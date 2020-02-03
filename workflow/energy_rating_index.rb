@@ -6,7 +6,7 @@ require 'pathname'
 require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
-require_relative "../measures/301EnergyRatingIndexRuleset/resources/constants"
+require_relative "../hpxml-measures/HPXMLtoOpenStudio/resources/constants"
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
@@ -457,7 +457,7 @@ end
 
 def cache_weather
   # Process all epw files through weather.rb and serialize objects
-  require_relative "../measures/HPXMLtoOpenStudio/resources/weather"
+  require_relative "../hpxml-measures/HPXMLtoOpenStudio/resources/weather"
 
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   weather_dir = File.join(File.dirname(__FILE__), "..", "weather")

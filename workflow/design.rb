@@ -1,7 +1,7 @@
 # Used by energy_rating_index.rb.
 # Separate ruby script to allow being called using system() on Windows.
 
-require_relative "../measures/HPXMLtoOpenStudio/resources/meta_measure"
+require_relative "../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 def get_design_name_and_dir(output_dir, run)
   design_name = ""
@@ -24,7 +24,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   output_hpxml = get_output_hpxml(resultsdir, designdir)
 
-  measures_dir = File.join(File.dirname(__FILE__), "../measures")
+  measures_dir = File.join(File.dirname(__FILE__), "..")
   measures = get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir, designdir)
 
   Dir.mkdir(designdir)
@@ -81,7 +81,7 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir
 
   if not run[0].nil?
     # Add 301 measure to workflow
-    measure_subdir = "301EnergyRatingIndexRuleset"
+    measure_subdir = "rulesets/301EnergyRatingIndexRuleset"
     args = {}
     args['calc_type'] = run[0]
     args['hpxml_input_path'] = hpxml
@@ -90,7 +90,7 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir
   end
 
   # Add HPXML translator measure to workflow
-  measure_subdir = "HPXMLtoOpenStudio"
+  measure_subdir = "hpxml-measures/HPXMLtoOpenStudio"
   args = {}
   args['hpxml_path'] = output_hpxml
   args['weather_dir'] = File.absolute_path(File.join(basedir, "..", "weather"))
@@ -101,14 +101,14 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir
   update_args_hash(measures, measure_subdir, args)
 
   # Add reporting measure to workflow
-  measure_subdir = "SimOutputReport"
+  measure_subdir = "hpxml-measures/SimulationOutputReport"
   args = {}
   args['timeseries_frequency'] = 'hourly'
-  args['timeseries_output_zone_temperatures'] = hourly_outputs.include? "temperatures"
-  args['timeseries_output_fuel_consumptions'] = hourly_outputs.include? "fuels"
-  args['timeseries_output_end_use_consumptions'] = hourly_outputs.include? "enduses"
-  args['timeseries_output_total_loads'] = hourly_outputs.include? "loads"
-  args['timeseries_output_component_loads'] = hourly_outputs.include? "componentloads"
+  args['include_timeseries_zone_temperatures'] = hourly_outputs.include? "temperatures"
+  args['include_timeseries_fuel_consumptions'] = hourly_outputs.include? "fuels"
+  args['include_timeseries_end_use_consumptions'] = hourly_outputs.include? "enduses"
+  args['include_timeseries_total_loads'] = hourly_outputs.include? "loads"
+  args['include_timeseries_component_loads'] = hourly_outputs.include? "componentloads"
   update_args_hash(measures, measure_subdir, args)
 
   return measures
