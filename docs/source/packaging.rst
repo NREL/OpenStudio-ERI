@@ -12,7 +12,7 @@ First, OpenStudio must be available.
 Web applications may wish to use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
 Alternatively, the OpenStudio installer can be executed on the web server -- only the EnergyPlus and Command Line Interface (CLI) components are required.
 
-Finally the OpenStudio-ERI repo can be cloned, using the latest release.
+Then grab the latest `OpenStudio-ERI release <https://github.com/NREL/OpenStudio-ERI/releases>`_.
 
 Desktop Applications
 --------------------
@@ -23,11 +23,4 @@ First, OpenStudio must be bundled -- only the EnergyPlus and Command Line Interf
 Either the OpenStudio setup file can be automatically run as part of your install, or the OpenStudio application can be installed to a local computer and its contents can be re-bundled in your installer (there are no external dependencies required).
 The only required OpenStudio contents are the ``openstudio/bin`` and ``openstudio/EnergyPlus`` directories.
 
-Second, the OpenStudio-ERI repo files from the latest release need to be bundled.
-If you want to slim down the installation package, the minimum required files from the OpenStudio-ERI repo are:
-
--	``measures/*/resources/*.*``
--	``measures/*/measure.*``
--	``measures/HPXMLtoOpenStudio/hpxml_schema/*.*``
--	``weather/*.*``
--	``workflow/*.rb``
+Then grab the latest `OpenStudio-ERI release <https://github.com/NREL/OpenStudio-ERI/releases>`_.
