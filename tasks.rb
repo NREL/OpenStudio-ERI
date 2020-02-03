@@ -2382,7 +2382,7 @@ def create_sample_hpxmls
   end
 end
 
-command_list = [:generate_sample_outputs, :update_version, :update_measures]
+command_list = [:generate_sample_outputs, :update_version, :update_measures, :create_release_zips]
 
 def display_usage(command_list)
   puts "Usage: openstudio rake.rb [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
@@ -2455,6 +2455,78 @@ if ARGV[0].to_sym == :update_measures
 
   create_test_hpxmls
   create_sample_hpxmls
+
+  puts "Done."
+end
+
+if ARGV[0].to_sym == :create_release_zips
+  require 'openstudio'
+
+  files = ["hpxml-measures/HPXMLtoOpenStudio/measure.*",
+           "hpxml-measures/HPXMLtoOpenStudio/resources/*.*",
+           "hpxml-measures/SimulationOutputReport/measure.*",
+           "hpxml-measures/SimulationOutputReport/resources/*.*",
+           "rulesets/301EnergyRatingIndexRuleset/measure.*",
+           "rulesets/301EnergyRatingIndexRuleset/resources/*.*",
+           "weather/*.*",
+           "workflow/*.*",
+           "workflow/sample_files/*.*"]
+
+  # Only include files under git version control
+  command = "git ls-files"
+  begin
+    git_files = `#{command}`
+  rescue
+    puts "Command failed: '#{command}'. Perhaps git needs to be installed?"
+    exit!
+  end
+
+  release_map = { File.join(File.dirname(__FILE__), "release-minimal.zip") => false,
+                  File.join(File.dirname(__FILE__), "release-full.zip") => true }
+
+  release_map.keys.each do |zip_path|
+    File.delete(zip_path) if File.exists? zip_path
+  end
+
+  # Check if we need to download weather files for the full release zip
+  num_epws_expected = File.readlines(File.join("weather", "data.csv")).size - 1
+  num_epws_local = 0
+  files.each do |f|
+    Dir[f].each do |file|
+      next unless file.end_with? ".epw"
+
+      num_epws_local += 1
+    end
+  end
+
+  # Make sure we have the full set of weather files
+  if num_epws_local < num_epws_expected
+    puts "Fetching all weather files..."
+    command = "openstudio workflow/energy_rating_index.rb --download-weather"
+    log = `#{command}`
+  end
+
+  # Create zip files
+  release_map.each do |zip_path, include_all_epws|
+    puts "Creating #{zip_path}..."
+    zip = OpenStudio::ZipFile.new(zip_path, false)
+    files.each do |f|
+      Dir[f].each do |file|
+        if include_all_epws
+          if not git_files.include? file and not file.start_with? "weather"
+            next
+          end
+        else
+          if not git_files.include? file
+            next
+          end
+        end
+
+        zip.addFile(file, File.join("OpenStudio-ERI", file))
+      end
+    end
+    puts "Wrote file at #{zip_path}."
+  end
 
   puts "Done."
 end
