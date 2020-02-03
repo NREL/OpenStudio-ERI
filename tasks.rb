@@ -2385,7 +2385,7 @@ end
 command_list = [:generate_sample_outputs, :update_version, :update_measures, :create_release_zips]
 
 def display_usage(command_list)
-  puts "Usage: openstudio rake.rb [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
+  puts "Usage: openstudio #{File.basename(__FILE__)} [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
 end
 
 if ARGV.size == 0
@@ -2502,7 +2502,7 @@ if ARGV[0].to_sym == :create_release_zips
   # Make sure we have the full set of weather files
   if num_epws_local < num_epws_expected
     puts "Fetching all weather files..."
-    command = "openstudio workflow/energy_rating_index.rb --download-weather"
+    command = "#{OpenStudio.getOpenStudioCLI} workflow/energy_rating_index.rb --download-weather"
     log = `#{command}`
   end
 
