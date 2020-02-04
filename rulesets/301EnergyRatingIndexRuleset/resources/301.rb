@@ -1,4 +1,3 @@
-require_relative "../../../hpxml-measures/HPXMLtoOpenStudio/measure"
 require_relative "../../../hpxml-measures/HPXMLtoOpenStudio/resources/airflow"
 require_relative "../../../hpxml-measures/HPXMLtoOpenStudio/resources/constants"
 require_relative "../../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions"

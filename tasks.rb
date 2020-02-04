@@ -2442,6 +2442,7 @@ if ARGV[0].to_sym == :update_version
 end
 
 if ARGV[0].to_sym == :update_measures
+  require 'openstudio'
   require_relative "hpxml-measures/HPXMLtoOpenStudio/resources/hpxml"
 
   # Prevent NREL error regarding U: drive when not VPNed in
@@ -2452,6 +2453,11 @@ if ARGV[0].to_sym == :update_measures
   command = "rubocop --auto-correct --format simple --only Layout"
   puts "Applying rubocop style to measures..."
   system(command)
+
+  # Update measures XMLs
+  command = "#{OpenStudio.getOpenStudioCLI} measure -t '#{File.join(File.dirname(__FILE__), 'rulesets')}'"
+  puts "Updating measure.xmls..."
+  system(command, [:out, :err] => File::NULL)
 
   create_test_hpxmls
   create_sample_hpxmls

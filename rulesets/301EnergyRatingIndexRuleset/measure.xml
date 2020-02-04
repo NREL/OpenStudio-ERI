@@ -1,9 +1,9 @@
 <measure>
   <schema_version>3.0</schema_version>
-  <name>energy_rating_index_301</name>
+  <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>8a9132d4-7702-424e-97b7-f467702d5752</version_id>
-  <version_modified>20181116T175945Z</version_modified>
+  <version_id>7438add9-d76b-45d5-9e93-8b9ac57aa0b0</version_id>
+  <version_modified>20200204T002438Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -16,6 +16,7 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value>ERI Rated Home</default_value>
       <choices>
         <choice>
           <value>ERI Reference Home</value>
@@ -36,27 +37,11 @@
       </choices>
     </argument>
     <argument>
-      <name>hpxml_path</name>
-      <display_name>HPXML File Path</display_name>
-      <description>Absolute (or relative) path of the HPXML file.</description>
+      <name>hpxml_input_path</name>
+      <display_name>HPXML Input File Path</display_name>
+      <description>Absolute (or relative) path of the input HPXML file.</description>
       <type>String</type>
       <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>weather_dir</name>
-      <display_name>Weather Directory</display_name>
-      <description>Absolute path of the weather directory.</description>
-      <type>String</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>schemas_dir</name>
-      <display_name>HPXML Schemas Directory</display_name>
-      <description>Absolute path of the hpxml schemas directory.</description>
-      <type>String</type>
-      <required>false</required>
       <model_dependent>false</model_dependent>
     </argument>
     <argument>
@@ -66,25 +51,6 @@
       <type>String</type>
       <required>false</required>
       <model_dependent>false</model_dependent>
-    </argument>
-    <argument>
-      <name>skip_validation</name>
-      <display_name>Skip HPXML validation</display_name>
-      <description>If true, only checks for and reports HPXML validation issues if an error occurs during processing. Used for faster runtime.</description>
-      <type>Boolean</type>
-      <required>true</required>
-      <model_dependent>false</model_dependent>
-      <default_value>false</default_value>
-      <choices>
-        <choice>
-          <value>true</value>
-          <display_name>true</display_name>
-        </choice>
-        <choice>
-          <value>false</value>
-          <display_name>false</display_name>
-        </choice>
-      </choices>
     </argument>
   </arguments>
   <outputs/>
@@ -119,37 +85,31 @@
       <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>C68A8B3B</checksum>
+      <checksum>4FAB2228</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>6EFA3187</checksum>
+      <checksum>688C6FFD</checksum>
     </file>
     <file>
       <filename>test_appliances.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>308567F1</checksum>
+      <checksum>8CBD308E</checksum>
     </file>
     <file>
       <filename>test_lighting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>ABC9AEA9</checksum>
-    </file>
-    <file>
-      <filename>test_mechanical_ventilation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C429C6B1</checksum>
+      <checksum>4CCA7DF8</checksum>
     </file>
     <file>
       <filename>test_water_heating.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>2107B366</checksum>
+      <checksum>5FE7EAB5</checksum>
     </file>
     <file>
       <version>
@@ -160,7 +120,31 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>C3B99194</checksum>
+      <checksum>0B5E457B</checksum>
+    </file>
+    <file>
+      <filename>test_enclosure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9F88DB5F</checksum>
+    </file>
+    <file>
+      <filename>test_hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>24944DB8</checksum>
+    </file>
+    <file>
+      <filename>test_misc.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CAC605C9</checksum>
+    </file>
+    <file>
+      <filename>test_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>19FF4EC7</checksum>
     </file>
   </files>
 </measure>
