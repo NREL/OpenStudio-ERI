@@ -9,6 +9,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing"
+require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads"
 require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 class EnergyRatingIndexTest < Minitest::Test
