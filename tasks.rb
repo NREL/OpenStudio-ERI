@@ -2244,12 +2244,12 @@ def get_hpxml_file_misc_load_schedule_values(hpxml_file, misc_load_schedule_valu
 end
 
 def create_sample_hpxmls
-  # Copy sample files from HPXMLtoOpenStudio measure
+  # Copy sample files from hpxml-measures subtree
   puts "Copying sample files..."
   FileUtils.rm_f(Dir.glob("workflow/sample_files/*.xml"))
   FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml"))
-  FileUtils.cp(Dir.glob("hpxml-measures/HPXMLtoOpenStudio/tests/*.xml"), "workflow/sample_files")
-  FileUtils.cp(Dir.glob("hpxml-measures/HPXMLtoOpenStudio/tests/invalid_files/*.xml"), "workflow/sample_files/invalid_files")
+  FileUtils.cp(Dir.glob("hpxml-measures/workflow/tests/*.xml"), "workflow/sample_files")
+  FileUtils.cp(Dir.glob("hpxml-measures/workflow/tests/invalid_files/*.xml"), "workflow/sample_files/invalid_files")
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
@@ -2293,7 +2293,6 @@ def create_sample_hpxmls
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
                   'base-appliances-none.xml',
-                  'base-appliances-refrigerator-adjusted.xml',
                   'base-appliances-wood.xml',
                   'base-dhw-combi-tankless-outside.xml',
                   'base-dhw-desuperheater-var-speed.xml',
@@ -2324,8 +2323,6 @@ def create_sample_hpxmls
                   'base-hvac-central-ac-only-2-speed-detailed.xml',
                   'base-hvac-central-ac-only-var-speed-detailed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
-                  'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-oil.xml',
-                  'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-propane.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-var-speed.xml',
                   'base-hvac-dual-fuel-mini-split-heat-pump-ducted.xml',
@@ -2348,7 +2345,7 @@ def create_sample_hpxmls
                   'base-hvac-wall-furnace-wood-only.xml',
                   'base-infiltration-ach-natural.xml',
                   'base-location-epw-filename.xml',
-                  'base-mechvent-cfis-24hrs.xml',
+                  'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-lighting-none.xml',
                   'base-misc-loads-detailed.xml',

@@ -526,10 +526,10 @@ class EnclosureTest < MiniTest::Test
     hpxml_names.each do |hpxml_name|
       # Rated Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
-                                  180 => [54, 0.33, 0.45],
-                                  90 => [36, 0.33, 0.45],
-                                  270 => [36, 0.33, 0.45] })
+      _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [72, 0.33, 0.45],
+                                  270 => [72, 0.33, 0.45] })
 
       # Reference Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -562,10 +562,10 @@ class EnclosureTest < MiniTest::Test
     hpxml_names.each do |hpxml_name|
       # Rated Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
-                                  180 => [54, 0.33, 0.45],
-                                  90 => [36, 0.33, 0.45],
-                                  270 => [36, 0.33, 0.45] })
+      _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [72, 0.33, 0.45],
+                                  270 => [72, 0.33, 0.45] })
 
       # Reference Home
       hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -593,10 +593,10 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
-                                180 => [54, 0.33, 0.45],
-                                90 => [66, 0.33, 0.45],
-                                270 => [66, 0.33, 0.45] })
+    _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                180 => [108, 0.33, 0.45],
+                                90 => [120, 0.33, 0.45],
+                                270 => [120, 0.33, 0.45] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -623,10 +623,10 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
-                                180 => [54, 0.33, 0.45],
-                                90 => [66, 0.33, 0.45],
-                                270 => [116, (0.3 * 62 + 0.33 * 54) / 116, 0.45] })
+    _check_windows(hpxml_doc, { 0 => [108, 0.33, 0.45],
+                                180 => [108, 0.33, 0.45],
+                                90 => [120, 0.33, 0.45],
+                                270 => [170, (0.3 * 62 + 0.33 * 108) / 170, 0.45] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -637,10 +637,10 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_windows(hpxml_doc, { 0 => [108, (0.3 * 62 + 0.33 * 228) / 290, 0.45],
-                                180 => [108, (0.3 * 62 + 0.33 * 228) / 290, 0.45],
-                                90 => [108, (0.3 * 62 + 0.33 * 228) / 290, 0.45],
-                                270 => [108, (0.3 * 62 + 0.33 * 228) / 290, 0.45] })
+    _check_windows(hpxml_doc, { 0 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
+                                180 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
+                                90 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
+                                270 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -653,10 +653,10 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_windows(hpxml_doc, { 0 => [54, 0.33, 0.45],
-                                180 => [54, 0.33, 0.45],
-                                90 => [36, 0.33, 0.45],
-                                270 => [36, 0.33, 0.45] })
+    _check_windows(hpxml_doc, { 0 => [37.8, 0.33, 0.45],
+                                180 => [37.8, 0.33, 0.45],
+                                90 => [25.2, 0.33, 0.45],
+                                270 => [25.2, 0.33, 0.45] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -703,8 +703,8 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_skylights(hpxml_doc, { 0 => [15, 0.33, 0.45],
-                                  180 => [15, 0.35, 0.47] })
+    _check_skylights(hpxml_doc, { 0 => [45, 0.33, 0.45],
+                                  180 => [45, 0.35, 0.47] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -712,8 +712,8 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_skylights(hpxml_doc, { 0 => [15, 0.33, 0.45],
-                                  180 => [15, 0.35, 0.47] })
+    _check_skylights(hpxml_doc, { 0 => [45, 0.33, 0.45],
+                                  180 => [45, 0.35, 0.47] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
