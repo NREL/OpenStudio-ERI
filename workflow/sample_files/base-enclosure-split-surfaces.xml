@@ -1272,7 +1272,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1280,7 +1280,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1288,7 +1288,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1296,7 +1296,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1304,7 +1304,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth2'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1312,7 +1312,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth3'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1320,7 +1320,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth4'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1328,7 +1328,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth5'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1336,7 +1336,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth6'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1344,7 +1344,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth7'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1352,7 +1352,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth8'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1360,7 +1360,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth9'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1368,7 +1368,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth10'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1376,7 +1376,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth2'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1384,7 +1384,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth3'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1392,7 +1392,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth4'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1400,7 +1400,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth5'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1408,7 +1408,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth6'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1416,7 +1416,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth7'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1424,7 +1424,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth8'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1432,7 +1432,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth9'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1440,7 +1440,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth10'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1448,7 +1448,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast2'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1456,7 +1456,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast3'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1464,7 +1464,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast4'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1472,7 +1472,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast5'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1480,7 +1480,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast6'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1488,7 +1488,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast7'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1496,7 +1496,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast8'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1504,7 +1504,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast9'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1512,7 +1512,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast10'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1520,7 +1520,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest2'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1528,7 +1528,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest3'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1536,7 +1536,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest4'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1544,7 +1544,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest5'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1552,7 +1552,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest6'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1560,7 +1560,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest7'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1568,7 +1568,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest8'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1576,7 +1576,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest9'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1584,7 +1584,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest10'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1594,7 +1594,7 @@
         <Skylights>
           <Skylight>
             <SystemIdentifier id='SkylightNorth'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1602,7 +1602,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1610,7 +1610,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth2'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1618,7 +1618,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth3'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1626,7 +1626,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth4'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1634,7 +1634,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth5'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1642,7 +1642,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth6'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1650,7 +1650,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth7'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1658,7 +1658,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth8'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1666,7 +1666,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth9'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1674,7 +1674,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth10'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1682,7 +1682,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth2'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1690,7 +1690,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth3'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1698,7 +1698,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth4'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1706,7 +1706,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth5'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1714,7 +1714,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth6'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1722,7 +1722,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth7'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1730,7 +1730,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth8'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1738,7 +1738,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth9'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1746,7 +1746,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth10'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
