@@ -11,5 +11,5 @@ Not all may apply:
 - [ ] 301validator.rb has been updated (reference EPvalidator.rb)
 - [ ] Workflow tests have been updated
 - [ ] Documentation has been updated
-- [ ] `rake update_measures` has been run
+- [ ] `openstudio tasks.rb update_measures` has been run
 - [ ] No unexpected regression test changes on CI
