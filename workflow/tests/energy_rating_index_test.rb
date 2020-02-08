@@ -420,7 +420,12 @@ class EnergyRatingIndexTest < Minitest::Test
         is_heat = true
       end
 
-      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat)
+      is_electric_heat = true
+      if xml.include? 'HVAC2a' or xml.include? 'HVAC2b'
+        is_electric_heat = false
+      end
+
+      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
       all_results[File.basename(xml)] = [hvac, hvac_fan]
     end
     assert(all_results.size > 0)
@@ -467,7 +472,9 @@ class EnergyRatingIndexTest < Minitest::Test
         is_heat = true
       end
 
-      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat)
+      is_electric_heat = false
+
+      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
 
       dse, seasonal_temp, percent_min, percent_max = _calc_dse(xml, sql_path)
 
@@ -775,7 +782,7 @@ class EnergyRatingIndexTest < Minitest::Test
     measures_dir = File.join(File.dirname(__FILE__), "../..")
 
     measures = {}
-    
+
     # Add HPXML translator measure to workflow
     measure_subdir = "hpxml-measures/HPXMLtoOpenStudio"
     args = {}
@@ -795,7 +802,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
     update_args_hash(measures, measure_subdir, args)
-    
+
     # Apply measure
     success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ModelMeasure")
 
@@ -843,10 +850,10 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Apply reporting measure output requests
     apply_energyplus_output_requests(measures_dir, measures, runner, model, model_idf)
-    
+
     # Write IDF
     File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
-    
+
     # Run EnergyPlus
     ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
     command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
@@ -857,12 +864,20 @@ class EnergyRatingIndexTest < Minitest::Test
 
     sql_path = File.join(rundir, "eplusout.sql")
     assert(File.exists?(sql_path))
-    
+
     # Apply reporting measures
     runner.setLastEnergyPlusSqlFilePath(sql_path)
     success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ReportingMeasure")
+    File.open(File.join(rundir, 'run.log'), 'a') do |f|
+      runner.result.stepWarnings.each do |s|
+        f << "Warning: #{s}\n"
+      end
+      runner.result.stepErrors.each do |s|
+        f << "Error: #{s}\n"
+      end
+    end
     assert(success)
-    
+
     csv_path = File.join(rundir, "results_annual.csv")
     assert(File.exists?(csv_path))
 
@@ -891,23 +906,27 @@ class EnergyRatingIndexTest < Minitest::Test
     results = _get_csv_results(csv_path)
     htg_load = results["Load: Heating (MBtu)"].round(2)
     clg_load = results["Load: Cooling (MBtu)"].round(2)
-    
+
     assert_operator(htg_load, :>, 0)
     assert_operator(clg_load, :>, 0)
-    
+
     return htg_load, clg_load
   end
 
-  def _get_simulation_hvac_energy_results(csv_path, is_heat)
+  def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
     results = _get_csv_results(csv_path)
     if not is_heat
-      hvac = results["Electricity: Cooling (MBtu)"].round(2)
-      hvac_fan = results["Electricity: Cooling Fans/Pumps (MBtu)"].round(2)
+      hvac = UnitConversions.convert(results["Electricity: Cooling (MBtu)"], "MBtu", "kwh").round(2)
+      hvac_fan = UnitConversions.convert(results["Electricity: Cooling Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
     else
-      hvac = (results["Electricity: Heating (MBtu)"] + results["Natural Gas: Heating (MBtu)"]).round(2)
-      hvac_fan = results["Electricity: Heating Fans/Pumps (MBtu)"].round(2)
+      if is_electric_heat
+        hvac = UnitConversions.convert(results["Electricity: Heating (MBtu)"], "MBtu", "kwh").round(2)
+      else
+        hvac = UnitConversions.convert(results["Natural Gas: Heating (MBtu)"], "MBtu", "therm").round(2)
+      end
+      hvac_fan = UnitConversions.convert(results["Electricity: Heating Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
     end
-  
+
     assert_operator(hvac, :>, 0)
     assert_operator(hvac_fan, :>, 0)
 
@@ -1014,7 +1033,7 @@ class EnergyRatingIndexTest < Minitest::Test
     percent_min = percent_avg - 5.0
     percent_max = percent_avg + 5.0
 
-    return dse.round(3), seasonal_temp.round(1), percent_min, percent_max
+    return dse.round(3), seasonal_temp.round(1), percent_min.round(1), percent_max.round(1)
   end
 
   def _test_schema_validation(xml)
