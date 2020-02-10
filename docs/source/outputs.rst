@@ -43,7 +43,7 @@ It also includes an "Electricity: Net" field that incorporates any renewable gen
 
 2. **Annual Energy Consumption By Fuel Type and End Use**.
 Current fuel types are: "Electricity", "Natural Gas", "Fuel Oil", "Propane".
-Current end uses are: "Heating", "Cooling", "Hot Water", "Hot Water Recirc Pump", "Hot Water Solar Thermal Pump", "Lighting Interior", "Lighting Garage", "Lighting Exterior", "Mech Vent", "Whole House Fan", "Refrigerator", "Dishwasher", "Clothes Washer", "Clothes Dryer", "Range/Oven", "Ceiling Fan", "Plug Loads", "PV" (negative value for generation).
+Current end uses are: "Heating", "Heating Fans/Pumps", "Cooling", "Cooling Fans/Pumps", "Hot Water", "Hot Water Recirc Pump", "Hot Water Solar Thermal Pump", "Lighting Interior", "Lighting Garage", "Lighting Exterior", "Mech Vent", "Whole House Fan", "Refrigerator", "Dishwasher", "Clothes Washer", "Clothes Dryer", "Range/Oven", "Ceiling Fan", "Plug Loads", "PV" (negative value for generation).
 
 3. **Annual Building Loads**.
 Values are reported for heating, cooling, and hot water.

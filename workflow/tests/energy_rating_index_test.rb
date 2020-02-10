@@ -76,6 +76,8 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_downloading_weather
+    skip
+
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --download-weather"
     system(command)
@@ -132,8 +134,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, sim_time = run_simulation(xml, test_name)
-      htg_load, clg_load = _get_simulation_load_results(sql_path)
+      sql_path, csv_path, sim_time = run_simulation(xml, test_name)
+      htg_load, clg_load = _get_simulation_load_results(csv_path)
       if xml.include? "C.xml"
         all_results << [xml, htg_load, "N/A"]
         assert_operator(htg_load, :>, 0)
@@ -413,7 +415,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, sim_time = run_simulation(xml, test_name)
+      sql_path, csv_path, sim_time = run_simulation(xml, test_name)
 
       is_heat = false
       if xml.include? 'HVAC2'
@@ -425,7 +427,7 @@ class EnergyRatingIndexTest < Minitest::Test
         is_electric_heat = false
       end
 
-      hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
+      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
       all_results[File.basename(xml)] = [hvac, hvac_fan]
     end
     assert(all_results.size > 0)
@@ -465,7 +467,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, sim_time = run_simulation(xml, test_name, true)
+      sql_path, csv_path, sim_time = run_simulation(xml, test_name, true)
 
       is_heat = false
       if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
@@ -474,7 +476,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
       is_electric_heat = false
 
-      hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
+      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
 
       dse, seasonal_temp, percent_min, percent_max = _calc_dse(xml, sql_path)
 
@@ -779,21 +781,32 @@ class EnergyRatingIndexTest < Minitest::Test
 
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    measures_dir = File.join(File.dirname(__FILE__), "../..")
 
+    measures = {}
+
+    # Add HPXML translator measure to workflow
+    measure_subdir = "hpxml-measures/HPXMLtoOpenStudio"
     args = {}
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), "weather"))
     args['epw_output_path'] = File.absolute_path(File.join(rundir, "in.epw"))
     args['osm_output_path'] = File.absolute_path(File.join(rundir, "in.osm"))
     args['hpxml_path'] = xml
+    update_args_hash(measures, measure_subdir, args)
 
-    # Add measure to workflow
-    measures = {}
-    measure_subdir = "hpxml-measures/HPXMLtoOpenStudio"
+    # Add reporting measure to workflow
+    measure_subdir = "hpxml-measures/SimulationOutputReport"
+    args = {}
+    args['timeseries_frequency'] = 'hourly'
+    args['include_timeseries_zone_temperatures'] = false
+    args['include_timeseries_fuel_consumptions'] = false
+    args['include_timeseries_end_use_consumptions'] = false
+    args['include_timeseries_total_loads'] = false
+    args['include_timeseries_component_loads'] = false
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measure
-    measures_dir = File.join(File.dirname(__FILE__), "../..")
-    success = apply_measures(measures_dir, measures, runner, model)
+    success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ModelMeasure")
 
     # Report warnings/errors
     File.open(File.join(rundir, 'run.log'), 'w') do |f|
@@ -809,6 +822,7 @@ class EnergyRatingIndexTest < Minitest::Test
     if request_dse_outputs
       # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
       #       based on EnergyPlus hourly outputs for DSE tests.
+      #       When this happens, we can just call run_simulation.rb instead.
 
       # Thermal zone temperatures
       output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
@@ -831,10 +845,15 @@ class EnergyRatingIndexTest < Minitest::Test
       output_meter.setReportingFrequency('hourly')
     end
 
-    # Write model to IDF
+    # Translate model to IDF
     forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
     forward_translator.setExcludeLCCObjects(true)
     model_idf = forward_translator.translateModel(model)
+
+    # Apply reporting measure output requests
+    apply_energyplus_output_requests(measures_dir, measures, runner, model, model_idf)
+
+    # Write IDF
     File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
 
     # Run EnergyPlus
@@ -843,12 +862,28 @@ class EnergyRatingIndexTest < Minitest::Test
     start_time = Time.now
     system(command, :err => File::NULL)
     sim_time = (Time.now - start_time).round(1)
-    puts "Completed #{File.basename(args['hpxml_path'])} simulation in #{sim_time}s."
+    puts "Completed #{File.basename(xml)} simulation in #{sim_time}s."
 
     sql_path = File.join(rundir, "eplusout.sql")
     assert(File.exists?(sql_path))
 
-    return sql_path, sim_time
+    # Apply reporting measures
+    runner.setLastEnergyPlusSqlFilePath(sql_path)
+    success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ReportingMeasure")
+    File.open(File.join(rundir, 'run.log'), 'a') do |f|
+      runner.result.stepWarnings.each do |s|
+        f << "Warning: #{s}\n"
+      end
+      runner.result.stepErrors.each do |s|
+        f << "Error: #{s}\n"
+      end
+    end
+    assert(success)
+
+    csv_path = File.join(rundir, "results_annual.csv")
+    assert(File.exists?(csv_path))
+
+    return sql_path, csv_path, sim_time
   end
 
   def _test_reul(all_results, files_include, result_name)
@@ -869,51 +904,30 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
-  def _get_simulation_load_results(sql_path)
-    # Obtain heating/cooling loads
-    sqlFile = OpenStudio::SqlFile.new(sql_path, false)
+  def _get_simulation_load_results(csv_path)
+    results = _get_csv_results(csv_path)
+    htg_load = results["Load: Heating (MBtu)"].round(2)
+    clg_load = results["Load: Cooling (MBtu)"].round(2)
 
-    # Space Heating Load
-    query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-    htg_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+    assert_operator(htg_load, :>, 0)
+    assert_operator(clg_load, :>, 0)
 
-    # Space Cooling Load
-    query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-    clg_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-
-    sqlFile.close
-
-    return htg_load.round(2), clg_load.round(2)
+    return htg_load, clg_load
   end
 
-  def _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
-    # Obtain heating/cooling energy values
-    sqlFile = OpenStudio::SqlFile.new(sql_path, false)
-
+  def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
+    results = _get_csv_results(csv_path)
     if not is_heat
-      # Cool
-      query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Cooling' AND ColumnName='Electricity' AND Units='GJ'"
-      hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
-
-      # Cool Fan
-      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%#{Constants.ObjectNameFanPumpDisaggregateCool}' AND VariableUnits='J')"
-      hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+      hvac = UnitConversions.convert(results["Electricity: Cooling (MBtu)"], "MBtu", "kwh").round(2)
+      hvac_fan = UnitConversions.convert(results["Electricity: Cooling Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
     else
-      # Heat
-      if not is_electric_heat
-        query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Heating' AND ColumnName='Natural Gas' AND Units='GJ'"
-        hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "therm")
+      if is_electric_heat
+        hvac = UnitConversions.convert(results["Electricity: Heating (MBtu)"], "MBtu", "kwh").round(2)
       else
-        query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Heating' AND ColumnName='Electricity' AND Units='GJ'"
-        hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+        hvac = UnitConversions.convert(results["Natural Gas: Heating (MBtu)"], "MBtu", "therm").round(2)
       end
-
-      # Heat Fan
-      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND (VariableName LIKE '%#{Constants.ObjectNameFanPumpDisaggregatePrimaryHeat}' OR VariableName LIKE '%#{Constants.ObjectNameFanPumpDisaggregateBackupHeat}') AND VariableUnits='J')"
-      hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+      hvac_fan = UnitConversions.convert(results["Electricity: Heating Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
     end
-
-    sqlFile.close
 
     assert_operator(hvac, :>, 0)
     assert_operator(hvac_fan, :>, 0)
@@ -1021,7 +1035,7 @@ class EnergyRatingIndexTest < Minitest::Test
     percent_min = percent_avg - 5.0
     percent_max = percent_avg + 5.0
 
-    return dse.round(3), seasonal_temp.round(1), percent_min, percent_max
+    return dse.round(3), seasonal_temp.round(1), percent_min.round(1), percent_max.round(1)
   end
 
   def _test_schema_validation(xml)

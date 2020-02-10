@@ -121,8 +121,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_heat = rated_output[:hpxml_eec_heats][s]
     eec_r_heat = ref_output[:hpxml_eec_heats][s]
 
-    ec_x_heat = rated_output[:elecHeating][s] + rated_output[:gasHeating][s] + rated_output[:oilHeating][s] + rated_output[:propaneHeating][s]
-    ec_r_heat = ref_output[:elecHeating][s] + ref_output[:gasHeating][s] + ref_output[:oilHeating][s] + ref_output[:propaneHeating][s]
+    ec_x_heat = rated_output[:elecHeating][s] + rated_output[:elecHeatingFansPumps][s] + rated_output[:gasHeating][s] + rated_output[:oilHeating][s] + rated_output[:propaneHeating][s]
+    ec_r_heat = ref_output[:elecHeating][s] + ref_output[:elecHeatingFansPumps][s] + ref_output[:gasHeating][s] + ref_output[:oilHeating][s] + ref_output[:propaneHeating][s]
 
     dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
@@ -173,8 +173,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     eec_x_cool = rated_output[:hpxml_eec_cools][s]
     eec_r_cool = ref_output[:hpxml_eec_cools][s]
 
-    ec_x_cool = rated_output[:elecCooling][s]
-    ec_r_cool = ref_output[:elecCooling][s]
+    ec_x_cool = rated_output[:elecCooling][s] + rated_output[:elecCoolingFansPumps][s]
+    ec_r_cool = ref_output[:elecCooling][s] + ref_output[:elecCoolingFansPumps][s]
 
     dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
 
