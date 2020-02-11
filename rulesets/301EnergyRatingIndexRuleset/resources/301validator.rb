@@ -32,7 +32,7 @@ class EnergyRatingIndex301Validator
         "/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy" => one, # Required by HPXML schema
         "/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime" => one, # Required by HPXML schema
         "/HPXML/XMLTransactionHeaderInformation/Transaction" => one, # Required by HPXML schema
-        "/HPXML/SoftwareInfo/extension/ERICalculation[Version='latest' or Version='2014AEG' or Version='2014AE' or Version='2014A' or Version='2014']" => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
+        "/HPXML/SoftwareInfo/extension/ERICalculation[Version='latest' or Version='2019A' or Version='2019' or Version='2014AEG' or Version='2014AE' or Version='2014A' or Version='2014']" => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
 
         "/HPXML/Building" => one,
         "/HPXML/Building/BuildingID" => one, # Required by HPXML schema
@@ -408,9 +408,9 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "[FanType='energy recovery ventilator' or FanType='heat recovery ventilator' or FanType='exhaust only' or FanType='supply only' or FanType='balanced' or FanType='central fan integrated supply']" => one, # See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS]
-        "TestedFlowRate" => one,
+        "TestedFlowRate" => zero_or_one,
         "HoursInOperation" => one,
-        "FanPower" => one,
+        "FanPower" => zero_or_one,
       },
 
       ## [MechVentType=HRV]

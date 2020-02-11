@@ -14,8 +14,8 @@ class EnergyRatingIndex301Ruleset
     @weather = weather
     @calc_type = calc_type
 
-    # Determine building type (single family attached or multifamily?)
-    @is_sfa_or_mf = !hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/*/*[contains(ExteriorAdjacentTo, 'other housing unit')]"].nil?
+    # Determine building type: single family detached or attached (including multifamily)
+    @is_attached_unit = !hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/*/*[contains(ExteriorAdjacentTo, 'other housing unit')]"].nil?
 
     # Update HPXML object based on calculation type
     HPXML.collapse_enclosure(hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure"])
@@ -204,6 +204,8 @@ class EnergyRatingIndex301Ruleset
                                    building_id: hpxml_values[:building_id],
                                    event_type: hpxml_values[:event_type])
 
+    @eri_version = hpxml_values[:eri_calculation_version]
+
     return hpxml_doc
   end
 
@@ -382,47 +384,15 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Air exchange rate
 
-    whole_house_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    ach50 = calc_rated_home_infiltration_ach50(orig_details)
 
-    min_ach50 = 0.0
-    if whole_house_fan.nil?
-      min_nach = 0.30
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @ncfl, @weather)
-      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
-    end
-
-    orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
-      air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
-      if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
-        nach = air_infiltration_measurement_values[:air_leakage]
-        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
-        # Convert to ACH50
-        air_infiltration_measurement_values[:air_leakage] = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
-        air_infiltration_measurement_values[:unit_of_measure] = 'ACH'
-        air_infiltration_measurement_values[:house_pressure] = 50
-      elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
-        # nop
-      elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
-        # Convert to ACH50
-        air_infiltration_measurement_values[:unit_of_measure] = "ACH"
-        air_infiltration_measurement_values[:air_leakage] *= 60.0 / @infilvolume
-      else
-        next
-      end
-
-      if air_infiltration_measurement_values[:air_leakage] < min_ach50
-        air_infiltration_measurement_values[:air_leakage] = min_ach50
-      end
-
-      # Air Infiltration
-      HPXML.add_air_infiltration_measurement(hpxml: hpxml,
-                                             id: "AirInfiltrationMeasurement",
-                                             house_pressure: air_infiltration_measurement_values[:house_pressure],
-                                             unit_of_measure: air_infiltration_measurement_values[:unit_of_measure],
-                                             air_leakage: air_infiltration_measurement_values[:air_leakage],
-                                             infiltration_volume: @infilvolume)
-      break
-    end
+    # Air Infiltration
+    HPXML.add_air_infiltration_measurement(hpxml: hpxml,
+                                           id: "AirInfiltrationMeasurement",
+                                           house_pressure: 50,
+                                           unit_of_measure: "ACH",
+                                           air_leakage: ach50,
+                                           infiltration_volume: @infilvolume)
   end
 
   def self.set_enclosure_air_infiltration_iad(hpxml)
@@ -1487,59 +1457,27 @@ class EnergyRatingIndex301Ruleset
     q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm for airflow rate using Reference Home infiltration
-    # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
+    # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, fan_type, orig_details)
 
-    # Calculate fan cfm for fan power using Rated Home infiltration
-    # http://www.resnet.us/standards/Interpretation_on_Reference_Home_mechVent_fanCFM_approved.pdf
     if fan_type.nil?
       fan_type = 'exhaust only'
       fan_power_w = 0.0
     else
-      rated_sla = nil
-      air_infiltration_measurements_values = []
-      # Check for eRatio workaround first
-      orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |air_infiltration_measurement|
-        air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
-      end
-      if air_infiltration_measurements_values.empty?
-        orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
-          air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
-        end
-      end
-      air_infiltration_measurements_values.each do |air_infiltration_measurement_values|
-        if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
-          nach = air_infiltration_measurement_values[:air_leakage]
-          rated_sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
-          break
-        elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
-          ach50 = air_infiltration_measurement_values[:air_leakage] * 60.0 / @infilvolume
-          rated_sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
-          break
-        elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
-          ach50 = air_infiltration_measurement_values[:air_leakage]
-          rated_sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
-          break
-        end
-      end
-      q_fan_power = calc_mech_vent_q_fan(q_tot, rated_sla)
+      # Calculate fan cfm for fan power using Rated Home infiltration
+      # https://www.resnet.us/wp-content/uploads/No.-301-2014-02-Table-4.2.21-Reference-Home-Whole-House-Mechanical-Ventilation.pdf
+      q_fan_power = calc_rated_home_qfan(orig_details, fan_type) # Use Rated Home fan type
 
       # Treat CFIS like supply ventilation
       if fan_type == 'central fan integrated supply'
         fan_type = 'supply only'
       end
 
-      fan_power_w = nil
-      if fan_type == 'supply only' or fan_type == 'exhaust only'
-        w_cfm = 0.35
-        fan_power_w = w_cfm * q_fan_power
-      elsif fan_type == 'balanced'
-        w_cfm = 0.70
-        fan_power_w = w_cfm * q_fan_power
-      elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
-        w_cfm = 1.00
-        fan_power_w = w_cfm * q_fan_power
+      fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(fan_type)
+      fan_power_w = fan_w_per_cfm * q_fan_power
+
+      if fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
         fan_type = 'balanced'
       end
     end
@@ -1560,30 +1498,49 @@ class EnergyRatingIndex301Ruleset
       vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
 
       # Calculate min airflow rate
-      min_q_tot = calc_mech_vent_q_tot()
-      sla = nil
-      hpxml.elements.each("Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
-        air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
-        if air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
-          ach50 = air_infiltration_measurement_values[:air_leakage]
-          sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
-          break
-        end
-      end
-      min_q_fan = calc_mech_vent_q_fan(min_q_tot, sla)
+      min_q_fan = calc_rated_home_qfan(orig_details, vent_fan_values[:fan_type])
 
-      fan_w_per_cfm = vent_fan_values[:fan_power] / vent_fan_values[:tested_flow_rate]
-      q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
-      if q_fan < min_q_fan
-        # First try increasing operation to meet minimum
-        vent_fan_values[:hours_in_operation] = [min_q_fan / q_fan * vent_fan_values[:hours_in_operation], 24].min
+      if vent_fan_values[:tested_flow_rate].nil?
+        # Calculate airflow rate based on increased infiltration rate
+        vent_fan_values[:tested_flow_rate] = min_q_fan
+        if vent_fan_values[:fan_power].nil?
+          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(vent_fan_values[:fan_type])
+          if vent_fan_values[:fan_type] == 'central fan integrated supply'
+            # For CFIS systems, the cfm used to determine fan watts shall be the larger of
+            # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
+            htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_details, vent_fan_values[:distribution_system_idref])
+            q_fan = [400.0 * clg_cap / 12000.0, 240.0 * htg_cap / 12000.0].max
+            vent_fan_values[:fan_power] = fan_w_per_cfm * q_fan
+          else
+            vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
+          end
+        end
+        vent_fan_values[:hours_in_operation] = 24
+        if vent_fan_values[:tested_flow_rate] <= 0
+          # Where a Rated Home has mechanical ventilation but the flowrate has not been measured ...
+          # and where Qfan ≤ 0 (cfm) ... Rated Home fan energy shall be zero.
+          # https://www.resnet.us/wp-content/uploads/IR-301-2019-001-FanEnergyUnmeasuredMechVentilation_final.pdf
+          vent_fan_values[:fan_power] = 0
+        end
+      else
+        if vent_fan_values[:fan_power].nil?
+          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(vent_fan_values[:fan_type])
+        else
+          fan_w_per_cfm = vent_fan_values[:fan_power] / vent_fan_values[:tested_flow_rate]
+        end
         q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+        if q_fan < min_q_fan
+          # First try increasing operation to meet minimum
+          vent_fan_values[:hours_in_operation] = [min_q_fan / q_fan * vent_fan_values[:hours_in_operation], 24.0].min
+          q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+        end
+        if q_fan < min_q_fan
+          # Finally resort to increasing airflow rate
+          vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
+          q_fan = vent_fan_values[:tested_flow_rate] * vent_fan_values[:hours_in_operation] / 24.0
+        end
+        vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
       end
-      if q_fan < min_q_fan
-        # Finally resort to increasing airflow rate
-        vent_fan_values[:tested_flow_rate] *= min_q_fan / q_fan
-      end
-      vent_fan_values[:fan_power] = fan_w_per_cfm * vent_fan_values[:tested_flow_rate]
 
       HPXML.add_ventilation_fan(hpxml: hpxml,
                                 id: vent_fan_values[:id],
@@ -1616,11 +1573,12 @@ class EnergyRatingIndex301Ruleset
         break
       end
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla)
+    fan_type = "balanced"
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_details)
 
     HPXML.add_ventilation_fan(hpxml: hpxml,
                               id: "VentilationFan",
-                              fan_type: "balanced",
+                              fan_type: fan_type,
                               tested_flow_rate: q_fan,
                               hours_in_operation: 24,
                               fan_power: 0.7 * q_fan,
@@ -2154,25 +2112,131 @@ class EnergyRatingIndex301Ruleset
     return false
   end
 
+  def self.calc_rated_home_infiltration_ach50(orig_details)
+    air_infiltration_measurements_values = []
+    orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |air_infiltration_measurement|
+      air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+    end
+    if air_infiltration_measurements_values.empty?
+      orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
+        air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+      end
+    end
+    ach50 = nil
+    air_infiltration_measurements_values.each do |air_infiltration_measurement_values|
+      if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
+        nach = air_infiltration_measurement_values[:air_leakage]
+        sla = Airflow.get_infiltration_SLA_from_ACH(nach, calc_mech_vent_h_vert_distance() / 8.202, @weather)
+        ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
+      elsif air_infiltration_measurement_values[:unit_of_measure] == 'ACH' and air_infiltration_measurement_values[:house_pressure] == 50
+        ach50 = air_infiltration_measurement_values[:air_leakage]
+      elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
+        ach50 = air_infiltration_measurement_values[:air_leakage] * 60.0 / @infilvolume
+      end
+      break unless ach50.nil?
+    end
+
+    tot_cb_area, ext_cb_area = calc_compartmentalization_boundary_areas(orig_details)
+    a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
+
+    if @is_attached_unit
+      cfm50 = ach50 * @infilvolume / 60.0
+      if cfm50 / tot_cb_area <= 0.30
+        ach50 *= a_ext
+      end
+    end
+
+    vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    vent_fan_unmeasured_airflow = false
+    vent_fan_type = nil
+    if not vent_fan.nil?
+      # Check if no measured airflow
+      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+      if vent_fan_values[:tested_flow_rate].nil?
+        vent_fan_unmeasured_airflow = true
+      end
+      vent_fan_type = vent_fan_values[:fan_type]
+    end
+
+    if vent_fan.nil? or vent_fan_unmeasured_airflow or (a_ext < 0.5 and vent_fan_type == 'exhaust only')
+      min_nach = 0.30
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, calc_mech_vent_h_vert_distance() / 8.202, @weather)
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
+      if ach50 < min_ach50
+        ach50 = min_ach50
+      end
+    end
+
+    return ach50
+  end
+
+  def self.calc_rated_home_qfan(orig_details, fan_type)
+    ach50 = calc_rated_home_infiltration_ach50(orig_details)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
+    q_tot = calc_mech_vent_q_tot()
+    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_details)
+  end
+
   def self.calc_mech_vent_q_tot()
     return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla)
-    if @is_sfa_or_mf # No infiltration credit for attached/multifamily
+  def self.calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_details)
+    if @is_attached_unit # No infiltration credit for attached/multifamily
       return q_tot
     end
 
-    vert_distance = Float(@ncfl_ag) * @infilvolume / @cfa # vertical distance between lowest and highest above-grade points within the pressure boundary
-    nl = 1000.0 * sla * (vert_distance / 8.202)**0.4 # Normalized leakage, eq. 4.4
+    h = calc_mech_vent_h_vert_distance()
+    hr = 8.202
+    nl = 1000.0 * sla * (h / hr)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-    if q_inf > 2.0 / 3.0 * q_tot
-      q_fan = q_tot - 2.0 / 3.0 * q_tot
+    if not @eri_version.include? "2014" # 2019 or newer
+      tot_cb_area, ext_cb_area = calc_compartmentalization_boundary_areas(orig_details)
+      a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
+      if ['balanced', 'energy recovery ventilator', 'heat recovery ventilator'].include? fan_type
+        phi = 1.0
+      else
+        phi = q_inf / q_tot
+      end
+      q_fan = q_tot - phi * (q_inf * a_ext)
     else
-      q_fan = q_tot - q_inf
+      if q_inf > 2.0 / 3.0 * q_tot
+        q_fan = q_tot - 2.0 / 3.0 * q_tot
+      else
+        q_fan = q_tot - q_inf
+      end
     end
 
     return [q_fan, 0].max
+  end
+
+  def self.calc_mech_vent_h_vert_distance()
+    return Float(@ncfl_ag) * @infilvolume / @cfa # inferred vertical distance between lowest and highest above-grade points within the pressure boundary
+  end
+
+  def self.calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
+    if not @is_attached_unit
+      return 1.0 # detached unit
+    end
+
+    return ext_cb_area / tot_cb_area
+  end
+
+  def self.calc_compartmentalization_boundary_areas(orig_details)
+    # Returns:
+    # 1. Total Compartmentalization Boundary area
+    # 2. Exterior Compartmentalization Boundary area (i.e., excluding surfaces attached to garage or other housing units)
+    tot_cb_area = 0.0
+    ext_cb_area = 0.0
+    orig_details.elements.each("/HPXML/Building/BuildingDetails/Enclosure/*/*[InteriorAdjacentTo='living space' or InteriorAdjacentTo='basement - conditioned']") do |surface|
+      tot_cb_area += Float(surface.elements["Area"].text)
+      ext_adjacent_to = "outside/ground"
+      ext_adjacent_to = surface.elements["ExteriorAdjacentTo"].text unless surface.elements["ExteriorAdjacentTo"].nil?
+      if not (ext_adjacent_to.include? "other housing unit" or ext_adjacent_to == "garage")
+        ext_cb_area += Float(surface.elements["Area"].text)
+      end
+    end
+    return tot_cb_area, ext_cb_area
   end
 
   def self.add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, values = {})
@@ -2330,6 +2394,25 @@ class EnergyRatingIndex301Ruleset
                                    recovery_efficiency: wh_re)
   end
 
+  def self.get_hvac_capacities_for_distribution_system(orig_details, dist_id)
+    htg_cap = 0.0
+    clg_cap = 0.0
+
+    orig_details.elements["Systems/HVAC/HVACPlant"].elements.each("HeatingSystem | CoolingSystem | HeatPump") do |hvac|
+      next unless HPXML.get_idref(hvac, "DistributionSystem") == dist_id
+
+      htg_cap_el = hvac.elements["HeatingCapacity"]
+      if not htg_cap_el.nil? and htg_cap_el.text.to_f > 0
+        htg_cap = htg_cap_el.text.to_f
+      end
+      clg_cap_el = hvac.elements["CoolingCapacity"]
+      if not clg_cap_el.nil? and clg_cap_el.text.to_f > 0
+        clg_cap = clg_cap_el.text.to_f
+      end
+    end
+    return htg_cap, clg_cap
+  end
+
   def self.get_predominant_heating_fuel(orig_details)
     fuel_fracs = {}
 
@@ -2449,7 +2532,7 @@ end
 def calc_sum_of_exterior_thermal_boundary_values(surfaces_values)
   sum_val = 0
   surfaces_values.each do |surface_values|
-    next unless is_exterior_thermal_boundary(surface_values) or (surface_values[:interior_adjacent_to].nil? and surface_values[:exterior_adjacent_to].nil?)
+    next unless is_exterior_thermal_boundary(surface_values)
 
     sum_val += surface_values[:area]
   end

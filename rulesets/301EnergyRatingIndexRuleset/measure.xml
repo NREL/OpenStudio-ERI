@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>e9d37d2f-fe3b-4fab-9e91-e92fa0d8fd24</version_id>
-  <version_modified>20200207T154151Z</version_modified>
+  <version_id>b621e4ca-47f3-40ec-9aa4-cc5922d1c7fd</version_id>
+  <version_modified>20200211T211507Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -82,18 +82,6 @@
   </attributes>
   <files>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4FAB2228</checksum>
-    </file>
-    <file>
-      <filename>301.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>688C6FFD</checksum>
-    </file>
-    <file>
       <filename>test_lighting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -129,22 +117,34 @@
       <checksum>CAC605C9</checksum>
     </file>
     <file>
-      <filename>test_ventilation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>19FF4EC7</checksum>
-    </file>
-    <file>
       <filename>test_appliances.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>C8F226C0</checksum>
     </file>
     <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>A325860D</checksum>
+    </file>
+    <file>
       <filename>test_enclosure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>EEE9CA22</checksum>
+      <checksum>40DD8B57</checksum>
+    </file>
+    <file>
+      <filename>301.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>60EA9F08</checksum>
+    </file>
+    <file>
+      <filename>test_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>CA7B60B8</checksum>
     </file>
   </files>
 </measure>
