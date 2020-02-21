@@ -2273,6 +2273,7 @@ def create_sample_hpxmls
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
+                  'invalid_files/mismatched-slab-and-foundation-wall.xml',
                   'invalid_files/missing-surfaces.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
