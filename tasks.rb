@@ -2248,8 +2248,8 @@ def create_sample_hpxmls
   puts "Copying sample files..."
   FileUtils.rm_f(Dir.glob("workflow/sample_files/*.xml"))
   FileUtils.rm_f(Dir.glob("workflow/sample_files/invalid_files/*.xml"))
-  FileUtils.cp(Dir.glob("hpxml-measures/workflow/tests/*.xml"), "workflow/sample_files")
-  FileUtils.cp(Dir.glob("hpxml-measures/workflow/tests/invalid_files/*.xml"), "workflow/sample_files/invalid_files")
+  FileUtils.cp(Dir.glob("hpxml-measures/workflow/sample_files/*.xml"), "workflow/sample_files")
+  FileUtils.cp(Dir.glob("hpxml-measures/workflow/sample_files/invalid_files/*.xml"), "workflow/sample_files/invalid_files")
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
@@ -2467,6 +2467,20 @@ end
 if ARGV[0].to_sym == :create_release_zips
   require 'openstudio'
 
+  # Generate documentation
+  puts "Generating documentation..."
+  command = "sphinx-build -b singlehtml docs/source documentation"
+  begin
+    `#{command}`
+    if not File.exists? File.join(File.dirname(__FILE__), "documentation", "index.html")
+      puts "Documentation was not successfully generated. Aborting..."
+      exit!
+    end
+  rescue
+    puts "Command failed: '#{command}'. Perhaps sphinx needs to be installed?"
+    exit!
+  end
+
   files = ["hpxml-measures/HPXMLtoOpenStudio/measure.*",
            "hpxml-measures/HPXMLtoOpenStudio/resources/*.*",
            "hpxml-measures/SimulationOutputReport/measure.*",
@@ -2475,7 +2489,9 @@ if ARGV[0].to_sym == :create_release_zips
            "rulesets/301EnergyRatingIndexRuleset/resources/*.*",
            "weather/*.*",
            "workflow/*.*",
-           "workflow/sample_files/*.*"]
+           "workflow/sample_files/*.*",
+           "documentation/index.html",
+           "documentation/_static/**/*.*"]
 
   # Only include files under git version control
   command = "git ls-files"
@@ -2517,7 +2533,9 @@ if ARGV[0].to_sym == :create_release_zips
     zip = OpenStudio::ZipFile.new(zip_path, false)
     files.each do |f|
       Dir[f].each do |file|
-        if include_all_epws
+        if file.start_with? "documentation"
+          # always include
+        elsif include_all_epws
           if not git_files.include? file and not file.start_with? "weather"
             next
           end
@@ -2532,6 +2550,9 @@ if ARGV[0].to_sym == :create_release_zips
     end
     puts "Wrote file at #{zip_path}."
   end
+
+  # Cleanup
+  FileUtils.rm_r(File.join(File.dirname(__FILE__), "documentation"))
 
   puts "Done."
 end
