@@ -6,13 +6,7 @@
     <CreatedDateAndTime>2000-01-01T00:00:00-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
-  <SoftwareInfo>
-    <extension>
-      <ERICalculation>
-        <Version>2019</Version>
-      </ERICalculation>
-    </extension>
-  </SoftwareInfo>
+  <SoftwareInfo/>
   <Building>
     <BuildingID id='MyBuilding'/>
     <ProjectStatus>
@@ -322,6 +316,7 @@
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
+            <HotWaterTemperature>130.0</HotWaterTemperature>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDstribution'/>

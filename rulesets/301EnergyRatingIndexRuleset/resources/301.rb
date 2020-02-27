@@ -194,12 +194,15 @@ class EnergyRatingIndex301Ruleset
   def self.create_new_doc(hpxml_doc)
     hpxml_values = HPXML.get_hpxml_values(hpxml: hpxml_doc.elements["/HPXML"])
 
+    @eri_version = hpxml_values[:eri_calculation_version]
+    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
+
     hpxml_doc = HPXML.create_hpxml(xml_type: hpxml_values[:xml_type],
                                    xml_generated_by: "OpenStudio-ERI",
                                    transaction: hpxml_values[:transaction],
                                    software_program_used: hpxml_values[:software_program_used],
                                    software_program_version: hpxml_values[:software_program_version],
-                                   eri_calculation_version: hpxml_values[:eri_calculation_version],
+                                   eri_calculation_version: @eri_version,
                                    eri_design: @calc_type,
                                    building_id: hpxml_values[:building_id],
                                    event_type: hpxml_values[:event_type])
@@ -1641,7 +1644,8 @@ class EnergyRatingIndex301Ruleset
                                      fraction_dhw_load_served: wh_sys_values[:fraction_dhw_load_served],
                                      heating_capacity: wh_sys_values[:heating_capacity],
                                      energy_factor: wh_sys_values[:energy_factor],
-                                     recovery_efficiency: wh_sys_values[:recovery_efficiency])
+                                     recovery_efficiency: wh_sys_values[:recovery_efficiency],
+                                     temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
     end
 
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
@@ -1686,7 +1690,8 @@ class EnergyRatingIndex301Ruleset
                                      uses_desuperheater: wh_sys_values[:uses_desuperheater],
                                      jacket_r_value: wh_sys_values[:jacket_r_value],
                                      related_hvac: wh_sys_values[:related_hvac],
-                                     standby_loss: wh_sys_values[:standby_loss])
+                                     standby_loss: wh_sys_values[:standby_loss],
+                                     temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
     end
 
     if orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].nil?
@@ -2391,7 +2396,8 @@ class EnergyRatingIndex301Ruleset
                                    fraction_dhw_load_served: 1.0,
                                    heating_capacity: wh_cap,
                                    energy_factor: wh_ef,
-                                   recovery_efficiency: wh_re)
+                                   recovery_efficiency: wh_re,
+                                   temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
   end
 
   def self.get_hvac_capacities_for_distribution_system(orig_details, dist_id)
