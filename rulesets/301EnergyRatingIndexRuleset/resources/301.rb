@@ -207,8 +207,6 @@ class EnergyRatingIndex301Ruleset
                                    building_id: hpxml_values[:building_id],
                                    event_type: hpxml_values[:event_type])
 
-    @eri_version = hpxml_values[:eri_calculation_version]
-
     return hpxml_doc
   end
 
