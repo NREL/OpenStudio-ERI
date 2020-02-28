@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>62de8bb0-0e6c-4786-9f1b-bf13c98afd32</version_id>
-  <version_modified>20200222T000029Z</version_modified>
+  <version_id>701233b0-267e-4cdf-8a20-d3c3ad8e12fc</version_id>
+  <version_modified>20200228T210525Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -82,12 +82,6 @@
   </attributes>
   <files>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4FAB2228</checksum>
-    </file>
-    <file>
       <filename>test_lighting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -103,12 +97,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>0B5E457B</checksum>
-    </file>
-    <file>
-      <filename>test_hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>24944DB8</checksum>
     </file>
     <file>
       <filename>test_misc.rb</filename>
@@ -135,16 +123,34 @@
       <checksum>EEE9CA22</checksum>
     </file>
     <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>2579F7B2</checksum>
+    </file>
+    <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EDEDAA35</checksum>
+      <checksum>EAB3336E</checksum>
     </file>
     <file>
       <filename>test_water_heating.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>83566F19</checksum>
+      <checksum>291BC434</checksum>
+    </file>
+    <file>
+      <filename>test_hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>60A4B845</checksum>
+    </file>
+    <file>
+      <filename>test_hvac.rb.bak</filename>
+      <filetype>bak</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2D969D31</checksum>
     </file>
   </files>
 </measure>
