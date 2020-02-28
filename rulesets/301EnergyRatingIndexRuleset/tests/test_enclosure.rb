@@ -20,7 +20,7 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml_doc, 7.6)
+    _check_infiltration(hpxml_doc, 10.1)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -70,7 +70,7 @@ class EnclosureTest < MiniTest::Test
     # 301-2019: For residences without measured mechanical ventilation airflow, the measured
     # infiltration rate but not less than 0.30 ACH.
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml_doc, 7.6)
+    _check_infiltration(hpxml_doc, 10.1)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
