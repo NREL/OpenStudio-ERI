@@ -44,6 +44,7 @@ class EnergyRatingIndex301Validator
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms" => one,
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea" => one,
         "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume" => one,
+        "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/extension/FractionWindowAreaOperable" => one, # 0 - 1
 
         "/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year='2006']" => one, # See [ClimateZone]
         "/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation" => one, # See [WeatherStation]
@@ -217,7 +218,6 @@ class EnergyRatingIndex301Validator
         "UFactor" => one,
         "SHGC" => one,
         "Overhangs" => zero_or_one, # See [WindowOverhang]
-        "Operable" => one,
         "AttachedToWall" => one,
       },
 

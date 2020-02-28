@@ -421,7 +421,8 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
                                      :number_of_conditioned_floors_above_grade => 1,
                                      :number_of_bedrooms => 3,
                                      :conditioned_floor_area => 1539,
-                                     :conditioned_building_volume => 12312 }
+                                     :conditioned_building_volume => 12312,
+                                     :fraction_window_area_operable => 0.0 }
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     building_construction_values[:number_of_conditioned_floors] = 2
@@ -1098,7 +1099,6 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
                           :azimuth => azimuth,
                           :ufactor => 1.039,
                           :shgc => 0.67,
-                          :operable => false,
                           :wall_idref => wall }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
