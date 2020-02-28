@@ -390,7 +390,7 @@ class EnergyRatingIndex301Ruleset
     min_ach50 = 0.0
     if whole_house_fan.nil?
       min_nach = 0.30
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @ncfl, @weather)
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, calc_mech_vent_h_vert_distance()/8.202, @weather)
       min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
     end
 
@@ -398,7 +398,7 @@ class EnergyRatingIndex301Ruleset
       air_infiltration_measurement_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
       if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
         nach = air_infiltration_measurement_values[:air_leakage]
-        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
+        sla = Airflow.get_infiltration_SLA_from_ACH(nach, calc_mech_vent_h_vert_distance()/8.202, @weather)
         # Convert to ACH50
         air_infiltration_measurement_values[:air_leakage] = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
         air_infiltration_measurement_values[:unit_of_measure] = 'ACH'
@@ -1514,7 +1514,7 @@ class EnergyRatingIndex301Ruleset
       air_infiltration_measurements_values.each do |air_infiltration_measurement_values|
         if air_infiltration_measurement_values[:unit_of_measure] == 'ACHnatural'
           nach = air_infiltration_measurement_values[:air_leakage]
-          rated_sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl, @weather)
+          rated_sla = Airflow.get_infiltration_SLA_from_ACH(nach, calc_mech_vent_h_vert_distance()/8.202, @weather)
           break
         elsif air_infiltration_measurement_values[:unit_of_measure] == 'CFM' and air_infiltration_measurement_values[:house_pressure] == 50
           ach50 = air_infiltration_measurement_values[:air_leakage] * 60.0 / @infilvolume
@@ -2168,8 +2168,9 @@ class EnergyRatingIndex301Ruleset
       return q_tot
     end
 
-    vert_distance = Float(@ncfl_ag) * @infilvolume / @cfa # vertical distance between lowest and highest above-grade points within the pressure boundary
-    nl = 1000.0 * sla * (vert_distance / 8.202)**0.4 # Normalized leakage, eq. 4.4
+    h = calc_mech_vent_h_vert_distance()
+    hr = 8.202
+    nl = 1000.0 * sla * (h / hr)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
     if q_inf > 2.0 / 3.0 * q_tot
       q_fan = q_tot - 2.0 / 3.0 * q_tot
@@ -2178,6 +2179,10 @@ class EnergyRatingIndex301Ruleset
     end
 
     return [q_fan, 0].max
+  end
+  
+  def self.calc_mech_vent_h_vert_distance()
+    return Float(@ncfl_ag) * @infilvolume / @cfa # inferred vertical distance between lowest and highest above-grade points within the pressure boundary
   end
 
   def self.add_reference_heating_gas_furnace(hpxml, ref_hvacdist_ids, values = {})
