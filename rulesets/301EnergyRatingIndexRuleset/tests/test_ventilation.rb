@@ -157,6 +157,44 @@ class VentTest < MiniTest::Test
     _check_mech_vent(hpxml_doc, "balanced", 34.0, 24, 42.0)
   end
 
+  def test_mech_vent_unmeasured_airflow_rate_IR_301_2019_001
+    # Test IR 301-2019-001: Fan Energy for Unmeasured Mechanical Ventilation
+    # Create derivative file for testing
+    hpxml_name = "base-mechvent-exhaust.xml"
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
+
+    # Update mech vent object
+    vent_fan = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+    vent_fan.elements.delete("TestedFlowRate")
+    vent_fan.elements["HoursInOperation"].text = 8.0
+
+    # Update CFA/Volume to trigger IR
+    cfa = 2750
+    hpxml_doc.elements["/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"].text = cfa
+    hpxml_doc.elements["/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume"].text = cfa * 8.0
+    hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume"].text = cfa * 8.0
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml_doc, "exhaust only", 56.7, 24, 0.0)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_mech_vent(hpxml_doc, "exhaust only", 0.0, 24, 0.0)
+
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_mech_vent(hpxml_doc, "balanced", 60.0, 24, 42.0)
+
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_mech_vent(hpxml_doc, "balanced", 8.5, 24, 42.0)
+  end
+
   def test_mech_vent_defaulted_fan_power
     # Create derivative file for testing
     hpxml_name = "base-mechvent-exhaust.xml"
