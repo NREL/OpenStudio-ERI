@@ -396,15 +396,8 @@ def get_hpxml_file_hpxml_values(hpxml_file, hpxml_values)
 end
 
 def get_hpxml_file_site_values(hpxml_file, site_values)
-  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
-     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
-     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
-    # Base configuration
-    site_values = { :fuels => ["electricity", "natural gas"],
-                    :disable_natural_ventilation => true }
-  else
-    site_values = { :fuels => ["electricity", "natural gas"] }
-  end
+  # Base configuration
+  site_values = { :fuels => ["electricity", "natural gas"] }
   return site_values
 end
 
@@ -1105,6 +1098,7 @@ def get_hpxml_file_windows_values(hpxml_file, windows_values)
                           :azimuth => azimuth,
                           :ufactor => 1.039,
                           :shgc => 0.67,
+                          :operable => false,
                           :wall_idref => wall }
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',

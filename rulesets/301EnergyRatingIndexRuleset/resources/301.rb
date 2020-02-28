@@ -1057,6 +1057,21 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
+    # Determine whether natural ventilation available
+    home_has_operable_windows = false
+    orig_details.elements.each("Enclosure/Windows/Window") do |window|
+      window_values = HPXML.get_window_values(window: window)
+      if window_values[:operable]
+        home_has_operable_windows = true
+        break
+      end
+    end
+    if @is_attached_unit and not home_has_operable_windows
+      operable = false
+    else
+      operable = true
+    end
+
     # Create windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
       HPXML.add_window(hpxml: hpxml,
@@ -1065,9 +1080,10 @@ class EnergyRatingIndex301Ruleset
                        azimuth: azimuth,
                        ufactor: ufactor,
                        shgc: shgc,
-                       wall_idref: "WallArea",
                        interior_shading_factor_summer: shade_summer,
-                       interior_shading_factor_winter: shade_winter)
+                       interior_shading_factor_winter: shade_winter,
+                       operable: operable,
+                       wall_idref: "WallArea")
     end
   end
 
@@ -1085,9 +1101,10 @@ class EnergyRatingIndex301Ruleset
                        overhangs_depth: window_values[:overhangs_depth],
                        overhangs_distance_to_top_of_window: window_values[:overhangs_distance_to_top_of_window],
                        overhangs_distance_to_bottom_of_window: window_values[:overhangs_distance_to_bottom_of_window],
-                       wall_idref: window_values[:wall_idref],
+                       operable: window_values[:operable],
                        interior_shading_factor_summer: shade_summer,
-                       interior_shading_factor_winter: shade_winter)
+                       interior_shading_factor_winter: shade_winter,
+                       wall_idref: window_values[:wall_idref])
     end
   end
 
@@ -1111,9 +1128,10 @@ class EnergyRatingIndex301Ruleset
                        azimuth: azimuth,
                        ufactor: avg_ufactor,
                        shgc: avg_shgc,
-                       wall_idref: "WallArea",
                        interior_shading_factor_summer: shade_summer,
-                       interior_shading_factor_winter: shade_winter)
+                       interior_shading_factor_winter: shade_winter,
+                       operable: true, # 301 is silent here
+                       wall_idref: "WallArea")
     end
   end
 

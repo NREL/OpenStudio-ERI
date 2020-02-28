@@ -1152,7 +1152,7 @@ class EnclosureTest < MiniTest::Test
     end
   end
 
-  def _check_windows(hpxml_doc, azimuth_values = {})
+  def _check_windows(hpxml_doc, azimuth_values = {}, operable = true)
     azimuth_area_values = {}
     azimuth_ufactor_x_area_values = {} # Area-weighted
     azimuth_shgc_x_area_values = {} # Area-weighted
@@ -1168,6 +1168,8 @@ class EnclosureTest < MiniTest::Test
       azimuth_area_values[azimuth] << Float(window.elements["Area"].text)
       azimuth_ufactor_x_area_values[azimuth] << Float(window.elements["UFactor"].text) * azimuth_area_values[azimuth][-1]
       azimuth_shgc_x_area_values[azimuth] << Float(window.elements["SHGC"].text) * azimuth_area_values[azimuth][-1]
+      
+      assert_equal(operable, Boolean(window.elements["Operable"].text))
     end
 
     assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
