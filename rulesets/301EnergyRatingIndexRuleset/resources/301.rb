@@ -1057,33 +1057,42 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    # Determine whether natural ventilation available
-    home_has_operable_windows = false
-    orig_details.elements.each("Enclosure/Windows/Window") do |window|
-      window_values = HPXML.get_window_values(window: window)
-      if window_values[:operable]
-        home_has_operable_windows = true
-        break
-      end
-    end
+    # Determine natural ventilation
     if @is_attached_unit and not home_has_operable_windows and not @eri_version.include? "2014" # 2019 or newer
-      operable = false
+      frac_operable = 0.0
     else
-      operable = true
+      frac_operable = 0.33 # Default assumption
     end
 
     # Create windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
-      HPXML.add_window(hpxml: hpxml,
-                       id: "WindowArea#{orientation}",
-                       area: 0.18 * @cfa * fa * f * 0.25,
-                       azimuth: azimuth,
-                       ufactor: ufactor,
-                       shgc: shgc,
-                       interior_shading_factor_summer: shade_summer,
-                       interior_shading_factor_winter: shade_winter,
-                       operable: operable,
-                       wall_idref: "WallArea")
+      window_area = 0.18 * @cfa * fa * f * 0.25
+      operable_area = window_area * frac_operable
+      inoperable_area = window_area * (1.0 - frac_operable)
+      if operable_area > 0
+        HPXML.add_window(hpxml: hpxml,
+                         id: "WindowArea#{orientation}Operable",
+                         area: operable_area,
+                         azimuth: azimuth,
+                         ufactor: ufactor,
+                         shgc: shgc,
+                         interior_shading_factor_summer: shade_summer,
+                         interior_shading_factor_winter: shade_winter,
+                         operable: true,
+                         wall_idref: "WallArea")
+      end
+      if inoperable_area > 0
+        HPXML.add_window(hpxml: hpxml,
+                         id: "WindowArea#{orientation}Inoperable",
+                         area: inoperable_area,
+                         azimuth: azimuth,
+                         ufactor: ufactor,
+                         shgc: shgc,
+                         interior_shading_factor_summer: shade_summer,
+                         interior_shading_factor_winter: shade_winter,
+                         operable: false,
+                         wall_idref: "WallArea")
+      end
     end
   end
 
