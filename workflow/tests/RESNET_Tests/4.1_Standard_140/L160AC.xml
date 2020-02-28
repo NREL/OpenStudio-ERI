@@ -25,9 +25,6 @@
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
-          <extension>
-            <DisableNaturalVentilation>true</DisableNaturalVentilation>
-          </extension>
         </Site>
         <BuildingOccupancy>
           <NumberofResidents>0.0</NumberofResidents>
@@ -39,6 +36,7 @@
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
           <extension>
+            <FractionofOperableWindowArea>0.0</FractionofOperableWindowArea>
             <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
           </extension>
         </BuildingConstruction>
