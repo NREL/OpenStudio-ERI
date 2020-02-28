@@ -32,6 +32,9 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
+          <extension>
+            <FractionWindowAreaOperable>0.0</FractionWindowAreaOperable>
+          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -389,7 +392,6 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.32</UFactor>
             <SHGC>0.4</SHGC>
-            <Operable>false</Operable>
             <AttachedToWall idref='WallNorth'/>
           </Window>
           <Window>
@@ -398,7 +400,6 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.32</UFactor>
             <SHGC>0.4</SHGC>
-            <Operable>false</Operable>
             <AttachedToWall idref='WallEast'/>
           </Window>
           <Window>
@@ -407,7 +408,6 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.32</UFactor>
             <SHGC>0.4</SHGC>
-            <Operable>false</Operable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
           <Window>
@@ -416,7 +416,6 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.32</UFactor>
             <SHGC>0.4</SHGC>
-            <Operable>false</Operable>
             <AttachedToWall idref='WallWest'/>
           </Window>
         </Windows>

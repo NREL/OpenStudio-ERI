@@ -723,16 +723,16 @@ class EnclosureTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_windows(hpxml_doc, 0.0, { 0 => [37.8, 0.33, 0.45],
-                                       180 => [37.8, 0.33, 0.45],
-                                       90 => [25.2, 0.33, 0.45],
-                                       270 => [25.2, 0.33, 0.45] })
+                                     180 => [37.8, 0.33, 0.45],
+                                     90 => [25.2, 0.33, 0.45],
+                                     270 => [25.2, 0.33, 0.45] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_windows(hpxml_doc, 0.0, { 0 => [43.4, 0.35, 0.40],
-                                       180 => [43.4, 0.35, 0.40],
-                                       90 => [43.4, 0.35, 0.40],
-                                       270 => [43.4, 0.35, 0.40] })
+                                     180 => [43.4, 0.35, 0.40],
+                                     90 => [43.4, 0.35, 0.40],
+                                     270 => [43.4, 0.35, 0.40] })
 
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -1224,8 +1224,6 @@ class EnclosureTest < MiniTest::Test
     azimuth_area_values = {}
     azimuth_ufactor_x_area_values = {} # Area-weighted
     azimuth_shgc_x_area_values = {} # Area-weighted
-    total_window_area = 0.0
-    operable_window_area = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Windows/Window") do |window|
       azimuth = Integer(window.elements["Azimuth"].text)
 
@@ -1238,16 +1236,14 @@ class EnclosureTest < MiniTest::Test
       azimuth_area_values[azimuth] << Float(window.elements["Area"].text)
       azimuth_ufactor_x_area_values[azimuth] << Float(window.elements["UFactor"].text) * azimuth_area_values[azimuth][-1]
       azimuth_shgc_x_area_values[azimuth] << Float(window.elements["SHGC"].text) * azimuth_area_values[azimuth][-1]
-
-      total_window_area += Float(window.elements["Area"].text)
-      operable_window_area += Float(window.elements["Area"].text) if Boolean(window.elements["Operable"].text)
     end
 
     assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
     assert_equal(azimuth_values.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(azimuth_values.keys.size, azimuth_shgc_x_area_values.size)
-    
-    assert_in_epsilon(frac_operable, operable_window_area / total_window_area, 0.001)
+
+    actual_frac_operable = Float(hpxml_doc.elements["/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/extension/FractionofOperableWindowArea"].text)
+    assert_in_epsilon(frac_operable, actual_frac_operable, 0.001)
 
     azimuth_values.each do |azimuth, values|
       area, ufactor, shgc = values

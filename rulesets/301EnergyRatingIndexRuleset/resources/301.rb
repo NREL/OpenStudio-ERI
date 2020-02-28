@@ -291,12 +291,20 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_building_occupancy(hpxml: hpxml,
                                  number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
 
+    # Natural ventilation (operable windows)
+    if @is_attached_unit and construction_values[:fraction_of_operable_window_area] > 0 and not @eri_version.include? "2014" # 2019 or newer
+      frac_window_area_operable = 0.0
+    else
+      frac_window_area_operable = Airflow.get_default_fraction_of_operable_window_area()
+    end
+
     HPXML.add_building_construction(hpxml: hpxml,
                                     number_of_conditioned_floors: construction_values[:number_of_conditioned_floors],
                                     number_of_conditioned_floors_above_grade: construction_values[:number_of_conditioned_floors_above_grade],
                                     number_of_bedrooms: construction_values[:number_of_bedrooms],
                                     conditioned_floor_area: construction_values[:conditioned_floor_area],
-                                    conditioned_building_volume: construction_values[:conditioned_building_volume])
+                                    conditioned_building_volume: construction_values[:conditioned_building_volume],
+                                    fraction_of_operable_window_area: frac_window_area_operable)
   end
 
   def self.set_summary_rated(orig_details, hpxml)
@@ -326,7 +334,8 @@ class EnergyRatingIndex301Ruleset
                                     number_of_conditioned_floors_above_grade: construction_values[:number_of_conditioned_floors_above_grade],
                                     number_of_bedrooms: construction_values[:number_of_bedrooms],
                                     conditioned_floor_area: construction_values[:conditioned_floor_area],
-                                    conditioned_building_volume: construction_values[:conditioned_building_volume])
+                                    conditioned_building_volume: construction_values[:conditioned_building_volume],
+                                    fraction_of_operable_window_area: Airflow.get_default_fraction_of_operable_window_area())
   end
 
   def self.set_summary_iad(orig_details, hpxml)
@@ -355,7 +364,8 @@ class EnergyRatingIndex301Ruleset
                                     number_of_conditioned_floors_above_grade: @ncfl_ag,
                                     number_of_bedrooms: @nbeds,
                                     conditioned_floor_area: @cfa,
-                                    conditioned_building_volume: @cvolume)
+                                    conditioned_building_volume: @cvolume,
+                                    fraction_of_operable_window_area: Airflow.get_default_fraction_of_operable_window_area())
   end
 
   def self.set_climate(orig_details, hpxml)
@@ -1057,42 +1067,17 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    # Determine natural ventilation
-    if @is_attached_unit and not home_has_operable_windows and not @eri_version.include? "2014" # 2019 or newer
-      frac_operable = 0.0
-    else
-      frac_operable = 0.33 # Default assumption
-    end
-
     # Create windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
-      window_area = 0.18 * @cfa * fa * f * 0.25
-      operable_area = window_area * frac_operable
-      inoperable_area = window_area * (1.0 - frac_operable)
-      if operable_area > 0
-        HPXML.add_window(hpxml: hpxml,
-                         id: "WindowArea#{orientation}Operable",
-                         area: operable_area,
-                         azimuth: azimuth,
-                         ufactor: ufactor,
-                         shgc: shgc,
-                         interior_shading_factor_summer: shade_summer,
-                         interior_shading_factor_winter: shade_winter,
-                         operable: true,
-                         wall_idref: "WallArea")
-      end
-      if inoperable_area > 0
-        HPXML.add_window(hpxml: hpxml,
-                         id: "WindowArea#{orientation}Inoperable",
-                         area: inoperable_area,
-                         azimuth: azimuth,
-                         ufactor: ufactor,
-                         shgc: shgc,
-                         interior_shading_factor_summer: shade_summer,
-                         interior_shading_factor_winter: shade_winter,
-                         operable: false,
-                         wall_idref: "WallArea")
-      end
+      HPXML.add_window(hpxml: hpxml,
+                       id: "WindowArea#{orientation}",
+                       area: 0.18 * @cfa * fa * f * 0.25,
+                       azimuth: azimuth,
+                       ufactor: ufactor,
+                       shgc: shgc,
+                       interior_shading_factor_summer: shade_summer,
+                       interior_shading_factor_winter: shade_winter,
+                       wall_idref: "WallArea")
     end
   end
 
@@ -1110,7 +1095,6 @@ class EnergyRatingIndex301Ruleset
                        overhangs_depth: window_values[:overhangs_depth],
                        overhangs_distance_to_top_of_window: window_values[:overhangs_distance_to_top_of_window],
                        overhangs_distance_to_bottom_of_window: window_values[:overhangs_distance_to_bottom_of_window],
-                       operable: window_values[:operable],
                        interior_shading_factor_summer: shade_summer,
                        interior_shading_factor_winter: shade_winter,
                        wall_idref: window_values[:wall_idref])
@@ -1139,7 +1123,6 @@ class EnergyRatingIndex301Ruleset
                        shgc: avg_shgc,
                        interior_shading_factor_summer: shade_summer,
                        interior_shading_factor_winter: shade_winter,
-                       operable: true, # 301 is silent here
                        wall_idref: "WallArea")
     end
   end
