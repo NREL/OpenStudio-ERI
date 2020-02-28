@@ -735,16 +735,16 @@ class EnclosureTest < MiniTest::Test
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_windows(hpxml_doc, 0.33, { 0 => [108, 0.33, 0.45],
-                                     180 => [108, 0.33, 0.45],
-                                     90 => [108, 0.33, 0.45],
-                                     270 => [108, 0.33, 0.45] })
+                                      180 => [108, 0.33, 0.45],
+                                      90 => [108, 0.33, 0.45],
+                                      270 => [108, 0.33, 0.45] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_windows(hpxml_doc, 0.33, { 0 => [108, 0.35, 0.40],
-                                     180 => [108, 0.35, 0.40],
-                                     90 => [108, 0.35, 0.40],
-                                     270 => [108, 0.35, 0.40] })
+                                      180 => [108, 0.35, 0.40],
+                                      90 => [108, 0.35, 0.40],
+                                      270 => [108, 0.35, 0.40] })
 
     # But in 301-2014, the Reference Home windows are still operable
     hpxml_name = _change_to_301_2014(hpxml_name)
@@ -752,9 +752,9 @@ class EnclosureTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_windows(hpxml_doc, 0.0, { 0 => [37.8, 0.33, 0.45],
-                                      180 => [37.8, 0.33, 0.45],
-                                      90 => [25.2, 0.33, 0.45],
-                                      270 => [25.2, 0.33, 0.45] })
+                                     180 => [37.8, 0.33, 0.45],
+                                     90 => [25.2, 0.33, 0.45],
+                                     270 => [25.2, 0.33, 0.45] })
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

@@ -296,7 +296,7 @@ class EnergyRatingIndex301Ruleset
     else
       fraction_of_operable_window_area = Airflow.get_default_fraction_of_operable_window_area()
     end
-    
+
     HPXML.add_building_construction(hpxml: hpxml,
                                     number_of_conditioned_floors: construction_values[:number_of_conditioned_floors],
                                     number_of_conditioned_floors_above_grade: construction_values[:number_of_conditioned_floors_above_grade],
