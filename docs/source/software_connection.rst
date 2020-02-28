@@ -1,21 +1,3 @@
-Software Connection
-===================
-
-In order to connect a software tool to the OpenStudio-ERI workflow, the software tool must be able to export its building description in `HPXML file <https://hpxml.nrel.gov/>`_ format.
-
-HPXML Overview
---------------
-
-HPXML is an open data standard for collecting and transferring home energy data. 
-Requiring HPXML files as the input to the ERI workflow significantly reduces the complexity and effort for software developers to leverage the EnergyPlus simulation engine.
-It also simplifies the process of applying the ERI 301 ruleset.
-
-The `HPXML Toolbox website <https://hpxml.nrel.gov/>`_ provides several resources for software developers, including:
-
-#. An interactive schema validator
-#. A data dictionary
-#. An implementation guide
-
 ERI Use Case for HPXML
 ----------------------
 
@@ -63,6 +45,8 @@ To use custom weather files, first ensure that all weather files have a unique W
 Then place them in the ``weather`` directory and call ``openstudio energy_rating_index.rb --cache-weather``.
 After processing is complete, each EPW file will have a corresponding \*.csv cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
 
+The fraction of window area that is operable must be provided as ``BuildingConstruction/extension/FractionofOperableWindowArea`` and is used for the calculation of natural ventilation.
+
 .. note:: 
 
   In the future, we hope to provide an automated weather file selector based on a building's address/zipcode or similar information. But for now, each software tool is responsible for providing this information.
@@ -104,7 +88,7 @@ Thus, software tools can choose to use a single wall (or roof) surface to repres
 Air Leakage
 ***********
 
-Building air leakage characterized by air changes per hour or cfm at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``. 
+Building air leakage characterized by air changes per hour or cfm at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``.
 The ``Enclosure/AirInfiltration/AirInfiltrationMeasurement`` should be specified with ``HousePressure='50'`` and ``BuildingAirLeakage/UnitofMeasure='ACH'`` or ``BuildingAirLeakage/UnitofMeasure='CFM'``.
 
 In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``AirInfiltrationMeasurement/InfiltrationVolume``.
@@ -189,10 +173,10 @@ So, a basement slab edge adjacent to a garage or crawlspace, for example, should
 Vertical insulation adjacent to the slab can be described by a ``PerimeterInsulation/Layer/NominalRValue`` and a ``PerimeterInsulationDepth``.
 
 Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. 
-The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
+The insulation can either have a fixed width (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
 
 For foundation types without walls, the ``DepthBelowGrade`` element must be provided.
-For foundation types with walls, the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` values.
+For foundation types with walls, the ``DepthBelowGrade`` element is not used; instead the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` values.
 
 Windows
 *******
@@ -203,7 +187,7 @@ Windows are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as
 Windows must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
 Windows must also have an ``Azimuth`` specified, even if the attached wall does not.
 
-Overhangs can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
+Overhangs (e.g., a roof eave) can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
 Overhangs are defined by the vertical distance between the overhang and the top of the window (``DistanceToTopOfWindow``), and the vertical distance between the overhang and the bottom of the window (``DistanceToBottomOfWindow``).
 The difference between these two values equals the height of the window.
 
@@ -230,8 +214,9 @@ Systems
 
 This section describes elements specified in HPXML's ``Systems``.
 
-If any HVAC systems are entered that provide heating, the sum of all their ``FractionHeatLoadServed`` values must equal 1.
-The same holds true for ``FractionCoolLoadServeds`` for HVAC systems that provide cooling and ``FractionDHWLoadServed`` for water heating systems.
+If any HVAC systems are entered that provide heating (or cooling), the sum of all their ``FractionHeatLoadServed`` (or ``FractionCoolLoadServed``) values must equal 1.
+
+If any water heating systems are entered, the sum of all their ``FractionDHWLoadServed`` values must be equal to 1.
 
 Heating Systems
 ***************
@@ -307,8 +292,8 @@ Also, note that some HVAC systems (e.g., room air conditioners) are not allowed 
 
 ``AirDistribution`` systems are defined by:
 
-- Supply leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='supply']/DuctLeakage/Value``)
-- Optional return leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='return']/DuctLeakage/Value``)
+- Supply leakage to the outside in CFM25 (``DuctLeakageMeasurement[DuctType='supply']/DuctLeakage/Value``)
+- Optional return leakage to the outside in CFM25 (``DuctLeakageMeasurement[DuctType='return']/DuctLeakage/Value``)
 - Optional supply ducts (``Ducts[DuctType='supply']``)
 - Optional return ducts (``Ducts[DuctType='return']``)
 

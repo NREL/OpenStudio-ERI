@@ -714,9 +714,7 @@ class EnclosureTest < MiniTest::Test
     # Create derivative file for testing w/o operable windows
     # Rated/Reference Home windows should not be operable
     hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Windows/Window") do |window|
-      window.elements["Operable"].text = false
-    end
+    hpxml_doc.elements["/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/extension/FractionofOperableWindowArea"].text = 0.0
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
 
@@ -737,23 +735,23 @@ class EnclosureTest < MiniTest::Test
     # IAD Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_windows(hpxml_doc, 0.33, { 0 => [108, 0.33, 0.45],
-                                      180 => [108, 0.33, 0.45],
-                                      90 => [108, 0.33, 0.45],
-                                      270 => [108, 0.33, 0.45] })
+                                     180 => [108, 0.33, 0.45],
+                                     90 => [108, 0.33, 0.45],
+                                     270 => [108, 0.33, 0.45] })
 
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_windows(hpxml_doc, 0.33, { 0 => [108, 0.35, 0.40],
-                                      180 => [108, 0.35, 0.40],
-                                      90 => [108, 0.35, 0.40],
-                                      270 => [108, 0.35, 0.40] })
+                                     180 => [108, 0.35, 0.40],
+                                     90 => [108, 0.35, 0.40],
+                                     270 => [108, 0.35, 0.40] })
 
-    # But in 301-2014, Rated/Reference Home windows should be operable
+    # But in 301-2014, the Reference Home windows are still operable
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_windows(hpxml_doc, 0.33, { 0 => [37.8, 0.33, 0.45],
+    _check_windows(hpxml_doc, 0.0, { 0 => [37.8, 0.33, 0.45],
                                       180 => [37.8, 0.33, 0.45],
                                       90 => [25.2, 0.33, 0.45],
                                       270 => [25.2, 0.33, 0.45] })

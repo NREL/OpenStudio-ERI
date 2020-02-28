@@ -291,20 +291,19 @@ class EnergyRatingIndex301Ruleset
     HPXML.add_building_occupancy(hpxml: hpxml,
                                  number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
 
-    # Natural ventilation (operable windows)
-    if @is_attached_unit and construction_values[:fraction_of_operable_window_area] > 0 and not @eri_version.include? "2014" # 2019 or newer
-      frac_window_area_operable = 0.0
+    if @is_attached_unit and construction_values[:fraction_of_operable_window_area] <= 0 and not @eri_version.include? "2014" # 2019 or newer
+      fraction_of_operable_window_area = 0.0
     else
-      frac_window_area_operable = Airflow.get_default_fraction_of_operable_window_area()
+      fraction_of_operable_window_area = Airflow.get_default_fraction_of_operable_window_area()
     end
-
+    
     HPXML.add_building_construction(hpxml: hpxml,
                                     number_of_conditioned_floors: construction_values[:number_of_conditioned_floors],
                                     number_of_conditioned_floors_above_grade: construction_values[:number_of_conditioned_floors_above_grade],
                                     number_of_bedrooms: construction_values[:number_of_bedrooms],
                                     conditioned_floor_area: construction_values[:conditioned_floor_area],
                                     conditioned_building_volume: construction_values[:conditioned_building_volume],
-                                    fraction_of_operable_window_area: frac_window_area_operable)
+                                    fraction_of_operable_window_area: fraction_of_operable_window_area)
   end
 
   def self.set_summary_rated(orig_details, hpxml)
@@ -335,7 +334,7 @@ class EnergyRatingIndex301Ruleset
                                     number_of_bedrooms: construction_values[:number_of_bedrooms],
                                     conditioned_floor_area: construction_values[:conditioned_floor_area],
                                     conditioned_building_volume: construction_values[:conditioned_building_volume],
-                                    fraction_of_operable_window_area: Airflow.get_default_fraction_of_operable_window_area())
+                                    fraction_of_operable_window_area: construction_values[:fraction_of_operable_window_area])
   end
 
   def self.set_summary_iad(orig_details, hpxml)
