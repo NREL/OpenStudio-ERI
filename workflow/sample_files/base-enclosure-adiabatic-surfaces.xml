@@ -118,6 +118,7 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <Operable>true</Operable>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -126,6 +127,7 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <Operable>true</Operable>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -134,6 +136,7 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <Operable>true</Operable>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -142,6 +145,7 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
+            <Operable>true</Operable>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>

@@ -1066,7 +1066,7 @@ class EnergyRatingIndex301Ruleset
         break
       end
     end
-    if @is_attached_unit and not home_has_operable_windows
+    if @is_attached_unit and not home_has_operable_windows and not @eri_version.include? "2014" # 2019 or newer
       operable = false
     else
       operable = true
@@ -2279,7 +2279,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: heat_sys,
-                          extensions: { "SeedId": seed_id })
+                          extensions: { "SeedId" => seed_id })
     end
   end
 
@@ -2302,7 +2302,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: heat_sys,
-                          extensions: { "SeedId": seed_id })
+                          extensions: { "SeedId" => seed_id })
     end
   end
 
@@ -2357,7 +2357,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: heat_pump,
-                          extensions: { "SeedId": seed_id })
+                          extensions: { "SeedId" => seed_id })
     end
   end
 
@@ -2381,7 +2381,7 @@ class EnergyRatingIndex301Ruleset
                              Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
       # Map reference home system back to rated home system
       HPXML.add_extension(parent: cool_sys,
-                          extensions: { "SeedId": seed_id })
+                          extensions: { "SeedId" => seed_id })
     end
   end
 

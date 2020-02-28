@@ -25,9 +25,6 @@
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
-          <extension>
-            <DisableNaturalVentilation>true</DisableNaturalVentilation>
-          </extension>
         </Site>
         <BuildingOccupancy>
           <NumberofResidents>0.0</NumberofResidents>
@@ -430,6 +427,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallNorth'/>
           </Window>
           <Window>
@@ -443,6 +441,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallEast'/>
           </Window>
           <Window>
@@ -456,6 +455,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
           <Window>
@@ -469,6 +469,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallWest'/>
           </Window>
         </Windows>
