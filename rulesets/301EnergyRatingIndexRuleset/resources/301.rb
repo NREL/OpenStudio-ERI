@@ -394,7 +394,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_rated(orig_details, hpxml)
     # Table 4.2.2(1) - Air exchange rate
 
-    ach50 = calc_rated_home_infiltration_ach50(orig_details)
+    ach50 = calc_rated_home_infiltration_ach50(orig_details, false)
 
     # Air Infiltration
     HPXML.add_air_infiltration_measurement(hpxml: hpxml,
@@ -1477,7 +1477,7 @@ class EnergyRatingIndex301Ruleset
     else
       # Calculate fan cfm for fan power using Rated Home infiltration
       # https://www.resnet.us/wp-content/uploads/No.-301-2014-02-Table-4.2.21-Reference-Home-Whole-House-Mechanical-Ventilation.pdf
-      q_fan_power = calc_rated_home_qfan(orig_details, fan_type) # Use Rated Home fan type
+      q_fan_power = calc_rated_home_qfan(orig_details, fan_type, true) # Use Rated Home fan type
 
       # Treat CFIS like supply ventilation
       if fan_type == 'central fan integrated supply'
@@ -1508,7 +1508,7 @@ class EnergyRatingIndex301Ruleset
       vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
 
       # Calculate min airflow rate
-      min_q_fan = calc_rated_home_qfan(orig_details, vent_fan_values[:fan_type])
+      min_q_fan = calc_rated_home_qfan(orig_details, vent_fan_values[:fan_type], false)
 
       if vent_fan_values[:tested_flow_rate].nil?
         # Calculate airflow rate based on increased infiltration rate
@@ -2124,10 +2124,12 @@ class EnergyRatingIndex301Ruleset
     return false
   end
 
-  def self.calc_rated_home_infiltration_ach50(orig_details)
+  def self.calc_rated_home_infiltration_ach50(orig_details, use_eratio_workaround)
     air_infiltration_measurements_values = []
-    orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |air_infiltration_measurement|
-      air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+    if use_eratio_workaround
+      orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |air_infiltration_measurement|
+        air_infiltration_measurements_values << HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: air_infiltration_measurement)
+      end
     end
     if air_infiltration_measurements_values.empty?
       orig_details.elements.each("Enclosure/AirInfiltration/AirInfiltrationMeasurement") do |air_infiltration_measurement|
@@ -2182,8 +2184,8 @@ class EnergyRatingIndex301Ruleset
     return ach50
   end
 
-  def self.calc_rated_home_qfan(orig_details, fan_type)
-    ach50 = calc_rated_home_infiltration_ach50(orig_details)
+  def self.calc_rated_home_qfan(orig_details, fan_type, use_eratio_workaround)
+    ach50 = calc_rated_home_infiltration_ach50(orig_details, use_eratio_workaround)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
     q_tot = calc_mech_vent_q_tot()
     q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_details)
