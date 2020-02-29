@@ -425,8 +425,7 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
                                      :number_of_conditioned_floors_above_grade => 1,
                                      :number_of_bedrooms => 3,
                                      :conditioned_floor_area => 1539,
-                                     :conditioned_building_volume => 12312,
-                                     :fraction_of_operable_window_area => 0.0 }
+                                     :conditioned_building_volume => 12312 }
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     building_construction_values[:number_of_conditioned_floors] = 2
@@ -457,6 +456,13 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:number_of_conditioned_floors] = 1
     building_construction_values[:conditioned_floor_area] = 1539
     building_construction_values[:conditioned_building_volume] = 12312
+  end
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
+    building_construction_values[:fraction_of_operable_window_area] = 0.0
+  else
+    building_construction_values[:fraction_of_operable_window_area] = nil
   end
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
     building_construction_values[:use_only_ideal_air_system] = true
