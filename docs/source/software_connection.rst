@@ -255,6 +255,12 @@ room air conditioner                                        electricity        E
 evaporative cooler       AirDistribution or DSE (optional)  electricity
 =======================  =================================  =================  =======================  ====================
 
+Central air conditioners can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
+
+- "single stage": SEER <= 15
+- "two stage": 15 < SEER <= 21
+- "variable speed": SEER > 21
+
 Heat Pumps
 **********
 
@@ -271,6 +277,12 @@ air-to-air     AirDistribution or DSE             electricity   SEER            
 mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                     (optional)                   (optional)
 ground-to-air  AirDistribution or DSE             electricity   EER                      COP                      (optional)
 =============  =================================  ============  =======================  =======================  ===========================  ==================
+
+Air-to-air heat pumps can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
+
+- "single stage": SEER <= 15
+- "two stage": 15 < SEER <= 21
+- "variable speed": SEER > 21
 
 If the heat pump has backup heating, it can be specified with ``BackupSystemFuel``, ``BackupAnnualHeatingEfficiency``, and ``BackupHeatingCapacity``.
 If the heat pump has a switchover temperature (e.g., dual-fuel heat pump) where the heat pump stops operating and the backup heating system starts running, it can be specified with ``BackupHeatingSwitchoverTemperature``.
@@ -352,7 +364,7 @@ space-heating boiler with tankless coil                                         
 ========================================  ===================================  ===========  ==========  ===============  ========================  =================  =================  =========================================
 
 For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
-For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr) can be entered as ``extension/StandbyLoss``; if not provided, an average value will be used.
+For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr) can be entered as ``StandbyLoss``; if not provided, an average value will be used.
 
 For water heaters that are connected to a desuperheater, the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
 

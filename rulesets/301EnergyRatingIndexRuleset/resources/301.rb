@@ -1322,6 +1322,7 @@ class EnergyRatingIndex301Ruleset
                                  distribution_system_idref: cooling_values[:distribution_system_idref],
                                  cooling_system_type: cooling_values[:cooling_system_type],
                                  cooling_system_fuel: cooling_values[:cooling_system_fuel],
+                                 compressor_type: cooling_values[:compressor_type],
                                  cooling_capacity: cooling_values[:cooling_capacity],
                                  fraction_cool_load_served: cooling_values[:fraction_cool_load_served],
                                  cooling_efficiency_seer: cooling_values[:cooling_efficiency_seer],
@@ -1343,6 +1344,7 @@ class EnergyRatingIndex301Ruleset
                             distribution_system_idref: hp_values[:distribution_system_idref],
                             heat_pump_type: hp_values[:heat_pump_type],
                             heat_pump_fuel: hp_values[:heat_pump_fuel],
+                            compressor_type: hp_values[:compressor_type],
                             heating_capacity: hp_values[:heating_capacity],
                             heating_capacity_17F: hp_values[:heating_capacity_17F],
                             cooling_capacity: hp_values[:cooling_capacity],
@@ -2335,6 +2337,7 @@ class EnergyRatingIndex301Ruleset
                                     distribution_system_idref: ref_hvacdist_ids[-1],
                                     heat_pump_type: "air-to-air",
                                     heat_pump_fuel: "electricity",
+                                    compressor_type: "single stage",
                                     cooling_capacity: -1, # Use Manual J auto-sizing
                                     heating_capacity: -1, # Use Manual J auto-sizing
                                     backup_heating_fuel: backup_fuel,
@@ -2366,6 +2369,7 @@ class EnergyRatingIndex301Ruleset
                                         distribution_system_idref: ref_hvacdist_ids[-1],
                                         cooling_system_type: "central air conditioner",
                                         cooling_system_fuel: "electricity",
+                                        compressor_type: "single stage",
                                         cooling_capacity: -1, # Use Manual J auto-sizing
                                         fraction_cool_load_served: load_frac,
                                         cooling_efficiency_seer: 13.0,
