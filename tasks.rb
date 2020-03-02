@@ -400,9 +400,6 @@ def get_hpxml_file_site_values(hpxml_file, site_values)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    site_values = { :fuels => ["electricity", "natural gas"],
-                    :disable_natural_ventilation => true }
-  else
     site_values = { :fuels => ["electricity", "natural gas"] }
   end
   return site_values
@@ -459,6 +456,13 @@ def get_hpxml_file_building_construction_values(hpxml_file, building_constructio
     building_construction_values[:number_of_conditioned_floors] = 1
     building_construction_values[:conditioned_floor_area] = 1539
     building_construction_values[:conditioned_building_volume] = 12312
+  end
+  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
+     hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
+     hpxml_file.include? 'RESNET_Tests/4.5_DSE'
+    building_construction_values[:fraction_of_operable_window_area] = 0.0
+  else
+    building_construction_values[:fraction_of_operable_window_area] = nil
   end
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
     building_construction_values[:use_only_ideal_air_system] = true
@@ -2314,7 +2318,7 @@ def create_sample_hpxmls
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
                   'base-dhw-tankless-wood.xml',
                   'base-dhw-temperature.xml',
-                  'base-enclosure-no-natural-ventilation.xml',
+                  'base-enclosure-windows-inoperable.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',
                   'base-foundation-complex.xml',

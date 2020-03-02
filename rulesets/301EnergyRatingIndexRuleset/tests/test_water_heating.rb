@@ -754,9 +754,9 @@ class WaterHeatingTest < MiniTest::Test
       end
       assert_in_epsilon(Float(wh.elements["HotWaterTemperature"].text), temp, 0.01)
       if standby_loss.nil?
-        assert_nil(wh.elements["extension/StandbyLoss"])
+        assert_nil(wh.elements["StandbyLoss"])
       else
-        assert_in_epsilon(Float(wh.elements["extension/StandbyLoss"].text), standby_loss, 0.01)
+        assert_in_epsilon(Float(wh.elements["StandbyLoss"].text), standby_loss, 0.01)
       end
     end
   end
