@@ -166,6 +166,22 @@ class Airflow
     return 1.0 / 150.0 # Table 4.2.2(1) - Crawlspaces
   end
 
+  def self.get_default_mech_vent_fan_power(fan_type)
+    # 301-2019: Table 4.2.2(1b)
+    # Returns fan power in W/cfm
+    if fan_type == 'supply only' or fan_type == 'exhaust only'
+      return 0.35
+    elsif fan_type == 'balanced'
+      return 0.70
+    elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
+      return 1.00
+    elsif fan_type == 'central fan integrated supply'
+      return 0.50
+    else
+      fail "Unexpected fan_type: '#{fan_type}'."
+    end
+  end
+
   private
 
   def self.process_wind_speed_correction(terrain, shelter_coef, min_neighbor_distance, building_height)
@@ -1429,6 +1445,23 @@ class Airflow
           end
           if not duct_actuators["liv_to_dz_flow_rate"].nil?
             duct_program.addLine("  Set #{duct_actuators["cfis_liv_to_dz_flow_rate"].name} = #{duct_vars["liv_to_dz_flow_rate"].name}")
+          end
+          duct_program.addLine("Else")
+          duct_program.addLine("  Set #{duct_actuators["cfis_supply_sens_lk_to_liv"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_supply_lat_lk_to_liv"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_supply_cond_to_liv"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_return_sens_lk_to_rp"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_return_lat_lk_to_rp"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_return_cond_to_rp"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_return_cond_to_dz"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_supply_cond_to_dz"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_supply_sens_lk_to_dz"].name} = 0")
+          duct_program.addLine("  Set #{duct_actuators["cfis_supply_lat_lk_to_dz"].name} = 0")
+          if not duct_actuators["dz_to_liv_flow_rate"].nil?
+            duct_program.addLine("  Set #{duct_actuators["cfis_dz_to_liv_flow_rate"].name} = 0")
+          end
+          if not duct_actuators["liv_to_dz_flow_rate"].nil?
+            duct_program.addLine("  Set #{duct_actuators["cfis_liv_to_dz_flow_rate"].name} = 0")
           end
           duct_program.addLine("EndIf")
 
