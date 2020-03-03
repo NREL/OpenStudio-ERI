@@ -32,6 +32,9 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>3078.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>24624.0</ConditionedBuildingVolume>
+          <extension>
+            <FractionofOperableWindowArea>0.33</FractionofOperableWindowArea>
+          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
