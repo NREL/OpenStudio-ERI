@@ -34,6 +34,10 @@ class EnclosureTest < MiniTest::Test
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
 
+    # FIXME: Add test for attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
+    # FIXME: Add test for attached dwelling where airtightness test results > 0.30 cfm50 per ft2 of Compartmentalization Boundary
+    # FIXME: Add test for attached dwelling unit w/ exhaust mech vent and Aext < 0.5
+
     hpxml_name = "base-mechvent-exhaust.xml"
 
     # Rated Home

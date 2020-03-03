@@ -332,7 +332,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    # FIXME: need Aext calculation
+    # FIXME: Add compartmentalization/Aext check
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -340,11 +340,13 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    # FIXME: need Aext calculation
+    # FIXME: Add compartmentalization/Aext check
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    # FIXME: need Aext calculation
+    # FIXME: Add compartmentalization/Aext check
+
+    # FIXME: Add more compartmentalization/Aext tests
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 

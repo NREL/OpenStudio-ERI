@@ -456,8 +456,8 @@ class EnergyRatingIndex301Ruleset
                            vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
     end
 
-    @uncond_bsmnt_thermal_bndry = nil
     # Preserve rated home thermal boundary to be consistent with other software tools
+    @uncond_bsmnt_thermal_bndry = nil
     orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Basement[Conditioned='false']]") do |uncond_bsmt|
       fnd_values = HPXML.get_foundation_values(foundation: uncond_bsmt)
       HPXML.add_foundation(hpxml: hpxml,
@@ -473,8 +473,7 @@ class EnergyRatingIndex301Ruleset
 
     orig_details.elements.each("Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]") do |vented_crawl|
       vented_crawl_values = HPXML.get_foundation_values(foundation: vented_crawl)
-      if vented_crawl_values[:vented_crawlspace_sla].nil? or vented_crawl_values[:vented_crawlspace_sla] < reference_crawlspace_sla
-        # FUTURE: Allow approved ground cover
+      if vented_crawl_values[:vented_crawlspace_sla].nil? or vented_crawl_values[:vented_crawlspace_sla] < reference_crawlspace_sla # FUTURE: Allow approved ground cover
         vented_crawl_values[:vented_crawlspace_sla] = reference_crawlspace_sla
       end
       HPXML.add_foundation(hpxml: hpxml,
@@ -2240,18 +2239,49 @@ class EnergyRatingIndex301Ruleset
 
   def self.calc_compartmentalization_boundary_areas(orig_details)
     # Returns:
-    # 1. Total Compartmentalization Boundary area
-    # 2. Exterior Compartmentalization Boundary area (i.e., excluding surfaces attached to garage or other housing units)
+    # 1. Total Compartmentalization Boundary area (i.e., surface area surrounding infiltration volume)
+    # 2. Exterior Compartmentalization Boundary area (i.e., above excluding surfaces attached to garage or other housing units)
+
     tot_cb_area = 0.0
     ext_cb_area = 0.0
-    orig_details.elements.each("/HPXML/Building/BuildingDetails/Enclosure/*/*[InteriorAdjacentTo='living space' or InteriorAdjacentTo='basement - conditioned']") do |surface|
-      tot_cb_area += Float(surface.elements["Area"].text)
-      ext_adjacent_to = "outside/ground"
-      ext_adjacent_to = surface.elements["ExteriorAdjacentTo"].text unless surface.elements["ExteriorAdjacentTo"].nil?
-      if not (ext_adjacent_to.include? "other housing unit" or ext_adjacent_to == "garage")
-        ext_cb_area += Float(surface.elements["Area"].text)
+
+    # Populate space_within_infil_volume hash for relevant attic/foundation space types
+    space_within_infil_volume = { 'living space' => true }
+    orig_details.elements.each("Enclosure/Attics/Attic") do |attic|
+      attic_values = HPXML.get_attic_values(attic: attic)
+      if attic_values[:attic_type] == "UnventedAttic"
+        space_within_infil_volume["attic - unvented"] = attic_values[:within_infiltration_volume]
       end
     end
+    orig_details.elements.each("Enclosure/Foundations/Foundation") do |foundation|
+      foundation_values = HPXML.get_foundation_values(foundation: foundation)
+      if foundation_values[:foundation_type] == "UnconditionedBasement"
+        space_within_infil_volume["basement - unconditioned"] = foundation_values[:within_infiltration_volume]
+      elsif foundation_values[:foundation_type] == "UnventedCrawlspace"
+        space_within_infil_volume["crawlspace - unvented"] = foundation_values[:within_infiltration_volume]
+      end
+    end
+
+    # Get surfaces bounding infiltration volume
+    space_within_infil_volume.keys.each do |space_type|
+      next unless space_within_infil_volume[space_type]
+
+      orig_details.elements.each("Enclosure/*/*[InteriorAdjacentTo='#{space_type}' or ExteriorAdjacentTo='#{space_type}']") do |surface|
+        int_adjacent_to = surface.elements["InteriorAdjacentTo"].text
+        ext_adjacent_to = "outside/ground"
+        ext_adjacent_to = surface.elements["ExteriorAdjacentTo"].text unless surface.elements["ExteriorAdjacentTo"].nil?
+
+        # Exclude surfaces between two spaces that are both within infiltration volume
+        next if space_within_infil_volume[int_adjacent_to] and space_within_infil_volume[ext_adjacent_to]
+
+        # Update Compartmentalization Boundary areas
+        tot_cb_area += Float(surface.elements["Area"].text)
+        if not (ext_adjacent_to.include? "other housing unit" or ext_adjacent_to == "garage")
+          ext_cb_area += Float(surface.elements["Area"].text)
+        end
+      end
+    end
+
     return tot_cb_area, ext_cb_area
   end
 

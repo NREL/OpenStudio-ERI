@@ -51,6 +51,8 @@ class EnergyRatingIndex301Validator
 
         "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH' or UnitofMeasure='CFM']/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure='ACHnatural']/AirLeakage]" => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
 
+        "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic" => zero_or_more, # See [Attic]
+        "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation" => zero_or_more, # See [Foundation]
         "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof" => zero_or_more, # See [Roof]
         "/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall" => one_or_more, # See [Wall]
         "/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist" => zero_or_more, # See [RimJoist]
@@ -103,10 +105,22 @@ class EnergyRatingIndex301Validator
         "InfiltrationVolume" => one, # Assumes InfiltrationVolume = ConditionedVolume if not provided
       },
 
+      # [Attic]
+      "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic" => {
+        "SystemIdentifier" => one, # Required by HPXML schema
+        "AtticType" => one, # Required by HPXML schema
+      },
+
+      # [Foundation]
+      "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation" => {
+        "SystemIdentifier" => one, # Required by HPXML schema
+        "FoundationType" => one, # Required by HPXML schema
+      },
+
       # [Roof]
       "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof" => {
         "SystemIdentifier" => one, # Required by HPXML schema
-        "[InteriorAdjacentTo='attic - vented' or InteriorAdjacentTo='attic - unvented' or InteriorAdjacentTo='living space' or InteriorAdjacentTo='garage']" => one, # See [VentedAttic]
+        "[InteriorAdjacentTo='attic - vented' or InteriorAdjacentTo='attic - unvented' or InteriorAdjacentTo='living space' or InteriorAdjacentTo='garage']" => one, # See [VentedAttic] or [UnventedAttic]
         "Area" => one,
         "Azimuth" => zero_or_one,
         "SolarAbsorptance" => one,
@@ -120,6 +134,11 @@ class EnergyRatingIndex301Validator
       ## [VentedAttic]
       "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - vented']" => {
         "../../Attics/Attic[AtticType/Attic[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value | ../../Attics/Attic[AtticType/Attic[Vented='true']]/extension/ConstantACHnatural" => zero_or_one,
+      },
+
+      ## [UnventedAttic]
+      "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - unvented']" => {
+        "../../Attics/Attic[AtticType/Attic[Vented='false']]/WithinInfiltrationVolume" => one,
       },
 
       # [Wall]
@@ -153,7 +172,7 @@ class EnergyRatingIndex301Validator
       "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall" => {
         "SystemIdentifier" => one, # Required by HPXML schema
         "[ExteriorAdjacentTo='ground' or ExteriorAdjacentTo='basement - conditioned' or ExteriorAdjacentTo='basement - unconditioned' or ExteriorAdjacentTo='crawlspace - vented' or ExteriorAdjacentTo='crawlspace - unvented' or ExteriorAdjacentTo='garage' or ExteriorAdjacentTo='other housing unit']" => one,
-        "[InteriorAdjacentTo='basement - conditioned' or InteriorAdjacentTo='basement - unconditioned' or InteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or InteriorAdjacentTo='garage']" => one, # See [VentedCrawlspace] or [UnconditionedBasement]
+        "[InteriorAdjacentTo='basement - conditioned' or InteriorAdjacentTo='basement - unconditioned' or InteriorAdjacentTo='crawlspace - vented' or InteriorAdjacentTo='crawlspace - unvented' or InteriorAdjacentTo='garage']" => one, # See [VentedCrawlspace] or [UnventedCrawlspace] or [UnconditionedBasement]
         "Height" => one,
         "Area" => one,
         "Azimuth" => zero_or_one,
@@ -170,9 +189,15 @@ class EnergyRatingIndex301Validator
         "../../Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value" => zero_or_one,
       },
 
+      ## [UnventedCrawlspace]
+      "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='crawlspace - unvented']" => {
+        "../../Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]/WithinInfiltrationVolume" => one,
+      },
+
       ## [UnconditionedBasement]
       "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - unconditioned']" => {
         "../../Foundations/Foundation[FoundationType/Basement[Conditioned='false']]/ThermalBoundary" => one,
+        "../../Foundations/Foundation[FoundationType/Basement[Conditioned='false']]/WithinInfiltrationVolume" => one,
       },
 
       ## [FoundationWallInsLayer]

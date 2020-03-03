@@ -2278,6 +2278,7 @@ def create_sample_hpxmls
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
                   'invalid_files/orphaned-hvac-distribution.xml',
+                  'invalid_files/slab-zero-exposed-perimeter.xml',
                   'invalid_files/solar-thermal-system-with-combi-tankless.xml',
                   'invalid_files/solar-thermal-system-with-desuperheater.xml',
                   'invalid_files/solar-thermal-system-with-dhw-indirect.xml',
