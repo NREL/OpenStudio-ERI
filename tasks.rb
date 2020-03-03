@@ -2272,6 +2272,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
+                  'invalid_files/invalid-window-height.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/mismatched-slab-and-foundation-wall.xml',
                   'invalid_files/missing-surfaces.xml',
