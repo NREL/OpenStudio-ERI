@@ -332,7 +332,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    # FIXME: Add compartmentalization/Aext check
+    _check_mech_vent(hpxml_doc, "exhaust only", 68.2, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -340,14 +340,13 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    # FIXME: Add compartmentalization/Aext check
+    _check_mech_vent(hpxml_doc, "balanced", 96.3, 24, 67.4)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    # FIXME: Add compartmentalization/Aext check
+    _check_mech_vent(hpxml_doc, "balanced", 32.1, 24, 55.0)
 
-    # FIXME: Add more compartmentalization/Aext tests
-
+    # Test w/ 301-2014
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
@@ -365,6 +364,8 @@ class VentTest < MiniTest::Test
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_mech_vent(hpxml_doc, "balanced", 102.0, 24, 71.4)
+
+    # FIXME: Add tests for new 301-2019 space types HPXML file
   end
 
   def test_mech_vent_exhaust

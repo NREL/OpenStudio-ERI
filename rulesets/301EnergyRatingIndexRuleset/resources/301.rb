@@ -2154,27 +2154,25 @@ class EnergyRatingIndex301Ruleset
     tot_cb_area, ext_cb_area = calc_compartmentalization_boundary_areas(orig_details)
     a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
 
-    if @is_attached_unit
+    if @is_attached_unit and not @eri_version.include? "2014" # 2019 or newer
       cfm50 = ach50 * @infilvolume / 60.0
       if cfm50 / tot_cb_area <= 0.30
         ach50 *= a_ext
       end
     end
 
+    # Apply min Natural ACH?
+    min_nach = nil
     vent_fan = orig_details.elements["Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    vent_fan_unmeasured_airflow = false
-    vent_fan_type = nil
-    if not vent_fan.nil?
-      # Check if no measured airflow
-      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
-      if vent_fan_values[:tested_flow_rate].nil?
-        vent_fan_unmeasured_airflow = true
-      end
-      vent_fan_type = vent_fan_values[:fan_type]
-    end
-
-    if vent_fan.nil? or vent_fan_unmeasured_airflow or (a_ext < 0.5 and vent_fan_type == 'exhaust only')
+    if vent_fan.nil?
       min_nach = 0.30
+    elsif not @eri_version.include? "2014" # 2019 or newer
+      vent_fan_values = HPXML.get_ventilation_fan_values(ventilation_fan: vent_fan)
+      if vent_fan_values[:tested_flow_rate].nil? or (a_ext < 0.5 and vent_fan_values[:fan_type] == 'exhaust only')
+        min_nach = 0.30
+      end
+    end
+    if not min_nach.nil?
       min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, calc_mech_vent_h_vert_distance() / 8.202, @weather)
       min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
       if ach50 < min_ach50
@@ -2197,10 +2195,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_details)
-    if @is_attached_unit # No infiltration credit for attached/multifamily
-      return q_tot
-    end
-
     h = calc_mech_vent_h_vert_distance()
     hr = 8.202
     nl = 1000.0 * sla * (h / hr)**0.4 # Normalized leakage, eq. 4.4
@@ -2215,6 +2209,9 @@ class EnergyRatingIndex301Ruleset
       end
       q_fan = q_tot - phi * (q_inf * a_ext)
     else
+      if @is_attached_unit # No infiltration credit for attached/multifamily
+        return q_tot
+      end
       if q_inf > 2.0 / 3.0 * q_tot
         q_fan = q_tot - 2.0 / 3.0 * q_tot
       else

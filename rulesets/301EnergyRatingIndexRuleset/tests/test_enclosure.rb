@@ -16,11 +16,12 @@ class EnclosureTest < MiniTest::Test
   end
 
   def test_enclosure_infiltration
+    # Test w/o mech vent
     hpxml_name = "base.xml"
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml_doc, 10.1)
+    _check_infiltration(hpxml_doc, 10.1) # 0.3 nACH
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -34,10 +35,7 @@ class EnclosureTest < MiniTest::Test
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
 
-    # FIXME: Add test for attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
-    # FIXME: Add test for attached dwelling where airtightness test results > 0.30 cfm50 per ft2 of Compartmentalization Boundary
-    # FIXME: Add test for attached dwelling unit w/ exhaust mech vent and Aext < 0.5
-
+    # Test w/ mech vent
     hpxml_name = "base-mechvent-exhaust.xml"
 
     # Rated Home
@@ -56,6 +54,7 @@ class EnclosureTest < MiniTest::Test
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
 
+    # Test w/ unmeasured mech vent
     # Create derivative file for testing
     hpxml_name = "base-mechvent-exhaust.xml"
     hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
@@ -71,8 +70,74 @@ class EnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
 
     # Rated Home
-    # 301-2019: For residences without measured mechanical ventilation airflow, the measured
-    # infiltration rate but not less than 0.30 ACH.
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml_doc, 10.1) # 0.3 nACH
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml_doc, 7.09)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml_doc, 3.0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml_doc, 6.67)
+
+    # Test attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
+    # Create derivative file for testing
+    hpxml_name = "base-enclosure-adiabatic-surfaces.xml"
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
+
+    # Add mech vent object
+    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements['/HPXML'],
+                              id: "MechanicalVentilation",
+                              fan_type: "supply only",
+                              tested_flow_rate: 110.0,
+                              hours_in_operation: 24.0,
+                              used_for_whole_building_ventilation: true,
+                              fan_power: 30.0)
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml_doc, 0.32)
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml_doc, 7.09)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml_doc, 3.0)
+
+    # IAD Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml_doc, 6.67)
+
+    # Test attached dwelling where Aext < 0.5 and exhaust mech vent
+    # Create derivative file for testing
+    hpxml_name = "base-enclosure-adiabatic-surfaces.xml"
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
+
+    # Add mech vent object
+    HPXML.add_ventilation_fan(hpxml: hpxml_doc.elements['/HPXML'],
+                              id: "MechanicalVentilation",
+                              fan_type: "exhaust only",
+                              tested_flow_rate: 110.0,
+                              hours_in_operation: 24.0,
+                              used_for_whole_building_ventilation: true,
+                              fan_power: 30.0)
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+
+    # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_infiltration(hpxml_doc, 10.1)
 
@@ -87,6 +152,9 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml_doc, 6.67)
+
+    # FIXME: Add 301-2014 tests
+    # FIXME: Add tests for new 301-2019 space types HPXML file
   end
 
   def test_enclosure_roofs
