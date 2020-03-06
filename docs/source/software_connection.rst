@@ -19,8 +19,8 @@ The `HPXML Toolbox website <https://hpxml.nrel.gov/>`_ provides several resource
 ERI Use Case for HPXML
 ----------------------
 
-HPXML is an flexible and extensible format, where nearly all fields in the schema are optional and custom fields can be included.
-Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML fields or enumeration choices required to run the workflow.
+HPXML is an flexible and extensible format, where nearly all elements in the schema are optional and custom elements can be included.
+Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML elements or enumeration choices required to run the workflow.
 
 Software developers should use the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb>`_ (defined as a set of conditional XPath expressions) as well as the `HPXML schema <https://github.com/NREL/OpenStudio-ERI/tree/master/measures/HPXMLtoOpenStudio/hpxml_schemas>`_ to construct valid HPXML files for ERI calculations.
 
@@ -29,6 +29,7 @@ ERI Version
 
 The version of the ERI calculation to be run is specified inside the HPXML file itself at ``/HPXML/SoftwareInfo/extension/ERICalculation/Version``. 
 For example, a value of "2014AE" tells the workflow to use ANSI/RESNET/ICC© 301-2014 with both Addendum A (Amendment on Domestic Hot Water Systems) and Addendum E (House Size Index Adjustment Factors) included.
+A value of "latest" can be used to always point to the latest version available.
 
 .. note:: 
 
@@ -42,15 +43,15 @@ The building description is entered in HPXML's ``/HPXML/Building/BuildingDetails
 Building Summary
 ~~~~~~~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, etc.
+This section describes elements specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, etc.
 
-The ``BuildingSummary/Site/FuelTypesAvailable`` field is used to determine whether the home has access to natural gas or fossil fuel delivery (specified by any value other than "electricity").
+The ``BuildingSummary/Site/FuelTypesAvailable`` element is used to determine whether the home has access to natural gas or fossil fuel delivery (specified by any value other than "electricity").
 This information may be used for determining the heating system, as specified by the ERI 301 Standard.
 
 Climate and Weather
 ~~~~~~~~~~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``ClimateandRiskZones``.
+This section describes elements specified in HPXML's ``ClimateandRiskZones``.
 
 The ``ClimateandRiskZones/ClimateZoneIECC`` element specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
 
@@ -60,7 +61,7 @@ The ``WeatherStation/WMO`` must be one of the acceptable TMY3 WMO station number
 In addition to using the TMY3 weather files that are provided, custom weather files can be used if they are in EPW file format.
 To use custom weather files, first ensure that all weather files have a unique WMO station number (as provided in the first header line of the EPW file).
 Then place them in the ``weather`` directory and call ``openstudio energy_rating_index.rb --cache-weather``.
-After processing is complete, each EPW file will have a corresponding \*.cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
+After processing is complete, each EPW file will have a corresponding \*.csv cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv <https://github.com/NREL/OpenStudio-ERI/blob/master/weather/data.csv>`_ file.
 
 .. note:: 
 
@@ -69,7 +70,7 @@ After processing is complete, each EPW file will have a corresponding \*.cache f
 Enclosure
 ~~~~~~~~~
 
-This section describes fields specified in HPXML's ``Enclosure``.
+This section describes elements specified in HPXML's ``Enclosure``.
 
 All surfaces that bound different space types in the building (i.e., not just thermal boundary surfaces) must be specified in the HPXML file.
 For example, an attached garage would generally be defined by walls adjacent to conditioned space, walls adjacent to outdoors, a slab, and a roof or ceiling.
@@ -98,7 +99,7 @@ other housing unit            Used to specify adiabatic surfaces.
 
 Also note that wall and roof surfaces do not require an azimuth to be specified. 
 Rather, only the windows/skylights themselves require an azimuth. 
-Thus, software tools can use a single wall (or roof) surface to represent multiple wall (or roof) surfaces for the entire building if all their other properties (construction type, interior/exterior adjacency, etc.) are identical.
+Thus, software tools can choose to use a single wall (or roof) surface to represent multiple wall (or roof) surfaces for the entire building if all their other properties (construction type, interior/exterior adjacency, etc.) are identical.
 
 Air Leakage
 ***********
@@ -120,14 +121,15 @@ Roofs
 *****
 
 Pitched or flat roof surfaces that are exposed to ambient conditions should be specified as an ``Enclosure/Roofs/Roof``. 
-For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``Floor`` and not a ``Roof``.
+For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``FrameFloor`` and not a ``Roof``.
 
 Beyond the specification of typical heat transfer properties (insulation R-value, solar absorptance, emittance, etc.), note that roofs can be defined as having a radiant barrier.
 
 Walls
 *****
 
-Any wall that has no contact with the ground and bounds a space type should be specified as an ``Enclosure/Walls/Wall``. Interior walls (for example, walls solely within the conditioned space of the building) are not required.
+Any wall that has no contact with the ground and bounds a space type should be specified as an ``Enclosure/Walls/Wall``. 
+Interior walls (for example, walls solely within the conditioned space of the building) are not required.
 
 Walls are primarily defined by their ``Insulation/AssemblyEffectiveRValue``.
 The choice of ``WallType`` has a secondary effect on heat transfer in that it informs the assumption of wall thermal mass.
@@ -158,12 +160,13 @@ Alternatively, an interior foundation wall between an 8 ft conditioned basement 
 
 Foundation wall insulation can be described in two ways: 
 
-Option 1. A continuous insulation layer with ``NominalRValue`` and ``DistanceToBottomOfInsulation``. 
-An insulation layer is useful for describing foundation wall insulation that doesn't span the entire height (e.g., 4 ft of insulation for an 8 ft conditioned basement). 
-When an insulation layer R-value is specified, it is modeled with a concrete wall (whose ``Thickness`` is provided) as well as air film resistances as appropriate.
+Option 1. Both interior and exterior continuous insulation layers with ``NominalRValue``, ``extension/DistanceToTopOfInsulation``, and ``extension/DistanceToBottomOfInsulation``. 
+Insulation layers are particularly useful for describing foundation wall insulation that doesn't span the entire height (e.g., 4 ft of insulation for an 8 ft conditioned basement). 
+If there is not insulation on the interior and/or exterior of the foundation wall, the continuous insulation layer must still be provided -- with the nominal R-value, etc., set to zero.
+When insulation is specified with option 1, it is modeled with a concrete wall (whose ``Thickness`` is provided) as well as air film resistances as appropriate.
 
 Option 2. An ``AssemblyEffectiveRValue``. 
-When instead providing an assembly effective R-value, the R-value should include the concrete wall and an interior air film resistance. 
+The assembly effective R-value should include the concrete wall and an interior air film resistance. 
 The exterior air film resistance (for any above-grade exposure) or any soil thermal resistance should **not** be included.
 
 Frame Floors
@@ -188,7 +191,7 @@ Vertical insulation adjacent to the slab can be described by a ``PerimeterInsula
 Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. 
 The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
 
-For foundation types without walls, the ``DepthBelowGrade`` field must be provided.
+For foundation types without walls, the ``DepthBelowGrade`` element must be provided.
 For foundation types with walls, the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` values.
 
 Windows
@@ -225,7 +228,7 @@ Doors must also have an ``Azimuth`` specified, even if the attached wall does no
 Systems
 ~~~~~~~
 
-This section describes fields specified in HPXML's ``Systems``.
+This section describes elements specified in HPXML's ``Systems``.
 
 If any HVAC systems are entered that provide heating, the sum of all their ``FractionHeatLoadServed`` values must equal 1.
 The same holds true for ``FractionCoolLoadServeds`` for HVAC systems that provide cooling and ``FractionDHWLoadServed`` for water heating systems.
@@ -254,16 +257,24 @@ Cooling Systems
 ***************
 
 Each cooling system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/CoolingSystem``.
-Inputs including ``CoolingSystemType``, ``CoolingCapacity``, and ``FractionCoolLoadServed`` must be provided.
+Inputs including ``CoolingSystemType`` and ``FractionCoolLoadServed`` must be provided.
+``CoolingCapacity`` must also be provided for all systems other than evaporative coolers.
 
 Depending on the type of cooling system specified, additional elements are required/available:
 
-=======================  ======================  =================  ======================= ====================
-CoolingSystemType        DistributionSystem      CoolingSystemFuel  AnnualCoolingEfficiency SensibleHeatFraction
-=======================  ======================  =================  ======================= ====================
-central air conditioner  AirDistribution or DSE  electricity        SEER                    optional
-room air conditioner                             electricity        EER                     optional
-=======================  ======================  =================  ======================= ====================
+=======================  =================================  =================  =======================  ====================
+CoolingSystemType        DistributionSystem                 CoolingSystemFuel  AnnualCoolingEfficiency  SensibleHeatFraction
+=======================  =================================  =================  =======================  ====================
+central air conditioner  AirDistribution or DSE             electricity        SEER                     (optional)
+room air conditioner                                        electricity        EER                      (optional)
+evaporative cooler       AirDistribution or DSE (optional)  electricity
+=======================  =================================  =================  =======================  ====================
+
+Central air conditioners can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
+
+- "single stage": SEER <= 15
+- "two stage": 15 < SEER <= 21
+- "variable speed": SEER > 21
 
 Heat Pumps
 **********
@@ -274,15 +285,23 @@ Note that heat pumps are allowed to provide only heating (``FractionCoolLoadServ
 
 Depending on the type of heat pump specified, additional elements are required/available:
 
-=============  =================================  ============  =======================  ======================= =========================== ==================
-HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency CoolingSensibleHeatFraction HeatingCapacity17F
-=============  =================================  ============  =======================  ======================= =========================== ==================
-air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF                    optional                    optional
-mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                    optional                    optional
-ground-to-air  AirDistribution or DSE             electricity   EER                      COP                     optional
-=============  =================================  ============  =======================  ======================= =========================== ==================
+=============  =================================  ============  =======================  =======================  ===========================  ==================
+HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency  CoolingSensibleHeatFraction  HeatingCapacity17F
+=============  =================================  ============  =======================  =======================  ===========================  ==================
+air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF                     (optional)                   (optional)
+mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                     (optional)                   (optional)
+ground-to-air  AirDistribution or DSE             electricity   EER                      COP                      (optional)
+=============  =================================  ============  =======================  =======================  ===========================  ==================
 
-If the heat pump has integrated backup heating, it can be specified with ``BackupSystemFuel`` (currently only "electricity" is allowed), ``BackupAnnualHeatingEfficiency`` (percent), and ``BackupHeatingCapacity``.
+Air-to-air heat pumps can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
+
+- "single stage": SEER <= 15
+- "two stage": 15 < SEER <= 21
+- "variable speed": SEER > 21
+
+If the heat pump has backup heating, it can be specified with ``BackupSystemFuel``, ``BackupAnnualHeatingEfficiency``, and ``BackupHeatingCapacity``.
+If the heat pump has a switchover temperature (e.g., dual-fuel heat pump) where the heat pump stops operating and the backup heating system starts running, it can be specified with ``BackupHeatingSwitchoverTemperature``.
+If the ``BackupHeatingSwitchoverTemperature`` is not provided, the backup heating system will operate as needed when the heat pump has insufficient capacity.
 
 Thermostat
 **********
@@ -296,12 +315,14 @@ HVAC Distribution
 Each separate HVAC distribution system should be specified as a ``Systems/HVAC/HVACDistribution``.
 There should be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
-Also, note that some HVAC systems are not allowed to be attached to a distribution system.
+Also, note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
 
 ``AirDistribution`` systems are defined by:
 
-- Supply & return leakages in CFM25 to the outside (``DuctLeakageMeasurement/DuctLeakage/Value``)
-- One or more supply & return ducts (``Ducts``)
+- Supply leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='supply']/DuctLeakage/Value``)
+- Optional return leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='return']/DuctLeakage/Value``)
+- Optional supply ducts (``Ducts[DuctType='supply']``)
+- Optional return ducts (``Ducts[DuctType='return']``)
 
 For each duct, ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` must be provided.
 
@@ -333,6 +354,12 @@ Note that AdjustedSensibleRecoveryEfficiency and AdjustedTotalRecoveryEfficiency
 In many situations, the rated flow rate should be the value derived from actual testing of the system.
 For a CFIS system, the rated flow rate should equal the amount of outdoor air provided to the distribution system.
 
+Whole House Fan
+***************
+
+A single whole house fan may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForSeasonalCoolingLoadReduction='true'``.
+Required elements include ``RatedFlowRate`` and ``FanPower``.
+
 Water Heaters
 *************
 
@@ -341,19 +368,20 @@ Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`
 
 Depending on the type of water heater specified, additional elements are required/available:
 
-========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
-WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem        WaterHeaterInsulation/Jacket/JacketRValue
-========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
-storage water heater                      required                             <any>        required    <optional>       required if non-electric                           <optional>
-instantaneous water heater                required                             <any>
-heat pump water heater                    required                             electricity  required                                                                        <optional>
-space-heating boiler with storage tank                                                      required                                               required                 <optional>
-space-heating boiler with tankless coil                                                                                                            required                 
-========================================  ===================================  ===========  ==========  ===============  ========================  =====================    =========================================
+========================================  ===================================  ===========  ==========  ===============  ========================  =================  =================  =========================================
+WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem  UsesDesuperheater  WaterHeaterInsulation/Jacket/JacketRValue
+========================================  ===================================  ===========  ==========  ===============  ========================  =================  =================  =========================================
+storage water heater                      required                             <any>        required    <optional>       required if non-electric                     <optional>         <optional>
+instantaneous water heater                required                             <any>                                                                                  <optional>
+heat pump water heater                    required                             electricity  required                                                                                     <optional>
+space-heating boiler with storage tank                                                      required                                               required                              <optional>
+space-heating boiler with tankless coil                                                                                                            required           
+========================================  ===================================  ===========  ==========  ===============  ========================  =================  =================  =========================================
 
 For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
+For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr) can be entered as ``StandbyLoss``; if not provided, an average value will be used.
 
-For water heaters that are connected to a desuperheater, ``UsesDesuperheater`` must be set and the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
+For water heaters that are connected to a desuperheater, the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
 
 Hot Water Distribution
 **********************
@@ -361,11 +389,11 @@ Hot Water Distribution
 A ``Systems/WaterHeating/HotWaterDistribution`` must be provided if any water heating systems are specified.
 Inputs including ``SystemType`` and ``PipeInsulation/PipeRValue`` must be provided.
 
-For a ``SystemType/Standard`` (non-recirculating) system, the following field is required:
+For a ``SystemType/Standard`` (non-recirculating) system, the following element is required:
 
 - ``PipingLength``: Measured length of hot water piping from the hot water heater to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
 
-For a ``SystemType/Recirculation`` system, the following fields are required:
+For a ``SystemType/Recirculation`` system, the following elements are required:
 
 - ``ControlType``
 - ``RecirculationPipingLoopLength``: Measured recirculation loop length including both supply and return sides, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements
@@ -386,11 +414,34 @@ Water fixtures should be entered as ``Systems/WaterHeating/WaterFixture`` elemen
 Each fixture must have ``WaterFixtureType`` and ``LowFlow`` elements provided.
 Fixtures should be specified as low flow if they are <= 2.0 gpm.
 
+Solar Thermal
+*************
+
+A solar hot water system can be entered as a ``Systems/SolarThermal/SolarThermalSystem``.
+The ``SystemType`` element must be 'hot water' and the ``ConnectedTo`` element is required and must point to a ``WaterHeatingSystem``.
+Note that the connected water heater cannot be of type space-heating boiler or attached to a desuperheater.
+
+Solar hot water systems can be described with either simple or detailed inputs.
+
+If using simple inputs, the following element is required:
+
+- ``SolarFraction``
+
+If using detailed inputs, the following elements are required:
+
+- ``CollectorLoopType``: 'liquid indirect' or 'liquid direct' or 'passive thermosyphon'
+- ``CollectorType``: 'single glazing black' or 'double glazing black' or 'evacuated tube' or 'integrated collector storage'
+- ``CollectorAzimuth``
+- ``CollectorTilt``
+- ``CollectorRatedOpticalEfficiency``: FRTA (y-intercept); see Directory of SRCC Certified Solar Collector Ratings
+- ``CollectorRatedThermalLosses``: FRUL (slope, in units of Btu/hr-ft^2-R); see Directory of SRCC Certified Solar Collector Ratings
+- ``StorageVolume``
+
 Photovoltaics
 *************
 
 Each solar electric (photovoltaic) system should be entered as a ``Systems/Photovoltaics/PVSystem``.
-The following fields, some adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_, are required for each PV system:
+The following elements, some adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_, are required for each PV system:
 
 - ``Location``: 'ground' or 'roof' mounted
 - ``ModuleType``: 'standard', 'premium', or 'thin film'
@@ -404,7 +455,7 @@ The following fields, some adopted from the `PVWatts model <https://pvwatts.nrel
 Appliances
 ~~~~~~~~~~
 
-This section describes fields specified in HPXML's ``Appliances``.
+This section describes elements specified in HPXML's ``Appliances``.
 Many of the appliances' inputs are derived from EnergyGuide labels.
 
 The ``Location`` for clothes washers, clothes dryers, and refrigerators can be provided, while dishwashers and cooking ranges are assumed to be in the living space.

@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: nrel/openstudio:2.9.0
+      - image: nrel/openstudio:2.9.1
     steps:
       - checkout
       - run:
@@ -10,19 +10,9 @@ jobs:
           command: |
             rm -f Gemfile.lock && bundle install
       - run:
-          name: Update measure
-          command: |
-            rake update_measures
-      - run:
           name: Run tests
           command: |
-            rake test:all
+            rake test_all
       - store_artifacts:
           path: workflow/tests/test_results
           destination: results
-      - store_artifacts:
-          path: workflow/tests/test_files/sample_files/base-location-dallas-tx.xml
-          destination: test_results
-      - store_artifacts:
-          path: workflow/sample_files/base-location-dallas-tx.xml
-          destination: base-location-dallas-tx.xml

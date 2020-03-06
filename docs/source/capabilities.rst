@@ -50,12 +50,14 @@ The following building features/technologies are available for modeling:
   
     - Central Air Conditioners
     - Room Air Conditioners
+    - Evaporative Coolers
     
   - Heat Pumps
   
     - Air Source Heat Pumps
     - Mini Split Heat Pumps
     - Ground Source Heat Pumps
+    - Dual-Fuel Heat Pumps
     
   - Thermostat Type
   - Ducts
@@ -69,7 +71,9 @@ The following building features/technologies are available for modeling:
     - Heat Pump Water Heater
     - Indirect Water Heater (Combination Boiler)
     - Tankless Coil (Combination Boiler)
-    
+
+  - Solar Hot Water
+  - Desuperheaters
   - Hot Water Distribution
   
     - Recirculation
@@ -86,6 +90,7 @@ The following building features/technologies are available for modeling:
   - Heat Recovery Ventilator
   - Central Fan Integrated Supply
   
+- Whole House Fan
 - Photovoltaics
 - Appliances
 
@@ -112,6 +117,5 @@ There are additional ways that software developers using this workflow can reduc
 
 - Run on Linux/Mac platform, which is significantly faster by taking advantage of the POSIX fork call.
 - Use the ``--no-ssl`` flag to prevent SSL initialization in OpenStudio.
-- Use the ``-s`` flag to skip HPXML validation.
-- Do not use the ``--hourly-output`` flag unless hourly output is required.
+- Do not use the ``--hourly`` flag unless hourly output is required. If required, limit requests to hourly variables of interest.
 - Run on computing environments with 1) fast CPUs, 2) sufficient memory, and 3) enough processors to allow all simulations to run in parallel.

@@ -8,8 +8,8 @@ Setup
 
 To get started:
 
-#. Either download `OpenStudio 2.9.0 <https://github.com/NREL/OpenStudio/releases/tag/v2.9.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
-#. Download the `OpenStudio-ERI v0.5.0 Beta <https://github.com/NREL/OpenStudio-ERI/releases/tag/v0.5.0-beta>`_ release.
+#. Either download `OpenStudio 2.9.1 <https://github.com/NREL/OpenStudio/releases/tag/v2.9.1>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
+#. Download the `OpenStudio-ERI v0.7.0 Beta <https://github.com/NREL/OpenStudio-ERI/releases/tag/v0.7.0-beta>`_ release.
 #. To obtain all available weather files, run: ``openstudio workflow/energy_rating_index.rb --download-weather``
 
 .. note:: 
@@ -28,8 +28,13 @@ This will generate output as shown below:
 
 .. image:: https://user-images.githubusercontent.com/5861765/63288138-3e167000-c279-11e9-9a18-b0a2327ed89d.png
 
-You can also request generation of hourly output CSV files as part of the calculation by running:
-``openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly-output``
+You can also request generation of hourly output CSV files as part of the calculation by providing one or more ``--hourly`` flags.
+
+To request all possible hourly outputs:
+``openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly ALL``
+
+Or one or more specific hourly output types can be requested, e.g.:
+``openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly fuels --hourly temperatures``
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 

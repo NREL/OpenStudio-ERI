@@ -1,15 +1,15 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?> 
 <HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>Rakefile</XMLGeneratedBy>
-    <CreatedDateAndTime>2019-10-24T15:44:20-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2000-01-01T00:00:00-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014AEG</Version>
+        <Version>latest</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -32,6 +32,9 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
+          <extension>
+            <FractionofOperableWindowArea>0.33</FractionofOperableWindowArea>
+          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -622,12 +625,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWallInsulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -639,12 +653,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall2Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -656,12 +681,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall3Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -673,12 +709,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall4Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -690,12 +737,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall5Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -707,12 +765,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall6Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -724,12 +793,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall7Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -741,12 +821,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall8Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -758,12 +849,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall9Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -775,12 +877,23 @@
             <Area>120.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
-            <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
             <Insulation>
               <SystemIdentifier id='FoundationWall10Insulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
+                <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -1162,7 +1275,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1170,7 +1283,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1178,7 +1291,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1186,7 +1299,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1194,7 +1307,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth2'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1202,7 +1315,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth3'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1210,7 +1323,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth4'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1218,7 +1331,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth5'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1226,7 +1339,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth6'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1234,7 +1347,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth7'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1242,7 +1355,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth8'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1250,7 +1363,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth9'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1258,7 +1371,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowNorth10'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1266,7 +1379,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth2'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1274,7 +1387,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth3'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1282,7 +1395,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth4'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1290,7 +1403,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth5'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1298,7 +1411,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth6'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1306,7 +1419,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth7'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1314,7 +1427,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth8'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1322,7 +1435,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth9'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1330,7 +1443,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth10'/>
-            <Area>5.4</Area>
+            <Area>10.8</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1338,7 +1451,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast2'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1346,7 +1459,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast3'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1354,7 +1467,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast4'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1362,7 +1475,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast5'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1370,7 +1483,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast6'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1378,7 +1491,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast7'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1386,7 +1499,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast8'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1394,7 +1507,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast9'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1402,7 +1515,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast10'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1410,7 +1523,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest2'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1418,7 +1531,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest3'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1426,7 +1539,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest4'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1434,7 +1547,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest5'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1442,7 +1555,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest6'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1450,7 +1563,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest7'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1458,7 +1571,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest8'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1466,7 +1579,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest9'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1474,7 +1587,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest10'/>
-            <Area>3.6</Area>
+            <Area>7.2</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1484,7 +1597,7 @@
         <Skylights>
           <Skylight>
             <SystemIdentifier id='SkylightNorth'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1492,7 +1605,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1500,7 +1613,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth2'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1508,7 +1621,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth3'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1516,7 +1629,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth4'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1524,7 +1637,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth5'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1532,7 +1645,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth6'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1540,7 +1653,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth7'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1548,7 +1661,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth8'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1556,7 +1669,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth9'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1564,7 +1677,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightNorth10'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -1572,7 +1685,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth2'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1580,7 +1693,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth3'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1588,7 +1701,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth4'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1596,7 +1709,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth5'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1604,7 +1717,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth6'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1612,7 +1725,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth7'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1620,7 +1733,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth8'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1628,7 +1741,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth9'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>
@@ -1636,7 +1749,7 @@
           </Skylight>
           <Skylight>
             <SystemIdentifier id='SkylightSouth10'/>
-            <Area>1.5</Area>
+            <Area>4.5</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.47</SHGC>

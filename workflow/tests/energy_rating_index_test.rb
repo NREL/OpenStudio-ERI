@@ -4,13 +4,13 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require 'csv'
-require_relative '../../measures/HPXMLtoOpenStudio/measure'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/xmlhelper'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/schedules'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/unit_conversions'
-require_relative '../../measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-require_relative "../../measures/HPXMLtoOpenStudio/resources/meta_measure"
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing"
+require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads"
+require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure"
 
 class EnergyRatingIndexTest < Minitest::Test
   def before_setup
@@ -30,7 +30,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri(xml, test_name)
+      hpxmls, csvs, runtime = run_eri(xml, test_name, hourly_output: true)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
     end
@@ -71,11 +71,13 @@ class EnergyRatingIndexTest < Minitest::Test
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      run_eri(xml, test_name, true, expected_error_msgs[File.basename(xml)])
+      run_eri(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
     end
   end
 
   def test_downloading_weather
+    skip
+
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --download-weather"
     system(command)
@@ -85,8 +87,41 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(num_epws_expected, num_epws_actual)
 
     num_cache_expected = File.readlines(File.join(File.dirname(__FILE__), "..", "..", "weather", "data.csv")).size - 1
-    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*.cache")].count
+    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*-cache.csv")].count
     assert_equal(num_cache_expected, num_cache_actual)
+  end
+
+  def test_weather_cache
+    # Download new EPW
+    require 'openssl'
+    require 'open-uri'
+
+    weather_dir = File.join(File.dirname(__FILE__), "..", "..", "weather")
+    weather_epw = File.join(weather_dir, "USA_CO_Denver-Stapleton.724690_TMY.epw")
+    begin
+      File.open(weather_epw, "wb") do |file|
+        file.write open('https://energyplus.net/weather-download/north_and_central_america_wmo_region_4/USA/CO/USA_CO_Denver-Stapleton.724690_TMY/USA_CO_Denver-Stapleton.724690_TMY.epw', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }).read
+      end
+    rescue
+      File.delete(weather_epw)
+      flunk "Could not download EPW."
+    end
+
+    data_csv = File.join(weather_dir, "data.csv")
+    FileUtils.cp(data_csv, "#{data_csv}.bak")
+
+    cli_path = OpenStudio.getOpenStudioCLI
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --cache-weather"
+    system(command)
+
+    cache_csv = File.join(weather_dir, "USA_CO_Denver-Stapleton.724690_TMY-cache.csv")
+    assert(File.exists?(cache_csv))
+
+    # Restore original and cleanup
+    FileUtils.cp("#{data_csv}.bak", data_csv)
+    File.delete("#{data_csv}.bak")
+    File.delete(weather_epw)
+    File.delete(cache_csv)
   end
 
   def test_resnet_ashrae_140
@@ -99,13 +134,13 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, sim_time = run_simulation(xml, test_name)
-      htg_load, clg_load = _get_simulation_load_results(sql_path)
+      sql_path, csv_path, sim_time = run_simulation(xml, test_name)
+      htg_load, clg_load = _get_simulation_load_results(csv_path)
       if xml.include? "C.xml"
-        all_results << [xml, htg_load, "N/A", sim_time]
+        all_results << [xml, htg_load, "N/A"]
         assert_operator(htg_load, :>, 0)
       elsif xml.include? "L.xml"
-        all_results << [xml, "N/A", clg_load, sim_time]
+        all_results << [xml, "N/A", clg_load]
         assert_operator(clg_load, :>, 0)
       end
     end
@@ -113,7 +148,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test", "Annual Heating Load [MMBtu]", "Annual Cooling Load [MMBtu]", "Simulation Runtime [s]"]
+      csv << ["Test", "Annual Heating Load [MMBtu]", "Annual Cooling Load [MMBtu]"]
       all_results.each do |results|
         next unless results[0].include? "C.xml"
 
@@ -380,7 +415,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, sim_time = run_simulation(xml, test_name)
+      sql_path, csv_path, sim_time = run_simulation(xml, test_name)
 
       is_heat = false
       if xml.include? 'HVAC2'
@@ -392,7 +427,7 @@ class EnergyRatingIndexTest < Minitest::Test
         is_electric_heat = false
       end
 
-      hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
+      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
       all_results[File.basename(xml)] = [hvac, hvac_fan]
     end
     assert(all_results.size > 0)
@@ -432,7 +467,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, sim_time = run_simulation(xml, test_name, true)
+      sql_path, csv_path, sim_time = run_simulation(xml, test_name, true)
 
       is_heat = false
       if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
@@ -441,28 +476,14 @@ class EnergyRatingIndexTest < Minitest::Test
 
       is_electric_heat = false
 
-      hvac, hvac_fan = _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
-      all_results[File.basename(xml)] = [hvac, hvac_fan]
+      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
+
+      dse, seasonal_temp, percent_min, percent_max = _calc_dse(xml, sql_path)
+
+      all_results[File.basename(xml)] = [hvac, hvac_fan, seasonal_temp, dse, percent_min, percent_max]
     end
     assert(all_results.size > 0)
 
-    # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case", "Heat/Cool (kWh or therm)", "HVAC Fan (kWh)"]
-      all_results.each_with_index do |(xml, results), i|
-        next unless ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
-
-        csv << [xml, results[0], results[1]]
-      end
-      all_results.each_with_index do |(xml, results), i|
-        next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
-
-        csv << [xml, results[0], results[1]]
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-
-    # Check results
     all_results.each_with_index do |(xml, results), i|
       base_results = nil
       if ['HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? xml
@@ -472,7 +493,39 @@ class EnergyRatingIndexTest < Minitest::Test
       end
       next if base_results.nil?
 
-      _check_dse_test_results(xml, results, base_results)
+      if ['HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? xml
+        curr_val = results[0] / 10.0 + results[1] / 293.0
+        base_val = base_results[0] / 10.0 + base_results[1] / 293.0
+      else
+        curr_val = results[0] + results[1]
+        base_val = base_results[0] + base_results[1]
+      end
+
+      percent_change = ((curr_val - base_val) / base_val * 100.0).round(1)
+      all_results[xml] << percent_change.round(1)
+    end
+
+    # Write results to csv
+    CSV.open(test_results_csv, "w") do |csv|
+      csv << ["Test Case", "Heat/Cool (kWh or therm)", "HVAC Fan (kWh)", "Seasonal Duct Zone Temperature (F)", "Seasonal DSE", "Criteria Min (%)", "Criteria Max (%)", "Test Value (%)"]
+      all_results.each_with_index do |(xml, results), i|
+        next unless ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
+
+        csv << [xml, results[0], results[1], results[2], results[3], results[4], results[5], results[6]]
+      end
+      all_results.each_with_index do |(xml, results), i|
+        next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
+
+        csv << [xml, results[0], results[1], results[2], results[3], results[4], results[5], results[6]]
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Check results
+    all_results.each_with_index do |(xml, results), i|
+      next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
+
+      _check_dse_test_results(xml, results)
     end
   end
 
@@ -597,36 +650,6 @@ class EnergyRatingIndexTest < Minitest::Test
     # TODO
   end
 
-  def test_naseo_technical_exercises
-    test_name = "naseo_technical_exercises"
-    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
-
-    # Run simulations
-    all_results = {}
-    xmldir = "#{File.dirname(__FILE__)}/../tests/NASEO_Technical_Exercises"
-    Dir["#{xmldir}/NASEO*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = run_eri(xml, test_name)
-      all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
-      all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
-    end
-    assert(all_results.size > 0)
-
-    # Write results to csv
-    keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["XML"] + keys
-      all_results.each_with_index do |(xml, results), i|
-        csv_line = [File.basename(xml)]
-        keys.each do |key|
-          csv_line << results[key]
-        end
-        csv << csv_line
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-  end
-
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     cli_path = OpenStudio.getOpenStudioCLI
@@ -640,19 +663,16 @@ class EnergyRatingIndexTest < Minitest::Test
   def run_ruleset(design, xml, output_hpxml_path)
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    measures_dir = File.join(File.dirname(__FILE__), "../../measures")
+    measures_dir = File.join(File.dirname(__FILE__), "../..")
 
     measures = {}
 
     # Add 301 measure to workflow
-    measure_subdir = "301EnergyRatingIndexRuleset"
+    measure_subdir = "rulesets/301EnergyRatingIndexRuleset"
     args = {}
     args['calc_type'] = design
-    args['hpxml_path'] = xml
-    args['weather_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../weather"))
-    args['schemas_dir'] = File.absolute_path(File.join(File.dirname(__FILE__), "../../measures/HPXMLtoOpenStudio/hpxml_schemas"))
+    args['hpxml_input_path'] = File.absolute_path(xml)
     args['hpxml_output_path'] = output_hpxml_path
-    args['skip_validation'] = false
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measures
@@ -661,14 +681,14 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(success)
   end
 
-  def run_eri(xml, test_name, expect_error = false, expect_error_msgs = nil)
+  def run_eri(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
     # Run sample files with hourly output turned on to test hourly results against annual results
     hourly = ""
-    if xml.include? "sample_files"
-      hourly = " --hourly-output"
+    if hourly_output
+      hourly = " --hourly ALL"
     end
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -750,9 +770,7 @@ class EnergyRatingIndexTest < Minitest::Test
     return hpxmls, csvs, runtime
   end
 
-  def run_simulation(xml, test_name, hourly_output = false)
-    require_relative '../../measures/HPXMLtoOpenStudio/resources/meta_measure'
-
+  def run_simulation(xml, test_name, request_dse_outputs = false)
     puts "Running #{xml}..."
 
     xml = File.absolute_path(xml)
@@ -763,22 +781,32 @@ class EnergyRatingIndexTest < Minitest::Test
 
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    measures_dir = File.join(File.dirname(__FILE__), "../..")
 
+    measures = {}
+
+    # Add HPXML translator measure to workflow
+    measure_subdir = "hpxml-measures/HPXMLtoOpenStudio"
     args = {}
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), "weather"))
-    args['skip_validation'] = false
     args['epw_output_path'] = File.absolute_path(File.join(rundir, "in.epw"))
     args['osm_output_path'] = File.absolute_path(File.join(rundir, "in.osm"))
     args['hpxml_path'] = xml
+    update_args_hash(measures, measure_subdir, args)
 
-    # Add measure to workflow
-    measures = {}
-    measure_subdir = "HPXMLtoOpenStudio"
+    # Add reporting measure to workflow
+    measure_subdir = "hpxml-measures/SimulationOutputReport"
+    args = {}
+    args['timeseries_frequency'] = 'hourly'
+    args['include_timeseries_zone_temperatures'] = false
+    args['include_timeseries_fuel_consumptions'] = false
+    args['include_timeseries_end_use_consumptions'] = false
+    args['include_timeseries_total_loads'] = false
+    args['include_timeseries_component_loads'] = false
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measure
-    measures_dir = File.join(File.dirname(__FILE__), "../../measures")
-    success = apply_measures(measures_dir, measures, runner, model)
+    success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ModelMeasure")
 
     # Report warnings/errors
     File.open(File.join(rundir, 'run.log'), 'w') do |f|
@@ -791,19 +819,41 @@ class EnergyRatingIndexTest < Minitest::Test
     end
     assert(success)
 
-    if hourly_output
+    if request_dse_outputs
       # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
-      #       based on EnergyPlus hourly outputs.
+      #       based on EnergyPlus hourly outputs for DSE tests.
+      #       When this happens, we can just call run_simulation.rb instead.
 
-      # Thermal zone temperatures:
+      # Thermal zone temperatures
       output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
       output_var.setReportingFrequency('hourly')
       output_var.setKeyValue('*')
+
+      # Fan runtime fraction
+      output_var = OpenStudio::Model::OutputVariable.new('Fan Runtime Fraction', model)
+      output_var.setReportingFrequency('hourly')
+      output_var.setKeyValue('*')
+
+      # Heating season?
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName("Heating:EnergyTransfer")
+      output_meter.setReportingFrequency('hourly')
+
+      # Cooling season?
+      output_meter = OpenStudio::Model::OutputMeter.new(model)
+      output_meter.setName("Cooling:EnergyTransfer")
+      output_meter.setReportingFrequency('hourly')
     end
 
-    # Write model to IDF
+    # Translate model to IDF
     forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
+    forward_translator.setExcludeLCCObjects(true)
     model_idf = forward_translator.translateModel(model)
+
+    # Apply reporting measure output requests
+    apply_energyplus_output_requests(measures_dir, measures, runner, model, model_idf)
+
+    # Write IDF
     File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
 
     # Run EnergyPlus
@@ -812,55 +862,28 @@ class EnergyRatingIndexTest < Minitest::Test
     start_time = Time.now
     system(command, :err => File::NULL)
     sim_time = (Time.now - start_time).round(1)
-    puts "Completed #{File.basename(args['hpxml_path'])} simulation in #{sim_time}s."
+    puts "Completed #{File.basename(xml)} simulation in #{sim_time}s."
 
     sql_path = File.join(rundir, "eplusout.sql")
     assert(File.exists?(sql_path))
 
-    if hourly_output
-      # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
-      #       based on EnergyPlus hourly outputs.
-
-      sqlFile = OpenStudio::SqlFile.new(sql_path, false)
-      design_hourly_output = []
-
-      # Get zone names (excluding duct zone/return plenum)
-      zone_names = []
-      query = "SELECT KeyValue FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature'"
-      sqlFile.execAndReturnVectorOfString(query).get.each do |zone_name|
-        query = "SELECT FloorArea FROM Zones WHERE ZoneName='#{zone_name}'"
-        floor_area = sqlFile.execAndReturnFirstDouble(query).get
-        next unless floor_area > 1.0
-
-        zone_names << zone_name
+    # Apply reporting measures
+    runner.setLastEnergyPlusSqlFilePath(sql_path)
+    success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ReportingMeasure")
+    File.open(File.join(rundir, 'run.log'), 'a') do |f|
+      runner.result.stepWarnings.each do |s|
+        f << "Warning: #{s}\n"
       end
-      zone_names.sort!
-
-      # Header
-      design_hourly_output = [["Hour"]]
-      zone_names.each do |zone_name|
-        design_hourly_output[0] << "#{zone_name.split.map(&:capitalize).join(' ')} Temperature [F]"
+      runner.result.stepErrors.each do |s|
+        f << "Error: #{s}\n"
       end
-      for i in 1..8760
-        design_hourly_output << [i]
-      end
-
-      # Space temperatures
-      zone_names.each do |zone_name|
-        query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
-        temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
-        fail "Unexpected result" if temperatures.size != 8760
-
-        temperatures.each_with_index do |temperature, i|
-          design_hourly_output[i + 1] << temperature.round(2)
-        end
-      end
-
-      out_csv = File.join(rundir, "hourly.csv")
-      CSV.open(out_csv, "wb") { |csv| design_hourly_output.to_a.each { |elem| csv << elem } }
     end
+    assert(success)
 
-    return sql_path, sim_time
+    csv_path = File.join(rundir, "results_annual.csv")
+    assert(File.exists?(csv_path))
+
+    return sql_path, csv_path, sim_time
   end
 
   def _test_reul(all_results, files_include, result_name)
@@ -881,51 +904,30 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
-  def _get_simulation_load_results(sql_path)
-    # Obtain heating/cooling loads
-    sqlFile = OpenStudio::SqlFile.new(sql_path, false)
+  def _get_simulation_load_results(csv_path)
+    results = _get_csv_results(csv_path)
+    htg_load = results["Load: Heating (MBtu)"].round(2)
+    clg_load = results["Load: Cooling (MBtu)"].round(2)
 
-    # Space Heating Load
-    query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Heating:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-    htg_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
+    assert_operator(htg_load, :>, 0)
+    assert_operator(clg_load, :>, 0)
 
-    # Space Cooling Load
-    query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnergyMeters' AND TableName='Annual and Peak Values - Other' AND RowName='Cooling:EnergyTransfer' AND ColumnName='Annual Value' AND Units='GJ'"
-    clg_load = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "MBtu")
-
-    sqlFile.close
-
-    return htg_load.round(2), clg_load.round(2)
+    return htg_load, clg_load
   end
 
-  def _get_simulation_hvac_energy_results(sql_path, is_heat, is_electric_heat)
-    # Obtain heating/cooling energy values
-    sqlFile = OpenStudio::SqlFile.new(sql_path, false)
-
+  def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
+    results = _get_csv_results(csv_path)
     if not is_heat
-      # Cool
-      query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Cooling' AND ColumnName='Electricity' AND Units='GJ'"
-      hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
-
-      # Cool Fan
-      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%#{Constants.ObjectNameFanPumpDisaggregate(true)}' AND VariableUnits='J')"
-      hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+      hvac = UnitConversions.convert(results["Electricity: Cooling (MBtu)"], "MBtu", "kwh").round(2)
+      hvac_fan = UnitConversions.convert(results["Electricity: Cooling Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
     else
-      # Heat
-      if not is_electric_heat
-        query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Heating' AND ColumnName='Natural Gas' AND Units='GJ'"
-        hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "therm")
+      if is_electric_heat
+        hvac = UnitConversions.convert(results["Electricity: Heating (MBtu)"], "MBtu", "kwh").round(2)
       else
-        query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='AnnualBuildingUtilityPerformanceSummary' AND TableName='End Uses' AND RowName='Heating' AND ColumnName='Electricity' AND Units='GJ'"
-        hvac = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+        hvac = UnitConversions.convert(results["Natural Gas: Heating (MBtu)"], "MBtu", "therm").round(2)
       end
-
-      # Heat Fan
-      query = "SELECT SUM(VariableValue)/1000000000 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex IN (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE KeyValue='EMS' AND VariableName LIKE '%#{Constants.ObjectNameFanPumpDisaggregate(false)}' AND VariableUnits='J')"
-      hvac_fan = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, "GJ", "kWh")
+      hvac_fan = UnitConversions.convert(results["Electricity: Heating Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
     end
-
-    sqlFile.close
 
     assert_operator(hvac, :>, 0)
     assert_operator(hvac_fan, :>, 0)
@@ -933,9 +935,112 @@ class EnergyRatingIndexTest < Minitest::Test
     return hvac.round(2), hvac_fan.round(2)
   end
 
+  def _calc_dse(xml, sql_path)
+    xml = File.basename(xml)
+
+    if ["HVAC3a.xml", "HVAC3e.xml"].include? xml
+      return nil
+    end
+
+    if ["HVAC3b.xml", "HVAC3c.xml", "HVAC3d.xml"].include? xml
+      is_heating = true
+    elsif ["HVAC3f.xml", "HVAC3g.xml", "HVAC3h.xml"].include? xml
+      is_cooling = true
+    else
+      fail "Unexpected DSE test file: #{xml}"
+    end
+
+    # Read hourly outputs
+    sqlFile = OpenStudio::SqlFile.new(sql_path, false)
+    if is_heating
+      zone_name = 'basement - unconditioned'.upcase
+      mode = "Heating"
+    elsif is_cooling
+      zone_name = 'attic - vented'.upcase
+      mode = "Cooling"
+    end
+    query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
+    query = "SELECT VariableValue FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='#{mode}:EnergyTransfer' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    loads = sqlFile.execAndReturnVectorOfDouble(query).get
+    query = "SELECT VariableValue FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Fan Runtime Fraction' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
+    rtfs = sqlFile.execAndReturnVectorOfDouble(query).get
+    sqlFile.close
+
+    # Calculate seasonal average duct zone temperature
+    sum_seasonal_temps_x_rtfs = 0.0
+    sum_rtfs = 0.0
+    for i in 1..8760
+      next unless loads[i - 1] > 0
+
+      sum_seasonal_temps_x_rtfs += (temperatures[i - 1] * rtfs[i - 1])
+      sum_rtfs += rtfs[i - 1]
+    end
+    seasonal_temp = sum_seasonal_temps_x_rtfs / sum_rtfs
+
+    # Calculate DSE
+    air_dens = 0.075
+    air_cp = 0.24
+
+    if is_heating
+      dse_Qs = { "HVAC3b.xml" => 0.0, "HVAC3c.xml" => 0.0, "HVAC3d.xml" => 125.0 }[xml]
+      dse_Qr = dse_Qs
+      capacity = { "HVAC3b.xml" => 56000.0, "HVAC3c.xml" => 49000.0, "HVAC3d.xml" => 61000.0 }[xml]
+      cfm = 30.0 * capacity / 1000.0
+      dse_Tamb_s = seasonal_temp
+      dse_Tamb_r = dse_Tamb_s
+      dse_As = 308.0
+      dse_Ar = 77.0
+      t_setpoint = 68.0
+      dse_Fregain_s = 0.1
+      dse_Fregain_r = dse_Fregain_s
+      supply_r = { "HVAC3b.xml" => 1.5, "HVAC3c.xml" => 7.0, "HVAC3d.xml" => 7.0 }[xml]
+      return_r = supply_r
+
+      de = HVACSizing.calc_delivery_effectiveness_heating(dse_Qs, dse_Qr, cfm, capacity, dse_Tamb_s, dse_Tamb_r, dse_As, dse_Ar, t_setpoint, dse_Fregain_s, dse_Fregain_r, supply_r, return_r, air_dens, air_cp)
+
+      f_load_s = 0.999
+      f_equip_s = 1.0
+      f_cycloss = 0.02
+    elsif is_cooling
+      dse_Qs = { "HVAC3f.xml" => 0.0, "HVAC3g.xml" => 0.0, "HVAC3h.xml" => 125.0 }[xml]
+      dse_Qr = dse_Qs
+      capacity = { "HVAC3f.xml" => 49900.0, "HVAC3g.xml" => 42200.0, "HVAC3h.xml" => 55000.0 }[xml]
+      load_total = capacity
+      cfm = 30.0 * capacity / 1000.0
+      dse_Tamb_s = seasonal_temp
+      dse_Tamb_r = dse_Tamb_s
+      dse_As = 308.0
+      dse_Ar = 77.0
+      t_setpoint = 78.0
+      dse_Fregain_s = 0.1
+      dse_Fregain_r = dse_Fregain_s
+      supply_r = { "HVAC3f.xml" => 1.5, "HVAC3g.xml" => 7.0, "HVAC3h.xml" => 7.0 }[xml]
+      return_r = supply_r
+      lat = 55.0
+      dse_h_r = 30.9
+      h_in = 25.0
+
+      de = HVACSizing.calc_delivery_effectiveness_cooling(dse_Qs, dse_Qr, lat, cfm, capacity, dse_Tamb_s, dse_Tamb_r, dse_As, dse_Ar, t_setpoint, dse_Fregain_s, dse_Fregain_r, load_total, dse_h_r, supply_r, return_r, air_dens, air_cp, h_in)[0]
+
+      f_load_s = 0.999
+      f_equip_s = 0.965315315
+      f_cycloss = 0.02
+    end
+
+    dse = de * f_equip_s * f_load_s * (1.0 - f_cycloss)
+
+    # Calculate new test criteria based on this DSE
+    percent_avg = ((1.0 - 1.0 / dse).abs * 100.0).round(1)
+    percent_min = percent_avg - 5.0
+    percent_max = percent_avg + 5.0
+
+    return dse.round(3), seasonal_temp.round(1), percent_min.round(1), percent_max.round(1)
+  end
+
   def _test_schema_validation(xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", "measures", "HPXMLtoOpenStudio", "hpxml_schemas"))
+    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", "hpxml-measures", "HPXMLtoOpenStudio", "resources"))
     hpxml_doc = REXML::Document.new(File.read(xml))
     errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), nil)
     if errors.size > 0
@@ -1527,7 +1632,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: CookingRange
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange") do |appl|
-      cook_fuel_type = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cook_fuel_type = XMLHelper.get_value(appl, "FuelType")
       cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
       oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
       cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
@@ -1567,7 +1672,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: ClothesDryer
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
-      cd_fuel = to_beopt_fuel(XMLHelper.get_value(appl, "FuelType"))
+      cd_fuel = XMLHelper.get_value(appl, "FuelType")
       cd_ef = XMLHelper.get_value(appl, "EnergyFactor")
       if cd_ef.nil?
         cd_cef = Float(XMLHelper.get_value(appl, "CombinedEnergyFactor"))
@@ -1865,47 +1970,40 @@ class EnergyRatingIndexTest < Minitest::Test
     # assert_operator(percent_change, :<=, percent_max)
   end
 
-  def _check_dse_test_results(xml, results, base_results)
-    percent_min = nil
-    percent_max = nil
-
+  def _check_dse_test_results(xml, results)
     # Table 4.5.3(2): Heating Energy DSE Comparison Test Acceptance Criteria
-    if xml == 'HVAC3b.xml'
-      percent_min = 21.4
-      percent_max = 31.4
-    elsif xml == 'HVAC3c.xml'
-      percent_min = 2.5
-      percent_max = 12.5
-    elsif xml == 'HVAC3d.xml'
-      percent_min = 15.0
-      percent_max = 25.0
-    end
+    # if xml == 'HVAC3b.xml'
+    #  percent_min = 21.4
+    #  percent_max = 31.4
+    # elsif xml == 'HVAC3c.xml'
+    #  percent_min = 2.5
+    #  percent_max = 12.5
+    # elsif xml == 'HVAC3d.xml'
+    #  percent_min = 15.0
+    #  percent_max = 25.0
+    # end
 
     # Table 4.5.4(2): Cooling Energy DSE Comparison Test Acceptance Criteria
-    if xml == 'HVAC3f.xml'
-      percent_min = 26.2
-      percent_max = 36.2
-    elsif xml == 'HVAC3g.xml'
-      percent_min = 6.5
-      percent_max = 16.5
-    elsif xml == 'HVAC3h.xml'
-      percent_min = 21.1
-      percent_max = 31.1
-    end
+    # if xml == 'HVAC3f.xml'
+    #  percent_min = 26.2
+    #  percent_max = 36.2
+    # elsif xml == 'HVAC3g.xml'
+    #  percent_min = 6.5
+    #  percent_max = 16.5
+    # elsif xml == 'HVAC3h.xml'
+    #  percent_min = 21.1
+    #  percent_max = 31.1
+    # end
 
-    if ['HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? xml
-      curr_val = results[0] / 10.0 + results[1] / 293.0
-      base_val = base_results[0] / 10.0 + base_results[1] / 293.0
-    else
-      curr_val = results[0] + results[1]
-      base_val = base_results[0] + base_results[1]
-    end
+    # Test criteria calculated using EnergyPlus seasonal duct zone temperatures
+    # via ASHRAE 152 spreadsheet calculations.
+    percent_min = results[4]
+    percent_max = results[5]
 
-    percent_change = (curr_val - base_val) / base_val * 100.0
+    percent_change = results[6]
 
-    # FIXME: Test checks currently disabled
-    # assert_operator(percent_change, :>=, percent_min)
-    # assert_operator(percent_change, :<=, percent_max)
+    assert_operator(percent_change, :>, percent_min)
+    assert_operator(percent_change, :<, percent_max)
   end
 
   def _get_hot_water(results_csv)
@@ -2072,7 +2170,7 @@ class EnergyRatingIndexTest < Minitest::Test
     unless orig_mech_vent_values.nil?
       ventilation_fan = XMLHelper.add_element(extension, "OverrideVentilationFan")
       sys_id = XMLHelper.add_element(ventilation_fan, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", orig_mech_vent_values[:id])
+      XMLHelper.add_attribute(sys_id, "id", "Override#{orig_mech_vent_values[:id]}")
       XMLHelper.add_element(ventilation_fan, "FanType", orig_mech_vent_values[:fan_type])
       XMLHelper.add_element(ventilation_fan, "TestedFlowRate", Float(orig_mech_vent_values[:tested_flow_rate]))
       XMLHelper.add_element(ventilation_fan, "HoursInOperation", Float(orig_mech_vent_values[:hours_in_operation]))
@@ -2091,7 +2189,7 @@ class EnergyRatingIndexTest < Minitest::Test
     extension = XMLHelper.add_element(ref_infil, "extension")
     air_infiltration_measurement = XMLHelper.add_element(extension, "OverrideAirInfiltrationMeasurement")
     sys_id = XMLHelper.add_element(air_infiltration_measurement, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", orig_infil_values[:id])
+    XMLHelper.add_attribute(sys_id, "id", "Override#{orig_infil_values[:id]}")
     XMLHelper.add_element(air_infiltration_measurement, "HousePressure", Float(orig_infil_values[:house_pressure])) unless orig_infil_values[:house_pressure].nil?
     if not orig_infil_values[:unit_of_measure].nil? and not orig_infil_values[:air_leakage].nil?
       building_air_leakage = XMLHelper.add_element(air_infiltration_measurement, "BuildingAirLeakage")
