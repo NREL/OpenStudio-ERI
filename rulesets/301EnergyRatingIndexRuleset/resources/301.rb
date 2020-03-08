@@ -21,7 +21,7 @@ class EnergyRatingIndex301Ruleset
 
       @is_sfa_or_mf = true
     end
-
+    
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml)
@@ -1304,9 +1304,9 @@ class EnergyRatingIndex301Ruleset
     orig_mech_vent_fan = nil
 
     # Check for eRatio workaround first
-    eratio_fan = orig_hpxml.doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension"]
+    eratio_fan = orig_hpxml.doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan"]
     if not eratio_fan.nil?
-      orig_mech_vent_fan = HPXML::VentilationFan.new(hpxml: eratio_fan)
+      orig_mech_vent_fan = HPXML::VentilationFan.new(eratio_fan)
     else
       orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
         next unless orig_ventilation_fan.used_for_whole_building_ventilation
@@ -1899,7 +1899,7 @@ class EnergyRatingIndex301Ruleset
     # Check for eRatio workaround first
     if use_eratio_override
       orig_hpxml.doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |infil_measurement|
-        air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(hpxml: infil_measurement)
+        air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(infil_measurement)
       end
     end
     if air_infiltration_measurements.empty?
@@ -2199,15 +2199,21 @@ class EnergyRatingIndex301Ruleset
 
   def self.delete_wall_subsurfaces(orig_hpxml, surface_id)
     orig_hpxml.windows.each do |orig_window|
+      next unless orig_window.wall_idref == surface_id 
+      
       orig_hpxml.windows.delete(orig_window)
     end
     orig_hpxml.doors.each do |orig_door|
+      next unless orig_door.wall_idref == surface_id
+      
       orig_hpxml.doors.delete(orig_door)
     end
   end
 
   def self.delete_roof_subsurfaces(orig_hpxml, surface_id)
     orig_hpxml.skylights.each do |orig_skylight|
+      next unless orig_skylight.roof_idref == surface_id
+      
       orig_hpxml.skylights.delete(orig_skylight)
     end
   end

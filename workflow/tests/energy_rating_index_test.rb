@@ -2158,45 +2158,44 @@ class EnergyRatingIndexTest < Minitest::Test
     # FUTURE: Remove this code (and workaround in 301.rb) if HERS tests are fixed.
 
     ref_hpxml_doc = REXML::Document.new(File.read(ref_xml))
-    orig_hpxml_doc = REXML::Document.new(File.read(orig_xml))
+    orig_hpxml = HPXML.new(hpxml_path: orig_xml)
 
     # Retrieve mech vent values from orig
-    orig_mech_vent = orig_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    orig_mech_vent_values = HPXML.get_ventilation_fan_values(ventilation_fan: orig_mech_vent)
-
-    # Store mech vent values in extension element
-    ref_mech_vent = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    extension = XMLHelper.add_element(ref_mech_vent, "extension")
-    unless orig_mech_vent_values.nil?
+    orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
+      next unless orig_ventilation_fan.used_for_whole_building_ventilation
+      
+      # Store mech vent values in extension element
+      ref_mech_vent = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+      extension = XMLHelper.add_element(ref_mech_vent, "extension")
+      
       ventilation_fan = XMLHelper.add_element(extension, "OverrideVentilationFan")
       sys_id = XMLHelper.add_element(ventilation_fan, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "Override#{orig_mech_vent_values[:id]}")
-      XMLHelper.add_element(ventilation_fan, "FanType", orig_mech_vent_values[:fan_type])
-      XMLHelper.add_element(ventilation_fan, "TestedFlowRate", Float(orig_mech_vent_values[:tested_flow_rate]))
-      XMLHelper.add_element(ventilation_fan, "HoursInOperation", Float(orig_mech_vent_values[:hours_in_operation]))
+      XMLHelper.add_attribute(sys_id, "id", "Override#{orig_ventilation_fan.id}")
+      XMLHelper.add_element(ventilation_fan, "FanType", orig_ventilation_fan.fan_type)
+      XMLHelper.add_element(ventilation_fan, "TestedFlowRate", Float(orig_ventilation_fan.tested_flow_rate))
+      XMLHelper.add_element(ventilation_fan, "HoursInOperation", Float(orig_ventilation_fan.hours_in_operation))
       XMLHelper.add_element(ventilation_fan, "UsedForWholeBuildingVentilation", true)
-      XMLHelper.add_element(ventilation_fan, "TotalRecoveryEfficiency", Float(orig_mech_vent_values[:total_recovery_efficiency])) unless orig_mech_vent_values[:total_recovery_efficiency].nil?
-      XMLHelper.add_element(ventilation_fan, "SensibleRecoveryEfficiency", Float(orig_mech_vent_values[:sensible_recovery_efficiency])) unless orig_mech_vent_values[:sensible_recovery_efficiency].nil?
-      XMLHelper.add_element(ventilation_fan, "FanPower", Float(orig_mech_vent_values[:fan_power]))
+      XMLHelper.add_element(ventilation_fan, "TotalRecoveryEfficiency", Float(orig_ventilation_fan.total_recovery_efficiency)) unless orig_ventilation_fan.total_recovery_efficiency.nil?
+      XMLHelper.add_element(ventilation_fan, "SensibleRecoveryEfficiency", Float(orig_ventilation_fan.sensible_recovery_efficiency)) unless orig_ventilation_fan.sensible_recovery_efficiency.nil?
+      XMLHelper.add_element(ventilation_fan, "FanPower", Float(orig_ventilation_fan.fan_power))
     end
 
     # Retrieve infiltration values from orig
-    orig_infil = orig_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement"]
-    orig_infil_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: orig_infil)
-
-    # Store infiltration values in extension element
-    ref_infil = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement"]
-    extension = XMLHelper.add_element(ref_infil, "extension")
-    air_infiltration_measurement = XMLHelper.add_element(extension, "OverrideAirInfiltrationMeasurement")
-    sys_id = XMLHelper.add_element(air_infiltration_measurement, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Override#{orig_infil_values[:id]}")
-    XMLHelper.add_element(air_infiltration_measurement, "HousePressure", Float(orig_infil_values[:house_pressure])) unless orig_infil_values[:house_pressure].nil?
-    if not orig_infil_values[:unit_of_measure].nil? and not orig_infil_values[:air_leakage].nil?
-      building_air_leakage = XMLHelper.add_element(air_infiltration_measurement, "BuildingAirLeakage")
-      XMLHelper.add_element(building_air_leakage, "UnitofMeasure", orig_infil_values[:unit_of_measure])
-      XMLHelper.add_element(building_air_leakage, "AirLeakage", Float(orig_infil_values[:air_leakage]))
+    orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
+      # Store infiltration values in extension element
+      ref_infil = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement"]
+      extension = XMLHelper.add_element(ref_infil, "extension")
+      air_infiltration_measurement = XMLHelper.add_element(extension, "OverrideAirInfiltrationMeasurement")
+      sys_id = XMLHelper.add_element(air_infiltration_measurement, "SystemIdentifier")
+      XMLHelper.add_attribute(sys_id, "id", "Override#{orig_infil_measurement.id}")
+      XMLHelper.add_element(air_infiltration_measurement, "HousePressure", Float(orig_infil_measurement.house_pressure)) unless orig_infil_measurement.house_pressure.nil?
+      if not orig_infil_measurement.unit_of_measure.nil? and not orig_infil_measurement.air_leakage.nil?
+        building_air_leakage = XMLHelper.add_element(air_infiltration_measurement, "BuildingAirLeakage")
+        XMLHelper.add_element(building_air_leakage, "UnitofMeasure", orig_infil_measurement.unit_of_measure)
+        XMLHelper.add_element(building_air_leakage, "AirLeakage", Float(orig_infil_measurement.air_leakage))
+      end
+      XMLHelper.add_element(air_infiltration_measurement, "InfiltrationVolume", Float(orig_infil_measurement.infiltration_volume)) unless orig_infil_measurement.infiltration_volume.nil?
     end
-    XMLHelper.add_element(air_infiltration_measurement, "InfiltrationVolume", Float(orig_infil_values[:infiltration_volume])) unless orig_infil_values[:infiltration_volume].nil?
 
     # Update saved file
     XMLHelper.write_file(ref_hpxml_doc, ref_xml)
