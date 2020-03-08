@@ -21,7 +21,7 @@ class EnergyRatingIndex301Ruleset
 
       @is_sfa_or_mf = true
     end
-    
+
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml)
@@ -2199,13 +2199,13 @@ class EnergyRatingIndex301Ruleset
 
   def self.delete_wall_subsurfaces(orig_hpxml, surface_id)
     orig_hpxml.windows.each do |orig_window|
-      next unless orig_window.wall_idref == surface_id 
-      
+      next unless orig_window.wall_idref == surface_id
+
       orig_hpxml.windows.delete(orig_window)
     end
     orig_hpxml.doors.each do |orig_door|
       next unless orig_door.wall_idref == surface_id
-      
+
       orig_hpxml.doors.delete(orig_door)
     end
   end
@@ -2213,7 +2213,7 @@ class EnergyRatingIndex301Ruleset
   def self.delete_roof_subsurfaces(orig_hpxml, surface_id)
     orig_hpxml.skylights.each do |orig_skylight|
       next unless orig_skylight.roof_idref == surface_id
-      
+
       orig_hpxml.skylights.delete(orig_skylight)
     end
   end

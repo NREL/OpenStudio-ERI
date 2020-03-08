@@ -2163,11 +2163,11 @@ class EnergyRatingIndexTest < Minitest::Test
     # Retrieve mech vent values from orig
     orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
-      
+
       # Store mech vent values in extension element
       ref_mech_vent = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
       extension = XMLHelper.add_element(ref_mech_vent, "extension")
-      
+
       ventilation_fan = XMLHelper.add_element(extension, "OverrideVentilationFan")
       sys_id = XMLHelper.add_element(ventilation_fan, "SystemIdentifier")
       XMLHelper.add_attribute(sys_id, "id", "Override#{orig_ventilation_fan.id}")
