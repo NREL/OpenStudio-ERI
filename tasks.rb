@@ -250,15 +250,15 @@ def set_hpxml_header(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration w/ all Addenda
-    hpxml.set_header({ :xml_type => "HPXML",
-                                       :xml_generated_by => "Rakefile",
-                                       :transaction => "create",
-                                       :software_program_used => nil,
-                                       :software_program_version => nil,
-                                       :eri_calculation_version => "2014AEG",
-                                       :building_id => "MyBuilding",
-                                       :event_type => "proposed workscope",
-                                       :created_date_and_time => Time.new(2000, 1, 1).strftime("%Y-%m-%dT%H:%M:%S%:z") }) # Hard-code to prevent diffs
+    hpxml.set_header(:xml_type => "HPXML",
+                     :xml_generated_by => "Rakefile",
+                     :transaction => "create",
+                     :software_program_used => nil,
+                     :software_program_version => nil,
+                     :eri_calculation_version => "2014AEG",
+                     :building_id => "MyBuilding",
+                     :event_type => "proposed workscope",
+                     :created_date_and_time => Time.new(2000, 1, 1).strftime("%Y-%m-%dT%H:%M:%S%:z")) # Hard-code to prevent diffs
   elsif hpxml_file.include? 'RESNET_Tests/Other_Hot_Water_PreAddendumA'
     # Pre-Addendum A
     hpxml.header.eri_calculation_version = "2014"
@@ -275,7 +275,7 @@ def set_hpxml_site(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_site({ :fuels => ["electricity", "natural gas"] })
+    hpxml.set_site(:fuels => ["electricity", "natural gas"])
   end
 end
 
@@ -284,9 +284,9 @@ def set_hpxml_building_occupancy(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_building_occupancy({ :number_of_residents => 0 })
+    hpxml.set_building_occupancy(:number_of_residents => 0)
   else
-    hpxml.set_building_occupancy(nil)
+    hpxml.set_building_occupancy()
   end
 end
 
@@ -294,11 +294,11 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
-    hpxml.set_building_construction({ :number_of_conditioned_floors => 1,
-                                                                    :number_of_conditioned_floors_above_grade => 1,
-                                                                    :number_of_bedrooms => 3,
-                                                                    :conditioned_floor_area => 1539,
-                                                                    :conditioned_building_volume => 12312 })
+    hpxml.set_building_construction(:number_of_conditioned_floors => 1,
+                                    :number_of_conditioned_floors_above_grade => 1,
+                                    :number_of_bedrooms => 3,
+                                    :conditioned_floor_area => 1539,
+                                    :conditioned_building_volume => 12312)
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     hpxml.building_construction.number_of_conditioned_floors = 2
@@ -347,41 +347,41 @@ end
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
   if hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AC.xml'
     # Colorado Springs
-    hpxml.set_climate_and_risk_zones({ :iecc2006 => "5B",
-                                                                    :weather_station_id => "WeatherStation",
-                                                                    :weather_station_name => "Colorado Springs, CO",
-                                                                    :weather_station_wmo => "724660" })
+    hpxml.set_climate_and_risk_zones(:iecc2006 => "5B",
+                                     :weather_station_id => "WeatherStation",
+                                     :weather_station_name => "Colorado Springs, CO",
+                                     :weather_station_wmo => "724660")
   elsif hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AL.xml'
     # Las Vegas
-    hpxml.set_climate_and_risk_zones({ :iecc2006 => "3B",
-                                                                    :weather_station_id => "WeatherStation",
-                                                                    :weather_station_name => "Las Vegas, NV",
-                                                                    :weather_station_wmo => "723860" })
+    hpxml.set_climate_and_risk_zones(:iecc2006 => "3B",
+                                     :weather_station_id => "WeatherStation",
+                                     :weather_station_name => "Las Vegas, NV",
+                                     :weather_station_wmo => "723860")
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
     # Baltimore
-    hpxml.set_climate_and_risk_zones({ :iecc2006 => "4A",
-                                                                    :weather_station_id => "WeatherStation",
-                                                                    :weather_station_name => "Baltimore, MD",
-                                                                    :weather_station_wmo => "724060" })
+    hpxml.set_climate_and_risk_zones(:iecc2006 => "4A",
+                                     :weather_station_id => "WeatherStation",
+                                     :weather_station_name => "Baltimore, MD",
+                                     :weather_station_wmo => "724060")
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Dallas
-    hpxml.set_climate_and_risk_zones({ :iecc2006 => "3A",
-                                                                    :weather_station_id => "WeatherStation",
-                                                                    :weather_station_name => "Dallas, TX",
-                                                                    :weather_station_wmo => "722590" })
+    hpxml.set_climate_and_risk_zones(:iecc2006 => "3A",
+                                     :weather_station_id => "WeatherStation",
+                                     :weather_station_name => "Dallas, TX",
+                                     :weather_station_wmo => "722590")
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
-    hpxml.set_climate_and_risk_zones({ :iecc2006 => "1A",
-                                                                    :weather_station_id => "WeatherStation",
-                                                                    :weather_station_name => "Miami, FL",
-                                                                    :weather_station_wmo => "722020" })
+    hpxml.set_climate_and_risk_zones(:iecc2006 => "1A",
+                                     :weather_station_id => "WeatherStation",
+                                     :weather_station_name => "Miami, FL",
+                                     :weather_station_wmo => "722020")
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
-    hpxml.set_climate_and_risk_zones({ :iecc2006 => "7",
-                                                                    :weather_station_id => "WeatherStation",
-                                                                    :weather_station_name => "Duluth, MN",
-                                                                    :weather_station_wmo => "727450" })
+    hpxml.set_climate_and_risk_zones(:iecc2006 => "7",
+                                     :weather_station_id => "WeatherStation",
+                                     :weather_station_name => "Duluth, MN",
+                                     :weather_station_wmo => "727450")
   end
 end
 
@@ -391,20 +391,20 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
       'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add({ :id => "InfiltrationMeasurement",
-                                                                                   :constant_ach_natural => 0.67 })
+    hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
+                                            :constant_ach_natural => 0.67)
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add({ :id => "InfiltrationMeasurement",
-                                                                                   :constant_ach_natural => 0.335 })
+    hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
+                                            :constant_ach_natural => 0.335)
   elsif ['RESNET_Tests/4.1_Standard_140/L110AC.xml',
          'RESNET_Tests/4.1_Standard_140/L110AL.xml',
          'RESNET_Tests/4.1_Standard_140/L200AC.xml',
          'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
     # High Infiltration
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add({ :id => "InfiltrationMeasurement",
-                                                                                   :constant_ach_natural => 1.5 })
+    hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
+                                            :constant_ach_natural => 1.5)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
@@ -414,22 +414,22 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add({ :id => "InfiltrationMeasurement",
-                                                                                   :unit_of_measure => "ACHnatural",
-                                                                                   :air_leakage => 0.67 })
+    hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
+                                            :unit_of_measure => "ACHnatural",
+                                            :air_leakage => 0.67)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add({ :id => "InfiltrationMeasurement",
-                                                                                   :unit_of_measure => "ACHnatural",
-                                                                                   :air_leakage => 0.335 })
+    hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
+                                            :unit_of_measure => "ACHnatural",
+                                            :air_leakage => 0.335)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 3 ACH50
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add({ :id => "InfiltrationMeasurement",
-                                                                                   :house_pressure => 50,
-                                                                                   :unit_of_measure => "ACH",
-                                                                                   :air_leakage => 3 })
+    hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
+                                            :house_pressure => 50,
+                                            :unit_of_measure => "ACH",
+                                            :air_leakage => 3)
   end
   hpxml.air_infiltration_measurements[0].infiltration_volume = hpxml.building_construction.conditioned_building_volume
 end
@@ -440,17 +440,17 @@ def set_hpxml_attics(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     hpxml.attics.clear
-    hpxml.attics.add({ :id => "VentedAttic",
-                                       :attic_type => "VentedAttic",
-                                       :vented_attic_constant_ach => 2.4,
-                                       :vented_attic_sla => nil })
+    hpxml.attics.add(:id => "VentedAttic",
+                     :attic_type => "VentedAttic",
+                     :vented_attic_constant_ach => 2.4,
+                     :vented_attic_sla => nil)
   else
     # Reference home
     hpxml.attics.clear
-    hpxml.attics.add({ :id => "VentedAttic",
-                                       :attic_type => "VentedAttic",
-                                       :vented_attic_constant_ach => nil,
-                                       :vented_attic_sla => (1.0 / 300.0).round(5) })
+    hpxml.attics.add(:id => "VentedAttic",
+                     :attic_type => "VentedAttic",
+                     :vented_attic_constant_ach => nil,
+                     :vented_attic_sla => (1.0 / 300.0).round(5))
   end
 end
 
@@ -458,17 +458,17 @@ def set_hpxml_foundations(hpxml_file, hpxml)
   if hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed'
     # Vented crawlspace
     hpxml.foundations.clear
-    hpxml.foundations.add({ :id => "VentedCrawlspace",
-                                                 :foundation_type => "VentedCrawlspace",
-                                                 :vented_crawlspace_sla => (1.0 / 150.0).round(5) })
+    hpxml.foundations.add(:id => "VentedCrawlspace",
+                          :foundation_type => "VentedCrawlspace",
+                          :vented_crawlspace_sla => (1.0 / 150.0).round(5))
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
          'RESNET_Tests/4.5_DSE/HVAC3b.xml',
          'RESNET_Tests/4.5_DSE/HVAC3c.xml',
          'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
     hpxml.foundations.clear
-    hpxml.foundations.add({ :id => "UnconditionedBasement",
-                                                 :foundation_type => "UnconditionedBasement",
-                                                 :unconditioned_basement_thermal_boundary => "frame floor" })
+    hpxml.foundations.add(:id => "UnconditionedBasement",
+                          :foundation_type => "UnconditionedBasement",
+                          :unconditioned_basement_thermal_boundary => "frame floor")
   else
     hpxml.foundations.clear
   end
@@ -478,24 +478,24 @@ def set_hpxml_roofs(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
-    hpxml.roofs.add({ :id => "AtticRoofNorth",
-                                     :interior_adjacent_to => "attic - vented",
-                                     :area => 811.1,
-                                     :azimuth => 0,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :pitch => 4,
-                                     :radiant_barrier => false,
-                                     :insulation_assembly_r_value => 1.99 })
-    hpxml.roofs.add({ :id => "AtticRoofSouth",
-                                     :interior_adjacent_to => "attic - vented",
-                                     :area => 811.1,
-                                     :azimuth => 180,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :pitch => 4,
-                                     :radiant_barrier => false,
-                                     :insulation_assembly_r_value => 1.99 })
+    hpxml.roofs.add(:id => "AtticRoofNorth",
+                    :interior_adjacent_to => "attic - vented",
+                    :area => 811.1,
+                    :azimuth => 0,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :pitch => 4,
+                    :radiant_barrier => false,
+                    :insulation_assembly_r_value => 1.99)
+    hpxml.roofs.add(:id => "AtticRoofSouth",
+                    :interior_adjacent_to => "attic - vented",
+                    :area => 811.1,
+                    :azimuth => 180,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :pitch => 4,
+                    :radiant_barrier => false,
+                    :insulation_assembly_r_value => 1.99)
   elsif ['RESNET_Tests/4.1_Standard_140/L202AC.xml',
          'RESNET_Tests/4.1_Standard_140/L202AL.xml'].include? hpxml_file
     # Low Exterior Solar Absorptance
@@ -522,38 +522,38 @@ end
 def set_hpxml_rim_joists(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
-    hpxml.rim_joists.add({ :id => "RimJoistNorth",
-                                              :exterior_adjacent_to => "outside",
-                                              :interior_adjacent_to => "basement - conditioned",
-                                              :area => 42.75,
-                                              :azimuth => 0,
-                                              :solar_absorptance => 0.6,
-                                              :emittance => 0.9,
-                                              :insulation_assembly_r_value => 5.01 })
-    hpxml.rim_joists.add({ :id => "RimJoistEast",
-                                              :exterior_adjacent_to => "outside",
-                                              :interior_adjacent_to => "basement - conditioned",
-                                              :area => 20.25,
-                                              :azimuth => 90,
-                                              :solar_absorptance => 0.6,
-                                              :emittance => 0.9,
-                                              :insulation_assembly_r_value => 5.01 })
-    hpxml.rim_joists.add({ :id => "RimJoistSouth",
-                                              :exterior_adjacent_to => "outside",
-                                              :interior_adjacent_to => "basement - conditioned",
-                                              :area => 42.75,
-                                              :azimuth => 180,
-                                              :solar_absorptance => 0.6,
-                                              :emittance => 0.9,
-                                              :insulation_assembly_r_value => 5.01 })
-    hpxml.rim_joists.add({ :id => "RimJoistWest",
-                                              :exterior_adjacent_to => "outside",
-                                              :interior_adjacent_to => "basement - conditioned",
-                                              :area => 20.25,
-                                              :azimuth => 270,
-                                              :solar_absorptance => 0.6,
-                                              :emittance => 0.9,
-                                              :insulation_assembly_r_value => 5.01 })
+    hpxml.rim_joists.add(:id => "RimJoistNorth",
+                         :exterior_adjacent_to => "outside",
+                         :interior_adjacent_to => "basement - conditioned",
+                         :area => 42.75,
+                         :azimuth => 0,
+                         :solar_absorptance => 0.6,
+                         :emittance => 0.9,
+                         :insulation_assembly_r_value => 5.01)
+    hpxml.rim_joists.add(:id => "RimJoistEast",
+                         :exterior_adjacent_to => "outside",
+                         :interior_adjacent_to => "basement - conditioned",
+                         :area => 20.25,
+                         :azimuth => 90,
+                         :solar_absorptance => 0.6,
+                         :emittance => 0.9,
+                         :insulation_assembly_r_value => 5.01)
+    hpxml.rim_joists.add(:id => "RimJoistSouth",
+                         :exterior_adjacent_to => "outside",
+                         :interior_adjacent_to => "basement - conditioned",
+                         :area => 42.75,
+                         :azimuth => 180,
+                         :solar_absorptance => 0.6,
+                         :emittance => 0.9,
+                         :insulation_assembly_r_value => 5.01)
+    hpxml.rim_joists.add(:id => "RimJoistWest",
+                         :exterior_adjacent_to => "outside",
+                         :interior_adjacent_to => "basement - conditioned",
+                         :area => 20.25,
+                         :azimuth => 270,
+                         :solar_absorptance => 0.6,
+                         :emittance => 0.9,
+                         :insulation_assembly_r_value => 5.01)
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
     # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
     for i in 0..hpxml.rim_joists.size - 1
@@ -570,60 +570,60 @@ def set_hpxml_walls(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
-    hpxml.walls.add({ :id => "WallNorth",
-                                     :exterior_adjacent_to => "outside",
-                                     :interior_adjacent_to => "living space",
-                                     :wall_type => "WoodStud",
-                                     :area => 456,
-                                     :azimuth => 0,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :insulation_assembly_r_value => 11.76 })
-    hpxml.walls.add({ :id => "WallEast",
-                                     :exterior_adjacent_to => "outside",
-                                     :interior_adjacent_to => "living space",
-                                     :wall_type => "WoodStud",
-                                     :area => 216,
-                                     :azimuth => 90,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :insulation_assembly_r_value => 11.76 })
-    hpxml.walls.add({ :id => "WallSouth",
-                                     :exterior_adjacent_to => "outside",
-                                     :interior_adjacent_to => "living space",
-                                     :wall_type => "WoodStud",
-                                     :area => 456,
-                                     :azimuth => 180,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :insulation_assembly_r_value => 11.76 })
-    hpxml.walls.add({ :id => "WallWest",
-                                     :exterior_adjacent_to => "outside",
-                                     :interior_adjacent_to => "living space",
-                                     :wall_type => "WoodStud",
-                                     :area => 216,
-                                     :azimuth => 270,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :insulation_assembly_r_value => 11.76 })
-    hpxml.walls.add({ :id => "WallAtticGableEast",
-                                     :exterior_adjacent_to => "outside",
-                                     :interior_adjacent_to => "attic - vented",
-                                     :wall_type => "WoodStud",
-                                     :area => 60.75,
-                                     :azimuth => 90,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :insulation_assembly_r_value => 2.15 })
-    hpxml.walls.add({ :id => "WallAtticGableWest",
-                                     :exterior_adjacent_to => "outside",
-                                     :interior_adjacent_to => "attic - vented",
-                                     :wall_type => "WoodStud",
-                                     :area => 60.75,
-                                     :azimuth => 270,
-                                     :solar_absorptance => 0.6,
-                                     :emittance => 0.9,
-                                     :insulation_assembly_r_value => 2.15 })
+    hpxml.walls.add(:id => "WallNorth",
+                    :exterior_adjacent_to => "outside",
+                    :interior_adjacent_to => "living space",
+                    :wall_type => "WoodStud",
+                    :area => 456,
+                    :azimuth => 0,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :insulation_assembly_r_value => 11.76)
+    hpxml.walls.add(:id => "WallEast",
+                    :exterior_adjacent_to => "outside",
+                    :interior_adjacent_to => "living space",
+                    :wall_type => "WoodStud",
+                    :area => 216,
+                    :azimuth => 90,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :insulation_assembly_r_value => 11.76)
+    hpxml.walls.add(:id => "WallSouth",
+                    :exterior_adjacent_to => "outside",
+                    :interior_adjacent_to => "living space",
+                    :wall_type => "WoodStud",
+                    :area => 456,
+                    :azimuth => 180,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :insulation_assembly_r_value => 11.76)
+    hpxml.walls.add(:id => "WallWest",
+                    :exterior_adjacent_to => "outside",
+                    :interior_adjacent_to => "living space",
+                    :wall_type => "WoodStud",
+                    :area => 216,
+                    :azimuth => 270,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :insulation_assembly_r_value => 11.76)
+    hpxml.walls.add(:id => "WallAtticGableEast",
+                    :exterior_adjacent_to => "outside",
+                    :interior_adjacent_to => "attic - vented",
+                    :wall_type => "WoodStud",
+                    :area => 60.75,
+                    :azimuth => 90,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :insulation_assembly_r_value => 2.15)
+    hpxml.walls.add(:id => "WallAtticGableWest",
+                    :exterior_adjacent_to => "outside",
+                    :interior_adjacent_to => "attic - vented",
+                    :wall_type => "WoodStud",
+                    :area => 60.75,
+                    :azimuth => 270,
+                    :solar_absorptance => 0.6,
+                    :emittance => 0.9,
+                    :insulation_assembly_r_value => 2.15)
   elsif ['RESNET_Tests/4.1_Standard_140/L120AC.xml',
          'RESNET_Tests/4.1_Standard_140/L120AL.xml'].include? hpxml_file
     # Well-Insulated Walls
@@ -658,62 +658,62 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
     hpxml.foundation_walls.clear
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
-    hpxml.foundation_walls.add({ :id => "FoundationWallNorth",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "basement - conditioned",
-                                                          :height => 7.25,
-                                                          :area => 413.25,
-                                                          :azimuth => 0,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 6.583,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallEast",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "basement - conditioned",
-                                                          :height => 7.25,
-                                                          :area => 195.75,
-                                                          :azimuth => 90,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 6.583,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallSouth",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "basement - conditioned",
-                                                          :height => 7.25,
-                                                          :area => 413.25,
-                                                          :azimuth => 180,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 6.583,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallWest",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "basement - conditioned",
-                                                          :height => 7.25,
-                                                          :area => 195.75,
-                                                          :azimuth => 270,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 6.583,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
+    hpxml.foundation_walls.add(:id => "FoundationWallNorth",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "basement - conditioned",
+                               :height => 7.25,
+                               :area => 413.25,
+                               :azimuth => 0,
+                               :thickness => 6,
+                               :depth_below_grade => 6.583,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallEast",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "basement - conditioned",
+                               :height => 7.25,
+                               :area => 195.75,
+                               :azimuth => 90,
+                               :thickness => 6,
+                               :depth_below_grade => 6.583,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallSouth",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "basement - conditioned",
+                               :height => 7.25,
+                               :area => 413.25,
+                               :azimuth => 180,
+                               :thickness => 6,
+                               :depth_below_grade => 6.583,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallWest",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "basement - conditioned",
+                               :height => 7.25,
+                               :area => 195.75,
+                               :azimuth => 270,
+                               :thickness => 6,
+                               :depth_below_grade => 6.583,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
   elsif ['RESNET_Tests/4.1_Standard_140/L324XC.xml'].include? hpxml_file
     # Interior Insulation Applied to Uninsulated ASHRAE Conditioned Basement Wall
     for i in 0..hpxml.foundation_walls.size - 1
@@ -723,121 +723,121 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
     end
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Un-vented crawlspace with R-7 crawlspace wall insulation
-    hpxml.foundation_walls.add({ :id => "FoundationWallNorth",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - unvented",
-                                                          :height => 4,
-                                                          :area => 228,
-                                                          :azimuth => 0,
-                                                          :thickness => 8,
-                                                          :depth_below_grade => 3,
-                                                          :insulation_interior_r_value => 7,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 4,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallEast",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - unvented",
-                                                          :height => 4,
-                                                          :area => 108,
-                                                          :azimuth => 90,
-                                                          :thickness => 8,
-                                                          :depth_below_grade => 3,
-                                                          :insulation_interior_r_value => 7,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 4,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallSouth",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - unvented",
-                                                          :height => 4,
-                                                          :area => 228,
-                                                          :azimuth => 180,
-                                                          :thickness => 8,
-                                                          :depth_below_grade => 3,
-                                                          :insulation_interior_r_value => 7,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 4,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallWest",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - unvented",
-                                                          :height => 4,
-                                                          :area => 108,
-                                                          :azimuth => 270,
-                                                          :thickness => 8,
-                                                          :depth_below_grade => 3,
-                                                          :insulation_interior_r_value => 7,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 4,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
+    hpxml.foundation_walls.add(:id => "FoundationWallNorth",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - unvented",
+                               :height => 4,
+                               :area => 228,
+                               :azimuth => 0,
+                               :thickness => 8,
+                               :depth_below_grade => 3,
+                               :insulation_interior_r_value => 7,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 4,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallEast",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - unvented",
+                               :height => 4,
+                               :area => 108,
+                               :azimuth => 90,
+                               :thickness => 8,
+                               :depth_below_grade => 3,
+                               :insulation_interior_r_value => 7,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 4,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallSouth",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - unvented",
+                               :height => 4,
+                               :area => 228,
+                               :azimuth => 180,
+                               :thickness => 8,
+                               :depth_below_grade => 3,
+                               :insulation_interior_r_value => 7,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 4,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallWest",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - unvented",
+                               :height => 4,
+                               :area => 108,
+                               :azimuth => 270,
+                               :thickness => 8,
+                               :depth_below_grade => 3,
+                               :insulation_interior_r_value => 7,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 4,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # 2 ft. high crawlspace above grade
-    hpxml.foundation_walls.add({ :id => "FoundationWallNorth",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - vented",
-                                                          :height => 2,
-                                                          :area => 114,
-                                                          :azimuth => 0,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 0,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallEast",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - vented",
-                                                          :height => 2,
-                                                          :area => 54,
-                                                          :azimuth => 90,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 0,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallSouth",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - vented",
-                                                          :height => 2,
-                                                          :area => 114,
-                                                          :azimuth => 180,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 0,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
-    hpxml.foundation_walls.add({ :id => "FoundationWallWest",
-                                                          :exterior_adjacent_to => "ground",
-                                                          :interior_adjacent_to => "crawlspace - vented",
-                                                          :height => 2,
-                                                          :area => 54,
-                                                          :azimuth => 270,
-                                                          :thickness => 6,
-                                                          :depth_below_grade => 0,
-                                                          :insulation_interior_r_value => 0,
-                                                          :insulation_interior_distance_to_top => 0,
-                                                          :insulation_interior_distance_to_bottom => 0,
-                                                          :insulation_exterior_r_value => 0,
-                                                          :insulation_exterior_distance_to_top => 0,
-                                                          :insulation_exterior_distance_to_bottom => 0 })
+    hpxml.foundation_walls.add(:id => "FoundationWallNorth",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - vented",
+                               :height => 2,
+                               :area => 114,
+                               :azimuth => 0,
+                               :thickness => 6,
+                               :depth_below_grade => 0,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallEast",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - vented",
+                               :height => 2,
+                               :area => 54,
+                               :azimuth => 90,
+                               :thickness => 6,
+                               :depth_below_grade => 0,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallSouth",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - vented",
+                               :height => 2,
+                               :area => 114,
+                               :azimuth => 180,
+                               :thickness => 6,
+                               :depth_below_grade => 0,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
+    hpxml.foundation_walls.add(:id => "FoundationWallWest",
+                               :exterior_adjacent_to => "ground",
+                               :interior_adjacent_to => "crawlspace - vented",
+                               :height => 2,
+                               :area => 54,
+                               :azimuth => 270,
+                               :thickness => 6,
+                               :depth_below_grade => 0,
+                               :insulation_interior_r_value => 0,
+                               :insulation_interior_distance_to_top => 0,
+                               :insulation_interior_distance_to_bottom => 0,
+                               :insulation_exterior_r_value => 0,
+                               :insulation_exterior_distance_to_top => 0,
+                               :insulation_exterior_distance_to_bottom => 0)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     for i in 0..hpxml.foundation_walls.size - 1
       hpxml.foundation_walls[i].interior_adjacent_to = "basement - unconditioned"
@@ -851,16 +851,16 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
       'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
     hpxml.frame_floors.clear
-    hpxml.frame_floors.add({ :id => "FloorUnderAttic",
-                                                  :exterior_adjacent_to => "attic - vented",
-                                                  :interior_adjacent_to => "living space",
-                                                  :area => 1539,
-                                                  :insulation_assembly_r_value => 18.45 })
-    hpxml.frame_floors.add({ :id => "FloorOverFoundation",
-                                                  :exterior_adjacent_to => "outside",
-                                                  :interior_adjacent_to => "living space",
-                                                  :area => 1539,
-                                                  :insulation_assembly_r_value => 14.15 })
+    hpxml.frame_floors.add(:id => "FloorUnderAttic",
+                           :exterior_adjacent_to => "attic - vented",
+                           :interior_adjacent_to => "living space",
+                           :area => 1539,
+                           :insulation_assembly_r_value => 18.45)
+    hpxml.frame_floors.add(:id => "FloorOverFoundation",
+                           :exterior_adjacent_to => "outside",
+                           :interior_adjacent_to => "living space",
+                           :area => 1539,
+                           :insulation_assembly_r_value => 14.15)
     if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
       hpxml.frame_floors[1].exterior_adjacent_to = "basement - unconditioned"
     end
@@ -903,66 +903,66 @@ def set_hpxml_slabs(hpxml_file, hpxml)
     hpxml.slabs.clear
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml'].include? hpxml_file
     # Slab-on-Grade, Uninsulated ASHRAE Slab
-    hpxml.slabs.add({ :id => "Slab",
-                                     :interior_adjacent_to => "living space",
-                                     :area => 1539,
-                                     :thickness => 4,
-                                     :exposed_perimeter => 168,
-                                     :perimeter_insulation_depth => 0,
-                                     :under_slab_insulation_width => 0,
-                                     :under_slab_insulation_spans_entire_slab => nil,
-                                     :depth_below_grade => 0,
-                                     :perimeter_insulation_r_value => 0,
-                                     :under_slab_insulation_r_value => 0,
-                                     :carpet_fraction => 1,
-                                     :carpet_r_value => 2.08 })
+    hpxml.slabs.add(:id => "Slab",
+                    :interior_adjacent_to => "living space",
+                    :area => 1539,
+                    :thickness => 4,
+                    :exposed_perimeter => 168,
+                    :perimeter_insulation_depth => 0,
+                    :under_slab_insulation_width => 0,
+                    :under_slab_insulation_spans_entire_slab => nil,
+                    :depth_below_grade => 0,
+                    :perimeter_insulation_r_value => 0,
+                    :under_slab_insulation_r_value => 0,
+                    :carpet_fraction => 1,
+                    :carpet_r_value => 2.08)
   elsif ['RESNET_Tests/4.1_Standard_140/L304XC.xml'].include? hpxml_file
     # Slab-on-Grade, Insulated ASHRAE Slab
     hpxml.slabs[0].perimeter_insulation_depth = 2.5
     hpxml.slabs[0].perimeter_insulation_r_value = 5.4
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
-    hpxml.slabs.add({ :id => "Slab",
-                                     :interior_adjacent_to => "basement - conditioned",
-                                     :area => 1539,
-                                     :thickness => 4,
-                                     :exposed_perimeter => 168,
-                                     :perimeter_insulation_depth => 0,
-                                     :under_slab_insulation_width => 0,
-                                     :under_slab_insulation_spans_entire_slab => nil,
-                                     :perimeter_insulation_r_value => 0,
-                                     :under_slab_insulation_r_value => 0,
-                                     :carpet_fraction => 0,
-                                     :carpet_r_value => 0 })
+    hpxml.slabs.add(:id => "Slab",
+                    :interior_adjacent_to => "basement - conditioned",
+                    :area => 1539,
+                    :thickness => 4,
+                    :exposed_perimeter => 168,
+                    :perimeter_insulation_depth => 0,
+                    :under_slab_insulation_width => 0,
+                    :under_slab_insulation_spans_entire_slab => nil,
+                    :perimeter_insulation_r_value => 0,
+                    :under_slab_insulation_r_value => 0,
+                    :carpet_fraction => 0,
+                    :carpet_r_value => 0)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Unvented crawlspace
-    hpxml.slabs.add({ :id => "Slab",
-                                     :interior_adjacent_to => "crawlspace - unvented",
-                                     :area => 1539,
-                                     :thickness => 0,
-                                     :exposed_perimeter => 168,
-                                     :perimeter_insulation_depth => 0,
-                                     :under_slab_insulation_width => 0,
-                                     :under_slab_insulation_spans_entire_slab => nil,
-                                     :perimeter_insulation_r_value => 0,
-                                     :under_slab_insulation_r_value => 0,
-                                     :carpet_fraction => 0,
-                                     :carpet_r_value => 2.5 })
+    hpxml.slabs.add(:id => "Slab",
+                    :interior_adjacent_to => "crawlspace - unvented",
+                    :area => 1539,
+                    :thickness => 0,
+                    :exposed_perimeter => 168,
+                    :perimeter_insulation_depth => 0,
+                    :under_slab_insulation_width => 0,
+                    :under_slab_insulation_spans_entire_slab => nil,
+                    :perimeter_insulation_r_value => 0,
+                    :under_slab_insulation_r_value => 0,
+                    :carpet_fraction => 0,
+                    :carpet_r_value => 2.5)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 2 ft. high crawlspace above grade
-    hpxml.slabs.add({ :id => "Slab",
-                                     :interior_adjacent_to => "crawlspace - vented",
-                                     :area => 1539,
-                                     :thickness => 0,
-                                     :exposed_perimeter => 168,
-                                     :perimeter_insulation_depth => 0,
-                                     :under_slab_insulation_width => 0,
-                                     :under_slab_insulation_spans_entire_slab => nil,
-                                     :perimeter_insulation_r_value => 0,
-                                     :under_slab_insulation_r_value => 0,
-                                     :carpet_fraction => 0,
-                                     :carpet_r_value => 0 })
+    hpxml.slabs.add(:id => "Slab",
+                    :interior_adjacent_to => "crawlspace - vented",
+                    :area => 1539,
+                    :thickness => 0,
+                    :exposed_perimeter => 168,
+                    :perimeter_insulation_depth => 0,
+                    :under_slab_insulation_width => 0,
+                    :under_slab_insulation_spans_entire_slab => nil,
+                    :perimeter_insulation_r_value => 0,
+                    :under_slab_insulation_r_value => 0,
+                    :carpet_fraction => 0,
+                    :carpet_r_value => 0)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     hpxml.slabs[0].interior_adjacent_to = "basement - unconditioned"
   end
@@ -979,12 +979,12 @@ def set_hpxml_windows(hpxml_file, hpxml)
                 "WindowWest" => [270, 45, "WallWest"] }
     windows.each do |window_name, window_values|
       azimuth, area, wall = window_values
-      hpxml.windows.add({ :id => window_name,
-                                           :area => area,
-                                           :azimuth => azimuth,
-                                           :ufactor => 1.039,
-                                           :shgc => 0.67,
-                                           :wall_idref => wall })
+      hpxml.windows.add(:id => window_name,
+                        :area => area,
+                        :azimuth => azimuth,
+                        :ufactor => 1.039,
+                        :shgc => 0.67,
+                        :wall_idref => wall)
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
          'RESNET_Tests/4.1_Standard_140/L130AL.xml'].include? hpxml_file
@@ -1003,12 +1003,12 @@ def set_hpxml_windows(hpxml_file, hpxml)
          'RESNET_Tests/4.1_Standard_140/L150AL.xml'].include? hpxml_file
     # South windows only
     hpxml.windows.clear
-    hpxml.windows.add({ :id => "WindowSouth",
-                                         :area => 270,
-                                         :azimuth => 180,
-                                         :ufactor => 1.039,
-                                         :shgc => 0.67,
-                                         :wall_idref => "WallSouth" })
+    hpxml.windows.add(:id => "WindowSouth",
+                      :area => 270,
+                      :azimuth => 180,
+                      :ufactor => 1.039,
+                      :shgc => 0.67,
+                      :wall_idref => "WallSouth")
   elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml',
          'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
     # South windows with overhangs
@@ -1023,12 +1023,12 @@ def set_hpxml_windows(hpxml_file, hpxml)
                 "WindowWest" => [270, 135, "WallWest"] }
     windows.each do |window_name, window_values|
       azimuth, area, wall = window_values
-      hpxml.windows.add({ :id => window_name,
-                                           :area => area,
-                                           :azimuth => azimuth,
-                                           :ufactor => 1.039,
-                                           :shgc => 0.67,
-                                           :wall_idref => wall })
+      hpxml.windows.add(:id => window_name,
+                        :area => area,
+                        :azimuth => azimuth,
+                        :ufactor => 1.039,
+                        :shgc => 0.67,
+                        :wall_idref => wall)
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Base configuration
@@ -1078,11 +1078,11 @@ def set_hpxml_doors(hpxml_file, hpxml)
               "DoorNorth" => [0, 20, "WallNorth"] }
     doors.each do |door_name, door_values|
       azimuth, area, wall = door_values
-      hpxml.doors.add({ :id => door_name,
-                                       :wall_idref => wall,
-                                       :area => area,
-                                       :azimuth => azimuth,
-                                       :r_value => 3.04 })
+      hpxml.doors.add(:id => door_name,
+                      :wall_idref => wall,
+                      :area => area,
+                      :azimuth => azimuth,
+                      :r_value => 3.04)
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # U-factor = 0.35
@@ -1108,100 +1108,100 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
     # Gas furnace with AFUE = 82%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => -1,
-                                                        :heating_efficiency_afue => 0.82,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => -1,
+                              :heating_efficiency_afue => 0.82,
+                              :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Electric strip heating with COP = 1.0
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :heating_system_type => "ElectricResistance",
-                                                        :heating_system_fuel => "electricity",
-                                                        :heating_capacity => -1,
-                                                        :heating_efficiency_percent => 1,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :heating_system_type => "ElectricResistance",
+                              :heating_system_fuel => "electricity",
+                              :heating_capacity => -1,
+                              :heating_efficiency_percent => 1,
+                              :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     # Gas furnace with AFUE = 95%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => -1,
-                                                        :heating_efficiency_afue => 0.95,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => -1,
+                              :heating_efficiency_afue => 0.95,
+                              :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 78%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => -1,
-                                                        :heating_efficiency_afue => 0.78,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => -1,
+                              :heating_efficiency_afue => 0.78,
+                              :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 96%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => -1,
-                                                        :heating_efficiency_afue => 0.96,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => -1,
+                              :heating_efficiency_afue => 0.96,
+                              :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 78%; 0.0005 kW/cfm
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => 56100,
-                                                        :heating_efficiency_afue => 0.78,
-                                                        :fraction_heat_load_served => 1,
-                                                        :electric_auxiliary_energy => 1040 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => 56100,
+                              :heating_efficiency_afue => 0.78,
+                              :fraction_heat_load_served => 1,
+                              :electric_auxiliary_energy => 1040)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 90%; 0.000375 kW/cfm
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => 56100,
-                                                        :heating_efficiency_afue => 0.9,
-                                                        :fraction_heat_load_served => 1,
-                                                        :electric_auxiliary_energy => 780 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => 56100,
+                              :heating_efficiency_afue => 0.9,
+                              :fraction_heat_load_served => 1,
+                              :electric_auxiliary_energy => 780)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
     # Electric Furnace; 56.1 kBtu/h; COP =1.0
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "electricity",
-                                                        :heating_capacity => 56100,
-                                                        :heating_efficiency_afue => 1,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "electricity",
+                              :heating_capacity => 56100,
+                              :heating_efficiency_afue => 1,
+                              :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
          'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Gas Furnace; 46.6 kBtu/h
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => 46600,
-                                                        :heating_efficiency_afue => 0.78,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => 46600,
+                              :heating_efficiency_afue => 0.78,
+                              :fraction_heat_load_served => 1)
     hpxml.heating_systems[0].heating_cfm = hpxml.heating_systems[0].heating_capacity * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to 56.0 kBtu/h
@@ -1219,13 +1219,13 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Heating: gas furnace AFUE = 80%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add({ :id => "HeatingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :heating_system_type => "Furnace",
-                                                        :heating_system_fuel => "natural gas",
-                                                        :heating_capacity => -1,
-                                                        :heating_efficiency_afue => 0.8,
-                                                        :fraction_heat_load_served => 1 })
+    hpxml.heating_systems.add(:id => "HeatingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :heating_system_type => "Furnace",
+                              :heating_system_fuel => "natural gas",
+                              :heating_capacity => -1,
+                              :heating_efficiency_afue => 0.8,
+                              :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-07.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-07.xml'].include? hpxml_file
     # High-efficiency gas furnace with AFUE = 96%
@@ -1244,23 +1244,23 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
     # central air conditioner with SEER = 11.0
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add({ :id => "CoolingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :cooling_system_type => "central air conditioner",
-                                                        :cooling_system_fuel => "electricity",
-                                                        :cooling_capacity => -1,
-                                                        :fraction_cool_load_served => 1,
-                                                        :cooling_efficiency_seer => 11 })
+    hpxml.cooling_systems.add(:id => "CoolingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :cooling_system_type => "central air conditioner",
+                              :cooling_system_fuel => "electricity",
+                              :cooling_capacity => -1,
+                              :fraction_cool_load_served => 1,
+                              :cooling_efficiency_seer => 11)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Central air conditioner with SEER = 15.0
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add({ :id => "CoolingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :cooling_system_type => "central air conditioner",
-                                                        :cooling_system_fuel => "electricity",
-                                                        :cooling_capacity => -1,
-                                                        :fraction_cool_load_served => 1,
-                                                        :cooling_efficiency_seer => 15 })
+    hpxml.cooling_systems.add(:id => "CoolingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :cooling_system_type => "central air conditioner",
+                              :cooling_system_fuel => "electricity",
+                              :cooling_capacity => -1,
+                              :fraction_cool_load_served => 1,
+                              :cooling_efficiency_seer => 15)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
@@ -1269,24 +1269,24 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Cooling system – electric A/C with SEER = 10.0
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add({ :id => "CoolingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :cooling_system_type => "central air conditioner",
-                                                        :cooling_system_fuel => "electricity",
-                                                        :cooling_capacity => -1,
-                                                        :fraction_cool_load_served => 1,
-                                                        :cooling_efficiency_seer => 10 })
+    hpxml.cooling_systems.add(:id => "CoolingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :cooling_system_type => "central air conditioner",
+                              :cooling_system_fuel => "electricity",
+                              :cooling_capacity => -1,
+                              :fraction_cool_load_served => 1,
+                              :cooling_efficiency_seer => 10)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add({ :id => "CoolingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :cooling_system_type => "central air conditioner",
-                                                        :cooling_system_fuel => "electricity",
-                                                        :cooling_capacity => 38300,
-                                                        :fraction_cool_load_served => 1,
-                                                        :cooling_efficiency_seer => 10 })
+    hpxml.cooling_systems.add(:id => "CoolingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :cooling_system_type => "central air conditioner",
+                              :cooling_system_fuel => "electricity",
+                              :cooling_capacity => 38300,
+                              :fraction_cool_load_served => 1,
+                              :cooling_efficiency_seer => 10)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     # Change to SEER = 13
     hpxml.cooling_systems[0].cooling_efficiency_seer = 13
@@ -1294,13 +1294,13 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
          'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Air Conditioner; 38.4 kBtu/h; SEER 10
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add({ :id => "CoolingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :cooling_system_type => "central air conditioner",
-                                                        :cooling_system_fuel => "electricity",
-                                                        :cooling_capacity => 38400,
-                                                        :fraction_cool_load_served => 1,
-                                                        :cooling_efficiency_seer => 10 })
+    hpxml.cooling_systems.add(:id => "CoolingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :cooling_system_type => "central air conditioner",
+                              :cooling_system_fuel => "electricity",
+                              :cooling_capacity => 38400,
+                              :fraction_cool_load_served => 1,
+                              :cooling_efficiency_seer => 10)
     hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
     # Change to 49.9 kBtu/h
@@ -1317,23 +1317,23 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Cooling: Air conditioner SEER = 14
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add({ :id => "CoolingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :cooling_system_type => "central air conditioner",
-                                                        :cooling_system_fuel => "electricity",
-                                                        :cooling_capacity => -1,
-                                                        :fraction_cool_load_served => 1,
-                                                        :cooling_efficiency_seer => 14 })
+    hpxml.cooling_systems.add(:id => "CoolingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :cooling_system_type => "central air conditioner",
+                              :cooling_system_fuel => "electricity",
+                              :cooling_capacity => -1,
+                              :fraction_cool_load_served => 1,
+                              :cooling_efficiency_seer => 14)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Cooling: Air conditioner SEER = 13
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add({ :id => "CoolingSystem",
-                                                        :distribution_system_idref => "HVACDistribution",
-                                                        :cooling_system_type => "central air conditioner",
-                                                        :cooling_system_fuel => "electricity",
-                                                        :cooling_capacity => -1,
-                                                        :fraction_cool_load_served => 1,
-                                                        :cooling_efficiency_seer => 13 })
+    hpxml.cooling_systems.add(:id => "CoolingSystem",
+                              :distribution_system_idref => "HVACDistribution",
+                              :cooling_system_type => "central air conditioner",
+                              :cooling_system_fuel => "electricity",
+                              :cooling_capacity => -1,
+                              :fraction_cool_load_served => 1,
+                              :cooling_efficiency_seer => 13)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-14.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-14.xml'].include? hpxml_file
     # Change to high efficiency air conditioner SEER = 21
@@ -1352,38 +1352,38 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Electric heat pump with HSPF = 7.5 and SEER = 12.0
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => -1,
-                                              :heating_capacity => -1,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => -1,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 7.5,
-                                              :cooling_efficiency_seer => 12 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => -1,
+                         :heating_capacity => -1,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => -1,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 7.5,
+                         :cooling_efficiency_seer => 12)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Heating system – electric HP with HSPF = 6.8
     # Cooling system – electric A/C with SEER
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => -1,
-                                              :heating_capacity => -1,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => -1,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 6.8,
-                                              :cooling_efficiency_seer => 10 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => -1,
+                         :heating_capacity => -1,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => -1,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 6.8,
+                         :cooling_efficiency_seer => 10)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-04.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-04.xml'].include? hpxml_file
@@ -1392,99 +1392,99 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 6.8
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => 56100,
-                                              :heating_capacity => 56100,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => 34121,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 6.8,
-                                              :cooling_efficiency_seer => 10 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => 56100,
+                         :heating_capacity => 56100,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => 34121,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 6.8,
+                         :cooling_efficiency_seer => 10)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 9.85
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => 56100,
-                                              :heating_capacity => 56100,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => 34121,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 9.85,
-                                              :cooling_efficiency_seer => 13 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => 56100,
+                         :heating_capacity => 56100,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => 34121,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 9.85,
+                         :cooling_efficiency_seer => 13)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=14, HSPF = 8.2
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => -1,
-                                              :heating_capacity => -1,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => -1,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 8.2,
-                                              :cooling_efficiency_seer => 14 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => -1,
+                         :heating_capacity => -1,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => -1,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 8.2,
+                         :cooling_efficiency_seer => 14)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=14, HSPF = 12.0
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => -1,
-                                              :heating_capacity => -1,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => -1,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 12,
-                                              :cooling_efficiency_seer => 14 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => -1,
+                         :heating_capacity => -1,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => -1,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 12,
+                         :cooling_efficiency_seer => 14)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=13, HSPF = 8.2
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => -1,
-                                              :heating_capacity => -1,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => -1,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 8.2,
-                                              :cooling_efficiency_seer => 13 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => -1,
+                         :heating_capacity => -1,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => -1,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 8.2,
+                         :cooling_efficiency_seer => 13)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=13, HSPF = 12.0
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add({ :id => "HeatPump",
-                                              :distribution_system_idref => "HVACDistribution",
-                                              :heat_pump_type => "air-to-air",
-                                              :heat_pump_fuel => "electricity",
-                                              :cooling_capacity => -1,
-                                              :heating_capacity => -1,
-                                              :backup_heating_fuel => "electricity",
-                                              :backup_heating_capacity => -1,
-                                              :backup_heating_efficiency_percent => 1.0,
-                                              :fraction_heat_load_served => 1,
-                                              :fraction_cool_load_served => 1,
-                                              :heating_efficiency_hspf => 12,
-                                              :cooling_efficiency_seer => 13 })
+    hpxml.heat_pumps.add(:id => "HeatPump",
+                         :distribution_system_idref => "HVACDistribution",
+                         :heat_pump_type => "air-to-air",
+                         :heat_pump_fuel => "electricity",
+                         :cooling_capacity => -1,
+                         :heating_capacity => -1,
+                         :backup_heating_fuel => "electricity",
+                         :backup_heating_capacity => -1,
+                         :backup_heating_efficiency_percent => 1.0,
+                         :fraction_heat_load_served => 1,
+                         :fraction_cool_load_served => 1,
+                         :heating_efficiency_hspf => 12,
+                         :cooling_efficiency_seer => 13)
   end
 end
 
@@ -1493,13 +1493,13 @@ def set_hpxml_hvac_control(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_hvac_control({ :id => "HVACControl",
-                                                  :control_type => "manual thermostat",
-                                                  :heating_setpoint_temp => 68,
-                                                  :cooling_setpoint_temp => 78 })
+    hpxml.set_hvac_control(:id => "HVACControl",
+                           :control_type => "manual thermostat",
+                           :heating_setpoint_temp => 68,
+                           :cooling_setpoint_temp => 78)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
-    hpxml.set_hvac_control(nil)
+    hpxml.set_hvac_control()
   end
 end
 
@@ -1516,26 +1516,26 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add({ :id => "HVACDistribution",
-                                                              :distribution_system_type => "AirDistribution" })
+    hpxml.hvac_distributions.add(:id => "HVACDistribution",
+                                 :distribution_system_type => "AirDistribution")
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add({ :id => "HVACDistribution",
-                                                              :distribution_system_type => "DSE",
-                                                              :annual_cooling_dse => 1 })
+    hpxml.hvac_distributions.add(:id => "HVACDistribution",
+                                 :distribution_system_type => "DSE",
+                                 :annual_cooling_dse => 1)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add({ :id => "HVACDistribution",
-                                                              :distribution_system_type => "DSE",
-                                                              :annual_heating_dse => 1 })
+    hpxml.hvac_distributions.add(:id => "HVACDistribution",
+                                 :distribution_system_type => "DSE",
+                                 :annual_heating_dse => 1)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add({ :id => "HVACDistribution",
-                                                              :distribution_system_type => "DSE",
-                                                              :annual_heating_dse => 1,
-                                                              :annual_cooling_dse => 1 })
+    hpxml.hvac_distributions.add(:id => "HVACDistribution",
+                                 :distribution_system_type => "DSE",
+                                 :annual_heating_dse => 1,
+                                 :annual_cooling_dse => 1)
   end
   if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
       'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
@@ -1554,12 +1554,12 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-12.xml'].include? hpxml_file
     # No leakage
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear
-    hpxml.hvac_distributions[0].duct_leakage_measurements.add({ :duct_type => "supply",
-                                                                                                 :duct_leakage_units => "CFM25",
-                                                                                                 :duct_leakage_value => 0 })
-    hpxml.hvac_distributions[0].duct_leakage_measurements.add({ :duct_type => "return",
-                                                                                                 :duct_leakage_units => "CFM25",
-                                                                                                 :duct_leakage_value => 0 })
+    hpxml.hvac_distributions[0].duct_leakage_measurements.add(:duct_type => "supply",
+                                                              :duct_leakage_units => "CFM25",
+                                                              :duct_leakage_value => 0)
+    hpxml.hvac_distributions[0].duct_leakage_measurements.add(:duct_type => "return",
+                                                              :duct_leakage_units => "CFM25",
+                                                              :duct_leakage_value => 0)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml',
          'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
     # Supply and return duct leakage = 125 cfm each
@@ -1592,14 +1592,14 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     # Duct R-val = 0
     # Duct Location = 100% conditioned
     hpxml.hvac_distributions[0].ducts.clear
-    hpxml.hvac_distributions[0].ducts.add({ :duct_type => "supply",
-                                                           :duct_insulation_r_value => 0,
-                                                           :duct_location => "living space",
-                                                           :duct_surface_area => 308 })
-    hpxml.hvac_distributions[0].ducts.add({ :duct_type => "return",
-                                                           :duct_insulation_r_value => 0,
-                                                           :duct_location => "living space",
-                                                           :duct_surface_area => 77 })
+    hpxml.hvac_distributions[0].ducts.add(:duct_type => "supply",
+                                          :duct_insulation_r_value => 0,
+                                          :duct_location => "living space",
+                                          :duct_surface_area => 308)
+    hpxml.hvac_distributions[0].ducts.add(:duct_type => "return",
+                                          :duct_insulation_r_value => 0,
+                                          :duct_location => "living space",
+                                          :duct_surface_area => 77)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to Duct Location = 100% in basement
     for i in 0..hpxml.hvac_distributions[0].ducts.size - 1
@@ -1622,14 +1622,14 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 100% in conditioned space, including air handler; R-6 duct insulation
     hpxml.hvac_distributions[0].ducts.clear
-    hpxml.hvac_distributions[0].ducts.add({ :duct_type => "supply",
-                                                           :duct_insulation_r_value => 6,
-                                                           :duct_location => "living space",
-                                                           :duct_surface_area => 415.5 })
-    hpxml.hvac_distributions[0].ducts.add({ :duct_type => "return",
-                                                           :duct_insulation_r_value => 6,
-                                                           :duct_location => "living space",
-                                                           :duct_surface_area => 77 })
+    hpxml.hvac_distributions[0].ducts.add(:duct_type => "supply",
+                                          :duct_insulation_r_value => 6,
+                                          :duct_location => "living space",
+                                          :duct_surface_area => 415.5)
+    hpxml.hvac_distributions[0].ducts.add(:duct_type => "return",
+                                          :duct_insulation_r_value => 6,
+                                          :duct_location => "living space",
+                                          :duct_surface_area => 77)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-22.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-22.xml'].include? hpxml_file
     # Change to crawlspace
@@ -1657,40 +1657,40 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Exhaust-only whole-dwelling mechanical ventilation
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add({ :id => "MechanicalVentilation",
-                                                          :fan_type => "exhaust only",
-                                                          :tested_flow_rate => 56.2,
-                                                          :hours_in_operation => 24,
-                                                          :fan_power => 14.7,
-                                                          :used_for_whole_building_ventilation => true })
+    hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
+                               :fan_type => "exhaust only",
+                               :tested_flow_rate => 56.2,
+                               :hours_in_operation => 24,
+                               :fan_power => 14.7,
+                               :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add({ :id => "MechanicalVentilation",
-                                                          :fan_type => "balanced",
-                                                          :tested_flow_rate => 56.2,
-                                                          :hours_in_operation => 24,
-                                                          :fan_power => 14.7,
-                                                          :used_for_whole_building_ventilation => true })
+    hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
+                               :fan_type => "balanced",
+                               :tested_flow_rate => 56.2,
+                               :hours_in_operation => 24,
+                               :fan_power => 14.7,
+                               :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% heat recovery system
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add({ :id => "MechanicalVentilation",
-                                                          :fan_type => "heat recovery ventilator",
-                                                          :tested_flow_rate => 56.2,
-                                                          :hours_in_operation => 24,
-                                                          :sensible_recovery_efficiency => 0.6,
-                                                          :fan_power => 14.7,
-                                                          :used_for_whole_building_ventilation => true })
+    hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
+                               :fan_type => "heat recovery ventilator",
+                               :tested_flow_rate => 56.2,
+                               :hours_in_operation => 24,
+                               :sensible_recovery_efficiency => 0.6,
+                               :fan_power => 14.7,
+                               :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Exhaust fan = 58.7 cfm, continuous; Fan power = 14.7 watts
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add({ :id => "MechanicalVentilation",
-                                                          :fan_type => "exhaust only",
-                                                          :tested_flow_rate => 58.7,
-                                                          :hours_in_operation => 24,
-                                                          :fan_power => 14.7,
-                                                          :used_for_whole_building_ventilation => true })
+    hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
+                               :fan_type => "exhaust only",
+                               :tested_flow_rate => 58.7,
+                               :hours_in_operation => 24,
+                               :fan_power => 14.7,
+                               :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 51.2 cfm continuous with fan power = 12.8 watts
     hpxml.ventilation_fans[0].tested_flow_rate = 51.2
@@ -1702,22 +1702,22 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-15.xml'].include? hpxml_file
     # Change to CFIS system at flow rate of 176.1 cfm and 33.33% duty cycle (8 hours per day)
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add({ :id => "MechanicalVentilation",
-                                                          :fan_type => "central fan integrated supply",
-                                                          :tested_flow_rate => 176.1,
-                                                          :hours_in_operation => 8,
-                                                          :fan_power => 14.7,
-                                                          :used_for_whole_building_ventilation => true,
-                                                          :distribution_system_idref => "HVACDistribution" })
+    hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
+                               :fan_type => "central fan integrated supply",
+                               :tested_flow_rate => 176.1,
+                               :hours_in_operation => 8,
+                               :fan_power => 14.7,
+                               :used_for_whole_building_ventilation => true,
+                               :distribution_system_idref => "HVACDistribution")
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Exhaust fan = 56.2 cfm, continuous; Fan power = 14.0 watts
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add({ :id => "MechanicalVentilation",
-                                                          :fan_type => "exhaust only",
-                                                          :tested_flow_rate => 56.2,
-                                                          :hours_in_operation => 24,
-                                                          :fan_power => 14,
-                                                          :used_for_whole_building_ventilation => true })
+    hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
+                               :fan_type => "exhaust only",
+                               :tested_flow_rate => 56.2,
+                               :hours_in_operation => 24,
+                               :fan_power => 14,
+                               :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-09.xml'].include? hpxml_file
     # Change to exhaust mechanical ventilation = 48.7 cfm continuous with fan power = 12.2 watts
     hpxml.ventilation_fans[0].tested_flow_rate = 48.7
@@ -1729,13 +1729,13 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-15.xml'].include? hpxml_file
     # Change to CFIS system at flow rate of 168.6 cfm and 33.33% duty cycle (8 hours per day)
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add({ :id => "MechanicalVentilation",
-                                                          :fan_type => "central fan integrated supply",
-                                                          :tested_flow_rate => 168.6,
-                                                          :hours_in_operation => 8,
-                                                          :fan_power => 373,
-                                                          :used_for_whole_building_ventilation => true,
-                                                          :distribution_system_idref => "HVACDistribution" })
+    hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
+                               :fan_type => "central fan integrated supply",
+                               :tested_flow_rate => 168.6,
+                               :hours_in_operation => 8,
+                               :fan_power => 373,
+                               :used_for_whole_building_ventilation => true,
+                               :distribution_system_idref => "HVACDistribution")
   end
 end
 
@@ -1750,83 +1750,83 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add({ :id => "WaterHeater",
-                                                                   :fuel_type => "electricity",
-                                                                   :water_heater_type => "storage water heater",
-                                                                   :location => "living space",
-                                                                   :tank_volume => 40,
-                                                                   :fraction_dhw_load_served => 1,
-                                                                   :energy_factor => 0.88 })
+    hpxml.water_heating_systems.add(:id => "WaterHeater",
+                                    :fuel_type => "electricity",
+                                    :water_heater_type => "storage water heater",
+                                    :location => "living space",
+                                    :tank_volume => 40,
+                                    :fraction_dhw_load_served => 1,
+                                    :energy_factor => 0.88)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-02.xml'].include? hpxml_file
     # Tankless natural gas with EF = 0.82
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add({ :id => "WaterHeater",
-                                                                   :fuel_type => "natural gas",
-                                                                   :water_heater_type => "instantaneous water heater",
-                                                                   :location => "living space",
-                                                                   :fraction_dhw_load_served => 1,
-                                                                   :energy_factor => 0.82 })
+    hpxml.water_heating_systems.add(:id => "WaterHeater",
+                                    :fuel_type => "natural gas",
+                                    :water_heater_type => "instantaneous water heater",
+                                    :location => "living space",
+                                    :fraction_dhw_load_served => 1,
+                                    :energy_factor => 0.82)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # 40 gallon storage; gas; EF = 0.56; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add({ :id => "WaterHeater",
-                                                                   :fuel_type => "natural gas",
-                                                                   :water_heater_type => "storage water heater",
-                                                                   :location => "living space",
-                                                                   :tank_volume => 40,
-                                                                   :fraction_dhw_load_served => 1,
-                                                                   :energy_factor => 0.56,
-                                                                   :recovery_efficiency => 0.78 })
+    hpxml.water_heating_systems.add(:id => "WaterHeater",
+                                    :fuel_type => "natural gas",
+                                    :water_heater_type => "storage water heater",
+                                    :location => "living space",
+                                    :tank_volume => 40,
+                                    :fraction_dhw_load_served => 1,
+                                    :energy_factor => 0.56,
+                                    :recovery_efficiency => 0.78)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-03.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-03.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add({ :id => "WaterHeater",
-                                                                   :fuel_type => "natural gas",
-                                                                   :water_heater_type => "storage water heater",
-                                                                   :location => "living space",
-                                                                   :tank_volume => 40,
-                                                                   :fraction_dhw_load_served => 1,
-                                                                   :energy_factor => 0.62,
-                                                                   :recovery_efficiency => 0.78 })
+    hpxml.water_heating_systems.add(:id => "WaterHeater",
+                                    :fuel_type => "natural gas",
+                                    :water_heater_type => "storage water heater",
+                                    :location => "living space",
+                                    :tank_volume => 40,
+                                    :fraction_dhw_load_served => 1,
+                                    :energy_factor => 0.62,
+                                    :recovery_efficiency => 0.78)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-08.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-08.xml'].include? hpxml_file
     # Tankless gas water heater with EF=0.83
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add({ :id => "WaterHeater",
-                                                                   :fuel_type => "natural gas",
-                                                                   :water_heater_type => "instantaneous water heater",
-                                                                   :location => "living space",
-                                                                   :fraction_dhw_load_served => 1,
-                                                                   :energy_factor => 0.83 })
+    hpxml.water_heating_systems.add(:id => "WaterHeater",
+                                    :fuel_type => "natural gas",
+                                    :water_heater_type => "instantaneous water heater",
+                                    :location => "living space",
+                                    :fraction_dhw_load_served => 1,
+                                    :energy_factor => 0.83)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-12.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-12.xml'].include? hpxml_file
     # Standard electric water heater EF = 0.95, RE = 0.98
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add({ :id => "WaterHeater",
-                                                                   :fuel_type => "electricity",
-                                                                   :water_heater_type => "storage water heater",
-                                                                   :location => "living space",
-                                                                   :tank_volume => 40,
-                                                                   :fraction_dhw_load_served => 1,
-                                                                   :energy_factor => 0.95,
-                                                                   :recovery_efficiency => 0.98 })
+    hpxml.water_heating_systems.add(:id => "WaterHeater",
+                                    :fuel_type => "electricity",
+                                    :water_heater_type => "storage water heater",
+                                    :location => "living space",
+                                    :tank_volume => 40,
+                                    :fraction_dhw_load_served => 1,
+                                    :energy_factor => 0.95,
+                                    :recovery_efficiency => 0.98)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-13.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-13.xml'].include? hpxml_file
     # Electric heat pump water heater EF = 2.5
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add({ :id => "WaterHeater",
-                                                                   :fuel_type => "electricity",
-                                                                   :water_heater_type => "heat pump water heater",
-                                                                   :location => "living space",
-                                                                   :tank_volume => 40,
-                                                                   :fraction_dhw_load_served => 1,
-                                                                   :energy_factor => 2.5 })
+    hpxml.water_heating_systems.add(:id => "WaterHeater",
+                                    :fuel_type => "electricity",
+                                    :water_heater_type => "heat pump water heater",
+                                    :location => "living space",
+                                    :tank_volume => 40,
+                                    :fraction_dhw_load_served => 1,
+                                    :energy_factor => 2.5)
   end
 end
 
@@ -1835,7 +1835,7 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_hot_water_distribution(nil)
+    hpxml.set_hot_water_distribution()
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
@@ -1844,9 +1844,9 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard
-    hpxml.set_hot_water_distribution({ :id => "HotWaterDstribution",
-                                                                     :system_type => "Standard",
-                                                                     :pipe_r_value => 0.0 })
+    hpxml.set_hot_water_distribution(:id => "HotWaterDstribution",
+                                     :system_type => "Standard",
+                                     :pipe_r_value => 0.0)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-16.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-16.xml'].include? hpxml_file
     # Change to recirculation: loop length = 156.92 ft.; branch piping length = 10 ft.; pump power = 50 watts; R-3 piping insulation; and control = none
@@ -1914,22 +1914,22 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard
     hpxml.water_fixtures.clear
-    hpxml.water_fixtures.add({ :id => "WaterFixture",
-                                                      :water_fixture_type => "shower head",
-                                                      :low_flow => false })
-    hpxml.water_fixtures.add({ :id => "WaterFixture2",
-                                                      :water_fixture_type => "faucet",
-                                                      :low_flow => false })
+    hpxml.water_fixtures.add(:id => "WaterFixture",
+                             :water_fixture_type => "shower head",
+                             :low_flow => false)
+    hpxml.water_fixtures.add(:id => "WaterFixture2",
+                             :water_fixture_type => "faucet",
+                             :low_flow => false)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml'].include? hpxml_file
     # Low-flow
     hpxml.water_fixtures.clear
-    hpxml.water_fixtures.add({ :id => "WaterFixture",
-                                                      :water_fixture_type => "shower head",
-                                                      :low_flow => true })
-    hpxml.water_fixtures.add({ :id => "WaterFixture2",
-                                                      :water_fixture_type => "faucet",
-                                                      :low_flow => true })
+    hpxml.water_fixtures.add(:id => "WaterFixture",
+                             :water_fixture_type => "shower head",
+                             :low_flow => true)
+    hpxml.water_fixtures.add(:id => "WaterFixture2",
+                             :water_fixture_type => "faucet",
+                             :low_flow => true)
   end
 end
 
@@ -1941,17 +1941,17 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_clothes_washer(nil)
+    hpxml.set_clothes_washer()
   else
     # Standard
-    hpxml.set_clothes_washer({ :id => "ClothesWasher",
-                                                      :location => "living space",
-                                                      :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
-                                                      :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
-                                                      :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
-                                                      :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
-                                                      :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
-                                                      :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap() })
+    hpxml.set_clothes_washer(:id => "ClothesWasher",
+                             :location => "living space",
+                             :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
+                             :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
+                             :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
+                             :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
+                             :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
+                             :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap())
   end
 end
 
@@ -1960,7 +1960,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_clothes_dryer(nil)
+    hpxml.set_clothes_dryer()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
@@ -1975,11 +1975,11 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
-    hpxml.set_clothes_dryer({ :id => "ClothesDryer",
-                                                    :location => "living space",
-                                                    :fuel_type => "natural gas",
-                                                    :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                                                    :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('natural gas') })
+    hpxml.set_clothes_dryer(:id => "ClothesDryer",
+                            :location => "living space",
+                            :fuel_type => "natural gas",
+                            :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
+                            :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('natural gas'))
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -1990,11 +1990,11 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
-    hpxml.set_clothes_dryer({ :id => "ClothesDryer",
-                                                    :location => "living space",
-                                                    :fuel_type => "electricity",
-                                                    :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                                                    :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('electricity') })
+    hpxml.set_clothes_dryer(:id => "ClothesDryer",
+                            :location => "living space",
+                            :fuel_type => "electricity",
+                            :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
+                            :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('electricity'))
   end
 end
 
@@ -2003,12 +2003,12 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_dishwasher(nil)
+    hpxml.set_dishwasher()
   else
     # Standard
-    hpxml.set_dishwasher({ :id => "Dishwasher",
-                                               :place_setting_capacity => 12,
-                                               :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef() })
+    hpxml.set_dishwasher(:id => "Dishwasher",
+                         :place_setting_capacity => 12,
+                         :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef())
   end
 end
 
@@ -2017,13 +2017,13 @@ def set_hpxml_refrigerator(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_refrigerator(nil)
+    hpxml.set_refrigerator()
   else
     # Standard
     rated_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(hpxml.building_construction.number_of_bedrooms)
-    hpxml.set_refrigerator({ :id => "Refrigerator",
-                                                   :location => "living space",
-                                                   :rated_annual_kwh => rated_annual_kwh })
+    hpxml.set_refrigerator(:id => "Refrigerator",
+                           :location => "living space",
+                           :rated_annual_kwh => rated_annual_kwh)
   end
 end
 
@@ -2032,7 +2032,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_cooking_range(nil)
+    hpxml.set_cooking_range()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
@@ -2047,9 +2047,9 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
-    hpxml.set_cooking_range({ :id => "Range",
-                                                    :fuel_type => "natural gas",
-                                                    :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection() })
+    hpxml.set_cooking_range(:id => "Range",
+                            :fuel_type => "natural gas",
+                            :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2060,9 +2060,9 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
-    hpxml.set_cooking_range({ :id => "Range",
-                                                    :fuel_type => "electricity",
-                                                    :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection() })
+    hpxml.set_cooking_range(:id => "Range",
+                            :fuel_type => "electricity",
+                            :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
   end
 end
 
@@ -2071,11 +2071,11 @@ def set_hpxml_oven(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_oven(nil)
+    hpxml.set_oven()
   else
     # Standard
-    hpxml.set_oven({ :id => "Oven",
-                                   :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_induction() })
+    hpxml.set_oven(:id => "Oven",
+                   :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_induction())
   end
 end
 
@@ -2084,25 +2084,25 @@ def set_hpxml_lighting(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_lighting(nil)
+    hpxml.set_lighting()
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file
     # 75% high efficiency interior and exterior
-    hpxml.set_lighting({ :fraction_tier_i_interior => 0.75,
-                                           :fraction_tier_i_exterior => 0.75,
-                                           :fraction_tier_i_garage => 0.0,
-                                           :fraction_tier_ii_interior => 0.0,
-                                           :fraction_tier_ii_exterior => 0.0,
-                                           :fraction_tier_ii_garage => 0.0 })
+    hpxml.set_lighting(:fraction_tier_i_interior => 0.75,
+                       :fraction_tier_i_exterior => 0.75,
+                       :fraction_tier_i_garage => 0.0,
+                       :fraction_tier_ii_interior => 0.0,
+                       :fraction_tier_ii_exterior => 0.0,
+                       :fraction_tier_ii_garage => 0.0)
   else
     # ERI Reference
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
-    hpxml.set_lighting({ :fraction_tier_i_interior => fFI_int,
-                                           :fraction_tier_i_exterior => fFI_ext,
-                                           :fraction_tier_i_garage => fFI_grg,
-                                           :fraction_tier_ii_interior => fFII_int,
-                                           :fraction_tier_ii_exterior => fFII_ext,
-                                           :fraction_tier_ii_garage => fFII_grg })
+    hpxml.set_lighting(:fraction_tier_i_interior => fFI_int,
+                       :fraction_tier_i_exterior => fFI_ext,
+                       :fraction_tier_i_garage => fFI_grg,
+                       :fraction_tier_ii_interior => fFII_int,
+                       :fraction_tier_ii_exterior => fFII_ext,
+                       :fraction_tier_ii_garage => fFII_grg)
   end
 end
 
@@ -2115,11 +2115,11 @@ def set_hpxml_plug_loads(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
     hpxml.plug_loads.clear
-    hpxml.plug_loads.add({ :id => "PlugLoadMisc",
-                                              :plug_load_type => "other",
-                                              :kWh_per_year => 7302,
-                                              :frac_sensible => 0.82,
-                                              :frac_latent => 0.18 })
+    hpxml.plug_loads.add(:id => "PlugLoadMisc",
+                         :plug_load_type => "other",
+                         :kWh_per_year => 7302,
+                         :frac_sensible => 0.82,
+                         :frac_latent => 0.18)
     if ['RESNET_Tests/4.1_Standard_140/L170AC.xml',
         'RESNET_Tests/4.1_Standard_140/L170AL.xml'].include? hpxml_file
       hpxml.plug_loads[0].kWh_per_year = 0
@@ -2134,11 +2134,11 @@ def set_hpxml_misc_load_schedule(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_misc_loads_schedule({ :weekday_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
-                                                      :weekend_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
-                                                      :monthly_multipliers => "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0" })
+    hpxml.set_misc_loads_schedule(:weekday_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
+                                  :weekend_fractions => "0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066",
+                                  :monthly_multipliers => "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0")
   else
-    hpxml.set_misc_loads_schedule(nil)
+    hpxml.set_misc_loads_schedule()
   end
 end
 
@@ -2353,14 +2353,14 @@ if ARGV[0].to_sym == :update_measures
   ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? and ENV['HOMEDRIVE'].start_with? 'U:'
 
   # Apply rubocop
-  #command = "rubocop --auto-correct --format simple --only Layout"
-  #puts "Applying rubocop style to measures..."
-  #system(command)
+  command = "rubocop --auto-correct --format simple --only Layout"
+  puts "Applying rubocop style to measures..."
+  system(command)
 
   # Update measures XMLs
-  #command = "#{OpenStudio.getOpenStudioCLI} measure -t '#{File.join(File.dirname(__FILE__), 'rulesets')}'"
-  #puts "Updating measure.xmls..."
-  #system(command, [:out, :err] => File::NULL)
+  command = "#{OpenStudio.getOpenStudioCLI} measure -t '#{File.join(File.dirname(__FILE__), 'rulesets')}'"
+  puts "Updating measure.xmls..."
+  system(command, [:out, :err] => File::NULL)
 
   create_test_hpxmls
   create_sample_hpxmls
