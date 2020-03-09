@@ -1599,7 +1599,7 @@ class EnergyRatingIndex301Ruleset
 
       wh_sys_values[:energy_factor], wh_sys_values[:recovery_efficiency] = get_water_heater_ef_and_re(wh_sys_values[:fuel_type], wh_sys_values[:tank_volume])
 
-      num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
+      num_water_heaters = orig_details.elements["count(Systems/WaterHeating/WaterHeatingSystem)"]
       wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(wh_sys_values[:fuel_type], @nbeds, num_water_heaters) * 1000.0 # Btuh
 
       if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
@@ -1641,7 +1641,7 @@ class EnergyRatingIndex301Ruleset
       end
 
       if wh_sys_values[:water_heater_type] == 'storage water heater' and wh_sys_values[:heating_capacity].nil?
-        num_water_heaters = orig_details.elements["Systems/WaterHeating/WaterHeatingSystem"].size
+        num_water_heaters = orig_details.elements["count(Systems/WaterHeating/WaterHeatingSystem)"]
         wh_sys_values[:heating_capacity] = Waterheater.calc_water_heater_capacity(wh_sys_values[:fuel_type], @nbeds, num_water_heaters) * 1000.0 # Btuh
       end
 
