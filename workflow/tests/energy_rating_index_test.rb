@@ -76,8 +76,6 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_downloading_weather
-    skip
-
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --download-weather"
     system(command)
