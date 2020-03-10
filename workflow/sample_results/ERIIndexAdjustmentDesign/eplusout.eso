@@ -1,138 +1,176 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
 1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
 2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
 3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Report Variables Requested
 4,2,Cumulative Days of Simulation[],Month[]  ! When Monthly Report Variables Requested
 5,1,Cumulative Days of Simulation[] ! When Run Period Report Variables Requested
 6,1,Calendar Year of Simulation[] ! When Annual Report Variables Requested
-311,9,EMS,central ac supply fan clg disaggregate [J] !Monthly [Value,Min,Day,Hour,Minute,Max,Day,Hour,Minute]
-312,11,EMS,central ac supply fan clg disaggregate [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-313,11,EMS,clg_ceilings_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-314,11,EMS,clg_doors_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-315,11,EMS,clg_ducts_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-316,11,EMS,clg_floors_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-317,11,EMS,clg_foundation_walls_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-318,11,EMS,clg_infil_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-319,11,EMS,clg_internal_mass_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-320,11,EMS,clg_intgains_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-321,11,EMS,clg_mechvent_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-322,11,EMS,clg_natvent_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-323,11,EMS,clg_rim_joists_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-324,11,EMS,clg_roofs_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-325,11,EMS,clg_skylights_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-326,11,EMS,clg_slabs_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-327,11,EMS,clg_walls_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-328,11,EMS,clg_windows_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+326,9,EMS,central ac supply fan clg disaggregate [J] !Monthly [Value,Min,Day,Hour,Minute,Max,Day,Hour,Minute]
+327,11,EMS,central ac supply fan clg disaggregate [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+328,9,EMS,furnace supply fan htg primary disaggregate [J] !Monthly [Value,Min,Day,Hour,Minute,Max,Day,Hour,Minute]
 329,11,EMS,furnace supply fan htg primary disaggregate [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-330,9,EMS,furnace supply fan htg primary disaggregate [J] !Monthly [Value,Min,Day,Hour,Minute,Max,Day,Hour,Minute]
-331,11,EMS,htg_ceilings_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-332,11,EMS,htg_doors_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-333,11,EMS,htg_ducts_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-334,11,EMS,htg_floors_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-335,11,EMS,htg_foundation_walls_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-336,11,EMS,htg_infil_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-337,11,EMS,htg_internal_mass_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-338,11,EMS,htg_intgains_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-339,11,EMS,htg_mechvent_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-340,11,EMS,htg_natvent_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-341,11,EMS,htg_rim_joists_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-342,11,EMS,htg_roofs_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-343,11,EMS,htg_skylights_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-344,11,EMS,htg_slabs_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-345,11,EMS,htg_walls_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-346,11,EMS,htg_windows_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-347,11,EMS,water heater EC adjustment outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-724,11,CENTRAL AC CLG COIL,Cooling Coil Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-737,11,FURNACE HTG COIL,Heating Coil Heating Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-750,11,FURNACE HTG COIL,Heating Coil Gas Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1015,11,WATER USE CONNECTIONS 1,Water Use Connections Plant Hot Water Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1052,11,WATER HEATER,Water Heater Heat Loss Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1068,11,WATER HEATER,Water Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1106,11,WATER HEATER,Water Heater Off Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1108,11,WATER HEATER,Water Heater On Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-1271,11,CENTRAL AC CLG COIL,Cooling Coil Crankcase Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+330,11,EMS,water heater EC adjustment outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+331,11,EMS,loads_htg_roofs_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+332,11,EMS,loads_htg_ceilings_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+333,11,EMS,loads_htg_walls_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+334,11,EMS,loads_htg_rim_joists_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+335,11,EMS,loads_htg_foundation_walls_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+336,11,EMS,loads_htg_doors_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+337,11,EMS,loads_htg_windows_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+338,11,EMS,loads_htg_skylights_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+339,11,EMS,loads_htg_floors_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+340,11,EMS,loads_htg_slabs_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+341,11,EMS,loads_htg_internal_mass_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+342,11,EMS,loads_htg_infil_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+343,11,EMS,loads_htg_natvent_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+344,11,EMS,loads_htg_mechvent_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+345,11,EMS,loads_htg_whf_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+346,11,EMS,loads_htg_ducts_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+347,11,EMS,loads_htg_intgains_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+348,11,EMS,loads_clg_roofs_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+349,11,EMS,loads_clg_ceilings_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+350,11,EMS,loads_clg_walls_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+351,11,EMS,loads_clg_rim_joists_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+352,11,EMS,loads_clg_foundation_walls_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+353,11,EMS,loads_clg_doors_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+354,11,EMS,loads_clg_windows_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+355,11,EMS,loads_clg_skylights_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+356,11,EMS,loads_clg_floors_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+357,11,EMS,loads_clg_slabs_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+358,11,EMS,loads_clg_internal_mass_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+359,11,EMS,loads_clg_infil_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+360,11,EMS,loads_clg_natvent_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+361,11,EMS,loads_clg_mechvent_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+362,11,EMS,loads_clg_whf_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+363,11,EMS,loads_clg_ducts_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+364,11,EMS,loads_clg_intgains_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+365,11,EMS,loads_htg_tot_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+366,11,EMS,loads_clg_tot_annual_outvar [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+747,11,CENTRAL AC CLG COIL,Cooling Coil Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+760,11,FURNACE HTG COIL,Heating Coil Heating Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+773,11,FURNACE HTG COIL,Heating Coil Gas Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1038,11,WATER USE CONNECTIONS 1,Water Use Connections Plant Hot Water Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1075,11,WATER HEATER,Water Heater Heat Loss Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1091,11,WATER HEATER,Water Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1129,11,WATER HEATER,Water Heater Off Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1131,11,WATER HEATER,Water Heater On Cycle Parasitic Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+1294,11,CENTRAL AC CLG COIL,Cooling Coil Crankcase Heater Electric Energy [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+16,11,Electricity:Facility [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+779,11,Gas:Facility [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+107,11,interior lighting:InteriorLights:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+28,11,ExteriorLights:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+234,11,mech vent house fan:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+294,11,whole house fan:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+204,11,fridge:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+189,11,dishwasher:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+159,11,clothes washer:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+144,11,clothes dryer:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+174,11,cooking range:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+279,11,misc tv:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+264,11,misc plug loads:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+638,11,Heating:DistrictHeating [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+675,11,Cooling:DistrictCooling [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 End of Data Dictionary
 1,RUN PERIOD 1,  39.83,-104.65,  -7.00,1650.00
 4,31, 1
-311,0.0,0.0, 1, 1,60,0.0, 1, 1,60
-330,128274231.52209719,0.0, 5,10,60,527128.3136107999,29, 7,60
+326,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+328,124269236.46286577,0.0, 5,10,60,510795.0038687215,29, 7,60
 4,59, 2
-311,0.0,0.0, 1, 1,60,0.0, 1, 1,60
-330,125631375.05184661,0.0, 2,14,60,613284.6749066449, 9, 6,60
+326,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+328,121706538.81096491,0.0, 2,14,60,594112.8013704609, 9, 6,60
 4,90, 3
-311,0.0,0.0, 1, 1,60,0.0, 1, 1,60
-330,53300226.94692596,0.0, 1,11,60,407692.8697930879,17, 6,60
+326,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+328,51635176.49678643,0.0, 1,11,60,395025.8714353321,17, 6,60
 4,120, 4
-311,234375.98480788826,0.0, 1, 1,60,119877.96075138546,19,18,60
-330,63081027.903590399,0.0, 1, 1,60,432256.5587877022, 3, 4,60
+326,695105.9740623493,0.0, 1, 1,60,188696.96012200949,19,18,60
+328,61032253.2662202,0.0, 1, 1,60,418689.4683436556, 3, 4,60
 4,151, 5
-311,8794691.62640579,0.0, 1, 1,60,526553.76208785,11,18,60
-330,6802188.100094378,0.0, 1,11,60,248115.5520995246, 1, 5,60
+326,18684159.165571523,0.0, 1, 1,60,619769.9487962154,11,17,60
+328,5740936.860404091,0.0, 1,11,60,240260.60418970674, 1, 5,60
 4,181, 6
-311,154517672.43081744,0.0, 1, 1,60,963854.7007947515,26,17,60
-330,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+326,177333198.21728189,0.0, 1, 1,60,933349.3144191278,14,18,60
+328,0.0,0.0, 1, 1,60,0.0, 1, 1,60
 4,212, 7
-311,144355529.61880166,0.0, 1, 1,60,902539.334383904,15,17,60
-330,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+326,168383776.27785088,0.0, 1, 1,60,925264.4156909979,15,17,60
+328,0.0,0.0, 1, 1,60,0.0, 1, 1,60
 4,243, 8
-311,116571275.5161577,0.0, 1, 3,60,963854.7007947515, 3,18,60
-330,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+326,141992769.40567137,0.0, 1, 3,60,933349.3144191278, 3,17,60
+328,0.0,0.0, 1, 1,60,0.0, 1, 1,60
 4,273, 9
-311,51374474.20006592,0.0, 1, 1,60,792124.0427399471, 7,17,60
-330,299867.14266091838,0.0, 1, 1,60,72535.80890583953,29, 6,60
+326,72757366.27955726,0.0, 1, 1,60,837434.0226721608, 7,17,60
+328,20562.71668397201,0.0, 1, 1,60,12312.425478575153,29, 7,60
 4,304,10
-311,3261597.2292836725,0.0, 1, 1,60,540008.0223360247, 1,16,60
-330,28370798.877694146,0.0, 1, 1,60,295259.246418336, 6, 6,60
+326,5577411.017122687,0.0, 1, 1,60,633385.2154651, 1,16,60
+328,22625936.867768203,0.0, 1, 1,60,280776.4327297259, 6, 6,60
 4,334,11
-311,0.0,0.0, 1, 1,60,0.0, 1, 1,60
-330,106100092.27974887,0.0, 5,14,60,589267.0565350043,26, 7,60
+326,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+328,102767970.4838086,0.0, 5,14,60,570814.8545423688,26, 7,60
 4,365,12
-311,0.0,0.0, 1, 1,60,0.0, 1, 1,60
-330,130236118.22548025,0.0, 1,10,60,573990.2748905959,31,24,60
+326,0.0,0.0, 1, 1,60,0.0, 1, 1,60
+328,126169222.5845533,0.0, 1,10,60,556138.5994601109,31,24,60
 5,365
-313,39043004.70814961,-1307492.1434839098, 9,18,16,60,1627769.7038580278, 6,26,21,60
-314,102309799.7166348,-189623.54808338677, 7,10, 3,60,308361.6889599209, 6,26,20,60
-315,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-316,-357867169.6601354,-1492294.90814064, 4,19,17,60,502305.68279744786, 7, 5,21,60
-317,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-318,69436316.71326947,-798971.9615605134, 7,26,16,60,911327.7892366747, 6,26,17,60
-319,-2283392118.9248526,-8848833.34601081, 6, 6,10,60,3204208.0116856617, 6,25,21,60
-320,2768048743.8065035,-307137.1334827709, 7, 6,12,60,4490723.303814365, 8, 1,21,60
-321,304435663.0877336,-1031664.0751050524, 7,22,22,60,1454720.7421974997, 6,26,18,60
-322,-572884241.0477805,-9223667.067594506, 8, 8,21,60,0.0, 1, 1, 1,60
-323,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-324,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-325,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-326,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-327,83819702.30600964,-2673524.0029582197, 7, 4,11,60,3040246.629562289, 6,26,21,60
-328,7868499819.732941,-2517663.7917754345, 5,18,23,60,14899780.35414774, 6,26,18,60
-331,2769150265.4384377,-462410.2501729961, 4, 6, 1,60,2574240.007458523, 2, 9,11,60
-332,1009952147.6564,0.0, 1, 1, 1,60,581416.230298254,11,26, 9,60
-333,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-334,3023893060.342415,-231033.5658019722, 9,15, 7,60,3031642.909783522,11,27,10,60
+331,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+332,3733210669.0849297,-594078.6702420288, 4,27,22,60,2574240.0080069235, 2, 9,11,60
+333,9822393329.754475,-423755.70138752818, 1,19,23,60,6315109.069347222, 2, 9,11,60
+334,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
 335,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-336,6217683550.403921,0.0, 1, 1, 1,60,5635273.48476885,12,31,24,60
-337,-1561776953.612115,-5848119.738117067, 4,11, 1,60,6685710.604731204,11,28,10,60
-338,-8633415706.971783,-6419772.379923529, 3, 7,21,60,153641.86248544046, 5, 4,12,60
-339,6945679530.5521559,0.0, 1, 1, 1,60,4388729.173873772, 1, 1, 3,60
+336,1235561520.4720605,-91647.45708086719, 4,27,14,60,581822.2845787787,11,26, 9,60
+337,1601796690.3946858,-15175607.850593064,11,22,14,60,8998918.893011243,12,31,24,60
+338,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+339,4450603648.439385,-195378.75721021594, 9,29, 7,60,3031559.9451045596,11,27,10,60
 340,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-341,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-342,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+341,-255740003.69726265,-6266220.896717814, 4, 9, 5,60,7219321.303389347,11,22,15,60
+342,7339622301.432499,0.0, 1, 1, 1,60,5635273.484768786,12,31,24,60
 343,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-344,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-345,7703966553.718078,-107195.99415522187, 1,20, 1,60,6315109.067494245, 2, 9,11,60
-346,6644347935.1151709,-13711008.072355994, 3,17,11,60,8929405.46145376,12,31,24,60
-312,479109616.60633906,0.0, 1, 1, 1,60,963854.7007947515, 6,26,17,60
-329,642095926.0501402,0.0, 1, 5,10,60,613284.6749066449, 2, 9, 6,60
-347,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-724,1997047115.5394309,0.0, 1, 1, 1,60,5200634.679674611, 6,26,16,60
-737,23545462061.871618,0.0, 1, 5,10,60,22488962.25673, 2, 9, 6,60
-750,30186489822.912385,0.0, 1, 5,10,60,28832002.893243594, 2, 9, 6,60
-1015,10898770105.035237,0.0, 1, 1, 1,60,27537677.989511726, 2, 9,11,60
-1052,-1085056927.1818274,-136324.3675739572, 1,26, 2,60,-65376.80349194971, 4,20,11,60
-1068,11987154309.98463,0.0, 1, 1, 1,60,16200000.0, 1,27,22,60
-1106,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-1108,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
-1271,752040000.0,0.0, 1, 2,15,60,180000.0, 1, 1, 1,60
+344,8427297597.366283,-39543.55788840186,12, 1,15,60,4388729.137452549, 1, 1, 3,60
+345,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+346,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+347,-12368369054.388115,-5808282.065272955, 1,10,21,60,138982.68828723167, 5, 4,12,60
+348,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+349,197379966.07303498,-1701358.2737539847,10, 9,16,60,1647133.6002014797, 6,26,21,60
+350,-736053351.6479217,-3649970.0147492855,10, 9,11,60,3090889.2844683669, 6,26,21,60
+351,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+352,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+353,-236699964.8579379,-324195.89914818326,10,13, 4,60,290773.9363432016, 6,26,20,60
+354,13587189940.673605,-4752481.720204143,10,13, 2,60,15616686.971578047,10,11,16,60
+355,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+356,-886275193.5732893,-1865015.81075892, 4,19,17,60,894610.5204636022, 6, 9, 3,60
+357,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+358,-238214509.20660789,-8745219.122948183,10,11,16,60,8114254.185900285, 6, 9, 3,60
+359,-1200917090.6615909,-1925207.383826331,10,14, 7,60,911327.7893050136, 6,26,17,60
+360,-8723825794.213534,-14095570.138720578, 8, 8,24,60,0.0, 1, 1, 1,60
+361,-1799257181.0407708,-2212605.1305273065,10,13, 3,60,1454427.9707174474, 6,26,18,60
+362,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+363,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+364,9869202454.448546,-293219.6001654476, 7, 6,12,60,5187463.200094605,10,24,21,60
+365,23929756340.512414,0.0, 1, 1, 1,60,23100972.03276401, 2, 9, 7,60
+366,9806326409.08761,0.0, 1, 1, 1,60,19204664.531156236, 6,26,19,60
+327,585423786.3371172,0.0, 1, 1, 1,60,933349.3144191278, 6,14,18,60
+329,615967834.5500546,0.0, 1, 5,10,60,594112.8013704609, 2, 9, 6,60
+330,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+747,2425701480.1389186,0.0, 1, 1, 1,60,5046910.587267453, 6,26,16,60
+760,23334796542.517377,0.0, 1, 5,10,60,22506859.231394143, 2, 9, 6,60
+773,29916405823.7402,0.0, 1, 5,10,60,28854947.732556594, 2, 9, 6,60
+1038,10937354956.280316,0.0, 1, 1, 1,60,29317812.26665815, 2, 9,11,60
+1075,-1074797084.4535838,-136323.58110085905, 1,24, 3,60,-78441.14109300991, 4,20,11,60
+1091,12013746190.78172,0.0, 1, 1, 1,60,19799103.630641674, 8,31,11,60
+1129,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+1131,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+1294,752040000.0,0.0, 1, 2,15,60,180000.0, 1, 1, 1,60
+16,41126797328.55256,1308490.003949555, 7, 2, 5,60,26688647.41567853, 2, 3,22,60
+28,346499999.999995,5164.033122472247, 1, 1, 3,60,104322.9976163208,12, 1,19,60
+107,4494527027.02696,66983.79924217699, 1, 1, 3,60,1353196.3414921524,12, 1,19,60
+144,3520114450.3611729,19307.60596410732, 1, 1, 4,60,781958.0415463452, 1, 1,12,60
+159,249410555.91279526,0.0, 1, 1, 1,60,1371541.3564130692, 1, 1, 9,60
+174,1612173395.3929914,15680.660023932067, 6, 1, 3,60,724790.058128658, 1, 1,18,60
+189,614534040.0323552,0.0, 1, 1, 1,60,3653599.3356510715, 1, 3,20,60
+204,2489607519.0080258,204647.47603422169, 2, 1, 5,60,373076.5697496792, 6, 1,19,60
+234,1323724005.7156337,151110.04631458078, 1, 1, 1,60,151110.04631458078, 1, 1, 1,60
+264,7853775414.605873,406315.13168838227, 7, 1,10,60,1920373.1694006806, 2, 1,21,60
+279,2229551628.6884877,115345.8707173982, 7, 1,10,60,545160.8814232716, 2, 1,21,60
+294,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+638,1046102.6656174534,0.0, 1, 1, 1,60,102066.80940198583, 1, 9,17,60
+675,17741476.70802185,0.0, 1, 1, 1,60,3420378.6173644617, 6,26,18,60
+779,29916405823.7402,0.0, 1, 5,10,60,28854947.732556594, 2, 9, 6,60
 End of Data
- Number of Records Written=          68
+ Number of Records Written=          87

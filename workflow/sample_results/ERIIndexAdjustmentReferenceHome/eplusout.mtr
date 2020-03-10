@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
 1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
 2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
 3,5,Cumulative Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],DayType  ! When Daily Meters Requested
@@ -6,29 +6,26 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26
 5,1,Cumulative Days of Simulation[] ! When Run Period Meters Requested
 6,1,Calendar Year of Simulation[] ! When Annual Meters Requested
 16,11,Electricity:Facility [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-615,11,Heating:DistrictHeating [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-756,11,Gas:Facility [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-652,11,Cooling:DistrictCooling [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-462,11,Heating:EnergyTransfer [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+779,11,Gas:Facility [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 107,11,interior lighting:InteriorLights:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-487,11,Cooling:EnergyTransfer [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 28,11,ExteriorLights:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-120,11,InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-189,11,dishwasher:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+234,11,mech vent house fan:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+294,11,whole house fan:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 204,11,fridge:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+189,11,dishwasher:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 159,11,clothes washer:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 144,11,clothes dryer:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-264,11,misc plug loads:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-279,11,misc tv:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 174,11,cooking range:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
-234,11,mech vent house fan:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+279,11,misc tv:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+264,11,misc plug loads:InteriorEquipment:Electricity [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+638,11,Heating:DistrictHeating [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
+675,11,Cooling:DistrictCooling [J] !RunPeriod [Value,Min,Month,Day,Hour,Minute,Max,Month,Day,Hour,Minute]
 End of Data Dictionary
 1,RUN PERIOD 1,  39.83,-104.65,  -7.00,1650.00
 5,365
-16,45201986159.76154,1376896.4511445219, 7, 2, 5,60,25359363.48174633, 2, 3,22,60
+16,45689557586.03732,1376896.4511445219, 7, 2, 5,60,27729679.87434715, 2, 3,22,60
 28,792000000.0000142,11803.504279936584, 1, 1, 3,60,238452.56598016228,12, 1,19,60
 107,8550000000.000022,127424.19393113347, 1, 1, 3,60,2574203.8372858406,12, 1,19,60
-120,19888992230.300706,1233991.6077983175, 7, 1, 5,60,7186018.316554257, 2, 7,20,60
 144,3520114450.3611729,19307.60596410732, 1, 1, 4,60,781958.0415463452, 1, 1,12,60
 159,249410555.91279526,0.0, 1, 1, 1,60,1371541.3564130692, 1, 1, 9,60
 174,1612173395.3929914,15680.660023932067, 6, 1, 3,60,724790.058128658, 1, 1,18,60
@@ -37,10 +34,9 @@ End of Data Dictionary
 234,1319825226.2983454,150664.98017105438, 1, 1, 1,60,150664.98017105438, 1, 1, 1,60
 264,7853775414.605873,406315.13168838227, 7, 1,10,60,1920373.1694006806, 2, 1,21,60
 279,2229551628.6884877,115345.8707173982, 7, 1,10,60,545160.8814232716, 2, 1,21,60
-462,34819235305.72956,0.0, 1, 5,10,60,30356331.63304889, 2, 9, 6,60
-487,7620067064.072766,0.0, 1, 1, 1,60,20189866.049398446, 6,26,18,60
-615,1056131.677973584,0.0, 1, 1, 1,60,104444.2231780221, 1,11,15,60
-652,18495293.404955657,0.0, 1, 1, 1,60,3984519.8938421185, 6,26,18,60
-756,43542792119.8729,0.0, 1, 5,10,60,37962673.61990922, 2, 9, 6,60
+294,0.0,0.0, 1, 1, 1,60,0.0, 1, 1, 1,60
+638,1000424.8475713892,0.0, 1, 1, 1,60,101540.13362092499, 1,11,15,60
+675,26869300.813900435,0.0, 1, 1, 1,60,4584705.6649023289, 6,26,18,60
+779,43227680955.38423,0.0, 1, 5,10,60,37986808.42328149, 2, 9, 6,60
 End of Data
- Number of Records Written=          17
+ Number of Records Written=          15

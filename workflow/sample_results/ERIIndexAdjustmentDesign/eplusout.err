@@ -1,7 +1,6 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26,
+Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
-   ** Warning ** ProcessScheduleInput: Schedule:Constant="ALWAYS ON CONTINUOUS", Blank Schedule Type Limits Name input -- will not be validated.
    ** Warning ** GetSurfaceData: Very small surface area[5.89412E-004], Surface=SURFACE DOORAREANORTH
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
    ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
@@ -9,39 +8,36 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26,
    ** Warning ** CalculateZoneVolume: 3 zones are not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
    ** Warning ** CheckUsedConstructions: There are 1 nominally unused constructions in input.
    **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
-   ** Warning ** GetInputViewFactors: ComplexFenestrationProperty:SolarAbsorbedLayers="LIVING", not enough values.
-   **   ~~~   ** ...Number of input values [198] is less than the required number=[400] Missing surface pairs will have a zero view factor.
-   ** Warning ** Surfaces in Zone/Enclosure="VENTED CRAWLSPACE" do not define an enclosure.
+   ** Warning ** Surfaces in Zone/Enclosure="CRAWLSPACE - VENTED" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
-   ** Warning ** GetInputViewFactors: Output:DaylightFactors="LIVING", not enough values.
+   ** Warning ** GetInputViewFactors: ComplexFenestrationProperty:SolarAbsorbedLayers="LIVING SPACE", not enough values.
    **   ~~~   ** ...Number of input values [198] is less than the required number=[400] Missing surface pairs will have a zero view factor.
-   ** Warning ** Surfaces in Zone/Enclosure="VENTED CRAWLSPACE" do not define an enclosure.
+   ** Warning ** Surfaces in Zone/Enclosure="CRAWLSPACE - VENTED" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
+   ** Warning ** GetInputViewFactors: Output:DaylightFactors="LIVING SPACE", not enough values.
+   **   ~~~   ** ...Number of input values [198] is less than the required number=[400] Missing surface pairs will have a zero view factor.
    ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC CLG COIL but not at the AHRI test condition due to curve out of bound.
    **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="FUELOIL#1:FACILITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="PROPANE:FACILITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="GARAGE LIGHTING:INTERIORLIGHTS:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="INTERIOREQUIPMENT:FUELOIL#1" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOIL#1" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#1" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="CEILING FAN:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter:MeterFileOnly: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="FUELOIL#1:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="PROPANE:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="GARAGE LIGHTING:INTERIORLIGHTS:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CEILING FAN:INTERIOREQUIPMENT:ELECTRICITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:GAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:GAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOIL#1" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#1" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
    ************* Testing Individual Branch Integrity
    ************* All Branches passed integrity testing
    ************* Testing Individual Supply Air Path Integrity
@@ -57,24 +53,22 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26,
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/04 11:00 - 12:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.813E-005 m3/s/W.
-   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=04/19 15:00 - 16:00
+   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.905E-005 m3/s/W.
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=04/07 17:00 - 18:00
    **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
    **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/10 22:00 - 23:00
+   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/24 15:00 - 16:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 05/01 09:00 - 10:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 05/17 04:00 - 05:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 06/16 04:00 - 05:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 06/18 17:00 - 18:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 09/29 05:00 - 06:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 06/24 22:00 - 23:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/17 07:00 - 08:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/28 12:00 - 13:00
+   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/25 01:00 - 02:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 11/17 10:00 - 11:00
    **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
@@ -84,26 +78,26 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26,
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
    **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
+   ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER GAS ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
    ************* There are 1 unused objects in input.
    ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
-   ************* There are 4 unused schedules in input.
-   ************* There are 67 unused week schedules in input.
-   ************* There are 40 unused day schedules in input.
+   ************* There are 2 unused schedules in input.
+   ************* There are 4 unused week schedules in input.
+   ************* There are 5 unused day schedules in input.
    ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
    *************
    ************* ===== Recurring Error Summary =====
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 27094 total times;
+   *************  **   ~~~   **   This error occurred 29876 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.010643E-005  Min=6.741616E-005
+   *************  **   ~~~   **   Max=7.017940E-005  Min=6.747739E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -115,4 +109,4 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2019.12.18 17:26,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 27133 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 10.74sec
+   ************* EnergyPlus Completed Successfully-- 29910 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.66sec
