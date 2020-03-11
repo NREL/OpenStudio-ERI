@@ -215,8 +215,10 @@ class EnergyRatingIndex301Ruleset
     # Roof
     orig_hpxml.roofs.each do |orig_roof|
       if ["garage"].include? orig_roof.interior_adjacent_to
+        orig_roof.skylights.each do |orig_skylight|
+          orig_hpxml.skylights.delete(orig_skylight)
+        end
         orig_hpxml.roofs.delete(orig_roof)
-        delete_roof_subsurfaces(orig_hpxml, orig_roof.id)
       end
     end
 
@@ -232,8 +234,13 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.walls.each do |orig_wall|
       if ["garage", "other housing unit"].include? orig_wall.interior_adjacent_to or
          ["garage", "other housing unit"].include? orig_wall.exterior_adjacent_to
+        orig_wall.windows.each do |orig_window|
+          orig_hpxml.windows.delete(orig_window)
+        end
+        orig_wall.doors.each do |orig_door|
+          orig_hpxml.doors.delete(orig_door)
+        end
         orig_hpxml.walls.delete(orig_wall)
-        delete_wall_subsurfaces(orig_hpxml, orig_wall.id)
       end
     end
 
@@ -241,8 +248,13 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       if ["garage", "other housing unit"].include? orig_foundation_wall.interior_adjacent_to or
          ["garage", "other housing unit"].include? orig_foundation_wall.exterior_adjacent_to
+        orig_foundation_wall.windows.each do |orig_window|
+          orig_hpxml.windows.delete(orig_window)
+        end
+        orig_foundation_wall.doors.each do |orig_door|
+          orig_hpxml.doors.delete(orig_door)
+        end
         orig_hpxml.foundation_walls.delete(orig_foundation_wall)
-        delete_wall_subsurfaces(orig_hpxml, orig_foundation_wall.id)
       end
     end
 
@@ -270,7 +282,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
-    @has_uncond_bsmnt = get_has_space_type(orig_hpxml, "basement - unconditioned")
+    @has_uncond_bsmnt = orig_hpxml.has_space_type("basement - unconditioned")
 
     new_hpxml.set_site(:fuels => orig_hpxml.site.fuels,
                        :shelter_coefficient => Airflow.get_default_shelter_coefficient())
@@ -292,7 +304,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
-    @has_uncond_bsmnt = get_has_space_type(orig_hpxml, "basement - unconditioned")
+    @has_uncond_bsmnt = orig_hpxml.has_space_type("basement - unconditioned")
 
     new_hpxml.set_site(:fuels => orig_hpxml.site.fuels,
                        :shelter_coefficient => Airflow.get_default_shelter_coefficient())
@@ -1034,16 +1046,12 @@ class EnergyRatingIndex301Ruleset
     # scale down skylight area if needed to fit.
     new_hpxml.roofs.each do |new_roof|
       new_skylight_area = 0.0
-      new_attached_skylights = []
-      new_hpxml.skylights.each do |new_skylight|
-        next unless new_skylight.roof_idref == new_roof.id
-
-        new_attached_skylights << new_skylight
-        new_skylight_area += new_skylight.area
+      new_roof.skylights.each do |skylight|
+        new_skylight_area += skylight.area
       end
       if new_skylight_area > new_roof.area
-        new_attached_skylights.each do |new_attached_skylight|
-          new_attached_skylight.area = new_attached_skylight.area * new_roof.area / new_skylight_area * 0.99
+        new_roof.skylights.each do |new_skylight|
+          new_skylight.area = new_skylight.area * new_roof.area / new_skylight_area * 0.99
         end
       end
     end
@@ -1089,7 +1097,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
-    has_fuel = has_fuel_access(orig_hpxml)
+    has_fuel = orig_hpxml.has_fuel_access()
     ref_hvacdist_ids = []
 
     orig_hps_heating = []
@@ -1148,11 +1156,11 @@ class EnergyRatingIndex301Ruleset
     else
       clg_ceiling_fan_offset = nil
     end
-    new_hpxml.set_hvac_control(:id => "HVACControl",
-                               :control_type => control_type,
-                               :heating_setpoint_temp => HVAC.get_default_heating_setpoint(control_type)[0],
-                               :cooling_setpoint_temp => HVAC.get_default_cooling_setpoint(control_type)[0],
-                               :ceiling_fan_cooling_setpoint_temp_offset => clg_ceiling_fan_offset)
+    new_hpxml.hvac_controls.add(:id => "HVACControl",
+                                :control_type => control_type,
+                                :heating_setpoint_temp => HVAC.get_default_heating_setpoint(control_type)[0],
+                                :cooling_setpoint_temp => HVAC.get_default_cooling_setpoint(control_type)[0],
+                                :ceiling_fan_cooling_setpoint_temp_offset => clg_ceiling_fan_offset)
 
     # Distribution system
     add_reference_distribution_system(new_hpxml, ref_hvacdist_ids)
@@ -1180,7 +1188,7 @@ class EnergyRatingIndex301Ruleset
                                     :fraction_heat_load_served => orig_heating_system.fraction_heat_load_served,
                                     :electric_auxiliary_energy => orig_heating_system.electric_auxiliary_energy)
     end
-    if not has_heating_system and not has_heat_pump and has_fuel_access(orig_hpxml)
+    if not has_heating_system and not has_heat_pump and orig_hpxml.has_fuel_access()
       add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids)
     end
 
@@ -1224,7 +1232,7 @@ class EnergyRatingIndex301Ruleset
                                :heating_efficiency_hspf => orig_heat_pump.heating_efficiency_hspf,
                                :heating_efficiency_cop => orig_heat_pump.heating_efficiency_cop)
     end
-    if not has_heating_system and not has_heat_pump and not has_fuel_access(orig_hpxml)
+    if not has_heating_system and not has_heat_pump and not orig_hpxml.has_fuel_access()
       add_reference_heating_heat_pump(new_hpxml, ref_hvacdist_ids)
     end
 
@@ -1234,29 +1242,30 @@ class EnergyRatingIndex301Ruleset
     else
       clg_ceiling_fan_offset = nil
     end
-    if not orig_hpxml.hvac_control.nil?
-      control_type = orig_hpxml.hvac_control.control_type
+    if orig_hpxml.hvac_controls.size > 0
+      hvac_control = orig_hpxml.hvac_controls[0]
+      control_type = hvac_control.control_type
       htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
       clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
-      new_hpxml.set_hvac_control(:id => orig_hpxml.hvac_control.id,
-                                 :control_type => control_type,
-                                 :heating_setpoint_temp => htg_sp,
-                                 :heating_setback_temp => htg_setback_sp,
-                                 :heating_setback_hours_per_week => htg_setback_hrs_per_week,
-                                 :heating_setback_start_hour => htg_setback_start_hr,
-                                 :cooling_setpoint_temp => clg_sp,
-                                 :cooling_setup_temp => clg_setup_sp,
-                                 :cooling_setup_hours_per_week => clg_setup_hrs_per_week,
-                                 :cooling_setup_start_hour => clg_setup_start_hr,
-                                 :ceiling_fan_cooling_setpoint_temp_offset => clg_ceiling_fan_offset)
+      new_hpxml.hvac_controls.add(:id => hvac_control.id,
+                                  :control_type => control_type,
+                                  :heating_setpoint_temp => htg_sp,
+                                  :heating_setback_temp => htg_setback_sp,
+                                  :heating_setback_hours_per_week => htg_setback_hrs_per_week,
+                                  :heating_setback_start_hour => htg_setback_start_hr,
+                                  :cooling_setpoint_temp => clg_sp,
+                                  :cooling_setup_temp => clg_setup_sp,
+                                  :cooling_setup_hours_per_week => clg_setup_hrs_per_week,
+                                  :cooling_setup_start_hour => clg_setup_start_hr,
+                                  :ceiling_fan_cooling_setpoint_temp_offset => clg_ceiling_fan_offset)
 
     else
       control_type = "manual thermostat"
-      new_hpxml.set_hvac_control(:id => "HVACControl",
-                                 :control_type => control_type,
-                                 :heating_setpoint_temp => HVAC.get_default_heating_setpoint(control_type)[0],
-                                 :cooling_setpoint_temp => HVAC.get_default_cooling_setpoint(control_type)[0],
-                                 :ceiling_fan_cooling_setpoint_temp_offset => clg_ceiling_fan_offset)
+      new_hpxml.hvac_controls.add(:id => "HVACControl",
+                                  :control_type => control_type,
+                                  :heating_setpoint_temp => HVAC.get_default_heating_setpoint(control_type)[0],
+                                  :cooling_setpoint_temp => HVAC.get_default_cooling_setpoint(control_type)[0],
+                                  :ceiling_fan_cooling_setpoint_temp_offset => clg_ceiling_fan_offset)
     end
 
     # Table 4.2.2(1) - Thermal distribution systems
@@ -1455,11 +1464,7 @@ class EnergyRatingIndex301Ruleset
       # Set fuel type for combi systems
       fuel_type = orig_water_heater.fuel_type
       if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? orig_water_heater.water_heater_type
-        orig_hpxml.heating_systems.each do |orig_heating_system|
-          next unless orig_heating_system.id == orig_water_heater.related_hvac
-
-          fuel_type = orig_heating_system.heating_system_fuel
-        end
+        fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
       end
 
       energy_factor, recovery_efficiency = get_water_heater_ef_and_re(fuel_type, tank_volume)
@@ -1526,7 +1531,7 @@ class EnergyRatingIndex301Ruleset
                                           :recovery_efficiency => orig_water_heater.recovery_efficiency,
                                           :uses_desuperheater => orig_water_heater.uses_desuperheater,
                                           :jacket_r_value => orig_water_heater.jacket_r_value,
-                                          :related_hvac => orig_water_heater.related_hvac,
+                                          :related_hvac_idref => orig_water_heater.related_hvac_idref,
                                           :standby_loss => orig_water_heater.standby_loss,
                                           :temperature => Waterheater.get_default_hot_water_temperature(@eri_version))
     end
@@ -1546,17 +1551,17 @@ class EnergyRatingIndex301Ruleset
 
     standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl)
 
-    if orig_hpxml.hot_water_distribution.nil?
+    if orig_hpxml.hot_water_distributions.size == 0
       sys_id = "HotWaterDistribution"
     else
-      sys_id = orig_hpxml.hot_water_distribution.id
+      sys_id = orig_hpxml.hot_water_distributions[0].id
     end
 
     # New hot water distribution
-    new_hpxml.set_hot_water_distribution(:id => sys_id,
-                                         :system_type => "Standard",
-                                         :pipe_r_value => 0,
-                                         :standard_piping_length => standard_piping_length)
+    new_hpxml.hot_water_distributions.add(:id => sys_id,
+                                          :system_type => "Standard",
+                                          :pipe_r_value => 0,
+                                          :standard_piping_length => standard_piping_length)
 
     # New water fixtures
     if orig_hpxml.water_fixtures.size == 0
@@ -1583,23 +1588,24 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_water_heating_use_rated(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
-    if orig_hpxml.hot_water_distribution.nil?
+    if orig_hpxml.hot_water_distributions.size == 0
       set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
       return
     end
 
     # New hot water distribution
-    new_hpxml.set_hot_water_distribution(:id => orig_hpxml.hot_water_distribution.id,
-                                         :system_type => orig_hpxml.hot_water_distribution.system_type,
-                                         :pipe_r_value => orig_hpxml.hot_water_distribution.pipe_r_value,
-                                         :standard_piping_length => orig_hpxml.hot_water_distribution.standard_piping_length,
-                                         :recirculation_control_type => orig_hpxml.hot_water_distribution.recirculation_control_type,
-                                         :recirculation_piping_length => orig_hpxml.hot_water_distribution.recirculation_piping_length,
-                                         :recirculation_branch_piping_length => orig_hpxml.hot_water_distribution.recirculation_branch_piping_length,
-                                         :recirculation_pump_power => orig_hpxml.hot_water_distribution.recirculation_pump_power,
-                                         :dwhr_facilities_connected => orig_hpxml.hot_water_distribution.dwhr_facilities_connected,
-                                         :dwhr_equal_flow => orig_hpxml.hot_water_distribution.dwhr_equal_flow,
-                                         :dwhr_efficiency => orig_hpxml.hot_water_distribution.dwhr_efficiency)
+    hot_water_distribution = orig_hpxml.hot_water_distributions[0]
+    new_hpxml.hot_water_distributions.add(:id => hot_water_distribution.id,
+                                          :system_type => hot_water_distribution.system_type,
+                                          :pipe_r_value => hot_water_distribution.pipe_r_value,
+                                          :standard_piping_length => hot_water_distribution.standard_piping_length,
+                                          :recirculation_control_type => hot_water_distribution.recirculation_control_type,
+                                          :recirculation_piping_length => hot_water_distribution.recirculation_piping_length,
+                                          :recirculation_branch_piping_length => hot_water_distribution.recirculation_branch_piping_length,
+                                          :recirculation_pump_power => hot_water_distribution.recirculation_pump_power,
+                                          :dwhr_facilities_connected => hot_water_distribution.dwhr_facilities_connected,
+                                          :dwhr_equal_flow => hot_water_distribution.dwhr_equal_flow,
+                                          :dwhr_efficiency => hot_water_distribution.dwhr_efficiency)
 
     # New water fixtures
     orig_hpxml.water_fixtures.each do |orig_water_fixture|
@@ -1621,20 +1627,21 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_solar_thermal_rated(orig_hpxml, new_hpxml)
-    return if orig_hpxml.solar_thermal_system.nil?
+    return if orig_hpxml.solar_thermal_systems.size == 0
 
-    new_hpxml.set_solar_thermal_system(:id => orig_hpxml.solar_thermal_system.id,
-                                       :system_type => orig_hpxml.solar_thermal_system.system_type,
-                                       :collector_area => orig_hpxml.solar_thermal_system.collector_area,
-                                       :collector_loop_type => orig_hpxml.solar_thermal_system.collector_loop_type,
-                                       :collector_azimuth => orig_hpxml.solar_thermal_system.collector_azimuth,
-                                       :collector_type => orig_hpxml.solar_thermal_system.collector_type,
-                                       :collector_tilt => orig_hpxml.solar_thermal_system.collector_tilt,
-                                       :collector_frta => orig_hpxml.solar_thermal_system.collector_frta,
-                                       :collector_frul => orig_hpxml.solar_thermal_system.collector_frul,
-                                       :storage_volume => orig_hpxml.solar_thermal_system.storage_volume,
-                                       :water_heating_system_idref => orig_hpxml.solar_thermal_system.water_heating_system_idref,
-                                       :solar_fraction => orig_hpxml.solar_thermal_system.solar_fraction)
+    solar_thermal_system = orig_hpxml.solar_thermal_systems[0]
+    new_hpxml.solar_thermal_systems.add(:id => solar_thermal_system.id,
+                                        :system_type => solar_thermal_system.system_type,
+                                        :collector_area => solar_thermal_system.collector_area,
+                                        :collector_loop_type => solar_thermal_system.collector_loop_type,
+                                        :collector_azimuth => solar_thermal_system.collector_azimuth,
+                                        :collector_type => solar_thermal_system.collector_type,
+                                        :collector_tilt => solar_thermal_system.collector_tilt,
+                                        :collector_frta => solar_thermal_system.collector_frta,
+                                        :collector_frul => solar_thermal_system.collector_frul,
+                                        :storage_volume => solar_thermal_system.storage_volume,
+                                        :water_heating_system_idref => solar_thermal_system.water_heating_system_idref,
+                                        :solar_fraction => solar_thermal_system.solar_fraction)
   end
 
   def self.set_systems_solar_thermal_iad(orig_hpxml, new_hpxml)
@@ -1666,26 +1673,28 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
-    new_hpxml.set_clothes_washer(:id => orig_hpxml.clothes_washer.id,
-                                 :location => "living space",
-                                 :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
-                                 :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
-                                 :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
-                                 :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
-                                 :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
-                                 :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap())
+    clothes_washer = orig_hpxml.clothes_washers[0]
+    new_hpxml.clothes_washers.add(:id => clothes_washer.id,
+                                  :location => "living space",
+                                  :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
+                                  :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
+                                  :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
+                                  :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
+                                  :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
+                                  :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap())
   end
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
-    new_hpxml.set_clothes_washer(:id => orig_hpxml.clothes_washer.id,
-                                 :location => orig_hpxml.clothes_washer.location,
-                                 :modified_energy_factor => orig_hpxml.clothes_washer.modified_energy_factor,
-                                 :integrated_modified_energy_factor => orig_hpxml.clothes_washer.integrated_modified_energy_factor,
-                                 :rated_annual_kwh => orig_hpxml.clothes_washer.rated_annual_kwh,
-                                 :label_electric_rate => orig_hpxml.clothes_washer.label_electric_rate,
-                                 :label_gas_rate => orig_hpxml.clothes_washer.label_gas_rate,
-                                 :label_annual_gas_cost => orig_hpxml.clothes_washer.label_annual_gas_cost,
-                                 :capacity => orig_hpxml.clothes_washer.capacity)
+    clothes_washer = orig_hpxml.clothes_washers[0]
+    new_hpxml.clothes_washers.add(:id => clothes_washer.id,
+                                  :location => clothes_washer.location,
+                                  :modified_energy_factor => clothes_washer.modified_energy_factor,
+                                  :integrated_modified_energy_factor => clothes_washer.integrated_modified_energy_factor,
+                                  :rated_annual_kwh => clothes_washer.rated_annual_kwh,
+                                  :label_electric_rate => clothes_washer.label_electric_rate,
+                                  :label_gas_rate => clothes_washer.label_gas_rate,
+                                  :label_annual_gas_cost => clothes_washer.label_annual_gas_cost,
+                                  :capacity => clothes_washer.capacity)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
@@ -1694,20 +1703,22 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
-    new_hpxml.set_clothes_dryer(:id => orig_hpxml.clothes_dryer.id,
-                                :location => "living space",
-                                :fuel_type => orig_hpxml.clothes_dryer.fuel_type,
-                                :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(orig_hpxml.clothes_dryer.fuel_type),
-                                :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control())
+    clothes_dryer = orig_hpxml.clothes_dryers[0]
+    new_hpxml.clothes_dryers.add(:id => clothes_dryer.id,
+                                 :location => "living space",
+                                 :fuel_type => clothes_dryer.fuel_type,
+                                 :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(clothes_dryer.fuel_type),
+                                 :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control())
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
-    new_hpxml.set_clothes_dryer(:id => orig_hpxml.clothes_dryer.id,
-                                :location => orig_hpxml.clothes_dryer.location,
-                                :fuel_type => orig_hpxml.clothes_dryer.fuel_type,
-                                :energy_factor => orig_hpxml.clothes_dryer.energy_factor,
-                                :combined_energy_factor => orig_hpxml.clothes_dryer.combined_energy_factor,
-                                :control_type => orig_hpxml.clothes_dryer.control_type)
+    clothes_dryer = orig_hpxml.clothes_dryers[0]
+    new_hpxml.clothes_dryers.add(:id => clothes_dryer.id,
+                                 :location => clothes_dryer.location,
+                                 :fuel_type => clothes_dryer.fuel_type,
+                                 :energy_factor => clothes_dryer.energy_factor,
+                                 :combined_energy_factor => clothes_dryer.combined_energy_factor,
+                                 :control_type => clothes_dryer.control_type)
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)
@@ -1716,16 +1727,18 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
-    new_hpxml.set_dishwasher(:id => orig_hpxml.dishwasher.id,
-                             :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef(),
-                             :place_setting_capacity => HotWaterAndAppliances.get_dishwasher_reference_cap())
+    dishwasher = orig_hpxml.dishwashers[0]
+    new_hpxml.dishwashers.add(:id => dishwasher.id,
+                              :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef(),
+                              :place_setting_capacity => HotWaterAndAppliances.get_dishwasher_reference_cap())
   end
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
-    new_hpxml.set_dishwasher(:id => orig_hpxml.dishwasher.id,
-                             :energy_factor => orig_hpxml.dishwasher.energy_factor,
-                             :rated_annual_kwh => orig_hpxml.dishwasher.rated_annual_kwh,
-                             :place_setting_capacity => orig_hpxml.dishwasher.place_setting_capacity)
+    dishwasher = orig_hpxml.dishwashers[0]
+    new_hpxml.dishwashers.add(:id => dishwasher.id,
+                              :energy_factor => dishwasher.energy_factor,
+                              :rated_annual_kwh => dishwasher.rated_annual_kwh,
+                              :place_setting_capacity => dishwasher.place_setting_capacity)
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
@@ -1737,15 +1750,17 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric ERI Reference Homes
     refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
 
-    new_hpxml.set_refrigerator(:id => orig_hpxml.refrigerator.id,
-                               :location => "living space",
-                               :rated_annual_kwh => refrigerator_kwh)
+    refrigerator = orig_hpxml.refrigerators[0]
+    new_hpxml.refrigerators.add(:id => refrigerator.id,
+                                :location => "living space",
+                                :rated_annual_kwh => refrigerator_kwh)
   end
 
   def self.set_appliances_refrigerator_rated(orig_hpxml, new_hpxml)
-    new_hpxml.set_refrigerator(:id => orig_hpxml.refrigerator.id,
-                               :location => orig_hpxml.refrigerator.location,
-                               :rated_annual_kwh => orig_hpxml.refrigerator.rated_annual_kwh)
+    refrigerator = orig_hpxml.refrigerators[0]
+    new_hpxml.refrigerators.add(:id => refrigerator.id,
+                                :location => refrigerator.location,
+                                :rated_annual_kwh => refrigerator.rated_annual_kwh)
   end
 
   def self.set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
@@ -1754,21 +1769,25 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
-    new_hpxml.set_cooking_range(:id => orig_hpxml.cooking_range.id,
-                                :fuel_type => orig_hpxml.cooking_range.fuel_type,
-                                :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_induction())
+    cooking_range = orig_hpxml.cooking_ranges[0]
+    new_hpxml.cooking_ranges.add(:id => cooking_range.id,
+                                 :fuel_type => cooking_range.fuel_type,
+                                 :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_induction())
 
-    new_hpxml.set_oven(:id => orig_hpxml.oven.id,
-                       :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_convection())
+    oven = orig_hpxml.ovens[0]
+    new_hpxml.ovens.add(:id => oven.id,
+                        :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_convection())
   end
 
   def self.set_appliances_cooking_range_oven_rated(orig_hpxml, new_hpxml)
-    new_hpxml.set_cooking_range(:id => orig_hpxml.cooking_range.id,
-                                :fuel_type => orig_hpxml.cooking_range.fuel_type,
-                                :is_induction => orig_hpxml.cooking_range.is_induction)
+    cooking_range = orig_hpxml.cooking_ranges[0]
+    new_hpxml.cooking_ranges.add(:id => cooking_range.id,
+                                 :fuel_type => cooking_range.fuel_type,
+                                 :is_induction => cooking_range.is_induction)
 
-    new_hpxml.set_oven(:id => orig_hpxml.oven.id,
-                       :is_convection => orig_hpxml.oven.is_convection)
+    oven = orig_hpxml.ovens[0]
+    new_hpxml.ovens.add(:id => oven.id,
+                        :is_convection => oven.is_convection)
   end
 
   def self.set_appliances_cooking_range_oven_iad(orig_hpxml, new_hpxml)
@@ -1779,38 +1798,108 @@ class EnergyRatingIndex301Ruleset
   def self.set_lighting_reference(orig_hpxml, new_hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
 
-    new_hpxml.set_lighting(:fraction_tier_i_interior => fFI_int,
-                           :fraction_tier_i_exterior => fFI_ext,
-                           :fraction_tier_i_garage => fFI_grg,
-                           :fraction_tier_ii_interior => fFII_int,
-                           :fraction_tier_ii_exterior => fFII_ext,
-                           :fraction_tier_ii_garage => fFII_grg)
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
+                                  :location => "interior",
+                                  :fration_of_units_in_location => fFI_int,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
+                                  :location => "exterior",
+                                  :fration_of_units_in_location => fFI_ext,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
+                                  :location => "garage",
+                                  :fration_of_units_in_location => fFI_grg,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
+                                  :location => "interior",
+                                  :fration_of_units_in_location => fFII_int,
+                                  :third_party_certification => "ERI Tier II")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
+                                  :location => "exterior",
+                                  :fration_of_units_in_location => fFII_ext,
+                                  :third_party_certification => "ERI Tier II")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
+                                  :location => "garage",
+                                  :fration_of_units_in_location => fFII_grg,
+                                  :third_party_certification => "ERI Tier II")
   end
 
   def self.set_lighting_rated(orig_hpxml, new_hpxml)
-    # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
-    fraction_tier_i_interior = orig_hpxml.lighting.fraction_tier_i_interior
-    if fraction_tier_i_interior + orig_hpxml.lighting.fraction_tier_ii_interior < 0.1
-      fraction_tier_i_interior = 0.1 - orig_hpxml.lighting.fraction_tier_ii_interior
+    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = nil
+    orig_hpxml.lighting_groups.each do |orig_lg|
+      if orig_lg.location == "interior" and orig_lg.third_party_certification == "ERI Tier I"
+        fFI_int = orig_lg.fration_of_units_in_location
+      elsif orig_lg.location == "exterior" and orig_lg.third_party_certification == "ERI Tier I"
+        fFI_ext = orig_lg.fration_of_units_in_location
+      elsif orig_lg.location == "garage" and orig_lg.third_party_certification == "ERI Tier I"
+        fFI_grg = orig_lg.fration_of_units_in_location
+      elsif orig_lg.location == "interior" and orig_lg.third_party_certification == "ERI Tier II"
+        fFII_int = orig_lg.fration_of_units_in_location
+      elsif orig_lg.location == "exterior" and orig_lg.third_party_certification == "ERI Tier II"
+        fFII_ext = orig_lg.fration_of_units_in_location
+      elsif orig_lg.location == "garage" and orig_lg.third_party_certification == "ERI Tier II"
+        fFII_grg = orig_lg.fration_of_units_in_location
+      end
     end
 
-    new_hpxml.set_lighting(:fraction_tier_i_interior => fraction_tier_i_interior,
-                           :fraction_tier_i_exterior => orig_hpxml.lighting.fraction_tier_i_exterior,
-                           :fraction_tier_i_garage => orig_hpxml.lighting.fraction_tier_i_garage,
-                           :fraction_tier_ii_interior => orig_hpxml.lighting.fraction_tier_ii_interior,
-                           :fraction_tier_ii_exterior => orig_hpxml.lighting.fraction_tier_ii_exterior,
-                           :fraction_tier_ii_garage => orig_hpxml.lighting.fraction_tier_ii_garage)
+    # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
+    if fFI_int + fFII_int < 0.1
+      fFI_int = 0.1 - fFII_int
+    end
+
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
+                                  :location => "interior",
+                                  :fration_of_units_in_location => fFI_int,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
+                                  :location => "exterior",
+                                  :fration_of_units_in_location => fFI_ext,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
+                                  :location => "garage",
+                                  :fration_of_units_in_location => fFI_grg,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
+                                  :location => "interior",
+                                  :fration_of_units_in_location => fFII_int,
+                                  :third_party_certification => "ERI Tier II")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
+                                  :location => "exterior",
+                                  :fration_of_units_in_location => fFII_ext,
+                                  :third_party_certification => "ERI Tier II")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
+                                  :location => "garage",
+                                  :fration_of_units_in_location => fFII_grg,
+                                  :third_party_certification => "ERI Tier II")
   end
 
   def self.set_lighting_iad(orig_hpxml, new_hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
 
-    new_hpxml.set_lighting(:fraction_tier_i_interior => fFI_int,
-                           :fraction_tier_i_exterior => fFI_ext,
-                           :fraction_tier_i_garage => fFI_grg,
-                           :fraction_tier_ii_interior => fFII_int,
-                           :fraction_tier_ii_exterior => fFII_ext,
-                           :fraction_tier_ii_garage => fFII_grg)
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
+                                  :location => "interior",
+                                  :fration_of_units_in_location => fFI_int,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
+                                  :location => "exterior",
+                                  :fration_of_units_in_location => fFI_ext,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
+                                  :location => "garage",
+                                  :fration_of_units_in_location => fFI_grg,
+                                  :third_party_certification => "ERI Tier I")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
+                                  :location => "interior",
+                                  :fration_of_units_in_location => fFII_int,
+                                  :third_party_certification => "ERI Tier II")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
+                                  :location => "exterior",
+                                  :fration_of_units_in_location => fFII_ext,
+                                  :third_party_certification => "ERI Tier II")
+    new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
+                                  :location => "garage",
+                                  :fration_of_units_in_location => fFII_grg,
+                                  :third_party_certification => "ERI Tier II")
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
@@ -1883,15 +1972,6 @@ class EnergyRatingIndex301Ruleset
       re = 0.78
     end
     return ef.round(2), re
-  end
-
-  def self.has_fuel_access(orig_hpxml)
-    orig_hpxml.site.fuels.each do |fuel|
-      if fuel != "electricity"
-        return true
-      end
-    end
-    return false
   end
 
   def self.calc_rated_home_infiltration_ach50(orig_hpxml, use_eratio_override)
@@ -2113,7 +2193,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.add_reference_water_heater(orig_hpxml, new_hpxml)
-    wh_fuel_type = get_predominant_heating_fuel(orig_hpxml)
+    wh_fuel_type = orig_hpxml.predominant_heating_fuel()
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
@@ -2129,30 +2209,6 @@ class EnergyRatingIndex301Ruleset
                                         :energy_factor => wh_ef,
                                         :recovery_efficiency => wh_re,
                                         :temperature => Waterheater.get_default_hot_water_temperature(@eri_version))
-  end
-
-  def self.get_predominant_heating_fuel(orig_hpxml)
-    fuel_fracs = {}
-
-    orig_hpxml.heating_systems.each do |orig_heating_system|
-      fuel = orig_heating_system.heating_system_fuel
-      if fuel_fracs[fuel].nil?
-        fuel_fracs[fuel] = 0.0
-      end
-      fuel_fracs[fuel] += orig_heating_system.fraction_heat_load_served
-    end
-
-    orig_hpxml.heat_pumps.each do |orig_heat_pump|
-      fuel = orig_heat_pump.heat_pump_fuel
-      if fuel_fracs[fuel].nil?
-        fuel_fracs[fuel] = 0.0
-      end
-      fuel_fracs[fuel] += orig_heat_pump.fraction_heat_load_served
-    end
-
-    return "electricity" if fuel_fracs.empty?
-
-    return fuel_fracs.key(fuel_fracs.values.max)
   end
 
   def self.get_infiltration_volume(hpxml)
@@ -2195,35 +2251,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     return ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area
-  end
-
-  def self.delete_wall_subsurfaces(orig_hpxml, surface_id)
-    orig_hpxml.windows.each do |orig_window|
-      next unless orig_window.wall_idref == surface_id
-
-      orig_hpxml.windows.delete(orig_window)
-    end
-    orig_hpxml.doors.each do |orig_door|
-      next unless orig_door.wall_idref == surface_id
-
-      orig_hpxml.doors.delete(orig_door)
-    end
-  end
-
-  def self.delete_roof_subsurfaces(orig_hpxml, surface_id)
-    orig_hpxml.skylights.each do |orig_skylight|
-      next unless orig_skylight.roof_idref == surface_id
-
-      orig_hpxml.skylights.delete(orig_skylight)
-    end
-  end
-
-  def self.get_has_space_type(hpxml, adjacent_to)
-    (hpxml.roofs + hpxml.rim_joists + hpxml.walls + hpxml.foundation_walls + hpxml.frame_floors + hpxml.slabs).each do |surface|
-      return true if surface.interior_adjacent_to == adjacent_to
-      return true if surface.exterior_adjacent_to == adjacent_to
-    end
-    return false
   end
 end
 

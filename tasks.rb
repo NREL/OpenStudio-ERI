@@ -188,7 +188,7 @@ def create_test_hpxmls
         set_hpxml_heating_systems(hpxml_file, hpxml)
         set_hpxml_cooling_systems(hpxml_file, hpxml)
         set_hpxml_heat_pumps(hpxml_file, hpxml)
-        set_hpxml_hvac_control(hpxml_file, hpxml)
+        set_hpxml_hvac_controls(hpxml_file, hpxml)
         set_hpxml_hvac_distributions(hpxml_file, hpxml)
         set_hpxml_ventilation_fans(hpxml_file, hpxml)
         set_hpxml_water_heating_systems(hpxml_file, hpxml)
@@ -1488,18 +1488,18 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
   end
 end
 
-def set_hpxml_hvac_control(hpxml_file, hpxml)
+def set_hpxml_hvac_controls(hpxml_file, hpxml)
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140' or
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_hvac_control(:id => "HVACControl",
-                           :control_type => "manual thermostat",
-                           :heating_setpoint_temp => 68,
-                           :cooling_setpoint_temp => 78)
+    hpxml.hvac_controls.add(:id => "HVACControl",
+                            :control_type => "manual thermostat",
+                            :heating_setpoint_temp => 68,
+                            :cooling_setpoint_temp => 78)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
-    hpxml.set_hvac_control()
+    hpxml.hvac_controls.clear()
   end
 end
 
@@ -1835,7 +1835,7 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_hot_water_distribution()
+    hpxml.hot_water_distributions.clear()
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
@@ -1844,40 +1844,40 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard
-    hpxml.set_hot_water_distribution(:id => "HotWaterDstribution",
-                                     :system_type => "Standard",
-                                     :pipe_r_value => 0.0)
+    hpxml.hot_water_distributions.add(:id => "HotWaterDstribution",
+                                      :system_type => "Standard",
+                                      :pipe_r_value => 0.0)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-16.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-16.xml'].include? hpxml_file
     # Change to recirculation: loop length = 156.92 ft.; branch piping length = 10 ft.; pump power = 50 watts; R-3 piping insulation; and control = none
-    hpxml.hot_water_distribution.system_type = "Recirculation"
-    hpxml.hot_water_distribution.recirculation_control_type = "no control"
-    hpxml.hot_water_distribution.recirculation_piping_length = 156.92
-    hpxml.hot_water_distribution.recirculation_branch_piping_length = 10
-    hpxml.hot_water_distribution.recirculation_pump_power = 50
-    hpxml.hot_water_distribution.pipe_r_value = 3
+    hpxml.hot_water_distributions[0].system_type = "Recirculation"
+    hpxml.hot_water_distributions[0].recirculation_control_type = "no control"
+    hpxml.hot_water_distributions[0].recirculation_piping_length = 156.92
+    hpxml.hot_water_distributions[0].recirculation_branch_piping_length = 10
+    hpxml.hot_water_distributions[0].recirculation_pump_power = 50
+    hpxml.hot_water_distributions[0].pipe_r_value = 3
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-05.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-05.xml'].include? hpxml_file
     # Change to recirculation: Control = none; 50 W pump; Loop length is same as reference loop length; Branch length is 10 ft; All hot water pipes insulated to R-3
-    hpxml.hot_water_distribution.system_type = "Recirculation"
-    hpxml.hot_water_distribution.recirculation_control_type = "no control"
-    hpxml.hot_water_distribution.recirculation_branch_piping_length = 10
-    hpxml.hot_water_distribution.recirculation_pump_power = 50
-    hpxml.hot_water_distribution.pipe_r_value = 3
+    hpxml.hot_water_distributions[0].system_type = "Recirculation"
+    hpxml.hot_water_distributions[0].recirculation_control_type = "no control"
+    hpxml.hot_water_distributions[0].recirculation_branch_piping_length = 10
+    hpxml.hot_water_distributions[0].recirculation_pump_power = 50
+    hpxml.hot_water_distributions[0].pipe_r_value = 3
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-06.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-17.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-17.xml'].include? hpxml_file
     # Change to recirculation: Control = manual
-    hpxml.hot_water_distribution.recirculation_control_type = "manual demand control"
+    hpxml.hot_water_distributions[0].recirculation_control_type = "manual demand control"
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-07.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-07.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-18.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-18.xml'].include? hpxml_file
     # Change to drain Water Heat Recovery (DWHR) with all facilities connected; equal flow; DWHR eff = 54%
-    hpxml.hot_water_distribution.dwhr_facilities_connected = "all"
-    hpxml.hot_water_distribution.dwhr_equal_flow = true
-    hpxml.hot_water_distribution.dwhr_efficiency = 0.54
+    hpxml.hot_water_distributions[0].dwhr_facilities_connected = "all"
+    hpxml.hot_water_distributions[0].dwhr_equal_flow = true
+    hpxml.hot_water_distributions[0].dwhr_efficiency = 0.54
   end
 
   has_uncond_bsmnt = false
@@ -1890,11 +1890,11 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
   ncfl = hpxml.building_construction.number_of_conditioned_floors
   piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
 
-  if not hpxml.hot_water_distribution.nil?
-    if hpxml.hot_water_distribution.system_type == "Standard" and hpxml.hot_water_distribution.standard_piping_length.nil?
-      hpxml.hot_water_distribution.standard_piping_length = piping_length.round(2)
-    elsif hpxml.hot_water_distribution.system_type == "Recirculation" and hpxml.hot_water_distribution.recirculation_piping_length.nil?
-      hpxml.hot_water_distribution.recirculation_piping_length = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length).round(2)
+  if hpxml.hot_water_distributions.size > 0
+    if hpxml.hot_water_distributions[0].system_type == "Standard" and hpxml.hot_water_distributions[0].standard_piping_length.nil?
+      hpxml.hot_water_distributions[0].standard_piping_length = piping_length.round(2)
+    elsif hpxml.hot_water_distributions[0].system_type == "Recirculation" and hpxml.hot_water_distributions[0].recirculation_piping_length.nil?
+      hpxml.hot_water_distributions[0].recirculation_piping_length = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length).round(2)
     end
   end
 end
@@ -1941,17 +1941,17 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_clothes_washer()
+    hpxml.clothes_washers.add()
   else
     # Standard
-    hpxml.set_clothes_washer(:id => "ClothesWasher",
-                             :location => "living space",
-                             :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
-                             :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
-                             :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
-                             :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
-                             :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
-                             :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap())
+    hpxml.clothes_washers.add(:id => "ClothesWasher",
+                              :location => "living space",
+                              :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
+                              :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
+                              :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
+                              :label_gas_rate => HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
+                              :label_annual_gas_cost => HotWaterAndAppliances.get_clothes_washer_reference_agc(),
+                              :capacity => HotWaterAndAppliances.get_clothes_washer_reference_cap())
   end
 end
 
@@ -1960,7 +1960,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_clothes_dryer()
+    hpxml.clothes_dryers.clear()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
@@ -1975,11 +1975,11 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
-    hpxml.set_clothes_dryer(:id => "ClothesDryer",
-                            :location => "living space",
-                            :fuel_type => "natural gas",
-                            :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                            :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('natural gas'))
+    hpxml.clothes_dryers.add(:id => "ClothesDryer",
+                             :location => "living space",
+                             :fuel_type => "natural gas",
+                             :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('natural gas'))
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -1990,11 +1990,11 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
-    hpxml.set_clothes_dryer(:id => "ClothesDryer",
-                            :location => "living space",
-                            :fuel_type => "electricity",
-                            :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                            :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('electricity'))
+    hpxml.clothes_dryers.add(:id => "ClothesDryer",
+                             :location => "living space",
+                             :fuel_type => "electricity",
+                             :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control(),
+                             :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef('electricity'))
   end
 end
 
@@ -2003,12 +2003,12 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_dishwasher()
+    hpxml.dishwashers.clear()
   else
     # Standard
-    hpxml.set_dishwasher(:id => "Dishwasher",
-                         :place_setting_capacity => 12,
-                         :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef())
+    hpxml.dishwashers.add(:id => "Dishwasher",
+                          :place_setting_capacity => 12,
+                          :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef())
   end
 end
 
@@ -2017,13 +2017,13 @@ def set_hpxml_refrigerator(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_refrigerator()
+    hpxml.refrigerators.clear()
   else
     # Standard
     rated_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(hpxml.building_construction.number_of_bedrooms)
-    hpxml.set_refrigerator(:id => "Refrigerator",
-                           :location => "living space",
-                           :rated_annual_kwh => rated_annual_kwh)
+    hpxml.refrigerators.add(:id => "Refrigerator",
+                            :location => "living space",
+                            :rated_annual_kwh => rated_annual_kwh)
   end
 end
 
@@ -2032,7 +2032,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_cooking_range()
+    hpxml.cooking_ranges.clear()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
@@ -2047,9 +2047,9 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
-    hpxml.set_cooking_range(:id => "Range",
-                            :fuel_type => "natural gas",
-                            :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
+    hpxml.cooking_ranges.add(:id => "Range",
+                             :fuel_type => "natural gas",
+                             :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2060,9 +2060,9 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
-    hpxml.set_cooking_range(:id => "Range",
-                            :fuel_type => "electricity",
-                            :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
+    hpxml.cooking_ranges.add(:id => "Range",
+                             :fuel_type => "electricity",
+                             :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
   end
 end
 
@@ -2071,11 +2071,11 @@ def set_hpxml_oven(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_oven()
+    hpxml.ovens.clear()
   else
     # Standard
-    hpxml.set_oven(:id => "Oven",
-                   :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_induction())
+    hpxml.ovens.add(:id => "Oven",
+                    :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_induction())
   end
 end
 
@@ -2084,25 +2084,61 @@ def set_hpxml_lighting(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.set_lighting()
+    hpxml.lighting_groups.clear()
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file
     # 75% high efficiency interior and exterior
-    hpxml.set_lighting(:fraction_tier_i_interior => 0.75,
-                       :fraction_tier_i_exterior => 0.75,
-                       :fraction_tier_i_garage => 0.0,
-                       :fraction_tier_ii_interior => 0.0,
-                       :fraction_tier_ii_exterior => 0.0,
-                       :fraction_tier_ii_garage => 0.0)
+    hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
+                              :location => "interior",
+                              :fration_of_units_in_location => 0.75,
+                              :third_party_certification => "ERI Tier I")
+    hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
+                              :location => "exterior",
+                              :fration_of_units_in_location => 0.75,
+                              :third_party_certification => "ERI Tier I")
+    hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
+                              :location => "garage",
+                              :fration_of_units_in_location => 0.0,
+                              :third_party_certification => "ERI Tier I")
+    hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
+                              :location => "interior",
+                              :fration_of_units_in_location => 0.0,
+                              :third_party_certification => "ERI Tier II")
+    hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
+                              :location => "exterior",
+                              :fration_of_units_in_location => 0.0,
+                              :third_party_certification => "ERI Tier II")
+    hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
+                              :location => "garage",
+                              :fration_of_units_in_location => 0.0,
+                              :third_party_certification => "ERI Tier II")
   else
     # ERI Reference
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
-    hpxml.set_lighting(:fraction_tier_i_interior => fFI_int,
-                       :fraction_tier_i_exterior => fFI_ext,
-                       :fraction_tier_i_garage => fFI_grg,
-                       :fraction_tier_ii_interior => fFII_int,
-                       :fraction_tier_ii_exterior => fFII_ext,
-                       :fraction_tier_ii_garage => fFII_grg)
+    hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
+                              :location => "interior",
+                              :fration_of_units_in_location => fFI_int,
+                              :third_party_certification => "ERI Tier I")
+    hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
+                              :location => "exterior",
+                              :fration_of_units_in_location => fFI_ext,
+                              :third_party_certification => "ERI Tier I")
+    hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
+                              :location => "garage",
+                              :fration_of_units_in_location => fFI_grg,
+                              :third_party_certification => "ERI Tier I")
+    hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
+                              :location => "interior",
+                              :fration_of_units_in_location => fFII_int,
+                              :third_party_certification => "ERI Tier II")
+    hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
+                              :location => "exterior",
+                              :fration_of_units_in_location => fFII_ext,
+                              :third_party_certification => "ERI Tier II")
+    hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
+                              :location => "garage",
+                              :fration_of_units_in_location => fFII_grg,
+                              :third_party_certification => "ERI Tier II")
   end
 end
 
