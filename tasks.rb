@@ -390,11 +390,11 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
-    hpxml.air_infiltration_measurements.clear
+    hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
                                             :constant_ach_natural => 0.67)
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
-    hpxml.air_infiltration_measurements.clear
+    hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
                                             :constant_ach_natural => 0.335)
   elsif ['RESNET_Tests/4.1_Standard_140/L110AC.xml',
@@ -402,7 +402,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
          'RESNET_Tests/4.1_Standard_140/L200AC.xml',
          'RESNET_Tests/4.1_Standard_140/L200AL.xml'].include? hpxml_file
     # High Infiltration
-    hpxml.air_infiltration_measurements.clear
+    hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
                                             :constant_ach_natural => 1.5)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
@@ -413,19 +413,19 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
-    hpxml.air_infiltration_measurements.clear
+    hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
                                             :unit_of_measure => "ACHnatural",
                                             :air_leakage => 0.67)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
-    hpxml.air_infiltration_measurements.clear
+    hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
                                             :unit_of_measure => "ACHnatural",
                                             :air_leakage => 0.335)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 3 ACH50
-    hpxml.air_infiltration_measurements.clear
+    hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(:id => "InfiltrationMeasurement",
                                             :house_pressure => 50,
                                             :unit_of_measure => "ACH",
@@ -439,14 +439,14 @@ def set_hpxml_attics(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.attics.clear
+    hpxml.attics.clear()
     hpxml.attics.add(:id => "VentedAttic",
                      :attic_type => "VentedAttic",
                      :vented_attic_constant_ach => 2.4,
                      :vented_attic_sla => nil)
   else
     # Reference home
-    hpxml.attics.clear
+    hpxml.attics.clear()
     hpxml.attics.add(:id => "VentedAttic",
                      :attic_type => "VentedAttic",
                      :vented_attic_constant_ach => nil,
@@ -457,7 +457,7 @@ end
 def set_hpxml_foundations(hpxml_file, hpxml)
   if hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_Proposed'
     # Vented crawlspace
-    hpxml.foundations.clear
+    hpxml.foundations.clear()
     hpxml.foundations.add(:id => "VentedCrawlspace",
                           :foundation_type => "VentedCrawlspace",
                           :vented_crawlspace_sla => (1.0 / 150.0).round(5))
@@ -465,12 +465,12 @@ def set_hpxml_foundations(hpxml_file, hpxml)
          'RESNET_Tests/4.5_DSE/HVAC3b.xml',
          'RESNET_Tests/4.5_DSE/HVAC3c.xml',
          'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
-    hpxml.foundations.clear
+    hpxml.foundations.clear()
     hpxml.foundations.add(:id => "UnconditionedBasement",
                           :foundation_type => "UnconditionedBasement",
                           :unconditioned_basement_thermal_boundary => "frame floor")
   else
-    hpxml.foundations.clear
+    hpxml.foundations.clear()
   end
 end
 
@@ -655,7 +655,7 @@ end
 def set_hpxml_foundations_walls(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
-    hpxml.foundation_walls.clear
+    hpxml.foundation_walls.clear()
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
     hpxml.foundation_walls.add(:id => "FoundationWallNorth",
@@ -850,7 +850,7 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
       'RESNET_Tests/4.1_Standard_140/L100AL.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Base configuration
-    hpxml.frame_floors.clear
+    hpxml.frame_floors.clear()
     hpxml.frame_floors.add(:id => "FloorUnderAttic",
                            :exterior_adjacent_to => "attic - vented",
                            :interior_adjacent_to => "living space",
@@ -900,7 +900,7 @@ end
 def set_hpxml_slabs(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
-    hpxml.slabs.clear
+    hpxml.slabs.clear()
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml'].include? hpxml_file
     # Slab-on-Grade, Uninsulated ASHRAE Slab
     hpxml.slabs.add(:id => "Slab",
@@ -972,7 +972,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
-    hpxml.windows.clear
+    hpxml.windows.clear()
     windows = { "WindowNorth" => [0, 90, "WallNorth"],
                 "WindowEast" => [90, 45, "WallEast"],
                 "WindowSouth" => [180, 90, "WallSouth"],
@@ -998,11 +998,11 @@ def set_hpxml_windows(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-06.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-06.xml'].include? hpxml_file
     # No windows
-    hpxml.windows.clear
+    hpxml.windows.clear()
   elsif ['RESNET_Tests/4.1_Standard_140/L150AC.xml',
          'RESNET_Tests/4.1_Standard_140/L150AL.xml'].include? hpxml_file
     # South windows only
-    hpxml.windows.clear
+    hpxml.windows.clear()
     hpxml.windows.add(:id => "WindowSouth",
                       :area => 270,
                       :azimuth => 180,
@@ -1018,7 +1018,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.1_Standard_140/L160AC.xml',
          'RESNET_Tests/4.1_Standard_140/L160AL.xml'].include? hpxml_file
     # East and West windows only
-    hpxml.windows.clear
+    hpxml.windows.clear()
     windows = { "WindowEast" => [90, 135, "WallEast"],
                 "WindowWest" => [270, 135, "WallWest"] }
     windows.each do |window_name, window_values|
@@ -1073,7 +1073,7 @@ def set_hpxml_doors(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
-    hpxml.doors.clear
+    hpxml.doors.clear()
     doors = { "DoorSouth" => [180, 20, "WallSouth"],
               "DoorNorth" => [0, 20, "WallNorth"] }
     doors.each do |door_name, door_values|
@@ -1104,10 +1104,10 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
     # Gas furnace with AFUE = 82%
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1117,7 +1117,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Electric strip heating with COP = 1.0
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :heating_system_type => "ElectricResistance",
                               :heating_system_fuel => "electricity",
@@ -1126,7 +1126,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               :fraction_heat_load_served => 1)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     # Gas furnace with AFUE = 95%
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1138,7 +1138,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 78%
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1150,7 +1150,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 96%
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1161,7 +1161,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 78%; 0.0005 kW/cfm
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1172,7 +1172,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               :electric_auxiliary_energy => 1040)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 90%; 0.000375 kW/cfm
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1183,7 +1183,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               :electric_auxiliary_energy => 780)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
     # Electric Furnace; 56.1 kBtu/h; COP =1.0
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1194,7 +1194,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
          'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Gas Furnace; 46.6 kBtu/h
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1218,7 +1218,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Heating: gas furnace AFUE = 80%
-    hpxml.heating_systems.clear
+    hpxml.heating_systems.clear()
     hpxml.heating_systems.add(:id => "HeatingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :heating_system_type => "Furnace",
@@ -1240,10 +1240,10 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml'].include? hpxml_file
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
     # central air conditioner with SEER = 11.0
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(:id => "CoolingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :cooling_system_type => "central air conditioner",
@@ -1253,7 +1253,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               :cooling_efficiency_seer => 11)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Central air conditioner with SEER = 15.0
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(:id => "CoolingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :cooling_system_type => "central air conditioner",
@@ -1268,7 +1268,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Cooling system – electric A/C with SEER = 10.0
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(:id => "CoolingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :cooling_system_type => "central air conditioner",
@@ -1279,7 +1279,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(:id => "CoolingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :cooling_system_type => "central air conditioner",
@@ -1293,7 +1293,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3e.xml',
          'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Air Conditioner; 38.4 kBtu/h; SEER 10
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(:id => "CoolingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :cooling_system_type => "central air conditioner",
@@ -1316,7 +1316,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
     hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Cooling: Air conditioner SEER = 14
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(:id => "CoolingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :cooling_system_type => "central air conditioner",
@@ -1326,7 +1326,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               :cooling_efficiency_seer => 14)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Cooling: Air conditioner SEER = 13
-    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(:id => "CoolingSystem",
                               :distribution_system_idref => "HVACDistribution",
                               :cooling_system_type => "central air conditioner",
@@ -1348,10 +1348,10 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-05.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Electric heat pump with HSPF = 7.5 and SEER = 12.0
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1370,7 +1370,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Heating system – electric HP with HSPF = 6.8
     # Cooling system – electric A/C with SEER
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1391,7 +1391,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
     hpxml.heat_pumps[0].heating_efficiency_hspf = 9.85
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 6.8
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1407,7 +1407,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          :cooling_efficiency_seer => 10)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 9.85
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1423,7 +1423,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          :cooling_efficiency_seer => 13)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=14, HSPF = 8.2
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1439,7 +1439,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          :cooling_efficiency_seer => 14)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=14, HSPF = 12.0
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1455,7 +1455,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          :cooling_efficiency_seer => 14)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=13, HSPF = 8.2
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1471,7 +1471,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          :cooling_efficiency_seer => 13)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml'].include? hpxml_file
     # Heat pump HVAC system with SEER=13, HSPF = 12.0
-    hpxml.heat_pumps.clear
+    hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(:id => "HeatPump",
                          :distribution_system_idref => "HVACDistribution",
                          :heat_pump_type => "air-to-air",
@@ -1493,6 +1493,7 @@ def set_hpxml_hvac_controls(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
+    hpxml.hvac_controls.clear()
     hpxml.hvac_controls.add(:id => "HVACControl",
                             :control_type => "manual thermostat",
                             :heating_setpoint_temp => 68,
@@ -1515,23 +1516,23 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
+    hpxml.hvac_distributions.clear()
     hpxml.hvac_distributions.add(:id => "HVACDistribution",
                                  :distribution_system_type => "AirDistribution")
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
+    hpxml.hvac_distributions.clear()
     hpxml.hvac_distributions.add(:id => "HVACDistribution",
                                  :distribution_system_type => "DSE",
                                  :annual_cooling_dse => 1)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
+    hpxml.hvac_distributions.clear()
     hpxml.hvac_distributions.add(:id => "HVACDistribution",
                                  :distribution_system_type => "DSE",
                                  :annual_heating_dse => 1)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
+    hpxml.hvac_distributions.clear()
     hpxml.hvac_distributions.add(:id => "HVACDistribution",
                                  :distribution_system_type => "DSE",
                                  :annual_heating_dse => 1,
@@ -1553,7 +1554,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-08.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-12.xml'].include? hpxml_file
     # No leakage
-    hpxml.hvac_distributions[0].duct_leakage_measurements.clear
+    hpxml.hvac_distributions[0].duct_leakage_measurements.clear()
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(:duct_type => "supply",
                                                               :duct_leakage_units => "CFM25",
                                                               :duct_leakage_value => 0)
@@ -1591,7 +1592,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     # Supply duct area = 308 ft2; Return duct area = 77 ft2
     # Duct R-val = 0
     # Duct Location = 100% conditioned
-    hpxml.hvac_distributions[0].ducts.clear
+    hpxml.hvac_distributions[0].ducts.clear()
     hpxml.hvac_distributions[0].ducts.add(:duct_type => "supply",
                                           :duct_insulation_r_value => 0,
                                           :duct_location => "living space",
@@ -1621,7 +1622,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 100% in conditioned space, including air handler; R-6 duct insulation
-    hpxml.hvac_distributions[0].ducts.clear
+    hpxml.hvac_distributions[0].ducts.clear()
     hpxml.hvac_distributions[0].ducts.add(:duct_type => "supply",
                                           :duct_insulation_r_value => 6,
                                           :duct_location => "living space",
@@ -1653,10 +1654,10 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Exhaust-only whole-dwelling mechanical ventilation
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
                                :fan_type => "exhaust only",
                                :tested_flow_rate => 56.2,
@@ -1665,7 +1666,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
                                :fan_type => "balanced",
                                :tested_flow_rate => 56.2,
@@ -1674,7 +1675,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% heat recovery system
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
                                :fan_type => "heat recovery ventilator",
                                :tested_flow_rate => 56.2,
@@ -1684,7 +1685,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                :used_for_whole_building_ventilation => true)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # Exhaust fan = 58.7 cfm, continuous; Fan power = 14.7 watts
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
                                :fan_type => "exhaust only",
                                :tested_flow_rate => 58.7,
@@ -1701,7 +1702,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
     hpxml.ventilation_fans[0].fan_power = 16.6
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-15.xml'].include? hpxml_file
     # Change to CFIS system at flow rate of 176.1 cfm and 33.33% duty cycle (8 hours per day)
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
                                :fan_type => "central fan integrated supply",
                                :tested_flow_rate => 176.1,
@@ -1711,7 +1712,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                :distribution_system_idref => "HVACDistribution")
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # Exhaust fan = 56.2 cfm, continuous; Fan power = 14.0 watts
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
                                :fan_type => "exhaust only",
                                :tested_flow_rate => 56.2,
@@ -1728,7 +1729,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
     hpxml.ventilation_fans[0].fan_power = 15.9
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-15.xml'].include? hpxml_file
     # Change to CFIS system at flow rate of 168.6 cfm and 33.33% duty cycle (8 hours per day)
-    hpxml.ventilation_fans.clear
+    hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(:id => "MechanicalVentilation",
                                :fan_type => "central fan integrated supply",
                                :tested_flow_rate => 168.6,
@@ -1744,12 +1745,12 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # 40 gal electric with EF = 0.88
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(:id => "WaterHeater",
                                     :fuel_type => "electricity",
                                     :water_heater_type => "storage water heater",
@@ -1761,7 +1762,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-02.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-02.xml'].include? hpxml_file
     # Tankless natural gas with EF = 0.82
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(:id => "WaterHeater",
                                     :fuel_type => "natural gas",
                                     :water_heater_type => "instantaneous water heater",
@@ -1771,7 +1772,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # 40 gallon storage; gas; EF = 0.56; RE = 0.78; conditioned space
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(:id => "WaterHeater",
                                     :fuel_type => "natural gas",
                                     :water_heater_type => "storage water heater",
@@ -1785,7 +1786,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-06.xml'].include? hpxml_file
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(:id => "WaterHeater",
                                     :fuel_type => "natural gas",
                                     :water_heater_type => "storage water heater",
@@ -1797,7 +1798,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-08.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-08.xml'].include? hpxml_file
     # Tankless gas water heater with EF=0.83
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(:id => "WaterHeater",
                                     :fuel_type => "natural gas",
                                     :water_heater_type => "instantaneous water heater",
@@ -1807,7 +1808,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-12.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-12.xml'].include? hpxml_file
     # Standard electric water heater EF = 0.95, RE = 0.98
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(:id => "WaterHeater",
                                     :fuel_type => "electricity",
                                     :water_heater_type => "storage water heater",
@@ -1819,7 +1820,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-13.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-13.xml'].include? hpxml_file
     # Electric heat pump water heater EF = 2.5
-    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(:id => "WaterHeater",
                                     :fuel_type => "electricity",
                                     :water_heater_type => "heat pump water heater",
@@ -1844,6 +1845,7 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard
+    hpxml.hot_water_distributions.clear()
     hpxml.hot_water_distributions.add(:id => "HotWaterDstribution",
                                       :system_type => "Standard",
                                       :pipe_r_value => 0.0)
@@ -1904,7 +1906,7 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.water_fixtures.clear
+    hpxml.water_fixtures.clear()
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
@@ -1913,7 +1915,7 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard
-    hpxml.water_fixtures.clear
+    hpxml.water_fixtures.clear()
     hpxml.water_fixtures.add(:id => "WaterFixture",
                              :water_fixture_type => "shower head",
                              :low_flow => false)
@@ -1923,7 +1925,7 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-04.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-04.xml'].include? hpxml_file
     # Low-flow
-    hpxml.water_fixtures.clear
+    hpxml.water_fixtures.clear()
     hpxml.water_fixtures.add(:id => "WaterFixture",
                              :water_fixture_type => "shower head",
                              :low_flow => true)
@@ -1944,6 +1946,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
     hpxml.clothes_washers.add()
   else
     # Standard
+    hpxml.clothes_washers.clear()
     hpxml.clothes_washers.add(:id => "ClothesWasher",
                               :location => "living space",
                               :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
@@ -1975,6 +1978,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
+    hpxml.clothes_dryers.clear()
     hpxml.clothes_dryers.add(:id => "ClothesDryer",
                              :location => "living space",
                              :fuel_type => "natural gas",
@@ -1990,6 +1994,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
+    hpxml.clothes_dryers.clear()
     hpxml.clothes_dryers.add(:id => "ClothesDryer",
                              :location => "living space",
                              :fuel_type => "electricity",
@@ -2006,6 +2011,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
     hpxml.dishwashers.clear()
   else
     # Standard
+    hpxml.dishwashers.clear()
     hpxml.dishwashers.add(:id => "Dishwasher",
                           :place_setting_capacity => 12,
                           :energy_factor => HotWaterAndAppliances.get_dishwasher_reference_ef())
@@ -2021,6 +2027,7 @@ def set_hpxml_refrigerator(hpxml_file, hpxml)
   else
     # Standard
     rated_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(hpxml.building_construction.number_of_bedrooms)
+    hpxml.refrigerators.clear()
     hpxml.refrigerators.add(:id => "Refrigerator",
                             :location => "living space",
                             :rated_annual_kwh => rated_annual_kwh)
@@ -2047,6 +2054,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
+    hpxml.cooking_ranges.clear()
     hpxml.cooking_ranges.add(:id => "Range",
                              :fuel_type => "natural gas",
                              :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
@@ -2060,6 +2068,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
+    hpxml.cooking_ranges.clear()
     hpxml.cooking_ranges.add(:id => "Range",
                              :fuel_type => "electricity",
                              :is_induction => HotWaterAndAppliances.get_range_oven_reference_is_convection())
@@ -2074,6 +2083,7 @@ def set_hpxml_oven(hpxml_file, hpxml)
     hpxml.ovens.clear()
   else
     # Standard
+    hpxml.ovens.clear()
     hpxml.ovens.add(:id => "Oven",
                     :is_convection => HotWaterAndAppliances.get_range_oven_reference_is_induction())
   end
@@ -2088,6 +2098,7 @@ def set_hpxml_lighting(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-21.xml',
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-21.xml'].include? hpxml_file
     # 75% high efficiency interior and exterior
+    hpxml.lighting_groups.clear()
     hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
                               :location => "interior",
                               :fration_of_units_in_location => 0.75,
@@ -2115,6 +2126,7 @@ def set_hpxml_lighting(hpxml_file, hpxml)
   else
     # ERI Reference
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
+    hpxml.lighting_groups.clear()
     hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
                               :location => "interior",
                               :fration_of_units_in_location => fFI_int,
@@ -2150,7 +2162,7 @@ def set_hpxml_plug_loads(hpxml_file, hpxml)
      hpxml_file.include? 'RESNET_Tests/4.4_HVAC' or
      hpxml_file.include? 'RESNET_Tests/4.5_DSE'
     # Base configuration
-    hpxml.plug_loads.clear
+    hpxml.plug_loads.clear()
     hpxml.plug_loads.add(:id => "PlugLoadMisc",
                          :plug_load_type => "other",
                          :kWh_per_year => 7302,
@@ -2161,7 +2173,7 @@ def set_hpxml_plug_loads(hpxml_file, hpxml)
       hpxml.plug_loads[0].kWh_per_year = 0
     end
   else
-    hpxml.plug_loads.clear
+    hpxml.plug_loads.clear()
   end
 end
 
