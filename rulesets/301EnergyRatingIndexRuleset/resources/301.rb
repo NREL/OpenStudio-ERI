@@ -17,7 +17,7 @@ class EnergyRatingIndex301Ruleset
     # Determine building type (single family attached or multifamily?)
     @is_sfa_or_mf = false
     (hpxml.rim_joists + hpxml.walls + hpxml.foundation_walls + hpxml.frame_floors).each do |surface|
-      next unless surface.exterior_adjacent_to.include? "other housing unit"
+      next unless surface.exterior_adjacent_to.include? HPXML::LocationOtherHousingUnit
 
       @is_sfa_or_mf = true
     end
@@ -214,7 +214,7 @@ class EnergyRatingIndex301Ruleset
 
     # Roof
     orig_hpxml.roofs.each do |orig_roof|
-      if ["garage"].include? orig_roof.interior_adjacent_to
+      if [HPXML::LocationGarage].include? orig_roof.interior_adjacent_to
         orig_roof.skylights.each do |orig_skylight|
           orig_hpxml.skylights.delete(orig_skylight)
         end
@@ -224,16 +224,16 @@ class EnergyRatingIndex301Ruleset
 
     # Rim Joist
     orig_hpxml.rim_joists.each do |orig_rim_joist|
-      if ["garage", "other housing unit"].include? orig_rim_joist.interior_adjacent_to or
-         ["garage", "other housing unit"].include? orig_rim_joist.exterior_adjacent_to
+      if [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include? orig_rim_joist.interior_adjacent_to or
+         [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include? orig_rim_joist.exterior_adjacent_to
         orig_hpxml.rim_joists.delete(orig_rim_joist)
       end
     end
 
     # Wall
     orig_hpxml.walls.each do |orig_wall|
-      if ["garage", "other housing unit"].include? orig_wall.interior_adjacent_to or
-         ["garage", "other housing unit"].include? orig_wall.exterior_adjacent_to
+      if [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include? orig_wall.interior_adjacent_to or
+         [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include? orig_wall.exterior_adjacent_to
         orig_wall.windows.each do |orig_window|
           orig_hpxml.windows.delete(orig_window)
         end
@@ -246,8 +246,8 @@ class EnergyRatingIndex301Ruleset
 
     # FoundationWall
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      if ["garage", "other housing unit"].include? orig_foundation_wall.interior_adjacent_to or
-         ["garage", "other housing unit"].include? orig_foundation_wall.exterior_adjacent_to
+      if [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include? orig_foundation_wall.interior_adjacent_to or
+         [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include? orig_foundation_wall.exterior_adjacent_to
         orig_foundation_wall.windows.each do |orig_window|
           orig_hpxml.windows.delete(orig_window)
         end
@@ -260,15 +260,15 @@ class EnergyRatingIndex301Ruleset
 
     # FrameFloor
     orig_hpxml.frame_floors.each do |orig_frame_floor|
-      if ["garage"].include? orig_frame_floor.interior_adjacent_to or
-         ["garage"].include? orig_frame_floor.exterior_adjacent_to
+      if [HPXML::LocationGarage].include? orig_frame_floor.interior_adjacent_to or
+         [HPXML::LocationGarage].include? orig_frame_floor.exterior_adjacent_to
         orig_hpxml.frame_floors.delete(orig_frame_floor)
       end
     end
 
     # Slab
     orig_hpxml.slabs.each do |orig_slab|
-      if ["garage"].include? orig_slab.interior_adjacent_to
+      if [HPXML::LocationGarage].include? orig_slab.interior_adjacent_to
         orig_hpxml.slabs.delete(orig_slab)
       end
     end
@@ -282,7 +282,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
-    @has_uncond_bsmnt = orig_hpxml.has_space_type("basement - unconditioned")
+    @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
     new_hpxml.set_site(:fuels => orig_hpxml.site.fuels,
                        :shelter_coefficient => Airflow.get_default_shelter_coefficient())
@@ -304,7 +304,7 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
-    @has_uncond_bsmnt = orig_hpxml.has_space_type("basement - unconditioned")
+    @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
     new_hpxml.set_site(:fuels => orig_hpxml.site.fuels,
                        :shelter_coefficient => Airflow.get_default_shelter_coefficient())
@@ -357,7 +357,7 @@ class EnergyRatingIndex301Ruleset
     # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(:id => "Infiltration_ACH50",
                                                 :house_pressure => 50,
-                                                :unit_of_measure => "ACH",
+                                                :unit_of_measure => HPXML::UnitsACH,
                                                 :air_leakage => ach50,
                                                 :infiltration_volume => @infilvolume)
   end
@@ -370,7 +370,7 @@ class EnergyRatingIndex301Ruleset
     # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(:id => "AirInfiltrationMeasurement",
                                                 :house_pressure => 50,
-                                                :unit_of_measure => "ACH",
+                                                :unit_of_measure => HPXML::UnitsACH,
                                                 :air_leakage => ach50,
                                                 :infiltration_volume => @infilvolume)
   end
@@ -386,7 +386,7 @@ class EnergyRatingIndex301Ruleset
     # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(:id => "Infiltration_ACH50",
                                                 :house_pressure => 50,
-                                                :unit_of_measure => "ACH",
+                                                :unit_of_measure => HPXML::UnitsACH,
                                                 :air_leakage => ach50,
                                                 :infiltration_volume => @infilvolume)
   end
@@ -397,7 +397,7 @@ class EnergyRatingIndex301Ruleset
       next unless roof.interior_adjacent_to.include? 'attic'
 
       new_hpxml.attics.add(:id => "VentedAttic",
-                           :attic_type => "VentedAttic",
+                           :attic_type => HPXML::AtticTypeVented,
                            :vented_attic_sla => Airflow.get_default_vented_attic_sla())
       break
     end
@@ -405,7 +405,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_attics_rated(orig_hpxml, new_hpxml)
     orig_hpxml.attics.each do |orig_attic|
-      next unless orig_attic.attic_type == "VentedAttic"
+      next unless orig_attic.attic_type == HPXML::AtticTypeVented
 
       new_hpxml.attics.add(:id => orig_attic.id,
                            :attic_type => orig_attic.attic_type,
@@ -424,7 +424,7 @@ class EnergyRatingIndex301Ruleset
       next unless orig_frame_floor.interior_adjacent_to.include? 'crawlspace' or orig_frame_floor.exterior_adjacent_to.include? 'crawlspace'
 
       new_hpxml.foundations.add(:id => "VentedCrawlspace",
-                                :foundation_type => "VentedCrawlspace",
+                                :foundation_type => HPXML::FoundationTypeCrawlspaceVented,
                                 :vented_crawlspace_sla => Airflow.get_default_vented_crawl_sla())
       break
     end
@@ -432,7 +432,7 @@ class EnergyRatingIndex301Ruleset
     @uncond_bsmnt_thermal_bndry = nil
     # Preserve rated home thermal boundary to be consistent with other software tools
     orig_hpxml.foundations.each do |orig_foundation|
-      next unless orig_foundation.foundation_type == "UnconditionedBasement"
+      next unless orig_foundation.foundation_type == HPXML::FoundationTypeBasementUncond
 
       new_hpxml.foundations.add(:id => orig_foundation.id,
                                 :foundation_type => orig_foundation.foundation_type,
@@ -445,7 +445,7 @@ class EnergyRatingIndex301Ruleset
     reference_crawlspace_sla = Airflow.get_default_vented_crawl_sla()
 
     orig_hpxml.foundations.each do |orig_foundation|
-      next unless orig_foundation.foundation_type == "VentedCrawlspace"
+      next unless orig_foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
 
       vented_crawl_sla = orig_foundation.vented_crawlspace_sla
       if vented_crawl_sla.nil? or vented_crawl_sla < reference_crawlspace_sla
@@ -459,7 +459,7 @@ class EnergyRatingIndex301Ruleset
 
     @uncond_bsmnt_thermal_bndry = nil
     orig_hpxml.foundations.each do |foundation|
-      next unless foundation.foundation_type == "UnconditionedBasement"
+      next unless foundation.foundation_type == HPXML::FoundationTypeBasementUncond
 
       new_hpxml.foundations.add(:id => foundation.id,
                                 :foundation_type => foundation.foundation_type,
@@ -470,7 +470,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_foundations_iad(orig_hpxml, new_hpxml)
     new_hpxml.foundations.add(:id => "VentedCrawlspace",
-                              :foundation_type => "VentedCrawlspace",
+                              :foundation_type => HPXML::FoundationTypeCrawlspaceVented,
                               :vented_crawlspace_sla => Airflow.get_default_vented_crawl_sla())
 
     @uncond_bsmnt_thermal_bndry = nil
@@ -488,7 +488,7 @@ class EnergyRatingIndex301Ruleset
     # Create thermal boundary roof area
     if sum_gross_area > 0
       new_hpxml.roofs.add(:id => "RoofArea",
-                          :interior_adjacent_to => "living space",
+                          :interior_adjacent_to => HPXML::LocationLivingSpace,
                           :area => sum_gross_area,
                           :azimuth => nil,
                           :solar_absorptance => solar_abs,
@@ -559,8 +559,8 @@ class EnergyRatingIndex301Ruleset
     # Create thermal boundary rim joist area
     if sum_gross_area > 0
       new_hpxml.rim_joists.add(:id => "RimJoistArea",
-                               :exterior_adjacent_to => "outside",
-                               :interior_adjacent_to => "living space",
+                               :exterior_adjacent_to => HPXML::LocationOutside,
+                               :interior_adjacent_to => HPXML::LocationLivingSpace,
                                :area => sum_gross_area,
                                :azimuth => nil,
                                :solar_absorptance => solar_abs,
@@ -618,9 +618,9 @@ class EnergyRatingIndex301Ruleset
     # Create thermal boundary wall area
     if sum_gross_area > 0
       new_hpxml.walls.add(:id => "WallArea",
-                          :exterior_adjacent_to => "outside",
-                          :interior_adjacent_to => "living space",
-                          :wall_type => "WoodStud",
+                          :exterior_adjacent_to => HPXML::LocationOutside,
+                          :interior_adjacent_to => HPXML::LocationLivingSpace,
+                          :wall_type => HPXML::WallTypeWoodStud,
                           :area => sum_gross_area,
                           :azimuth => nil,
                           :solar_absorptance => solar_abs,
@@ -674,9 +674,9 @@ class EnergyRatingIndex301Ruleset
 
     # Create thermal boundary wall area
     new_hpxml.walls.add(:id => "WallArea",
-                        :exterior_adjacent_to => "outside",
-                        :interior_adjacent_to => "living space",
-                        :wall_type => "WoodStud",
+                        :exterior_adjacent_to => HPXML::LocationOutside,
+                        :interior_adjacent_to => HPXML::LocationLivingSpace,
+                        :wall_type => HPXML::WallTypeWoodStud,
                         :area => 2355.52,
                         :azimuth => nil,
                         :solar_absorptance => avg_solar_abs,
@@ -686,7 +686,7 @@ class EnergyRatingIndex301Ruleset
     # Preserve non-thermal boundary walls adjacent to attic
     orig_hpxml.walls.each do |orig_wall|
       next if is_thermal_boundary(orig_wall)
-      next unless ["attic - vented", "attic - unvented"].include? orig_wall.interior_adjacent_to
+      next unless [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include? orig_wall.interior_adjacent_to
 
       new_hpxml.walls.add(:id => orig_wall.id,
                           :exterior_adjacent_to => orig_wall.exterior_adjacent_to,
@@ -706,7 +706,7 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Conditioned basement walls
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      if is_thermal_boundary(orig_foundation_wall) or @uncond_bsmnt_thermal_bndry == "foundation wall"
+      if is_thermal_boundary(orig_foundation_wall) or @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
         insulation_assembly_r_value = 1.0 / wall_ufactor
         insulation_interior_r_value = nil
         insulation_interior_distance_to_top = nil
@@ -766,7 +766,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_foundation_walls_iad(orig_hpxml, new_hpxml)
     new_hpxml.foundation_walls.add(:id => "FoundationWall",
-                                   :interior_adjacent_to => "crawlspace - vented",
+                                   :interior_adjacent_to => HPXML::LocationCrawlspaceVented,
                                    :exterior_adjacent_to => "ground",
                                    :height => 2,
                                    :area => 2 * 34.64 * 4,
@@ -839,7 +839,7 @@ class EnergyRatingIndex301Ruleset
       next unless orig_frame_floor.is_floor
 
       if is_thermal_boundary(orig_frame_floor)
-        if @uncond_bsmnt_thermal_bndry == "foundation wall"
+        if @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
           insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
         else
           insulation_assembly_r_value = 1.0 / floor_ufactor
@@ -874,8 +874,8 @@ class EnergyRatingIndex301Ruleset
     floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
 
     new_hpxml.frame_floors.add(:id => "FloorAboveCrawlspace",
-                               :interior_adjacent_to => "living space",
-                               :exterior_adjacent_to => "crawlspace - vented",
+                               :interior_adjacent_to => HPXML::LocationLivingSpace,
+                               :exterior_adjacent_to => HPXML::LocationCrawlspaceVented,
                                :area => 1200,
                                :insulation_assembly_r_value => 1.0 / floor_ufactor)
   end
@@ -886,7 +886,7 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Foundations
     orig_hpxml.slabs.each do |orig_slab|
-      if orig_slab.interior_adjacent_to == "living space" and is_thermal_boundary(orig_slab)
+      if orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace and is_thermal_boundary(orig_slab)
         perimeter_insulation_depth = slab_perim_depth
         under_slab_insulation_width = slab_under_width
         perimeter_insulation_r_value = slab_perim_rvalue
@@ -897,7 +897,7 @@ class EnergyRatingIndex301Ruleset
         perimeter_insulation_r_value = 0
         under_slab_insulation_r_value = 0
       end
-      if ["living space", "basement - conditioned"].include? orig_slab.interior_adjacent_to
+      if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? orig_slab.interior_adjacent_to
         carpet_fraction = 0.8
         carpet_r_value = 2.0
       else
@@ -944,7 +944,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_slabs_iad(orig_hpxml, new_hpxml)
     new_hpxml.slabs.add(:id => "Slab",
-                        :interior_adjacent_to => "crawlspace - vented",
+                        :interior_adjacent_to => HPXML::LocationCrawlspaceVented,
                         :area => 1200,
                         :thickness => 0,
                         :exposed_perimeter => 4 * 34.64,
@@ -1109,9 +1109,9 @@ class EnergyRatingIndex301Ruleset
 
     # Heating
     orig_hpxml.heating_systems.each do |orig_heating_system|
-      next unless orig_heating_system.heating_system_fuel != "electricity"
+      next unless orig_heating_system.heating_system_fuel != HPXML::FuelTypeElectricity
 
-      if orig_heating_system.heating_system_type == "Boiler"
+      if orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler
         add_reference_heating_gas_boiler(new_hpxml, ref_hvacdist_ids, orig_heating_system)
       else
         add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids, orig_heating_system)
@@ -1136,7 +1136,7 @@ class EnergyRatingIndex301Ruleset
 
     # HeatPump
     orig_hpxml.heating_systems.each do |orig_heating_system|
-      next unless orig_heating_system.heating_system_fuel == "electricity"
+      next unless orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
 
       add_reference_heating_heat_pump(new_hpxml, ref_hvacdist_ids, orig_heating_system)
     end
@@ -1150,7 +1150,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Table 303.4.1(1) - Thermostat
-    control_type = "manual thermostat"
+    control_type = HPXML::HVACControlTypeManual
     if orig_hpxml.ceiling_fans.size > 0
       clg_ceiling_fan_offset = 0.5 # deg-F
     else
@@ -1260,7 +1260,7 @@ class EnergyRatingIndex301Ruleset
                                   :ceiling_fan_cooling_setpoint_temp_offset => clg_ceiling_fan_offset)
 
     else
-      control_type = "manual thermostat"
+      control_type = HPXML::HVACControlTypeManual
       new_hpxml.hvac_controls.add(:id => "HVACControl",
                                   :control_type => control_type,
                                   :heating_setpoint_temp => HVAC.get_default_heating_setpoint(control_type)[0],
@@ -1274,7 +1274,7 @@ class EnergyRatingIndex301Ruleset
                                        :distribution_system_type => orig_hvac_distribution.distribution_system_type,
                                        :annual_heating_dse => orig_hvac_distribution.annual_heating_dse,
                                        :annual_cooling_dse => orig_hvac_distribution.annual_cooling_dse)
-      if orig_hvac_distribution.distribution_system_type == "AirDistribution"
+      if orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
         orig_hvac_distribution.duct_leakage_measurements.each do |orig_leakage_measurement|
           new_hpxml.hvac_distributions[-1].duct_leakage_measurements.add(:duct_type => orig_leakage_measurement.duct_type,
                                                                          :duct_leakage_units => orig_leakage_measurement.duct_leakage_units,
@@ -1339,27 +1339,27 @@ class EnergyRatingIndex301Ruleset
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla)
 
     if fan_type.nil?
-      fan_type = 'exhaust only'
+      fan_type = HPXML::MechVentTypeExhaust
       fan_power_w = 0.0
     else
       q_fan_power = calc_rated_home_qfan(orig_hpxml, true) # Use Rated Home fan type
 
       # Treat CFIS like supply ventilation
-      if fan_type == 'central fan integrated supply'
-        fan_type = 'supply only'
+      if fan_type == HPXML::MechVentTypeCFIS
+        fan_type = HPXML::MechVentTypeSupply
       end
 
       fan_power_w = nil
-      if fan_type == 'supply only' or fan_type == 'exhaust only'
+      if fan_type == HPXML::MechVentTypeSupply or fan_type == HPXML::MechVentTypeExhaust
         w_cfm = 0.35
         fan_power_w = w_cfm * q_fan_power
-      elsif fan_type == 'balanced'
+      elsif fan_type == HPXML::MechVentTypeBalanced
         w_cfm = 0.70
         fan_power_w = w_cfm * q_fan_power
-      elsif fan_type == 'energy recovery ventilator' or fan_type == 'heat recovery ventilator'
+      elsif fan_type == HPXML::MechVentTypeERV or fan_type == HPXML::MechVentTypeHRV
         w_cfm = 1.00
         fan_power_w = w_cfm * q_fan_power
-        fan_type = 'balanced'
+        fan_type = HPXML::MechVentTypeBalanced
       end
     end
 
@@ -1417,7 +1417,7 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm
     sla = nil
     new_hpxml.air_infiltration_measurements.each do |new_infil_measurement|
-      if new_infil_measurement.unit_of_measure == 'ACH' and new_infil_measurement.house_pressure == 50
+      if new_infil_measurement.unit_of_measure == HPXML::UnitsACH and new_infil_measurement.house_pressure == 50
         ach50 = new_infil_measurement.air_leakage
         sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
         break
@@ -1426,7 +1426,7 @@ class EnergyRatingIndex301Ruleset
     q_fan = calc_mech_vent_q_fan(q_tot, sla)
 
     new_hpxml.ventilation_fans.add(:id => "VentilationFan",
-                                   :fan_type => "balanced",
+                                   :fan_type => HPXML::MechVentTypeBalanced,
                                    :tested_flow_rate => q_fan,
                                    :hours_in_operation => 24,
                                    :fan_power => 0.7 * q_fan,
@@ -1457,13 +1457,13 @@ class EnergyRatingIndex301Ruleset
 
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
       tank_volume = orig_water_heater.tank_volume
-      if ['space-heating boiler with tankless coil', 'instantaneous water heater'].include? orig_water_heater.water_heater_type
+      if [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeTankless].include? orig_water_heater.water_heater_type
         tank_volume = 40.0
       end
 
       # Set fuel type for combi systems
       fuel_type = orig_water_heater.fuel_type
-      if ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? orig_water_heater.water_heater_type
+      if [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
       end
 
@@ -1474,14 +1474,14 @@ class EnergyRatingIndex301Ruleset
       location = orig_water_heater.location
       if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Hot water equipment shall be located in conditioned space.
-        location = "living space"
+        location = HPXML::LocationLivingSpace
       end
       location.gsub!("unvented", "vented")
 
       # New water heater
       new_hpxml.water_heating_systems.add(:id => orig_water_heater.id,
                                           :fuel_type => fuel_type,
-                                          :water_heater_type => 'storage water heater',
+                                          :water_heater_type => HPXML::WaterHeaterTypeStorage,
                                           :location => location,
                                           :tank_volume => tank_volume,
                                           :fraction_dhw_load_served => orig_water_heater.fraction_dhw_load_served,
@@ -1502,19 +1502,19 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
       energy_factor = orig_water_heater.energy_factor
       if energy_factor.nil?
-        if not ['space-heating boiler with tankless coil', 'space-heating boiler with storage tank'].include? orig_water_heater.water_heater_type
+        if not [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
           wh_uef = orig_water_heater.uniform_energy_factor
           energy_factor = Waterheater.calc_ef_from_uef(wh_uef, orig_water_heater.water_heater_type, orig_water_heater.fuel_type)
         end
       end
 
       heating_capacity = orig_water_heater.heating_capacity
-      if orig_water_heater.water_heater_type == 'storage water heater' and heating_capacity.nil?
+      if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeStorage and heating_capacity.nil?
         heating_capacity = Waterheater.calc_water_heater_capacity(orig_water_heater.fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
       end
 
       performance_adjustment = orig_water_heater.performance_adjustment
-      if orig_water_heater.water_heater_type == 'instantaneous water heater'
+      if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
         performance_adjustment = Waterheater.get_tankless_cycling_derate()
       end
 
@@ -1559,7 +1559,7 @@ class EnergyRatingIndex301Ruleset
 
     # New hot water distribution
     new_hpxml.hot_water_distributions.add(:id => sys_id,
-                                          :system_type => "Standard",
+                                          :system_type => HPXML::DHWDistTypeStandard,
                                           :pipe_r_value => 0,
                                           :standard_piping_length => standard_piping_length)
 
@@ -1567,16 +1567,16 @@ class EnergyRatingIndex301Ruleset
     if orig_hpxml.water_fixtures.size == 0
       # Shower Head
       new_hpxml.water_fixtures.add(:id => "ShowerHead",
-                                   :water_fixture_type => "shower head",
+                                   :water_fixture_type => HPXML::WaterFixtureTypeShowerhead,
                                    :low_flow => false)
 
       # Faucet
       new_hpxml.water_fixtures.add(:id => "Faucet",
-                                   :water_fixture_type => "faucet",
+                                   :water_fixture_type => HPXML::WaterFixtureTypeFaucet,
                                    :low_flow => false)
     else
       orig_hpxml.water_fixtures.each do |orig_water_fixture|
-        next unless ["shower head", "faucet"].include? orig_water_fixture.water_fixture_type
+        next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
 
         new_hpxml.water_fixtures.add(:id => orig_water_fixture.id,
                                      :water_fixture_type => orig_water_fixture.water_fixture_type,
@@ -1609,7 +1609,7 @@ class EnergyRatingIndex301Ruleset
 
     # New water fixtures
     orig_hpxml.water_fixtures.each do |orig_water_fixture|
-      next unless ["shower head", "faucet"].include? orig_water_fixture.water_fixture_type
+      next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
 
       new_hpxml.water_fixtures.add(:id => orig_water_fixture.id,
                                    :water_fixture_type => orig_water_fixture.water_fixture_type,
@@ -1675,7 +1675,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
     clothes_washer = orig_hpxml.clothes_washers[0]
     new_hpxml.clothes_washers.add(:id => clothes_washer.id,
-                                  :location => "living space",
+                                  :location => HPXML::LocationLivingSpace,
                                   :integrated_modified_energy_factor => HotWaterAndAppliances.get_clothes_washer_reference_imef(),
                                   :rated_annual_kwh => HotWaterAndAppliances.get_clothes_washer_reference_ler(),
                                   :label_electric_rate => HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
@@ -1705,7 +1705,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     clothes_dryer = orig_hpxml.clothes_dryers[0]
     new_hpxml.clothes_dryers.add(:id => clothes_dryer.id,
-                                 :location => "living space",
+                                 :location => HPXML::LocationLivingSpace,
                                  :fuel_type => clothes_dryer.fuel_type,
                                  :combined_energy_factor => HotWaterAndAppliances.get_clothes_dryer_reference_cef(clothes_dryer.fuel_type),
                                  :control_type => HotWaterAndAppliances.get_clothes_dryer_reference_control())
@@ -1752,7 +1752,7 @@ class EnergyRatingIndex301Ruleset
 
     refrigerator = orig_hpxml.refrigerators[0]
     new_hpxml.refrigerators.add(:id => refrigerator.id,
-                                :location => "living space",
+                                :location => HPXML::LocationLivingSpace,
                                 :rated_annual_kwh => refrigerator_kwh)
   end
 
@@ -1799,45 +1799,45 @@ class EnergyRatingIndex301Ruleset
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
 
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
-                                  :location => "interior",
+                                  :location => HPXML::LocationInterior,
                                   :fration_of_units_in_location => fFI_int,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
-                                  :location => "exterior",
+                                  :location => HPXML::LocationExterior,
                                   :fration_of_units_in_location => fFI_ext,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
-                                  :location => "garage",
+                                  :location => HPXML::LocationGarage,
                                   :fration_of_units_in_location => fFI_grg,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
-                                  :location => "interior",
+                                  :location => HPXML::LocationInterior,
                                   :fration_of_units_in_location => fFII_int,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
-                                  :location => "exterior",
+                                  :location => HPXML::LocationExterior,
                                   :fration_of_units_in_location => fFII_ext,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
-                                  :location => "garage",
+                                  :location => HPXML::LocationGarage,
                                   :fration_of_units_in_location => fFII_grg,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
   end
 
   def self.set_lighting_rated(orig_hpxml, new_hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = nil
     orig_hpxml.lighting_groups.each do |orig_lg|
-      if orig_lg.location == "interior" and orig_lg.third_party_certification == "ERI Tier I"
+      if orig_lg.location == HPXML::LocationInterior and orig_lg.third_party_certification == HPXML::LightingTypeTierI
         fFI_int = orig_lg.fration_of_units_in_location
-      elsif orig_lg.location == "exterior" and orig_lg.third_party_certification == "ERI Tier I"
+      elsif orig_lg.location == HPXML::LocationExterior and orig_lg.third_party_certification == HPXML::LightingTypeTierI
         fFI_ext = orig_lg.fration_of_units_in_location
-      elsif orig_lg.location == "garage" and orig_lg.third_party_certification == "ERI Tier I"
+      elsif orig_lg.location == HPXML::LocationGarage and orig_lg.third_party_certification == HPXML::LightingTypeTierI
         fFI_grg = orig_lg.fration_of_units_in_location
-      elsif orig_lg.location == "interior" and orig_lg.third_party_certification == "ERI Tier II"
+      elsif orig_lg.location == HPXML::LocationInterior and orig_lg.third_party_certification == HPXML::LightingTypeTierII
         fFII_int = orig_lg.fration_of_units_in_location
-      elsif orig_lg.location == "exterior" and orig_lg.third_party_certification == "ERI Tier II"
+      elsif orig_lg.location == HPXML::LocationExterior and orig_lg.third_party_certification == HPXML::LightingTypeTierII
         fFII_ext = orig_lg.fration_of_units_in_location
-      elsif orig_lg.location == "garage" and orig_lg.third_party_certification == "ERI Tier II"
+      elsif orig_lg.location == HPXML::LocationGarage and orig_lg.third_party_certification == HPXML::LightingTypeTierII
         fFII_grg = orig_lg.fration_of_units_in_location
       end
     end
@@ -1848,58 +1848,58 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
-                                  :location => "interior",
+                                  :location => HPXML::LocationInterior,
                                   :fration_of_units_in_location => fFI_int,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
-                                  :location => "exterior",
+                                  :location => HPXML::LocationExterior,
                                   :fration_of_units_in_location => fFI_ext,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
-                                  :location => "garage",
+                                  :location => HPXML::LocationGarage,
                                   :fration_of_units_in_location => fFI_grg,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
-                                  :location => "interior",
+                                  :location => HPXML::LocationInterior,
                                   :fration_of_units_in_location => fFII_int,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
-                                  :location => "exterior",
+                                  :location => HPXML::LocationExterior,
                                   :fration_of_units_in_location => fFII_ext,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
-                                  :location => "garage",
+                                  :location => HPXML::LocationGarage,
                                   :fration_of_units_in_location => fFII_grg,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
   end
 
   def self.set_lighting_iad(orig_hpxml, new_hpxml)
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
 
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Interior",
-                                  :location => "interior",
+                                  :location => HPXML::LocationInterior,
                                   :fration_of_units_in_location => fFI_int,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Exterior",
-                                  :location => "exterior",
+                                  :location => HPXML::LocationExterior,
                                   :fration_of_units_in_location => fFI_ext,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierI_Garage",
-                                  :location => "garage",
+                                  :location => HPXML::LocationGarage,
                                   :fration_of_units_in_location => fFI_grg,
-                                  :third_party_certification => "ERI Tier I")
+                                  :third_party_certification => HPXML::LightingTypeTierI)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Interior",
-                                  :location => "interior",
+                                  :location => HPXML::LocationInterior,
                                   :fration_of_units_in_location => fFII_int,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Exterior",
-                                  :location => "exterior",
+                                  :location => HPXML::LocationExterior,
                                   :fration_of_units_in_location => fFII_ext,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
     new_hpxml.lighting_groups.add(:id => "Lighting_TierII_Garage",
-                                  :location => "garage",
+                                  :location => HPXML::LocationGarage,
                                   :fration_of_units_in_location => fFII_grg,
-                                  :third_party_certification => "ERI Tier II")
+                                  :third_party_certification => HPXML::LightingTypeTierII)
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
@@ -1944,11 +1944,11 @@ class EnergyRatingIndex301Ruleset
   def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
     # Misc
     new_hpxml.plug_loads.add(:id => "MiscPlugLoad",
-                             :plug_load_type => "other")
+                             :plug_load_type => HPXML::PlugLoadTypeOther)
 
     # Television
     new_hpxml.plug_loads.add(:id => "TelevisionPlugLoad",
-                             :plug_load_type => "TV other")
+                             :plug_load_type => HPXML::PlugLoadTypeTelevision)
   end
 
   def self.set_misc_loads_rated(orig_hpxml, new_hpxml)
@@ -1965,7 +1965,7 @@ class EnergyRatingIndex301Ruleset
     # # Table 4.2.2(1) - Service water heating systems
     ef = nil
     re = nil
-    if wh_fuel_type == 'electricity'
+    if wh_fuel_type == HPXML::FuelTypeElectricity
       ef = 0.97 - (0.00132 * wh_tank_vol)
     else
       ef = 0.67 - (0.0019 * wh_tank_vol)
@@ -1990,13 +1990,13 @@ class EnergyRatingIndex301Ruleset
 
     ach50 = nil
     air_infiltration_measurements.each do |infil_measurement|
-      if infil_measurement.unit_of_measure == 'ACHnatural'
+      if infil_measurement.unit_of_measure == HPXML::UnitsACHNatural
         nach = infil_measurement.air_leakage
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, calc_mech_vent_h_vert_distance() / 8.202, @weather)
         ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
-      elsif infil_measurement.unit_of_measure == 'ACH' and infil_measurement.house_pressure == 50
+      elsif infil_measurement.unit_of_measure == HPXML::UnitsACH and infil_measurement.house_pressure == 50
         ach50 = infil_measurement.air_leakage
-      elsif infil_measurement.unit_of_measure == 'CFM' and infil_measurement.house_pressure == 50
+      elsif infil_measurement.unit_of_measure == HPXML::UnitsCFM and infil_measurement.house_pressure == 50
         ach50 = infil_measurement.air_leakage * 60.0 / @infilvolume
       end
       break unless ach50.nil?
@@ -2069,8 +2069,8 @@ class EnergyRatingIndex301Ruleset
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.heating_systems.add(:id => "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   :distribution_system_idref => ref_hvacdist_ids[-1],
-                                  :heating_system_type => "Furnace",
-                                  :heating_system_fuel => "natural gas",
+                                  :heating_system_type => HPXML::HVACTypeFurnace,
+                                  :heating_system_fuel => HPXML::FuelTypeNaturalGas,
                                   :heating_capacity => -1, # Use Manual J auto-sizing
                                   :heating_efficiency_afue => 0.78,
                                   :fraction_heat_load_served => load_frac,
@@ -2092,8 +2092,8 @@ class EnergyRatingIndex301Ruleset
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.heating_systems.add(:id => "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   :distribution_system_idref => ref_hvacdist_ids[-1],
-                                  :heating_system_type => "Boiler",
-                                  :heating_system_fuel => "natural gas",
+                                  :heating_system_type => HPXML::HVACTypeBoiler,
+                                  :heating_system_fuel => HPXML::FuelTypeNaturalGas,
                                   :heating_capacity => -1, # Use Manual J auto-sizing
                                   :heating_efficiency_afue => 0.80,
                                   :fraction_heat_load_served => load_frac,
@@ -2120,7 +2120,7 @@ class EnergyRatingIndex301Ruleset
     backup_switchover_temp = nil
     if not orig_system.nil? and orig_system.respond_to? :backup_heating_switchover_temp and not orig_system.backup_heating_switchover_temp.nil?
       # Dual-fuel HP
-      if orig_system.backup_heating_fuel != "electricity"
+      if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity
         backup_fuel = orig_system.backup_heating_fuel
         backup_efficiency_afue = 0.78
         backup_capacity = -1
@@ -2130,7 +2130,7 @@ class EnergyRatingIndex301Ruleset
       end
     else
       # Normal heat pump
-      backup_fuel = "electricity"
+      backup_fuel = HPXML::FuelTypeElectricity
       backup_efficiency_percent = 1.0
       backup_capacity = -1
     end
@@ -2138,9 +2138,9 @@ class EnergyRatingIndex301Ruleset
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.heat_pumps.add(:id => "HeatPump#{new_hpxml.heat_pumps.size + 1}",
                              :distribution_system_idref => ref_hvacdist_ids[-1],
-                             :heat_pump_type => "air-to-air",
-                             :heat_pump_fuel => "electricity",
-                             :compressor_type => "single stage",
+                             :heat_pump_type => HPXML::HVACTypeHeatPumpAirToAir,
+                             :heat_pump_fuel => HPXML::FuelTypeElectricity,
+                             :compressor_type => HPXML::HVACCompressorTypeSingleStage,
                              :cooling_capacity => -1, # Use Manual J auto-sizing
                              :heating_capacity => -1, # Use Manual J auto-sizing
                              :backup_heating_fuel => backup_fuel,
@@ -2172,9 +2172,9 @@ class EnergyRatingIndex301Ruleset
     ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.cooling_systems.add(:id => "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
                                   :distribution_system_idref => ref_hvacdist_ids[-1],
-                                  :cooling_system_type => "central air conditioner",
-                                  :cooling_system_fuel => "electricity",
-                                  :compressor_type => "single stage",
+                                  :cooling_system_type => HPXML::HVACTypeCentralAirConditioner,
+                                  :cooling_system_fuel => HPXML::FuelTypeElectricity,
+                                  :compressor_type => HPXML::HVACCompressorTypeSingleStage,
                                   :cooling_capacity => -1, # Use Manual J auto-sizing
                                   :fraction_cool_load_served => load_frac,
                                   :cooling_efficiency_seer => 13.0,
@@ -2186,7 +2186,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Thermal distribution systems
     ref_hvacdist_ids.each do |ref_hvacdist_id|
       new_hpxml.hvac_distributions.add(:id => ref_hvacdist_id,
-                                       :distribution_system_type => "DSE",
+                                       :distribution_system_type => HPXML::HVACDistributionTypeDSE,
                                        :annual_heating_dse => 0.8,
                                        :annual_cooling_dse => 0.8)
     end
@@ -2201,8 +2201,8 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.water_heating_systems.add(:id => 'WaterHeatingSystem',
                                         :fuel_type => wh_fuel_type,
-                                        :water_heater_type => 'storage water heater',
-                                        :location => 'living space', # TODO => 301 Standard doesn't specify the location
+                                        :water_heater_type => HPXML::WaterHeaterTypeStorage,
+                                        :location => HPXML::LocationLivingSpace, # TODO => 301 Standard doesn't specify the location
                                         :tank_volume => wh_tank_vol,
                                         :fraction_dhw_load_served => 1.0,
                                         :heating_capacity => wh_cap,
@@ -2227,7 +2227,7 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.walls.each do |orig_wall|
       if is_thermal_boundary(orig_wall)
         ag_bndry_wall_area += orig_wall.area
-      elsif orig_wall.exterior_adjacent_to == "other housing unit"
+      elsif orig_wall.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
         common_wall_area += orig_wall.area
       end
     end
@@ -2235,7 +2235,7 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.rim_joists.each do |orig_rim_joist|
       if is_thermal_boundary(orig_rim_joist)
         ag_bndry_wall_area += orig_rim_joist.area
-      elsif orig_rim_joist.exterior_adjacent_to == "other housing unit"
+      elsif orig_rim_joist.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
         common_wall_area += orig_rim_joist.area
       end
     end
@@ -2300,5 +2300,5 @@ def calc_sum_of_exterior_thermal_boundary_values(surfaces)
 end
 
 def is_exterior_thermal_boundary(surface)
-  return (is_thermal_boundary(surface) and surface.exterior_adjacent_to == "outside")
+  return (is_thermal_boundary(surface) and surface.exterior_adjacent_to == HPXML::LocationOutside)
 end

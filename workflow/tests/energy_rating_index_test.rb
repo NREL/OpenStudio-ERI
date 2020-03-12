@@ -951,10 +951,10 @@ class EnergyRatingIndexTest < Minitest::Test
     # Read hourly outputs
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
     if is_heating
-      zone_name = 'basement - unconditioned'.upcase
+      zone_name = HPXML::LocationBasementUnconditioned.upcase
       mode = "Heating"
     elsif is_cooling
-      zone_name = 'attic - vented'.upcase
+      zone_name = HPXML::LocationAtticVented.upcase
       mode = "Cooling"
     end
     query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
