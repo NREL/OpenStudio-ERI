@@ -1315,7 +1315,7 @@ class EnergyRatingIndex301Ruleset
     # Check for eRatio workaround first
     eratio_fan = orig_hpxml.doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan"]
     if not eratio_fan.nil?
-      orig_mech_vent_fan = HPXML::VentilationFan.new(eratio_fan)
+      orig_mech_vent_fan = HPXML::VentilationFan.new(orig_hpxml, eratio_fan)
     else
       orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
         next unless orig_ventilation_fan.used_for_whole_building_ventilation
@@ -1979,7 +1979,7 @@ class EnergyRatingIndex301Ruleset
     # Check for eRatio workaround first
     if use_eratio_override
       orig_hpxml.doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement") do |infil_measurement|
-        air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(infil_measurement)
+        air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(orig_hpxml, infil_measurement)
       end
     end
     if air_infiltration_measurements.empty?
