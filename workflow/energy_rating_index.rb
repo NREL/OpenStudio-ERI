@@ -7,6 +7,7 @@ require 'fileutils'
 require 'parallel'
 require File.join(File.dirname(__FILE__), "design.rb")
 require_relative "../hpxml-measures/HPXMLtoOpenStudio/resources/constants"
+require_relative "../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml"
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
@@ -107,10 +108,10 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
     coeff_heat_a = nil
     coeff_heat_b = nil
-    if rated_output[:hpxml_heat_fuels][s] == 'electricity'
+    if rated_output[:hpxml_heat_fuels][s] == HPXML::FuelTypeElectricity
       coeff_heat_a = 2.2561
       coeff_heat_b = 0.0
-    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_heat_fuels][s]
+    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane].include? rated_output[:hpxml_heat_fuels][s]
       coeff_heat_a = 1.0943
       coeff_heat_b = 0.4030
     end
@@ -222,10 +223,10 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
     coeff_dhw_a = nil
     coeff_dhw_b = nil
-    if rated_output[:hpxml_dwh_fuels][s] == 'electricity'
+    if rated_output[:hpxml_dwh_fuels][s] == HPXML::FuelTypeElectricity
       coeff_dhw_a = 0.9200
       coeff_dhw_b = 0.0
-    elsif ['natural gas', 'fuel oil', 'propane'].include? rated_output[:hpxml_dwh_fuels][s]
+    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane].include? rated_output[:hpxml_dwh_fuels][s]
       coeff_dhw_a = 1.1877
       coeff_dhw_b = 1.0130
     end
