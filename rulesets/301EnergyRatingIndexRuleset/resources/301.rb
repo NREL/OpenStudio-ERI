@@ -432,7 +432,7 @@ class EnergyRatingIndex301Ruleset
     @uncond_bsmnt_thermal_bndry = nil
     # Preserve rated home thermal boundary to be consistent with other software tools
     orig_hpxml.foundations.each do |orig_foundation|
-      next unless orig_foundation.foundation_type == HPXML::FoundationTypeBasementUncond
+      next unless orig_foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
 
       new_hpxml.foundations.add(:id => orig_foundation.id,
                                 :foundation_type => orig_foundation.foundation_type,
@@ -459,7 +459,7 @@ class EnergyRatingIndex301Ruleset
 
     @uncond_bsmnt_thermal_bndry = nil
     orig_hpxml.foundations.each do |foundation|
-      next unless foundation.foundation_type == HPXML::FoundationTypeBasementUncond
+      next unless foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
 
       new_hpxml.foundations.add(:id => foundation.id,
                                 :foundation_type => foundation.foundation_type,
