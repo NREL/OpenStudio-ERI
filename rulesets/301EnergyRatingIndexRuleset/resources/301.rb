@@ -720,9 +720,20 @@ class EnergyRatingIndex301Ruleset
     wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      if orig_foundation_wall.is_thermal_boundary or @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
-        # Insulated for, e.g., conditioned basement walls adjacent to ground or
-        # walls of unconditioned basements whose thermal boundary location is the wall.
+
+      # Insulated for, e.g., conditioned basement walls adjacent to ground or
+      # walls of unconditioned basements whose thermal boundary location is the wall.
+      # Uninsulated for, e.g., crawlspace walls adjacent to ground.
+      is_insulated = false
+      if orig_foundation_wall.is_thermal_boundary
+        is_insulated = true
+      elsif [orig_foundation_wall.interior_adjacent_to, orig_foundation_wall.exterior_adjacent_to].include? HPXML::LocationBasementUnconditioned
+        if @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
+          is_insulated = true
+        end
+      end
+
+      if is_insulated
         insulation_assembly_r_value = 1.0 / wall_ufactor
         insulation_interior_r_value = nil
         insulation_interior_distance_to_top = nil
@@ -731,7 +742,6 @@ class EnergyRatingIndex301Ruleset
         insulation_exterior_distance_to_top = nil
         insulation_exterior_distance_to_bottom = nil
       else
-        # Uninsulated for, e.g., crawlspace walls.
         insulation_interior_r_value = 0
         insulation_interior_distance_to_top = 0
         insulation_interior_distance_to_bottom = 0
@@ -806,10 +816,10 @@ class EnergyRatingIndex301Ruleset
       next unless orig_frame_floor.is_ceiling
 
       if orig_frame_floor.is_thermal_boundary
-        # Insulated for, e.g., ceilings between vented attic and living space
+        # Insulated for, e.g., ceilings between vented attic and living space.
         insulation_assembly_r_value = 1.0 / ceiling_ufactor
       else
-        # Uninsulated for, e.g., ceilings between vented attic and garage
+        # Uninsulated for, e.g., ceilings between vented attic and garage.
         insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 2.1].min # uninsulated
       end
       new_hpxml.frame_floors.add(:id => orig_frame_floor.id,
@@ -858,12 +868,23 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
 
-      if orig_frame_floor.is_thermal_boundary or @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryFloor
-        # Insulated for, e.g., floors between living space and crawlspace or
-        # floors of unconditioned basements whose thermal boundary location is the floor.
+      # Insulated for, e.g., floors between living space and crawlspace or
+      # floors of unconditioned basements whose thermal boundary location is the floor.
+      # Uninsulated for, e.g., floors between living space and conditioned basement.
+      is_insulated = false
+      if orig_frame_floor.is_thermal_boundary
+        if [orig_frame_floor.interior_adjacent_to, orig_frame_floor.exterior_adjacent_to].include? HPXML::LocationBasementUnconditioned
+          if @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryFloor
+            is_insulated = true
+          end
+        else
+          is_insulated = true
+        end
+      end
+
+      if is_insulated
         insulation_assembly_r_value = 1.0 / floor_ufactor
       else
-        # Uninsulated for, e.g., floors between living space and conditioned basement
         insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
       end
 
