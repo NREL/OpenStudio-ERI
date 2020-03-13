@@ -404,6 +404,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_attics_rated(orig_hpxml, new_hpxml)
+    # Preserve vented attic ventilation rate
     orig_hpxml.attics.each do |orig_attic|
       next unless orig_attic.attic_type == HPXML::AtticTypeVented
 
@@ -419,7 +420,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundations_reference(orig_hpxml, new_hpxml)
-    # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists
+    # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists.
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.interior_adjacent_to.include? 'crawlspace' or orig_frame_floor.exterior_adjacent_to.include? 'crawlspace'
 
@@ -429,8 +430,9 @@ class EnergyRatingIndex301Ruleset
       break
     end
 
+    # Preserve unconditioned basement thermal boundary location.
+    # TODO: Seems inconsistent with 301 language, but done for consistency with other software tools.
     @uncond_bsmnt_thermal_bndry = nil
-    # Preserve rated home thermal boundary to be consistent with other software tools
     orig_hpxml.foundations.each do |orig_foundation|
       next unless orig_foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
 
@@ -442,8 +444,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundations_rated(orig_hpxml, new_hpxml)
+    # Preserve vented crawlspace ventilation rate.
     reference_crawlspace_sla = Airflow.get_default_vented_crawl_sla()
-
     orig_hpxml.foundations.each do |orig_foundation|
       next unless orig_foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
 
@@ -457,6 +459,7 @@ class EnergyRatingIndex301Ruleset
                                 :vented_crawlspace_sla => vented_crawl_sla)
     end
 
+    # Preserve unconditioned basement thermal boundary location.
     @uncond_bsmnt_thermal_bndry = nil
     orig_hpxml.foundations.each do |foundation|
       next unless foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
@@ -469,6 +472,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundations_iad(orig_hpxml, new_hpxml)
+    # Always has a vented crawlspace
     new_hpxml.foundations.add(:id => "VentedCrawlspace",
                               :foundation_type => HPXML::FoundationTypeCrawlspaceVented,
                               :vented_crawlspace_sla => Airflow.get_default_vented_crawl_sla())
@@ -480,12 +484,14 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Roofs
     ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
 
-    sum_gross_area = calc_sum_of_exterior_thermal_boundary_values(orig_hpxml.roofs)
-    avg_pitch = calc_area_weighted_sum_of_exterior_thermal_boundary_values(orig_hpxml.roofs, :pitch)
+    ext_thermal_bndry_roofs = orig_hpxml.roofs.select { |roof| roof.is_exterior_thermal_boundary }
+    sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.inject(0, :+)
+    avg_pitch = calc_area_weighted_sum(ext_thermal_bndry_roofs, :pitch)
     solar_abs = 0.75
     emittance = 0.90
 
-    # Create thermal boundary roof area
+    # Create insulated roofs for exterior thermal boundary surface.
+    # Area is equally distributed to each direction to be consistent with walls.
     if sum_gross_area > 0
       new_hpxml.roofs.add(:id => "RoofArea",
                           :interior_adjacent_to => HPXML::LocationLivingSpace,
@@ -498,15 +504,12 @@ class EnergyRatingIndex301Ruleset
                           :insulation_assembly_r_value => 1.0 / ceiling_ufactor)
     end
 
-    # Preserve other roofs
+    # Preserve other roofs:
+    # 1. Non-thermal boundary surfaces (e.g., over garage)
     orig_hpxml.roofs.each do |orig_roof|
-      next if is_exterior_thermal_boundary(orig_roof)
+      next if orig_roof.is_exterior_thermal_boundary
 
-      if is_thermal_boundary(orig_roof)
-        insulation_assembly_r_value = 1.0 / ceiling_ufactor
-      else
-        insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
-      end
+      insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
       new_hpxml.roofs.add(:id => orig_roof.id,
                           :interior_adjacent_to => orig_roof.interior_adjacent_to.gsub("unvented", "vented"),
                           :area => orig_roof.area,
@@ -521,6 +524,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_roofs_rated(orig_hpxml, new_hpxml)
+    # Preserve all roofs
     orig_hpxml.roofs.each do |orig_roof|
       new_hpxml.roofs.add(:id => orig_roof.id,
                           :interior_adjacent_to => orig_roof.interior_adjacent_to,
@@ -538,7 +542,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_roofs_iad(orig_hpxml, new_hpxml)
     set_enclosure_roofs_rated(orig_hpxml, new_hpxml)
 
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Roofs
+    # Scale down roof area to 1300 sqft while maintaining ratio of attic types.
     sum_roof_area = 0.0
     new_hpxml.roofs.each do |new_roof|
       sum_roof_area += new_roof.area
@@ -552,11 +556,13 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Above-grade walls
     ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
-    sum_gross_area = calc_sum_of_exterior_thermal_boundary_values(orig_hpxml.rim_joists)
+    ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
+    sum_gross_area = ext_thermal_bndry_rim_joists.map { |rim_joist| rim_joist.area }.inject(0, :+)
     solar_abs = 0.75
     emittance = 0.90
 
-    # Create thermal boundary rim joist area
+    # Create insulated rim joists for exterior thermal boundary surface.
+    # Area is equally distributed to each direction to be consistent with walls.
     if sum_gross_area > 0
       new_hpxml.rim_joists.add(:id => "RimJoistArea",
                                :exterior_adjacent_to => HPXML::LocationOutside,
@@ -568,11 +574,13 @@ class EnergyRatingIndex301Ruleset
                                :insulation_assembly_r_value => 1.0 / ufactor)
     end
 
-    # Preserve other rim joists
+    # Preserve other rim joists:
+    # 1. Interior thermal boundary surfaces (e.g., between conditioned basement and crawlspace)
+    # 2. Exterior non-thermal boundary surfaces (e.g., between unconditioned basement and outside)
     orig_hpxml.rim_joists.each do |orig_rim_joist|
-      next if is_exterior_thermal_boundary(orig_rim_joist)
+      next if orig_rim_joist.is_exterior_thermal_boundary
 
-      if is_thermal_boundary(orig_rim_joist)
+      if orig_rim_joist.is_thermal_boundary
         insulation_assembly_r_value = 1.0 / ufactor
       else
         insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
@@ -590,6 +598,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_rim_joists_rated(orig_hpxml, new_hpxml)
+    # Preserve all rim joists
     orig_hpxml.rim_joists.each do |orig_rim_joist|
       new_hpxml.rim_joists.add(:id => orig_rim_joist.id,
                                :exterior_adjacent_to => orig_rim_joist.exterior_adjacent_to,
@@ -611,11 +620,14 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Above-grade walls
     ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
 
-    sum_gross_area = calc_sum_of_exterior_thermal_boundary_values(orig_hpxml.walls)
+    ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
+    sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.inject(0, :+)
     solar_abs = 0.75
     emittance = 0.90
 
-    # Create thermal boundary wall area
+    # Create insulated walls for exterior thermal boundary surface.
+    # Area is equally distributed to each direction to be able to accommodate windows,
+    # which are also equally distributed.
     if sum_gross_area > 0
       new_hpxml.walls.add(:id => "WallArea",
                           :exterior_adjacent_to => HPXML::LocationOutside,
@@ -628,11 +640,13 @@ class EnergyRatingIndex301Ruleset
                           :insulation_assembly_r_value => 1.0 / ufactor)
     end
 
-    # Preserve other walls
+    # Preserve other walls:
+    # 1. Interior thermal boundary surfaces (e.g., between living space and garage)
+    # 2. Exterior non-thermal boundary surfaces (e.g., between garage and outside)
     orig_hpxml.walls.each do |orig_wall|
-      next if is_exterior_thermal_boundary(orig_wall)
+      next if orig_wall.is_exterior_thermal_boundary
 
-      if is_thermal_boundary(orig_wall)
+      if orig_wall.is_thermal_boundary
         insulation_assembly_r_value = 1.0 / ufactor
       else
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
@@ -651,7 +665,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_walls_rated(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Above-grade walls
+    # Preserve all walls
     orig_hpxml.walls.each do |orig_wall|
       new_hpxml.walls.add(:id => orig_wall.id,
                           :exterior_adjacent_to => orig_wall.exterior_adjacent_to,
@@ -668,11 +682,12 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_walls_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
-    avg_solar_abs = calc_area_weighted_sum_of_exterior_thermal_boundary_values(orig_hpxml.walls, :solar_absorptance)
-    avg_emittance = calc_area_weighted_sum_of_exterior_thermal_boundary_values(orig_hpxml.walls, :emittance)
-    avg_r_value = calc_area_weighted_sum_of_exterior_thermal_boundary_values(orig_hpxml.walls, :insulation_assembly_r_value, true)
+    ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
+    avg_solar_abs = calc_area_weighted_sum(ext_thermal_bndry_walls, :solar_absorptance)
+    avg_emittance = calc_area_weighted_sum(ext_thermal_bndry_walls, :emittance)
+    avg_r_value = calc_area_weighted_sum(ext_thermal_bndry_walls, :insulation_assembly_r_value, true)
 
-    # Create thermal boundary wall area
+    # Add 2355.52 sqft of exterior thermal boundary wall area
     new_hpxml.walls.add(:id => "WallArea",
                         :exterior_adjacent_to => HPXML::LocationOutside,
                         :interior_adjacent_to => HPXML::LocationLivingSpace,
@@ -685,7 +700,7 @@ class EnergyRatingIndex301Ruleset
 
     # Preserve non-thermal boundary walls adjacent to attic
     orig_hpxml.walls.each do |orig_wall|
-      next if is_thermal_boundary(orig_wall)
+      next if orig_wall.is_thermal_boundary
       next unless [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include? orig_wall.interior_adjacent_to
 
       new_hpxml.walls.add(:id => orig_wall.id,
@@ -704,9 +719,10 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
     wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
 
-    # Table 4.2.2(1) - Conditioned basement walls
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      if is_thermal_boundary(orig_foundation_wall) or @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
+      if orig_foundation_wall.is_thermal_boundary or @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
+        # Insulated for, e.g., conditioned basement walls adjacent to ground or
+        # walls of unconditioned basements whose thermal boundary location is the wall.
         insulation_assembly_r_value = 1.0 / wall_ufactor
         insulation_interior_r_value = nil
         insulation_interior_distance_to_top = nil
@@ -715,7 +731,7 @@ class EnergyRatingIndex301Ruleset
         insulation_exterior_distance_to_top = nil
         insulation_exterior_distance_to_bottom = nil
       else
-        # uninsulated
+        # Uninsulated for, e.g., crawlspace walls.
         insulation_interior_r_value = 0
         insulation_interior_distance_to_top = 0
         insulation_interior_distance_to_bottom = 0
@@ -744,6 +760,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_rated(orig_hpxml, new_hpxml)
+    # Preserve all foundation walls
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       new_hpxml.foundation_walls.add(:id => orig_foundation_wall.id,
                                      :exterior_adjacent_to => orig_foundation_wall.exterior_adjacent_to,
@@ -765,6 +782,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_iad(orig_hpxml, new_hpxml)
+    # Add vented crawlspace foundation wall
     new_hpxml.foundation_walls.add(:id => "FoundationWall",
                                    :interior_adjacent_to => HPXML::LocationCrawlspaceVented,
                                    :exterior_adjacent_to => "ground",
@@ -787,9 +805,11 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_ceiling
 
-      if is_thermal_boundary(orig_frame_floor)
+      if orig_frame_floor.is_thermal_boundary
+        # Insulated for, e.g., ceilings between vented attic and living space
         insulation_assembly_r_value = 1.0 / ceiling_ufactor
       else
+        # Uninsulated for, e.g., ceilings between vented attic and garage
         insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 2.1].min # uninsulated
       end
       new_hpxml.frame_floors.add(:id => orig_frame_floor.id,
@@ -802,6 +822,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_ceilings_rated(orig_hpxml, new_hpxml)
+    # Preserve all ceilings
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_ceiling
 
@@ -817,7 +838,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_ceilings_iad(orig_hpxml, new_hpxml)
     set_enclosure_ceilings_rated(orig_hpxml, new_hpxml)
 
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Ceilings
+    # Scale down ceiling area to 1200 sqft while maintaining ratio of attic types.
     sum_ceiling_area = 0.0
     new_hpxml.frame_floors.each do |new_frame_floor|
       next unless new_frame_floor.is_ceiling
@@ -834,17 +855,15 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
     floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
 
-    # Table 4.2.2(1) - Floors over unconditioned spaces or outdoor environment
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
 
-      if is_thermal_boundary(orig_frame_floor)
-        if @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
-          insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
-        else
-          insulation_assembly_r_value = 1.0 / floor_ufactor
-        end
+      if orig_frame_floor.is_thermal_boundary or @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryFloor
+        # Insulated for, e.g., floors between living space and crawlspace or
+        # floors of unconditioned basements whose thermal boundary location is the floor.
+        insulation_assembly_r_value = 1.0 / floor_ufactor
       else
+        # Uninsulated for, e.g., floors between living space and conditioned basement
         insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
       end
 
@@ -858,6 +877,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_rated(orig_hpxml, new_hpxml)
+    # Preserve all floors
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
 
@@ -873,6 +893,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_floors_iad(orig_hpxml, new_hpxml)
     floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
 
+    # Add crawlspace floor
     new_hpxml.frame_floors.add(:id => "FloorAboveCrawlspace",
                                :interior_adjacent_to => HPXML::LocationLivingSpace,
                                :exterior_adjacent_to => HPXML::LocationCrawlspaceVented,
@@ -884,14 +905,15 @@ class EnergyRatingIndex301Ruleset
     slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
     slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
 
-    # Table 4.2.2(1) - Foundations
     orig_hpxml.slabs.each do |orig_slab|
-      if orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace and is_thermal_boundary(orig_slab)
+      if orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
+        # Insulated for slabs below living space.
         perimeter_insulation_depth = slab_perim_depth
         under_slab_insulation_width = slab_under_width
         perimeter_insulation_r_value = slab_perim_rvalue
         under_slab_insulation_r_value = slab_under_rvalue
       else
+        # Uninsulated for all other cases.
         perimeter_insulation_depth = 0
         under_slab_insulation_width = 0
         perimeter_insulation_r_value = 0
@@ -923,6 +945,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_slabs_rated(orig_hpxml, new_hpxml)
+    # Preserve all slabs.
     orig_hpxml.slabs.each do |orig_slab|
       new_hpxml.slabs.add(:id => orig_slab.id,
                           :interior_adjacent_to => orig_slab.interior_adjacent_to,
@@ -943,6 +966,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_slabs_iad(orig_hpxml, new_hpxml)
+    # Add crawlspace slab
     new_hpxml.slabs.add(:id => "Slab",
                         :interior_adjacent_to => HPXML::LocationCrawlspaceVented,
                         :area => 1200,
@@ -968,7 +992,7 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    # Create windows
+    # Create equally distributed windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
       new_hpxml.windows.add(:id => "WindowArea#{orientation}",
                             :area => 0.18 * @cfa * fa * f * 0.25,
@@ -982,9 +1006,9 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_windows_rated(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Glazing
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
+    # Preserve all windows
     orig_hpxml.windows.each do |orig_window|
       new_hpxml.windows.add(:id => orig_window.id,
                             :area => orig_window.area,
@@ -1001,13 +1025,12 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_windows_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Glazing
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
+    ext_thermal_bndry_windows = orig_hpxml.windows.select { |window| window.is_exterior_thermal_boundary }
+    avg_ufactor = calc_area_weighted_sum(ext_thermal_bndry_windows, :ufactor)
+    avg_shgc = calc_area_weighted_sum(ext_thermal_bndry_windows, :shgc)
 
-    avg_ufactor = calc_area_weighted_sum_of_exterior_thermal_boundary_values(orig_hpxml.windows, :ufactor)
-    avg_shgc = calc_area_weighted_sum_of_exterior_thermal_boundary_values(orig_hpxml.windows, :shgc)
-
-    # Create windows
+    # Create equally distributed windows
     for orientation, azimuth in { "North" => 0, "South" => 180, "East" => 90, "West" => 270 }
       new_hpxml.windows.add(:id => "WindowArea#{orientation}",
                             :area => 0.18 * @cfa * 0.25,
@@ -1021,12 +1044,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_skylights_reference(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Skylights
-    # nop
+    # nop; No skylights
   end
 
   def self.set_enclosure_skylights_rated(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Skylights
+    # Preserve all skylights
     orig_hpxml.skylights.each do |orig_skylight|
       new_hpxml.skylights.add(:id => orig_skylight.id,
                               :area => orig_skylight.area,
@@ -1038,17 +1060,13 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_skylights_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Skylights
     set_enclosure_skylights_rated(orig_hpxml, new_hpxml)
 
     # Since the IAD roof area is scaled down but skylight area is maintained,
     # it's possible that skylights no longer fit on the roof. To resolve this,
-    # scale down skylight area if needed to fit.
+    # scale down skylight area to fit as needed.
     new_hpxml.roofs.each do |new_roof|
-      new_skylight_area = 0.0
-      new_roof.skylights.each do |skylight|
-        new_skylight_area += skylight.area
-      end
+      new_skylight_area = new_roof.skylights.map { |skylight| skylight.area }.inject(0, :+)
       if new_skylight_area > new_roof.area
         new_roof.skylights.each do |new_skylight|
           new_skylight.area = new_skylight.area * new_roof.area / new_skylight_area * 0.99
@@ -1082,7 +1100,8 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
-    avg_r_value = calc_area_weighted_sum_of_exterior_thermal_boundary_values(orig_hpxml.doors, :r_value, true)
+    ext_thermal_bndry_doors = orig_hpxml.doors.select { |door| door.is_exterior_thermal_boundary }
+    avg_r_value = calc_area_weighted_sum(ext_thermal_bndry_doors, :r_value, true)
 
     # Create new door (since it's impossible to preserve the Rated Home's door orientation)
     # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
@@ -2225,7 +2244,7 @@ class EnergyRatingIndex301Ruleset
     common_wall_area = 0.0 # Excludes foundation walls
 
     orig_hpxml.walls.each do |orig_wall|
-      if is_thermal_boundary(orig_wall)
+      if orig_wall.is_thermal_boundary
         ag_bndry_wall_area += orig_wall.area
       elsif orig_wall.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
         common_wall_area += orig_wall.area
@@ -2233,7 +2252,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     orig_hpxml.rim_joists.each do |orig_rim_joist|
-      if is_thermal_boundary(orig_rim_joist)
+      if orig_rim_joist.is_thermal_boundary
         ag_bndry_wall_area += orig_rim_joist.area
       elsif orig_rim_joist.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
         common_wall_area += orig_rim_joist.area
@@ -2241,7 +2260,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      next unless is_thermal_boundary(orig_foundation_wall)
+      next unless orig_foundation_wall.is_thermal_boundary
 
       height = orig_foundation_wall.height
       bg_depth = orig_foundation_wall.depth_below_grade
@@ -2254,18 +2273,10 @@ class EnergyRatingIndex301Ruleset
   end
 end
 
-def calc_area_weighted_sum_of_exterior_thermal_boundary_values(surfaces, attribute, use_inverse = false)
+def calc_area_weighted_sum(surfaces, attribute, use_inverse = false)
   sum_area = 0
   sum_val_times_area = 0
   surfaces.each do |surface|
-    if not surface.respond_to? :interior_adjacent_to and not surface.respond_to? :exterior_adjacent_to
-      # nop
-    elsif is_exterior_thermal_boundary(surface)
-      # nop
-    else
-      next
-    end
-
     sum_area += surface.area
     if use_inverse
       sum_val_times_area += (1.0 / surface.send(attribute) * surface.area)
@@ -2281,24 +2292,4 @@ def calc_area_weighted_sum_of_exterior_thermal_boundary_values(surfaces, attribu
     end
   end
   return 0
-end
-
-def calc_sum_of_exterior_thermal_boundary_values(surfaces)
-  sum_val = 0
-  surfaces.each do |surface|
-    if (not surface.respond_to? :interior_adjacent_to and not surface.respond_to? :exterior_adjacent_to)
-      # nop
-    elsif is_exterior_thermal_boundary(surface)
-      # nop
-    else
-      next
-    end
-
-    sum_val += surface.area
-  end
-  return sum_val
-end
-
-def is_exterior_thermal_boundary(surface)
-  return (is_thermal_boundary(surface) and surface.exterior_adjacent_to == HPXML::LocationOutside)
 end
