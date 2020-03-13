@@ -7,16 +7,16 @@ require 'fileutils'
 
 class VentTest < MiniTest::Test
   def before_setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
-    @tmp_hpxml_path = File.join(@root_path, "workflow", "sample_files", "tmp.xml")
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
   def after_teardown
-    File.delete(@tmp_hpxml_path) if File.exists? @tmp_hpxml_path
+    File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 
   def test_mech_vent
-    hpxml_name = "base.xml"
+    hpxml_name = 'base.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -36,7 +36,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_attached_or_multifamily
-    hpxml_name = "base-enclosure-adiabatic-surfaces.xml"
+    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -57,13 +57,13 @@ class VentTest < MiniTest::Test
 
   def test_mech_vent_below_ashrae_622
     # Create derivative file for testing
-    hpxml_name = "base-mechvent-exhaust.xml"
-    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, "workflow", "sample_files", hpxml_name)))
+    hpxml_name = 'base-mechvent-exhaust.xml'
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, 'workflow', 'sample_files', hpxml_name)))
 
     vent_fan = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    vent_fan.elements["TestedFlowRate"].text = 1.0
-    vent_fan.elements["HoursInOperation"].text = 1
-    vent_fan.elements["FanPower"].text = 1.0
+    vent_fan.elements['TestedFlowRate'].text = 1.0
+    vent_fan.elements['HoursInOperation'].text = 1
+    vent_fan.elements['FanPower'].text = 1.0
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -87,7 +87,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_exhaust
-    hpxml_name = "base-mechvent-exhaust.xml"
+    hpxml_name = 'base-mechvent-exhaust.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -107,7 +107,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_supply
-    hpxml_name = "base-mechvent-supply.xml"
+    hpxml_name = 'base-mechvent-supply.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -127,7 +127,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_balanced
-    hpxml_name = "base-mechvent-balanced.xml"
+    hpxml_name = 'base-mechvent-balanced.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -147,7 +147,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_erv
-    hpxml_name = "base-mechvent-erv.xml"
+    hpxml_name = 'base-mechvent-erv.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -167,7 +167,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_erv_adjusted
-    hpxml_name = "base-mechvent-erv-atre-asre.xml"
+    hpxml_name = 'base-mechvent-erv-atre-asre.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -187,7 +187,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_hrv
-    hpxml_name = "base-mechvent-hrv.xml"
+    hpxml_name = 'base-mechvent-hrv.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -207,7 +207,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_hrv_adjusted
-    hpxml_name = "base-mechvent-hrv-asre.xml"
+    hpxml_name = 'base-mechvent-hrv-asre.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -227,7 +227,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_cfis
-    hpxml_name = "base-mechvent-cfis.xml"
+    hpxml_name = 'base-mechvent-cfis.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -247,7 +247,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_cfm50_infiltration
-    hpxml_name = "base-enclosure-infil-cfm50.xml"
+    hpxml_name = 'base-enclosure-infil-cfm50.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -267,7 +267,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_whole_house_fan
-    hpxml_name = "base-misc-whole-house-fan.xml"
+    hpxml_name = 'base-misc-whole-house-fan.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -288,7 +288,7 @@ class VentTest < MiniTest::Test
 
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
-    args_hash['hpxml_input_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
+    args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 
@@ -321,8 +321,8 @@ class VentTest < MiniTest::Test
     show_output(result) unless result.value.valueName == 'Success'
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(File.exists? args_hash['hpxml_output_path'])
+    assert_equal('Success', result.value.valueName)
+    assert(File.exist? args_hash['hpxml_output_path'])
 
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
     File.delete(args_hash['hpxml_output_path'])
@@ -333,33 +333,33 @@ class VentTest < MiniTest::Test
   def _check_mech_vent(hpxml_doc, fantype = nil, flowrate = nil, hours = nil, power = nil, sre = nil, tre = nil, asre = nil, atre = nil)
     mechvent = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
     if not fantype.nil?
-      assert_equal(fantype, mechvent.elements["FanType"].text)
-      if not mechvent.elements["RatedFlowRate"].nil?
-        assert_in_epsilon(flowrate, Float(mechvent.elements["RatedFlowRate"].text), 0.01)
+      assert_equal(fantype, mechvent.elements['FanType'].text)
+      if not mechvent.elements['RatedFlowRate'].nil?
+        assert_in_epsilon(flowrate, Float(mechvent.elements['RatedFlowRate'].text), 0.01)
       else
-        assert_in_epsilon(flowrate, Float(mechvent.elements["TestedFlowRate"].text), 0.01)
+        assert_in_epsilon(flowrate, Float(mechvent.elements['TestedFlowRate'].text), 0.01)
       end
-      assert_equal(hours, Float(mechvent.elements["HoursInOperation"].text))
-      assert_in_epsilon(power, Float(mechvent.elements["FanPower"].text), 0.01)
+      assert_equal(hours, Float(mechvent.elements['HoursInOperation'].text))
+      assert_in_epsilon(power, Float(mechvent.elements['FanPower'].text), 0.01)
       if sre.nil?
-        assert_nil(mechvent.elements["SensibleRecoveryEfficiency"])
+        assert_nil(mechvent.elements['SensibleRecoveryEfficiency'])
       else
-        assert_equal(sre, Float(mechvent.elements["SensibleRecoveryEfficiency"].text))
+        assert_equal(sre, Float(mechvent.elements['SensibleRecoveryEfficiency'].text))
       end
       if tre.nil?
-        assert_nil(mechvent.elements["TotalRecoveryEfficiency"])
+        assert_nil(mechvent.elements['TotalRecoveryEfficiency'])
       else
-        assert_equal(tre, Float(mechvent.elements["TotalRecoveryEfficiency"].text))
+        assert_equal(tre, Float(mechvent.elements['TotalRecoveryEfficiency'].text))
       end
       if asre.nil?
-        assert_nil(mechvent.elements["AdjustedSensibleRecoveryEfficiency"])
+        assert_nil(mechvent.elements['AdjustedSensibleRecoveryEfficiency'])
       else
-        assert_equal(asre, Float(mechvent.elements["AdjustedSensibleRecoveryEfficiency"].text))
+        assert_equal(asre, Float(mechvent.elements['AdjustedSensibleRecoveryEfficiency'].text))
       end
       if atre.nil?
-        assert_nil(mechvent.elements["AdjustedTotalRecoveryEfficiency"])
+        assert_nil(mechvent.elements['AdjustedTotalRecoveryEfficiency'])
       else
-        assert_equal(atre, Float(mechvent.elements["AdjustedTotalRecoveryEfficiency"].text))
+        assert_equal(atre, Float(mechvent.elements['AdjustedTotalRecoveryEfficiency'].text))
       end
     else
       assert_nil(mechvent)
@@ -369,8 +369,8 @@ class VentTest < MiniTest::Test
   def _check_whf(hpxml_doc, flowrate = nil, power = nil)
     whf = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForSeasonalCoolingLoadReduction='true']"]
     if not flowrate.nil?
-      assert_in_epsilon(flowrate, Float(whf.elements["RatedFlowRate"].text), 0.01)
-      assert_in_epsilon(power, Float(whf.elements["FanPower"].text), 0.01)
+      assert_in_epsilon(flowrate, Float(whf.elements['RatedFlowRate'].text), 0.01)
+      assert_in_epsilon(power, Float(whf.elements['FanPower'].text), 0.01)
     else
       assert_nil(whf)
     end

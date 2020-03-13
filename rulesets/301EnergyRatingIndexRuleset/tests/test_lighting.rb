@@ -7,11 +7,11 @@ require 'fileutils'
 
 class LightingTest < MiniTest::Test
   def before_setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
   end
 
   def test_lighting
-    hpxml_name = "base.xml"
+    hpxml_name = 'base.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -31,7 +31,7 @@ class LightingTest < MiniTest::Test
   end
 
   def test_lighting_pre_addendum_g
-    hpxml_name = "base-version-2014AE.xml"
+    hpxml_name = 'base-version-2014AE.xml'
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -51,7 +51,7 @@ class LightingTest < MiniTest::Test
   end
 
   def test_ceiling_fans
-    hpxml_name = "base-misc-ceiling-fans.xml"
+    hpxml_name = 'base-misc-ceiling-fans.xml'
 
     medium_cfm = 3000.0
 
@@ -78,7 +78,7 @@ class LightingTest < MiniTest::Test
 
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
-    args_hash['hpxml_input_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
+    args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 
@@ -111,8 +111,8 @@ class LightingTest < MiniTest::Test
     show_output(result) unless result.value.valueName == 'Success'
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(File.exists? args_hash['hpxml_output_path'])
+    assert_equal('Success', result.value.valueName)
+    assert(File.exist? args_hash['hpxml_output_path'])
 
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
     File.delete(args_hash['hpxml_output_path'])
@@ -121,7 +121,7 @@ class LightingTest < MiniTest::Test
   end
 
   def _check_lighting(hpxml_doc, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
-    ltg = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting"]
+    ltg = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Lighting']
     assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']/FractionofUnitsInLocation"].text), fFI_int, 0.01)
     assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']/FractionofUnitsInLocation"].text), fFI_ext, 0.01)
     assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']/FractionofUnitsInLocation"].text), fFI_grg, 0.01)
@@ -131,16 +131,16 @@ class LightingTest < MiniTest::Test
   end
 
   def _check_ceiling_fans(hpxml_doc, cfm_per_w, quantity)
-    cf = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Lighting/CeilingFan"]
+    cf = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Lighting/CeilingFan']
     if cfm_per_w.nil?
       assert_nil(cf.elements["Airflow[FanSpeed='medium']/Efficiency"])
     else
       assert_equal(Float(cf.elements["Airflow[FanSpeed='medium']/Efficiency"].text), cfm_per_w)
     end
     if quantity.nil?
-      assert_nil(cf.elements["Quantity"])
+      assert_nil(cf.elements['Quantity'])
     else
-      assert_equal(Integer(cf.elements["Quantity"].text), quantity)
+      assert_equal(Integer(cf.elements['Quantity'].text), quantity)
     end
   end
 end
