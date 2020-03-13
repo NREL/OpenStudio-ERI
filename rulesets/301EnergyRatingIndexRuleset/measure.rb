@@ -4,22 +4,22 @@
 require 'openstudio'
 require 'pathname'
 require 'csv'
-require_relative "resources/301"
-require_relative "resources/301validator"
-require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/constants"
-require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/weather"
-require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper"
+require_relative 'resources/301'
+require_relative 'resources/301validator'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 # start the measure
 class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
   # human readable name
   def name
-    return "Apply Energy Rating Index Ruleset"
+    return 'Apply Energy Rating Index Ruleset'
   end
 
   # human readable description
   def description
-    return "Generates a HPXML building description for, e.g., the Reference Home or Rated Home, as defined by the ANSI/RESNET 301-2014 ruleset. Used as part of the calculation of an Energy Rating Index."
+    return 'Generates a HPXML building description for, e.g., the Reference Home or Rated Home, as defined by the ANSI/RESNET 301-2014 ruleset. Used as part of the calculation of an Energy Rating Index.'
   end
 
   # human readable description of modeling approach
@@ -37,19 +37,19 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     calc_types << Constants.CalcTypeERIRatedHome
     calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
     calc_types << Constants.CalcTypeERIIndexAdjustmentReferenceHome
-    calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument("calc_type", calc_types, true)
-    calc_type.setDisplayName("Calculation Type")
+    calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument('calc_type', calc_types, true)
+    calc_type.setDisplayName('Calculation Type')
     calc_type.setDefaultValue(Constants.CalcTypeERIRatedHome)
     args << calc_type
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_input_path", true)
-    arg.setDisplayName("HPXML Input File Path")
-    arg.setDescription("Absolute (or relative) path of the input HPXML file.")
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('hpxml_input_path', true)
+    arg.setDisplayName('HPXML Input File Path')
+    arg.setDescription('Absolute (or relative) path of the input HPXML file.')
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument("hpxml_output_path", false)
-    arg.setDisplayName("HPXML Output File Path")
-    arg.setDescription("Absolute (or relative) path of the output HPXML file.")
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('hpxml_output_path', false)
+    arg.setDisplayName('HPXML Output File Path')
+    arg.setDescription('Absolute (or relative) path of the output HPXML file.')
     args << arg
 
     return args
@@ -65,14 +65,14 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     end
 
     # assign the user inputs to variables
-    calc_type = runner.getStringArgumentValue("calc_type", user_arguments)
-    hpxml_input_path = runner.getStringArgumentValue("hpxml_input_path", user_arguments)
-    hpxml_output_path = runner.getOptionalStringArgumentValue("hpxml_output_path", user_arguments)
+    calc_type = runner.getStringArgumentValue('calc_type', user_arguments)
+    hpxml_input_path = runner.getStringArgumentValue('hpxml_input_path', user_arguments)
+    hpxml_output_path = runner.getOptionalStringArgumentValue('hpxml_output_path', user_arguments)
 
     unless (Pathname.new hpxml_input_path).absolute?
       hpxml_input_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_input_path))
     end
-    unless File.exists?(hpxml_input_path) and hpxml_input_path.downcase.end_with? ".xml"
+    unless File.exist?(hpxml_input_path) && hpxml_input_path.downcase.end_with?('.xml')
       runner.registerError("'#{hpxml_input_path}' does not exist or is not an .xml file.")
       return false
     end
@@ -85,20 +85,20 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
     begin
       # Weather file
-      weather_dir = File.join(File.dirname(__FILE__), "..", "..", "weather")
+      weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
       weather_wmo = hpxml.climate_and_risk_zones.weather_station_wmo
       epw_path = nil
       cache_path = nil
-      CSV.foreach(File.join(weather_dir, "data.csv"), headers: true) do |row|
-        next if row["wmo"] != weather_wmo
+      CSV.foreach(File.join(weather_dir, 'data.csv'), headers: true) do |row|
+        next if row['wmo'] != weather_wmo
 
-        epw_path = File.join(weather_dir, row["filename"])
-        if not File.exists?(epw_path)
+        epw_path = File.join(weather_dir, row['filename'])
+        if not File.exist?(epw_path)
           runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
           return false
         end
         cache_path = epw_path.gsub('.epw', '-cache.csv')
-        if not File.exists?(cache_path)
+        if not File.exist?(cache_path)
           runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
           return false
         end
@@ -132,11 +132,11 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
   def validate_hpxml(runner, hpxml_input_path, hpxml)
     is_valid = true
 
-    schemas_dir = File.join(File.dirname(__FILE__), "..", "..", "hpxml-measures", "HPXMLtoOpenStudio", "resources")
+    schemas_dir = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources')
 
     # Validate input HPXML against schema
-    XMLHelper.validate(hpxml.doc.to_s, File.join(schemas_dir, "HPXML.xsd"), runner).each do |error|
-      runner.registerError("#{hpxml_input_path}: #{error.to_s}")
+    XMLHelper.validate(hpxml.doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), runner).each do |error|
+      runner.registerError("#{hpxml_input_path}: #{error}")
       is_valid = false
     end
     runner.registerInfo("#{hpxml_input_path}: Validated against HPXML schema.")

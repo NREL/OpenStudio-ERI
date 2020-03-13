@@ -7,11 +7,11 @@ require 'fileutils'
 
 class MiscTest < MiniTest::Test
   def before_setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", ".."))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
   end
 
   def test_misc
-    hpxml_name = "base.xml"
+    hpxml_name = 'base.xml'
 
     # Reference Home, Rated Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
@@ -26,7 +26,7 @@ class MiscTest < MiniTest::Test
 
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
-    args_hash['hpxml_input_path'] = File.join(@root_path, "workflow", "sample_files", hpxml_name)
+    args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 
@@ -59,8 +59,8 @@ class MiscTest < MiniTest::Test
     show_output(result) unless result.value.valueName == 'Success'
 
     # assert that it ran correctly
-    assert_equal("Success", result.value.valueName)
-    assert(File.exists? args_hash['hpxml_output_path'])
+    assert_equal('Success', result.value.valueName)
+    assert(File.exist? args_hash['hpxml_output_path'])
 
     hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
     File.delete(args_hash['hpxml_output_path'])
@@ -69,7 +69,7 @@ class MiscTest < MiniTest::Test
   end
 
   def _check_misc(hpxml_doc)
-    misc = hpxml_doc.elements["/HPXML/Building/BuildingDetails/MiscLoads"]
+    misc = hpxml_doc.elements['/HPXML/Building/BuildingDetails/MiscLoads']
     refute_nil(misc.elements["PlugLoad[PlugLoadType='other']"])
     refute_nil(misc.elements["PlugLoad[PlugLoadType='TV other']"])
   end
