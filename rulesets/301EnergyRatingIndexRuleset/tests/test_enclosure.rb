@@ -718,6 +718,30 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_skylights(hpxml_doc)
+
+    # Test large skylight area that would create an IAD Home error if not handled
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, 'workflow', 'sample_files', hpxml_name)))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight') do |skylight|
+      skylight.elements['Area'].text = 700.0
+    end
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_skylights(hpxml_doc, { 0 => [700, 0.33, 0.45],
+                                  180 => [700, 0.35, 0.47] })
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_skylights(hpxml_doc)
+
+    # IAD Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_skylights(hpxml_doc, { 0 => [643.5, 0.33, 0.45],
+                                  180 => [643.5, 0.35, 0.47] })
   end
 
   def test_enclosure_overhangs
