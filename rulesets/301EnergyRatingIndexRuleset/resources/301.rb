@@ -2212,6 +2212,7 @@ class EnergyRatingIndex301Ruleset
       if @is_attached_unit # No infiltration credit for attached/multifamily
         return q_tot
       end
+
       if q_inf > 2.0 / 3.0 * q_tot
         q_fan = q_tot - 2.0 / 3.0 * q_tot
       else
