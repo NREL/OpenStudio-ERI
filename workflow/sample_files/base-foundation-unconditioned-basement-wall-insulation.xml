@@ -79,6 +79,16 @@
                 <Conditioned>false</Conditioned>
               </Basement>
             </FoundationType>
+            <ThermalBoundary>frame floor</ThermalBoundary>
+            <WithinInfiltrationVolume>false</WithinInfiltrationVolume>
+          </Foundation>
+          <Foundation>
+            <SystemIdentifier id='UnconditionedBasement'/>
+            <FoundationType>
+              <Basement>
+                <Conditioned>false</Conditioned>
+              </Basement>
+            </FoundationType>
             <ThermalBoundary>foundation wall</ThermalBoundary>
             <WithinInfiltrationVolume>false</WithinInfiltrationVolume>
           </Foundation>

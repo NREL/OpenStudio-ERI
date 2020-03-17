@@ -1,27 +1,31 @@
-Electricity: Total (MBtu),43.53
-Electricity: Net (MBtu),43.53
-Natural Gas: Total (MBtu),32.83
+Electricity: Total (MBtu),44.05
+Electricity: Net (MBtu),44.05
+Natural Gas: Total (MBtu),32.56
 Fuel Oil: Total (MBtu),0.0
 Propane: Total (MBtu),0.0
 
-Electricity: Heating (MBtu),0.68
-Electricity: Cooling (MBtu),3.23
-Electricity: Hot Water (MBtu),11.36
+Electricity: Heating (MBtu),0.0
+Electricity: Heating Fans/Pumps (MBtu),0.66
+Electricity: Cooling (MBtu),3.19
+Electricity: Cooling Fans/Pumps (MBtu),0.56
+Electricity: Hot Water (MBtu),11.39
 Electricity: Hot Water Recirc Pump (MBtu),0.0
 Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
 Electricity: Lighting Interior (MBtu),8.92
 Electricity: Lighting Garage (MBtu),0.0
 Electricity: Lighting Exterior (MBtu),0.8
 Electricity: Mech Vent (MBtu),0.0
+Electricity: Whole House Fan (MBtu),0.0
 Electricity: Refrigerator (MBtu),2.36
 Electricity: Dishwasher (MBtu),0.58
 Electricity: Clothes Washer (MBtu),0.24
 Electricity: Clothes Dryer (MBtu),3.34
 Electricity: Range/Oven (MBtu),1.53
 Electricity: Ceiling Fan (MBtu),0.0
-Electricity: Plug Loads (MBtu),10.49
+Electricity: Television (MBtu),2.11
+Electricity: Plug Loads (MBtu),8.37
 Electricity: PV (MBtu),0.0
-Natural Gas: Heating (MBtu),32.83
+Natural Gas: Heating (MBtu),32.56
 Natural Gas: Hot Water (MBtu),0.0
 Natural Gas: Clothes Dryer (MBtu),0.0
 Natural Gas: Range/Oven (MBtu),0.0
@@ -34,51 +38,53 @@ Propane: Hot Water (MBtu),0.0
 Propane: Clothes Dryer (MBtu),0.0
 Propane: Range/Oven (MBtu),0.0
 
-Annual Load: Heating (MBtu),21.04
-Annual Load: Cooling (MBtu),5.99
-Annual Load: Hot Water: Delivered (MBtu),10.33
-Annual Load: Hot Water: Tank Losses (MBtu),1.03
-Annual Load: Hot Water: Desuperheater (MBtu),0.0
-Annual Load: Hot Water: Solar Thermal (MBtu),0.0
+Load: Heating (MBtu),20.82
+Load: Cooling (MBtu),7.41
+Load: Hot Water: Delivered (MBtu),10.37
+Load: Hot Water: Tank Losses (MBtu),1.02
+Load: Hot Water: Desuperheater (MBtu),0.0
+Load: Hot Water: Solar Thermal (MBtu),0.0
 
-Annual Unmet Load: Heating (MBtu),0.0
-Annual Unmet Load: Cooling (MBtu),0.01
+Unmet Load: Heating (MBtu),0.0
+Unmet Load: Cooling (MBtu),0.01
 
-Peak Electricity: Winter Total (W),7099.02
-Peak Electricity: Summer Total (W),6753.0
+Peak Electricity: Winter Total (W),7757.99
+Peak Electricity: Summer Total (W),6869.49
 
 Peak Load: Heating (kBtu),19.82
-Peak Load: Cooling (kBtu),14.72
+Peak Load: Cooling (kBtu),14.98
 
 Component Load: Heating: Roofs (MBtu),0.0
-Component Load: Heating: Ceilings (MBtu),4.14
-Component Load: Heating: Walls (MBtu),4.51
-Component Load: Heating: Rim Joists (MBtu),0.61
-Component Load: Heating: Foundation Walls (MBtu),2.27
-Component Load: Heating: Doors (MBtu),1.42
-Component Load: Heating: Windows (MBtu),6.27
+Component Load: Heating: Ceilings (MBtu),5.22
+Component Load: Heating: Walls (MBtu),5.1
+Component Load: Heating: Rim Joists (MBtu),0.71
+Component Load: Heating: Foundation Walls (MBtu),3.14
+Component Load: Heating: Doors (MBtu),1.69
+Component Load: Heating: Windows (MBtu),3.56
 Component Load: Heating: Skylights (MBtu),0.0
 Component Load: Heating: Floors (MBtu),0.0
-Component Load: Heating: Slabs (MBtu),2.39
-Component Load: Heating: Internal Mass (MBtu),-1.29
-Component Load: Heating: Infiltration (MBtu),6.86
+Component Load: Heating: Slabs (MBtu),3.55
+Component Load: Heating: Internal Mass (MBtu),-0.19
+Component Load: Heating: Infiltration (MBtu),7.75
 Component Load: Heating: Natural Ventilation (MBtu),0.0
-Component Load: Heating: Mechanical Ventilation (MBtu),4.29
+Component Load: Heating: Mechanical Ventilation (MBtu),5.03
+Component Load: Heating: Whole House Fan (MBtu),0.0
 Component Load: Heating: Ducts (MBtu),0.0
-Component Load: Heating: Internal Gains (MBtu),-10.6
+Component Load: Heating: Internal Gains (MBtu),-14.77
 Component Load: Cooling: Roofs (MBtu),0.0
-Component Load: Cooling: Ceilings (MBtu),-0.06
-Component Load: Cooling: Walls (MBtu),0.48
-Component Load: Cooling: Rim Joists (MBtu),0.06
-Component Load: Cooling: Foundation Walls (MBtu),0.76
-Component Load: Cooling: Doors (MBtu),0.14
-Component Load: Cooling: Windows (MBtu),4.8
+Component Load: Cooling: Ceilings (MBtu),-0.96
+Component Load: Cooling: Walls (MBtu),-0.18
+Component Load: Cooling: Rim Joists (MBtu),-0.01
+Component Load: Cooling: Foundation Walls (MBtu),2.48
+Component Load: Cooling: Doors (MBtu),-0.35
+Component Load: Cooling: Windows (MBtu),8.25
 Component Load: Cooling: Skylights (MBtu),0.0
 Component Load: Cooling: Floors (MBtu),0.0
-Component Load: Cooling: Slabs (MBtu),-1.41
-Component Load: Cooling: Internal Mass (MBtu),-1.59
-Component Load: Cooling: Infiltration (MBtu),0.08
-Component Load: Cooling: Natural Ventilation (MBtu),-0.45
-Component Load: Cooling: Mechanical Ventilation (MBtu),0.1
+Component Load: Cooling: Slabs (MBtu),-5.19
+Component Load: Cooling: Internal Mass (MBtu),-0.15
+Component Load: Cooling: Infiltration (MBtu),-1.21
+Component Load: Cooling: Natural Ventilation (MBtu),-5.71
+Component Load: Cooling: Mechanical Ventilation (MBtu),-1.28
+Component Load: Cooling: Whole House Fan (MBtu),0.0
 Component Load: Cooling: Ducts (MBtu),0.0
-Component Load: Cooling: Internal Gains (MBtu),3.19
+Component Load: Cooling: Internal Gains (MBtu),11.76

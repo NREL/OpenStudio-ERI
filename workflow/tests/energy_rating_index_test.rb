@@ -8,38 +8,38 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing"
-require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads"
-require_relative "../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure"
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
 class EnergyRatingIndexTest < Minitest::Test
   def before_setup
-    @test_results_dir = File.join(File.dirname(__FILE__), "test_results")
+    @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
     FileUtils.mkdir_p @test_results_dir
-    @test_files_dir = File.join(File.dirname(__FILE__), "test_files")
+    @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
     FileUtils.mkdir_p @test_files_dir
   end
 
   def test_sample_files
-    test_name = "sample_files"
+    test_name = 'sample_files'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    files = "base*.xml"
+    files = 'base*.xml'
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       hpxmls, csvs, runtime = run_eri(xml, test_name, hourly_output: true)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
-      all_results[File.basename(xml)]["Workflow Runtime (s)"] = runtime
+      all_results[File.basename(xml)]['Workflow Runtime (s)'] = runtime
     end
     assert(all_results.size > 0)
 
     # Write results to csv
     keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["XML"] + keys
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['XML'] + keys
       all_results.each_with_index do |(xml, results), i|
         csv_line = [File.basename(xml)]
         keys.each do |key|
@@ -53,21 +53,21 @@ class EnergyRatingIndexTest < Minitest::Test
     # Cross-simulation tests
 
     # Verify that REUL Hot Water is identical across water heater types
-    _test_reul(all_results, "base-dhw", "REUL Hot Water (MBtu)")
+    _test_reul(all_results, 'base-dhw', 'REUL Hot Water (MBtu)')
 
     # Verify that REUL Heating/Cooling are identical across HVAC types
-    _test_reul(all_results, "base-hvac", "REUL Heating (MBtu)")
-    _test_reul(all_results, "base-hvac", "REUL Cooling (MBtu)")
+    _test_reul(all_results, 'base-hvac', 'REUL Heating (MBtu)')
+    _test_reul(all_results, 'base-hvac', 'REUL Cooling (MBtu)')
   end
 
   def test_invalid_files
-    test_name = "invalid_files"
+    test_name = 'invalid_files'
     expected_error_msgs = { 'bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
-                            'dhw-frac-load-served.xml' => ["Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15."],
-                            'missing-elements.xml' => ["Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors",
-                                                       "Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"],
-                            'hvac-frac-load-served.xml' => ["Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.",
-                                                            "Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1."] }
+                            'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
+                            'missing-elements.xml' => ['Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors',
+                                                       'Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'],
+                            'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.',
+                                                            'Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1.'] }
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
@@ -76,18 +76,16 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_downloading_weather
-    skip
-
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --download-weather"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --download-weather"
     system(command)
 
-    num_epws_expected = File.readlines(File.join(File.dirname(__FILE__), "..", "..", "weather", "data.csv")).size - 1
-    num_epws_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*.epw")].count
+    num_epws_expected = File.readlines(File.join(File.dirname(__FILE__), '..', '..', 'weather', 'data.csv')).size - 1
+    num_epws_actual = Dir[File.join(File.dirname(__FILE__), '..', '..', 'weather', '*.epw')].count
     assert_equal(num_epws_expected, num_epws_actual)
 
-    num_cache_expected = File.readlines(File.join(File.dirname(__FILE__), "..", "..", "weather", "data.csv")).size - 1
-    num_cache_actual = Dir[File.join(File.dirname(__FILE__), "..", "..", "weather", "*-cache.csv")].count
+    num_cache_expected = File.readlines(File.join(File.dirname(__FILE__), '..', '..', 'weather', 'data.csv')).size - 1
+    num_cache_actual = Dir[File.join(File.dirname(__FILE__), '..', '..', 'weather', '*-cache.csv')].count
     assert_equal(num_cache_expected, num_cache_actual)
   end
 
@@ -96,26 +94,26 @@ class EnergyRatingIndexTest < Minitest::Test
     require 'openssl'
     require 'open-uri'
 
-    weather_dir = File.join(File.dirname(__FILE__), "..", "..", "weather")
-    weather_epw = File.join(weather_dir, "USA_CO_Denver-Stapleton.724690_TMY.epw")
+    weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
+    weather_epw = File.join(weather_dir, 'USA_CO_Denver-Stapleton.724690_TMY.epw')
     begin
-      File.open(weather_epw, "wb") do |file|
+      File.open(weather_epw, 'wb') do |file|
         file.write open('https://energyplus.net/weather-download/north_and_central_america_wmo_region_4/USA/CO/USA_CO_Denver-Stapleton.724690_TMY/USA_CO_Denver-Stapleton.724690_TMY.epw', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }).read
       end
     rescue
       File.delete(weather_epw)
-      flunk "Could not download EPW."
+      flunk 'Could not download EPW.'
     end
 
-    data_csv = File.join(weather_dir, "data.csv")
+    data_csv = File.join(weather_dir, 'data.csv')
     FileUtils.cp(data_csv, "#{data_csv}.bak")
 
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "..", "energy_rating_index.rb")}\" --cache-weather"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
     system(command)
 
-    cache_csv = File.join(weather_dir, "USA_CO_Denver-Stapleton.724690_TMY-cache.csv")
-    assert(File.exists?(cache_csv))
+    cache_csv = File.join(weather_dir, 'USA_CO_Denver-Stapleton.724690_TMY-cache.csv')
+    assert(File.exist?(cache_csv))
 
     # Restore original and cleanup
     FileUtils.cp("#{data_csv}.bak", data_csv)
@@ -125,37 +123,37 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_ashrae_140
-    test_name = "RESNET_Test_4.1_Standard_140"
+    test_name = 'RESNET_Test_4.1_Standard_140'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.1_Standard_140")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.1_Standard_140')
     all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
       sql_path, csv_path, sim_time = run_simulation(xml, test_name)
       htg_load, clg_load = _get_simulation_load_results(csv_path)
-      if xml.include? "C.xml"
-        all_results << [xml, htg_load, "N/A"]
+      if xml.include? 'C.xml'
+        all_results << [xml, htg_load, 'N/A']
         assert_operator(htg_load, :>, 0)
-      elsif xml.include? "L.xml"
-        all_results << [xml, "N/A", clg_load]
+      elsif xml.include? 'L.xml'
+        all_results << [xml, 'N/A', clg_load]
         assert_operator(clg_load, :>, 0)
       end
     end
     assert(all_results.size > 0)
 
     # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test", "Annual Heating Load [MMBtu]", "Annual Cooling Load [MMBtu]"]
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test', 'Annual Heating Load [MMBtu]', 'Annual Cooling Load [MMBtu]']
       all_results.each do |results|
-        next unless results[0].include? "C.xml"
+        next unless results[0].include? 'C.xml'
 
         csv << results
       end
       all_results.each do |results|
-        next unless results[0].include? "L.xml"
+        next unless results[0].include? 'L.xml'
 
         csv << results
       end
@@ -167,13 +165,13 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_hers_reference_home_auto_generation
-    test_name = "RESNET_Test_4.2_HERS_AutoGen_Reference_Home"
+    test_name = 'RESNET_Test_4.2_HERS_AutoGen_Reference_Home'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.2_HERS_AutoGen_Reference_Home")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       output_hpxml_path = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
       run_ruleset(Constants.CalcTypeERIReferenceHome, xml, output_hpxml_path)
@@ -184,19 +182,19 @@ class EnergyRatingIndexTest < Minitest::Test
       _override_ref_ref_mech_vent_infil(output_hpxml_path, xml)
       hpxmls, csvs, runtime = run_eri(output_hpxml_path, test_name)
       worksheet_results = _get_csv_results(csvs[:worksheet])
-      all_results[File.basename(xml)]["e-Ratio"] = worksheet_results["Total Loads TnML"] / worksheet_results["Total Loads TRL"]
+      all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
     end
     assert(all_results.size > 0)
 
     # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Component", "Test 1 Results", "Test 2 Results", "Test 3 Results", "Test 4 Results"]
-      all_results["01-L100.xml"].keys.each do |component|
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Component', 'Test 1 Results', 'Test 2 Results', 'Test 3 Results', 'Test 4 Results']
+      all_results['01-L100.xml'].keys.each do |component|
         csv << [component,
-                all_results["01-L100.xml"][component],
-                all_results["02-L100.xml"][component],
-                all_results["03-L304.xml"][component],
-                all_results["04-L324.xml"][component]]
+                all_results['01-L100.xml'][component],
+                all_results['02-L100.xml'][component],
+                all_results['03-L304.xml'][component],
+                all_results['04-L324.xml'][component]]
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -209,13 +207,13 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_hers_iad_home_auto_generation
-    test_name = "RESNET_Test_Other_HERS_AutoGen_IAD_Home"
+    test_name = 'RESNET_Test_Other_HERS_AutoGen_IAD_Home'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_AutoGen_IAD_Home")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       output_hpxml_path = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
       run_ruleset(Constants.CalcTypeERIIndexAdjustmentDesign, xml, output_hpxml_path)
@@ -225,14 +223,14 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(all_results.size > 0)
 
     # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Component", "Test 1 Results", "Test 2 Results", "Test 3 Results", "Test 4 Results"]
-      all_results["01-L100.xml"].keys.each do |component|
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Component', 'Test 1 Results', 'Test 2 Results', 'Test 3 Results', 'Test 4 Results']
+      all_results['01-L100.xml'].keys.each do |component|
         csv << [component,
-                all_results["01-L100.xml"][component],
-                all_results["02-L100.xml"][component],
-                all_results["03-L304.xml"][component],
-                all_results["04-L324.xml"][component]]
+                all_results['01-L100.xml'][component],
+                all_results['02-L100.xml'][component],
+                all_results['03-L304.xml'][component],
+                all_results['04-L324.xml'][component]]
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -245,13 +243,13 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_hers_method
-    test_name = "RESNET_Test_4.3_HERS_Method"
+    test_name = 'RESNET_Test_4.3_HERS_Method'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.3_HERS_Method")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.3_HERS_Method')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
       hpxmls, csvs, runtime = run_eri(xml, test_name)
@@ -261,8 +259,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case"] + keys
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test Case'] + keys
       all_results.each_with_index do |(xml, results), i|
         csv_line = [File.basename(xml)]
         keys.each do |key|
@@ -282,13 +280,13 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_resnet_hers_method_pre_addendum_e
     # Tests before Addendum E (IAF) was in place
-    test_name = "RESNET_Test_Other_HERS_Method_PreAddendumE"
+    test_name = 'RESNET_Test_Other_HERS_Method_PreAddendumE'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_PreAddendumE")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_Method_PreAddendumE')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
       hpxmls, csvs, runtime = run_eri(xml, test_name)
@@ -298,8 +296,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case"] + keys
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test Case'] + keys
       all_results.each_with_index do |(xml, results), i|
         csv_line = [File.basename(xml)]
         keys.each do |key|
@@ -319,13 +317,13 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_resnet_hers_method_proposed
     # Proposed New Method Test Suite (Approved by RESNET Board of Directors June 16, 2016)
-    test_name = "RESNET_Test_Other_HERS_Method_Proposed"
+    test_name = 'RESNET_Test_Other_HERS_Method_Proposed'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_Proposed")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_Method_Proposed')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:results])
@@ -334,9 +332,9 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case"] + keys
-      ["AC", "AL"].each do |test_type|
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test Case'] + keys
+      ['AC', 'AL'].each do |test_type|
         all_results.each_with_index do |(xml, results), i|
           next unless xml.include? test_type
 
@@ -365,13 +363,13 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_resnet_hers_method_proposed_task_group
     # HERS Consistency Task Group files
-    test_name = "RESNET_Test_Other_HERS_Method_Task_Group"
+    test_name = 'RESNET_Test_Other_HERS_Method_Task_Group'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_HERS_Method_Task_Group")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_Method_Task_Group')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
@@ -380,8 +378,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     keys = all_results.values[0].keys
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["XML"] + keys
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['XML'] + keys
       all_results.each_with_index do |(xml, results), i|
         csv_line = [File.basename(xml)]
         keys.each do |key|
@@ -406,12 +404,12 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_hvac
-    test_name = "RESNET_Test_4.4_HVAC"
+    test_name = 'RESNET_Test_4.4_HVAC'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.4_HVAC")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.4_HVAC')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
@@ -423,7 +421,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
 
       is_electric_heat = true
-      if xml.include? 'HVAC2a' or xml.include? 'HVAC2b'
+      if xml.include?('HVAC2a') || xml.include?('HVAC2b')
         is_electric_heat = false
       end
 
@@ -433,8 +431,8 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(all_results.size > 0)
 
     # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case", "HVAC (kWh or therm)", "HVAC Fan (kWh)"]
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test Case', 'HVAC (kWh or therm)', 'HVAC Fan (kWh)']
       all_results.each_with_index do |(xml, results), i|
         csv << [xml, results[0], results[1]]
       end
@@ -458,12 +456,12 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_dse
-    test_name = "RESNET_Test_4.5_DSE"
+    test_name = 'RESNET_Test_4.5_DSE'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.5_DSE")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.5_DSE')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
@@ -506,8 +504,8 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case", "Heat/Cool (kWh or therm)", "HVAC Fan (kWh)", "Seasonal Duct Zone Temperature (F)", "Seasonal DSE", "Criteria Min (%)", "Criteria Max (%)", "Test Value (%)"]
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test Case', 'Heat/Cool (kWh or therm)', 'HVAC Fan (kWh)', 'Seasonal Duct Zone Temperature (F)', 'Seasonal DSE', 'Criteria Min (%)', 'Criteria Max (%)', 'Test Value (%)']
       all_results.each_with_index do |(xml, results), i|
         next unless ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
 
@@ -530,15 +528,15 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_hot_water
-    test_name = "RESNET_Test_4.6_Hot_Water"
+    test_name = 'RESNET_Test_4.6_Hot_Water'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     base_vals = {}
     mn_vals = {}
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/4.6_Hot_Water")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.6_Hot_Water')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_hot_water(csvs[:rated_results])
@@ -547,8 +545,8 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(all_results.size > 0)
 
     # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case", "DHW Energy (therms)", "Recirc Pump (kWh)"]
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test Case', 'DHW Energy (therms)', 'Recirc Pump (kWh)']
       all_results.each_with_index do |(xml, result), i|
         rated_dhw, rated_recirc = result
         csv << [xml, (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2)]
@@ -563,23 +561,23 @@ class EnergyRatingIndexTest < Minitest::Test
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results["L100AD-HW-01.xml"].inject(:+)
-        fail "Missing value" if base_val.nil?
+        base_val = all_results['L100AD-HW-01.xml'].inject(:+)
+        fail 'Missing value' if base_val.nil?
       elsif [4, 5, 6, 7].include? test_num
-        base_val = all_results["L100AD-HW-02.xml"].inject(:+)
-        fail "Missing value" if base_val.nil?
+        base_val = all_results['L100AD-HW-02.xml'].inject(:+)
+        fail 'Missing value' if base_val.nil?
       elsif [9, 10].include? test_num
-        base_val = all_results["L100AM-HW-01.xml"].inject(:+)
-        fail "Missing value" if base_val.nil?
+        base_val = all_results['L100AM-HW-01.xml'].inject(:+)
+        fail 'Missing value' if base_val.nil?
       elsif [11, 12, 13, 14].include? test_num
-        base_val = all_results["L100AM-HW-02.xml"].inject(:+)
-        fail "Missing value" if base_val.nil?
+        base_val = all_results['L100AM-HW-02.xml'].inject(:+)
+        fail 'Missing value' if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 8
-        mn_val = all_results[xml.gsub("AM", "AD")].inject(:+)
-        fail "Missing value" if mn_val.nil?
+        mn_val = all_results[xml.gsub('AM', 'AD')].inject(:+)
+        fail 'Missing value' if mn_val.nil?
       end
 
       _check_hot_water(test_num, rated_dhw + rated_recirc, base_val, mn_val)
@@ -588,15 +586,15 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_resnet_hot_water_pre_addendum_a
     # Tests w/o Addendum A
-    test_name = "RESNET_Test_Other_Hot_Water_PreAddendumA"
+    test_name = 'RESNET_Test_Other_Hot_Water_PreAddendumA'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exists? test_results_csv
+    File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
     base_vals = {}
     mn_vals = {}
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), "RESNET_Tests/Other_Hot_Water_PreAddendumA")
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_Hot_Water_PreAddendumA')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       hpxmls, csvs, runtime = run_eri(xml, test_name)
       all_results[File.basename(xml)] = _get_hot_water(csvs[:rated_results])
@@ -605,8 +603,8 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(all_results.size > 0)
 
     # Write results to csv
-    CSV.open(test_results_csv, "w") do |csv|
-      csv << ["Test Case", "DHW Energy (therms)"]
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['Test Case', 'DHW Energy (therms)']
       all_results.each_with_index do |(xml, result), i|
         rated_dhw, rated_recirc = result
         csv << [xml, (rated_dhw * 10.0).round(2)]
@@ -621,17 +619,17 @@ class EnergyRatingIndexTest < Minitest::Test
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results["L100AD-HW-01.xml"].inject(:+)
-        fail "Missing value" if base_val.nil?
+        base_val = all_results['L100AD-HW-01.xml'].inject(:+)
+        fail 'Missing value' if base_val.nil?
       elsif [5, 6].include? test_num
-        base_val = all_results["L100AM-HW-01.xml"].inject(:+)
-        fail "Missing value" if base_val.nil?
+        base_val = all_results['L100AM-HW-01.xml'].inject(:+)
+        fail 'Missing value' if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 4
-        mn_val = all_results[xml.gsub("AM", "AD")].inject(:+)
-        fail "Missing value" if mn_val.nil?
+        mn_val = all_results[xml.gsub('AM', 'AD')].inject(:+)
+        fail 'Missing value' if mn_val.nil?
       end
 
       _check_hot_water_pre_addendum_a(test_num, rated_dhw + rated_recirc, base_val, mn_val)
@@ -663,12 +661,12 @@ class EnergyRatingIndexTest < Minitest::Test
   def run_ruleset(design, xml, output_hpxml_path)
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    measures_dir = File.join(File.dirname(__FILE__), "../..")
+    measures_dir = File.join(File.dirname(__FILE__), '../..')
 
     measures = {}
 
     # Add 301 measure to workflow
-    measure_subdir = "rulesets/301EnergyRatingIndexRuleset"
+    measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
     args = {}
     args['calc_type'] = design
     args['hpxml_input_path'] = File.absolute_path(xml)
@@ -686,50 +684,50 @@ class EnergyRatingIndexTest < Minitest::Test
     xml = File.absolute_path(xml)
 
     # Run sample files with hourly output turned on to test hourly results against annual results
-    hourly = ""
+    hourly = ''
     if hourly_output
-      hourly = " --hourly ALL"
+      hourly = ' --hourly ALL'
     end
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), "../energy_rating_index.rb")}\" -x #{xml}#{hourly} -o #{rundir}"
+    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
 
     using_iaf = false
     File.open(xml, 'r').each do |line|
-      if line.strip.downcase.start_with? "<version>"
-        if line.include? '2014AE' or line.include? '2014AEG'
-          using_iaf = true
-        end
-        break
+      next unless line.strip.downcase.start_with? '<version>'
+
+      if line.include?('2014AE') || line.include?('2014AEG')
+        using_iaf = true
       end
+      break
     end
 
     hpxmls = {}
-    hpxmls[:ref] = File.join(rundir, "results", "ERIReferenceHome.xml")
-    hpxmls[:rated] = File.join(rundir, "results", "ERIRatedHome.xml")
+    hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
+    hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
     csvs = {}
-    csvs[:results] = File.join(rundir, "results", "ERI_Results.csv")
-    csvs[:worksheet] = File.join(rundir, "results", "ERI_Worksheet.csv")
-    csvs[:rated_results] = File.join(rundir, "results", "ERIRatedHome.csv")
-    csvs[:ref_results] = File.join(rundir, "results", "ERIReferenceHome.csv")
+    csvs[:results] = File.join(rundir, 'results', 'ERI_Results.csv')
+    csvs[:worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
+    csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
+    csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
     if expect_error
-      assert(!File.exists?(hpxmls[:ref]))
-      assert(!File.exists?(hpxmls[:rated]))
-      assert(!File.exists?(csvs[:results]))
-      assert(!File.exists?(csvs[:worksheet]))
+      assert(!File.exist?(hpxmls[:ref]))
+      assert(!File.exist?(hpxmls[:rated]))
+      assert(!File.exist?(csvs[:results]))
+      assert(!File.exist?(csvs[:worksheet]))
 
       if not expect_error_msgs.nil?
         found_error_msg = false
-        ["ERIRatedHome", "ERIReferenceHome", "ERIIndexAdjustmentDesign", "ERIIndexAdjustmentReferenceHome"].each do |design|
-          next unless File.exists? File.join(rundir, design, "run.log")
+        ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
+          next unless File.exist? File.join(rundir, design, 'run.log')
 
-          run_log = File.readlines(File.join(rundir, design, "run.log")).map(&:strip)
+          run_log = File.readlines(File.join(rundir, design, 'run.log')).map(&:strip)
           expect_error_msgs.each do |error_msg|
             run_log.each do |run_line|
               next unless run_line.include? error_msg
@@ -744,17 +742,17 @@ class EnergyRatingIndexTest < Minitest::Test
 
     else
       # Check all output files exist
-      assert(File.exists?(hpxmls[:ref]))
-      assert(File.exists?(hpxmls[:rated]))
-      assert(File.exists?(csvs[:results]))
-      assert(File.exists?(csvs[:worksheet]))
+      assert(File.exist?(hpxmls[:ref]))
+      assert(File.exist?(hpxmls[:rated]))
+      assert(File.exist?(csvs[:results]))
+      assert(File.exist?(csvs[:worksheet]))
       if using_iaf
-        hpxmls[:iad] = File.join(rundir, "results", "ERIIndexAdjustmentDesign.xml")
-        assert(File.exists?(hpxmls[:iad]))
-        hpxmls[:iadref] = File.join(rundir, "results", "ERIIndexAdjustmentReferenceHome.xml")
-        assert(File.exists?(hpxmls[:iadref]))
-        csvs[:iad_results] = File.join(rundir, "results", "ERIIndexAdjustmentDesign.csv")
-        csvs[:iadref_results] = File.join(rundir, "results", "ERIIndexAdjustmentReferenceHome.csv")
+        hpxmls[:iad] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.xml')
+        assert(File.exist?(hpxmls[:iad]))
+        hpxmls[:iadref] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.xml')
+        assert(File.exist?(hpxmls[:iadref]))
+        csvs[:iad_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.csv')
+        csvs[:iadref_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.csv')
       end
 
       # Check HPXMLs are valid
@@ -781,21 +779,21 @@ class EnergyRatingIndexTest < Minitest::Test
 
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    measures_dir = File.join(File.dirname(__FILE__), "../..")
+    measures_dir = File.join(File.dirname(__FILE__), '../..')
 
     measures = {}
 
     # Add HPXML translator measure to workflow
-    measure_subdir = "hpxml-measures/HPXMLtoOpenStudio"
+    measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
-    args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), "weather"))
-    args['epw_output_path'] = File.absolute_path(File.join(rundir, "in.epw"))
-    args['osm_output_path'] = File.absolute_path(File.join(rundir, "in.osm"))
+    args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), 'weather'))
+    args['epw_output_path'] = File.absolute_path(File.join(rundir, 'in.epw'))
+    args['osm_output_path'] = File.absolute_path(File.join(rundir, 'in.osm'))
     args['hpxml_path'] = xml
     update_args_hash(measures, measure_subdir, args)
 
     # Add reporting measure to workflow
-    measure_subdir = "hpxml-measures/SimulationOutputReport"
+    measure_subdir = 'hpxml-measures/SimulationOutputReport'
     args = {}
     args['timeseries_frequency'] = 'hourly'
     args['include_timeseries_zone_temperatures'] = false
@@ -806,7 +804,7 @@ class EnergyRatingIndexTest < Minitest::Test
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measure
-    success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ModelMeasure")
+    success = apply_measures(measures_dir, measures, runner, model, true, 'OpenStudio::Measure::ModelMeasure')
 
     # Report warnings/errors
     File.open(File.join(rundir, 'run.log'), 'w') do |f|
@@ -836,12 +834,12 @@ class EnergyRatingIndexTest < Minitest::Test
 
       # Heating season?
       output_meter = OpenStudio::Model::OutputMeter.new(model)
-      output_meter.setName("Heating:EnergyTransfer")
+      output_meter.setName('Heating:EnergyTransfer')
       output_meter.setReportingFrequency('hourly')
 
       # Cooling season?
       output_meter = OpenStudio::Model::OutputMeter.new(model)
-      output_meter.setName("Cooling:EnergyTransfer")
+      output_meter.setName('Cooling:EnergyTransfer')
       output_meter.setReportingFrequency('hourly')
     end
 
@@ -854,22 +852,22 @@ class EnergyRatingIndexTest < Minitest::Test
     apply_energyplus_output_requests(measures_dir, measures, runner, model, model_idf)
 
     # Write IDF
-    File.open(File.join(rundir, "in.idf"), 'w') { |f| f << model_idf.to_s }
+    File.open(File.join(rundir, 'in.idf'), 'w') { |f| f << model_idf.to_s }
 
     # Run EnergyPlus
     ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
     command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
     start_time = Time.now
-    system(command, :err => File::NULL)
+    system(command, err: File::NULL)
     sim_time = (Time.now - start_time).round(1)
     puts "Completed #{File.basename(xml)} simulation in #{sim_time}s."
 
-    sql_path = File.join(rundir, "eplusout.sql")
-    assert(File.exists?(sql_path))
+    sql_path = File.join(rundir, 'eplusout.sql')
+    assert(File.exist?(sql_path))
 
     # Apply reporting measures
     runner.setLastEnergyPlusSqlFilePath(sql_path)
-    success = apply_measures(measures_dir, measures, runner, model, true, "OpenStudio::Measure::ReportingMeasure")
+    success = apply_measures(measures_dir, measures, runner, model, true, 'OpenStudio::Measure::ReportingMeasure')
     File.open(File.join(rundir, 'run.log'), 'a') do |f|
       runner.result.stepWarnings.each do |s|
         f << "Warning: #{s}\n"
@@ -880,22 +878,22 @@ class EnergyRatingIndexTest < Minitest::Test
     end
     assert(success)
 
-    csv_path = File.join(rundir, "results_annual.csv")
-    assert(File.exists?(csv_path))
+    csv_path = File.join(rundir, 'results_annual.csv')
+    assert(File.exist?(csv_path))
 
     return sql_path, csv_path, sim_time
   end
 
   def _test_reul(all_results, files_include, result_name)
-    base_results = all_results["base.xml"]
+    base_results = all_results['base.xml']
     return if base_results.nil?
 
     base_reul = base_results[result_name]
     all_results.each do |compare_xml, compare_results|
       next unless compare_xml.include? files_include
 
-      if compare_results[result_name].to_s.include? ","
-        compare_reul = compare_results[result_name].split(",").map(&:to_f).inject(0, :+) # sum values
+      if compare_results[result_name].to_s.include? ','
+        compare_reul = compare_results[result_name].split(',').map(&:to_f).inject(0, :+) # sum values
       else
         compare_reul = compare_results[result_name]
       end
@@ -906,8 +904,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _get_simulation_load_results(csv_path)
     results = _get_csv_results(csv_path)
-    htg_load = results["Load: Heating (MBtu)"].round(2)
-    clg_load = results["Load: Cooling (MBtu)"].round(2)
+    htg_load = results['Load: Heating (MBtu)'].round(2)
+    clg_load = results['Load: Cooling (MBtu)'].round(2)
 
     assert_operator(htg_load, :>, 0)
     assert_operator(clg_load, :>, 0)
@@ -918,15 +916,15 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
     results = _get_csv_results(csv_path)
     if not is_heat
-      hvac = UnitConversions.convert(results["Electricity: Cooling (MBtu)"], "MBtu", "kwh").round(2)
-      hvac_fan = UnitConversions.convert(results["Electricity: Cooling Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
+      hvac = UnitConversions.convert(results['Electricity: Cooling (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac_fan = UnitConversions.convert(results['Electricity: Cooling Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
     else
       if is_electric_heat
-        hvac = UnitConversions.convert(results["Electricity: Heating (MBtu)"], "MBtu", "kwh").round(2)
+        hvac = UnitConversions.convert(results['Electricity: Heating (MBtu)'], 'MBtu', 'kwh').round(2)
       else
-        hvac = UnitConversions.convert(results["Natural Gas: Heating (MBtu)"], "MBtu", "therm").round(2)
+        hvac = UnitConversions.convert(results['Natural Gas: Heating (MBtu)'], 'MBtu', 'therm').round(2)
       end
-      hvac_fan = UnitConversions.convert(results["Electricity: Heating Fans/Pumps (MBtu)"], "MBtu", "kwh").round(2)
+      hvac_fan = UnitConversions.convert(results['Electricity: Heating Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
     end
 
     assert_operator(hvac, :>, 0)
@@ -938,13 +936,13 @@ class EnergyRatingIndexTest < Minitest::Test
   def _calc_dse(xml, sql_path)
     xml = File.basename(xml)
 
-    if ["HVAC3a.xml", "HVAC3e.xml"].include? xml
-      return nil
+    if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
+      return
     end
 
-    if ["HVAC3b.xml", "HVAC3c.xml", "HVAC3d.xml"].include? xml
+    if ['HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? xml
       is_heating = true
-    elsif ["HVAC3f.xml", "HVAC3g.xml", "HVAC3h.xml"].include? xml
+    elsif ['HVAC3f.xml', 'HVAC3g.xml', 'HVAC3h.xml'].include? xml
       is_cooling = true
     else
       fail "Unexpected DSE test file: #{xml}"
@@ -953,11 +951,11 @@ class EnergyRatingIndexTest < Minitest::Test
     # Read hourly outputs
     sqlFile = OpenStudio::SqlFile.new(sql_path, false)
     if is_heating
-      zone_name = 'basement - unconditioned'.upcase
-      mode = "Heating"
+      zone_name = HPXML::LocationBasementUnconditioned.upcase
+      mode = 'Heating'
     elsif is_cooling
-      zone_name = 'attic - vented'.upcase
-      mode = "Cooling"
+      zone_name = HPXML::LocationAtticVented.upcase
+      mode = 'Cooling'
     end
     query = "SELECT (VariableValue*9.0/5.0)+32.0 FROM ReportVariableData WHERE ReportVariableDataDictionaryIndex = (SELECT ReportVariableDataDictionaryIndex FROM ReportVariableDataDictionary WHERE VariableName='Zone Mean Air Temperature' AND KeyValue='#{zone_name}' AND ReportingFrequency='Hourly') ORDER BY TimeIndex"
     temperatures = sqlFile.execAndReturnVectorOfDouble(query).get
@@ -983,9 +981,9 @@ class EnergyRatingIndexTest < Minitest::Test
     air_cp = 0.24
 
     if is_heating
-      dse_Qs = { "HVAC3b.xml" => 0.0, "HVAC3c.xml" => 0.0, "HVAC3d.xml" => 125.0 }[xml]
+      dse_Qs = { 'HVAC3b.xml' => 0.0, 'HVAC3c.xml' => 0.0, 'HVAC3d.xml' => 125.0 }[xml]
       dse_Qr = dse_Qs
-      capacity = { "HVAC3b.xml" => 56000.0, "HVAC3c.xml" => 49000.0, "HVAC3d.xml" => 61000.0 }[xml]
+      capacity = { 'HVAC3b.xml' => 56000.0, 'HVAC3c.xml' => 49000.0, 'HVAC3d.xml' => 61000.0 }[xml]
       cfm = 30.0 * capacity / 1000.0
       dse_Tamb_s = seasonal_temp
       dse_Tamb_r = dse_Tamb_s
@@ -994,7 +992,7 @@ class EnergyRatingIndexTest < Minitest::Test
       t_setpoint = 68.0
       dse_Fregain_s = 0.1
       dse_Fregain_r = dse_Fregain_s
-      supply_r = { "HVAC3b.xml" => 1.5, "HVAC3c.xml" => 7.0, "HVAC3d.xml" => 7.0 }[xml]
+      supply_r = { 'HVAC3b.xml' => 1.5, 'HVAC3c.xml' => 7.0, 'HVAC3d.xml' => 7.0 }[xml]
       return_r = supply_r
 
       de = HVACSizing.calc_delivery_effectiveness_heating(dse_Qs, dse_Qr, cfm, capacity, dse_Tamb_s, dse_Tamb_r, dse_As, dse_Ar, t_setpoint, dse_Fregain_s, dse_Fregain_r, supply_r, return_r, air_dens, air_cp)
@@ -1003,9 +1001,9 @@ class EnergyRatingIndexTest < Minitest::Test
       f_equip_s = 1.0
       f_cycloss = 0.02
     elsif is_cooling
-      dse_Qs = { "HVAC3f.xml" => 0.0, "HVAC3g.xml" => 0.0, "HVAC3h.xml" => 125.0 }[xml]
+      dse_Qs = { 'HVAC3f.xml' => 0.0, 'HVAC3g.xml' => 0.0, 'HVAC3h.xml' => 125.0 }[xml]
       dse_Qr = dse_Qs
-      capacity = { "HVAC3f.xml" => 49900.0, "HVAC3g.xml" => 42200.0, "HVAC3h.xml" => 55000.0 }[xml]
+      capacity = { 'HVAC3f.xml' => 49900.0, 'HVAC3g.xml' => 42200.0, 'HVAC3h.xml' => 55000.0 }[xml]
       load_total = capacity
       cfm = 30.0 * capacity / 1000.0
       dse_Tamb_s = seasonal_temp
@@ -1015,7 +1013,7 @@ class EnergyRatingIndexTest < Minitest::Test
       t_setpoint = 78.0
       dse_Fregain_s = 0.1
       dse_Fregain_r = dse_Fregain_s
-      supply_r = { "HVAC3f.xml" => 1.5, "HVAC3g.xml" => 7.0, "HVAC3h.xml" => 7.0 }[xml]
+      supply_r = { 'HVAC3f.xml' => 1.5, 'HVAC3g.xml' => 7.0, 'HVAC3h.xml' => 7.0 }[xml]
       return_r = supply_r
       lat = 55.0
       dse_h_r = 30.9
@@ -1040,11 +1038,11 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _test_schema_validation(xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), "..", "..", "hpxml-measures", "HPXMLtoOpenStudio", "resources"))
+    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
     hpxml_doc = REXML::Document.new(File.read(xml))
-    errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, "HPXML.xsd"), nil)
+    errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
     if errors.size > 0
-      puts "#{xml}: #{errors.to_s}"
+      puts "#{xml}: #{errors}"
     end
     assert_equal(0, errors.size)
   end
@@ -1055,112 +1053,112 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Above-grade walls
     wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml_doc)
-    results["Above-grade walls (Uo)"] = wall_u
-    results["Above-grade wall solar absorptance (α)"] = wall_solar_abs
-    results["Above-grade wall infrared emittance (ε)"] = wall_emiss
+    results['Above-grade walls (Uo)'] = wall_u
+    results['Above-grade wall solar absorptance (α)'] = wall_solar_abs
+    results['Above-grade wall infrared emittance (ε)'] = wall_emiss
 
     # Basement walls
     bsmt_wall_u = _get_basement_walls(hpxml_doc)
     if test_num == 4
-      results["Basement walls (Uo)"] = bsmt_wall_u
+      results['Basement walls (Uo)'] = bsmt_wall_u
     else
-      results["Basement walls (Uo)"] = "n/a"
+      results['Basement walls (Uo)'] = 'n/a'
     end
 
     # Above-grade floors
     floors_u = _get_above_grade_floors(hpxml_doc)
     if test_num <= 2
-      results["Above-grade floors (Uo)"] = floors_u
+      results['Above-grade floors (Uo)'] = floors_u
     else
-      results["Above-grade floors (Uo)"] = "n/a"
+      results['Above-grade floors (Uo)'] = 'n/a'
     end
 
     # Slab insulation
     slab_r, carpet_r, exp_mas_floor_area = get_hpxml_slabs(hpxml_doc)
     if test_num >= 3
-      results["Slab insulation R-Value"] = slab_r
+      results['Slab insulation R-Value'] = slab_r
     else
-      results["Slab insulation R-Value"] = "n/a"
+      results['Slab insulation R-Value'] = 'n/a'
     end
 
     # Ceilings
     ceil_u, ceil_area = _get_ceilings(hpxml_doc)
-    results["Ceilings (Uo)"] = ceil_u
+    results['Ceilings (Uo)'] = ceil_u
 
     # Roofs
     roof_solar_abs, roof_emiss, roof_area = _get_roof(hpxml_doc)
-    results["Roof solar absorptance (α)"] = roof_solar_abs
-    results["Roof infrared emittance (ε)"] = roof_emiss
+    results['Roof solar absorptance (α)'] = roof_solar_abs
+    results['Roof infrared emittance (ε)'] = roof_emiss
 
     # Attic vent area
     attic_vent_area = _get_attic_vent_area(hpxml_doc)
-    results["Attic vent area (ft2)"] = attic_vent_area
+    results['Attic vent area (ft2)'] = attic_vent_area
 
     # Crawlspace vent area
     crawl_vent_area = _get_crawl_vent_area(hpxml_doc)
     if test_num == 2
-      results["Crawlspace vent area (ft2)"] = crawl_vent_area
+      results['Crawlspace vent area (ft2)'] = crawl_vent_area
     else
-      results["Crawlspace vent area (ft2)"] = "n/a"
+      results['Crawlspace vent area (ft2)'] = 'n/a'
     end
 
     # Slabs
     if test_num >= 3
-      results["Exposed masonry floor area (ft2)"] = exp_mas_floor_area
-      results["Carpet & pad R-Value"] = carpet_r
+      results['Exposed masonry floor area (ft2)'] = exp_mas_floor_area
+      results['Carpet & pad R-Value'] = carpet_r
     else
-      results["Exposed masonry floor area (ft2)"] = "n/a"
-      results["Carpet & pad R-Value"] = "n/a"
+      results['Exposed masonry floor area (ft2)'] = 'n/a'
+      results['Carpet & pad R-Value'] = 'n/a'
     end
 
     # Doors
     door_u, door_area = _get_doors(hpxml_doc)
-    results["Door Area (ft2)"] = door_area
-    results["Door U-Factor"] = door_u
+    results['Door Area (ft2)'] = door_area
+    results['Door U-Factor'] = door_u
 
     # Windows
     win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_doc)
-    results["North window area (ft2)"] = win_areas[0]
-    results["South window area (ft2)"] = win_areas[180]
-    results["East window area (ft2)"] = win_areas[90]
-    results["West window area (ft2)"] = win_areas[270]
-    results["Window U-Factor"] = win_u
-    results["Window SHGCo (heating)"] = win_shgc_htg
-    results["Window SHGCo (cooling)"] = win_shgc_clg
+    results['North window area (ft2)'] = win_areas[0]
+    results['South window area (ft2)'] = win_areas[180]
+    results['East window area (ft2)'] = win_areas[90]
+    results['West window area (ft2)'] = win_areas[270]
+    results['Window U-Factor'] = win_u
+    results['Window SHGCo (heating)'] = win_shgc_htg
+    results['Window SHGCo (cooling)'] = win_shgc_clg
 
     # Infiltration
     sla, ach50 = _get_infiltration(hpxml_doc)
-    results["SLAo (ft2/ft2)"] = sla
+    results['SLAo (ft2/ft2)'] = sla
 
     # Internal gains
     xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_doc)
-    results["Sensible Internal gains (Btu/day)"] = xml_it_sens
-    results["Latent Internal gains (Btu/day)"] = xml_it_lat
+    results['Sensible Internal gains (Btu/day)'] = xml_it_sens
+    results['Latent Internal gains (Btu/day)'] = xml_it_lat
 
     # HVAC
     afue, hspf, seer, dse = _get_hvac(hpxml_doc)
-    if test_num == 1 or test_num == 4
-      results["Labeled heating system rating and efficiency"] = afue
+    if (test_num == 1) || (test_num == 4)
+      results['Labeled heating system rating and efficiency'] = afue
     else
-      results["Labeled heating system rating and efficiency"] = hspf
+      results['Labeled heating system rating and efficiency'] = hspf
     end
-    results["Labeled cooling system rating and efficiency"] = seer
-    results["Air Distribution System Efficiency"] = dse
+    results['Labeled cooling system rating and efficiency'] = seer
+    results['Air Distribution System Efficiency'] = dse
 
     # Thermostat
     tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
-    results["Thermostat Type"] = tstat
-    results["Heating thermostat settings"] = htg_sp
-    results["Cooling thermostat settings"] = clg_sp
+    results['Thermostat Type'] = tstat
+    results['Heating thermostat settings'] = htg_sp
+    results['Cooling thermostat settings'] = clg_sp
 
     # Mechanical ventilation
     mv_kwh, mv_cfm = _get_mech_vent(hpxml_doc)
-    results["Mechanical ventilation (kWh/y)"] = mv_kwh
+    results['Mechanical ventilation (kWh/y)'] = mv_kwh
 
     # Domestic hot water
     ref_pipe_l, ref_loop_l = _get_dhw(hpxml_doc)
-    results["DHW pipe length refPipeL"] = ref_pipe_l
-    results["DHW loop length refLoopL"] = ref_loop_l
+    results['DHW pipe length refPipeL'] = ref_pipe_l
+    results['DHW loop length refLoopL'] = ref_loop_l
 
     return results
   end
@@ -1171,67 +1169,67 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Geometry
     nstories, nbeds, cfa, infil_volume = _get_geometry_values(hpxml_doc)
-    results["Number of Stories"] = nstories
-    results["Number of Bedrooms"] = nbeds
-    results["Conditioned Floor Area (ft2)"] = cfa
-    results["Infiltration Volume (ft3)"] = infil_volume
+    results['Number of Stories'] = nstories
+    results['Number of Bedrooms'] = nbeds
+    results['Conditioned Floor Area (ft2)'] = cfa
+    results['Infiltration Volume (ft3)'] = infil_volume
 
     # Above-grade Walls
     wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml_doc)
-    results["Above-grade walls area (ft2)"] = wall_area
-    results["Above-grade walls (Uo)"] = wall_u
+    results['Above-grade walls area (ft2)'] = wall_area
+    results['Above-grade walls (Uo)'] = wall_u
 
     # Roof
     roof_solar_abs, roof_emiss, roof_area = _get_roof(hpxml_doc)
-    results["Roof gross area (ft2)"] = roof_area
+    results['Roof gross area (ft2)'] = roof_area
 
     # Ceilings
     ceil_u, ceil_area = _get_ceilings(hpxml_doc)
-    results["Ceiling gross projected footprint area (ft2)"] = ceil_area
-    results["Ceilings (Uo)"] = ceil_u
+    results['Ceiling gross projected footprint area (ft2)'] = ceil_area
+    results['Ceilings (Uo)'] = ceil_u
 
     # Crawlspace
     crawl_vent_area = _get_crawl_vent_area(hpxml_doc)
-    results["Crawlspace vent area (ft2)"] = crawl_vent_area
+    results['Crawlspace vent area (ft2)'] = crawl_vent_area
 
     # Doors
     door_u, door_area = _get_doors(hpxml_doc)
-    results["Door Area (ft2)"] = door_area
-    results["Door R-value"] = 1.0 / door_u
+    results['Door Area (ft2)'] = door_area
+    results['Door R-value'] = 1.0 / door_u
 
     # Windows
     win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_doc)
-    results["North window area (ft2)"] = win_areas[0]
-    results["South window area (ft2)"] = win_areas[180]
-    results["East window area (ft2)"] = win_areas[90]
-    results["West window area (ft2)"] = win_areas[270]
-    results["Window U-Factor"] = win_u
-    results["Window SHGCo (heating)"] = win_shgc_htg
-    results["Window SHGCo (cooling)"] = win_shgc_clg
+    results['North window area (ft2)'] = win_areas[0]
+    results['South window area (ft2)'] = win_areas[180]
+    results['East window area (ft2)'] = win_areas[90]
+    results['West window area (ft2)'] = win_areas[270]
+    results['Window U-Factor'] = win_u
+    results['Window SHGCo (heating)'] = win_shgc_htg
+    results['Window SHGCo (cooling)'] = win_shgc_clg
 
     # Infiltration
     sla, ach50 = _get_infiltration(hpxml_doc)
-    results["Infiltration rate (ACH50)"] = ach50
+    results['Infiltration rate (ACH50)'] = ach50
 
     # Mechanical Ventilation
     mv_kwh, mv_cfm = _get_mech_vent(hpxml_doc)
-    results["Mechanical ventilation rate"] = mv_cfm
-    results["Mechanical ventilation"] = mv_kwh
+    results['Mechanical ventilation rate'] = mv_cfm
+    results['Mechanical ventilation'] = mv_kwh
 
     # HVAC
     afue, hspf, seer, dse = _get_hvac(hpxml_doc)
-    if test_num == 1 or test_num == 4
-      results["Labeled heating system rating and efficiency"] = afue
+    if (test_num == 1) || (test_num == 4)
+      results['Labeled heating system rating and efficiency'] = afue
     else
-      results["Labeled heating system rating and efficiency"] = hspf
+      results['Labeled heating system rating and efficiency'] = hspf
     end
-    results["Labeled cooling system rating and efficiency"] = seer
+    results['Labeled cooling system rating and efficiency'] = seer
 
     # Thermostat
     tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
-    results["Thermostat Type"] = tstat
-    results["Heating thermostat settings"] = htg_sp
-    results["Cooling thermostat settings"] = clg_sp
+    results['Thermostat Type'] = tstat
+    results['Heating thermostat settings'] = htg_sp
+    results['Cooling thermostat settings'] = clg_sp
 
     return results
   end
@@ -1243,224 +1241,224 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Above-grade walls
     if test_num <= 3
-      assert_in_delta(0.082, results["Above-grade walls (Uo)"], 0.001)
+      assert_in_delta(0.082, results['Above-grade walls (Uo)'], 0.001)
     else
-      assert_in_delta(0.060, results["Above-grade walls (Uo)"], 0.001)
+      assert_in_delta(0.060, results['Above-grade walls (Uo)'], 0.001)
     end
-    assert_equal(0.75, results["Above-grade wall solar absorptance (α)"])
-    assert_equal(0.90, results["Above-grade wall infrared emittance (ε)"])
+    assert_equal(0.75, results['Above-grade wall solar absorptance (α)'])
+    assert_equal(0.90, results['Above-grade wall infrared emittance (ε)'])
 
     # Basement walls
     if test_num == 4
-      assert_in_delta(0.059, results["Basement walls (Uo)"], 0.001)
+      assert_in_delta(0.059, results['Basement walls (Uo)'], 0.001)
     end
 
     # Above-grade floors
     if test_num <= 2
-      assert_in_delta(0.047, results["Above-grade floors (Uo)"], 0.001)
+      assert_in_delta(0.047, results['Above-grade floors (Uo)'], 0.001)
     end
 
     # Slab insulation
     if test_num >= 3
-      assert_equal(0, results["Slab insulation R-Value"])
+      assert_equal(0, results['Slab insulation R-Value'])
     end
 
     # Ceilings
-    if test_num == 1 or test_num == 4
-      assert_in_delta(0.030, results["Ceilings (Uo)"], 0.001)
+    if (test_num == 1) || (test_num == 4)
+      assert_in_delta(0.030, results['Ceilings (Uo)'], 0.001)
     else
-      assert_in_delta(0.035, results["Ceilings (Uo)"], 0.001)
+      assert_in_delta(0.035, results['Ceilings (Uo)'], 0.001)
     end
 
     # Roofs
-    assert_equal(0.75, results["Roof solar absorptance (α)"])
-    assert_equal(0.90, results["Roof infrared emittance (ε)"])
+    assert_equal(0.75, results['Roof solar absorptance (α)'])
+    assert_equal(0.90, results['Roof infrared emittance (ε)'])
 
     # Attic vent area
-    assert_in_epsilon(5.13, results["Attic vent area (ft2)"], epsilon)
+    assert_in_epsilon(5.13, results['Attic vent area (ft2)'], epsilon)
 
     # Crawlspace vent area
     if test_num == 2
-      assert_in_epsilon(10.26, results["Crawlspace vent area (ft2)"], epsilon)
+      assert_in_epsilon(10.26, results['Crawlspace vent area (ft2)'], epsilon)
     end
 
     # Slabs
     if test_num >= 3
-      assert_in_epsilon(307.8, results["Exposed masonry floor area (ft2)"], epsilon)
-      assert_equal(2.0, results["Carpet & pad R-Value"])
+      assert_in_epsilon(307.8, results['Exposed masonry floor area (ft2)'], epsilon)
+      assert_equal(2.0, results['Carpet & pad R-Value'])
     end
 
     # Doors
-    assert_equal(40, results["Door Area (ft2)"])
+    assert_equal(40, results['Door Area (ft2)'])
     if test_num == 1
-      assert_in_delta(0.40, results["Door U-Factor"], 0.01)
+      assert_in_delta(0.40, results['Door U-Factor'], 0.01)
     elsif test_num == 2
-      assert_in_delta(0.65, results["Door U-Factor"], 0.01)
+      assert_in_delta(0.65, results['Door U-Factor'], 0.01)
     elsif test_num == 3
-      assert_in_delta(1.20, results["Door U-Factor"], 0.01)
+      assert_in_delta(1.20, results['Door U-Factor'], 0.01)
     else
-      assert_in_delta(0.35, results["Door U-Factor"], 0.01)
+      assert_in_delta(0.35, results['Door U-Factor'], 0.01)
     end
 
     # Windows
     if test_num <= 3
-      assert_in_epsilon(69.26, results["North window area (ft2)"], epsilon)
-      assert_in_epsilon(69.26, results["South window area (ft2)"], epsilon)
-      assert_in_epsilon(69.26, results["East window area (ft2)"], epsilon)
-      assert_in_epsilon(69.26, results["West window area (ft2)"], epsilon)
+      assert_in_epsilon(69.26, results['North window area (ft2)'], epsilon)
+      assert_in_epsilon(69.26, results['South window area (ft2)'], epsilon)
+      assert_in_epsilon(69.26, results['East window area (ft2)'], epsilon)
+      assert_in_epsilon(69.26, results['West window area (ft2)'], epsilon)
     else
-      assert_in_epsilon(102.63, results["North window area (ft2)"], epsilon)
-      assert_in_epsilon(102.63, results["South window area (ft2)"], epsilon)
-      assert_in_epsilon(102.63, results["East window area (ft2)"], epsilon)
-      assert_in_epsilon(102.63, results["West window area (ft2)"], epsilon)
+      assert_in_epsilon(102.63, results['North window area (ft2)'], epsilon)
+      assert_in_epsilon(102.63, results['South window area (ft2)'], epsilon)
+      assert_in_epsilon(102.63, results['East window area (ft2)'], epsilon)
+      assert_in_epsilon(102.63, results['West window area (ft2)'], epsilon)
     end
     if test_num == 1
-      assert_in_delta(0.40, results["Window U-Factor"], 0.01)
+      assert_in_delta(0.40, results['Window U-Factor'], 0.01)
     elsif test_num == 2
-      assert_in_delta(0.65, results["Window U-Factor"], 0.01)
+      assert_in_delta(0.65, results['Window U-Factor'], 0.01)
     elsif test_num == 3
-      assert_in_delta(1.20, results["Window U-Factor"], 0.01)
+      assert_in_delta(1.20, results['Window U-Factor'], 0.01)
     else
-      assert_in_delta(0.35, results["Window U-Factor"], 0.01)
+      assert_in_delta(0.35, results['Window U-Factor'], 0.01)
     end
-    assert_in_delta(0.34, results["Window SHGCo (heating)"], 0.01)
-    assert_in_delta(0.28, results["Window SHGCo (cooling)"], 0.01)
+    assert_in_delta(0.34, results['Window SHGCo (heating)'], 0.01)
+    assert_in_delta(0.28, results['Window SHGCo (cooling)'], 0.01)
 
     # Infiltration
-    assert_in_delta(0.00036, results["SLAo (ft2/ft2)"], 0.00001)
+    assert_in_delta(0.00036, results['SLAo (ft2/ft2)'], 0.00001)
 
     # Internal gains
     if test_num == 1
-      assert_in_epsilon(55470, results["Sensible Internal gains (Btu/day)"], epsilon)
-      assert_in_epsilon(13807, results["Latent Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(55470, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13807, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
-      assert_in_epsilon(52794, results["Sensible Internal gains (Btu/day)"], epsilon)
-      assert_in_epsilon(12698, results["Latent Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(52794, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12698, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
-      assert_in_epsilon(48111, results["Sensible Internal gains (Btu/day)"], epsilon)
-      assert_in_epsilon(9259, results["Latent Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(48111, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9259, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(83103, results["Sensible Internal gains (Btu/day)"], epsilon)
-      assert_in_epsilon(17934, results["Latent Internal gains (Btu/day)"], epsilon)
+      assert_in_epsilon(83103, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17934, results['Latent Internal gains (Btu/day)'], epsilon)
     end
 
     # HVAC
-    if test_num == 1 or test_num == 4
-      assert_equal(0.78, results["Labeled heating system rating and efficiency"])
+    if (test_num == 1) || (test_num == 4)
+      assert_equal(0.78, results['Labeled heating system rating and efficiency'])
     else
-      assert_equal(7.7, results["Labeled heating system rating and efficiency"])
+      assert_equal(7.7, results['Labeled heating system rating and efficiency'])
     end
-    assert_equal(13.0, results["Labeled cooling system rating and efficiency"])
-    assert_equal(0.80, results["Air Distribution System Efficiency"])
+    assert_equal(13.0, results['Labeled cooling system rating and efficiency'])
+    assert_equal(0.80, results['Air Distribution System Efficiency'])
 
     # Thermostat
-    assert_equal("manual", results["Thermostat Type"])
-    assert_equal(68, results["Heating thermostat settings"])
-    assert_equal(78, results["Cooling thermostat settings"])
+    assert_equal('manual', results['Thermostat Type'])
+    assert_equal(68, results['Heating thermostat settings'])
+    assert_equal(78, results['Cooling thermostat settings'])
 
     # Mechanical ventilation
     mv_epsilon = 0.001 # 0.1%
     if test_num == 1
-      assert_in_epsilon(0.0, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+      assert_in_epsilon(0.0, results['Mechanical ventilation (kWh/y)'], mv_epsilon)
     elsif test_num == 2
-      assert_in_epsilon(77.9, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+      assert_in_epsilon(77.9, results['Mechanical ventilation (kWh/y)'], mv_epsilon)
     elsif test_num == 3
-      assert_in_epsilon(140.4, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+      assert_in_epsilon(140.4, results['Mechanical ventilation (kWh/y)'], mv_epsilon)
     else
-      assert_in_epsilon(379.1, results["Mechanical ventilation (kWh/y)"], mv_epsilon)
+      assert_in_epsilon(379.1, results['Mechanical ventilation (kWh/y)'], mv_epsilon)
     end
 
     # Domestic hot water
     dhw_epsilon = 0.1 # 0.1 ft
     if test_num <= 3
-      assert_in_delta(88.5, results["DHW pipe length refPipeL"], dhw_epsilon)
-      assert_in_delta(156.9, results["DHW loop length refLoopL"], dhw_epsilon)
+      assert_in_delta(88.5, results['DHW pipe length refPipeL'], dhw_epsilon)
+      assert_in_delta(156.9, results['DHW loop length refLoopL'], dhw_epsilon)
     else
-      assert_in_delta(98.5, results["DHW pipe length refPipeL"], dhw_epsilon)
-      assert_in_delta(176.9, results["DHW loop length refLoopL"], dhw_epsilon)
+      assert_in_delta(98.5, results['DHW pipe length refPipeL'], dhw_epsilon)
+      assert_in_delta(176.9, results['DHW loop length refLoopL'], dhw_epsilon)
     end
 
     # e-Ratio
-    assert_in_delta(1, results["e-Ratio"], 0.005)
+    assert_in_delta(1, results['e-Ratio'], 0.005)
   end
 
   def _check_iad_home_components(results, test_num)
     epsilon = 0.0005 # 0.05%
 
     # Geometry
-    assert_equal(2, results["Number of Stories"])
-    assert_equal(3, results["Number of Bedrooms"])
-    assert_equal(2400, results["Conditioned Floor Area (ft2)"])
-    assert_equal(20400, results["Infiltration Volume (ft3)"])
+    assert_equal(2, results['Number of Stories'])
+    assert_equal(3, results['Number of Bedrooms'])
+    assert_equal(2400, results['Conditioned Floor Area (ft2)'])
+    assert_equal(20400, results['Infiltration Volume (ft3)'])
 
     # Above-grade Walls
-    assert_in_delta(2355.52, results["Above-grade walls area (ft2)"], 0.01)
-    assert_in_delta(0.085, results["Above-grade walls (Uo)"], 0.001)
+    assert_in_delta(2355.52, results['Above-grade walls area (ft2)'], 0.01)
+    assert_in_delta(0.085, results['Above-grade walls (Uo)'], 0.001)
 
     # Roof
-    assert_equal(1300, results["Roof gross area (ft2)"])
+    assert_equal(1300, results['Roof gross area (ft2)'])
 
     # Ceilings
-    assert_equal(1200, results["Ceiling gross projected footprint area (ft2)"])
-    assert_in_delta(0.054, results["Ceilings (Uo)"], 0.01)
+    assert_equal(1200, results['Ceiling gross projected footprint area (ft2)'])
+    assert_in_delta(0.054, results['Ceilings (Uo)'], 0.01)
 
     # Crawlspace
-    assert_in_epsilon(8, results["Crawlspace vent area (ft2)"], 0.01)
+    assert_in_epsilon(8, results['Crawlspace vent area (ft2)'], 0.01)
 
     # Doors
-    assert_equal(40, results["Door Area (ft2)"])
-    assert_in_delta(3.04, results["Door R-value"], 0.01)
+    assert_equal(40, results['Door Area (ft2)'])
+    assert_in_delta(3.04, results['Door R-value'], 0.01)
 
     # Windows
-    assert_in_epsilon(108.00, results["North window area (ft2)"], epsilon)
-    assert_in_epsilon(108.00, results["South window area (ft2)"], epsilon)
-    assert_in_epsilon(108.00, results["East window area (ft2)"], epsilon)
-    assert_in_epsilon(108.00, results["West window area (ft2)"], epsilon)
-    assert_in_delta(1.039, results["Window U-Factor"], 0.01)
-    assert_in_delta(0.57, results["Window SHGCo (heating)"], 0.01)
-    assert_in_delta(0.47, results["Window SHGCo (cooling)"], 0.01)
+    assert_in_epsilon(108.00, results['North window area (ft2)'], epsilon)
+    assert_in_epsilon(108.00, results['South window area (ft2)'], epsilon)
+    assert_in_epsilon(108.00, results['East window area (ft2)'], epsilon)
+    assert_in_epsilon(108.00, results['West window area (ft2)'], epsilon)
+    assert_in_delta(1.039, results['Window U-Factor'], 0.01)
+    assert_in_delta(0.57, results['Window SHGCo (heating)'], 0.01)
+    assert_in_delta(0.47, results['Window SHGCo (cooling)'], 0.01)
 
     # Infiltration
     if test_num != 3
-      assert_equal(3.0, results["Infiltration rate (ACH50)"])
+      assert_equal(3.0, results['Infiltration rate (ACH50)'])
     else
-      assert_equal(5.0, results["Infiltration rate (ACH50)"])
+      assert_equal(5.0, results['Infiltration rate (ACH50)'])
     end
 
     # Mechanical Ventilation
     if test_num == 1
-      assert_in_delta(66.4, results["Mechanical ventilation rate"], 0.2)
-      assert_in_delta(407, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(66.4, results['Mechanical ventilation rate'], 0.2)
+      assert_in_delta(407, results['Mechanical ventilation'], 1.0)
     elsif test_num == 2
-      assert_in_delta(64.2, results["Mechanical ventilation rate"], 0.2)
-      assert_in_delta(394, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(64.2, results['Mechanical ventilation rate'], 0.2)
+      assert_in_delta(394, results['Mechanical ventilation'], 1.0)
     elsif test_num == 3
-      assert_in_delta(53.3, results["Mechanical ventilation rate"], 0.2)
-      assert_in_delta(327, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(53.3, results['Mechanical ventilation rate'], 0.2)
+      assert_in_delta(327, results['Mechanical ventilation'], 1.0)
     elsif test_num == 4
-      assert_in_delta(57.1, results["Mechanical ventilation rate"], 0.2)
-      assert_in_delta(350, results["Mechanical ventilation"], 1.0)
+      assert_in_delta(57.1, results['Mechanical ventilation rate'], 0.2)
+      assert_in_delta(350, results['Mechanical ventilation'], 1.0)
     end
 
     # HVAC
-    if test_num == 1 or test_num == 4
-      assert_equal(0.78, results["Labeled heating system rating and efficiency"])
+    if (test_num == 1) || (test_num == 4)
+      assert_equal(0.78, results['Labeled heating system rating and efficiency'])
     else
-      assert_equal(7.7, results["Labeled heating system rating and efficiency"])
+      assert_equal(7.7, results['Labeled heating system rating and efficiency'])
     end
-    assert_equal(13.0, results["Labeled cooling system rating and efficiency"])
+    assert_equal(13.0, results['Labeled cooling system rating and efficiency'])
 
     # Thermostat
-    assert_equal("manual", results["Thermostat Type"])
-    assert_equal(68, results["Heating thermostat settings"])
-    assert_equal(78, results["Cooling thermostat settings"])
+    assert_equal('manual', results['Thermostat Type'])
+    assert_equal(68, results['Heating thermostat settings'])
+    assert_equal(78, results['Cooling thermostat settings'])
   end
 
   def _get_geometry_values(hpxml_doc)
-    nstories = Integer(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
-    nbeds = Integer(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    infil_volume = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume"))
+    nstories = Integer(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors'))
+    nbeds = Integer(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms'))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
+    infil_volume = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume'))
     return nstories, nbeds, cfa, infil_volume
   end
 
@@ -1471,10 +1469,10 @@ class EnergyRatingIndexTest < Minitest::Test
     num = 0
     area = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall[InteriorAdjacentTo='living space' and ExteriorAdjacentTo='outside']") do |wall|
-      u_factor += 1.0 / Float(XMLHelper.get_value(wall, "Insulation/AssemblyEffectiveRValue"))
-      solar_abs += Float(XMLHelper.get_value(wall, "SolarAbsorptance"))
-      emittance += Float(XMLHelper.get_value(wall, "Emittance"))
-      area += Float(XMLHelper.get_value(wall, "Area"))
+      u_factor += 1.0 / Float(XMLHelper.get_value(wall, 'Insulation/AssemblyEffectiveRValue'))
+      solar_abs += Float(XMLHelper.get_value(wall, 'SolarAbsorptance'))
+      emittance += Float(XMLHelper.get_value(wall, 'Emittance'))
+      area += Float(XMLHelper.get_value(wall, 'Area'))
       num += 1
     end
     return u_factor / num, solar_abs / num, emittance / num, area
@@ -1484,7 +1482,7 @@ class EnergyRatingIndexTest < Minitest::Test
     u_factor = 0.0
     num = 0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - conditioned' and ExteriorAdjacentTo='ground']") do |fnd_wall|
-      u_factor += 1.0 / Float(XMLHelper.get_value(fnd_wall, "Insulation/AssemblyEffectiveRValue"))
+      u_factor += 1.0 / Float(XMLHelper.get_value(fnd_wall, 'Insulation/AssemblyEffectiveRValue'))
       num += 1
     end
     return u_factor / num
@@ -1494,7 +1492,7 @@ class EnergyRatingIndexTest < Minitest::Test
     u_factor = 0.0
     num = 0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='living space' and (ExteriorAdjacentTo='outside' or ExteriorAdjacentTo='crawlspace - vented')]") do |floor|
-      u_factor += 1.0 / Float(XMLHelper.get_value(floor, "Insulation/AssemblyEffectiveRValue"))
+      u_factor += 1.0 / Float(XMLHelper.get_value(floor, 'Insulation/AssemblyEffectiveRValue'))
       num += 1
     end
     return u_factor / num
@@ -1506,10 +1504,10 @@ class EnergyRatingIndexTest < Minitest::Test
     exp_area = 0.0
     carpet_num = 0
     r_num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab") do |fnd_slab|
-      exp_frac = 1.0 - Float(XMLHelper.get_value(fnd_slab, "extension/CarpetFraction"))
-      exp_area += (Float(XMLHelper.get_value(fnd_slab, "Area")) * exp_frac)
-      carpet_r_value += Float(XMLHelper.get_value(fnd_slab, "extension/CarpetRValue"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab') do |fnd_slab|
+      exp_frac = 1.0 - Float(XMLHelper.get_value(fnd_slab, 'extension/CarpetFraction'))
+      exp_area += (Float(XMLHelper.get_value(fnd_slab, 'Area')) * exp_frac)
+      carpet_r_value += Float(XMLHelper.get_value(fnd_slab, 'extension/CarpetRValue'))
       carpet_num += 1
       r_value += Float(XMLHelper.get_value(fnd_slab, "PerimeterInsulation/Layer[InstallationType='continuous']/NominalRValue"))
       r_num += 1
@@ -1524,8 +1522,8 @@ class EnergyRatingIndexTest < Minitest::Test
     area = 0.0
     num = 0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
-      u_factor += 1.0 / Float(XMLHelper.get_value(attc_floor, "Insulation/AssemblyEffectiveRValue"))
-      area += Float(XMLHelper.get_value(attc_floor, "Area"))
+      u_factor += 1.0 / Float(XMLHelper.get_value(attc_floor, 'Insulation/AssemblyEffectiveRValue'))
+      area += Float(XMLHelper.get_value(attc_floor, 'Area'))
       num += 1
     end
     return u_factor / num, area
@@ -1536,10 +1534,10 @@ class EnergyRatingIndexTest < Minitest::Test
     emittance = 0.0
     area = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof") do |roof|
-      solar_abs += Float(XMLHelper.get_value(roof, "SolarAbsorptance"))
-      emittance += Float(XMLHelper.get_value(roof, "Emittance"))
-      area += Float(XMLHelper.get_value(roof, "Area"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof') do |roof|
+      solar_abs += Float(XMLHelper.get_value(roof, 'SolarAbsorptance'))
+      emittance += Float(XMLHelper.get_value(roof, 'Emittance'))
+      area += Float(XMLHelper.get_value(roof, 'Area'))
       num += 1
     end
     return solar_abs / num, emittance / num, area
@@ -1549,7 +1547,7 @@ class EnergyRatingIndexTest < Minitest::Test
     sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value").to_f
     area = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
-      area += Float(XMLHelper.get_value(attc_floor, "Area"))
+      area += Float(XMLHelper.get_value(attc_floor, 'Area'))
     end
     return sla * area
   end
@@ -1558,7 +1556,7 @@ class EnergyRatingIndexTest < Minitest::Test
     sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value").to_f
     area = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='crawlspace - vented']") do |cs_floor|
-      area += Float(XMLHelper.get_value(cs_floor, "Area"))
+      area += Float(XMLHelper.get_value(cs_floor, 'Area'))
     end
     return sla * area
   end
@@ -1567,9 +1565,9 @@ class EnergyRatingIndexTest < Minitest::Test
     area = 0.0
     u_factor = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Doors/Door") do |door|
-      area += Float(XMLHelper.get_value(door, "Area"))
-      u_factor += 1.0 / Float(XMLHelper.get_value(door, "RValue"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Doors/Door') do |door|
+      area += Float(XMLHelper.get_value(door, 'Area'))
+      u_factor += 1.0 / Float(XMLHelper.get_value(door, 'RValue'))
       num += 1
     end
     return u_factor / num, area
@@ -1581,13 +1579,13 @@ class EnergyRatingIndexTest < Minitest::Test
     shgc_htg = 0.0
     shgc_clg = 0.0
     num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Windows/Window") do |win|
-      azimuth = Integer(XMLHelper.get_value(win, "Azimuth"))
-      areas[azimuth] += Float(XMLHelper.get_value(win, "Area"))
-      u_factor += Float(XMLHelper.get_value(win, "UFactor"))
-      shgc = Float(XMLHelper.get_value(win, "SHGC"))
-      shading_winter = Float(XMLHelper.get_value(win, "InteriorShading/WinterShadingCoefficient"))
-      shading_summer = Float(XMLHelper.get_value(win, "InteriorShading/SummerShadingCoefficient"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Windows/Window') do |win|
+      azimuth = Integer(XMLHelper.get_value(win, 'Azimuth'))
+      areas[azimuth] += Float(XMLHelper.get_value(win, 'Area'))
+      u_factor += Float(XMLHelper.get_value(win, 'UFactor'))
+      shgc = Float(XMLHelper.get_value(win, 'SHGC'))
+      shading_winter = Float(XMLHelper.get_value(win, 'InteriorShading/WinterShadingCoefficient'))
+      shading_summer = Float(XMLHelper.get_value(win, 'InteriorShading/SummerShadingCoefficient'))
       shgc_htg += (shgc * shading_winter)
       shgc_clg += (shgc * shading_summer)
       num += 1
@@ -1597,17 +1595,17 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _get_infiltration(hpxml_doc)
     ach50 = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
-    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    infil_volume = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume"))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
+    infil_volume = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume'))
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, cfa, infil_volume)
     return sla, ach50
   end
 
   def _get_internal_gains(hpxml_doc)
-    s = ""
-    nbeds = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms"))
-    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    eri_version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/ERICalculation/Version")
+    s = ''
+    nbeds = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms'))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
+    eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version')
     gfa = Float(hpxml_doc.elements["sum(/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='garage']/Area/text())"])
 
     xml_pl_sens = 0.0
@@ -1615,14 +1613,14 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Plug loads: Televisions
     annual_kwh, frac_sens, frac_lat = MiscLoads.get_televisions_values(cfa, nbeds)
-    btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    btu = UnitConversions.convert(annual_kwh, 'kWh', 'Btu')
     xml_pl_sens += (frac_sens * btu)
     xml_pl_lat += (frac_lat * btu)
     s += "#{xml_pl_sens} #{xml_pl_lat}\n"
 
     # Plug loads: Residual
     annual_kwh, frac_sens, frac_lat = MiscLoads.get_residual_mels_values(cfa)
-    btu = UnitConversions.convert(annual_kwh, "kWh", "Btu")
+    btu = UnitConversions.convert(annual_kwh, 'kWh', 'Btu')
     xml_pl_sens += (frac_sens * btu)
     xml_pl_lat += (frac_lat * btu)
     s += "#{xml_pl_sens} #{xml_pl_lat}\n"
@@ -1631,67 +1629,67 @@ class EnergyRatingIndexTest < Minitest::Test
     xml_appl_lat = 0.0
 
     # Appliances: CookingRange
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/CookingRange") do |appl|
-      cook_fuel_type = XMLHelper.get_value(appl, "FuelType")
-      cook_is_induction = Boolean(XMLHelper.get_value(appl, "IsInduction"))
-      oven_is_convection = Boolean(XMLHelper.get_value(appl, "../Oven/IsConvection"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/CookingRange') do |appl|
+      cook_fuel_type = XMLHelper.get_value(appl, 'FuelType')
+      cook_is_induction = Boolean(XMLHelper.get_value(appl, 'IsInduction'))
+      oven_is_convection = Boolean(XMLHelper.get_value(appl, '../Oven/IsConvection'))
       cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
-      btu = UnitConversions.convert(cook_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cook_annual_therm, "therm", "Btu")
+      btu = UnitConversions.convert(cook_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cook_annual_therm, 'therm', 'Btu')
       xml_appl_sens += (cook_frac_sens * btu)
       xml_appl_lat += (cook_frac_lat * btu)
     end
 
     # Appliances: Refrigerator
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/Refrigerator") do |appl|
-      btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, "RatedAnnualkWh")), "kWh", "Btu")
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/Refrigerator') do |appl|
+      btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, 'RatedAnnualkWh')), 'kWh', 'Btu')
       xml_appl_sens += btu
     end
 
     # Appliances: Dishwasher
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/Dishwasher") do |appl|
-      dw_ef = Float(XMLHelper.get_value(appl, "EnergyFactor"))
-      dw_cap = Float(XMLHelper.get_value(appl, "PlaceSettingCapacity"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/Dishwasher') do |appl|
+      dw_ef = Float(XMLHelper.get_value(appl, 'EnergyFactor'))
+      dw_cap = Float(XMLHelper.get_value(appl, 'PlaceSettingCapacity'))
       dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dw_ef, dw_cap)
-      btu = UnitConversions.convert(dw_annual_kwh, "kWh", "Btu")
+      btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
       xml_appl_sens += (dw_frac_sens * btu)
       xml_appl_lat += (dw_frac_lat * btu)
     end
 
     # Appliances: ClothesWasher
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesWasher") do |appl|
-      cw_ler = Float(XMLHelper.get_value(appl, "RatedAnnualkWh"))
-      cw_elec_rate = Float(XMLHelper.get_value(appl, "LabelElectricRate"))
-      cw_gas_rate = Float(XMLHelper.get_value(appl, "LabelGasRate"))
-      cw_agc = Float(XMLHelper.get_value(appl, "LabelAnnualGasCost"))
-      cw_cap = Float(XMLHelper.get_value(appl, "Capacity"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/ClothesWasher') do |appl|
+      cw_ler = Float(XMLHelper.get_value(appl, 'RatedAnnualkWh'))
+      cw_elec_rate = Float(XMLHelper.get_value(appl, 'LabelElectricRate'))
+      cw_gas_rate = Float(XMLHelper.get_value(appl, 'LabelGasRate'))
+      cw_agc = Float(XMLHelper.get_value(appl, 'LabelAnnualGasCost'))
+      cw_cap = Float(XMLHelper.get_value(appl, 'Capacity'))
       cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, cw_ler, cw_elec_rate, cw_gas_rate, cw_agc, cw_cap)
-      btu = UnitConversions.convert(cw_annual_kwh, "kWh", "Btu")
+      btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
       xml_appl_sens += (cw_frac_sens * btu)
       xml_appl_lat += (cw_frac_lat * btu)
     end
 
     # Appliances: ClothesDryer
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Appliances/ClothesDryer") do |appl|
-      cd_fuel = XMLHelper.get_value(appl, "FuelType")
-      cd_ef = XMLHelper.get_value(appl, "EnergyFactor")
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/ClothesDryer') do |appl|
+      cd_fuel = XMLHelper.get_value(appl, 'FuelType')
+      cd_ef = XMLHelper.get_value(appl, 'EnergyFactor')
       if cd_ef.nil?
-        cd_cef = Float(XMLHelper.get_value(appl, "CombinedEnergyFactor"))
+        cd_cef = Float(XMLHelper.get_value(appl, 'CombinedEnergyFactor'))
         cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(cd_cef)
       else
         cd_ef = Float(cd_ef)
       end
-      cd_control = XMLHelper.get_value(appl, "ControlType")
-      cw_ler = Float(XMLHelper.get_value(appl, "../ClothesWasher/RatedAnnualkWh"))
-      cw_cap = Float(XMLHelper.get_value(appl, "../ClothesWasher/Capacity"))
-      cw_mef = XMLHelper.get_value(appl, "../ClothesWasher/ModifiedEnergyFactor")
+      cd_control = XMLHelper.get_value(appl, 'ControlType')
+      cw_ler = Float(XMLHelper.get_value(appl, '../ClothesWasher/RatedAnnualkWh'))
+      cw_cap = Float(XMLHelper.get_value(appl, '../ClothesWasher/Capacity'))
+      cw_mef = XMLHelper.get_value(appl, '../ClothesWasher/ModifiedEnergyFactor')
       if cw_mef.nil?
-        cw_imef = Float(XMLHelper.get_value(appl, "../ClothesWasher/IntegratedModifiedEnergyFactor"))
+        cw_imef = Float(XMLHelper.get_value(appl, '../ClothesWasher/IntegratedModifiedEnergyFactor'))
         cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(cw_imef)
       else
         cw_mef = Float(cw_mef)
       end
       cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nbeds, cd_fuel, cd_ef, cd_control, cw_ler, cw_cap, cw_mef)
-      btu = UnitConversions.convert(cd_annual_kwh, "kWh", "Btu") + UnitConversions.convert(cd_annual_therm, "therm", "Btu")
+      btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
       xml_appl_sens += (cd_frac_sens * btu)
       xml_appl_lat += (cd_frac_lat * btu)
     end
@@ -1705,8 +1703,8 @@ class EnergyRatingIndexTest < Minitest::Test
     # Occupants
     xml_occ_sens = 0.0
     xml_occ_lat = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy") do |occ|
-      num_occ = Float(XMLHelper.get_value(occ, "NumberofResidents"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy') do |occ|
+      num_occ = Float(XMLHelper.get_value(occ, 'NumberofResidents'))
       heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
       btu = num_occ * heat_gain * hrs_per_day * 365.0
       xml_occ_sens += (frac_sens * btu)
@@ -1716,7 +1714,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Lighting
     xml_ltg_sens = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Lighting") do |ltg|
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Lighting') do |ltg|
       fFI_int = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']/FractionofUnitsInLocation"))
       fFI_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']/FractionofUnitsInLocation"))
       fFI_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']/FractionofUnitsInLocation"))
@@ -1724,7 +1722,7 @@ class EnergyRatingIndexTest < Minitest::Test
       fFII_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation"))
       fFII_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation"))
       int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
-      xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, "kWh", "Btu")
+      xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
     end
     s += "#{xml_ltg_sens}\n"
 
@@ -1743,15 +1741,15 @@ class EnergyRatingIndexTest < Minitest::Test
     num_hspf = 0
     num_seer = 0
     num_dse = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem") do |htg|
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem') do |htg|
       afue += Float(XMLHelper.get_value(htg, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
       num_afue += 1
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem") do |clg|
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem') do |clg|
       seer += Float(XMLHelper.get_value(clg, "AnnualCoolingEfficiency[Units='SEER']/Value"))
       num_seer += 1
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump") do |hp|
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump') do |hp|
       if hp.elements["AnnualHeatingEfficiency[Units='HSPF']"]
         hspf += Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
         num_hspf += 1
@@ -1761,19 +1759,19 @@ class EnergyRatingIndexTest < Minitest::Test
         num_seer += 1
       end
     end
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution") do |dist|
-      dse += Float(XMLHelper.get_value(dist, "AnnualHeatingDistributionSystemEfficiency"))
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution') do |dist|
+      dse += Float(XMLHelper.get_value(dist, 'AnnualHeatingDistributionSystemEfficiency'))
       num_dse += 1
-      dse += Float(XMLHelper.get_value(dist, "AnnualCoolingDistributionSystemEfficiency"))
+      dse += Float(XMLHelper.get_value(dist, 'AnnualCoolingDistributionSystemEfficiency'))
       num_dse += 1
     end
     return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
   end
 
   def _get_tstat(hpxml_doc)
-    control = hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl"]
-    control_type = XMLHelper.get_value(control, "ControlType")
-    tstat = control_type.gsub(" thermostat", "")
+    control = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl']
+    control_type = XMLHelper.get_value(control, 'ControlType')
+    tstat = control_type.gsub(' thermostat', '')
     htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
     clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
     return tstat, htg_sp, htg_setback_sp, clg_sp, clg_setup_sp
@@ -1783,18 +1781,18 @@ class EnergyRatingIndexTest < Minitest::Test
     mv_kwh = 0.0
     mv_cfm = 0.0
     hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']") do |mv|
-      hours = Float(XMLHelper.get_value(mv, "HoursInOperation"))
-      fan_w = Float(XMLHelper.get_value(mv, "FanPower"))
+      hours = Float(XMLHelper.get_value(mv, 'HoursInOperation'))
+      fan_w = Float(XMLHelper.get_value(mv, 'FanPower'))
       mv_kwh += fan_w * 8.76 * hours / 24.0
-      mv_cfm += Float(XMLHelper.get_value(mv, "TestedFlowRate"))
+      mv_cfm += Float(XMLHelper.get_value(mv, 'TestedFlowRate'))
     end
     return mv_kwh, mv_cfm
   end
 
   def _get_dhw(hpxml_doc)
     has_uncond_bsmnt = !hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='basement - unconditioned']"].nil?
-    cfa = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea"))
-    ncfl = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors"))
+    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
+    ncfl = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors'))
     ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
     ref_loop_l = HotWaterAndAppliances.get_default_recirc_loop_length(ref_pipe_l)
     return ref_pipe_l, ref_loop_l
@@ -1803,9 +1801,9 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_csv_results(csv)
     results = {}
     CSV.foreach(csv) do |row|
-      next if row.nil? or row.size < 2
+      next if row.nil? || (row.size < 2)
 
-      if row[1].include? "," # Occurs if, e.g., multiple HVAC
+      if row[1].include? ',' # Occurs if, e.g., multiple HVAC
         results[row[0]] = row[1]
       else
         results[row[0]] = Float(row[1])
@@ -2010,9 +2008,9 @@ class EnergyRatingIndexTest < Minitest::Test
     rated_dhw = nil
     rated_recirc = nil
     CSV.foreach(results_csv) do |row|
-      if ["Electricity: Hot Water (MBtu)", "Natural Gas: Hot Water (MBtu)"].include? row[0]
+      if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
-      elsif row[0] == "Electricity: Hot Water Recirc Pump (MBtu)"
+      elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
         rated_recirc = Float(row[1])
       end
     end
@@ -2072,15 +2070,15 @@ class EnergyRatingIndexTest < Minitest::Test
       min_max_base_delta_percent = [11.00, 11.40]
       min_max_mn_delta_percent = [41.32, 42.86]
     else
-      fail "Unexpected test."
+      fail 'Unexpected test.'
     end
 
     base_delta_percent = nil
     mn_delta_percent = nil
-    if not min_max_base_delta_percent.nil? and not base_val.nil?
+    if (not min_max_base_delta_percent.nil?) && (not base_val.nil?)
       base_delta_percent = (base_val - curr_val) / base_val * 100.0 # %
     end
-    if not min_max_mn_delta_percent.nil? and not mn_val.nil?
+    if (not min_max_mn_delta_percent.nil?) && (not mn_val.nil?)
       mn_delta_percent = (mn_val - curr_val) / mn_val * 100.0 # %
     end
 
@@ -2117,19 +2115,19 @@ class EnergyRatingIndexTest < Minitest::Test
     elsif test_num == 6
       min_max_base_delta_percent = [-19.5, -7.7]
     else
-      fail "Unexpected test."
+      fail 'Unexpected test.'
     end
 
     base_delta = nil
     mn_delta = nil
     fl_delta_percent = nil
-    if not min_max_base_delta_percent.nil? and not base_val.nil?
+    if (not min_max_base_delta_percent.nil?) && (not base_val.nil?)
       base_delta = (curr_val - base_val) / base_val * 100.0 # %
     end
-    if not min_max_fl_delta_abs.nil? and not mn_val.nil?
+    if (not min_max_fl_delta_abs.nil?) && (not mn_val.nil?)
       fl_delta = mn_val - curr_val
     end
-    if not min_max_fl_delta_percent.nil? and not mn_val.nil?
+    if (not min_max_fl_delta_percent.nil?) && (not mn_val.nil?)
       fl_delta_percent = (mn_val - curr_val) / mn_val * 100.0 # %
     end
 
@@ -2158,56 +2156,55 @@ class EnergyRatingIndexTest < Minitest::Test
     # FUTURE: Remove this code (and workaround in 301.rb) if HERS tests are fixed.
 
     ref_hpxml_doc = REXML::Document.new(File.read(ref_xml))
-    orig_hpxml_doc = REXML::Document.new(File.read(orig_xml))
+    orig_hpxml = HPXML.new(hpxml_path: orig_xml)
 
     # Retrieve mech vent values from orig
-    orig_mech_vent = orig_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    orig_mech_vent_values = HPXML.get_ventilation_fan_values(ventilation_fan: orig_mech_vent)
+    orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
+      next unless orig_ventilation_fan.used_for_whole_building_ventilation
 
-    # Store mech vent values in extension element
-    ref_mech_vent = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
-    extension = XMLHelper.add_element(ref_mech_vent, "extension")
-    unless orig_mech_vent_values.nil?
-      ventilation_fan = XMLHelper.add_element(extension, "OverrideVentilationFan")
-      sys_id = XMLHelper.add_element(ventilation_fan, "SystemIdentifier")
-      XMLHelper.add_attribute(sys_id, "id", "Override#{orig_mech_vent_values[:id]}")
-      XMLHelper.add_element(ventilation_fan, "FanType", orig_mech_vent_values[:fan_type])
-      XMLHelper.add_element(ventilation_fan, "TestedFlowRate", Float(orig_mech_vent_values[:tested_flow_rate]))
-      XMLHelper.add_element(ventilation_fan, "HoursInOperation", Float(orig_mech_vent_values[:hours_in_operation]))
-      XMLHelper.add_element(ventilation_fan, "UsedForWholeBuildingVentilation", true)
-      XMLHelper.add_element(ventilation_fan, "TotalRecoveryEfficiency", Float(orig_mech_vent_values[:total_recovery_efficiency])) unless orig_mech_vent_values[:total_recovery_efficiency].nil?
-      XMLHelper.add_element(ventilation_fan, "SensibleRecoveryEfficiency", Float(orig_mech_vent_values[:sensible_recovery_efficiency])) unless orig_mech_vent_values[:sensible_recovery_efficiency].nil?
-      XMLHelper.add_element(ventilation_fan, "FanPower", Float(orig_mech_vent_values[:fan_power]))
+      # Store mech vent values in extension element
+      ref_mech_vent = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+      extension = XMLHelper.add_element(ref_mech_vent, 'extension')
+
+      ventilation_fan = XMLHelper.add_element(extension, 'OverrideVentilationFan')
+      sys_id = XMLHelper.add_element(ventilation_fan, 'SystemIdentifier')
+      XMLHelper.add_attribute(sys_id, 'id', "Override#{orig_ventilation_fan.id}")
+      XMLHelper.add_element(ventilation_fan, 'FanType', orig_ventilation_fan.fan_type)
+      XMLHelper.add_element(ventilation_fan, 'TestedFlowRate', Float(orig_ventilation_fan.tested_flow_rate))
+      XMLHelper.add_element(ventilation_fan, 'HoursInOperation', Float(orig_ventilation_fan.hours_in_operation))
+      XMLHelper.add_element(ventilation_fan, 'UsedForWholeBuildingVentilation', true)
+      XMLHelper.add_element(ventilation_fan, 'TotalRecoveryEfficiency', Float(orig_ventilation_fan.total_recovery_efficiency)) unless orig_ventilation_fan.total_recovery_efficiency.nil?
+      XMLHelper.add_element(ventilation_fan, 'SensibleRecoveryEfficiency', Float(orig_ventilation_fan.sensible_recovery_efficiency)) unless orig_ventilation_fan.sensible_recovery_efficiency.nil?
+      XMLHelper.add_element(ventilation_fan, 'FanPower', Float(orig_ventilation_fan.fan_power))
     end
 
     # Retrieve infiltration values from orig
-    orig_infil = orig_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement"]
-    orig_infil_values = HPXML.get_air_infiltration_measurement_values(air_infiltration_measurement: orig_infil)
-
-    # Store infiltration values in extension element
-    ref_infil = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement"]
-    extension = XMLHelper.add_element(ref_infil, "extension")
-    air_infiltration_measurement = XMLHelper.add_element(extension, "OverrideAirInfiltrationMeasurement")
-    sys_id = XMLHelper.add_element(air_infiltration_measurement, "SystemIdentifier")
-    XMLHelper.add_attribute(sys_id, "id", "Override#{orig_infil_values[:id]}")
-    XMLHelper.add_element(air_infiltration_measurement, "HousePressure", Float(orig_infil_values[:house_pressure])) unless orig_infil_values[:house_pressure].nil?
-    if not orig_infil_values[:unit_of_measure].nil? and not orig_infil_values[:air_leakage].nil?
-      building_air_leakage = XMLHelper.add_element(air_infiltration_measurement, "BuildingAirLeakage")
-      XMLHelper.add_element(building_air_leakage, "UnitofMeasure", orig_infil_values[:unit_of_measure])
-      XMLHelper.add_element(building_air_leakage, "AirLeakage", Float(orig_infil_values[:air_leakage]))
+    orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
+      # Store infiltration values in extension element
+      ref_infil = ref_hpxml_doc.elements['/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement']
+      extension = XMLHelper.add_element(ref_infil, 'extension')
+      air_infiltration_measurement = XMLHelper.add_element(extension, 'OverrideAirInfiltrationMeasurement')
+      sys_id = XMLHelper.add_element(air_infiltration_measurement, 'SystemIdentifier')
+      XMLHelper.add_attribute(sys_id, 'id', "Override#{orig_infil_measurement.id}")
+      XMLHelper.add_element(air_infiltration_measurement, 'HousePressure', Float(orig_infil_measurement.house_pressure)) unless orig_infil_measurement.house_pressure.nil?
+      if (not orig_infil_measurement.unit_of_measure.nil?) && (not orig_infil_measurement.air_leakage.nil?)
+        building_air_leakage = XMLHelper.add_element(air_infiltration_measurement, 'BuildingAirLeakage')
+        XMLHelper.add_element(building_air_leakage, 'UnitofMeasure', orig_infil_measurement.unit_of_measure)
+        XMLHelper.add_element(building_air_leakage, 'AirLeakage', Float(orig_infil_measurement.air_leakage))
+      end
+      XMLHelper.add_element(air_infiltration_measurement, 'InfiltrationVolume', Float(orig_infil_measurement.infiltration_volume)) unless orig_infil_measurement.infiltration_volume.nil?
     end
-    XMLHelper.add_element(air_infiltration_measurement, "InfiltrationVolume", Float(orig_infil_values[:infiltration_volume])) unless orig_infil_values[:infiltration_volume].nil?
 
     # Update saved file
     XMLHelper.write_file(ref_hpxml_doc, ref_xml)
   end
 
   def _rm_path(path)
-    if Dir.exists?(path)
+    if Dir.exist?(path)
       FileUtils.rm_r(path)
     end
     while true
-      break if not Dir.exists?(path)
+      break if not Dir.exist?(path)
 
       sleep(0.01)
     end
