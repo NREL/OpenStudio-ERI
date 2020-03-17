@@ -2306,6 +2306,8 @@ def create_sample_hpxmls
                   'base-misc-timestep-10-mins.xml',
                   'base-misc-timestep-60-mins.xml',
                   'base-site-neighbors.xml',
+                  'base-version-2019.xml',
+                  'base-version-2019A.xml',
                   'base-version-latest.xml']
   exclude_list.each do |exclude_file|
     if File.exist? "workflow/sample_files/#{exclude_file}"
