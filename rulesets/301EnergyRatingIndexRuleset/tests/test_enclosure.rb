@@ -90,7 +90,7 @@ class EnclosureTest < MiniTest::Test
     hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                               fan_type: 'supply only',
+                               fan_type: HPXML::MechVentTypeSupply,
                                tested_flow_rate: 110.0,
                                hours_in_operation: 24.0,
                                used_for_whole_building_ventilation: true,
@@ -121,7 +121,7 @@ class EnclosureTest < MiniTest::Test
     hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                               fan_type: 'exhaust only',
+                               fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: 110.0,
                                hours_in_operation: 24.0,
                                used_for_whole_building_ventilation: true,

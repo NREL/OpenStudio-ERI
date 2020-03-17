@@ -20,7 +20,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 56.5, 24, 0.0) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 56.5, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -28,17 +28,17 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 0.0) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -46,11 +46,11 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_below_ashrae_622
@@ -75,37 +75,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 56.5, 24, 35.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 56.5, 24, 35.4)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 101.2, 24, 101.2) # Increased runtime and fan power
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 101.2, 24, 101.2) # Increased runtime and fan power
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 27.3)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 27.3)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 78.1, 24, 78.1) # Increased runtime and fan power
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 78.1, 24, 78.1) # Increased runtime and fan power
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_unmeasured_airflow_rate
@@ -124,37 +124,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 56.5, 24, 0.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 56.5, 24, 0.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 0.1, 24, 30.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 0.1, 24, 30.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 13.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 13.0)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 30.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 30.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_unmeasured_airflow_rate_IR_301_2019_001
@@ -180,19 +180,19 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 56.7, 24, 0.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 56.7, 24, 0.0)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 0.0, 24, 0.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 0.0, 24, 0.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
   end
 
   def test_mech_vent_defaulted_fan_power
@@ -212,37 +212,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 56.5, 24, 35.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 56.5, 24, 35.4)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 101.2, 24, 35.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 101.2, 24, 35.4)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 27.3)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 27.3)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 78.1, 24, 27.3)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 78.1, 24, 27.3)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_unmeasured_airflow_rate_and_defaulted_fan_power
@@ -262,37 +262,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 56.5, 24, 0.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 56.5, 24, 0.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 0.1, 24, 0.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 0.1, 24, 0.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 13.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 13.0)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 12.95)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 12.95)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_unmeasured_airflow_rate_and_defaulted_fan_power_cfis
@@ -312,19 +312,19 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'supply only', 56.5, 24, 0.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeSupply, 56.5, 24, 0.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'central fan integrated supply', 0.1, 24, 800.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeCFIS, 0.1, 24, 800.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
   end
 
   def test_mech_vent_attached_or_multifamily
@@ -332,7 +332,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 68.2, 24, 0.0) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 68.2, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -340,18 +340,18 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 96.3, 24, 67.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 96.3, 24, 67.4)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 32.1, 24, 55.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 32.1, 24, 55.0)
 
     # Test w/ 301-2014
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 70.5, 24, 0.0) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 70.5, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -359,11 +359,11 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 102.0, 24, 71.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 102.0, 24, 71.4)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 102.0, 24, 71.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 102.0, 24, 71.4)
 
     # FIXME: Add tests for new 301-2019 space types HPXML file
   end
@@ -373,37 +373,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 56.5, 24, 35.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 56.5, 24, 35.4)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 110.0, 24, 30.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 110.0, 24, 30.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 27.3)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 27.3)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 110.0, 24, 30.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 110.0, 24, 30.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_supply
@@ -411,37 +411,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'supply only', 56.5, 24, 35.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeSupply, 56.5, 24, 35.4)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'supply only', 110.0, 24, 30.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeSupply, 110.0, 24, 30.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'supply only', 37.0, 24, 27.3)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeSupply, 37.0, 24, 27.3)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'supply only', 110.0, 24, 30.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeSupply, 110.0, 24, 30.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_balanced
@@ -449,37 +449,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 33.2, 24, 54.7)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 33.2, 24, 54.7)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 110.0, 24, 60.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 110.0, 24, 60.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 37.0, 24, 54.7)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 37.0, 24, 54.7)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 110.0, 24, 60.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 110.0, 24, 60.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_erv
@@ -487,37 +487,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 33.2, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'energy recovery ventilator', 110.0, 24, 60.0, 0.72, 0.48)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeERV, 110.0, 24, 60.0, 0.72, 0.48)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 37.0, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'energy recovery ventilator', 110.0, 24, 60.0, 0.72, 0.48)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeERV, 110.0, 24, 60.0, 0.72, 0.48)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_erv_adjusted
@@ -525,37 +525,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 33.2, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'energy recovery ventilator', 110.0, 24, 60.0, nil, nil, 0.79, 0.526)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeERV, 110.0, 24, 60.0, nil, nil, 0.79, 0.526)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 37.0, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'energy recovery ventilator', 110.0, 24, 60.0, nil, nil, 0.79, 0.526)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeERV, 110.0, 24, 60.0, nil, nil, 0.79, 0.526)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_hrv
@@ -563,37 +563,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 33.2, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'heat recovery ventilator', 110.0, 24, 60.0, 0.72)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeHRV, 110.0, 24, 60.0, 0.72)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 37.0, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'heat recovery ventilator', 110.0, 24, 60.0, 0.72)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeHRV, 110.0, 24, 60.0, 0.72)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_hrv_adjusted
@@ -601,37 +601,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 33.2, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'heat recovery ventilator', 110.0, 24, 60.0, nil, nil, 0.79, nil)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeHRV, 110.0, 24, 60.0, nil, nil, 0.79, nil)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 37.0, 24, 78.1)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'heat recovery ventilator', 110.0, 24, 60.0, nil, nil, 0.79, nil)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeHRV, 110.0, 24, 60.0, nil, nil, 0.79, nil)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_cfis
@@ -639,37 +639,37 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'supply only', 56.5, 24, 35.4)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeSupply, 56.5, 24, 35.4)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'central fan integrated supply', 330.0, 8, 300.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeCFIS, 330.0, 8, 300.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 8.5, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 8.5, 24, 42.0)
 
     hpxml_name = _change_to_301_2014(hpxml_name)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'supply only', 37.0, 24, 27.3)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeSupply, 37.0, 24, 27.3)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml_doc, 'central fan integrated supply', 330.0, 8, 300.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeCFIS, 330.0, 8, 300.0)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_mech_vent_cfm50_infiltration
@@ -678,7 +678,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml_doc, 'exhaust only', 37.0, 24, 0.0) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeExhaust, 37.0, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -686,11 +686,11 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml_doc, 'balanced', 60.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 60.0, 24, 42.0)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml_doc, 'balanced', 34.0, 24, 42.0)
+    _check_mech_vent(hpxml_doc, HPXML::MechVentTypeBalanced, 34.0, 24, 42.0)
   end
 
   def test_whole_house_fan

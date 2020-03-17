@@ -83,6 +83,7 @@
               </Basement>
             </FoundationType>
             <ThermalBoundary>frame floor</ThermalBoundary>
+            <WithinInfiltrationVolume>false</WithinInfiltrationVolume>
           </Foundation>
         </Foundations>
         <Roofs>

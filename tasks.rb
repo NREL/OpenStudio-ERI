@@ -464,7 +464,13 @@ def set_hpxml_foundations(hpxml_file, hpxml)
     hpxml.foundations.clear()
     hpxml.foundations.add(id: 'UnconditionedBasement',
                           foundation_type: HPXML::FoundationTypeBasementUnconditioned,
-                          unconditioned_basement_thermal_boundary: HPXML::FoundationThermalBoundaryFloor)
+                          unconditioned_basement_thermal_boundary: HPXML::FoundationThermalBoundaryFloor,
+                          within_infiltration_volume: false)
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+    hpxml.foundations.clear()
+    hpxml.foundations.add(id: 'UnventedCrawlspace',
+                          foundation_type: HPXML::FoundationTypeCrawlspaceUnvented,
+                          within_infiltration_volume: false)
   else
     hpxml.foundations.clear()
   end
@@ -655,7 +661,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Uninsulated ASHRAE Conditioned Basement
     hpxml.foundation_walls.add(id: 'FoundationWallNorth',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationBasementConditioned,
                                height: 7.25,
                                area: 413.25,
@@ -669,7 +675,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallEast',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationBasementConditioned,
                                height: 7.25,
                                area: 195.75,
@@ -683,7 +689,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallSouth',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationBasementConditioned,
                                height: 7.25,
                                area: 413.25,
@@ -697,7 +703,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallWest',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationBasementConditioned,
                                height: 7.25,
                                area: 195.75,
@@ -720,7 +726,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Un-vented crawlspace with R-7 crawlspace wall insulation
     hpxml.foundation_walls.add(id: 'FoundationWallNorth',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
                                area: 228,
@@ -734,7 +740,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallEast',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
                                area: 108,
@@ -748,7 +754,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallSouth',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
                                area: 228,
@@ -762,7 +768,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallWest',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
                                area: 108,
@@ -779,7 +785,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
     # 2 ft. high crawlspace above grade
     hpxml.foundation_walls.add(id: 'FoundationWallNorth',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceVented,
                                height: 2,
                                area: 114,
@@ -793,7 +799,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallEast',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceVented,
                                height: 2,
                                area: 54,
@@ -807,7 +813,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallSouth',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceVented,
                                height: 2,
                                area: 114,
@@ -821,7 +827,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
     hpxml.foundation_walls.add(id: 'FoundationWallWest',
-                               exterior_adjacent_to: 'ground',
+                               exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceVented,
                                height: 2,
                                area: 54,

@@ -2091,7 +2091,6 @@ class EnergyRatingIndex301Ruleset
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
 
       has_mech_vent = true
-      next unless not @eri_version.include? '2014' # 2019 or newer
       if orig_ventilation_fan.tested_flow_rate.nil? || ((a_ext < 0.5) && (orig_ventilation_fan.fan_type == HPXML::MechVentTypeExhaust))
         min_nach = 0.30
       end
@@ -2117,6 +2116,7 @@ class EnergyRatingIndex301Ruleset
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
     q_tot = calc_mech_vent_q_tot()
     q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
+    return q_fan_power
   end
 
   def self.calc_mech_vent_q_tot()
@@ -2367,12 +2367,14 @@ class EnergyRatingIndex301Ruleset
 
   def self.get_hvac_capacities_for_distribution_system(orig_hvac_dist)
     htg_cap = 0.0
-    if orig_hvac_dist.respond_to?(:heating_capacity)
-      htg_cap = orig_hvac_dist.heating_capacity
-    end
     clg_cap = 0.0
-    if orig_hvac_dist.respond_to?(:cooling_capacity)
-      clg_cap = orig_hvac_dist.cooling_capacity
+    hvac = orig_hvac_dist.hvac_systems.each do |hvac|
+      if hvac.respond_to?(:heating_capacity)
+        htg_cap = hvac.heating_capacity
+      end
+      if hvac.respond_to?(:cooling_capacity)
+        clg_cap = hvac.cooling_capacity
+      end
     end
     return htg_cap, clg_cap
   end
