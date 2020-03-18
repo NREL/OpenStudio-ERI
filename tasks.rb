@@ -326,13 +326,6 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
     hpxml.building_construction.conditioned_floor_area = 1539
     hpxml.building_construction.conditioned_building_volume = 12312
   end
-  if hpxml_file.include?('RESNET_Tests/4.1_Standard_140') ||
-     hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
-     hpxml_file.include?('RESNET_Tests/4.5_DSE')
-    hpxml.building_construction.fraction_of_operable_window_area = 0.0
-  else
-    hpxml.building_construction.fraction_of_operable_window_area = 0.33
-  end
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
     hpxml.building_construction.use_only_ideal_air_system = true
   else
@@ -984,6 +977,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
+                        operable: false,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
@@ -1008,6 +1002,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                       azimuth: 180,
                       ufactor: 1.039,
                       shgc: 0.67,
+                      operable: false,
                       wall_idref: 'WallSouth')
   elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml',
          'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
@@ -1028,6 +1023,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
+                        operable: false,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file

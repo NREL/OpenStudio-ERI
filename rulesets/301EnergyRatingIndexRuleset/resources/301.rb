@@ -289,18 +289,11 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
 
-    if @is_attached_unit && (orig_hpxml.building_construction.fraction_of_operable_window_area <= 0) && (not @eri_version.include? '2014') # 2019 or newer
-      fraction_of_operable_window_area = 0.0
-    else
-      fraction_of_operable_window_area = Airflow.get_default_fraction_of_operable_window_area()
-    end
-
     new_hpxml.set_building_construction(number_of_conditioned_floors: orig_hpxml.building_construction.number_of_conditioned_floors,
                                         number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
                                         number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
                                         conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
-                                        fraction_of_operable_window_area: fraction_of_operable_window_area)
+                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume)
   end
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
@@ -322,8 +315,7 @@ class EnergyRatingIndex301Ruleset
                                         number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
                                         number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
                                         conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
-                                        fraction_of_operable_window_area: orig_hpxml.building_construction.fraction_of_operable_window_area)
+                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume)
   end
 
   def self.set_summary_iad(orig_hpxml, new_hpxml)
@@ -346,8 +338,7 @@ class EnergyRatingIndex301Ruleset
                                         number_of_conditioned_floors_above_grade: @ncfl_ag,
                                         number_of_bedrooms: @nbeds,
                                         conditioned_floor_area: @cfa,
-                                        conditioned_building_volume: @cvolume,
-                                        fraction_of_operable_window_area: Airflow.get_default_fraction_of_operable_window_area())
+                                        conditioned_building_volume: @cvolume)
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
