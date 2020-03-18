@@ -471,8 +471,6 @@ def set_hpxml_foundations(hpxml_file, hpxml)
     hpxml.foundations.add(id: 'UnventedCrawlspace',
                           foundation_type: HPXML::FoundationTypeCrawlspaceUnvented,
                           within_infiltration_volume: false)
-  else
-    hpxml.foundations.clear()
   end
 end
 
