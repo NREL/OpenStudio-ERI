@@ -779,10 +779,12 @@ class EnclosureTest < MiniTest::Test
 
     # Create derivative file for testing w/o operable windows
     # Rated/Reference Home windows should not be operable
-    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, 'workflow', 'sample_files', hpxml_name)))
-    hpxml_doc.elements['/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/extension/FractionofOperableWindowArea'].text = 0.0
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.windows.each do |window|
+      window.operable = false
+    end
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -1308,11 +1310,15 @@ class EnclosureTest < MiniTest::Test
   end
 
   def _check_windows(hpxml_doc, frac_operable, azimuth_values = {})
+    area_total = 0.0
+    area_operable = 0.0
     azimuth_area_values = {}
     azimuth_ufactor_x_area_values = {} # Area-weighted
     azimuth_shgc_x_area_values = {} # Area-weighted
     hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Windows/Window') do |window|
       azimuth = Integer(window.elements['Azimuth'].text)
+      area_total += Float(window.elements['Area'].text)
+      area_operable += Float(window.elements['Area'].text) if Boolean(window.elements['Operable'].text)
 
       # Init if needed
       azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?
@@ -1329,7 +1335,7 @@ class EnclosureTest < MiniTest::Test
     assert_equal(azimuth_values.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(azimuth_values.keys.size, azimuth_shgc_x_area_values.size)
 
-    actual_frac_operable = Float(hpxml_doc.elements['/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/extension/FractionofOperableWindowArea'].text)
+    actual_frac_operable = area_operable / area_total
     assert_in_epsilon(frac_operable, actual_frac_operable, 0.001)
 
     azimuth_values.each do |azimuth, values|

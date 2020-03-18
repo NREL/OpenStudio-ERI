@@ -1011,16 +1011,30 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
+    if @is_attached_unit && (orig_hpxml.fraction_of_window_area_operable(nil) <= 0) && (not @eri_version.include? '2014') # 2019 or newer
+      # Disable natural ventilation
+      frac_operable = 0.0
+    else
+      # Default natural ventilation
+      frac_operable = Airflow.get_default_fraction_of_operable_window_area()
+    end
+    frac_inoperable = 1.0 - frac_operable
+
     # Create equally distributed windows
-    for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
-      new_hpxml.windows.add(id: "WindowArea#{orientation}",
-                            area: 0.18 * @cfa * fa * f * 0.25,
-                            azimuth: azimuth,
-                            ufactor: ufactor,
-                            shgc: shgc,
-                            interior_shading_factor_summer: shade_summer,
-                            interior_shading_factor_winter: shade_winter,
-                            wall_idref: 'WallArea')
+    { 'Operable' => frac_operable, 'Inoperable' => frac_inoperable }.each do |mode, frac|
+      next unless frac > 0
+
+      for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
+        new_hpxml.windows.add(id: "WindowArea#{orientation}#{mode}",
+                              area: 0.18 * @cfa * fa * f * 0.25 * frac,
+                              azimuth: azimuth,
+                              ufactor: ufactor,
+                              shgc: shgc,
+                              interior_shading_factor_summer: shade_summer,
+                              interior_shading_factor_winter: shade_winter,
+                              operable: (mode == 'Operable'),
+                              wall_idref: 'WallArea')
+      end
     end
   end
 
@@ -1039,6 +1053,7 @@ class EnergyRatingIndex301Ruleset
                             overhangs_distance_to_bottom_of_window: orig_window.overhangs_distance_to_bottom_of_window,
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
+                            operable: orig_window.operable,
                             wall_idref: orig_window.wall_idref)
     end
   end
@@ -1049,16 +1064,23 @@ class EnergyRatingIndex301Ruleset
     avg_ufactor = calc_area_weighted_sum(ext_thermal_bndry_windows, :ufactor)
     avg_shgc = calc_area_weighted_sum(ext_thermal_bndry_windows, :shgc)
 
+    # Default natural ventilation
+    frac_operable = Airflow.get_default_fraction_of_operable_window_area()
+    frac_inoperable = 1.0 - frac_operable
+
     # Create equally distributed windows
-    for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
-      new_hpxml.windows.add(id: "WindowArea#{orientation}",
-                            area: 0.18 * @cfa * 0.25,
-                            azimuth: azimuth,
-                            ufactor: avg_ufactor,
-                            shgc: avg_shgc,
-                            interior_shading_factor_summer: shade_summer,
-                            interior_shading_factor_winter: shade_winter,
-                            wall_idref: 'WallArea')
+    { 'Operable' => frac_operable, 'Inoperable' => frac_inoperable }.each do |mode, frac|
+      for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
+        new_hpxml.windows.add(id: "WindowArea#{orientation}#{mode}",
+                              area: 0.18 * @cfa * 0.25 * frac,
+                              azimuth: azimuth,
+                              ufactor: avg_ufactor,
+                              shgc: avg_shgc,
+                              interior_shading_factor_summer: shade_summer,
+                              interior_shading_factor_winter: shade_winter,
+                              operable: (mode == 'Operable'),
+                              wall_idref: 'WallArea')
+      end
     end
   end
 
