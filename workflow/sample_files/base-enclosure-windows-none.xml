@@ -26,9 +26,6 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
-          <extension>
-            <FractionofOperableWindowArea>0.33</FractionofOperableWindowArea>
-          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -65,6 +62,16 @@
             <WithinInfiltrationVolume>false</WithinInfiltrationVolume>
           </Attic>
         </Attics>
+        <Foundations>
+          <Foundation>
+            <SystemIdentifier id='ConditionedBasement'/>
+            <FoundationType>
+              <Basement>
+                <Conditioned>true</Conditioned>
+              </Basement>
+            </FoundationType>
+          </Foundation>
+        </Foundations>
         <Roofs>
           <Roof>
             <SystemIdentifier id='Roof'/>
