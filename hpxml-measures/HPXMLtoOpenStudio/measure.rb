@@ -88,6 +88,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
     weather_dir = runner.getStringArgumentValue('weather_dir', user_arguments)
     epw_output_path = runner.getOptionalStringArgumentValue('epw_output_path', user_arguments)
     osm_output_path = runner.getOptionalStringArgumentValue('osm_output_path', user_arguments)
+    debug = osm_output_path.is_initialized
 
     unless (Pathname.new hpxml_path).absolute?
       hpxml_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_path))
@@ -150,7 +151,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
       weather = Location.apply(model, runner, epw_path, cache_path, 'NA', 'NA')
 
       # Create OpenStudio model
-      OSModel.create(hpxml, runner, model, weather, hpxml_path)
+      OSModel.create(hpxml, runner, model, weather, hpxml_path, debug)
     rescue Exception => e
       # Report exception
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
@@ -190,9 +191,10 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
 end
 
 class OSModel
-  def self.create(hpxml, runner, model, weather, hpxml_path)
+  def self.create(hpxml, runner, model, weather, hpxml_path, debug)
     @hpxml = hpxml
     @hpxml_path = hpxml_path
+    @debug = debug
 
     @eri_version = @hpxml.header.eri_calculation_version # Hidden feature
     @eri_version = 'latest' if @eri_version.nil?
@@ -221,6 +223,7 @@ class OSModel
     @has_vented_crawl = @hpxml.has_space_type(HPXML::LocationCrawlspaceVented)
     @min_neighbor_distance = get_min_neighbor_distance()
     @default_azimuths = get_default_azimuths()
+    @frac_window_area_operable = get_frac_window_area_operable()
     @cond_bsmnt_surfaces = [] # list of surfaces in conditioned basement, used for modification of some surface properties, eg. solar absorptance, view factor, etc.
 
     @hvac_map = {} # mapping between HPXML HVAC systems and model objects
@@ -940,6 +943,39 @@ class OSModel
       azimuth -= 360
     end
     return azimuth
+  end
+
+  def self.get_frac_window_area_operable()
+    # Calculate fraction of window area that is operable
+    window_area_total = 0.0
+    window_area_operable = 0.0
+    @hpxml.windows.each do |window|
+      window_area_total += window.area
+      if window.operable.nil?
+        window_area_operable += (window.area * Airflow.get_default_fraction_of_operable_window_area)
+      elsif window.operable
+        window_area_operable += window.area
+      end
+    end
+    if window_area_total <= 0
+      frac_window_area_operable = 0.0
+    else
+      frac_window_area_operable = window_area_operable / window_area_total
+    end
+
+    # Now that we have it, further collapse windows irrespective of their
+    # operable property. For example, if there are two identical windows that
+    # only otherwise differ based on their operable property, we will combine
+    # them so as to model a single window in EnergyPlus for reasons of speed.
+    @hpxml.collapse_enclosure_surfaces([:operable])
+
+    # Finally reset the operable property since it is now arbitrary and we
+    # don't want to accidentally use it.
+    @hpxml.windows.each do |window|
+      window.operable = false
+    end
+
+    return frac_window_area_operable
   end
 
   def self.create_or_get_space(model, spaces, spacetype)
@@ -2901,15 +2937,7 @@ class OSModel
                              vented_attic_sla, unvented_attic_sla, vented_attic_const_ach, unconditioned_basement_ach, has_flue_chimney, terrain)
 
     # Natural Ventilation
-    frac_window_area_operable = @hpxml.building_construction.fraction_of_operable_window_area
-    if frac_window_area_operable.nil?
-      frac_window_area_operable = Airflow.get_default_fraction_of_operable_window_area()
-    end
-    if (frac_window_area_operable < 0) || (frac_window_area_operable > 1)
-      fail "Fraction window area operable (#{frac_window_area_operable}) must be between 0 and 1."
-    end
-
-    nv_frac_window_area_open = frac_window_area_operable * 0.20 # Assume 20% of operable window area is open
+    nv_frac_window_area_open = @frac_window_area_operable * 0.20 # Assume 20% of operable window area is open
     nv_num_days_per_week = 7
     nv_max_oa_hr = 0.0115
     nv_max_oa_rh = 0.7
@@ -3147,7 +3175,7 @@ class OSModel
   end
 
   def self.add_hvac_sizing(runner, model, weather)
-    HVACSizing.apply(model, runner, weather, @cfa, @infilvolume, @nbeds, @min_neighbor_distance, @living_space)
+    HVACSizing.apply(model, runner, weather, @cfa, @infilvolume, @nbeds, @min_neighbor_distance, @living_space, @debug)
   end
 
   def self.add_fuel_heating_eae(runner, model)
