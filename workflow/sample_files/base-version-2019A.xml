@@ -6,7 +6,13 @@
     <CreatedDateAndTime>2000-01-01T00:00:00-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
-  <SoftwareInfo/>
+  <SoftwareInfo>
+    <extension>
+      <ERICalculation>
+        <Version>2019A</Version>
+      </ERICalculation>
+    </extension>
+  </SoftwareInfo>
   <Building>
     <BuildingID id='MyBuilding'/>
     <ProjectStatus>
@@ -333,14 +339,13 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeater'/>
-            <FuelType>natural gas</FuelType>
+            <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>other exterior</Location>
-            <TankVolume>50.0</TankVolume>
+            <Location>living space</Location>
+            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>40000.0</HeatingCapacity>
-            <EnergyFactor>0.59</EnergyFactor>
-            <RecoveryEfficiency>0.76</RecoveryEfficiency>
+            <HeatingCapacity>18767.0</HeatingCapacity>
+            <EnergyFactor>0.95</EnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDstribution'/>

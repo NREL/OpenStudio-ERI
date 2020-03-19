@@ -123,6 +123,12 @@ class HPXML < Object
   LocationOtherHousingUnitBelow = 'other housing unit below'
   LocationOutside = 'outside'
   LocationRoof = 'roof'
+  MechVentTypeBalanced = 'balanced'
+  MechVentTypeCFIS = 'central fan integrated supply'
+  MechVentTypeERV = 'energy recovery ventilator'
+  MechVentTypeExhaust = 'exhaust only'
+  MechVentTypeHRV = 'heat recovery ventilator'
+  MechVentTypeSupply = 'supply only'
   OrientationEast = 'east'
   OrientationNorth = 'north'
   OrientationNortheast = 'northeast'
@@ -131,12 +137,6 @@ class HPXML < Object
   OrientationSoutheast = 'southeast'
   OrientationSouthwest = 'southwest'
   OrientationWest = 'west'
-  MechVentTypeBalanced = 'balanced'
-  MechVentTypeCFIS = 'central fan integrated supply'
-  MechVentTypeERV = 'energy recovery ventilator'
-  MechVentTypeExhaust = 'exhaust only'
-  MechVentTypeHRV = 'heat recovery ventilator'
-  MechVentTypeSupply = 'supply only'
   PlugLoadTypeOther = 'other'
   PlugLoadTypeTelevision = 'TV other'
   PVModuleTypePremium = 'premium'
@@ -201,9 +201,12 @@ class HPXML < Object
   WindowLayersSinglePane = 'single-pane'
   WindowLayersTriplePane = 'triple-pane'
 
-  def initialize(hpxml_path: nil, collapse_enclosure: true)
+  def initialize(hpxml_path: nil, delete_partitions: true, collapse_enclosure: true)
     @doc = nil
     from_hpxml_file(hpxml_path)
+    if delete_partitions
+      delete_partition_surfaces()
+    end
     if collapse_enclosure
       _collapse_enclosure_surfaces()
     end
@@ -718,7 +721,7 @@ class HPXML < Object
   end
 
   class Attic < BaseElement
-    ATTRS = [:id, :attic_type, :vented_attic_sla, :vented_attic_constant_ach,
+    ATTRS = [:id, :attic_type, :vented_attic_sla, :vented_attic_constant_ach, :within_infiltration_volume,
              :attached_to_roof_idrefs, :attached_to_frame_floor_idrefs]
     attr_accessor(*ATTRS)
 
@@ -798,6 +801,7 @@ class HPXML < Object
           fail "Unhandled attic type '#{@attic_type}'."
         end
       end
+      XMLHelper.add_element(attic, 'WithinInfiltrationVolume', Boolean(@within_infiltration_volume)) unless @within_infiltration_volume.nil?
     end
 
     def from_rexml(attic)
@@ -817,6 +821,7 @@ class HPXML < Object
       end
       @vented_attic_sla = HPXML::to_float_or_nil(XMLHelper.get_value(attic, "[AtticType/Attic[Vented='true']]VentilationRate[UnitofMeasure='SLA']/Value"))
       @vented_attic_constant_ach = HPXML::to_float_or_nil(XMLHelper.get_value(attic, "[AtticType/Attic[Vented='true']]extension/ConstantACHnatural"))
+      @within_infiltration_volume = HPXML::to_bool_or_nil(XMLHelper.get_value(attic, 'WithinInfiltrationVolume'))
       @attached_to_roof_idrefs = []
       attic.elements.each('AttachedToRoof') do |roof|
         @attached_to_roof_idrefs << HPXML::get_idref(roof)
@@ -843,7 +848,7 @@ class HPXML < Object
   end
 
   class Foundation < BaseElement
-    ATTRS = [:id, :foundation_type, :vented_crawlspace_sla, :unconditioned_basement_thermal_boundary,
+    ATTRS = [:id, :foundation_type, :vented_crawlspace_sla, :unconditioned_basement_thermal_boundary, :within_infiltration_volume,
              :attached_to_slab_idrefs, :attached_to_frame_floor_idrefs, :attached_to_foundation_wall_idrefs]
     attr_accessor(*ATTRS)
 
@@ -940,6 +945,7 @@ class HPXML < Object
           fail "Unhandled foundation type '#{@foundation_type}'."
         end
       end
+      XMLHelper.add_element(foundation, 'WithinInfiltrationVolume', Boolean(@within_infiltration_volume)) unless @within_infiltration_volume.nil?
     end
 
     def from_rexml(foundation)
@@ -961,6 +967,7 @@ class HPXML < Object
       end
       @vented_crawlspace_sla = HPXML::to_float_or_nil(XMLHelper.get_value(foundation, "[FoundationType/Crawlspace[Vented='true']]VentilationRate[UnitofMeasure='SLA']/Value"))
       @unconditioned_basement_thermal_boundary = XMLHelper.get_value(foundation, "[FoundationType/Basement[Conditioned='false']]ThermalBoundary")
+      @within_infiltration_volume = HPXML::to_bool_or_nil(XMLHelper.get_value(foundation, 'WithinInfiltrationVolume'))
       @attached_to_slab_idrefs = []
       foundation.elements.each('AttachedToSlab') do |slab|
         @attached_to_slab_idrefs << HPXML::get_idref(slab)
@@ -1031,6 +1038,13 @@ class HPXML < Object
 
     def is_exterior_thermal_boundary
       return (is_exterior && is_thermal_boundary)
+    end
+
+    def delete
+      @hpxml_object.roofs.delete(self)
+      skylights.reverse_each do |skylight|
+        @hpxml_object.skylights.delete(skylight)
+      end
     end
 
     def to_rexml(doc)
@@ -1117,6 +1131,10 @@ class HPXML < Object
 
     def is_exterior_thermal_boundary
       return (is_exterior && is_thermal_boundary)
+    end
+
+    def delete
+      @hpxml_object.rim_joists.delete(self)
     end
 
     def to_rexml(doc)
@@ -1220,6 +1238,16 @@ class HPXML < Object
       return (is_exterior && is_thermal_boundary)
     end
 
+    def delete
+      @hpxml_object.walls.delete(self)
+      windows.reverse_each do |window|
+        @hpxml_object.windows.delete(window)
+      end
+      doors.reverse_each do |door|
+        @hpxml_object.doors.delete(door)
+      end
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -1293,6 +1321,14 @@ class HPXML < Object
              :insulation_exterior_distance_to_bottom, :insulation_assembly_r_value]
     attr_accessor(*ATTRS)
 
+    def windows
+      return @hpxml_object.windows.select { |window| window.wall_idref == @id }
+    end
+
+    def doors
+      return @hpxml_object.doors.select { |door| door.wall_idref == @id }
+    end
+
     def net_area
       return if nil?
 
@@ -1325,6 +1361,16 @@ class HPXML < Object
 
     def is_exterior_thermal_boundary
       return (is_exterior && is_thermal_boundary)
+    end
+
+    def delete
+      @hpxml_object.foundation_walls.delete(self)
+      windows.reverse_each do |window|
+        @hpxml_object.windows.delete(window)
+      end
+      doors.reverse_each do |door|
+        @hpxml_object.doors.delete(door)
+      end
     end
 
     def to_rexml(doc)
@@ -1446,6 +1492,10 @@ class HPXML < Object
       return (is_exterior && is_thermal_boundary)
     end
 
+    def delete
+      @hpxml_object.frame_floors.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -1523,6 +1573,10 @@ class HPXML < Object
 
     def is_exterior_thermal_boundary
       return (is_exterior && is_thermal_boundary)
+    end
+
+    def delete
+      @hpxml_object.slabs.delete(self)
     end
 
     def to_rexml(doc)
@@ -1639,6 +1693,10 @@ class HPXML < Object
       return (is_exterior && is_thermal_boundary)
     end
 
+    def delete
+      @hpxml_object.windows.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -1737,6 +1795,10 @@ class HPXML < Object
       return (is_exterior && is_thermal_boundary)
     end
 
+    def delete
+      @hpxml_object.skylights.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -1816,6 +1878,10 @@ class HPXML < Object
       return (is_exterior && is_thermal_boundary)
     end
 
+    def delete
+      @hpxml_object.doors.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -1863,6 +1929,10 @@ class HPXML < Object
              :heating_efficiency_percent, :fraction_heat_load_served, :electric_auxiliary_energy,
              :heating_cfm, :energy_star, :seed_id]
     attr_accessor(*ATTRS)
+
+    def delete
+      @hpxml_object.heating_systems.delete(self)
+    end
 
     def to_rexml(doc)
       return if nil?
@@ -1943,6 +2013,10 @@ class HPXML < Object
              :cooling_efficiency_seer, :cooling_efficiency_eer, :cooling_shr, :cooling_cfm,
              :energy_star, :seed_id]
     attr_accessor(*ATTRS)
+
+    def delete
+      @hpxml_object.cooling_systems.delete(self)
+    end
 
     def to_rexml(doc)
       return if nil?
@@ -2025,6 +2099,10 @@ class HPXML < Object
              :cooling_efficiency_seer, :cooling_efficiency_eer, :heating_efficiency_hspf,
              :heating_efficiency_cop, :energy_star, :seed_id]
     attr_accessor(*ATTRS)
+
+    def delete
+      @hpxml_object.heat_pumps.delete(self)
+    end
 
     def to_rexml(doc)
       return if nil?
@@ -2141,6 +2219,10 @@ class HPXML < Object
              :ceiling_fan_cooling_setpoint_temp_offset]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.hvac_controls.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2212,6 +2294,10 @@ class HPXML < Object
         list << hvac_system
       end
       return list
+    end
+
+    def delete
+      @hpxml_object.hvac_distributions.delete(self)
     end
 
     def to_rexml(doc)
@@ -2373,6 +2459,10 @@ class HPXML < Object
       fail "Attached HVAC distribution system '#{@distribution_system_idref}' not found for mechanical ventilation '#{@id}'."
     end
 
+    def delete
+      @hpxml_object.ventilation_fans.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2444,6 +2534,10 @@ class HPXML < Object
         return hvac_system
       end
       fail "Attached HVAC system '#{@related_hvac_idref}' not found for water heating system '#{@id}'."
+    end
+
+    def delete
+      @hpxml_object.water_heating_systems.delete(self)
     end
 
     def to_rexml(doc)
@@ -2522,6 +2616,10 @@ class HPXML < Object
              :dwhr_efficiency]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.hot_water_distributions.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2591,6 +2689,10 @@ class HPXML < Object
     ATTRS = [:id, :water_fixture_type, :low_flow]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.water_fixtures.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2638,6 +2740,10 @@ class HPXML < Object
         return water_heater
       end
       fail "Attached water heating system '#{@water_heating_system_idref}' not found for solar thermal system '#{@id}'."
+    end
+
+    def delete
+      @hpxml_object.solar_thermal_systems.delete(self)
     end
 
     def to_rexml(doc)
@@ -2701,6 +2807,10 @@ class HPXML < Object
              :year_modules_manufactured]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.pv_systems.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2756,6 +2866,10 @@ class HPXML < Object
              :capacity]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.clothes_washers.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2806,6 +2920,10 @@ class HPXML < Object
     ATTRS = [:id, :location, :fuel_type, :energy_factor, :combined_energy_factor, :control_type]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.clothes_dryers.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2850,6 +2968,10 @@ class HPXML < Object
     ATTRS = [:id, :energy_factor, :rated_annual_kwh, :place_setting_capacity]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.dishwashers.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2889,6 +3011,10 @@ class HPXML < Object
   class Refrigerator < BaseElement
     ATTRS = [:id, :location, :rated_annual_kwh, :adjusted_annual_kwh]
     attr_accessor(*ATTRS)
+
+    def delete
+      @hpxml_object.refrigerators.delete(self)
+    end
 
     def to_rexml(doc)
       return if nil?
@@ -2931,6 +3057,10 @@ class HPXML < Object
     ATTRS = [:id, :fuel_type, :is_induction]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.cooking_ranges.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -2969,6 +3099,10 @@ class HPXML < Object
     ATTRS = [:id, :is_convection]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.ovens.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -3004,6 +3138,10 @@ class HPXML < Object
   class LightingGroup < BaseElement
     ATTRS = [:id, :location, :fration_of_units_in_location, :third_party_certification]
     attr_accessor(*ATTRS)
+
+    def delete
+      @hpxml_object.lighting_groups.delete(self)
+    end
 
     def to_rexml(doc)
       return if nil?
@@ -3045,6 +3183,10 @@ class HPXML < Object
     ATTRS = [:id, :efficiency, :quantity]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.ceiling_fans.delete(self)
+    end
+
     def to_rexml(doc)
       return if nil?
 
@@ -3084,6 +3226,10 @@ class HPXML < Object
   class PlugLoad < BaseElement
     ATTRS = [:id, :plug_load_type, :kWh_per_year, :frac_sensible, :frac_latent]
     attr_accessor(*ATTRS)
+
+    def delete
+      @hpxml_object.plug_loads.delete(self)
+    end
 
     def to_rexml(doc)
       return if nil?
@@ -3219,6 +3365,14 @@ class HPXML < Object
           surfaces.delete_at(j)
         end
       end
+    end
+  end
+
+  def delete_partition_surfaces()
+    (@rim_joists + @walls + @foundation_walls + @frame_floors).reverse_each do |surface|
+      next unless surface.interior_adjacent_to == surface.exterior_adjacent_to
+
+      surface.delete
     end
   end
 
