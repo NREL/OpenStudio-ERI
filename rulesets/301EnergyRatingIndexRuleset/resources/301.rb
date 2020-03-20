@@ -212,65 +212,20 @@ class EnergyRatingIndex301Ruleset
   def self.remove_surfaces_from_iad(orig_hpxml)
     # Remove garage surfaces and adiabatic walls.
 
-    # Roof
-    orig_hpxml.roofs.each do |orig_roof|
-      next unless [HPXML::LocationGarage].include? orig_roof.interior_adjacent_to
+    # Garage only
+    (orig_hpxml.roofs + orig_hpxml.frame_floors + orig_hpxml.slabs).each do |orig_surface|
+      next unless [HPXML::LocationGarage].include?(orig_surface.interior_adjacent_to) ||
+                  [HPXML::LocationGarage].include?(orig_surface.exterior_adjacent_to)
 
-      orig_roof.skylights.each do |orig_skylight|
-        orig_hpxml.skylights.delete(orig_skylight)
-      end
-      orig_hpxml.roofs.delete(orig_roof)
+      orig_surface.delete
     end
 
-    # Rim Joist
-    orig_hpxml.rim_joists.each do |orig_rim_joist|
-      if [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_rim_joist.interior_adjacent_to) ||
-         [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_rim_joist.exterior_adjacent_to)
-        orig_hpxml.rim_joists.delete(orig_rim_joist)
-      end
-    end
+    # Garage and adiabatic
+    (orig_hpxml.rim_joists + orig_hpxml.walls + orig_hpxml.foundation_walls).each do |orig_surface|
+      next unless [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_surface.interior_adjacent_to) ||
+                  [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_surface.exterior_adjacent_to)
 
-    # Wall
-    orig_hpxml.walls.each do |orig_wall|
-      next unless [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_wall.interior_adjacent_to) ||
-                  [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_wall.exterior_adjacent_to)
-
-      orig_wall.windows.each do |orig_window|
-        orig_hpxml.windows.delete(orig_window)
-      end
-      orig_wall.doors.each do |orig_door|
-        orig_hpxml.doors.delete(orig_door)
-      end
-      orig_hpxml.walls.delete(orig_wall)
-    end
-
-    # FoundationWall
-    orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      next unless [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_foundation_wall.interior_adjacent_to) ||
-                  [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_foundation_wall.exterior_adjacent_to)
-
-      orig_foundation_wall.windows.each do |orig_window|
-        orig_hpxml.windows.delete(orig_window)
-      end
-      orig_foundation_wall.doors.each do |orig_door|
-        orig_hpxml.doors.delete(orig_door)
-      end
-      orig_hpxml.foundation_walls.delete(orig_foundation_wall)
-    end
-
-    # FrameFloor
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      if [HPXML::LocationGarage].include?(orig_frame_floor.interior_adjacent_to) ||
-         [HPXML::LocationGarage].include?(orig_frame_floor.exterior_adjacent_to)
-        orig_hpxml.frame_floors.delete(orig_frame_floor)
-      end
-    end
-
-    # Slab
-    orig_hpxml.slabs.each do |orig_slab|
-      if [HPXML::LocationGarage].include? orig_slab.interior_adjacent_to
-        orig_hpxml.slabs.delete(orig_slab)
-      end
+      orig_surface.delete
     end
   end
 
