@@ -2,8 +2,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>ab9a860f-12be-441b-90aa-1e28b931080a</version_id>
-  <version_modified>20200313T232248Z</version_modified>
+  <version_id>eb8eb05c-93ab-42fe-9095-815ad0e96db0</version_id>
+  <version_modified>20200319T234123Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -94,12 +94,6 @@
       <checksum>FC0C5AE4</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>189C39BB</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -141,10 +135,16 @@
       <checksum>50D979AC</checksum>
     </file>
     <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1E29C3F1</checksum>
+    </file>
+    <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>EB783F44</checksum>
+      <checksum>AD50BC21</checksum>
     </file>
   </files>
 </measure>
