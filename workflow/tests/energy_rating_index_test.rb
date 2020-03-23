@@ -66,8 +66,8 @@ class EnergyRatingIndexTest < Minitest::Test
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
                             'missing-elements.xml' => ['Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors',
                                                        'Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'],
-                            'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to 1, but calculated sum is 1.2.',
-                                                            'Expected FractionHeatLoadServed to sum to 1, but calculated sum is 1.1.'] }
+                            'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
+                                                            'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'] }
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
