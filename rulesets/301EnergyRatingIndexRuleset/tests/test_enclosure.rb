@@ -769,6 +769,9 @@ class EnclosureTest < MiniTest::Test
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_overhangs(hpxml_doc, [2.5, 0, 4],
                      [1.5, 2, 6],
+                     [1.5, 2, 7],
+                     [2.5, 0, 4],
+                     [1.5, 2, 6],
                      [1.5, 2, 7])
 
     # Reference Home
