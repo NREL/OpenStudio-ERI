@@ -2315,10 +2315,9 @@ def create_sample_hpxmls
   end
   hpxml_paths.each do |hpxml_path|
     hpxml_doc = XMLHelper.parse_file(hpxml_path)
-    software_info = hpxml_doc.elements['/HPXML/SoftwareInfo']
-    eri_calculation = software_info.elements['extension/ERICalculation']
-    if eri_calculation.nil?
-      XMLHelper.add_element(software_info, 'extension/ERICalculation/Version', 'latest')
+    eri_calculation = XMLHelper.create_elements_as_needed(hpxml_doc, ['HPXML', 'SoftwareInfo', 'extension', 'ERICalculation'])
+    if eri_calculation.elements['Version'].nil?
+      XMLHelper.add_element(eri_calculation, 'Version', 'latest')
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     end
   end

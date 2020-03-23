@@ -11,8 +11,6 @@
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
-    </extension>
-    <extension>
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
