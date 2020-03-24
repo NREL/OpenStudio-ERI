@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EnergyRatingIndex301Validator
   def self.run_validator(hpxml_doc)
     # A hash of hashes that defines the XML elements used by the ERI HPXML Use Case.

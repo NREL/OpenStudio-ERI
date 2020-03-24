@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Used by energy_rating_index.rb.
 # Separate ruby script to allow being called using system() on Windows.
 

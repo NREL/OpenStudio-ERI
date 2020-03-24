@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def create_test_hpxmls
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
@@ -2392,6 +2394,7 @@ if ARGV[0].to_sym == :update_measures
           'Lint/DeprecatedClassMethods',
           'Lint/StringConversionInInterpolation',
           'Style/AndOr',
+          'Style/FrozenStringLiteralComment',
           'Style/HashSyntax',
           'Style/Next',
           'Style/NilComparison',

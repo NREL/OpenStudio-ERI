@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/airflow'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
