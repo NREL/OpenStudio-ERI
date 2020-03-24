@@ -139,7 +139,6 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       runner.registerError("#{hpxml_input_path}: #{error}")
       is_valid = false
     end
-    runner.registerInfo("#{hpxml_input_path}: Validated against HPXML schema.")
 
     # Validate input HPXML against ERI Use Case
     errors = EnergyRatingIndex301Validator.run_validator(hpxml.doc)
@@ -147,7 +146,13 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       runner.registerError("#{hpxml_input_path}: #{error}")
       is_valid = false
     end
-    runner.registerInfo("#{hpxml_input_path}: Validated against HPXML ERI Use Case.")
+
+    # Check for additional errors
+    errors = hpxml.check_for_errors()
+    errors.each do |error|
+      runner.registerError("#{hpxml_input_path}: #{error}")
+      is_valid = false
+    end
 
     return is_valid
   end

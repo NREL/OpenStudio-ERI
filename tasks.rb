@@ -326,13 +326,6 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
     hpxml.building_construction.conditioned_floor_area = 1539
     hpxml.building_construction.conditioned_building_volume = 12312
   end
-  if hpxml_file.include?('RESNET_Tests/4.1_Standard_140') ||
-     hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
-     hpxml_file.include?('RESNET_Tests/4.5_DSE')
-    hpxml.building_construction.fraction_of_operable_window_area = 0.0
-  else
-    hpxml.building_construction.fraction_of_operable_window_area = 0.33
-  end
   if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
     hpxml.building_construction.use_only_ideal_air_system = true
   else
@@ -984,6 +977,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
+                        operable: false,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
@@ -1008,6 +1002,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                       azimuth: 180,
                       ufactor: 1.039,
                       shgc: 0.67,
+                      operable: false,
                       wall_idref: 'WallSouth')
   elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml',
          'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
@@ -1028,6 +1023,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
+                        operable: false,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
@@ -2207,6 +2203,7 @@ def create_sample_hpxmls
                   'invalid_files/clothes-dryer-location-other.xml',
                   'invalid_files/duct-location.xml',
                   'invalid_files/duct-location-other.xml',
+                  'invalid_files/duplicate-id.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities2.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities3.xml',
@@ -2222,6 +2219,7 @@ def create_sample_hpxmls
                   'invalid_files/invalid-timestep.xml',
                   'invalid_files/invalid-window-height.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
+                  'invalid_files/lighting-fractions.xml',
                   'invalid_files/mismatched-slab-and-foundation-wall.xml',
                   'invalid_files/missing-surfaces.xml',
                   'invalid_files/net-area-negative-roof.xml',
@@ -2263,17 +2261,11 @@ def create_sample_hpxmls
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
                   'base-dhw-tankless-wood.xml',
-                  'base-dhw-temperature.xml',
-                  'base-enclosure-windows-inoperable.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',
                   'base-foundation-complex.xml',
-                  'base-hvac-air-to-air-heat-pump-2-speed-detailed.xml',
-                  'base-hvac-air-to-air-heat-pump-var-speed-detailed.xml',
                   'base-hvac-boiler-gas-only-no-eae.xml',
                   'base-hvac-boiler-wood-only.xml',
-                  'base-hvac-central-ac-only-2-speed-detailed.xml',
-                  'base-hvac-central-ac-only-var-speed-detailed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-var-speed.xml',
@@ -2284,12 +2276,9 @@ def create_sample_hpxmls
                   'base-hvac-furnace-gas-only-no-eae.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-furnace-wood-only.xml',
-                  'base-hvac-ground-to-air-heat-pump-detailed.xml',
                   'base-hvac-ideal-air.xml',
-                  'base-hvac-mini-split-heat-pump-ducted-detailed.xml',
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-portable-heater-electric-only.xml',
-                  'base-hvac-room-ac-only-detailed.xml',
                   'base-hvac-stove-oil-only-no-eae.xml',
                   'base-hvac-stove-wood-only.xml',
                   'base-hvac-stove-wood-pellets-only.xml',
@@ -2300,11 +2289,9 @@ def create_sample_hpxmls
                   'base-location-epw-filename.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
+                  'base-misc-defaults.xml',
                   'base-misc-lighting-none.xml',
-                  'base-misc-loads-detailed.xml',
-                  'base-misc-number-of-occupants.xml',
                   'base-misc-timestep-10-mins.xml',
-                  'base-misc-timestep-60-mins.xml',
                   'base-site-neighbors.xml',
                   'base-version-latest.xml']
   exclude_list.each do |exclude_file|
@@ -2325,10 +2312,9 @@ def create_sample_hpxmls
   end
   hpxml_paths.each do |hpxml_path|
     hpxml_doc = XMLHelper.parse_file(hpxml_path)
-    software_info = hpxml_doc.elements['/HPXML/SoftwareInfo']
-    eri_calculation = software_info.elements['extension/ERICalculation']
-    if eri_calculation.nil?
-      XMLHelper.add_element(software_info, 'extension/ERICalculation/Version', 'latest')
+    eri_calculation = XMLHelper.create_elements_as_needed(hpxml_doc, ['HPXML', 'SoftwareInfo', 'extension', 'ERICalculation'])
+    if eri_calculation.elements['Version'].nil?
+      XMLHelper.add_element(eri_calculation, 'Version', 'latest')
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     end
   end
@@ -2355,7 +2341,6 @@ elsif not command_list.include? ARGV[0].to_sym
 end
 
 if ARGV[0].to_sym == :generate_sample_outputs
-  require 'openstudio'
   Dir.chdir('workflow')
 
   FileUtils.rm_rf('sample_results/.', secure: true)
@@ -2394,7 +2379,6 @@ if ARGV[0].to_sym == :update_version
 end
 
 if ARGV[0].to_sym == :update_measures
-  require 'openstudio'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 
   # Prevent NREL error regarding U: drive when not VPNed in
@@ -2434,8 +2418,6 @@ if ARGV[0].to_sym == :update_measures
 end
 
 if ARGV[0].to_sym == :create_release_zips
-  require 'openstudio'
-
   # Generate documentation
   puts 'Generating documentation...'
   command = 'sphinx-build -b singlehtml docs/source documentation'

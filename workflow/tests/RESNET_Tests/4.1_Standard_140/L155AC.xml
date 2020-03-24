@@ -36,7 +36,6 @@
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
           <extension>
-            <FractionofOperableWindowArea>0.0</FractionofOperableWindowArea>
             <UseOnlyIdealAirSystem>true</UseOnlyIdealAirSystem>
           </extension>
         </BuildingConstruction>
@@ -242,6 +241,7 @@
               <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
             </Overhangs>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
         </Windows>
