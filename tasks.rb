@@ -2261,7 +2261,6 @@ def create_sample_hpxmls
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
                   'base-dhw-tankless-wood.xml',
-                  'base-dhw-temperature.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',
                   'base-foundation-complex.xml',
