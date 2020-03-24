@@ -35,9 +35,6 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
-          <extension>
-            <FractionofOperableWindowArea>0.0</FractionofOperableWindowArea>
-          </extension>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -236,6 +233,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallNorth'/>
           </Window>
           <Window>
@@ -249,6 +247,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallEast'/>
           </Window>
           <Window>
@@ -262,6 +261,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
           <Window>
@@ -275,6 +275,7 @@
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
               <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
             </InteriorShading>
+            <Operable>false</Operable>
             <AttachedToWall idref='WallWest'/>
           </Window>
         </Windows>
