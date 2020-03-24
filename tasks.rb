@@ -2350,7 +2350,7 @@ if ARGV[0].to_sym == :generate_sample_outputs
   FileUtils.mkdir_p('sample_results')
 
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" --no-ssl energy_rating_index.rb -x sample_files/base.xml --hourly fuels --hourly temperatures"
+  command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly fuels --hourly temperatures"
   system(command)
 
   dirs = ['ERIRatedHome',

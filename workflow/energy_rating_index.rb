@@ -54,7 +54,7 @@ def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_
   hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\"")
+  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\"")
 
   return output_hpxml_path, designdir, pid
 end
@@ -598,7 +598,7 @@ if options[:hourly_outputs].include? 'ALL'
 end
 
 # Check for correct versions of OS
-os_version = '2.9.1'
+os_version = '3.0.0'
 if OpenStudio.openStudioVersion != os_version
   fail "OpenStudio version #{os_version} is required."
 end
