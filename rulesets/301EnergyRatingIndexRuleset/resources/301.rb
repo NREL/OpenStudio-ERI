@@ -1475,7 +1475,7 @@ class EnergyRatingIndex301Ruleset
         # Hot water equipment shall be located in conditioned space.
         location = HPXML::LocationLivingSpace
       end
-      location.gsub!('unvented', 'vented')
+      location = location.gsub('unvented', 'vented')
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,

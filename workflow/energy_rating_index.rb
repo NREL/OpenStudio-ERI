@@ -74,10 +74,10 @@ def retrieve_eri_outputs(design_name, resultsdir, debug)
     next if data.empty?
 
     key = data[0]
-    key.gsub!('enduseElectricity', 'elec')
-    key.gsub!('enduseNaturalGas', 'gas')
-    key.gsub!('enduseFuelOil', 'oil')
-    key.gsub!('endusePropane', 'propane')
+    key = key.gsub('enduseElectricity', 'elec')
+    key = key.gsub('enduseNaturalGas', 'gas')
+    key = key.gsub('enduseFuelOil', 'oil')
+    key = key.gsub('endusePropane', 'propane')
 
     output_data[key.to_sym] = eval(data[1])
   end
@@ -511,8 +511,8 @@ def get_versions(hpxml_path)
 
   # Avoid REXML for performance reasons
   text = File.read(hpxml_path)
-  text.gsub!("\r", '')
-  text.gsub!("\n", '')
+  text = text.gsub("\r", '')
+  text = text.gsub("\n", '')
 
   # Check for versions
   ['ERICalculation'].each do |program|
