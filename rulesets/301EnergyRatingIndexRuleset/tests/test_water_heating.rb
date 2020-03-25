@@ -758,6 +758,11 @@ class WaterHeatingTest < MiniTest::Test
       else
         assert_in_epsilon(Float(wh.elements['StandbyLoss'].text), standby_loss, 0.01)
       end
+      if whtype == HPXML::WaterHeaterTypeTankless
+        assert_equal(0.08, Float(wh.elements['PerformanceAdjustment'].text))
+      else
+        assert_equal(0.0, Float(wh.elements['PerformanceAdjustment'].text))
+      end
     end
   end
 
@@ -824,10 +829,6 @@ class WaterHeatingTest < MiniTest::Test
 
   def _check_desuperheater(hpxml_doc, present)
     whs = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem']
-    if present
-      assert(Boolean(whs.elements['UsesDesuperheater'].text))
-    else
-      assert((whs.elements['UsesDesuperheater'].nil? || (not Boolean(whs.elements['UsesDesuperheater'].text))))
-    end
+    assert_equal(present, Boolean(whs.elements['UsesDesuperheater'].text))
   end
 end
