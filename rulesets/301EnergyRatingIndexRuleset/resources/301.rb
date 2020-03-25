@@ -1267,7 +1267,6 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Thermal distribution systems
     orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
-    
       # Leakage exemption?
       zero_leakage = false
       if orig_hvac_distribution.duct_leakage_testing_exemption
@@ -1301,13 +1300,12 @@ class EnergyRatingIndex301Ruleset
                                                                        duct_leakage_value: 0.0)
       else
         orig_hvac_distribution.duct_leakage_measurements.each do |orig_leakage_measurement|
-          
           new_hpxml.hvac_distributions[-1].duct_leakage_measurements.add(duct_type: orig_leakage_measurement.duct_type,
                                                                          duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
                                                                          duct_leakage_value: orig_leakage_measurement.duct_leakage_value)
         end
       end
-      
+
       orig_hvac_distribution.ducts.each do |orig_duct|
         new_hpxml.hvac_distributions[-1].ducts.add(duct_type: orig_duct.duct_type,
                                                    duct_insulation_r_value: orig_duct.duct_insulation_r_value,

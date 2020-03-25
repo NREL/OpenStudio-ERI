@@ -12,7 +12,7 @@
         <Timestep>60</Timestep>
       </SimulationControl>
       <ERICalculation>
-        <Version>2014A</Version>
+        <Version>2014AD</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>

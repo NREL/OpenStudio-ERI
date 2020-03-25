@@ -645,7 +645,7 @@ class HVACtest < MiniTest::Test
     _check_heat_pump(hpxml_doc)
     _check_thermostat(hpxml_doc, HPXML::HVACControlTypeManual, 68, 78)
   end
-  
+
   def test_duct_leakage_exemption
     # Addendum L
     # Create derivative file for testing
@@ -656,7 +656,7 @@ class HVACtest < MiniTest::Test
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
-    
+
     # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -676,7 +676,7 @@ class HVACtest < MiniTest::Test
     _check_heating_system(hpxml_doc, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 1.0, 0.88])
     _check_heat_pump(hpxml_doc)
     _check_thermostat(hpxml_doc, HPXML::HVACControlTypeManual, 68, 78)
-    
+
     # Addendum D
     # Create derivative file for testing
     hpxml_name = 'base-hvac-ducts-leakage-exemption.xml'
@@ -686,7 +686,7 @@ class HVACtest < MiniTest::Test
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
-    
+
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
@@ -890,7 +890,7 @@ class HVACtest < MiniTest::Test
       assert_equal(dse, actual_dse)
     end
   end
-  
+
   def _check_duct_leakage(hpxml_doc, sum)
     actual_sum = nil
     hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement') do |duct_lk|

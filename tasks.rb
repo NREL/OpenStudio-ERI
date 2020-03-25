@@ -2292,10 +2292,7 @@ def create_sample_hpxmls
                   'base-misc-defaults.xml',
                   'base-misc-lighting-none.xml',
                   'base-misc-timestep-10-mins.xml',
-                  'base-site-neighbors.xml',
-                  'base-version-2019.xml',
-                  'base-version-2019A.xml',
-                  'base-version-latest.xml']
+                  'base-site-neighbors.xml']
   exclude_list.each do |exclude_file|
     if File.exist? "workflow/sample_files/#{exclude_file}"
       FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
@@ -2322,6 +2319,8 @@ def create_sample_hpxmls
   end
 
   # Create additional files
+
+  # Duct leakage exemption
   new_hpxml_name = 'base-hvac-ducts-leakage-exemption.xml'
   FileUtils.cp('workflow/sample_files/base.xml', File.join('workflow/sample_files', new_hpxml_name))
   hpxml_doc = XMLHelper.parse_file(File.join('workflow/sample_files', new_hpxml_name))
@@ -2330,6 +2329,14 @@ def create_sample_hpxmls
   XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
   XMLHelper.add_element(air_dist, 'extension/DuctLeakageTestingExemption', true)
   XMLHelper.write_file(hpxml_doc, File.join('workflow/sample_files', new_hpxml_name))
+
+  # Older versions
+  Constants.ERIVersions.each do |eri_version|
+    next if eri_version.include? '2019'
+    hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
+    hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = eri_version
+    XMLHelper.write_file(hpxml_doc, "workflow/sample_files/base-version-#{eri_version}.xml")
+  end
 end
 
 command_list = [:generate_sample_outputs, :update_version, :update_measures, :create_release_zips]
