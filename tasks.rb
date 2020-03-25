@@ -2187,6 +2187,8 @@ def set_hpxml_misc_load_schedule(hpxml_file, hpxml)
 end
 
 def create_sample_hpxmls
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+
   # Copy sample files from hpxml-measures subtree
   puts 'Copying sample files...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
@@ -2328,6 +2330,29 @@ def create_sample_hpxmls
   XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
   XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
   XMLHelper.add_element(air_dist, 'extension/DuctLeakageTestingExemption', true)
+  XMLHelper.write_file(hpxml_doc, File.join('workflow/sample_files', new_hpxml_name))
+
+  # Duct leakage total
+  new_hpxml_name = 'base-hvac-ducts-leakage-total.xml'
+  FileUtils.cp('workflow/sample_files/base.xml', File.join('workflow/sample_files', new_hpxml_name))
+  hpxml_doc = XMLHelper.parse_file(File.join('workflow/sample_files', new_hpxml_name))
+  air_distribution = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
+  air_distribution.elements.each('DuctLeakageMeasurement/DuctLeakage') do |duct_lk|
+    duct_lk.elements['TotalOrToOutside'].text = HPXML::DuctLeakageTotal
+    duct_lk.elements['Value'].text = Float(duct_lk.elements['Value'].text) * 1.5
+  end
+  # Add supply duct in conditioned space
+  ducts_el = XMLHelper.add_element(air_distribution, 'Ducts')
+  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeSupply)
+  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
+  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
+  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 105.0)
+  # Add return duct in conditioned space
+  ducts_el = XMLHelper.add_element(air_distribution, 'Ducts')
+  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeReturn)
+  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
+  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
+  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 35.0)
   XMLHelper.write_file(hpxml_doc, File.join('workflow/sample_files', new_hpxml_name))
 
   # Older versions

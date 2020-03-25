@@ -690,7 +690,35 @@ class HVACtest < MiniTest::Test
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
-    _check_duct_leakage(hpxml_doc, 0.0)
+    _check_duct_leakage(hpxml_doc, HPXML::DuctLeakageToOutside, 0.0)
+  end
+
+  def test_duct_leakage_total
+    # Addendum L
+    # Create derivative file for testing
+    hpxml_name = 'base-hvac-ducts-leakage-total.xml'
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, 'workflow', 'sample_files', hpxml_name)))
+    hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014ADEGL'
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+    
+    # Rated Home
+    calc_type = Constants.CalcTypeERIRatedHome
+    hpxml_doc = _test_measure(hpxml_name, calc_type)
+    _check_duct_leakage(hpxml_doc, HPXML::DuctLeakageToOutside, 75.0)
+
+    # FIXME TODO
+
+    # Addendum L - Apartments
+    # hpxml_doc.elements['/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType'].text = HPXML::ResidentialTypeApartment
+
+    # Save new file
+    # hpxml_name = File.basename(@tmp_hpxml_path)
+    # XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+
+    # FIXME TODO
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -891,11 +919,12 @@ class HVACtest < MiniTest::Test
     end
   end
 
-  def _check_duct_leakage(hpxml_doc, sum)
+  def _check_duct_leakage(hpxml_doc, total_or_to_outside, sum)
     actual_sum = nil
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement') do |duct_lk|
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement/DuctLeakage') do |duct_lk|
       actual_sum = 0.0 if actual_sum.nil?
-      actual_sum += Float(duct_lk.elements['DuctLeakage/Value'].text)
+      actual_sum += Float(duct_lk.elements['Value'].text)
+      assert_equal(total_or_to_outside, duct_lk.elements['TotalOrToOutside'].text)
     end
     assert_equal(sum, actual_sum)
   end

@@ -231,6 +231,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_summary_reference(orig_hpxml, new_hpxml)
     # Global variables
+    @bldg_type = orig_hpxml.building_construction.residential_facility_type
     @cfa = orig_hpxml.building_construction.conditioned_floor_area
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
@@ -253,6 +254,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
     # Global variables
+    @bldg_type = orig_hpxml.building_construction.residential_facility_type
     @cfa = orig_hpxml.building_construction.conditioned_floor_area
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
@@ -276,6 +278,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_summary_iad(orig_hpxml, new_hpxml)
     # Global variables
     # Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
+    @bldg_type = orig_hpxml.building_construction.residential_facility_type
     @cfa = 2400
     @nbeds = 3
     @ncfl = 2
@@ -1291,26 +1294,49 @@ class EnergyRatingIndex301Ruleset
                                        annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
       next unless orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
 
+      new_hvac_distribution = new_hpxml.hvac_distributions[-1]
+
       if zero_leakage
-        new_hpxml.hvac_distributions[-1].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
-                                                                       duct_leakage_units: HPXML::UnitsCFM25,
-                                                                       duct_leakage_value: 0.0)
-        new_hpxml.hvac_distributions[-1].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
-                                                                       duct_leakage_units: HPXML::UnitsCFM25,
-                                                                       duct_leakage_value: 0.0)
+        new_hvac_distribution.duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
+                                                            duct_leakage_units: HPXML::UnitsCFM25,
+                                                            duct_leakage_value: 0.0,
+                                                            duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
+        new_hvac_distribution.duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
+                                                            duct_leakage_units: HPXML::UnitsCFM25,
+                                                            duct_leakage_value: 0.0,
+                                                            duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
       else
         orig_hvac_distribution.duct_leakage_measurements.each do |orig_leakage_measurement|
-          new_hpxml.hvac_distributions[-1].duct_leakage_measurements.add(duct_type: orig_leakage_measurement.duct_type,
-                                                                         duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
-                                                                         duct_leakage_value: orig_leakage_measurement.duct_leakage_value)
+          duct_leakage_value = orig_leakage_measurement.duct_leakage_value
+          duct_leakage_total_or_to_outside = orig_leakage_measurement.duct_leakage_total_or_to_outside
+
+          # Total duct leakage?
+          if duct_leakage_total_or_to_outside == HPXML::DuctLeakageTotal
+
+            if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014ADEGL')
+              fail "ERI Version #{@eri_version} does not support total duct leakage testing."
+            end
+
+            if @bldg_type == HPXML::ResidentialTypeApartment
+              fail 'FIXME TODO'
+            else # Dwellings/Townhouses only
+              duct_leakage_total_or_to_outside = HPXML::DuctLeakageToOutside
+              duct_leakage_value *= 0.5
+            end
+          end
+
+          new_hvac_distribution.duct_leakage_measurements.add(duct_type: orig_leakage_measurement.duct_type,
+                                                              duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
+                                                              duct_leakage_value: duct_leakage_value,
+                                                              duct_leakage_total_or_to_outside: duct_leakage_total_or_to_outside)
         end
       end
 
       orig_hvac_distribution.ducts.each do |orig_duct|
-        new_hpxml.hvac_distributions[-1].ducts.add(duct_type: orig_duct.duct_type,
-                                                   duct_insulation_r_value: orig_duct.duct_insulation_r_value,
-                                                   duct_location: orig_duct.duct_location,
-                                                   duct_surface_area: orig_duct.duct_surface_area)
+        new_hvac_distribution.ducts.add(duct_type: orig_duct.duct_type,
+                                        duct_insulation_r_value: orig_duct.duct_insulation_r_value,
+                                        duct_location: orig_duct.duct_location,
+                                        duct_surface_area: orig_duct.duct_surface_area)
       end
     end
 
