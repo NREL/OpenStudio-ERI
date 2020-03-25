@@ -32,7 +32,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/Transaction' => one, # Required by HPXML schema
-        '/HPXML/SoftwareInfo/extension/ERICalculation[Version="latest" or Version="2014AEG" or Version="2014AE" or Version="2014A" or Version="2014"]' => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
+        '/HPXML/SoftwareInfo/extension/ERICalculation[Version="latest" or Version="2014ADEGL" or Version="2014ADEG" or Version="2014ADE" or Version="2014AD" or Version="2014A" or Version="2014"]' => one, # Choose version of 301 standard and addenda (e.g., A, D, E, G)
 
         '/HPXML/Building' => one,
         '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
@@ -389,8 +389,8 @@ class EnergyRatingIndex301Validator
 
       ## [HVACDistType=Air]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
-        'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value' => one,
-        'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value' => zero_or_one,
+        '[extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value' => one,
+        '[extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value' => zero_or_one,
         'Ducts[DuctType="supply"]' => zero_or_more, # See [HVACDuct]
         'Ducts[DuctType="return"]' => zero_or_more, # See [HVACDuct]
       },

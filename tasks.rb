@@ -255,7 +255,7 @@ def set_hpxml_header(hpxml_file, hpxml)
                      transaction: 'create',
                      software_program_used: nil,
                      software_program_version: nil,
-                     eri_calculation_version: '2014AEG',
+                     eri_calculation_version: 'latest',
                      building_id: 'MyBuilding',
                      event_type: 'proposed workscope',
                      created_date_and_time: Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z')) # Hard-code to prevent diffs
@@ -2320,6 +2320,16 @@ def create_sample_hpxmls
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     end
   end
+
+  # Create additional files
+  new_hpxml_name = 'base-hvac-ducts-leakage-exemption.xml'
+  FileUtils.cp('workflow/sample_files/base.xml', File.join('workflow/sample_files', new_hpxml_name))
+  hpxml_doc = XMLHelper.parse_file(File.join('workflow/sample_files', new_hpxml_name))
+  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.add_element(air_dist, 'extension/DuctLeakageTestingExemption', true)
+  XMLHelper.write_file(hpxml_doc, File.join('workflow/sample_files', new_hpxml_name))
 end
 
 command_list = [:generate_sample_outputs, :update_version, :update_measures, :create_release_zips]

@@ -702,7 +702,7 @@ class EnergyRatingIndexTest < Minitest::Test
     File.open(xml, 'r').each do |line|
       next unless line.strip.downcase.start_with? '<version>'
 
-      if line.include?('2014AE') || line.include?('2014AEG')
+      if line.include?('latest') || line.include?('2014ADE')
         using_iaf = true
       end
       break
