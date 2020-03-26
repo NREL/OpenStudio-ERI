@@ -978,7 +978,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
-                        operable: false,
+                        fraction_operable: 0.0,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
@@ -1003,7 +1003,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                       azimuth: 180,
                       ufactor: 1.039,
                       shgc: 0.67,
-                      operable: false,
+                      fraction_operable: 0.0,
                       wall_idref: 'WallSouth')
   elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml',
          'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
@@ -1024,7 +1024,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
-                        operable: false,
+                        fraction_operable: 0.0,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
