@@ -783,7 +783,7 @@ class EnclosureTest < MiniTest::Test
     # Rated/Reference Home windows should not be operable
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.windows.each do |window|
-      window.operable = false
+      window.fraction_operable = 0.0
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
@@ -936,9 +936,6 @@ class EnclosureTest < MiniTest::Test
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_overhangs(hpxml_doc, [2.5, 0, 4],
-                     [1.5, 2, 6],
-                     [1.5, 2, 7],
-                     [2.5, 0, 4],
                      [1.5, 2, 6],
                      [1.5, 2, 7])
 
@@ -1323,7 +1320,7 @@ class EnclosureTest < MiniTest::Test
     hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Windows/Window') do |window|
       azimuth = Integer(window.elements['Azimuth'].text)
       area_total += Float(window.elements['Area'].text)
-      area_operable += Float(window.elements['Area'].text) if Boolean(window.elements['Operable'].text)
+      area_operable += (Float(window.elements['Area'].text) * Float(window.elements['FractionOperable'].text))
 
       # Init if needed
       azimuth_area_values[azimuth] = [] if azimuth_area_values[azimuth].nil?

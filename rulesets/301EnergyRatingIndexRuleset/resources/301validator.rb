@@ -243,7 +243,7 @@ class EnergyRatingIndex301Validator
         'UFactor' => one,
         'SHGC' => one,
         'Overhangs' => zero_or_one, # See [WindowOverhang]
-        'Operable' => one,
+        'FractionOperable' => one,
         'AttachedToWall' => one,
       },
 

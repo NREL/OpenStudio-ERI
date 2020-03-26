@@ -184,7 +184,7 @@ Any window or glass door area should be specified as an ``Enclosure/Windows/Wind
 Windows are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as ``Area``.
 Windows must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
 Windows must also have an ``Azimuth`` specified, even if the attached wall does not.
-Finally, windows must have the ``Operable`` property specified for determining natural ventilation.
+Finally, windows must have the ``FractionOperable`` property specified for determining natural ventilation.
 
 Overhangs (e.g., a roof eave) can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
 Overhangs are defined by the vertical distance between the overhang and the top of the window (``DistanceToTopOfWindow``), and the vertical distance between the overhang and the bottom of the window (``DistanceToBottomOfWindow``).

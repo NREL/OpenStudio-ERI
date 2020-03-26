@@ -195,9 +195,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml = HPXML.new
 
     @eri_version = orig_hpxml.header.eri_calculation_version
-    # FIXME: Switch when 301-2019 is ready
-    # @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
-    @eri_version = '2014ADEGL' if @eri_version == 'latest'
+    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
     new_hpxml.set_header(xml_type: orig_hpxml.header.xml_type,
                          xml_generated_by: 'OpenStudio-ERI',
@@ -975,30 +973,25 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    if @is_attached_unit && (orig_hpxml.fraction_of_window_area_operable(nil) <= 0) && (not @eri_version.include? '2014') # 2019 or newer
+    if @is_attached_unit && (orig_hpxml.fraction_of_window_area_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
       # Disable natural ventilation
-      frac_operable = 0.0
+      fraction_operable = 0.0
     else
       # Default natural ventilation
-      frac_operable = Airflow.get_default_fraction_of_operable_window_area()
+      fraction_operable = Airflow.get_default_fraction_of_operable_window_area()
     end
-    frac_inoperable = 1.0 - frac_operable
 
     # Create equally distributed windows
-    { 'Operable' => frac_operable, 'Inoperable' => frac_inoperable }.each do |mode, frac|
-      next unless frac > 0
-
-      for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
-        new_hpxml.windows.add(id: "WindowArea#{orientation}#{mode}",
-                              area: 0.18 * @cfa * fa * f * 0.25 * frac,
-                              azimuth: azimuth,
-                              ufactor: ufactor,
-                              shgc: shgc,
-                              interior_shading_factor_summer: shade_summer,
-                              interior_shading_factor_winter: shade_winter,
-                              operable: (mode == 'Operable'),
-                              wall_idref: 'WallArea')
-      end
+    for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
+      new_hpxml.windows.add(id: "WindowArea#{orientation}",
+                            area: 0.18 * @cfa * fa * f * 0.25,
+                            azimuth: azimuth,
+                            ufactor: ufactor,
+                            shgc: shgc,
+                            interior_shading_factor_summer: shade_summer,
+                            interior_shading_factor_winter: shade_winter,
+                            fraction_operable: fraction_operable,
+                            wall_idref: 'WallArea')
     end
   end
 
@@ -1017,7 +1010,7 @@ class EnergyRatingIndex301Ruleset
                             overhangs_distance_to_bottom_of_window: orig_window.overhangs_distance_to_bottom_of_window,
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
-                            operable: orig_window.operable,
+                            fraction_operable: orig_window.fraction_operable,
                             wall_idref: orig_window.wall_idref)
     end
   end
@@ -1029,22 +1022,19 @@ class EnergyRatingIndex301Ruleset
     avg_shgc = calc_area_weighted_sum(ext_thermal_bndry_windows, :shgc)
 
     # Default natural ventilation
-    frac_operable = Airflow.get_default_fraction_of_operable_window_area()
-    frac_inoperable = 1.0 - frac_operable
+    fraction_operable = Airflow.get_default_fraction_of_operable_window_area()
 
     # Create equally distributed windows
-    { 'Operable' => frac_operable, 'Inoperable' => frac_inoperable }.each do |mode, frac|
-      for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
-        new_hpxml.windows.add(id: "WindowArea#{orientation}#{mode}",
-                              area: 0.18 * @cfa * 0.25 * frac,
-                              azimuth: azimuth,
-                              ufactor: avg_ufactor,
-                              shgc: avg_shgc,
-                              interior_shading_factor_summer: shade_summer,
-                              interior_shading_factor_winter: shade_winter,
-                              operable: (mode == 'Operable'),
-                              wall_idref: 'WallArea')
-      end
+    for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
+      new_hpxml.windows.add(id: "WindowArea#{orientation}",
+                            area: 0.18 * @cfa * 0.25,
+                            azimuth: azimuth,
+                            ufactor: avg_ufactor,
+                            shgc: avg_shgc,
+                            interior_shading_factor_summer: shade_summer,
+                            interior_shading_factor_winter: shade_winter,
+                            fraction_operable: fraction_operable,
+                            wall_idref: 'WallArea')
     end
   end
 
@@ -2141,7 +2131,7 @@ class EnergyRatingIndex301Ruleset
     tot_cb_area, ext_cb_area = calc_compartmentalization_boundary_areas(orig_hpxml)
     a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
 
-    if @is_attached_unit && (not @eri_version.include? '2014') # 2019 or newer
+    if @is_attached_unit && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
       cfm50 = ach50 * @infilvolume / 60.0
       if cfm50 / tot_cb_area <= 0.30
         ach50 *= a_ext
@@ -2192,7 +2182,7 @@ class EnergyRatingIndex301Ruleset
     hr = 8.202
     nl = 1000.0 * sla * (h / hr)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-    if not @eri_version.include? '2014' # 2019 or newer
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
       tot_cb_area, ext_cb_area = calc_compartmentalization_boundary_areas(orig_hpxml)
       a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
       if [HPXML::MechVentTypeBalanced, HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? fan_type
