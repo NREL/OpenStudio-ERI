@@ -707,12 +707,9 @@ class EnergyRatingIndexTest < Minitest::Test
     csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
     csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
     if expect_error
-      assert(!File.exist?(hpxmls[:ref]))
-      assert(!File.exist?(hpxmls[:rated]))
-      assert(!File.exist?(csvs[:results]))
-      assert(!File.exist?(csvs[:worksheet]))
-
-      if not expect_error_msgs.nil?
+      if expect_error_msgs.nil?
+        flunk "No error message defined for #{File.basename(xml)}."
+      else
         found_error_msg = false
         ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
           next unless File.exist? File.join(rundir, design, 'run.log')
@@ -729,7 +726,6 @@ class EnergyRatingIndexTest < Minitest::Test
         end
         assert(found_error_msg)
       end
-
     else
       # Check all output files exist
       assert(File.exist?(hpxmls[:ref]))
