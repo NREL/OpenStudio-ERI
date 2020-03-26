@@ -92,20 +92,10 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_weather_cache
-    # Download new EPW
-    require 'openssl'
-    require 'open-uri'
-
+    # Move existing -cache.csv file
     weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-    weather_epw = File.join(weather_dir, 'USA_CO_Denver-Stapleton.724690_TMY.epw')
-    begin
-      File.open(weather_epw, 'wb') do |file|
-        file.write open('https://energyplus.net/weather-download/north_and_central_america_wmo_region_4/USA/CO/USA_CO_Denver-Stapleton.724690_TMY/USA_CO_Denver-Stapleton.724690_TMY.epw', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }).read
-      end
-    rescue
-      File.delete(weather_epw)
-      flunk 'Could not download EPW.'
-    end
+    cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
+    FileUtils.mv(cache_csv, "#{cache_csv}.bak")
 
     data_csv = File.join(weather_dir, 'data.csv')
     FileUtils.cp(data_csv, "#{data_csv}.bak")
@@ -114,14 +104,12 @@ class EnergyRatingIndexTest < Minitest::Test
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
     system(command)
 
-    cache_csv = File.join(weather_dir, 'USA_CO_Denver-Stapleton.724690_TMY-cache.csv')
     assert(File.exist?(cache_csv))
 
     # Restore original and cleanup
-    FileUtils.cp("#{data_csv}.bak", data_csv)
-    File.delete("#{data_csv}.bak")
-    File.delete(weather_epw)
-    File.delete(cache_csv)
+    FileUtils.mv("#{cache_csv}.bak", cache_csv)
+    File.delete(data_csv)
+    FileUtils.mv("#{data_csv}.bak", data_csv)
   end
 
   def test_resnet_ashrae_140
