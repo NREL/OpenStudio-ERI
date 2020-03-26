@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?> 
 <HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
@@ -8,12 +8,12 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <ERICalculation>
-        <Version>2014AEG</Version>
-      </ERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
+      <ERICalculation>
+        <Version>latest</Version>
+      </ERICalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -33,6 +33,7 @@
           <NumberofResidents>3.0</NumberofResidents>
         </BuildingOccupancy>
         <BuildingConstruction>
+          <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
@@ -334,19 +335,10 @@
             <DistributionSystemType>
               <AirDistribution>
                 <DuctLeakageMeasurement>
-                  <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>75.0</Value>
-                    <TotalOrToOutside>to outside</TotalOrToOutside>
-                  </DuctLeakage>
-                </DuctLeakageMeasurement>
-                <DuctLeakageMeasurement>
-                  <DuctType>return</DuctType>
-                  <DuctLeakage>
-                    <Units>CFM25</Units>
-                    <Value>25.0</Value>
-                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                    <Value>150.0</Value>
+                    <TotalOrToOutside>total</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
@@ -360,6 +352,18 @@
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>attic - unvented</DuctLocation>
                   <DuctSurfaceArea>50.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>living space</DuctLocation>
+                  <DuctSurfaceArea>105.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>living space</DuctLocation>
+                  <DuctSurfaceArea>35.0</DuctSurfaceArea>
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>

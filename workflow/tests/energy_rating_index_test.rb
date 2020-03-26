@@ -67,7 +67,9 @@ class EnergyRatingIndexTest < Minitest::Test
                             'missing-elements.xml' => ['Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors',
                                                        'Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'],
                             'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
-                                                            'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'] }
+                                                            'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
+                            'hvac-ducts-leakage-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
+                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
@@ -90,20 +92,10 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_weather_cache
-    # Download new EPW
-    require 'openssl'
-    require 'open-uri'
-
+    # Move existing -cache.csv file
     weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-    weather_epw = File.join(weather_dir, 'USA_CO_Denver-Stapleton.724690_TMY.epw')
-    begin
-      File.open(weather_epw, 'wb') do |file|
-        file.write open('https://energyplus.net/weather-download/north_and_central_america_wmo_region_4/USA/CO/USA_CO_Denver-Stapleton.724690_TMY/USA_CO_Denver-Stapleton.724690_TMY.epw', { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }).read
-      end
-    rescue
-      File.delete(weather_epw)
-      flunk 'Could not download EPW.'
-    end
+    cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
+    FileUtils.mv(cache_csv, "#{cache_csv}.bak")
 
     data_csv = File.join(weather_dir, 'data.csv')
     FileUtils.cp(data_csv, "#{data_csv}.bak")
@@ -112,14 +104,12 @@ class EnergyRatingIndexTest < Minitest::Test
     command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
     system(command)
 
-    cache_csv = File.join(weather_dir, 'USA_CO_Denver-Stapleton.724690_TMY-cache.csv')
     assert(File.exist?(cache_csv))
 
     # Restore original and cleanup
-    FileUtils.cp("#{data_csv}.bak", data_csv)
-    File.delete("#{data_csv}.bak")
-    File.delete(weather_epw)
-    File.delete(cache_csv)
+    FileUtils.mv("#{cache_csv}.bak", cache_csv)
+    File.delete(data_csv)
+    FileUtils.mv("#{data_csv}.bak", data_csv)
   end
 
   def test_resnet_ashrae_140
@@ -702,7 +692,7 @@ class EnergyRatingIndexTest < Minitest::Test
     File.open(xml, 'r').each do |line|
       next unless line.strip.downcase.start_with? '<version>'
 
-      if line.include?('2014AE') || line.include?('2014AEG')
+      if line.include?('latest') || line.include?('2014ADE')
         using_iaf = true
       end
       break
@@ -717,12 +707,9 @@ class EnergyRatingIndexTest < Minitest::Test
     csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
     csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
     if expect_error
-      assert(!File.exist?(hpxmls[:ref]))
-      assert(!File.exist?(hpxmls[:rated]))
-      assert(!File.exist?(csvs[:results]))
-      assert(!File.exist?(csvs[:worksheet]))
-
-      if not expect_error_msgs.nil?
+      if expect_error_msgs.nil?
+        flunk "No error message defined for #{File.basename(xml)}."
+      else
         found_error_msg = false
         ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
           next unless File.exist? File.join(rundir, design, 'run.log')
@@ -739,7 +726,6 @@ class EnergyRatingIndexTest < Minitest::Test
         end
         assert(found_error_msg)
       end
-
     else
       # Check all output files exist
       assert(File.exist?(hpxmls[:ref]))
@@ -787,8 +773,7 @@ class EnergyRatingIndexTest < Minitest::Test
     measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), 'weather'))
-    args['epw_output_path'] = File.absolute_path(File.join(rundir, 'in.epw'))
-    args['osm_output_path'] = File.absolute_path(File.join(rundir, 'in.osm'))
+    args['output_path'] = File.absolute_path(rundir)
     args['hpxml_path'] = xml
     update_args_hash(measures, measure_subdir, args)
 

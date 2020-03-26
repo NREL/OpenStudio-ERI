@@ -43,7 +43,7 @@ The building description is entered in HPXML's ``/HPXML/Building/BuildingDetails
 Building Summary
 ~~~~~~~~~~~~~~~~
 
-This section describes elements specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, etc.
+This section describes elements specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, residential facility type, etc.
 
 The ``BuildingSummary/Site/FuelTypesAvailable`` element is used to determine whether the home has access to natural gas or fossil fuel delivery (specified by any value other than "electricity").
 This information may be used for determining the heating system, as specified by the ERI 301 Standard.
@@ -105,7 +105,7 @@ Air Leakage
 ***********
 
 Building air leakage characterized by air changes per hour or cfm at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``. 
-The ``Enclosure/AirInfiltration/AirInfiltrationMeasurement`` should be specified with ``HousePressure='50'`` and ``BuildingAirLeakage/UnitofMeasure='ACH'`` or ``BuildingAirLeakage/UnitofMeasure='CFM'``.
+The ``Enclosure/AirInfiltration/AirInfiltrationMeasurement`` should be specified with ``HousePressure="50"`` and ``BuildingAirLeakage/UnitofMeasure="ACH"`` or ``BuildingAirLeakage/UnitofMeasure="CFM"``.
 
 In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``AirInfiltrationMeasurement/InfiltrationVolume``.
 
@@ -113,8 +113,8 @@ Vented Attics/Crawlspaces
 *************************
 
 The ventilation rate for vented attics (or crawlspaces) can be specified using an ``Attic`` (or ``Foundation``) element.
-First, define the ``AtticType`` as ``Attic[Vented='true']`` (or ``FoundationType`` as ``Crawlspace[Vented='true']``).
-Then use the ``VentilationRate[UnitofMeasure='SLA']/Value`` element to specify a specific leakage area (SLA).
+First, define the ``AtticType`` as ``Attic[Vented="true"]`` (or ``FoundationType`` as ``Crawlspace[Vented="true"]``).
+Then use the ``VentilationRate[UnitofMeasure="SLA"]/Value`` element to specify a specific leakage area (SLA).
 If these elements are not provided, the ERI 301 Standard Reference Home defaults will be used.
 
 Roofs
@@ -314,27 +314,31 @@ HVAC Distribution
 *****************
 
 Each separate HVAC distribution system should be specified as a ``Systems/HVAC/HVACDistribution``.
-There should be at most one heating system and one cooling system attached to a distribution system.
+The three types of HVAC distribution systems allowed are ``AirDistribution``, ``HydronicDistribution``, and ``DSE``.
+There can be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
-Also, note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
 
-``AirDistribution`` systems are defined by:
+AirDistribution systems can have zero or more ``Ducts[DuctType="supply"]`` and zero or more ``Ducts[DuctType="return"]`` defined.
+Each duct must have ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` provided.
 
-- Supply leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='supply']/DuctLeakage/Value``)
-- Optional return leakage in CFM25 to the outside (``DuctLeakageMeasurement[DuctType='return']/DuctLeakage/Value``)
-- Optional supply ducts (``Ducts[DuctType='supply']``)
-- Optional return ducts (``Ducts[DuctType='return']``)
+AirDistribution systems must also have duct leakage testing provided in one of three ways:
 
-For each duct, ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` must be provided.
+#. Supply (and optionally return) leakage to the outside: ``DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value``
+#. Total leakage: ``extension/DuctLeakageTestingExemption="true"``
+#. Leakage testing exemption: ``DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value``
 
-``HydronicDistribution`` systems do not require any additional inputs.
+.. warning::
 
-``DSE`` systems are defined by a ``AnnualHeatingDistributionSystemEfficiency`` and ``AnnualCoolingDistributionSystemEfficiency`` elements.
+  Total leakage and leakage testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC© 301 have been appropriately met.
+
+HydronicDistribution systems do not require any additional inputs.
+
+DSE systems are defined by ``AnnualHeatingDistributionSystemEfficiency`` and ``AnnualCoolingDistributionSystemEfficiency`` elements.
 
 Mechanical Ventilation
 **********************
 
-A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
+A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation="true"``.
 Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
@@ -358,7 +362,7 @@ For a CFIS system, the rated flow rate should equal the amount of outdoor air pr
 Whole House Fan
 ***************
 
-A single whole house fan may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForSeasonalCoolingLoadReduction='true'``.
+A single whole house fan may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForSeasonalCoolingLoadReduction="true"``.
 Required elements include ``RatedFlowRate`` and ``FanPower``.
 
 Water Heaters
