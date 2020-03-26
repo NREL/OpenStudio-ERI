@@ -390,8 +390,8 @@ class EnergyRatingIndex301Validator
 
       ## [HVACDistType=Air]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
-        '[extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => one,
-        '[extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => zero_or_one,
+        'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | [extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => one,
+        'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | [extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => zero_or_one,
         'Ducts[DuctType="supply"]' => zero_or_more, # See [HVACDuct]
         'Ducts[DuctType="return"]' => zero_or_more, # See [HVACDuct]
       },
