@@ -322,7 +322,10 @@ Mechanical Ventilation
 **********************
 
 A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation="true"``.
-Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
+Inputs including ``FanType`` and ``HoursInOperation`` must be provided.
+
+The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, it should not be provided and the airflow rate will be defaulted.
+Likewise the fan power for the highest airflow setting should be entered as ``FanPower``; if unknown, it should not be provided and the fan power will be defaulted.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -337,7 +340,7 @@ balanced
 central fan integrated supply (CFIS)                                                       required
 ====================================  ==========================  =======================  ================================
 
-Note that AdjustedSensibleRecoveryEfficiency and AdjustedTotalRecoveryEfficiency can be provided instead.
+Note that AdjustedSensibleRecoveryEfficiency/AdjustedTotalRecoveryEfficiency can be provided instead of SensibleRecoveryEfficiency/TotalRecoveryEfficiency.
 
 In many situations, the rated flow rate should be the value derived from actual testing of the system.
 For a CFIS system, the rated flow rate should equal the amount of outdoor air provided to the distribution system.
