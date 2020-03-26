@@ -298,7 +298,8 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
                                     number_of_conditioned_floors_above_grade: 1,
                                     number_of_bedrooms: 3,
                                     conditioned_floor_area: 1539,
-                                    conditioned_building_volume: 12312)
+                                    conditioned_building_volume: 12312,
+                                    residential_facility_type: HPXML::ResidentialTypeSFD)
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     hpxml.building_construction.number_of_conditioned_floors = 2
