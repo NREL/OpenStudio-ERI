@@ -1610,19 +1610,17 @@ class EnergyRatingIndexTest < Minitest::Test
     xml_pl_sens = 0.0
     xml_pl_lat = 0.0
 
-    # Plug loads: Televisions
-    annual_kwh, frac_sens, frac_lat = MiscLoads.get_televisions_values(cfa, nbeds)
-    btu = UnitConversions.convert(annual_kwh, 'kWh', 'Btu')
-    xml_pl_sens += (frac_sens * btu)
-    xml_pl_lat += (frac_lat * btu)
-    s += "#{xml_pl_sens} #{xml_pl_lat}\n"
+    # Plug loads
+    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad') do |pl|
+      annual_kwh = Float(pl.elements['Load[Units="kWh/year"]/Value'].text)
+      frac_sens = Float(pl.elements['extension/FracSensible'].text)
+      frac_lat = Float(pl.elements['extension/FracLatent'].text)
 
-    # Plug loads: Residual
-    annual_kwh, frac_sens, frac_lat = MiscLoads.get_residual_mels_values(cfa)
-    btu = UnitConversions.convert(annual_kwh, 'kWh', 'Btu')
-    xml_pl_sens += (frac_sens * btu)
-    xml_pl_lat += (frac_lat * btu)
-    s += "#{xml_pl_sens} #{xml_pl_lat}\n"
+      btu = UnitConversions.convert(annual_kwh, 'kWh', 'Btu')
+      xml_pl_sens += (frac_sens * btu)
+      xml_pl_lat += (frac_lat * btu)
+      s += "#{xml_pl_sens} #{xml_pl_lat}\n"
+    end
 
     xml_appl_sens = 0.0
     xml_appl_lat = 0.0

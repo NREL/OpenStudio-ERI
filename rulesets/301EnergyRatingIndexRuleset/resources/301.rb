@@ -3,10 +3,11 @@ require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/geometry'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
+require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 
 class EnergyRatingIndex301Ruleset
   def self.apply_ruleset(hpxml, calc_type, weather)
@@ -321,7 +322,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
-                                                air_leakage: ach50,
+                                                air_leakage: ach50.round(2),
                                                 infiltration_volume: @infilvolume)
   end
 
@@ -334,7 +335,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
-                                                air_leakage: ach50,
+                                                air_leakage: ach50.round(2),
                                                 infiltration_volume: @infilvolume)
   end
 
@@ -1558,11 +1559,13 @@ class EnergyRatingIndex301Ruleset
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location,
+                                          performance_adjustment: 0.0,
                                           tank_volume: tank_volume,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           heating_capacity: heating_capacity,
                                           energy_factor: energy_factor,
                                           recovery_efficiency: recovery_efficiency,
+                                          uses_desuperheater: false,
                                           temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
     end
 
@@ -1588,10 +1591,14 @@ class EnergyRatingIndex301Ruleset
         heating_capacity = Waterheater.calc_water_heater_capacity(orig_water_heater.fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
       end
 
-      performance_adjustment = orig_water_heater.performance_adjustment
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
         performance_adjustment = Waterheater.get_tankless_cycling_derate()
+      else
+        performance_adjustment = 0.0
       end
+
+      uses_desuperheater = orig_water_heater.uses_desuperheater
+      uses_desuperheater = false if uses_desuperheater.nil?
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
@@ -1604,7 +1611,7 @@ class EnergyRatingIndex301Ruleset
                                           heating_capacity: heating_capacity,
                                           energy_factor: energy_factor,
                                           recovery_efficiency: orig_water_heater.recovery_efficiency,
-                                          uses_desuperheater: orig_water_heater.uses_desuperheater,
+                                          uses_desuperheater: uses_desuperheater,
                                           jacket_r_value: orig_water_heater.jacket_r_value,
                                           related_hvac_idref: orig_water_heater.related_hvac_idref,
                                           standby_loss: orig_water_heater.standby_loss,
@@ -2018,12 +2025,20 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
     # Misc
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_values(@cfa)
     new_hpxml.plug_loads.add(id: 'MiscPlugLoad',
-                             plug_load_type: HPXML::PlugLoadTypeOther)
+                             plug_load_type: HPXML::PlugLoadTypeOther,
+                             kWh_per_year: kWh_per_year,
+                             frac_sensible: frac_sensible.round(3),
+                             frac_latent: frac_latent.round(3))
 
     # Television
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_values(@cfa, @nbeds)
     new_hpxml.plug_loads.add(id: 'TelevisionPlugLoad',
-                             plug_load_type: HPXML::PlugLoadTypeTelevision)
+                             plug_load_type: HPXML::PlugLoadTypeTelevision,
+                             kWh_per_year: kWh_per_year,
+                             frac_sensible: frac_sensible.round(3),
+                             frac_latent: frac_latent.round(3))
   end
 
   def self.set_misc_loads_rated(orig_hpxml, new_hpxml)
@@ -2270,11 +2285,13 @@ class EnergyRatingIndex301Ruleset
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
                                         location: HPXML::LocationLivingSpace, # TODO => 301 Standard doesn't specify the location
+                                        performance_adjustment: 0.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,
                                         heating_capacity: wh_cap,
                                         energy_factor: wh_ef,
                                         recovery_efficiency: wh_re,
+                                        uses_desuperheater: false,
                                         temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
   end
 
