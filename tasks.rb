@@ -255,7 +255,7 @@ def set_hpxml_header(hpxml_file, hpxml)
                      transaction: 'create',
                      software_program_used: nil,
                      software_program_version: nil,
-                     eri_calculation_version: 'latest',
+                     eri_calculation_version: '2014ADEGL', # TODO: Switch to 'latest' once HERS Auto-Generation tests are updated
                      building_id: 'MyBuilding',
                      event_type: 'proposed workscope',
                      created_date_and_time: Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z')) # Hard-code to prevent diffs
