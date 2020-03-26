@@ -324,8 +324,8 @@ Each duct must have ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfac
 AirDistribution systems must also have duct leakage testing provided in one of three ways:
 
 #. Supply (and optionally return) leakage to the outside: ``DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value``
-#. Total leakage: ``extension/DuctLeakageTestingExemption="true"``
-#. Leakage testing exemption: ``DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value``
+#. Total leakage: ``extension/DuctLeakageTestingExemption="true"`` (Version 2014ADEGL or newer)
+#. Leakage testing exemption: ``DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value`` (Version 2014AD or newer)
 
 .. warning::
 
