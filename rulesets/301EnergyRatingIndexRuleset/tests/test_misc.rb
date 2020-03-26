@@ -13,14 +13,20 @@ class MiscTest < MiniTest::Test
   def test_misc
     hpxml_name = 'base.xml'
 
-    # Reference Home, Rated Home, IAD, IAD Reference
+    # Reference Home, Rated Home
     calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIRatedHome]
+    calc_types.each do |calc_type|
+      hpxml_doc = _test_measure(hpxml_name, calc_type)
+      _check_misc(hpxml_doc, 2457, 0.855, 0.045, 620, 1, 0)
+    end
+
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml_doc = _test_measure(hpxml_name, calc_type)
-      _check_misc(hpxml_doc)
+      _check_misc(hpxml_doc, 2184, 0.855, 0.045, 620, 1, 0)
     end
   end
 
@@ -68,9 +74,15 @@ class MiscTest < MiniTest::Test
     return hpxml_doc
   end
 
-  def _check_misc(hpxml_doc)
-    misc = hpxml_doc.elements['/HPXML/Building/BuildingDetails/MiscLoads']
-    refute_nil(misc.elements["PlugLoad[PlugLoadType='other']"])
-    refute_nil(misc.elements["PlugLoad[PlugLoadType='TV other']"])
+  def _check_misc(hpxml_doc, misc_kwh, misc_sens, misc_lat, tv_kwh, tv_sens, tv_lat)
+    misc = hpxml_doc.elements['/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="other"]']
+    assert_in_epsilon(Float(misc.elements['Load[Units="kWh/year"]/Value'].text), misc_kwh, 0.01)
+    assert_in_epsilon(Float(misc.elements['extension/FracSensible'].text), misc_sens, 0.01)
+    assert_in_epsilon(Float(misc.elements['extension/FracLatent'].text), misc_lat, 0.01)
+
+    tv = hpxml_doc.elements['/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad[PlugLoadType="TV other"]']
+    assert_in_epsilon(Float(tv.elements['Load[Units="kWh/year"]/Value'].text), tv_kwh, 0.01)
+    assert_in_epsilon(Float(tv.elements['extension/FracSensible'].text), tv_sens, 0.01)
+    assert_in_epsilon(Float(tv.elements['extension/FracLatent'].text), tv_lat, 0.01)
   end
 end

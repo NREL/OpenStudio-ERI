@@ -654,7 +654,7 @@ versions.each do |program, version|
 
   runs << [Constants.CalcTypeERIRatedHome]
   runs << [Constants.CalcTypeERIReferenceHome]
-  if not ['2014', '2014A'].include? version
+  if (version == 'latest') || (Constants.ERIVersions.index(version) >= Constants.ERIVersions.index('2014ADE'))
     runs << [Constants.CalcTypeERIIndexAdjustmentDesign]
     runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome]
   end

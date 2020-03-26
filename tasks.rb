@@ -255,7 +255,7 @@ def set_hpxml_header(hpxml_file, hpxml)
                      transaction: 'create',
                      software_program_used: nil,
                      software_program_version: nil,
-                     eri_calculation_version: '2014AEG',
+                     eri_calculation_version: 'latest',
                      building_id: 'MyBuilding',
                      event_type: 'proposed workscope',
                      created_date_and_time: Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z')) # Hard-code to prevent diffs
@@ -294,7 +294,8 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
                                     number_of_conditioned_floors_above_grade: 1,
                                     number_of_bedrooms: 3,
                                     conditioned_floor_area: 1539,
-                                    conditioned_building_volume: 12312)
+                                    conditioned_building_volume: 12312,
+                                    residential_facility_type: HPXML::ResidentialTypeSFD)
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     hpxml.building_construction.number_of_conditioned_floors = 2
@@ -977,7 +978,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
-                        operable: false,
+                        fraction_operable: 0.0,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
@@ -1002,7 +1003,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                       azimuth: 180,
                       ufactor: 1.039,
                       shgc: 0.67,
-                      operable: false,
+                      fraction_operable: 0.0,
                       wall_idref: 'WallSouth')
   elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml',
          'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
@@ -1023,7 +1024,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
-                        operable: false,
+                        fraction_operable: 0.0,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
@@ -1553,10 +1554,12 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear()
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: 0)
+                                                              duct_leakage_value: 0,
+                                                              duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: 0)
+                                                              duct_leakage_value: 0,
+                                                              duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml',
          'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
     # Supply and return duct leakage = 125 cfm each
@@ -2187,6 +2190,8 @@ def set_hpxml_misc_load_schedule(hpxml_file, hpxml)
 end
 
 def create_sample_hpxmls
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+
   # Copy sample files from hpxml-measures subtree
   puts 'Copying sample files...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
@@ -2292,8 +2297,7 @@ def create_sample_hpxmls
                   'base-misc-defaults.xml',
                   'base-misc-lighting-none.xml',
                   'base-misc-timestep-10-mins.xml',
-                  'base-site-neighbors.xml',
-                  'base-version-latest.xml']
+                  'base-site-neighbors.xml']
   exclude_list.each do |exclude_file|
     if File.exist? "workflow/sample_files/#{exclude_file}"
       FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
@@ -2317,6 +2321,64 @@ def create_sample_hpxmls
       XMLHelper.add_element(eri_calculation, 'Version', 'latest')
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     end
+  end
+
+  # Create additional files
+
+  # Duct leakage exemption
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
+  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.add_element(air_dist, 'extension/DuctLeakageTestingExemption', true)
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+
+  # ... and invalid test file (pre-Addendum L)
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014A'
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
+
+  # Duct leakage total
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
+  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  supply_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeSupply}']")
+  return_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeReturn}']")
+  # Add total duct leakage
+  duct_leakage_measurement_el = XMLHelper.add_element(air_dist, 'DuctLeakageMeasurement')
+  duct_leakage_el = XMLHelper.add_element(duct_leakage_measurement_el, 'DuctLeakage')
+  XMLHelper.add_element(duct_leakage_el, 'Units', HPXML::UnitsCFM25)
+  XMLHelper.add_element(duct_leakage_el, 'Value', 150.0)
+  XMLHelper.add_element(duct_leakage_el, 'TotalOrToOutside', HPXML::DuctLeakageTotal)
+  # Add ducts back
+  air_dist << supply_ducts
+  air_dist << return_ducts
+  # Add supply duct in conditioned space
+  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
+  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeSupply)
+  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
+  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
+  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 105.0)
+  # Add return duct in conditioned space
+  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
+  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeReturn)
+  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
+  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
+  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 35.0)
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+
+  # ... and invalid test file (pre-Addendum L)
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014ADEG'
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
+
+  # Older versions
+  Constants.ERIVersions.each do |eri_version|
+    next if eri_version.include? '2019'
+    hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
+    hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = eri_version
+    XMLHelper.write_file(hpxml_doc, "workflow/sample_files/base-version-#{eri_version}.xml")
   end
 end
 

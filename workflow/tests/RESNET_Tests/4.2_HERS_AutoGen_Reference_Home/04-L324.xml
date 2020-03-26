@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014AEG</Version>
+        <Version>latest</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -27,6 +27,7 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
+          <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
@@ -418,7 +419,7 @@
             <Azimuth>0</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallNorth'/>
           </Window>
           <Window>
@@ -427,7 +428,7 @@
             <Azimuth>90</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallEast'/>
           </Window>
           <Window>
@@ -436,7 +437,7 @@
             <Azimuth>180</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
           <Window>
@@ -445,7 +446,7 @@
             <Azimuth>270</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallWest'/>
           </Window>
         </Windows>

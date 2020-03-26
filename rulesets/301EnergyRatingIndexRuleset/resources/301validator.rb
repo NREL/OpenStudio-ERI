@@ -32,13 +32,14 @@ class EnergyRatingIndex301Validator
         '/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/Transaction' => one, # Required by HPXML schema
-        '/HPXML/SoftwareInfo/extension/ERICalculation[Version="latest" or Version="2019A" or Version="2019" or Version="2014AEG" or Version="2014AE" or Version="2014A" or Version="2014"]' => one, # Choose version of 301 standard and addenda (e.g., A, E, G)
+        '/HPXML/SoftwareInfo/extension/ERICalculation[Version="latest" or Version="2019A" or Version="2019" or Version="2014ADEGL" or Version="2014ADEG" or Version="2014ADE" or Version="2014AD" or Version="2014A" or Version="2014"]' => one, # Choose version of 301 standard and addenda (e.g., A, D, E, G)
 
         '/HPXML/Building' => one,
         '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
         '/HPXML/Building/ProjectStatus/EventType' => one, # Required by HPXML schema
 
         '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable/Fuel' => one_or_more,
+        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType="single-family detached" or ResidentialFacilityType="single-family attached" or ResidentialFacilityType="apartment unit" or ResidentialFacilityType="manufactured home"]' => one,
         '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
         '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
         '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
@@ -415,8 +416,8 @@ class EnergyRatingIndex301Validator
 
       ## [HVACDistType=Air]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
-        'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value' => one,
-        'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value' => zero_or_one,
+        'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | [extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => one,
+        'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | [extension/DuctLeakageTestingExemption="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => zero_or_one,
         'Ducts[DuctType="supply"]' => zero_or_more, # See [HVACDuct]
         'Ducts[DuctType="return"]' => zero_or_more, # See [HVACDuct]
       },
