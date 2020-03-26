@@ -318,10 +318,10 @@ The three types of HVAC distribution systems allowed are ``AirDistribution``, ``
 There can be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
 
-``AirDistribution`` systems can have zero or more ``Ducts[DuctType="supply"]`` and zero or more ``Ducts[DuctType="return"]`` defined.
+AirDistribution systems can have zero or more ``Ducts[DuctType="supply"]`` and zero or more ``Ducts[DuctType="return"]`` defined.
 Each duct must have ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` provided.
 
-``AirDistribution`` systems must also have duct leakage testing provided in one of three ways:
+AirDistribution systems must also have duct leakage testing provided in one of three ways:
 
 #. Supply (and optionally return) leakage to the outside: ``DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value``
 #. Total leakage: ``extension/DuctLeakageTestingExemption="true"``
@@ -331,9 +331,9 @@ Each duct must have ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfac
 
   Total leakage and leakage testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC© 301 have been appropriately met.
 
-``HydronicDistribution`` systems do not require any additional inputs.
+HydronicDistribution systems do not require any additional inputs.
 
-``DSE`` systems are defined by ``AnnualHeatingDistributionSystemEfficiency`` and ``AnnualCoolingDistributionSystemEfficiency`` elements.
+DSE systems are defined by ``AnnualHeatingDistributionSystemEfficiency`` and ``AnnualCoolingDistributionSystemEfficiency`` elements.
 
 Mechanical Ventilation
 **********************
