@@ -227,7 +227,7 @@
             <Azimuth>0</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.01</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallNorth'/>
           </Window>
           <Window>
@@ -236,7 +236,7 @@
             <Azimuth>90</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.01</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallEast'/>
           </Window>
           <Window>
@@ -245,7 +245,7 @@
             <Azimuth>180</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.01</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
           <Window>
@@ -254,7 +254,7 @@
             <Azimuth>270</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.01</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallWest'/>
           </Window>
         </Windows>

@@ -241,7 +241,7 @@
               <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
             </Overhangs>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
         </Windows>
