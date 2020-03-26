@@ -194,7 +194,9 @@ class EnergyRatingIndex301Ruleset
     new_hpxml = HPXML.new
 
     @eri_version = orig_hpxml.header.eri_calculation_version
-    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
+    # FIXME: Switch when 301-2019 is ready
+    # @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
+    @eri_version = '2014ADEGL' if @eri_version == 'latest'
 
     new_hpxml.set_header(xml_type: orig_hpxml.header.xml_type,
                          xml_generated_by: 'OpenStudio-ERI',
@@ -249,7 +251,8 @@ class EnergyRatingIndex301Ruleset
                                         number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
                                         number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
                                         conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume)
+                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
+                                        residential_facility_type: @bldg_type)
   end
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
@@ -272,7 +275,8 @@ class EnergyRatingIndex301Ruleset
                                         number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
                                         number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
                                         conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume)
+                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
+                                        residential_facility_type: @bldg_type)
   end
 
   def self.set_summary_iad(orig_hpxml, new_hpxml)
@@ -296,7 +300,8 @@ class EnergyRatingIndex301Ruleset
                                         number_of_conditioned_floors_above_grade: @ncfl_ag,
                                         number_of_bedrooms: @nbeds,
                                         conditioned_floor_area: @cfa,
-                                        conditioned_building_volume: @cvolume)
+                                        conditioned_building_volume: @cvolume,
+                                        residential_facility_type: @bldg_type)
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
