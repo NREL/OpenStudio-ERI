@@ -2326,19 +2326,20 @@ def create_sample_hpxmls
   # Create additional files
 
   # Duct leakage exemption
-  new_hpxml_name = 'base-hvac-ducts-leakage-exemption.xml'
-  FileUtils.cp('workflow/sample_files/base.xml', File.join('workflow/sample_files', new_hpxml_name))
-  hpxml_doc = XMLHelper.parse_file(File.join('workflow/sample_files', new_hpxml_name))
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
   air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
   XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
   XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
   XMLHelper.add_element(air_dist, 'extension/DuctLeakageTestingExemption', true)
-  XMLHelper.write_file(hpxml_doc, File.join('workflow/sample_files', new_hpxml_name))
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+
+  # ... and invalid test file (pre-Addendum L)
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014A'
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
 
   # Duct leakage total
-  new_hpxml_name = 'base-hvac-ducts-leakage-total.xml'
-  FileUtils.cp('workflow/sample_files/base.xml', File.join('workflow/sample_files', new_hpxml_name))
-  hpxml_doc = XMLHelper.parse_file(File.join('workflow/sample_files', new_hpxml_name))
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
   air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
   XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
   XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
@@ -2365,7 +2366,12 @@ def create_sample_hpxmls
   XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
   XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
   XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 35.0)
-  XMLHelper.write_file(hpxml_doc, File.join('workflow/sample_files', new_hpxml_name))
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+
+  # ... and invalid test file (pre-Addendum L)
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014ADEG'
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
 
   # Older versions
   Constants.ERIVersions.each do |eri_version|
