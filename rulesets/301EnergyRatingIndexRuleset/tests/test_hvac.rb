@@ -703,22 +703,26 @@ class HVACtest < MiniTest::Test
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
-    
+
     # Rated Home
     calc_type = Constants.CalcTypeERIRatedHome
     hpxml_doc = _test_measure(hpxml_name, calc_type)
     _check_duct_leakage(hpxml_doc, HPXML::DuctLeakageToOutside, 75.0)
 
-    # FIXME TODO
-
     # Addendum L - Apartments
-    # hpxml_doc.elements['/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType'].text = HPXML::ResidentialTypeApartment
+    # Create derivative file for testing
+    hpxml_name = 'base-hvac-ducts-leakage-total.xml'
+    hpxml_doc = REXML::Document.new(File.read(File.join(@root_path, 'workflow', 'sample_files', hpxml_name)))
+    hpxml_doc.elements['/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType'].text = HPXML::ResidentialTypeApartment
 
     # Save new file
-    # hpxml_name = File.basename(@tmp_hpxml_path)
-    # XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
 
-    # FIXME TODO
+    # Rated Home
+    calc_type = Constants.CalcTypeERIRatedHome
+    hpxml_doc = _test_measure(hpxml_name, calc_type)
+    _check_duct_leakage(hpxml_doc, HPXML::DuctLeakageToOutside, 128.2)
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -926,6 +930,6 @@ class HVACtest < MiniTest::Test
       actual_sum += Float(duct_lk.elements['Value'].text)
       assert_equal(total_or_to_outside, duct_lk.elements['TotalOrToOutside'].text)
     end
-    assert_equal(sum, actual_sum)
+    assert_in_epsilon(sum, actual_sum, 0.01)
   end
 end

@@ -1553,10 +1553,12 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear()
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: 0)
+                                                              duct_leakage_value: 0,
+                                                              duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: 0)
+                                                              duct_leakage_value: 0,
+                                                              duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml',
          'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
     # Supply and return duct leakage = 125 cfm each
@@ -2336,19 +2338,28 @@ def create_sample_hpxmls
   new_hpxml_name = 'base-hvac-ducts-leakage-total.xml'
   FileUtils.cp('workflow/sample_files/base.xml', File.join('workflow/sample_files', new_hpxml_name))
   hpxml_doc = XMLHelper.parse_file(File.join('workflow/sample_files', new_hpxml_name))
-  air_distribution = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
-  air_distribution.elements.each('DuctLeakageMeasurement/DuctLeakage') do |duct_lk|
-    duct_lk.elements['TotalOrToOutside'].text = HPXML::DuctLeakageTotal
-    duct_lk.elements['Value'].text = Float(duct_lk.elements['Value'].text) * 1.5
-  end
+  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  supply_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeSupply}']")
+  return_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeReturn}']")
+  # Add total duct leakage
+  duct_leakage_measurement_el = XMLHelper.add_element(air_dist, 'DuctLeakageMeasurement')
+  duct_leakage_el = XMLHelper.add_element(duct_leakage_measurement_el, 'DuctLeakage')
+  XMLHelper.add_element(duct_leakage_el, 'Units', HPXML::UnitsCFM25)
+  XMLHelper.add_element(duct_leakage_el, 'Value', 150.0)
+  XMLHelper.add_element(duct_leakage_el, 'TotalOrToOutside', HPXML::DuctLeakageTotal)
+  # Add ducts back
+  air_dist << supply_ducts
+  air_dist << return_ducts
   # Add supply duct in conditioned space
-  ducts_el = XMLHelper.add_element(air_distribution, 'Ducts')
+  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
   XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeSupply)
   XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
   XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
   XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 105.0)
   # Add return duct in conditioned space
-  ducts_el = XMLHelper.add_element(air_distribution, 'Ducts')
+  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
   XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeReturn)
   XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
   XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)

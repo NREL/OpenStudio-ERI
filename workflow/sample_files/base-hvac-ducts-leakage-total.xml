@@ -33,6 +33,7 @@
           <NumberofResidents>3.0</NumberofResidents>
         </BuildingOccupancy>
         <BuildingConstruction>
+          <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
@@ -390,18 +391,9 @@
             <DistributionSystemType>
               <AirDistribution>
                 <DuctLeakageMeasurement>
-                  <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>112.5</Value>
-                    <TotalOrToOutside>total</TotalOrToOutside>
-                  </DuctLeakage>
-                </DuctLeakageMeasurement>
-                <DuctLeakageMeasurement>
-                  <DuctType>return</DuctType>
-                  <DuctLeakage>
-                    <Units>CFM25</Units>
-                    <Value>37.5</Value>
+                    <Value>150.0</Value>
                     <TotalOrToOutside>total</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>

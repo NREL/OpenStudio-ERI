@@ -787,8 +787,7 @@ class EnergyRatingIndexTest < Minitest::Test
     measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), 'weather'))
-    args['epw_output_path'] = File.absolute_path(File.join(rundir, 'in.epw'))
-    args['osm_output_path'] = File.absolute_path(File.join(rundir, 'in.osm'))
+    args['output_path'] = File.absolute_path(rundir)
     args['hpxml_path'] = xml
     update_args_hash(measures, measure_subdir, args)
 
