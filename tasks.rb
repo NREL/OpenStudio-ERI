@@ -222,6 +222,12 @@ def create_test_hpxmls
         fail errors.to_s
       end
 
+      # Check for additional errors
+      errors = hpxml.check_for_errors()
+      if errors.size > 0
+        fail "ERRORS: #{errors}"
+      end
+
       FileUtils.mkdir_p(File.dirname(hpxml_path))
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     rescue Exception => e
@@ -1970,7 +1976,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
-    hpxml.clothes_washers.add()
+    hpxml.clothes_washers.clear()
   else
     # Standard
     hpxml.clothes_washers.clear()
