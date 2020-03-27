@@ -34,10 +34,14 @@ def create_test_hpxmls
     'RESNET_Tests/4.1_Standard_140/L202AL.xml' => 'RESNET_Tests/4.1_Standard_140/L200AL.xml',
     'RESNET_Tests/4.1_Standard_140/L304XC.xml' => 'RESNET_Tests/4.1_Standard_140/L302XC.xml',
     'RESNET_Tests/4.1_Standard_140/L324XC.xml' => 'RESNET_Tests/4.1_Standard_140/L322XC.xml',
-    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
-    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
-    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml' => 'RESNET_Tests/4.1_Standard_140/L304XC.xml',
-    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml' => 'RESNET_Tests/4.1_Standard_140/L324XC.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml' => 'RESNET_Tests/4.1_Standard_140/L304XC.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml' => 'RESNET_Tests/4.1_Standard_140/L324XC.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
+    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
     'RESNET_Tests/4.3_HERS_Method/L100A-01.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
     'RESNET_Tests/4.3_HERS_Method/L100A-02.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
     'RESNET_Tests/4.3_HERS_Method/L100A-03.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -218,6 +222,7 @@ def create_test_hpxmls
         fail errors.to_s
       end
 
+      FileUtils.mkdir_p(File.dirname(hpxml_path))
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     rescue Exception => e
       puts "\n#{e}\n#{e.backtrace.join('\n')}"
@@ -255,7 +260,7 @@ def set_hpxml_header(hpxml_file, hpxml)
                      transaction: 'create',
                      software_program_used: nil,
                      software_program_version: nil,
-                     eri_calculation_version: '2014ADEGL', # TODO: Switch to 'latest' once HERS Auto-Generation tests are updated
+                     eri_calculation_version: 'latest',
                      building_id: 'MyBuilding',
                      event_type: 'proposed workscope',
                      created_date_and_time: Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z')) # Hard-code to prevent diffs
@@ -267,6 +272,10 @@ def set_hpxml_header(hpxml_file, hpxml)
         hpxml_file.include?('RESNET_Tests/Other_HERS_Method_Task_Group')
     # Pre-Addendum E
     hpxml.header.eri_calculation_version = '2014A'
+  elsif hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014')
+    hpxml.header.eri_calculation_version = '2014ADEGL'
+  elsif hpxml_file.include?('RESNET_Tests/4.2_HERS_AutoGen_Reference_Home')
+    hpxml.header.eri_calculation_version = 'latest'
   end
 end
 
@@ -301,7 +310,7 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
     hpxml.building_construction.number_of_conditioned_floors = 2
     hpxml.building_construction.conditioned_floor_area = 3078
     hpxml.building_construction.conditioned_building_volume = 24624
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
@@ -311,7 +320,7 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml'].include? hpxml_file
     # 2 bedrooms
     hpxml.building_construction.number_of_bedrooms = 2
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-02.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-02.xml',
@@ -347,19 +356,19 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
                                      weather_station_id: 'WeatherStation',
                                      weather_station_name: 'Las Vegas, NV',
                                      weather_station_wmo: '723860')
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Baltimore
     hpxml.set_climate_and_risk_zones(iecc2006: '4A',
                                      weather_station_id: 'WeatherStation',
                                      weather_station_name: 'Baltimore, MD',
                                      weather_station_wmo: '724060')
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
     hpxml.set_climate_and_risk_zones(iecc2006: '3A',
                                      weather_station_id: 'WeatherStation',
                                      weather_station_name: 'Dallas, TX',
                                      weather_station_wmo: '722590')
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
     hpxml.set_climate_and_risk_zones(iecc2006: '1A',
@@ -395,9 +404,9 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
     hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
                                             constant_ach_natural: 1.5)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml',
@@ -407,7 +416,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
     hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
                                             unit_of_measure: HPXML::UnitsACHNatural,
                                             air_leakage: 0.67)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
                                             unit_of_measure: HPXML::UnitsACHNatural,
@@ -420,6 +429,25 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             house_pressure: 50,
                                             unit_of_measure: HPXML::UnitsACH,
                                             air_leakage: 3)
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
+    hpxml.air_infiltration_measurements.clear()
+    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
+                                            unit_of_measure: HPXML::UnitsACH,
+                                            house_pressure: 50,
+                                            air_leakage: 11.61)
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
+         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+    hpxml.air_infiltration_measurements.clear()
+    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
+                                            unit_of_measure: HPXML::UnitsACH,
+                                            house_pressure: 50,
+                                            air_leakage: 3.0)
+  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+    hpxml.air_infiltration_measurements.clear()
+    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
+                                            unit_of_measure: HPXML::UnitsACH,
+                                            house_pressure: 50,
+                                            air_leakage: 5.0)
   end
   hpxml.air_infiltration_measurements[0].infiltration_volume = hpxml.building_construction.conditioned_building_volume
 end
@@ -460,7 +488,7 @@ def set_hpxml_foundations(hpxml_file, hpxml)
                           foundation_type: HPXML::FoundationTypeBasementUnconditioned,
                           unconditioned_basement_thermal_boundary: HPXML::FoundationThermalBoundaryFloor,
                           within_infiltration_volume: false)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     hpxml.foundations.clear()
     hpxml.foundations.add(id: 'UnventedCrawlspace',
                           foundation_type: HPXML::FoundationTypeCrawlspaceUnvented,
@@ -715,7 +743,7 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
       hpxml.foundation_walls[i].insulation_interior_distance_to_top = 0.0
       hpxml.foundation_walls[i].insulation_interior_distance_to_bottom = 7.25
     end
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Un-vented crawlspace with R-7 crawlspace wall insulation
     hpxml.foundation_walls.add(id: 'FoundationWallNorth',
                                exterior_adjacent_to: HPXML::LocationGround,
@@ -867,7 +895,7 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
     # Energy Inefficient
     hpxml.frame_floors[0].insulation_assembly_r_value = 11.75
     hpxml.frame_floors[1].insulation_assembly_r_value = 4.24
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Uninsulated
     hpxml.frame_floors[1].insulation_assembly_r_value = 4.24
     hpxml.frame_floors[1].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
@@ -886,7 +914,7 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml',
          'RESNET_Tests/4.1_Standard_140/L322XC.xml',
          'RESNET_Tests/4.1_Standard_140/L324XC.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     hpxml.frame_floors.delete_at(1)
   end
 end
@@ -928,7 +956,7 @@ def set_hpxml_slabs(hpxml_file, hpxml)
                     under_slab_insulation_r_value: 0,
                     carpet_fraction: 0,
                     carpet_r_value: 0)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Unvented crawlspace
     hpxml.slabs.add(id: 'Slab',
                     interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
@@ -1102,7 +1130,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-19.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AL-20.xml'].include? hpxml_file
     hpxml.heating_systems.clear()
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Gas furnace with AFUE = 82%
     hpxml.heating_systems.clear()
     hpxml.heating_systems.add(id: 'HeatingSystem',
@@ -1112,7 +1140,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.82,
                               fraction_heat_load_served: 1)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Electric strip heating with COP = 1.0
     hpxml.heating_systems.clear()
     hpxml.heating_systems.add(id: 'HeatingSystem',
@@ -1121,7 +1149,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: -1,
                               heating_efficiency_percent: 1,
                               fraction_heat_load_served: 1)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     # Gas furnace with AFUE = 95%
     hpxml.heating_systems.clear()
     hpxml.heating_systems.add(id: 'HeatingSystem',
@@ -1238,7 +1266,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-19.xml',
       'RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-20.xml'].include? hpxml_file
     hpxml.cooling_systems.clear()
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # central air conditioner with SEER = 11.0
     hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(id: 'CoolingSystem',
@@ -1248,7 +1276,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 11)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Central air conditioner with SEER = 15.0
     hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(id: 'CoolingSystem',
@@ -1346,7 +1374,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
       'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     hpxml.heat_pumps.clear()
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Electric heat pump with HSPF = 7.5 and SEER = 12.0
     hpxml.heat_pumps.clear()
     hpxml.heat_pumps.add(id: 'HeatPump',
@@ -1502,10 +1530,10 @@ def set_hpxml_hvac_controls(hpxml_file, hpxml)
 end
 
 def set_hpxml_hvac_distributions(hpxml_file, hpxml)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+  if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
       'RESNET_Tests/4.5_DSE/HVAC3e.xml',
@@ -1535,10 +1563,10 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
                                  annual_heating_dse: 1,
                                  annual_cooling_dse: 1)
   end
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+  if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
       'RESNET_Tests/4.5_DSE/HVAC3e.xml',
@@ -1579,10 +1607,10 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 61.5
     end
   end
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
-      'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+  if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
       'RESNET_Tests/4.5_DSE/HVAC3e.xml',
@@ -1654,7 +1682,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
     hpxml.ventilation_fans.clear()
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Exhaust-only whole-dwelling mechanical ventilation
     hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -1663,7 +1691,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                hours_in_operation: 24,
                                fan_power: 14.7,
                                used_for_whole_building_ventilation: true)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
     hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -1672,7 +1700,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                hours_in_operation: 24,
                                fan_power: 14.7,
                                used_for_whole_building_ventilation: true)
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% heat recovery system
     hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -1963,8 +1991,8 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
     hpxml.clothes_dryers.clear()
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
@@ -1983,8 +2011,8 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control(),
                              combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(HPXML::FuelTypeNaturalGas))
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',
@@ -2039,8 +2067,8 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
     hpxml.cooking_ranges.clear()
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
@@ -2057,8 +2085,8 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     hpxml.cooking_ranges.add(id: 'Range',
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              is_induction: HotWaterAndAppliances.get_range_oven_reference_is_convection())
-  elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
-         'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml',

@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>latest</Version>
+        <Version>2014ADEGL</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -38,12 +38,12 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>5B</ClimateZone>
+          <ClimateZone>3A</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Colorado Springs, CO</Name>
-          <WMO>724660</WMO>
+          <Name>Dallas, TX</Name>
+          <WMO>722590</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -71,6 +71,17 @@
             </VentilationRate>
           </Attic>
         </Attics>
+        <Foundations>
+          <Foundation>
+            <SystemIdentifier id='UnventedCrawlspace'/>
+            <FoundationType>
+              <Crawlspace>
+                <Vented>false</Vented>
+              </Crawlspace>
+            </FoundationType>
+            <WithinInfiltrationVolume>false</WithinInfiltrationVolume>
+          </Foundation>
+        </Foundations>
         <Roofs>
           <Roof>
             <SystemIdentifier id='AtticRoofNorth'/>
@@ -199,6 +210,124 @@
             </Insulation>
           </Wall>
         </Walls>
+        <FoundationWalls>
+          <FoundationWall>
+            <SystemIdentifier id='FoundationWallNorth'/>
+            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - unvented</InteriorAdjacentTo>
+            <Height>4.0</Height>
+            <Area>228.0</Area>
+            <Azimuth>0</Azimuth>
+            <Thickness>8.0</Thickness>
+            <DepthBelowGrade>3.0</DepthBelowGrade>
+            <Insulation>
+              <SystemIdentifier id='FoundationWallNorthInsulation'/>
+              <Layer>
+                <InstallationType>continuous - exterior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>7.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>4.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+            </Insulation>
+          </FoundationWall>
+          <FoundationWall>
+            <SystemIdentifier id='FoundationWallEast'/>
+            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - unvented</InteriorAdjacentTo>
+            <Height>4.0</Height>
+            <Area>108.0</Area>
+            <Azimuth>90</Azimuth>
+            <Thickness>8.0</Thickness>
+            <DepthBelowGrade>3.0</DepthBelowGrade>
+            <Insulation>
+              <SystemIdentifier id='FoundationWallEastInsulation'/>
+              <Layer>
+                <InstallationType>continuous - exterior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>7.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>4.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+            </Insulation>
+          </FoundationWall>
+          <FoundationWall>
+            <SystemIdentifier id='FoundationWallSouth'/>
+            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - unvented</InteriorAdjacentTo>
+            <Height>4.0</Height>
+            <Area>228.0</Area>
+            <Azimuth>180</Azimuth>
+            <Thickness>8.0</Thickness>
+            <DepthBelowGrade>3.0</DepthBelowGrade>
+            <Insulation>
+              <SystemIdentifier id='FoundationWallSouthInsulation'/>
+              <Layer>
+                <InstallationType>continuous - exterior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>7.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>4.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+            </Insulation>
+          </FoundationWall>
+          <FoundationWall>
+            <SystemIdentifier id='FoundationWallWest'/>
+            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - unvented</InteriorAdjacentTo>
+            <Height>4.0</Height>
+            <Area>108.0</Area>
+            <Azimuth>270</Azimuth>
+            <Thickness>8.0</Thickness>
+            <DepthBelowGrade>3.0</DepthBelowGrade>
+            <Insulation>
+              <SystemIdentifier id='FoundationWallWestInsulation'/>
+              <Layer>
+                <InstallationType>continuous - exterior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>7.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>4.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+            </Insulation>
+          </FoundationWall>
+        </FoundationWalls>
         <FrameFloors>
           <FrameFloor>
             <SystemIdentifier id='FloorUnderAttic'/>
@@ -212,15 +341,44 @@
           </FrameFloor>
           <FrameFloor>
             <SystemIdentifier id='FloorOverFoundation'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <ExteriorAdjacentTo>crawlspace - unvented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='FloorOverFoundationInsulation'/>
-              <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>4.24</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
         </FrameFloors>
+        <Slabs>
+          <Slab>
+            <SystemIdentifier id='Slab'/>
+            <InteriorAdjacentTo>crawlspace - unvented</InteriorAdjacentTo>
+            <Area>1539.0</Area>
+            <Thickness>0.0</Thickness>
+            <ExposedPerimeter>168.0</ExposedPerimeter>
+            <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
+            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+            <PerimeterInsulation>
+              <SystemIdentifier id='SlabPerimeterInsulation'/>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+              </Layer>
+            </PerimeterInsulation>
+            <UnderSlabInsulation>
+              <SystemIdentifier id='SlabUnderSlabInsulation'/>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+              </Layer>
+            </UnderSlabInsulation>
+            <extension>
+              <CarpetFraction>0.0</CarpetFraction>
+              <CarpetRValue>2.5</CarpetRValue>
+            </extension>
+          </Slab>
+        </Slabs>
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>
@@ -296,11 +454,11 @@
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>10.0</Value>
+                <Value>12.0</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>6.8</Value>
+                <Value>7.5</Value>
               </AnnualHeatingEfficiency>
             </HeatPump>
           </HVACPlant>
@@ -346,38 +504,18 @@
             </DistributionSystemType>
           </HVACDistribution>
         </HVAC>
-        <WaterHeating>
-          <WaterHeatingSystem>
-            <SystemIdentifier id='WaterHeater'/>
-            <FuelType>electricity</FuelType>
-            <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>living space</Location>
-            <TankVolume>40.0</TankVolume>
-            <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <EnergyFactor>0.88</EnergyFactor>
-          </WaterHeatingSystem>
-          <HotWaterDistribution>
-            <SystemIdentifier id='HotWaterDstribution'/>
-            <SystemType>
-              <Standard>
-                <PipingLength>88.46</PipingLength>
-              </Standard>
-            </SystemType>
-            <PipeInsulation>
-              <PipeRValue>0.0</PipeRValue>
-            </PipeInsulation>
-          </HotWaterDistribution>
-          <WaterFixture>
-            <SystemIdentifier id='WaterFixture'/>
-            <WaterFixtureType>shower head</WaterFixtureType>
-            <LowFlow>false</LowFlow>
-          </WaterFixture>
-          <WaterFixture>
-            <SystemIdentifier id='WaterFixture2'/>
-            <WaterFixtureType>faucet</WaterFixtureType>
-            <LowFlow>false</LowFlow>
-          </WaterFixture>
-        </WaterHeating>
+        <MechanicalVentilation>
+          <VentilationFans>
+            <VentilationFan>
+              <SystemIdentifier id='MechanicalVentilation'/>
+              <FanType>exhaust only</FanType>
+              <TestedFlowRate>56.2</TestedFlowRate>
+              <HoursInOperation>24.0</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <FanPower>14.7</FanPower>
+            </VentilationFan>
+          </VentilationFans>
+        </MechanicalVentilation>
       </Systems>
       <Appliances>
         <ClothesWasher>
