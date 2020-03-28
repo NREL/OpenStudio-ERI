@@ -12,6 +12,8 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 # start the measure
 class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
+  attr_accessor(:orig_hpxml, :new_hpxml)
+
   # human readable name
   def name
     return 'Apply Energy Rating Index Ruleset'
@@ -77,16 +79,16 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    hpxml = HPXML.new(hpxml_path: hpxml_input_path)
+    @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path)
 
-    if not validate_hpxml(runner, hpxml_input_path, hpxml)
+    if not validate_hpxml(runner, hpxml_input_path)
       return false
     end
 
     begin
       # Weather file
       weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-      weather_wmo = hpxml.climate_and_risk_zones.weather_station_wmo
+      weather_wmo = @orig_hpxml.climate_and_risk_zones.weather_station_wmo
       epw_path = nil
       cache_path = nil
       CSV.foreach(File.join(weather_dir, 'data.csv'), headers: true) do |row|
@@ -113,7 +115,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       weather = WeatherProcess.new(nil, nil, cache_path)
 
       # Apply 301 ruleset on HPXML object
-      new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(hpxml, calc_type, weather)
+      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather)
     rescue Exception => e
       # Report exception
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
@@ -122,33 +124,33 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
     # Write new HPXML file
     if hpxml_output_path.is_initialized
-      XMLHelper.write_file(new_hpxml.to_rexml, hpxml_output_path.get)
+      XMLHelper.write_file(@new_hpxml.to_rexml, hpxml_output_path.get)
       runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
     end
 
     return true
   end
 
-  def validate_hpxml(runner, hpxml_input_path, hpxml)
+  def validate_hpxml(runner, hpxml_input_path)
     is_valid = true
 
     schemas_dir = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources')
 
     # Validate input HPXML against schema
-    XMLHelper.validate(hpxml.doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), runner).each do |error|
+    XMLHelper.validate(@orig_hpxml.doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), runner).each do |error|
       runner.registerError("#{hpxml_input_path}: #{error}")
       is_valid = false
     end
 
     # Validate input HPXML against ERI Use Case
-    errors = EnergyRatingIndex301Validator.run_validator(hpxml.doc)
+    errors = EnergyRatingIndex301Validator.run_validator(@orig_hpxml.doc)
     errors.each do |error|
       runner.registerError("#{hpxml_input_path}: #{error}")
       is_valid = false
     end
 
     # Check for additional errors
-    errors = hpxml.check_for_errors()
+    errors = @orig_hpxml.check_for_errors()
     errors.each do |error|
       runner.registerError("#{hpxml_input_path}: #{error}")
       is_valid = false
