@@ -1034,16 +1034,16 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _get_reference_home_components(hpxml, test_num)
     results = {}
-    hpxml_doc = REXML::Document.new(File.read(hpxml))
+    hpxml = HPXML.new(hpxml_path: hpxml)
 
     # Above-grade walls
-    wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml_doc)
+    wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml)
     results['Above-grade walls (Uo)'] = wall_u
     results['Above-grade wall solar absorptance (α)'] = wall_solar_abs
     results['Above-grade wall infrared emittance (ε)'] = wall_emiss
 
     # Basement walls
-    bsmt_wall_u = _get_basement_walls(hpxml_doc)
+    bsmt_wall_u = _get_basement_walls(hpxml)
     if test_num == 4
       results['Basement walls (Uo)'] = bsmt_wall_u
     else
@@ -1051,7 +1051,7 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # Above-grade floors
-    floors_u = _get_above_grade_floors(hpxml_doc)
+    floors_u = _get_above_grade_floors(hpxml)
     if test_num <= 2
       results['Above-grade floors (Uo)'] = floors_u
     else
@@ -1059,7 +1059,7 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # Slab insulation
-    slab_r, carpet_r, exp_mas_floor_area = get_hpxml_slabs(hpxml_doc)
+    slab_r, carpet_r, exp_mas_floor_area = get_hpxml_slabs(hpxml)
     if test_num >= 3
       results['Slab insulation R-Value'] = slab_r
     else
@@ -1067,20 +1067,20 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # Ceilings
-    ceil_u, ceil_area = _get_ceilings(hpxml_doc)
+    ceil_u, ceil_area = _get_ceilings(hpxml)
     results['Ceilings (Uo)'] = ceil_u
 
     # Roofs
-    roof_solar_abs, roof_emiss, roof_area = _get_roof(hpxml_doc)
+    roof_solar_abs, roof_emiss, roof_area = _get_roofs(hpxml)
     results['Roof solar absorptance (α)'] = roof_solar_abs
     results['Roof infrared emittance (ε)'] = roof_emiss
 
     # Attic vent area
-    attic_vent_area = _get_attic_vent_area(hpxml_doc)
+    attic_vent_area = _get_attic_vent_area(hpxml)
     results['Attic vent area (ft2)'] = attic_vent_area
 
     # Crawlspace vent area
-    crawl_vent_area = _get_crawl_vent_area(hpxml_doc)
+    crawl_vent_area = _get_crawl_vent_area(hpxml)
     if test_num == 2
       results['Crawlspace vent area (ft2)'] = crawl_vent_area
     else
@@ -1097,12 +1097,12 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # Doors
-    door_u, door_area = _get_doors(hpxml_doc)
+    door_u, door_area = _get_doors(hpxml)
     results['Door Area (ft2)'] = door_area
     results['Door U-Factor'] = door_u
 
     # Windows
-    win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_doc)
+    win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml)
     results['North window area (ft2)'] = win_areas[0]
     results['South window area (ft2)'] = win_areas[180]
     results['East window area (ft2)'] = win_areas[90]
@@ -1112,16 +1112,16 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Window SHGCo (cooling)'] = win_shgc_clg
 
     # Infiltration
-    sla, ach50 = _get_infiltration(hpxml_doc)
+    sla, ach50 = _get_infiltration(hpxml)
     results['SLAo (ft2/ft2)'] = sla
 
     # Internal gains
-    xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_doc)
+    xml_it_sens, xml_it_lat = _get_internal_gains(hpxml)
     results['Sensible Internal gains (Btu/day)'] = xml_it_sens
     results['Latent Internal gains (Btu/day)'] = xml_it_lat
 
     # HVAC
-    afue, hspf, seer, dse = _get_hvac(hpxml_doc)
+    afue, hspf, seer, dse = _get_hvac(hpxml)
     if (test_num == 1) || (test_num == 4)
       results['Labeled heating system rating and efficiency'] = afue
     else
@@ -1131,17 +1131,17 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Air Distribution System Efficiency'] = dse
 
     # Thermostat
-    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
+    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml)
     results['Thermostat Type'] = tstat
     results['Heating thermostat settings'] = htg_sp
     results['Cooling thermostat settings'] = clg_sp
 
     # Mechanical ventilation
-    mv_kwh, mv_cfm = _get_mech_vent(hpxml_doc)
+    mv_kwh, mv_cfm = _get_mech_vent(hpxml)
     results['Mechanical ventilation (kWh/y)'] = mv_kwh
 
     # Domestic hot water
-    ref_pipe_l, ref_loop_l = _get_dhw(hpxml_doc)
+    ref_pipe_l, ref_loop_l = _get_dhw(hpxml)
     results['DHW pipe length refPipeL'] = ref_pipe_l
     results['DHW loop length refLoopL'] = ref_loop_l
 
@@ -1150,40 +1150,39 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _get_iad_home_components(hpxml, test_num)
     results = {}
-    hpxml_doc = REXML::Document.new(File.read(hpxml))
+    hpxml = HPXML.new(hpxml_path: hpxml)
 
     # Geometry
-    nstories, nbeds, cfa, infil_volume = _get_geometry_values(hpxml_doc)
-    results['Number of Stories'] = nstories
-    results['Number of Bedrooms'] = nbeds
-    results['Conditioned Floor Area (ft2)'] = cfa
-    results['Infiltration Volume (ft3)'] = infil_volume
+    results['Number of Stories'] = hpxml.building_construction.number_of_conditioned_floors
+    results['Number of Bedrooms'] = hpxml.building_construction.number_of_bedrooms
+    results['Conditioned Floor Area (ft2)'] = hpxml.building_construction.conditioned_floor_area
+    results['Infiltration Volume (ft3)'] = hpxml.air_infiltration_measurements[0].infiltration_volume
 
     # Above-grade Walls
-    wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml_doc)
+    wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml)
     results['Above-grade walls area (ft2)'] = wall_area
     results['Above-grade walls (Uo)'] = wall_u
 
     # Roof
-    roof_solar_abs, roof_emiss, roof_area = _get_roof(hpxml_doc)
+    roof_solar_abs, roof_emiss, roof_area = _get_roofs(hpxml)
     results['Roof gross area (ft2)'] = roof_area
 
     # Ceilings
-    ceil_u, ceil_area = _get_ceilings(hpxml_doc)
+    ceil_u, ceil_area = _get_ceilings(hpxml)
     results['Ceiling gross projected footprint area (ft2)'] = ceil_area
     results['Ceilings (Uo)'] = ceil_u
 
     # Crawlspace
-    crawl_vent_area = _get_crawl_vent_area(hpxml_doc)
+    crawl_vent_area = _get_crawl_vent_area(hpxml)
     results['Crawlspace vent area (ft2)'] = crawl_vent_area
 
     # Doors
-    door_u, door_area = _get_doors(hpxml_doc)
+    door_u, door_area = _get_doors(hpxml)
     results['Door Area (ft2)'] = door_area
     results['Door R-value'] = 1.0 / door_u
 
     # Windows
-    win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_doc)
+    win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml)
     results['North window area (ft2)'] = win_areas[0]
     results['South window area (ft2)'] = win_areas[180]
     results['East window area (ft2)'] = win_areas[90]
@@ -1193,16 +1192,16 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Window SHGCo (cooling)'] = win_shgc_clg
 
     # Infiltration
-    sla, ach50 = _get_infiltration(hpxml_doc)
+    sla, ach50 = _get_infiltration(hpxml)
     results['Infiltration rate (ACH50)'] = ach50
 
     # Mechanical Ventilation
-    mv_kwh, mv_cfm = _get_mech_vent(hpxml_doc)
+    mv_kwh, mv_cfm = _get_mech_vent(hpxml)
     results['Mechanical ventilation rate'] = mv_cfm
     results['Mechanical ventilation'] = mv_kwh
 
     # HVAC
-    afue, hspf, seer, dse = _get_hvac(hpxml_doc)
+    afue, hspf, seer, dse = _get_hvac(hpxml)
     if (test_num == 1) || (test_num == 4)
       results['Labeled heating system rating and efficiency'] = afue
     else
@@ -1211,7 +1210,7 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Labeled cooling system rating and efficiency'] = seer
 
     # Thermostat
-    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml_doc)
+    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml)
     results['Thermostat Type'] = tstat
     results['Heating thermostat settings'] = htg_sp
     results['Cooling thermostat settings'] = clg_sp
@@ -1439,138 +1438,128 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(78, results['Cooling thermostat settings'])
   end
 
-  def _get_geometry_values(hpxml_doc)
-    nstories = Integer(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors'))
-    nbeds = Integer(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms'))
-    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
-    infil_volume = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume'))
-    return nstories, nbeds, cfa, infil_volume
-  end
+  def _get_above_grade_walls(hpxml)
+    u_factor = solar_abs = emittance = area = num = 0.0
+    hpxml.walls.each do |wall|
+      next unless wall.is_exterior_thermal_boundary
 
-  def _get_above_grade_walls(hpxml_doc)
-    u_factor = 0.0
-    solar_abs = 0.0
-    emittance = 0.0
-    num = 0
-    area = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall[InteriorAdjacentTo='living space' and ExteriorAdjacentTo='outside']") do |wall|
-      u_factor += 1.0 / Float(XMLHelper.get_value(wall, 'Insulation/AssemblyEffectiveRValue'))
-      solar_abs += Float(XMLHelper.get_value(wall, 'SolarAbsorptance'))
-      emittance += Float(XMLHelper.get_value(wall, 'Emittance'))
-      area += Float(XMLHelper.get_value(wall, 'Area'))
+      u_factor += 1.0 / wall.insulation_assembly_r_value
+      solar_abs += wall.solar_absorptance
+      emittance += wall.emittance
+      area += wall.area
       num += 1
     end
     return u_factor / num, solar_abs / num, emittance / num, area
   end
 
-  def _get_basement_walls(hpxml_doc)
-    u_factor = 0.0
-    num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='basement - conditioned' and ExteriorAdjacentTo='ground']") do |fnd_wall|
-      u_factor += 1.0 / Float(XMLHelper.get_value(fnd_wall, 'Insulation/AssemblyEffectiveRValue'))
+  def _get_basement_walls(hpxml)
+    u_factor = num = 0.0
+    hpxml.foundation_walls.each do |foundation_wall|
+      next unless foundation_wall.is_exterior_thermal_boundary
+
+      u_factor += 1.0 / foundation_wall.insulation_assembly_r_value
       num += 1
     end
     return u_factor / num
   end
 
-  def _get_above_grade_floors(hpxml_doc)
-    u_factor = 0.0
-    num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='living space' and (ExteriorAdjacentTo='outside' or ExteriorAdjacentTo='crawlspace - vented')]") do |floor|
-      u_factor += 1.0 / Float(XMLHelper.get_value(floor, 'Insulation/AssemblyEffectiveRValue'))
+  def _get_above_grade_floors(hpxml)
+    u_factor = num = 0.0
+    hpxml.frame_floors.each do |frame_floor|
+      next unless frame_floor.is_floor
+
+      u_factor += 1.0 / frame_floor.insulation_assembly_r_value
       num += 1
     end
     return u_factor / num
   end
 
-  def get_hpxml_slabs(hpxml_doc)
-    r_value = 0.0
-    carpet_r_value = 0.0
-    exp_area = 0.0
-    carpet_num = 0
-    r_num = 0
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab') do |fnd_slab|
-      exp_frac = 1.0 - Float(XMLHelper.get_value(fnd_slab, 'extension/CarpetFraction'))
-      exp_area += (Float(XMLHelper.get_value(fnd_slab, 'Area')) * exp_frac)
-      carpet_r_value += Float(XMLHelper.get_value(fnd_slab, 'extension/CarpetRValue'))
+  def get_hpxml_slabs(hpxml)
+    r_value = carpet_r_value = exp_area = carpet_num = r_num = 0.0
+    hpxml.slabs.each do |slab|
+      exp_area += (slab.area * (1.0 - slab.carpet_fraction))
+      carpet_r_value += Float(slab.carpet_r_value)
       carpet_num += 1
-      r_value += Float(XMLHelper.get_value(fnd_slab, "PerimeterInsulation/Layer[InstallationType='continuous']/NominalRValue"))
+      r_value += slab.perimeter_insulation_r_value
       r_num += 1
-      r_value += Float(XMLHelper.get_value(fnd_slab, "UnderSlabInsulation/Layer[InstallationType='continuous']/NominalRValue"))
+      r_value += slab.under_slab_insulation_r_value
       r_num += 1
     end
     return r_value / r_num, carpet_r_value / carpet_num, exp_area
   end
 
-  def _get_ceilings(hpxml_doc)
-    u_factor = 0.0
-    area = 0.0
-    num = 0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
-      u_factor += 1.0 / Float(XMLHelper.get_value(attc_floor, 'Insulation/AssemblyEffectiveRValue'))
-      area += Float(XMLHelper.get_value(attc_floor, 'Area'))
+  def _get_ceilings(hpxml)
+    u_factor = area = num = 0.0
+    hpxml.frame_floors.each do |frame_floor|
+      next unless frame_floor.is_ceiling
+
+      u_factor += 1.0 / frame_floor.insulation_assembly_r_value
+      area += frame_floor.area
       num += 1
     end
     return u_factor / num, area
   end
 
-  def _get_roof(hpxml_doc)
-    solar_abs = 0.0
-    emittance = 0.0
-    area = 0.0
-    num = 0
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof') do |roof|
-      solar_abs += Float(XMLHelper.get_value(roof, 'SolarAbsorptance'))
-      emittance += Float(XMLHelper.get_value(roof, 'Emittance'))
-      area += Float(XMLHelper.get_value(roof, 'Area'))
+  def _get_roofs(hpxml)
+    solar_abs = emittance = area = num = 0.0
+    hpxml.roofs.each do |roof|
+      solar_abs += roof.solar_absorptance
+      emittance += roof.emittance
+      area += roof.area
       num += 1
     end
     return solar_abs / num, emittance / num, area
   end
 
-  def _get_attic_vent_area(hpxml_doc)
-    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value").to_f
-    area = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[InteriorAdjacentTo='attic - vented' or ExteriorAdjacentTo='attic - vented']") do |attc_floor|
-      area += Float(XMLHelper.get_value(attc_floor, 'Area'))
+  def _get_attic_vent_area(hpxml)
+    area = sla = 0.0
+    hpxml.attics.each do |attic|
+      next unless attic.attic_type == HPXML::AtticTypeVented
+
+      sla = attic.vented_attic_sla
+    end
+    hpxml.frame_floors.each do |frame_floor|
+      next unless frame_floor.is_ceiling && (frame_floor.exterior_adjacent_to == HPXML::LocationAtticVented)
+
+      area += frame_floor.area
     end
     return sla * area
   end
 
-  def _get_crawl_vent_area(hpxml_doc)
-    sla = XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='true']]/VentilationRate[UnitofMeasure='SLA']/Value").to_f
-    area = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='crawlspace - vented']") do |cs_floor|
-      area += Float(XMLHelper.get_value(cs_floor, 'Area'))
+  def _get_crawl_vent_area(hpxml)
+    area = sla = 0.0
+    hpxml.foundations.each do |foundation|
+      next unless foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
+
+      sla = foundation.vented_crawlspace_sla
+    end
+    hpxml.frame_floors.each do |frame_floor|
+      next unless frame_floor.is_floor && (frame_floor.exterior_adjacent_to == HPXML::LocationCrawlspaceVented)
+
+      area += frame_floor.area
     end
     return sla * area
   end
 
-  def _get_doors(hpxml_doc)
-    area = 0.0
-    u_factor = 0.0
-    num = 0
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Doors/Door') do |door|
-      area += Float(XMLHelper.get_value(door, 'Area'))
-      u_factor += 1.0 / Float(XMLHelper.get_value(door, 'RValue'))
+  def _get_doors(hpxml)
+    area = u_factor = num = 0.0
+    hpxml.doors.each do |door|
+      area += door.area
+      u_factor += 1.0 / door.r_value
       num += 1
     end
     return u_factor / num, area
   end
 
-  def _get_windows(hpxml_doc)
+  def _get_windows(hpxml)
     areas = { 0 => 0.0, 90 => 0.0, 180 => 0.0, 270 => 0.0 }
-    u_factor = 0.0
-    shgc_htg = 0.0
-    shgc_clg = 0.0
-    num = 0
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/Windows/Window') do |win|
-      azimuth = Integer(XMLHelper.get_value(win, 'Azimuth'))
-      areas[azimuth] += Float(XMLHelper.get_value(win, 'Area'))
-      u_factor += Float(XMLHelper.get_value(win, 'UFactor'))
-      shgc = Float(XMLHelper.get_value(win, 'SHGC'))
-      shading_winter = Float(XMLHelper.get_value(win, 'InteriorShading/WinterShadingCoefficient'))
-      shading_summer = Float(XMLHelper.get_value(win, 'InteriorShading/SummerShadingCoefficient'))
+    u_factor = shgc_htg = shgc_clg = num = 0.0
+    hpxml.windows.each do |window|
+      areas[window.azimuth] += window.area
+      u_factor += window.ufactor
+      shgc = window.shgc
+      shading_winter = window.interior_shading_factor_winter
+      shading_summer = window.interior_shading_factor_summer
       shgc_htg += (shgc * shading_winter)
       shgc_clg += (shgc * shading_summer)
       num += 1
@@ -1578,33 +1567,30 @@ class EnergyRatingIndexTest < Minitest::Test
     return areas, u_factor / num, shgc_htg / num, shgc_clg / num
   end
 
-  def _get_infiltration(hpxml_doc)
-    ach50 = Float(XMLHelper.get_value(hpxml_doc, "/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[HousePressure='50']/BuildingAirLeakage[UnitofMeasure='ACH']/AirLeakage"))
-    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
-    infil_volume = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/InfiltrationVolume'))
+  def _get_infiltration(hpxml)
+    air_infil = hpxml.air_infiltration_measurements[0]
+    ach50 = air_infil.air_leakage
+    cfa = hpxml.building_construction.conditioned_floor_area
+    infil_volume = air_infil.infiltration_volume
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, cfa, infil_volume)
     return sla, ach50
   end
 
-  def _get_internal_gains(hpxml_doc)
+  def _get_internal_gains(hpxml)
     s = ''
-    nbeds = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms'))
-    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
-    eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version')
-    gfa = Float(hpxml_doc.elements["sum(/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='garage']/Area/text())"])
+    nbeds = hpxml.building_construction.number_of_bedrooms
+    cfa = hpxml.building_construction.conditioned_floor_area
+    eri_version = hpxml.header.eri_calculation_version
+    gfa = hpxml.slabs.select { |s| s.interior_adjacent_to == HPXML::LocationGarage }.map { |s| s.area }.inject(0, :+)
 
     xml_pl_sens = 0.0
     xml_pl_lat = 0.0
 
     # Plug loads
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/MiscLoads/PlugLoad') do |pl|
-      annual_kwh = Float(pl.elements['Load[Units="kWh/year"]/Value'].text)
-      frac_sens = Float(pl.elements['extension/FracSensible'].text)
-      frac_lat = Float(pl.elements['extension/FracLatent'].text)
-
-      btu = UnitConversions.convert(annual_kwh, 'kWh', 'Btu')
-      xml_pl_sens += (frac_sens * btu)
-      xml_pl_lat += (frac_lat * btu)
+    hpxml.plug_loads.each do |plug_load|
+      btu = UnitConversions.convert(plug_load.kWh_per_year, 'kWh', 'Btu')
+      xml_pl_sens += (plug_load.frac_sensible * btu)
+      xml_pl_lat += (plug_load.frac_latent * btu)
       s += "#{xml_pl_sens} #{xml_pl_lat}\n"
     end
 
@@ -1612,70 +1598,46 @@ class EnergyRatingIndexTest < Minitest::Test
     xml_appl_lat = 0.0
 
     # Appliances: CookingRange
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/CookingRange') do |appl|
-      cook_fuel_type = XMLHelper.get_value(appl, 'FuelType')
-      cook_is_induction = Boolean(XMLHelper.get_value(appl, 'IsInduction'))
-      oven_is_convection = Boolean(XMLHelper.get_value(appl, '../Oven/IsConvection'))
-      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cook_fuel_type, cook_is_induction, oven_is_convection)
-      btu = UnitConversions.convert(cook_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cook_annual_therm, 'therm', 'Btu')
-      xml_appl_sens += (cook_frac_sens * btu)
-      xml_appl_lat += (cook_frac_lat * btu)
-    end
+    cr = hpxml.cooking_ranges[0]
+    ov = hpxml.ovens[0]
+    cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cr.fuel_type, cr.is_induction, ov.is_convection)
+    btu = UnitConversions.convert(cook_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cook_annual_therm, 'therm', 'Btu')
+    xml_appl_sens += (cook_frac_sens * btu)
+    xml_appl_lat += (cook_frac_lat * btu)
 
     # Appliances: Refrigerator
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/Refrigerator') do |appl|
-      btu = UnitConversions.convert(Float(XMLHelper.get_value(appl, 'RatedAnnualkWh')), 'kWh', 'Btu')
-      xml_appl_sens += btu
-    end
+    rf = hpxml.refrigerators[0]
+    btu = UnitConversions.convert(rf.rated_annual_kwh, 'kWh', 'Btu')
+    xml_appl_sens += btu
 
     # Appliances: Dishwasher
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/Dishwasher') do |appl|
-      dw_ef = Float(XMLHelper.get_value(appl, 'EnergyFactor'))
-      dw_cap = Float(XMLHelper.get_value(appl, 'PlaceSettingCapacity'))
-      dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dw_ef, dw_cap)
-      btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
-      xml_appl_sens += (dw_frac_sens * btu)
-      xml_appl_lat += (dw_frac_lat * btu)
-    end
+    dw = hpxml.dishwashers[0]
+    dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dw.energy_factor, dw.place_setting_capacity)
+    btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
+    xml_appl_sens += (dw_frac_sens * btu)
+    xml_appl_lat += (dw_frac_lat * btu)
 
     # Appliances: ClothesWasher
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/ClothesWasher') do |appl|
-      cw_ler = Float(XMLHelper.get_value(appl, 'RatedAnnualkWh'))
-      cw_elec_rate = Float(XMLHelper.get_value(appl, 'LabelElectricRate'))
-      cw_gas_rate = Float(XMLHelper.get_value(appl, 'LabelGasRate'))
-      cw_agc = Float(XMLHelper.get_value(appl, 'LabelAnnualGasCost'))
-      cw_cap = Float(XMLHelper.get_value(appl, 'Capacity'))
-      cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, cw_ler, cw_elec_rate, cw_gas_rate, cw_agc, cw_cap)
-      btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
-      xml_appl_sens += (cw_frac_sens * btu)
-      xml_appl_lat += (cw_frac_lat * btu)
-    end
+    cw = hpxml.clothes_washers[0]
+    cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, cw.rated_annual_kwh, cw.label_electric_rate, cw.label_gas_rate, cw.label_annual_gas_cost, cw.capacity)
+    btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
+    xml_appl_sens += (cw_frac_sens * btu)
+    xml_appl_lat += (cw_frac_lat * btu)
 
     # Appliances: ClothesDryer
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Appliances/ClothesDryer') do |appl|
-      cd_fuel = XMLHelper.get_value(appl, 'FuelType')
-      cd_ef = XMLHelper.get_value(appl, 'EnergyFactor')
-      if cd_ef.nil?
-        cd_cef = Float(XMLHelper.get_value(appl, 'CombinedEnergyFactor'))
-        cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(cd_cef)
-      else
-        cd_ef = Float(cd_ef)
-      end
-      cd_control = XMLHelper.get_value(appl, 'ControlType')
-      cw_ler = Float(XMLHelper.get_value(appl, '../ClothesWasher/RatedAnnualkWh'))
-      cw_cap = Float(XMLHelper.get_value(appl, '../ClothesWasher/Capacity'))
-      cw_mef = XMLHelper.get_value(appl, '../ClothesWasher/ModifiedEnergyFactor')
-      if cw_mef.nil?
-        cw_imef = Float(XMLHelper.get_value(appl, '../ClothesWasher/IntegratedModifiedEnergyFactor'))
-        cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(cw_imef)
-      else
-        cw_mef = Float(cw_mef)
-      end
-      cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nbeds, cd_fuel, cd_ef, cd_control, cw_ler, cw_cap, cw_mef)
-      btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
-      xml_appl_sens += (cd_frac_sens * btu)
-      xml_appl_lat += (cd_frac_lat * btu)
+    cd = hpxml.clothes_dryers[0]
+    cd_ef = cd.energy_factor
+    if cd_ef.nil?
+      cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(cd.combined_energy_factor)
     end
+    cw_mef = cw.modified_energy_factor
+    if cw_mef.nil?
+      cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(cw.integrated_modified_energy_factor)
+    end
+    cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nbeds, cd.fuel_type, cd_ef, cd.control_type, cw.rated_annual_kwh, cw.capacity, cw_mef)
+    btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
+    xml_appl_sens += (cd_frac_sens * btu)
+    xml_appl_lat += (cd_frac_lat * btu)
 
     s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
@@ -1686,27 +1648,32 @@ class EnergyRatingIndexTest < Minitest::Test
     # Occupants
     xml_occ_sens = 0.0
     xml_occ_lat = 0.0
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy') do |occ|
-      num_occ = Float(XMLHelper.get_value(occ, 'NumberofResidents'))
-      heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
-      btu = num_occ * heat_gain * hrs_per_day * 365.0
-      xml_occ_sens += (frac_sens * btu)
-      xml_occ_lat += (frac_lat * btu)
-    end
+    heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
+    btu = hpxml.building_occupancy.number_of_residents * heat_gain * hrs_per_day * 365.0
+    xml_occ_sens += (frac_sens * btu)
+    xml_occ_lat += (frac_lat * btu)
     s += "#{xml_occ_sens} #{xml_occ_lat}\n"
 
     # Lighting
     xml_ltg_sens = 0.0
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Lighting') do |ltg|
-      fFI_int = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']/FractionofUnitsInLocation"))
-      fFI_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']/FractionofUnitsInLocation"))
-      fFI_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']/FractionofUnitsInLocation"))
-      fFII_int = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']/FractionofUnitsInLocation"))
-      fFII_ext = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation"))
-      fFII_grg = Float(XMLHelper.get_value(ltg, "LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation"))
-      int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
-      xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
+    fFI_int = fFI_ext = fFI_grg = fFII_int = fFII_ext = fFII_grg = nil
+    hpxml.lighting_groups.each do |lg|
+      if (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationInterior)
+        fFI_int = lg.fration_of_units_in_location
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationExterior)
+        fFI_ext = lg.fration_of_units_in_location
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationGarage)
+        fFI_grg = lg.fration_of_units_in_location
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationInterior)
+        fFII_int = lg.fration_of_units_in_location
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationExterior)
+        fFII_ext = lg.fration_of_units_in_location
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationGarage)
+        fFII_grg = lg.fration_of_units_in_location
+      end
     end
+    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+    xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
     s += "#{xml_ltg_sens}\n"
 
     xml_btu_sens = (xml_pl_sens + xml_appl_sens + xml_water_sens + xml_occ_sens + xml_ltg_sens) / 365.0
@@ -1715,67 +1682,60 @@ class EnergyRatingIndexTest < Minitest::Test
     return xml_btu_sens, xml_btu_lat
   end
 
-  def _get_hvac(hpxml_doc)
-    afue = 0.0
-    hspf = 0.0
-    seer = 0.0
-    dse = 0.0
-    num_afue = 0
-    num_hspf = 0
-    num_seer = 0
-    num_dse = 0
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem') do |htg|
-      afue += Float(XMLHelper.get_value(htg, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
+  def _get_hvac(hpxml)
+    afue = hspf = seer = dse = num_afue = num_hspf = num_seer = num_dse = 0.0
+    hpxml.heating_systems.each do |heating_system|
+      afue += heating_system.heating_efficiency_afue
       num_afue += 1
     end
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem') do |clg|
-      seer += Float(XMLHelper.get_value(clg, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+    hpxml.cooling_systems.each do |cooling_system|
+      seer += cooling_system.cooling_efficiency_seer
       num_seer += 1
     end
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump') do |hp|
-      if hp.elements["AnnualHeatingEfficiency[Units='HSPF']"]
-        hspf += Float(XMLHelper.get_value(hp, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+    hpxml.heat_pumps.each do |heat_pump|
+      if not heat_pump.heating_efficiency_hspf.nil?
+        hspf += heat_pump.heating_efficiency_hspf
         num_hspf += 1
       end
-      if hp.elements["AnnualCoolingEfficiency[Units='SEER']"]
-        seer += Float(XMLHelper.get_value(hp, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      if not heat_pump.cooling_efficiency_seer.nil?
+        seer += heat_pump.cooling_efficiency_seer
         num_seer += 1
       end
     end
-    hpxml_doc.elements.each('/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution') do |dist|
-      dse += Float(XMLHelper.get_value(dist, 'AnnualHeatingDistributionSystemEfficiency'))
+    hpxml.hvac_distributions.each do |hvac_distribution|
+      dse += hvac_distribution.annual_heating_dse
       num_dse += 1
-      dse += Float(XMLHelper.get_value(dist, 'AnnualCoolingDistributionSystemEfficiency'))
+      dse += hvac_distribution.annual_cooling_dse
       num_dse += 1
     end
     return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
   end
 
-  def _get_tstat(hpxml_doc)
-    control = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl']
-    control_type = XMLHelper.get_value(control, 'ControlType')
-    tstat = control_type.gsub(' thermostat', '')
-    htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
-    clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
+  def _get_tstat(hpxml)
+    hvac_control = hpxml.hvac_controls[0]
+    tstat = hvac_control.control_type.gsub(' thermostat', '')
+    htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(hvac_control.control_type)
+    clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(hvac_control.control_type)
     return tstat, htg_sp, htg_setback_sp, clg_sp, clg_setup_sp
   end
 
-  def _get_mech_vent(hpxml_doc)
-    mv_kwh = 0.0
-    mv_cfm = 0.0
-    hpxml_doc.elements.each("/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']") do |mv|
-      hours = Float(XMLHelper.get_value(mv, 'HoursInOperation'))
-      fan_w = Float(XMLHelper.get_value(mv, 'FanPower'))
+  def _get_mech_vent(hpxml)
+    mv_kwh = mv_cfm = 0.0
+    hpxml.ventilation_fans.each do |ventilation_fan|
+      next unless ventilation_fan.used_for_whole_building_ventilation
+
+      hours = ventilation_fan.hours_in_operation
+      fan_w = ventilation_fan.fan_power
       mv_kwh += fan_w * 8.76 * hours / 24.0
-      mv_cfm += Float(XMLHelper.get_value(mv, 'TestedFlowRate'))
+      mv_cfm += ventilation_fan.tested_flow_rate
     end
     return mv_kwh, mv_cfm
   end
 
-  def _get_dhw(hpxml_doc)
-    has_uncond_bsmnt = !hpxml_doc.elements["/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab[InteriorAdjacentTo='basement - unconditioned']"].nil?
-    cfa = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea'))
-    ncfl = Float(XMLHelper.get_value(hpxml_doc, '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors'))
+  def _get_dhw(hpxml)
+    has_uncond_bsmnt = hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
+    cfa = hpxml.building_construction.conditioned_floor_area
+    ncfl = hpxml.building_construction.number_of_conditioned_floors
     ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
     ref_loop_l = HotWaterAndAppliances.get_default_recirc_loop_length(ref_pipe_l)
     return ref_pipe_l, ref_loop_l
