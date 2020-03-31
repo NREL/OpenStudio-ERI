@@ -2068,7 +2068,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
     # Misc
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_values(@cfa)
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
     new_hpxml.plug_loads.add(id: 'MiscPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeOther,
                              kWh_per_year: kWh_per_year,
@@ -2076,7 +2076,7 @@ class EnergyRatingIndex301Ruleset
                              frac_latent: frac_latent.round(3))
 
     # Television
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_values(@cfa, @nbeds)
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(@cfa, @nbeds)
     new_hpxml.plug_loads.add(id: 'TelevisionPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeTelevision,
                              kWh_per_year: kWh_per_year,
