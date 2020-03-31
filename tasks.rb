@@ -2936,7 +2936,8 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
                               label_electric_rate: 0.10,
                               label_gas_rate: 0.60,
                               label_annual_gas_cost: 25.0,
-                              capacity: 3.0)
+                              capacity: 3.0,
+                              usage: 7.0)
   elsif ['base-appliances-none.xml'].include? hpxml_file
     hpxml.clothes_washers.clear()
   elsif ['base-appliances-modified.xml'].include? hpxml_file
@@ -3008,14 +3009,12 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   if ['base.xml'].include? hpxml_file
     hpxml.dishwashers.add(id: 'Dishwasher',
                           rated_annual_kwh: 450,
+                          label_electric_rate: 0.10,
+                          label_gas_rate: 1.05,
+                          label_annual_gas_cost: 33.03,
                           place_setting_capacity: 12)
   elsif ['base-appliances-none.xml'].include? hpxml_file
     hpxml.dishwashers.clear()
-  elsif ['base-appliances-modified.xml'].include? hpxml_file
-    hpxml.dishwashers.clear()
-    hpxml.dishwashers.add(id: 'Dishwasher',
-                          energy_factor: 0.5,
-                          place_setting_capacity: 12)
   end
 end
 
@@ -3130,12 +3129,12 @@ def set_hpxml_plug_loads(hpxml_file, hpxml)
     cfa = hpxml.building_construction.conditioned_floor_area
     nbeds = hpxml.building_construction.number_of_bedrooms
 
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_values(cfa)
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(cfa)
     hpxml.plug_loads[0].kWh_per_year = kWh_per_year
     hpxml.plug_loads[0].frac_sensible = frac_sensible.round(3)
     hpxml.plug_loads[0].frac_latent = frac_latent.round(3)
 
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_values(cfa, nbeds)
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(cfa, nbeds)
     hpxml.plug_loads[1].kWh_per_year = kWh_per_year
     hpxml.plug_loads[1].frac_sensible = frac_sensible.round(3)
     hpxml.plug_loads[1].frac_latent = frac_latent.round(3)
