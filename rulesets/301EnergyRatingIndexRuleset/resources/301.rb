@@ -1792,14 +1792,16 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
     clothes_washer = orig_hpxml.clothes_washers[0]
+    reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
                                   location: HPXML::LocationLivingSpace,
-                                  integrated_modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_imef(),
-                                  rated_annual_kwh: HotWaterAndAppliances.get_clothes_washer_reference_ler(),
-                                  label_electric_rate: HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
-                                  label_gas_rate: HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
-                                  label_annual_gas_cost: HotWaterAndAppliances.get_clothes_washer_reference_agc(),
-                                  capacity: HotWaterAndAppliances.get_clothes_washer_reference_cap())
+                                  integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
+                                  rated_annual_kwh: reference_values[:rated_annual_kwh],
+                                  label_electric_rate: reference_values[:label_electric_rate],
+                                  label_gas_rate: reference_values[:label_gas_rate],
+                                  label_annual_gas_cost: reference_values[:label_annual_gas_cost],
+                                  capacity: reference_values[:capacity],
+                                  usage: reference_values[:usage])
   end
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
@@ -1812,7 +1814,8 @@ class EnergyRatingIndex301Ruleset
                                   label_electric_rate: clothes_washer.label_electric_rate,
                                   label_gas_rate: clothes_washer.label_gas_rate,
                                   label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
-                                  capacity: clothes_washer.capacity)
+                                  capacity: clothes_washer.capacity,
+                                  usage: clothes_washer.usage)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
@@ -1822,11 +1825,12 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     clothes_dryer = orig_hpxml.clothes_dryers[0]
+    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, clothes_dryer.fuel_type)
     new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
                                  location: HPXML::LocationLivingSpace,
                                  fuel_type: clothes_dryer.fuel_type,
-                                 combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(clothes_dryer.fuel_type),
-                                 control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control())
+                                 combined_energy_factor: reference_values[:combined_energy_factor],
+                                 control_type: reference_values[:control_type])
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
@@ -1846,17 +1850,23 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
+    reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
-                              energy_factor: HotWaterAndAppliances.get_dishwasher_reference_ef(),
-                              place_setting_capacity: HotWaterAndAppliances.get_dishwasher_reference_cap())
+                              rated_annual_kwh: reference_values[:rated_annual_kwh],
+                              place_setting_capacity: reference_values[:place_setting_capacity],
+                              label_electric_rate: reference_values[:label_electric_rate],
+                              label_gas_rate: reference_values[:label_gas_rate],
+                              label_annual_gas_cost: reference_values[:label_annual_gas_cost])
   end
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
     new_hpxml.dishwashers.add(id: dishwasher.id,
-                              energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
-                              place_setting_capacity: dishwasher.place_setting_capacity)
+                              place_setting_capacity: dishwasher.place_setting_capacity,
+                              label_electric_rate: dishwasher.label_electric_rate,
+                              label_gas_rate: dishwasher.label_gas_rate,
+                              label_annual_gas_cost: dishwasher.label_annual_gas_cost)
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
@@ -1865,13 +1875,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric ERI Reference Homes
-    refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
-
     refrigerator = orig_hpxml.refrigerators[0]
+    reference_values = HotWaterAndAppliances.get_refrigerator_default_values(@nbeds)
     new_hpxml.refrigerators.add(id: refrigerator.id,
                                 location: HPXML::LocationLivingSpace,
-                                rated_annual_kwh: refrigerator_kwh)
+                                rated_annual_kwh: reference_values[:rated_annual_kwh])
   end
 
   def self.set_appliances_refrigerator_rated(orig_hpxml, new_hpxml)
@@ -1888,22 +1896,21 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
     cooking_range = orig_hpxml.cooking_ranges[0]
+    oven = orig_hpxml.ovens[0]
+    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
                                  fuel_type: cooking_range.fuel_type,
-                                 is_induction: HotWaterAndAppliances.get_range_oven_reference_is_induction())
-
-    oven = orig_hpxml.ovens[0]
+                                 is_induction: reference_values[:is_induction])
     new_hpxml.ovens.add(id: oven.id,
-                        is_convection: HotWaterAndAppliances.get_range_oven_reference_is_convection())
+                        is_convection: reference_values[:is_convection])
   end
 
   def self.set_appliances_cooking_range_oven_rated(orig_hpxml, new_hpxml)
     cooking_range = orig_hpxml.cooking_ranges[0]
+    oven = orig_hpxml.ovens[0]
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: cooking_range.is_induction)
-
-    oven = orig_hpxml.ovens[0]
     new_hpxml.ovens.add(id: oven.id,
                         is_convection: oven.is_convection)
   end
