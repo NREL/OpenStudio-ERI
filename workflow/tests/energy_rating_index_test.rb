@@ -1746,10 +1746,10 @@ class EnergyRatingIndexTest < Minitest::Test
     return results
   end
 
-  def _check_method_results(results, test_num, has_tankless_water_heater, version, test_loc)
+  def _check_method_results(results, test_num, has_tankless_water_heater, version, test_loc = nil)
     using_iaf = false
 
-    if (version == '2019') || (version == '2014')
+    if (version == '2019A') || (version == '2019') || (version == '2014')
 
       cooling_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'elec', 4 => 'elec', 5 => 'elec' }
       cooling_mepr =  { 1 => 10.00,  2 => 10.00,  3 => 10.00,  4 => 10.00,  5 => 10.00 }
@@ -1757,7 +1757,7 @@ class EnergyRatingIndexTest < Minitest::Test
       heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96  }
       hotwater_fuel = { 1 => 'elec', 2 => 'gas',  3 => 'elec', 4 => 'elec', 5 => 'elec' }
       hotwater_mepr = { 1 => 0.88,   2 => 0.82,   3 => 0.88,   4 => 0.88,   5 => 0.88 }
-      if version == '2019'
+      if version == '2019A'
         ec_x_la = { 1 => 20.45,  2 => 22.42,  3 => 21.28,  4 => 21.40,  5 => 22.42 }
       else
         ec_x_la = { 1 => 21.27,  2 => 23.33,  3 => 22.05,  4 => 22.35,  5 => 23.33 }

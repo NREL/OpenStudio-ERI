@@ -72,10 +72,10 @@ def create_test_hpxmls
     'RESNET_Tests/4.6_Hot_Water/L100AM-HW-05.xml' => 'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-05.xml',
     'RESNET_Tests/4.6_Hot_Water/L100AM-HW-06.xml' => 'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-06.xml',
     'RESNET_Tests/4.6_Hot_Water/L100AM-HW-07.xml' => 'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-07.xml',
-    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml',
-    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/02-L100.xml',
-    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/03-L304.xml',
-    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/04-L324.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
+    'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/04-L324.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
     'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/02-L100.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/03-L304.xml' => 'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
@@ -281,8 +281,8 @@ def create_test_hpxmls
 end
 
 def set_hpxml_header(hpxml_file, hpxml)
-  if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
-      'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
+  if hpxml_file.include?('RESNET_Tests/4.') ||
+     hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_IAD_Home')
     # Base configuration w/ all Addenda
     hpxml.set_header(xml_type: 'HPXML',
                      xml_generated_by: 'Rakefile',
@@ -297,14 +297,13 @@ def set_hpxml_header(hpxml_file, hpxml)
     hpxml.header.eri_calculation_version = '2014'
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE') ||
         hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_Proposed') ||
-        hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_Task_Group')
+        hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_Task_Group') ||
+        hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014')
     hpxml.header.eri_calculation_version = '2014A'
-  elsif hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014')
-    hpxml.header.eri_calculation_version = '2014ADEGL'
-  elsif hpxml_file.include?('Other_HERS_Method_301_2019_PreAddendumA')
+  elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA') ||
+        hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA') ||
+        hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
     hpxml.header.eri_calculation_version = '2019'
-  elsif hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA')
-    hpxml.header.eri_calculation_version = 'latest'
   end
 end
 

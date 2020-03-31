@@ -805,7 +805,11 @@ class HVACtest < MiniTest::Test
       else
         assert_equal(shr, heat_pump.cooling_shr)
       end
-      assert_equal(backup_fuel, heat_pump.backup_heating_fuel)
+      if backup_fuel.nil?
+        assert_nil(heat_pump.backup_heating_fuel)
+      else
+        assert_equal(backup_fuel, heat_pump.backup_heating_fuel)
+      end
       if backup_eff.nil?
         assert_nil(heat_pump.backup_heating_efficiency_percent)
         assert_nil(heat_pump.backup_heating_efficiency_afue)
