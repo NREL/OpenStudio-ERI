@@ -284,15 +284,15 @@ def set_hpxml_header(hpxml_file, hpxml)
   if hpxml_file.include?('RESNET_Tests/4.') ||
      hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_IAD_Home')
     # Base configuration w/ all Addenda
-    hpxml.set_header(xml_type: 'HPXML',
-                     xml_generated_by: 'Rakefile',
-                     transaction: 'create',
-                     software_program_used: nil,
-                     software_program_version: nil,
-                     eri_calculation_version: 'latest',
-                     building_id: 'MyBuilding',
-                     event_type: 'proposed workscope',
-                     created_date_and_time: Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z')) # Hard-code to prevent diffs
+    hpxml.header.xml_type = 'HPXML'
+    hpxml.header.xml_generated_by = 'Rakefile'
+    hpxml.header.transaction = 'create'
+    hpxml.header.software_program_used = nil
+    hpxml.header.software_program_version = nil
+    hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.building_id = 'MyBuilding'
+    hpxml.header.event_type = 'proposed workscope'
+    hpxml.header.created_date_and_time = Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
   elsif hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
     hpxml.header.eri_calculation_version = '2014'
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE') ||
@@ -309,7 +309,7 @@ end
 
 def set_hpxml_site(hpxml_file, hpxml)
   # Base configuration
-  hpxml.set_site(fuels: [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas])
+  hpxml.site.fuels = [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas]
 end
 
 def set_hpxml_building_occupancy(hpxml_file, hpxml)
@@ -317,9 +317,9 @@ def set_hpxml_building_occupancy(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
-    hpxml.set_building_occupancy(number_of_residents: 0)
+    hpxml.building_occupancy.number_of_residents = 0
   else
-    hpxml.set_building_occupancy()
+    hpxml.building_occupancy.number_of_residents = nil
   end
 end
 
@@ -327,12 +327,12 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
-    hpxml.set_building_construction(number_of_conditioned_floors: 1,
-                                    number_of_conditioned_floors_above_grade: 1,
-                                    number_of_bedrooms: 3,
-                                    conditioned_floor_area: 1539,
-                                    conditioned_building_volume: 12312,
-                                    residential_facility_type: HPXML::ResidentialTypeSFD)
+    hpxml.building_construction.number_of_conditioned_floors = 1
+    hpxml.building_construction.number_of_conditioned_floors_above_grade = 1
+    hpxml.building_construction.number_of_bedrooms = 3
+    hpxml.building_construction.conditioned_floor_area = 1539
+    hpxml.building_construction.conditioned_building_volume = 12312
+    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFD
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     hpxml.building_construction.number_of_conditioned_floors = 2
@@ -374,41 +374,41 @@ end
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
   if hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AC.xml'
     # Colorado Springs
-    hpxml.set_climate_and_risk_zones(iecc2006: '5B',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Colorado Springs, CO',
-                                     weather_station_wmo: '724660')
+    hpxml.climate_and_risk_zones.iecc2006 = '5B'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Colorado Springs, CO'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '724660'
   elsif hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AL.xml'
     # Las Vegas
-    hpxml.set_climate_and_risk_zones(iecc2006: '3B',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Las Vegas, NV',
-                                     weather_station_wmo: '723860')
+    hpxml.climate_and_risk_zones.iecc2006 = '3B'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Las Vegas, NV'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '723860'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Baltimore
-    hpxml.set_climate_and_risk_zones(iecc2006: '4A',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Baltimore, MD',
-                                     weather_station_wmo: '724060')
+    hpxml.climate_and_risk_zones.iecc2006 = '4A'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '724060'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
-    hpxml.set_climate_and_risk_zones(iecc2006: '3A',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Dallas, TX',
-                                     weather_station_wmo: '722590')
+    hpxml.climate_and_risk_zones.iecc2006 = '3A'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '722590'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
-    hpxml.set_climate_and_risk_zones(iecc2006: '1A',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Miami, FL',
-                                     weather_station_wmo: '722020')
+    hpxml.climate_and_risk_zones.iecc2006 = '1A'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '722020'
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
-    hpxml.set_climate_and_risk_zones(iecc2006: '7',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Duluth, MN',
-                                     weather_station_wmo: '727450')
+    hpxml.climate_and_risk_zones.iecc2006 = '7'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '727450'
   end
 end
 
@@ -2264,11 +2264,13 @@ def set_hpxml_misc_load_schedule(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
-    hpxml.set_misc_loads_schedule(weekday_fractions: '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066',
-                                  weekend_fractions: '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066',
-                                  monthly_multipliers: '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0')
+    hpxml.misc_loads_schedule.weekday_fractions = '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066'
+    hpxml.misc_loads_schedule.weekend_fractions = '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066'
+    hpxml.misc_loads_schedule.monthly_multipliers = '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0'
   else
-    hpxml.set_misc_loads_schedule()
+    hpxml.misc_loads_schedule.weekday_fractions = nil
+    hpxml.misc_loads_schedule.weekend_fractions = nil
+    hpxml.misc_loads_schedule.monthly_multipliers = nil
   end
 end
 

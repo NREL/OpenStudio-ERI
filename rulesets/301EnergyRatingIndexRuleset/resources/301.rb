@@ -197,15 +197,15 @@ class EnergyRatingIndex301Ruleset
     @eri_version = orig_hpxml.header.eri_calculation_version
     @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
-    new_hpxml.set_header(xml_type: orig_hpxml.header.xml_type,
-                         xml_generated_by: 'OpenStudio-ERI',
-                         transaction: orig_hpxml.header.transaction,
-                         software_program_used: orig_hpxml.header.software_program_used,
-                         software_program_version: orig_hpxml.header.software_program_version,
-                         eri_calculation_version: @eri_version,
-                         eri_design: @calc_type,
-                         building_id: orig_hpxml.header.building_id,
-                         event_type: orig_hpxml.header.event_type)
+    new_hpxml.header.xml_type = orig_hpxml.header.xml_type
+    new_hpxml.header.xml_generated_by = 'OpenStudio-ERI'
+    new_hpxml.header.transaction = orig_hpxml.header.transaction
+    new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
+    new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
+    new_hpxml.header.eri_calculation_version = @eri_version
+    new_hpxml.header.eri_design = @calc_type
+    new_hpxml.header.building_id = orig_hpxml.header.building_id
+    new_hpxml.header.event_type = orig_hpxml.header.event_type
 
     return new_hpxml
   end
@@ -241,17 +241,17 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = get_infiltration_volume(orig_hpxml)
     @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: orig_hpxml.building_construction.number_of_conditioned_floors,
-                                        number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
-                                        number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
-                                        conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
-                                        residential_facility_type: @bldg_type)
+    new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
+    new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
+    new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
+    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
@@ -265,17 +265,17 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = get_infiltration_volume(orig_hpxml)
     @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: orig_hpxml.building_construction.number_of_conditioned_floors,
-                                        number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
-                                        number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
-                                        conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
-                                        residential_facility_type: @bldg_type)
+    new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
+    new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
+    new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
+    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_summary_iad(orig_hpxml, new_hpxml)
@@ -290,24 +290,24 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = 20400
     @has_uncond_bsmnt = false
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: @ncfl,
-                                        number_of_conditioned_floors_above_grade: @ncfl_ag,
-                                        number_of_bedrooms: @nbeds,
-                                        conditioned_floor_area: @cfa,
-                                        conditioned_building_volume: @cvolume,
-                                        residential_facility_type: @bldg_type)
+    new_hpxml.building_construction.number_of_conditioned_floors = @ncfl
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = @ncfl_ag
+    new_hpxml.building_construction.number_of_bedrooms = @nbeds
+    new_hpxml.building_construction.conditioned_floor_area = @cfa
+    new_hpxml.building_construction.conditioned_building_volume = @cvolume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.set_climate_and_risk_zones(iecc2006: orig_hpxml.climate_and_risk_zones.iecc2006,
-                                         weather_station_id: orig_hpxml.climate_and_risk_zones.weather_station_id,
-                                         weather_station_name: orig_hpxml.climate_and_risk_zones.weather_station_name,
-                                         weather_station_wmo: orig_hpxml.climate_and_risk_zones.weather_station_wmo)
+    new_hpxml.climate_and_risk_zones.iecc2006 = orig_hpxml.climate_and_risk_zones.iecc2006
+    new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
+    new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
+    new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
     @iecc_zone_2006 = orig_hpxml.climate_and_risk_zones.iecc2006
   end
 
