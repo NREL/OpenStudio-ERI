@@ -327,6 +327,10 @@ AirDistribution systems must also have duct leakage testing provided in one of t
 #. Total leakage: ``extension/DuctLeakageTestingExemption="true"`` (Version 2014ADEGL or newer)
 #. Leakage testing exemption: ``DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value`` (Version 2014AD or newer)
 
+.. note::
+
+  When the leakage testing exemption is used with Addendum L or newer, it effectively overrides the Addendum D specification such that the leakage testing exemption reflects solely the Addendum L specification.
+
 .. warning::
 
   Total leakage and leakage testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC© 301 have been appropriately met.
