@@ -651,6 +651,9 @@ versions = get_versions(options[:hpxml])
 runs = []
 versions.each do |program, version|
   next unless program == 'ERICalculation'
+  if not Constants.ERIVersions.include?(version)
+    fail "Unexpected ERIVersion: '#{version}'."
+  end
 
   runs << [Constants.CalcTypeERIRatedHome]
   runs << [Constants.CalcTypeERIReferenceHome]
