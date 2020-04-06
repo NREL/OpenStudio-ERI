@@ -374,38 +374,44 @@ end
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
   if hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AC.xml'
     # Colorado Springs
-    hpxml.climate_and_risk_zones.iecc2006 = '5B'
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '5B'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Colorado Springs, CO'
     hpxml.climate_and_risk_zones.weather_station_wmo = '724660'
   elsif hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AL.xml'
     # Las Vegas
-    hpxml.climate_and_risk_zones.iecc2006 = '3B'
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '3B'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Las Vegas, NV'
     hpxml.climate_and_risk_zones.weather_station_wmo = '723860'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Baltimore
-    hpxml.climate_and_risk_zones.iecc2006 = '4A'
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '4A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
     hpxml.climate_and_risk_zones.weather_station_wmo = '724060'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
-    hpxml.climate_and_risk_zones.iecc2006 = '3A'
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '3A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
     hpxml.climate_and_risk_zones.weather_station_wmo = '722590'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
-    hpxml.climate_and_risk_zones.iecc2006 = '1A'
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '1A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
     hpxml.climate_and_risk_zones.weather_station_wmo = '722020'
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
-    hpxml.climate_and_risk_zones.iecc2006 = '7'
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '7'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
     hpxml.climate_and_risk_zones.weather_station_wmo = '727450'
@@ -2329,6 +2335,7 @@ def create_sample_hpxmls
                   'invalid_files/refrigerator-location-other.xml',
                   'invalid_files/repeated-relatedhvac-desuperheater.xml',
                   'invalid_files/repeated-relatedhvac-dhw-indirect.xml',
+                  'invalid_files/invalid-runperiod.xml',
                   'invalid_files/unattached-cfis.xml',
                   'invalid_files/unattached-door.xml',
                   'invalid_files/unattached-hvac-distribution.xml',
@@ -2387,6 +2394,7 @@ def create_sample_hpxmls
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
                   'base-misc-lighting-none.xml',
+                  'base-misc-runperiod-1-month.xml',
                   'base-misc-timestep-10-mins.xml',
                   'base-site-neighbors.xml']
   exclude_list.each do |exclude_file|

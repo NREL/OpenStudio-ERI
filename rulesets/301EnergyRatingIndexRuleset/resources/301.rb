@@ -304,11 +304,12 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.climate_and_risk_zones.iecc2006 = orig_hpxml.climate_and_risk_zones.iecc2006
+    new_hpxml.climate_and_risk_zones.iecc_year = orig_hpxml.climate_and_risk_zones.iecc_year
+    new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
-    @iecc_zone_2006 = orig_hpxml.climate_and_risk_zones.iecc2006
+    @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
@@ -339,9 +340,9 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone_2006
+    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
-    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone_2006
+    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
       ach50 = 3.0
     end
 
@@ -443,7 +444,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Roofs
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
 
     ext_thermal_bndry_roofs = orig_hpxml.roofs.select { |roof| roof.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.inject(0, :+)
@@ -515,7 +516,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_rim_joists_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
 
     ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_rim_joists.map { |rim_joist| rim_joist.area }.inject(0, :+)
@@ -579,7 +580,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_walls_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
 
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.inject(0, :+)
@@ -678,7 +679,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
-    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
+    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone)
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground or
@@ -769,7 +770,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_ceilings_reference(orig_hpxml, new_hpxml)
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
 
     # Table 4.2.2(1) - Ceilings
     orig_hpxml.frame_floors.each do |orig_frame_floor|
@@ -823,7 +824,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
 
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
@@ -872,7 +873,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_iad(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
 
     # Add crawlspace floor
     new_hpxml.frame_floors.add(id: 'FloorAboveCrawlspace',
@@ -883,7 +884,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_slabs_reference(orig_hpxml, new_hpxml)
-    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
+    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone)
     slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
 
     orig_hpxml.slabs.each do |orig_slab|
@@ -964,7 +965,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Glazing
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
 
     ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area = calc_wall_areas_for_windows(orig_hpxml)
 
@@ -1072,7 +1073,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Doors
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
 
     # Create new door
     new_hpxml.doors.add(id: 'DoorAreaNorth',

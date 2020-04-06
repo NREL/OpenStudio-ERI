@@ -10,6 +10,7 @@
     <extension>
       <ERICalculation>
         <Version>2014</Version>
+        <Design/>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
