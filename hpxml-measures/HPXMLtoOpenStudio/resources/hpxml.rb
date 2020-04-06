@@ -28,13 +28,19 @@ Creating from scratch
 hpxml = HPXML.new()
 
 # Singleton elements
-hpxml.set_building_construction(number_of_bedrooms: 3,
-                                conditioned_floor_area: 2400)
+hpxml.building_construction.number_of_bedrooms = 3
+hpxml.building_construction.conditioned_floor_area = 2400
 
 # Array elements
 hpxml.walls.clear
 hpxml.walls.add(id: "WallNorth", area: 500)
 hpxml.walls.add(id: "WallSouth", area: 500)
+hpxml.walls.add
+hpxml.walls[-1].id = "WallEastWest"
+hpxml.walls[-1].area = 1000
+
+# Write file
+XMLHelper.write_file(hpxml.to_rexml, "out.xml")
 
 '''
 
@@ -55,6 +61,10 @@ class HPXML < Object
   AtticTypeFlatRoof = 'FlatRoof'
   AtticTypeUnvented = 'UnventedAttic'
   AtticTypeVented = 'VentedAttic'
+  ResidentialTypeApartment = 'apartment unit'
+  ResidentialTypeManufactured = 'manufactured home'
+  ResidentialTypeSFA = 'single-family attached'
+  ResidentialTypeSFD = 'single-family detached'
   ClothesDryerControlTypeMoisture = 'moisture'
   ClothesDryerControlTypeTimer = 'timer'
   DHWRecirControlTypeManual = 'manual demand control'
@@ -66,6 +76,8 @@ class HPXML < Object
   DHWDistTypeStandard = 'Standard'
   DuctInsulationMaterialUnknown = 'Unknown'
   DuctInsulationMaterialNone = 'None'
+  DuctLeakageTotal = 'total'
+  DuctLeakageToOutside = 'to outside'
   DuctTypeReturn = 'return'
   DuctTypeSupply = 'supply'
   DWHRFacilitiesConnectedAll = 'all'
@@ -207,35 +219,20 @@ class HPXML < Object
   def initialize(hpxml_path: nil, collapse_enclosure: true)
     @doc = nil
     @hpxml_path = hpxml_path
-    from_hpxml_file(hpxml_path)
+
+    # Create/populate child objects
+    hpxml = nil
+    if not hpxml_path.nil?
+      @doc = XMLHelper.parse_file(hpxml_path)
+      hpxml = @doc.elements['/HPXML']
+    end
+    from_rexml(hpxml)
+
+    # Clean up
     delete_partition_surfaces()
     if collapse_enclosure
       collapse_enclosure_surfaces()
     end
-  end
-
-  def set_header(**kwargs)
-    @header = Header.new(self, **kwargs)
-  end
-
-  def set_site(**kwargs)
-    @site = Site.new(self, **kwargs)
-  end
-
-  def set_building_occupancy(**kwargs)
-    @building_occupancy = BuildingOccupancy.new(self, **kwargs)
-  end
-
-  def set_building_construction(**kwargs)
-    @building_construction = BuildingConstruction.new(self, **kwargs)
-  end
-
-  def set_climate_and_risk_zones(**kwargs)
-    @climate_and_risk_zones = ClimateandRiskZones.new(self, **kwargs)
-  end
-
-  def set_misc_loads_schedule(**kwargs)
-    @misc_loads_schedule = MiscLoadsSchedule.new(self, **kwargs)
   end
 
   def has_space_type(space_type)
@@ -273,24 +270,15 @@ class HPXML < Object
     return fuel_fracs.key(fuel_fracs.values.max)
   end
 
-  def fraction_of_window_area_operable(default_frac_for_unknown_operable)
+  def fraction_of_window_area_operable()
     # Calculates the fraction of window area that is operable.
-    window_area_total = 0.0
-    window_area_operable = 0.0
-    @windows.each do |window|
-      window_area_total += window.area
-      if window.operable.nil?
-        window_area_operable += (window.area * default_frac_for_unknown_operable)
-      elsif window.operable
-        window_area_operable += window.area
-      end
-    end
+    window_area_total = @windows.map { |w| w.area }.inject(0, :+)
+    window_area_operable = @windows.map { |w| w.fraction_operable * w.area }.inject(0, :+)
     if window_area_total <= 0
-      frac_window_area_operable = 0.0
-    else
-      frac_window_area_operable = window_area_operable / window_area_total
+      return 0.0
     end
-    return frac_window_area_operable
+
+    return window_area_operable / window_area_total
   end
 
   def to_rexml()
@@ -337,51 +325,46 @@ class HPXML < Object
     return @doc
   end
 
-  def from_hpxml_file(hpxml_path)
-    hpxml_element = nil
-    if not hpxml_path.nil?
-      @doc = XMLHelper.parse_file(hpxml_path)
-      hpxml_element = @doc.elements['/HPXML']
-    end
-    @header = Header.new(self, hpxml_element)
-    @site = Site.new(self, hpxml_element)
-    @neighbor_buildings = NeighborBuildings.new(self, hpxml_element)
-    @building_occupancy = BuildingOccupancy.new(self, hpxml_element)
-    @building_construction = BuildingConstruction.new(self, hpxml_element)
-    @climate_and_risk_zones = ClimateandRiskZones.new(self, hpxml_element)
-    @air_infiltration_measurements = AirInfiltrationMeasurements.new(self, hpxml_element)
-    @attics = Attics.new(self, hpxml_element)
-    @foundations = Foundations.new(self, hpxml_element)
-    @roofs = Roofs.new(self, hpxml_element)
-    @rim_joists = RimJoists.new(self, hpxml_element)
-    @walls = Walls.new(self, hpxml_element)
-    @foundation_walls = FoundationWalls.new(self, hpxml_element)
-    @frame_floors = FrameFloors.new(self, hpxml_element)
-    @slabs = Slabs.new(self, hpxml_element)
-    @windows = Windows.new(self, hpxml_element)
-    @skylights = Skylights.new(self, hpxml_element)
-    @doors = Doors.new(self, hpxml_element)
-    @heating_systems = HeatingSystems.new(self, hpxml_element)
-    @cooling_systems = CoolingSystems.new(self, hpxml_element)
-    @heat_pumps = HeatPumps.new(self, hpxml_element)
-    @hvac_controls = HVACControls.new(self, hpxml_element)
-    @hvac_distributions = HVACDistributions.new(self, hpxml_element)
-    @ventilation_fans = VentilationFans.new(self, hpxml_element)
-    @water_heating_systems = WaterHeatingSystems.new(self, hpxml_element)
-    @hot_water_distributions = HotWaterDistributions.new(self, hpxml_element)
-    @water_fixtures = WaterFixtures.new(self, hpxml_element)
-    @solar_thermal_systems = SolarThermalSystems.new(self, hpxml_element)
-    @pv_systems = PVSystems.new(self, hpxml_element)
-    @clothes_washers = ClothesWashers.new(self, hpxml_element)
-    @clothes_dryers = ClothesDryers.new(self, hpxml_element)
-    @dishwashers = Dishwashers.new(self, hpxml_element)
-    @refrigerators = Refrigerators.new(self, hpxml_element)
-    @cooking_ranges = CookingRanges.new(self, hpxml_element)
-    @ovens = Ovens.new(self, hpxml_element)
-    @lighting_groups = LightingGroups.new(self, hpxml_element)
-    @ceiling_fans = CeilingFans.new(self, hpxml_element)
-    @plug_loads = PlugLoads.new(self, hpxml_element)
-    @misc_loads_schedule = MiscLoadsSchedule.new(self, hpxml_element)
+  def from_rexml(hpxml)
+    @header = Header.new(self, hpxml)
+    @site = Site.new(self, hpxml)
+    @neighbor_buildings = NeighborBuildings.new(self, hpxml)
+    @building_occupancy = BuildingOccupancy.new(self, hpxml)
+    @building_construction = BuildingConstruction.new(self, hpxml)
+    @climate_and_risk_zones = ClimateandRiskZones.new(self, hpxml)
+    @air_infiltration_measurements = AirInfiltrationMeasurements.new(self, hpxml)
+    @attics = Attics.new(self, hpxml)
+    @foundations = Foundations.new(self, hpxml)
+    @roofs = Roofs.new(self, hpxml)
+    @rim_joists = RimJoists.new(self, hpxml)
+    @walls = Walls.new(self, hpxml)
+    @foundation_walls = FoundationWalls.new(self, hpxml)
+    @frame_floors = FrameFloors.new(self, hpxml)
+    @slabs = Slabs.new(self, hpxml)
+    @windows = Windows.new(self, hpxml)
+    @skylights = Skylights.new(self, hpxml)
+    @doors = Doors.new(self, hpxml)
+    @heating_systems = HeatingSystems.new(self, hpxml)
+    @cooling_systems = CoolingSystems.new(self, hpxml)
+    @heat_pumps = HeatPumps.new(self, hpxml)
+    @hvac_controls = HVACControls.new(self, hpxml)
+    @hvac_distributions = HVACDistributions.new(self, hpxml)
+    @ventilation_fans = VentilationFans.new(self, hpxml)
+    @water_heating_systems = WaterHeatingSystems.new(self, hpxml)
+    @hot_water_distributions = HotWaterDistributions.new(self, hpxml)
+    @water_fixtures = WaterFixtures.new(self, hpxml)
+    @solar_thermal_systems = SolarThermalSystems.new(self, hpxml)
+    @pv_systems = PVSystems.new(self, hpxml)
+    @clothes_washers = ClothesWashers.new(self, hpxml)
+    @clothes_dryers = ClothesDryers.new(self, hpxml)
+    @dishwashers = Dishwashers.new(self, hpxml)
+    @refrigerators = Refrigerators.new(self, hpxml)
+    @cooking_ranges = CookingRanges.new(self, hpxml)
+    @ovens = Ovens.new(self, hpxml)
+    @lighting_groups = LightingGroups.new(self, hpxml)
+    @ceiling_fans = CeilingFans.new(self, hpxml)
+    @plug_loads = PlugLoads.new(self, hpxml)
+    @misc_loads_schedule = MiscLoadsSchedule.new(self, hpxml)
   end
 
   class BaseElement
@@ -458,7 +441,8 @@ class HPXML < Object
   class Header < BaseElement
     ATTRS = [:xml_type, :xml_generated_by, :created_date_and_time, :transaction,
              :software_program_used, :software_program_version, :eri_calculation_version,
-             :eri_design, :timestep, :building_id, :event_type, :state_code]
+             :eri_design, :timestep, :building_id, :event_type, :state_code,
+             :begin_month, :begin_day_of_month, :end_month, :end_day_of_month]
     attr_accessor(*ATTRS)
 
     def check_for_errors
@@ -468,6 +452,47 @@ class HPXML < Object
         valid_tsteps = [60, 30, 20, 15, 12, 10, 6, 5, 4, 3, 2, 1]
         if not valid_tsteps.include? @timestep
           fail "Timestep (#{@timestep}) must be one of: #{valid_tsteps.join(', ')}."
+        end
+      end
+
+      if not @begin_month.nil?
+        valid_months = (1..12).to_a
+        if not valid_months.include? @begin_month
+          fail "Begin Month (#{@begin_month}) must be one of: #{valid_months.join(', ')}."
+        end
+      end
+
+      if not @end_month.nil?
+        valid_months = (1..12).to_a
+        if not valid_months.include? @end_month
+          fail "End Month (#{@end_month}) must be one of: #{valid_months.join(', ')}."
+        end
+      end
+
+      months_days = { [1, 3, 5, 7, 8, 10, 12] => (1..31).to_a, [4, 6, 9, 11] => (1..30).to_a, [2] => (1..28).to_a }
+      months_days.each do |months, valid_days|
+        if (not @begin_day_of_month.nil?) && (months.include? @begin_month)
+          if not valid_days.include? @begin_day_of_month
+            fail "Begin Day of Month (#{@begin_day_of_month}) must be one of: #{valid_days.join(', ')}."
+          end
+        end
+        next unless (not @end_day_of_month.nil?) && (months.include? @end_month)
+        if not valid_days.include? @end_day_of_month
+          fail "End Day of Month (#{@end_day_of_month}) must be one of: #{valid_days.join(', ')}."
+        end
+      end
+
+      if (not @begin_month.nil?) && (not @end_month.nil?)
+        if @begin_month > @end_month
+          fail "Begin Month (#{@begin_month}) cannot come after End Month (#{@end_month})."
+        end
+
+        if (not @begin_day_of_month.nil?) && (not @end_day_of_month.nil?)
+          if @begin_month == @end_month
+            if @begin_day_of_month > @end_day_of_month
+              fail "Begin Day of Month (#{@begin_day_of_month}) cannot come after End Day of Month (#{@end_day_of_month}) for the same month (#{@begin_month})."
+            end
+          end
         end
       end
 
@@ -491,10 +516,23 @@ class HPXML < Object
       software_info = XMLHelper.add_element(hpxml, 'SoftwareInfo')
       XMLHelper.add_element(software_info, 'SoftwareProgramUsed', @software_program_used) unless @software_program_used.nil?
       XMLHelper.add_element(software_info, 'SoftwareProgramVersion', software_program_version) unless software_program_version.nil?
-      HPXML::add_extension(parent: software_info,
-                           extensions: { 'ERICalculation/Version' => @eri_calculation_version,
-                                         'ERICalculation/Design' => @eri_design,
-                                         'SimulationControl/Timestep' => HPXML::to_integer_or_nil(@timestep) })
+      extension = XMLHelper.add_element(software_info, 'extension')
+      if (not @eri_calculation_version.nil?) || (not @eri_design.nil?)
+        eri_calculation = XMLHelper.add_element(extension, 'ERICalculation')
+        XMLHelper.add_element(eri_calculation, 'Version', @eri_calculation_version)
+        XMLHelper.add_element(eri_calculation, 'Design', @eri_design)
+      end
+      if (not @timestep.nil?) || (not @begin_month.nil?) || (not @begin_day_of_month.nil?) || (not @end_month.nil?) || (not @end_day_of_month.nil?)
+        simulation_control = XMLHelper.add_element(extension, 'SimulationControl')
+        XMLHelper.add_element(simulation_control, 'Timestep', HPXML::to_integer_or_nil(@timestep)) unless @timestep.nil?
+        XMLHelper.add_element(simulation_control, 'BeginMonth', HPXML::to_integer_or_nil(@begin_month)) unless @begin_month.nil?
+        XMLHelper.add_element(simulation_control, 'BeginDayOfMonth', HPXML::to_integer_or_nil(@begin_day_of_month)) unless @begin_day_of_month.nil?
+        XMLHelper.add_element(simulation_control, 'EndMonth', HPXML::to_integer_or_nil(@end_month)) unless @end_month.nil?
+        XMLHelper.add_element(simulation_control, 'EndDayOfMonth', HPXML::to_integer_or_nil(@end_day_of_month)) unless @end_day_of_month.nil?
+      end
+      if extension.elements['ERICalculation'].nil? && extension.elements['SimulationControl'].nil?
+        extension.remove
+      end
 
       building = XMLHelper.add_element(hpxml, 'Building')
       building_building_id = XMLHelper.add_element(building, 'BuildingID')
@@ -515,6 +553,10 @@ class HPXML < Object
       @eri_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/ERICalculation/Version')
       @eri_design = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/ERICalculation/Design')
       @timestep = HPXML::to_integer_or_nil(XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/Timestep'))
+      @begin_month = HPXML::to_integer_or_nil(XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/BeginMonth'))
+      @begin_day_of_month = HPXML::to_integer_or_nil(XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/BeginDayOfMonth'))
+      @end_month = HPXML::to_integer_or_nil(XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/EndMonth'))
+      @end_day_of_month = HPXML::to_integer_or_nil(XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/EndDayOfMonth'))
       @building_id = HPXML::get_id(hpxml, 'Building/BuildingID')
       @event_type = XMLHelper.get_value(hpxml, 'Building/ProjectStatus/EventType')
       @state_code = XMLHelper.get_value(hpxml, 'Building/Site/Address/StateCode')
@@ -641,8 +683,10 @@ class HPXML < Object
       return if nil?
 
       building_construction = XMLHelper.create_elements_as_needed(doc, ['HPXML', 'Building', 'BuildingDetails', 'BuildingSummary', 'BuildingConstruction'])
+      XMLHelper.add_element(building_construction, 'ResidentialFacilityType', @residential_facility_type) unless @residential_facility_type.nil?
       XMLHelper.add_element(building_construction, 'NumberofConditionedFloors', Integer(@number_of_conditioned_floors)) unless @number_of_conditioned_floors.nil?
       XMLHelper.add_element(building_construction, 'NumberofConditionedFloorsAboveGrade', Integer(@number_of_conditioned_floors_above_grade)) unless @number_of_conditioned_floors_above_grade.nil?
+      XMLHelper.add_element(building_construction, 'AverageCeilingHeight', Float(@average_ceiling_height)) unless @average_ceiling_height.nil?
       XMLHelper.add_element(building_construction, 'NumberofBedrooms', Integer(@number_of_bedrooms)) unless @number_of_bedrooms.nil?
       XMLHelper.add_element(building_construction, 'NumberofBathrooms', Integer(@number_of_bathrooms)) unless @number_of_bathrooms.nil?
       XMLHelper.add_element(building_construction, 'ConditionedFloorArea', Float(@conditioned_floor_area)) unless @conditioned_floor_area.nil?
@@ -807,6 +851,7 @@ class HPXML < Object
       if @attached_to_roof_idrefs.size > list.size
         fail "Attached roof not found for attic '#{@id}'."
       end
+
       return list
     end
 
@@ -817,6 +862,7 @@ class HPXML < Object
       if @attached_to_frame_floor_idrefs.size > list.size
         fail "Attached frame floor not found for attic '#{@id}'."
       end
+
       return list
     end
 
@@ -896,8 +942,10 @@ class HPXML < Object
       elsif XMLHelper.has_element(attic, 'AtticType/CathedralCeiling')
         @attic_type = AtticTypeCathedral
       end
-      @vented_attic_sla = HPXML::to_float_or_nil(XMLHelper.get_value(attic, "[AtticType/Attic[Vented='true']]VentilationRate[UnitofMeasure='SLA']/Value"))
-      @vented_attic_constant_ach = HPXML::to_float_or_nil(XMLHelper.get_value(attic, "[AtticType/Attic[Vented='true']]extension/ConstantACHnatural"))
+      if @attic_type == AtticTypeVented
+        @vented_attic_sla = HPXML::to_float_or_nil(XMLHelper.get_value(attic, "VentilationRate[UnitofMeasure='SLA']/Value"))
+        @vented_attic_constant_ach = HPXML::to_float_or_nil(XMLHelper.get_value(attic, 'extension/ConstantACHnatural'))
+      end
       @within_infiltration_volume = HPXML::to_bool_or_nil(XMLHelper.get_value(attic, 'WithinInfiltrationVolume'))
       @attached_to_roof_idrefs = []
       attic.elements.each('AttachedToRoof') do |roof|
@@ -936,6 +984,7 @@ class HPXML < Object
       if @attached_to_slab_idrefs.size > list.size
         fail "Attached slab not found for foundation '#{@id}'."
       end
+
       return list
     end
 
@@ -946,6 +995,7 @@ class HPXML < Object
       if @attached_to_frame_floor_idrefs.size > list.size
         fail "Attached frame floor not found for foundation '#{@id}'."
       end
+
       return list
     end
 
@@ -956,6 +1006,7 @@ class HPXML < Object
       if @attached_to_foundation_wall_idrefs.size > list.size
         fail "Attached foundation wall not found for foundation '#{@id}'."
       end
+
       return list
     end
 
@@ -1056,8 +1107,11 @@ class HPXML < Object
       elsif XMLHelper.has_element(foundation, 'FoundationType/Ambient')
         @foundation_type = FoundationTypeAmbient
       end
-      @vented_crawlspace_sla = HPXML::to_float_or_nil(XMLHelper.get_value(foundation, "[FoundationType/Crawlspace[Vented='true']]VentilationRate[UnitofMeasure='SLA']/Value"))
-      @unconditioned_basement_thermal_boundary = XMLHelper.get_value(foundation, "[FoundationType/Basement[Conditioned='false']]ThermalBoundary")
+      if @foundation_type == FoundationTypeCrawlspaceVented
+        @vented_crawlspace_sla = HPXML::to_float_or_nil(XMLHelper.get_value(foundation, "VentilationRate[UnitofMeasure='SLA']/Value"))
+      elsif @foundation_type == FoundationTypeBasementUnconditioned
+        @unconditioned_basement_thermal_boundary = XMLHelper.get_value(foundation, 'ThermalBoundary')
+      end
       @within_infiltration_volume = HPXML::to_bool_or_nil(XMLHelper.get_value(foundation, 'WithinInfiltrationVolume'))
       @attached_to_slab_idrefs = []
       foundation.elements.each('AttachedToSlab') do |slab|
@@ -1380,7 +1434,7 @@ class HPXML < Object
       else
         XMLHelper.add_attribute(sys_id, 'id', @id + 'Insulation')
       end
-      XMLHelper.add_element(insulation, 'AssemblyEffectiveRValue', Float(@insulation_assembly_r_value))
+      XMLHelper.add_element(insulation, 'AssemblyEffectiveRValue', Float(@insulation_assembly_r_value)) unless @insulation_assembly_r_value.nil?
     end
 
     def from_rexml(wall)
@@ -1796,7 +1850,7 @@ class HPXML < Object
              :glass_type, :gas_fill, :ufactor, :shgc, :interior_shading_factor_summer,
              :interior_shading_factor_winter, :exterior_shading, :overhangs_depth,
              :overhangs_distance_to_top_of_window, :overhangs_distance_to_bottom_of_window,
-             :operable, :wall_idref]
+             :fraction_operable, :wall_idref]
     attr_accessor(*ATTRS)
 
     def wall
@@ -1838,6 +1892,12 @@ class HPXML < Object
           fail "For Window '#{@id}', overhangs distance to bottom (#{@overhangs_distance_to_bottom_of_window}) must be greater than distance to top (#{@overhangs_distance_to_top_of_window})."
         end
       end
+      # TODO: Remove this error when we can support it w/ EnergyPlus
+      if (not @interior_shading_factor_summer.nil?) && (not @interior_shading_factor_winter.nil?)
+        if @interior_shading_factor_summer > @interior_shading_factor_winter
+          fail "SummerShadingCoefficient (#{interior_shading_factor_summer}) must be less than or equal to WinterShadingCoefficient (#{interior_shading_factor_winter}) for window '#{@id}'."
+        end
+      end
 
       return errors
     end
@@ -1866,7 +1926,7 @@ class HPXML < Object
         XMLHelper.add_element(overhangs, 'DistanceToTopOfWindow', Float(@overhangs_distance_to_top_of_window)) unless @overhangs_distance_to_top_of_window.nil?
         XMLHelper.add_element(overhangs, 'DistanceToBottomOfWindow', Float(@overhangs_distance_to_bottom_of_window)) unless @overhangs_distance_to_bottom_of_window.nil?
       end
-      XMLHelper.add_element(window, 'Operable', Boolean(@operable)) unless @operable.nil?
+      XMLHelper.add_element(window, 'FractionOperable', Float(@fraction_operable)) unless @fraction_operable.nil?
       if not @wall_idref.nil?
         attached_to_wall = XMLHelper.add_element(window, 'AttachedToWall')
         XMLHelper.add_attribute(attached_to_wall, 'idref', @wall_idref)
@@ -1893,7 +1953,7 @@ class HPXML < Object
       @overhangs_depth = HPXML::to_float_or_nil(XMLHelper.get_value(window, 'Overhangs/Depth'))
       @overhangs_distance_to_top_of_window = HPXML::to_float_or_nil(XMLHelper.get_value(window, 'Overhangs/DistanceToTopOfWindow'))
       @overhangs_distance_to_bottom_of_window = HPXML::to_float_or_nil(XMLHelper.get_value(window, 'Overhangs/DistanceToBottomOfWindow'))
-      @operable = HPXML::to_bool_or_nil(XMLHelper.get_value(window, 'Operable'))
+      @fraction_operable = HPXML::to_float_or_nil(XMLHelper.get_value(window, 'FractionOperable'))
       @wall_idref = HPXML::get_idref(window.elements['AttachedToWall'])
     end
   end
@@ -2163,8 +2223,11 @@ class HPXML < Object
       @heating_system_type = XMLHelper.get_child_name(heating_system, 'HeatingSystemType')
       @heating_system_fuel = XMLHelper.get_value(heating_system, 'HeatingSystemFuel')
       @heating_capacity = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, 'HeatingCapacity'))
-      @heating_efficiency_afue = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, "[HeatingSystemType[#{HVACTypeFurnace} | #{HVACTypeWallFurnace} | #{HVACTypeBoiler}]]AnnualHeatingEfficiency[Units='AFUE']/Value"))
-      @heating_efficiency_percent = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, "[HeatingSystemType[#{HVACTypeElectricResistance} | #{HVACTypeStove} | #{HVACTypePortableHeater}]]AnnualHeatingEfficiency[Units='Percent']/Value"))
+      if [HVACTypeFurnace, HVACTypeWallFurnace, HVACTypeBoiler].include? @heating_system_type
+        @heating_efficiency_afue = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, "AnnualHeatingEfficiency[Units='AFUE']/Value"))
+      elsif [HVACTypeElectricResistance, HVACTypeStove, HVACTypePortableHeater].include? @heating_system_type
+        @heating_efficiency_percent = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, "AnnualHeatingEfficiency[Units='Percent']/Value"))
+      end
       @fraction_heat_load_served = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, 'FractionHeatLoadServed'))
       @electric_auxiliary_energy = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, 'ElectricAuxiliaryEnergy'))
       @heating_cfm = HPXML::to_float_or_nil(XMLHelper.get_value(heating_system, 'extension/HeatingFlowRate'))
@@ -2264,8 +2327,11 @@ class HPXML < Object
       @cooling_capacity = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, 'CoolingCapacity'))
       @compressor_type = XMLHelper.get_value(cooling_system, 'CompressorType')
       @fraction_cool_load_served = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, 'FractionCoolLoadServed'))
-      @cooling_efficiency_seer = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, "[CoolingSystemType='#{HVACTypeCentralAirConditioner}']AnnualCoolingEfficiency[Units='SEER']/Value"))
-      @cooling_efficiency_eer = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, "[CoolingSystemType='#{HVACTypeRoomAirConditioner}']AnnualCoolingEfficiency[Units='EER']/Value"))
+      if [HVACTypeCentralAirConditioner].include? @cooling_system_type
+        @cooling_efficiency_seer = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      elsif [HVACTypeRoomAirConditioner].include? @cooling_system_type
+        @cooling_efficiency_eer = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='EER']/Value"))
+      end
       @cooling_shr = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, 'SensibleHeatFraction'))
       @cooling_cfm = HPXML::to_float_or_nil(XMLHelper.get_value(cooling_system, 'extension/CoolingFlowRate'))
       @energy_star = XMLHelper.get_values(cooling_system, 'ThirdPartyCertification').include?('Energy Star')
@@ -2403,10 +2469,16 @@ class HPXML < Object
       @backup_heating_switchover_temp = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, 'BackupHeatingSwitchoverTemperature'))
       @fraction_heat_load_served = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, 'FractionHeatLoadServed'))
       @fraction_cool_load_served = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, 'FractionCoolLoadServed'))
-      @cooling_efficiency_seer = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "[HeatPumpType='#{HVACTypeHeatPumpAirToAir}' or HeatPumpType='#{HVACTypeHeatPumpMiniSplit}']AnnualCoolingEfficiency[Units='SEER']/Value"))
-      @cooling_efficiency_eer = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "[HeatPumpType='#{HVACTypeHeatPumpGroundToAir}']AnnualCoolingEfficiency[Units='EER']/Value"))
-      @heating_efficiency_hspf = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "[HeatPumpType='#{HVACTypeHeatPumpAirToAir}' or HeatPumpType='#{HVACTypeHeatPumpMiniSplit}']AnnualHeatingEfficiency[Units='HSPF']/Value"))
-      @heating_efficiency_cop = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "[HeatPumpType='#{HVACTypeHeatPumpGroundToAir}']AnnualHeatingEfficiency[Units='COP']/Value"))
+      if [HVACTypeHeatPumpAirToAir, HVACTypeHeatPumpMiniSplit].include? @heat_pump_type
+        @cooling_efficiency_seer = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='SEER']/Value"))
+      elsif [HVACTypeHeatPumpGroundToAir].include? @heat_pump_type
+        @cooling_efficiency_eer = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='EER']/Value"))
+      end
+      if [HVACTypeHeatPumpAirToAir, HVACTypeHeatPumpMiniSplit].include? @heat_pump_type
+        @heating_efficiency_hspf = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='HSPF']/Value"))
+      elsif [HVACTypeHeatPumpGroundToAir].include? @heat_pump_type
+        @heating_efficiency_cop = HPXML::to_float_or_nil(XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='COP']/Value"))
+      end
       @energy_star = XMLHelper.get_values(heat_pump, 'ThirdPartyCertification').include?('Energy Star')
       @seed_id = XMLHelper.get_value(heat_pump, 'extension/SeedId')
     end
@@ -2494,13 +2566,13 @@ class HPXML < Object
   end
 
   class HVACDistribution < BaseElement
-    def initialize(*args)
-      @duct_leakage_measurements = DuctLeakageMeasurements.new(@hpxml_object)
-      @ducts = Ducts.new(@hpxml_object)
-      super(*args)
+    def initialize(hpxml_object, *args)
+      @duct_leakage_measurements = DuctLeakageMeasurements.new(hpxml_object)
+      @ducts = Ducts.new(hpxml_object)
+      super(hpxml_object, *args)
     end
     ATTRS = [:id, :distribution_system_type, :distribution_system_type, :annual_heating_dse,
-             :annual_cooling_dse, :duct_system_sealed]
+             :annual_cooling_dse, :duct_system_sealed, :duct_leakage_testing_exemption]
     attr_accessor(*ATTRS)
     attr_reader(:duct_leakage_measurements, :ducts)
 
@@ -2573,6 +2645,9 @@ class HPXML < Object
 
       @duct_leakage_measurements.to_rexml(air_distribution)
       @ducts.to_rexml(air_distribution)
+
+      HPXML::add_extension(parent: air_distribution,
+                           extensions: { 'DuctLeakageTestingExemption' => HPXML::to_bool_or_nil(@duct_leakage_testing_exemption) })
     end
 
     def from_rexml(hvac_distribution)
@@ -2586,6 +2661,7 @@ class HPXML < Object
       @annual_heating_dse = HPXML::to_float_or_nil(XMLHelper.get_value(hvac_distribution, 'AnnualHeatingDistributionSystemEfficiency'))
       @annual_cooling_dse = HPXML::to_float_or_nil(XMLHelper.get_value(hvac_distribution, 'AnnualCoolingDistributionSystemEfficiency'))
       @duct_system_sealed = HPXML::to_bool_or_nil(XMLHelper.get_value(hvac_distribution, 'HVACDistributionImprovement/DuctSystemSealed'))
+      @duct_leakage_testing_exemption = HPXML::to_bool_or_nil(XMLHelper.get_value(hvac_distribution, 'DistributionSystemType/AirDistribution/extension/DuctLeakageTestingExemption'))
 
       @duct_leakage_measurements.from_rexml(hvac_distribution)
       @ducts.from_rexml(hvac_distribution)
@@ -2611,6 +2687,14 @@ class HPXML < Object
              :duct_leakage_total_or_to_outside]
     attr_accessor(*ATTRS)
 
+    def delete
+      @hpxml_object.hvac_distributions.each do |hvac_distribution|
+        next unless hvac_distribution.duct_leakage_measurements.include? self
+
+        hvac_distribution.duct_leakage_measurements.delete(self)
+      end
+    end
+
     def check_for_errors
       errors = []
       return errors
@@ -2618,12 +2702,12 @@ class HPXML < Object
 
     def to_rexml(air_distribution)
       duct_leakage_measurement_el = XMLHelper.add_element(air_distribution, 'DuctLeakageMeasurement')
-      XMLHelper.add_element(duct_leakage_measurement_el, 'DuctType', @duct_type)
+      XMLHelper.add_element(duct_leakage_measurement_el, 'DuctType', @duct_type) unless @duct_type.nil?
       if not @duct_leakage_value.nil?
         duct_leakage_el = XMLHelper.add_element(duct_leakage_measurement_el, 'DuctLeakage')
-        XMLHelper.add_element(duct_leakage_el, 'Units', @duct_leakage_units)
+        XMLHelper.add_element(duct_leakage_el, 'Units', @duct_leakage_units) unless @duct_leakage_units.nil?
         XMLHelper.add_element(duct_leakage_el, 'Value', Float(@duct_leakage_value))
-        XMLHelper.add_element(duct_leakage_el, 'TotalOrToOutside', 'to outside')
+        XMLHelper.add_element(duct_leakage_el, 'TotalOrToOutside', @duct_leakage_total_or_to_outside) unless @duct_leakage_total_or_to_outside.nil?
       end
     end
 
@@ -2656,6 +2740,14 @@ class HPXML < Object
     ATTRS = [:duct_type, :duct_insulation_r_value, :duct_insulation_material, :duct_location,
              :duct_fraction_area, :duct_surface_area]
     attr_accessor(*ATTRS)
+
+    def delete
+      @hpxml_object.hvac_distributions.each do |hvac_distribution|
+        next unless hvac_distribution.ducts.include? self
+
+        hvac_distribution.ducts.delete(self)
+      end
+    end
 
     def check_for_errors
       errors = []
@@ -3124,6 +3216,7 @@ class HPXML < Object
       XMLHelper.add_element(pv_system, 'MaxPowerOutput', Float(@max_power_output)) unless @max_power_output.nil?
       XMLHelper.add_element(pv_system, 'InverterEfficiency', Float(@inverter_efficiency)) unless @inverter_efficiency.nil?
       XMLHelper.add_element(pv_system, 'SystemLossesFraction', Float(@system_losses_fraction)) unless @system_losses_fraction.nil?
+      XMLHelper.add_element(pv_system, 'YearModulesManufactured', Integer(@year_modules_manufactured)) unless @year_modules_manufactured.nil?
     end
 
     def from_rexml(pv_system)
@@ -3642,7 +3735,7 @@ class HPXML < Object
     return doc
   end
 
-  def collapse_enclosure_surfaces(additional_attrs_to_ignore = [])
+  def collapse_enclosure_surfaces()
     # Collapses like surfaces into a single surface with, e.g., aggregate surface area.
     # This can significantly speed up performance for HPXML files with lots of individual
     # surfaces (e.g., windows).
@@ -3663,7 +3756,6 @@ class HPXML < Object
                        :under_slab_insulation_id,
                        :area,
                        :exposed_perimeter]
-    attrs_to_ignore += additional_attrs_to_ignore
 
     # Look for pairs of surfaces that can be collapsed
     surf_types.each do |surf_type, surfaces|
@@ -3719,6 +3811,7 @@ class HPXML < Object
 
   def delete_partition_surfaces()
     (@rim_joists + @walls + @foundation_walls + @frame_floors).reverse_each do |surface|
+      next if surface.interior_adjacent_to.nil? || surface.exterior_adjacent_to.nil?
       next unless surface.interior_adjacent_to == surface.exterior_adjacent_to
 
       surface.delete
