@@ -2214,7 +2214,9 @@ end
 
 def get_eri_version(hpxml)
   eri_version = hpxml.header.eri_calculation_version
-  eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+  # FIXME: Switch when 301-2019 is ready
+  # eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+  eri_version = '2014ADEGL' if eri_version == 'latest'
   return eri_version
 end
 

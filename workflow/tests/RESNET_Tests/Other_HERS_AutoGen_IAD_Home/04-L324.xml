@@ -545,19 +545,19 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
-          <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
+          <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
           <Usage>6.0</Usage>
-          <RatedAnnualkWh>400.0</RatedAnnualkWh>
-          <LabelElectricRate>0.12</LabelElectricRate>
-          <LabelGasRate>1.09</LabelGasRate>
-          <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
-          <Capacity>3.0</Capacity>
+          <RatedAnnualkWh>704.0</RatedAnnualkWh>
+          <LabelElectricRate>0.08</LabelElectricRate>
+          <LabelGasRate>0.58</LabelGasRate>
+          <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
+          <Capacity>2.874</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
-          <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
+          <CombinedEnergyFactor>2.32</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>

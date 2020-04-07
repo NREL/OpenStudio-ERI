@@ -394,7 +394,7 @@
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
-          <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
+          <CombinedEnergyFactor>2.32</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>
