@@ -9,7 +9,8 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014ADEGL</Version>
+        <Version>2014A</Version>
+        <Design/>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -522,8 +523,9 @@
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
+          <Usage>6.0</Usage>
           <RatedAnnualkWh>704.0</RatedAnnualkWh>
-          <LabelElectricRate>0.0803</LabelElectricRate>
+          <LabelElectricRate>0.08</LabelElectricRate>
           <LabelGasRate>0.58</LabelGasRate>
           <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
           <Capacity>2.874</Capacity>
@@ -537,8 +539,11 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
-          <EnergyFactor>0.46</EnergyFactor>
+          <RatedAnnualkWh>467.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
+          <LabelElectricRate>0.12</LabelElectricRate>
+          <LabelGasRate>1.09</LabelGasRate>
+          <LabelAnnualGasCost>33.12</LabelAnnualGasCost>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
