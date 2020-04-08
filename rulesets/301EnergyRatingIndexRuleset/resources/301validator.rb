@@ -19,9 +19,9 @@ class EnergyRatingIndex301Validator
     #
 
     zero = [0]
-    one = [1]
     zero_or_one = [0, 1]
     zero_or_more = nil
+    one = [1]
     one_or_more = []
 
     requirements = {
@@ -39,14 +39,9 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/ProjectStatus/EventType' => one, # Required by HPXML schema
 
         '/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable/Fuel' => one_or_more,
-        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType="single-family detached" or ResidentialFacilityType="single-family attached" or ResidentialFacilityType="apartment unit" or ResidentialFacilityType="manufactured home"]' => one,
-        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloors' => one,
-        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofConditionedFloorsAboveGrade' => one,
-        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/NumberofBedrooms' => one,
-        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedFloorArea' => one,
-        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction/ConditionedBuildingVolume' => one,
+        '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction' => one, # See [BuildingConstruction]
 
-        '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2006"]' => one, # See [ClimateZone]
+        '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC' => one, # See [ClimateZone]
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => one, # See [WeatherStation]
 
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH" or UnitofMeasure="CFM"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
@@ -85,8 +80,19 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => zero_or_more, # See [CeilingFan]
       },
 
+      # [BuildingConstruction]
+      '/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction' => {
+        '[ResidentialFacilityType="single-family detached" or ResidentialFacilityType="single-family attached" or ResidentialFacilityType="apartment unit" or ResidentialFacilityType="manufactured home"]' => one,
+        'NumberofConditionedFloors' => one,
+        'NumberofConditionedFloorsAboveGrade' => one,
+        'NumberofBedrooms' => one,
+        'ConditionedFloorArea' => one,
+        'ConditionedBuildingVolume' => one,
+      },
+
       # [ClimateZone]
       '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC' => {
+        'Year' => one,
         '[ClimateZone="1A" or ClimateZone="1B" or ClimateZone="1C" or ClimateZone="2A" or ClimateZone="2B" or ClimateZone="2C" or ClimateZone="3A" or ClimateZone="3B" or ClimateZone="3C" or ClimateZone="4A" or ClimateZone="4B" or ClimateZone="4C" or ClimateZone="5A" or ClimateZone="5B" or ClimateZone="5C" or ClimateZone="6A" or ClimateZone="6B" or ClimateZone="6C" or ClimateZone="7" or ClimateZone="8"]' => one,
       },
 
@@ -253,7 +259,7 @@ class EnergyRatingIndex301Validator
         '../../HVACControl' => one, # See [HVACControl]
         'HeatingSystemType[ElectricResistance | Furnace | WallFurnace | Boiler | Stove]' => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Stove]
         'HeatingCapacity' => one,
-        'FractionHeatLoadServed' => one, # Must sum to 1 across all HeatingSystems and HeatPumps
+        'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatingSystems and HeatPumps
         'ElectricAuxiliaryEnergy' => zero_or_one, # If not provided, uses 301 defaults for fuel furnace/boiler and zero otherwise
       },
 
@@ -300,7 +306,7 @@ class EnergyRatingIndex301Validator
         '../../HVACControl' => one, # See [HVACControl]
         '[CoolingSystemType="central air conditioner" or CoolingSystemType="room air conditioner" or CoolingSystemType="evaporative cooler"]' => one, # See [CoolingType=CentralAC] or [CoolingType=RoomAC] or [CoolingType=EvapCooler]
         '[CoolingSystemFuel="electricity"]' => one,
-        'FractionCoolLoadServed' => one, # Must sum to 1 across all CoolingSystems and HeatPumps
+        'FractionCoolLoadServed' => one, # Must sum to <= 1 across all CoolingSystems and HeatPumps
       },
 
       ## [CoolingType=CentralAC]
@@ -308,7 +314,7 @@ class EnergyRatingIndex301Validator
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
         'CoolingCapacity' => one,
-        '[CompressorType="single stage" or CompressorType="two stage" or CompressorType="variable speed"]' => zero_or_one,
+        '[not(CompressorType) or CompressorType="single stage" or CompressorType="two stage" or CompressorType="variable speed"]' => one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'SensibleHeatFraction' => zero_or_one,
       },
@@ -323,6 +329,7 @@ class EnergyRatingIndex301Validator
 
       ## [CoolingType=EvapCooler]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="evaporative cooler"]' => {
+        '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => zero_or_more, # See [HVACDistribution]
         'DistributionSystem' => zero_or_one,
         'CoolingCapacity' => zero,
       },
@@ -336,16 +343,16 @@ class EnergyRatingIndex301Validator
         'HeatingCapacity' => one,
         'CoolingCapacity' => one,
         'CoolingSensibleHeatFraction' => zero_or_one,
-        '[BackupSystemFuel="electricity" or BackupSystemFuel="natural gas" or BackupSystemFuel="fuel oil" or BackupSystemFuel="propane"]' => zero_or_one, # See [HeatPumpBackup]
-        'FractionHeatLoadServed' => one, # Must sum to 1 across all HeatPumps and HeatingSystems
-        'FractionCoolLoadServed' => one, # Must sum to 1 across all HeatPumps and CoolingSystems
+        '[not(BackupSystemFuel) or BackupSystemFuel="electricity" or BackupSystemFuel="natural gas" or BackupSystemFuel="fuel oil" or BackupSystemFuel="propane"]' => one, # See [HeatPumpBackup]
+        'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatPumps and HeatingSystems
+        'FractionCoolLoadServed' => one, # Must sum to <= 1 across all HeatPumps and CoolingSystems
       },
 
       ## [HeatPumpType=ASHP]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
-        '[CompressorType="single stage" or CompressorType="two stage" or CompressorType="variable speed"]' => zero_or_one,
+        '[not(CompressorType) or CompressorType="single stage" or CompressorType="two stage" or CompressorType="variable speed"]' => one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
         'HeatingCapacity17F' => zero_or_one
@@ -513,7 +520,7 @@ class EnergyRatingIndex301Validator
 
       ## [HWDistType=Recirculation]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution/SystemType/Recirculation' => {
-        'ControlType' => one,
+        '[ControlType="manual demand control" or ControlType="presence sensor demand control" or ControlType="temperature" or ControlType="timer" or ControlType="no control"]' => one,
         'RecirculationPipingLoopLength' => one,
         'BranchPipingLoopLength' => one,
         'PumpPower' => one,
@@ -547,8 +554,8 @@ class EnergyRatingIndex301Validator
         '[CollectorType="single glazing black" or CollectorType="double glazing black" or CollectorType="evacuated tube" or CollectorType="integrated collector storage"]' => one,
         'CollectorAzimuth' => one,
         'CollectorTilt' => one,
-        'CollectorRatedOpticalEfficiency' => one, # FRTA (y-intercept); see Directory of SRCC Certified Solar Collector Ratings
-        'CollectorRatedThermalLosses' => one, # FRUL (slope, in units of Btu/hr-ft^2-R); see Directory of SRCC Certified Solar Collector Ratings
+        'CollectorRatedOpticalEfficiency' => one,
+        'CollectorRatedThermalLosses' => one,
         'StorageVolume' => one,
       },
 
@@ -589,7 +596,7 @@ class EnergyRatingIndex301Validator
       # [Dishwasher]
       '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'EnergyFactor | RatedAnnualkWh' => one,
+        'RatedAnnualkWh' => one,
         'PlaceSettingCapacity' => one,
       },
 

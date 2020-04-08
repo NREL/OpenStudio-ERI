@@ -199,15 +199,15 @@ class EnergyRatingIndex301Ruleset
     # @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
     @eri_version = '2014ADEGL' if @eri_version == 'latest'
 
-    new_hpxml.set_header(xml_type: orig_hpxml.header.xml_type,
-                         xml_generated_by: 'OpenStudio-ERI',
-                         transaction: orig_hpxml.header.transaction,
-                         software_program_used: orig_hpxml.header.software_program_used,
-                         software_program_version: orig_hpxml.header.software_program_version,
-                         eri_calculation_version: @eri_version,
-                         eri_design: @calc_type,
-                         building_id: orig_hpxml.header.building_id,
-                         event_type: orig_hpxml.header.event_type)
+    new_hpxml.header.xml_type = orig_hpxml.header.xml_type
+    new_hpxml.header.xml_generated_by = 'OpenStudio-ERI'
+    new_hpxml.header.transaction = orig_hpxml.header.transaction
+    new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
+    new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
+    new_hpxml.header.eri_calculation_version = @eri_version
+    new_hpxml.header.eri_design = @calc_type
+    new_hpxml.header.building_id = orig_hpxml.header.building_id
+    new_hpxml.header.event_type = orig_hpxml.header.event_type
 
     return new_hpxml
   end
@@ -243,17 +243,17 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = get_infiltration_volume(orig_hpxml)
     @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: orig_hpxml.building_construction.number_of_conditioned_floors,
-                                        number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
-                                        number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
-                                        conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
-                                        residential_facility_type: @bldg_type)
+    new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
+    new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
+    new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
+    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
@@ -267,17 +267,17 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = get_infiltration_volume(orig_hpxml)
     @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: orig_hpxml.building_construction.number_of_conditioned_floors,
-                                        number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
-                                        number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
-                                        conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume,
-                                        residential_facility_type: @bldg_type)
+    new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
+    new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
+    new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
+    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_summary_iad(orig_hpxml, new_hpxml)
@@ -292,25 +292,26 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = 20400
     @has_uncond_bsmnt = false
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: @ncfl,
-                                        number_of_conditioned_floors_above_grade: @ncfl_ag,
-                                        number_of_bedrooms: @nbeds,
-                                        conditioned_floor_area: @cfa,
-                                        conditioned_building_volume: @cvolume,
-                                        residential_facility_type: @bldg_type)
+    new_hpxml.building_construction.number_of_conditioned_floors = @ncfl
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = @ncfl_ag
+    new_hpxml.building_construction.number_of_bedrooms = @nbeds
+    new_hpxml.building_construction.conditioned_floor_area = @cfa
+    new_hpxml.building_construction.conditioned_building_volume = @cvolume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.set_climate_and_risk_zones(iecc2006: orig_hpxml.climate_and_risk_zones.iecc2006,
-                                         weather_station_id: orig_hpxml.climate_and_risk_zones.weather_station_id,
-                                         weather_station_name: orig_hpxml.climate_and_risk_zones.weather_station_name,
-                                         weather_station_wmo: orig_hpxml.climate_and_risk_zones.weather_station_wmo)
-    @iecc_zone_2006 = orig_hpxml.climate_and_risk_zones.iecc2006
+    new_hpxml.climate_and_risk_zones.iecc_year = orig_hpxml.climate_and_risk_zones.iecc_year
+    new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
+    new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
+    new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
+    @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
@@ -341,9 +342,9 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone_2006
+    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
-    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone_2006
+    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
       ach50 = 3.0
     end
 
@@ -446,7 +447,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Roofs
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
 
     ext_thermal_bndry_roofs = orig_hpxml.roofs.select { |roof| roof.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.inject(0, :+)
@@ -518,7 +519,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_rim_joists_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
 
     ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_rim_joists.map { |rim_joist| rim_joist.area }.inject(0, :+)
@@ -582,7 +583,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_walls_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
 
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.inject(0, :+)
@@ -681,7 +682,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
-    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
+    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone)
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground or
@@ -772,7 +773,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_ceilings_reference(orig_hpxml, new_hpxml)
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
 
     # Table 4.2.2(1) - Ceilings
     orig_hpxml.frame_floors.each do |orig_frame_floor|
@@ -826,7 +827,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
 
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
@@ -875,7 +876,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_iad(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
 
     # Add crawlspace floor
     new_hpxml.frame_floors.add(id: 'FloorAboveCrawlspace',
@@ -886,7 +887,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_slabs_reference(orig_hpxml, new_hpxml)
-    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
+    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone)
     slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
 
     orig_hpxml.slabs.each do |orig_slab|
@@ -967,7 +968,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Glazing
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
 
     ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area = calc_wall_areas_for_windows(orig_hpxml)
 
@@ -1061,7 +1062,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Doors
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
 
     # Create new door
     new_hpxml.doors.add(id: 'DoorAreaNorth',
@@ -1756,14 +1757,16 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
     clothes_washer = orig_hpxml.clothes_washers[0]
+    reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
                                   location: HPXML::LocationLivingSpace,
-                                  integrated_modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_imef(),
-                                  rated_annual_kwh: HotWaterAndAppliances.get_clothes_washer_reference_ler(),
-                                  label_electric_rate: HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
-                                  label_gas_rate: HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
-                                  label_annual_gas_cost: HotWaterAndAppliances.get_clothes_washer_reference_agc(),
-                                  capacity: HotWaterAndAppliances.get_clothes_washer_reference_cap())
+                                  integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
+                                  rated_annual_kwh: reference_values[:rated_annual_kwh],
+                                  label_electric_rate: reference_values[:label_electric_rate],
+                                  label_gas_rate: reference_values[:label_gas_rate],
+                                  label_annual_gas_cost: reference_values[:label_annual_gas_cost],
+                                  capacity: reference_values[:capacity],
+                                  usage: reference_values[:usage])
   end
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
@@ -1776,7 +1779,8 @@ class EnergyRatingIndex301Ruleset
                                   label_electric_rate: clothes_washer.label_electric_rate,
                                   label_gas_rate: clothes_washer.label_gas_rate,
                                   label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
-                                  capacity: clothes_washer.capacity)
+                                  capacity: clothes_washer.capacity,
+                                  usage: clothes_washer.usage)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
@@ -1786,11 +1790,12 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     clothes_dryer = orig_hpxml.clothes_dryers[0]
+    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, clothes_dryer.fuel_type)
     new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
                                  location: HPXML::LocationLivingSpace,
                                  fuel_type: clothes_dryer.fuel_type,
-                                 combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(clothes_dryer.fuel_type),
-                                 control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control())
+                                 combined_energy_factor: reference_values[:combined_energy_factor],
+                                 control_type: reference_values[:control_type])
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
@@ -1810,17 +1815,23 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
+    reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
-                              energy_factor: HotWaterAndAppliances.get_dishwasher_reference_ef(),
-                              place_setting_capacity: HotWaterAndAppliances.get_dishwasher_reference_cap())
+                              rated_annual_kwh: reference_values[:rated_annual_kwh],
+                              place_setting_capacity: reference_values[:place_setting_capacity],
+                              label_electric_rate: reference_values[:label_electric_rate],
+                              label_gas_rate: reference_values[:label_gas_rate],
+                              label_annual_gas_cost: reference_values[:label_annual_gas_cost])
   end
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
     new_hpxml.dishwashers.add(id: dishwasher.id,
-                              energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
-                              place_setting_capacity: dishwasher.place_setting_capacity)
+                              place_setting_capacity: dishwasher.place_setting_capacity,
+                              label_electric_rate: dishwasher.label_electric_rate,
+                              label_gas_rate: dishwasher.label_gas_rate,
+                              label_annual_gas_cost: dishwasher.label_annual_gas_cost)
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
@@ -1829,13 +1840,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric ERI Reference Homes
-    refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
-
     refrigerator = orig_hpxml.refrigerators[0]
+    reference_values = HotWaterAndAppliances.get_refrigerator_default_values(@nbeds)
     new_hpxml.refrigerators.add(id: refrigerator.id,
                                 location: HPXML::LocationLivingSpace,
-                                rated_annual_kwh: refrigerator_kwh)
+                                rated_annual_kwh: reference_values[:rated_annual_kwh])
   end
 
   def self.set_appliances_refrigerator_rated(orig_hpxml, new_hpxml)
@@ -1852,22 +1861,21 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
     cooking_range = orig_hpxml.cooking_ranges[0]
+    oven = orig_hpxml.ovens[0]
+    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
                                  fuel_type: cooking_range.fuel_type,
-                                 is_induction: HotWaterAndAppliances.get_range_oven_reference_is_induction())
-
-    oven = orig_hpxml.ovens[0]
+                                 is_induction: reference_values[:is_induction])
     new_hpxml.ovens.add(id: oven.id,
-                        is_convection: HotWaterAndAppliances.get_range_oven_reference_is_convection())
+                        is_convection: reference_values[:is_convection])
   end
 
   def self.set_appliances_cooking_range_oven_rated(orig_hpxml, new_hpxml)
     cooking_range = orig_hpxml.cooking_ranges[0]
+    oven = orig_hpxml.ovens[0]
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: cooking_range.is_induction)
-
-    oven = orig_hpxml.ovens[0]
     new_hpxml.ovens.add(id: oven.id,
                         is_convection: oven.is_convection)
   end
@@ -2025,7 +2033,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
     # Misc
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_values(@cfa)
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
     new_hpxml.plug_loads.add(id: 'MiscPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeOther,
                              kWh_per_year: kWh_per_year,
@@ -2033,7 +2041,7 @@ class EnergyRatingIndex301Ruleset
                              frac_latent: frac_latent.round(3))
 
     # Television
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_values(@cfa, @nbeds)
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(@cfa, @nbeds)
     new_hpxml.plug_loads.add(id: 'TelevisionPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeTelevision,
                              kWh_per_year: kWh_per_year,

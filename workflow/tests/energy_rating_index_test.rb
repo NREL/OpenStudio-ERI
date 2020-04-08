@@ -773,7 +773,7 @@ class EnergyRatingIndexTest < Minitest::Test
     measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
     args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), 'weather'))
-    args['output_path'] = File.absolute_path(rundir)
+    args['output_dir'] = File.absolute_path(rundir)
     args['hpxml_path'] = xml
     update_args_hash(measures, measure_subdir, args)
 
@@ -1598,43 +1598,37 @@ class EnergyRatingIndexTest < Minitest::Test
     xml_appl_lat = 0.0
 
     # Appliances: CookingRange
-    cr = hpxml.cooking_ranges[0]
-    ov = hpxml.ovens[0]
-    cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cr.fuel_type, cr.is_induction, ov.is_convection)
-    btu = UnitConversions.convert(cook_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cook_annual_therm, 'therm', 'Btu')
-    xml_appl_sens += (cook_frac_sens * btu)
-    xml_appl_lat += (cook_frac_lat * btu)
+    cooking_range = hpxml.cooking_ranges[0]
+    oven = hpxml.ovens[0]
+    cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cooking_range, oven)
+    btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
+    xml_appl_sens += (cr_frac_sens * btu)
+    xml_appl_lat += (cr_frac_lat * btu)
 
     # Appliances: Refrigerator
-    rf = hpxml.refrigerators[0]
-    btu = UnitConversions.convert(rf.rated_annual_kwh, 'kWh', 'Btu')
-    xml_appl_sens += btu
+    refrigerator = hpxml.refrigerators[0]
+    rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_energy(refrigerator)
+    btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
+    xml_appl_sens += (rf_frac_sens * btu)
+    xml_appl_lat += (rf_frac_lat * btu)
 
     # Appliances: Dishwasher
-    dw = hpxml.dishwashers[0]
-    dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dw.energy_factor, dw.place_setting_capacity)
+    dishwasher = hpxml.dishwashers[0]
+    dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
     btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (dw_frac_sens * btu)
     xml_appl_lat += (dw_frac_lat * btu)
 
     # Appliances: ClothesWasher
-    cw = hpxml.clothes_washers[0]
-    cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, cw.rated_annual_kwh, cw.label_electric_rate, cw.label_gas_rate, cw.label_annual_gas_cost, cw.capacity)
+    clothes_washer = hpxml.clothes_washers[0]
+    cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
     btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (cw_frac_sens * btu)
     xml_appl_lat += (cw_frac_lat * btu)
 
     # Appliances: ClothesDryer
-    cd = hpxml.clothes_dryers[0]
-    cd_ef = cd.energy_factor
-    if cd_ef.nil?
-      cd_ef = HotWaterAndAppliances.calc_clothes_dryer_ef_from_cef(cd.combined_energy_factor)
-    end
-    cw_mef = cw.modified_energy_factor
-    if cw_mef.nil?
-      cw_mef = HotWaterAndAppliances.calc_clothes_washer_mef_from_imef(cw.integrated_modified_energy_factor)
-    end
-    cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nbeds, cd.fuel_type, cd_ef, cd.control_type, cw.rated_annual_kwh, cw.capacity, cw_mef)
+    clothes_dryer = hpxml.clothes_dryers[0]
+    cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(eri_version, nbeds, clothes_dryer, clothes_washer)
     btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
     xml_appl_sens += (cd_frac_sens * btu)
     xml_appl_lat += (cd_frac_lat * btu)
