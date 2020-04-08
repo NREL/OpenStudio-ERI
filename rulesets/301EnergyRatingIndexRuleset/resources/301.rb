@@ -1413,7 +1413,7 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
     ref_sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, orig_hpxml)
 
     if fan_type.nil?
       fan_type = HPXML::MechVentTypeExhaust
@@ -1500,7 +1500,7 @@ class EnergyRatingIndex301Ruleset
       sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
       break
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, orig_hpxml)
 
     new_hpxml.ventilation_fans.add(id: 'VentilationFan',
                                    fan_type: HPXML::MechVentTypeBalanced,
@@ -2090,7 +2090,7 @@ class EnergyRatingIndex301Ruleset
     air_infiltration_measurements.each do |infil_measurement|
       if infil_measurement.unit_of_measure == HPXML::UnitsACHNatural
         nach = infil_measurement.air_leakage
-        sla = Airflow.get_infiltration_SLA_from_ACH(nach, calc_mech_vent_h_vert_distance() / 8.202, @weather)
+        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @ncfl_ag, @weather)
         ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infilvolume)
       elsif (infil_measurement.unit_of_measure == HPXML::UnitsACH) && (infil_measurement.house_pressure == 50)
         ach50 = infil_measurement.air_leakage
@@ -2109,7 +2109,7 @@ class EnergyRatingIndex301Ruleset
 
     if not has_mech_vent
       min_nach = 0.30
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, calc_mech_vent_h_vert_distance() / 8.202, @weather)
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @ncfl_ag, @weather)
       min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infilvolume)
       if ach50 < min_ach50
         ach50 = min_ach50
@@ -2123,19 +2123,19 @@ class EnergyRatingIndex301Ruleset
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml, use_eratio_override)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infilvolume)
     q_tot = calc_mech_vent_q_tot()
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
+    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, orig_hpxml)
   end
 
   def self.calc_mech_vent_q_tot()
     return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla)
+  def self.calc_mech_vent_q_fan(q_tot, sla, orig_hpxml)
     if @is_sfa_or_mf # No infiltration credit for attached/multifamily
       return q_tot
     end
 
-    h = calc_mech_vent_h_vert_distance()
+    h = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infilvolume, orig_hpxml)
     hr = 8.202
     nl = 1000.0 * sla * (h / hr)**0.4 # Normalized leakage, eq. 4.4
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
@@ -2146,10 +2146,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     return [q_fan, 0].max
-  end
-
-  def self.calc_mech_vent_h_vert_distance()
-    return Float(@ncfl_ag) * @infilvolume / @cfa # inferred vertical distance between lowest and highest above-grade points within the pressure boundary
   end
 
   def self.add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids, load_frac, orig_system = nil)
