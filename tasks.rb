@@ -287,8 +287,6 @@ def set_hpxml_header(hpxml_file, hpxml)
     hpxml.header.xml_type = 'HPXML'
     hpxml.header.xml_generated_by = 'Rakefile'
     hpxml.header.transaction = 'create'
-    hpxml.header.software_program_used = nil
-    hpxml.header.software_program_version = nil
     hpxml.header.eri_calculation_version = 'latest'
     hpxml.header.building_id = 'MyBuilding'
     hpxml.header.event_type = 'proposed workscope'

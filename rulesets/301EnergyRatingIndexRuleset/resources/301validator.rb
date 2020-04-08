@@ -285,7 +285,7 @@ class EnergyRatingIndex301Validator
         '../../HVACControl' => one, # See [HVACControl]
         'HeatingSystemType[ElectricResistance | Furnace | WallFurnace | Boiler | Stove]' => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Stove]
         'HeatingCapacity' => one,
-        'FractionHeatLoadServed' => one, # Must sum to 1 across all HeatingSystems and HeatPumps
+        'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatingSystems and HeatPumps
         'ElectricAuxiliaryEnergy' => zero_or_one, # If not provided, uses 301 defaults for fuel furnace/boiler and zero otherwise
       },
 
@@ -370,8 +370,8 @@ class EnergyRatingIndex301Validator
         'CoolingCapacity' => one,
         'CoolingSensibleHeatFraction' => zero_or_one,
         '[not(BackupSystemFuel) or BackupSystemFuel="electricity" or BackupSystemFuel="natural gas" or BackupSystemFuel="fuel oil" or BackupSystemFuel="propane"]' => one, # See [HeatPumpBackup]
-        'FractionHeatLoadServed' => one, # Must sum to 1 across all HeatPumps and HeatingSystems
-        'FractionCoolLoadServed' => one, # Must sum to 1 across all HeatPumps and CoolingSystems
+        'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatPumps and HeatingSystems
+        'FractionCoolLoadServed' => one, # Must sum to <= 1 across all HeatPumps and CoolingSystems
       },
 
       ## [HeatPumpType=ASHP]
