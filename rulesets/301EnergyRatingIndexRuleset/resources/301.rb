@@ -1817,6 +1817,7 @@ class EnergyRatingIndex301Ruleset
     dishwasher = orig_hpxml.dishwashers[0]
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
                               place_setting_capacity: reference_values[:place_setting_capacity],
                               label_electric_rate: reference_values[:label_electric_rate],
@@ -1827,6 +1828,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
                               place_setting_capacity: dishwasher.place_setting_capacity,
                               label_electric_rate: dishwasher.label_electric_rate,
