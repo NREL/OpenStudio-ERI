@@ -143,6 +143,7 @@ Building Summary
 This section describes elements specified in HPXML's ``BuildingSummary``. 
 It is used for high-level building information including conditioned floor area, number of bedrooms, number of residents, number of conditioned floors, etc.
 Most occupancy assumptions are based on the number of bedrooms, while the number of residents is solely used to determine heat gains from the occupants themselves.
+Note that a walkout basement should be included in ``NumberofConditionedFloorsAboveGrade``.
 
 Shading due to neighboring buildings can be defined inside an ``Site/extension/Neighbors`` element.
 Each ``Neighbors/NeighborBuilding`` element is required to have an ``Azimuth`` and ``Distance`` from the house.
@@ -518,7 +519,7 @@ The water heater ``Location`` can be optionally entered; if not provided, a defa
 +====================+============================================================================================+
 | 1-3, excluding 3A  | Garage if present, else Living Space                                                       |
 +--------------------+--------------------------------------------------------------------------------------------+
-| 3A, 4-8            | Conditioned Basement if present, else Unconditioned Basement if present, else Living Space |
+| 3A, 4-8, unknown   | Conditioned Basement if present, else Unconditioned Basement if present, else Living Space |
 +--------------------+--------------------------------------------------------------------------------------------+
 
 The setpoint temperature may be provided as ``HotWaterTemperature``; if not provided, 125°F is assumed.
@@ -655,7 +656,7 @@ LabelElectricRate                   0.12  [$/kWh]
 LabelGasRate                        1.09  [$/therm]
 LabelAnnualGasCost                  27.0  [$]
 Capacity                            3.0  [ft³]
-Usage                               6  [cyc/yr]
+Usage                               6  [cyc/week]
 ==================================  ==================
 
 If ``ModifiedEnergyFactor`` is provided instead of ``IntegratedModifiedEnergyFactor``, it will be converted using the following equation.
