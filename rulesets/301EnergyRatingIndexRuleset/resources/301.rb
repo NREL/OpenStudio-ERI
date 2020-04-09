@@ -1765,8 +1765,8 @@ class EnergyRatingIndex301Ruleset
                                   label_electric_rate: reference_values[:label_electric_rate],
                                   label_gas_rate: reference_values[:label_gas_rate],
                                   label_annual_gas_cost: reference_values[:label_annual_gas_cost],
-                                  capacity: reference_values[:capacity],
-                                  usage: reference_values[:usage])
+                                  label_usage: reference_values[:label_usage],
+                                  capacity: reference_values[:capacity])
   end
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
@@ -1779,8 +1779,8 @@ class EnergyRatingIndex301Ruleset
                                   label_electric_rate: clothes_washer.label_electric_rate,
                                   label_gas_rate: clothes_washer.label_gas_rate,
                                   label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
-                                  capacity: clothes_washer.capacity,
-                                  usage: clothes_washer.usage)
+                                  label_usage: clothes_washer.label_usage,
+                                  capacity: clothes_washer.capacity)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
