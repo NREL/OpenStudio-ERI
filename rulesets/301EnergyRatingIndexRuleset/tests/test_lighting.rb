@@ -16,40 +16,40 @@ class LightingTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     # Reference Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
 
     # Rated Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_lighting(hpxml, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
 
     # IAD
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_lighting(hpxml, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
 
     # IAD Reference
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
   end
 
   def test_lighting_pre_addendum_g
-    hpxml_name = 'base-version-2014AE.xml'
+    hpxml_name = 'base-version-2014ADE.xml'
 
     # Reference Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
 
     # Rated Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml_doc, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_lighting(hpxml, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
 
     # IAD
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml_doc, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_lighting(hpxml, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
 
     # IAD Reference
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml_doc, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
   end
 
   def test_ceiling_fans
@@ -58,30 +58,29 @@ class LightingTest < MiniTest::Test
     medium_cfm = 3000.0
 
     # Reference Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
 
     # Rated Home
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     avg_fan_w = 30.0
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
 
     # IAD
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
 
     # IAD Reference
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
   end
 
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    args_hash['hpxml_output_path'] = File.join(File.dirname(__FILE__), "#{calc_type}.xml")
     args_hash['calc_type'] = calc_type
 
     # create an instance of the measure
@@ -114,35 +113,44 @@ class LightingTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal('Success', result.value.valueName)
-    assert(File.exist? args_hash['hpxml_output_path'])
 
-    hpxml_doc = REXML::Document.new(File.read(args_hash['hpxml_output_path']))
-    File.delete(args_hash['hpxml_output_path'])
-
-    return hpxml_doc
+    return measure.new_hpxml
   end
 
-  def _check_lighting(hpxml_doc, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
-    ltg = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Lighting']
-    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='interior']/FractionofUnitsInLocation"].text), fFI_int, 0.01)
-    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='exterior']/FractionofUnitsInLocation"].text), fFI_ext, 0.01)
-    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier I' and Location='garage']/FractionofUnitsInLocation"].text), fFI_grg, 0.01)
-    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='interior']/FractionofUnitsInLocation"].text), fFII_int, 0.01)
-    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='exterior']/FractionofUnitsInLocation"].text), fFII_ext, 0.01)
-    assert_in_epsilon(Float(ltg.elements["LightingGroup[ThirdPartyCertification='ERI Tier II' and Location='garage']/FractionofUnitsInLocation"].text), fFII_grg, 0.01)
+  def _check_lighting(hpxml, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+    assert_equal(6, hpxml.lighting_groups.size)
+    hpxml.lighting_groups.each do |lg|
+      assert([HPXML::LightingTypeTierI, HPXML::LightingTypeTierII].include? lg.third_party_certification)
+      assert([HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? lg.location)
+
+      if (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationInterior)
+        assert_in_epsilon(fFI_int, lg.fration_of_units_in_location, 0.01)
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationExterior)
+        assert_in_epsilon(fFI_ext, lg.fration_of_units_in_location, 0.01)
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationGarage)
+        assert_in_epsilon(fFI_grg, lg.fration_of_units_in_location, 0.01)
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationInterior)
+        assert_in_epsilon(fFII_int, lg.fration_of_units_in_location, 0.01)
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationExterior)
+        assert_in_epsilon(fFII_ext, lg.fration_of_units_in_location, 0.01)
+      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationGarage)
+        assert_in_epsilon(fFII_grg, lg.fration_of_units_in_location, 0.01)
+      end
+    end
   end
 
-  def _check_ceiling_fans(hpxml_doc, cfm_per_w, quantity)
-    cf = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Lighting/CeilingFan']
+  def _check_ceiling_fans(hpxml, cfm_per_w, quantity)
+    assert_equal(1, hpxml.ceiling_fans.size)
+    ceiling_fan = hpxml.ceiling_fans[0]
     if cfm_per_w.nil?
-      assert_nil(cf.elements["Airflow[FanSpeed='medium']/Efficiency"])
+      assert_nil(ceiling_fan.efficiency)
     else
-      assert_equal(Float(cf.elements["Airflow[FanSpeed='medium']/Efficiency"].text), cfm_per_w)
+      assert_equal(cfm_per_w, ceiling_fan.efficiency)
     end
     if quantity.nil?
-      assert_nil(cf.elements['Quantity'])
+      assert_nil(ceiling_fan.quantity)
     else
-      assert_equal(Integer(cf.elements['Quantity'].text), quantity)
+      assert_equal(quantity, ceiling_fan.quantity)
     end
   end
 end

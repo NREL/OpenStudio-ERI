@@ -220,6 +220,12 @@ def create_test_hpxmls
         fail errors.to_s
       end
 
+      # Check for additional errors
+      errors = hpxml.check_for_errors()
+      if errors.size > 0
+        fail "ERRORS: #{errors}"
+      end
+
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     rescue Exception => e
       puts "\n#{e}\n#{e.backtrace.join('\n')}"
@@ -252,15 +258,13 @@ def set_hpxml_header(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration w/ all Addenda
-    hpxml.set_header(xml_type: 'HPXML',
-                     xml_generated_by: 'Rakefile',
-                     transaction: 'create',
-                     software_program_used: nil,
-                     software_program_version: nil,
-                     eri_calculation_version: '2014AEG',
-                     building_id: 'MyBuilding',
-                     event_type: 'proposed workscope',
-                     created_date_and_time: Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z')) # Hard-code to prevent diffs
+    hpxml.header.xml_type = 'HPXML'
+    hpxml.header.xml_generated_by = 'Rakefile'
+    hpxml.header.transaction = 'create'
+    hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.building_id = 'MyBuilding'
+    hpxml.header.event_type = 'proposed workscope'
+    hpxml.header.created_date_and_time = Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
   elsif hpxml_file.include? 'RESNET_Tests/Other_Hot_Water_PreAddendumA'
     # Pre-Addendum A
     hpxml.header.eri_calculation_version = '2014'
@@ -277,7 +281,7 @@ def set_hpxml_site(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
-    hpxml.set_site(fuels: [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas])
+    hpxml.site.fuels = [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas]
   end
 end
 
@@ -286,9 +290,9 @@ def set_hpxml_building_occupancy(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
-    hpxml.set_building_occupancy(number_of_residents: 0)
+    hpxml.building_occupancy.number_of_residents = 0
   else
-    hpxml.set_building_occupancy()
+    hpxml.building_occupancy.number_of_residents = nil
   end
 end
 
@@ -296,11 +300,12 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
   if ['RESNET_Tests/4.1_Standard_140/L100AC.xml',
       'RESNET_Tests/4.1_Standard_140/L100AL.xml'].include? hpxml_file
     # Base configuration
-    hpxml.set_building_construction(number_of_conditioned_floors: 1,
-                                    number_of_conditioned_floors_above_grade: 1,
-                                    number_of_bedrooms: 3,
-                                    conditioned_floor_area: 1539,
-                                    conditioned_building_volume: 12312)
+    hpxml.building_construction.number_of_conditioned_floors = 1
+    hpxml.building_construction.number_of_conditioned_floors_above_grade = 1
+    hpxml.building_construction.number_of_bedrooms = 3
+    hpxml.building_construction.conditioned_floor_area = 1539
+    hpxml.building_construction.conditioned_building_volume = 12312
+    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFD
   elsif ['RESNET_Tests/4.1_Standard_140/L322XC.xml'].include? hpxml_file
     # Conditioned basement
     hpxml.building_construction.number_of_conditioned_floors = 2
@@ -342,41 +347,47 @@ end
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
   if hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AC.xml'
     # Colorado Springs
-    hpxml.set_climate_and_risk_zones(iecc2006: '5B',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Colorado Springs, CO',
-                                     weather_station_wmo: '724660')
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '5B'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Colorado Springs, CO'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '724660'
   elsif hpxml_file == 'RESNET_Tests/4.1_Standard_140/L100AL.xml'
     # Las Vegas
-    hpxml.set_climate_and_risk_zones(iecc2006: '3B',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Las Vegas, NV',
-                                     weather_station_wmo: '723860')
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '3B'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Las Vegas, NV'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '723860'
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml'].include? hpxml_file
     # Baltimore
-    hpxml.set_climate_and_risk_zones(iecc2006: '4A',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Baltimore, MD',
-                                     weather_station_wmo: '724060')
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '4A'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '724060'
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml'].include? hpxml_file
     # Dallas
-    hpxml.set_climate_and_risk_zones(iecc2006: '3A',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Dallas, TX',
-                                     weather_station_wmo: '722590')
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '3A'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '722590'
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.6_Hot_Water/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
-    hpxml.set_climate_and_risk_zones(iecc2006: '1A',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Miami, FL',
-                                     weather_station_wmo: '722020')
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '1A'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '722020'
   elsif ['RESNET_Tests/4.6_Hot_Water/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
-    hpxml.set_climate_and_risk_zones(iecc2006: '7',
-                                     weather_station_id: 'WeatherStation',
-                                     weather_station_name: 'Duluth, MN',
-                                     weather_station_wmo: '727450')
+    hpxml.climate_and_risk_zones.iecc_year = 2006
+    hpxml.climate_and_risk_zones.iecc_zone = '7'
+    hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
+    hpxml.climate_and_risk_zones.weather_station_wmo = '727450'
   end
 end
 
@@ -979,7 +990,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
-                        operable: false,
+                        fraction_operable: 0.0,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L130AC.xml',
@@ -1004,7 +1015,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                       azimuth: 180,
                       ufactor: 1.039,
                       shgc: 0.67,
-                      operable: false,
+                      fraction_operable: 0.0,
                       wall_idref: 'WallSouth')
   elsif ['RESNET_Tests/4.1_Standard_140/L155AC.xml',
          'RESNET_Tests/4.1_Standard_140/L155AL.xml'].include? hpxml_file
@@ -1025,7 +1036,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: 1.039,
                         shgc: 0.67,
-                        operable: false,
+                        fraction_operable: 0.0,
                         wall_idref: wall)
     end
   elsif ['RESNET_Tests/Other_HERS_Method_Proposed/L100-AC-06.xml'].include? hpxml_file
@@ -1555,10 +1566,12 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear()
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: 0)
+                                                              duct_leakage_value: 0,
+                                                              duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: 0)
+                                                              duct_leakage_value: 0,
+                                                              duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml',
          'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
     # Supply and return duct leakage = 125 cfm each
@@ -1941,18 +1954,20 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
-    hpxml.clothes_washers.add()
+    hpxml.clothes_washers.clear()
   else
     # Standard
+    reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
     hpxml.clothes_washers.clear()
     hpxml.clothes_washers.add(id: 'ClothesWasher',
                               location: HPXML::LocationLivingSpace,
-                              integrated_modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_imef(),
-                              rated_annual_kwh: HotWaterAndAppliances.get_clothes_washer_reference_ler(),
-                              label_electric_rate: HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
-                              label_gas_rate: HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
-                              label_annual_gas_cost: HotWaterAndAppliances.get_clothes_washer_reference_agc(),
-                              capacity: HotWaterAndAppliances.get_clothes_washer_reference_cap())
+                              integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
+                              rated_annual_kwh: reference_values[:rated_annual_kwh],
+                              label_electric_rate: reference_values[:label_electric_rate],
+                              label_gas_rate: reference_values[:label_gas_rate],
+                              label_annual_gas_cost: reference_values[:label_annual_gas_cost],
+                              capacity: reference_values[:capacity],
+                              usage: reference_values[:usage])
   end
 end
 
@@ -1976,12 +1991,13 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
+    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear()
     hpxml.clothes_dryers.add(id: 'ClothesDryer',
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
-                             control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(HPXML::FuelTypeNaturalGas))
+                             control_type: reference_values[:control_type],
+                             combined_energy_factor: reference_values[:combined_energy_factor])
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -1992,12 +2008,13 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
+    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeElectricity)
     hpxml.clothes_dryers.clear()
     hpxml.clothes_dryers.add(id: 'ClothesDryer',
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
-                             control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control(),
-                             combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(HPXML::FuelTypeElectricity))
+                             control_type: reference_values[:control_type],
+                             combined_energy_factor: reference_values[:combined_energy_factor])
   end
 end
 
@@ -2009,10 +2026,14 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
     hpxml.dishwashers.clear()
   else
     # Standard
+    reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     hpxml.dishwashers.clear()
     hpxml.dishwashers.add(id: 'Dishwasher',
-                          place_setting_capacity: 12,
-                          energy_factor: HotWaterAndAppliances.get_dishwasher_reference_ef())
+                          place_setting_capacity: reference_values[:place_setting_capacity],
+                          rated_annual_kwh: reference_values[:rated_annual_kwh],
+                          label_electric_rate: reference_values[:label_electric_rate],
+                          label_gas_rate: reference_values[:label_gas_rate],
+                          label_annual_gas_cost: reference_values[:label_annual_gas_cost])
   end
 end
 
@@ -2024,11 +2045,11 @@ def set_hpxml_refrigerator(hpxml_file, hpxml)
     hpxml.refrigerators.clear()
   else
     # Standard
-    rated_annual_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(hpxml.building_construction.number_of_bedrooms)
+    reference_values = HotWaterAndAppliances.get_refrigerator_default_values(hpxml.building_construction.number_of_bedrooms)
     hpxml.refrigerators.clear()
     hpxml.refrigerators.add(id: 'Refrigerator',
                             location: HPXML::LocationLivingSpace,
-                            rated_annual_kwh: rated_annual_kwh)
+                            rated_annual_kwh: reference_values[:rated_annual_kwh])
   end
 end
 
@@ -2052,10 +2073,11 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-03.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-05.xml'].include? hpxml_file
     # Standard gas
+    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear()
     hpxml.cooking_ranges.add(id: 'Range',
                              fuel_type: HPXML::FuelTypeNaturalGas,
-                             is_induction: HotWaterAndAppliances.get_range_oven_reference_is_convection())
+                             is_induction: reference_values[:is_induction])
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
          'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2066,10 +2088,11 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-CO-01.xml',
          'RESNET_Tests/Other_HERS_Method_Task_Group/L100A-LV-01.xml'].include? hpxml_file
     # Standard electric
+    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear()
     hpxml.cooking_ranges.add(id: 'Range',
                              fuel_type: HPXML::FuelTypeElectricity,
-                             is_induction: HotWaterAndAppliances.get_range_oven_reference_is_convection())
+                             is_induction: reference_values[:is_induction])
   end
 end
 
@@ -2081,9 +2104,10 @@ def set_hpxml_oven(hpxml_file, hpxml)
     hpxml.ovens.clear()
   else
     # Standard
+    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.ovens.clear()
     hpxml.ovens.add(id: 'Oven',
-                    is_convection: HotWaterAndAppliances.get_range_oven_reference_is_induction())
+                    is_convection: reference_values[:is_convection])
   end
 end
 
@@ -2180,15 +2204,27 @@ def set_hpxml_misc_load_schedule(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
-    hpxml.set_misc_loads_schedule(weekday_fractions: '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066',
-                                  weekend_fractions: '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066',
-                                  monthly_multipliers: '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0')
+    hpxml.misc_loads_schedule.weekday_fractions = '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066'
+    hpxml.misc_loads_schedule.weekend_fractions = '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066'
+    hpxml.misc_loads_schedule.monthly_multipliers = '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0'
   else
-    hpxml.set_misc_loads_schedule()
+    hpxml.misc_loads_schedule.weekday_fractions = nil
+    hpxml.misc_loads_schedule.weekend_fractions = nil
+    hpxml.misc_loads_schedule.monthly_multipliers = nil
   end
 end
 
+def get_eri_version(hpxml)
+  eri_version = hpxml.header.eri_calculation_version
+  # FIXME: Switch when 301-2019 is ready
+  # eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+  eri_version = '2014ADEGL' if eri_version == 'latest'
+  return eri_version
+end
+
 def create_sample_hpxmls
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+
   # Copy sample files from hpxml-measures subtree
   puts 'Copying sample files...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
@@ -2235,6 +2271,7 @@ def create_sample_hpxmls
                   'invalid_files/refrigerator-location-other.xml',
                   'invalid_files/repeated-relatedhvac-desuperheater.xml',
                   'invalid_files/repeated-relatedhvac-dhw-indirect.xml',
+                  'invalid_files/invalid-runperiod.xml',
                   'invalid_files/unattached-cfis.xml',
                   'invalid_files/unattached-door.xml',
                   'invalid_files/unattached-hvac-distribution.xml',
@@ -2293,11 +2330,9 @@ def create_sample_hpxmls
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
                   'base-misc-lighting-none.xml',
+                  'base-misc-runperiod-1-month.xml',
                   'base-misc-timestep-10-mins.xml',
-                  'base-site-neighbors.xml',
-                  'base-version-2019.xml',
-                  'base-version-2019A.xml',
-                  'base-version-latest.xml']
+                  'base-site-neighbors.xml']
   exclude_list.each do |exclude_file|
     if File.exist? "workflow/sample_files/#{exclude_file}"
       FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
@@ -2321,6 +2356,65 @@ def create_sample_hpxmls
       XMLHelper.add_element(eri_calculation, 'Version', 'latest')
       XMLHelper.write_file(hpxml_doc, hpxml_path)
     end
+  end
+
+  # Create additional files
+
+  # Duct leakage exemption
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
+  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.add_element(air_dist, 'extension/DuctLeakageTestingExemption', true)
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+
+  # ... and invalid test file (pre-Addendum L)
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014A'
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
+
+  # Duct leakage total
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
+  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
+  supply_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeSupply}']")
+  return_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeReturn}']")
+  # Add total duct leakage
+  duct_leakage_measurement_el = XMLHelper.add_element(air_dist, 'DuctLeakageMeasurement')
+  duct_leakage_el = XMLHelper.add_element(duct_leakage_measurement_el, 'DuctLeakage')
+  XMLHelper.add_element(duct_leakage_el, 'Units', HPXML::UnitsCFM25)
+  XMLHelper.add_element(duct_leakage_el, 'Value', 150.0)
+  XMLHelper.add_element(duct_leakage_el, 'TotalOrToOutside', HPXML::DuctLeakageTotal)
+  # Add ducts back
+  air_dist << supply_ducts
+  air_dist << return_ducts
+  # Add supply duct in conditioned space
+  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
+  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeSupply)
+  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
+  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
+  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 105.0)
+  # Add return duct in conditioned space
+  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
+  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeReturn)
+  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
+  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
+  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 35.0)
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+
+  # ... and invalid test file (pre-Addendum L)
+  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014ADEG'
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
+
+  # Older versions
+  Constants.ERIVersions.each do |eri_version|
+    next if eri_version.include? '2019'
+
+    hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
+    hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = eri_version
+    XMLHelper.write_file(hpxml_doc, "workflow/sample_files/base-version-#{eri_version}.xml")
   end
 end
 

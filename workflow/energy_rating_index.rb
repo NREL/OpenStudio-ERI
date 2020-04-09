@@ -653,10 +653,13 @@ versions = get_versions(options[:hpxml])
 runs = []
 versions.each do |program, version|
   next unless program == 'ERICalculation'
+  if (version != 'latest') && (not Constants.ERIVersions.include?(version))
+    fail "Unexpected ERIVersion: '#{version}'."
+  end
 
   runs << [Constants.CalcTypeERIRatedHome]
   runs << [Constants.CalcTypeERIReferenceHome]
-  if ['2014AE', '2014AEG', 'latest'].include? version
+  if (version == 'latest') || (Constants.ERIVersions.index(version) >= Constants.ERIVersions.index('2014ADE'))
     runs << [Constants.CalcTypeERIIndexAdjustmentDesign]
     runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome]
   end

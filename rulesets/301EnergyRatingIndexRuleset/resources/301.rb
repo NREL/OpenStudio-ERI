@@ -5,10 +5,11 @@ require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/geometry'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
+require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 
 class EnergyRatingIndex301Ruleset
   def self.apply_ruleset(hpxml, calc_type, weather)
@@ -196,17 +197,19 @@ class EnergyRatingIndex301Ruleset
     new_hpxml = HPXML.new
 
     @eri_version = orig_hpxml.header.eri_calculation_version
-    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
+    # FIXME: Switch when 301-2019 is ready
+    # @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
+    @eri_version = '2014ADEGL' if @eri_version == 'latest'
 
-    new_hpxml.set_header(xml_type: orig_hpxml.header.xml_type,
-                         xml_generated_by: 'OpenStudio-ERI',
-                         transaction: orig_hpxml.header.transaction,
-                         software_program_used: orig_hpxml.header.software_program_used,
-                         software_program_version: orig_hpxml.header.software_program_version,
-                         eri_calculation_version: @eri_version,
-                         eri_design: @calc_type,
-                         building_id: orig_hpxml.header.building_id,
-                         event_type: orig_hpxml.header.event_type)
+    new_hpxml.header.xml_type = orig_hpxml.header.xml_type
+    new_hpxml.header.xml_generated_by = 'OpenStudio-ERI'
+    new_hpxml.header.transaction = orig_hpxml.header.transaction
+    new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
+    new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
+    new_hpxml.header.eri_calculation_version = @eri_version
+    new_hpxml.header.eri_design = @calc_type
+    new_hpxml.header.building_id = orig_hpxml.header.building_id
+    new_hpxml.header.event_type = orig_hpxml.header.event_type
 
     return new_hpxml
   end
@@ -233,6 +236,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_summary_reference(orig_hpxml, new_hpxml)
     # Global variables
+    @bldg_type = orig_hpxml.building_construction.residential_facility_type
     @cfa = orig_hpxml.building_construction.conditioned_floor_area
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
@@ -241,20 +245,22 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = get_infiltration_volume(orig_hpxml)
     @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: orig_hpxml.building_construction.number_of_conditioned_floors,
-                                        number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
-                                        number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
-                                        conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume)
+    new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
+    new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
+    new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
+    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
     # Global variables
+    @bldg_type = orig_hpxml.building_construction.residential_facility_type
     @cfa = orig_hpxml.building_construction.conditioned_floor_area
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
@@ -263,21 +269,23 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = get_infiltration_volume(orig_hpxml)
     @has_uncond_bsmnt = orig_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: orig_hpxml.building_construction.number_of_conditioned_floors,
-                                        number_of_conditioned_floors_above_grade: orig_hpxml.building_construction.number_of_conditioned_floors_above_grade,
-                                        number_of_bedrooms: orig_hpxml.building_construction.number_of_bedrooms,
-                                        conditioned_floor_area: orig_hpxml.building_construction.conditioned_floor_area,
-                                        conditioned_building_volume: orig_hpxml.building_construction.conditioned_building_volume)
+    new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
+    new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
+    new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
+    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_summary_iad(orig_hpxml, new_hpxml)
     # Global variables
     # Table 4.3.1(1) Configuration of Index Adjustment Design - General Characteristics
+    @bldg_type = orig_hpxml.building_construction.residential_facility_type
     @cfa = 2400
     @nbeds = 3
     @ncfl = 2
@@ -286,24 +294,26 @@ class EnergyRatingIndex301Ruleset
     @infilvolume = 20400
     @has_uncond_bsmnt = false
 
-    new_hpxml.set_site(fuels: orig_hpxml.site.fuels,
-                       shelter_coefficient: Airflow.get_default_shelter_coefficient())
+    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
 
-    new_hpxml.set_building_occupancy(number_of_residents: Geometry.get_occupancy_default_num(@nbeds))
+    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
-    new_hpxml.set_building_construction(number_of_conditioned_floors: @ncfl,
-                                        number_of_conditioned_floors_above_grade: @ncfl_ag,
-                                        number_of_bedrooms: @nbeds,
-                                        conditioned_floor_area: @cfa,
-                                        conditioned_building_volume: @cvolume)
+    new_hpxml.building_construction.number_of_conditioned_floors = @ncfl
+    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = @ncfl_ag
+    new_hpxml.building_construction.number_of_bedrooms = @nbeds
+    new_hpxml.building_construction.conditioned_floor_area = @cfa
+    new_hpxml.building_construction.conditioned_building_volume = @cvolume
+    new_hpxml.building_construction.residential_facility_type = @bldg_type
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.set_climate_and_risk_zones(iecc2006: orig_hpxml.climate_and_risk_zones.iecc2006,
-                                         weather_station_id: orig_hpxml.climate_and_risk_zones.weather_station_id,
-                                         weather_station_name: orig_hpxml.climate_and_risk_zones.weather_station_name,
-                                         weather_station_wmo: orig_hpxml.climate_and_risk_zones.weather_station_wmo)
-    @iecc_zone_2006 = orig_hpxml.climate_and_risk_zones.iecc2006
+    new_hpxml.climate_and_risk_zones.iecc_year = orig_hpxml.climate_and_risk_zones.iecc_year
+    new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
+    new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
+    new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
+    @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
@@ -315,7 +325,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
-                                                air_leakage: ach50,
+                                                air_leakage: ach50.round(2),
                                                 infiltration_volume: @infilvolume)
   end
 
@@ -328,15 +338,15 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
-                                                air_leakage: ach50,
+                                                air_leakage: ach50.round(2),
                                                 infiltration_volume: @infilvolume)
   end
 
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone_2006
+    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
-    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone_2006
+    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
       ach50 = 3.0
     end
 
@@ -439,7 +449,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Roofs
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
 
     ext_thermal_bndry_roofs = orig_hpxml.roofs.select { |roof| roof.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.inject(0, :+)
@@ -511,7 +521,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_rim_joists_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
 
     ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_rim_joists.map { |rim_joist| rim_joist.area }.inject(0, :+)
@@ -575,7 +585,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_walls_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone_2006)
+    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
 
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.inject(0, :+)
@@ -674,7 +684,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
-    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone_2006)
+    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone)
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground or
@@ -751,7 +761,7 @@ class EnergyRatingIndex301Ruleset
     # Add vented crawlspace foundation wall
     new_hpxml.foundation_walls.add(id: 'FoundationWall',
                                    interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                                   exterior_adjacent_to: 'ground',
+                                   exterior_adjacent_to: HPXML::LocationGround,
                                    height: 2,
                                    area: 2 * 34.64 * 4,
                                    thickness: 8,
@@ -765,7 +775,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_ceilings_reference(orig_hpxml, new_hpxml)
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone_2006)
+    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
 
     # Table 4.2.2(1) - Ceilings
     orig_hpxml.frame_floors.each do |orig_frame_floor|
@@ -819,7 +829,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
 
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
@@ -868,7 +878,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_iad(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone_2006)
+    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
 
     # Add crawlspace floor
     new_hpxml.frame_floors.add(id: 'FloorAboveCrawlspace',
@@ -879,7 +889,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_slabs_reference(orig_hpxml, new_hpxml)
-    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone_2006)
+    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone)
     slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
 
     orig_hpxml.slabs.each do |orig_slab|
@@ -960,7 +970,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Glazing
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
 
     ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area = calc_wall_areas_for_windows(orig_hpxml)
 
@@ -1054,7 +1064,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Doors
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone_2006)
+    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
 
     # Create new door
     new_hpxml.doors.add(id: 'DoorAreaNorth',
@@ -1269,22 +1279,92 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Thermal distribution systems
     orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
+      # Leakage exemption?
+      zero_leakage = false
+      if orig_hvac_distribution.duct_leakage_testing_exemption
+        if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014AD')
+          fail "ERI Version #{@eri_version} does not support duct leakage testing exemption."
+        elsif Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014ADEGL')
+          # Addendum D: Zero duct leakage to outside
+          zero_leakage = true
+        else
+          # Addendum L: DSE = 0.88
+          new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
+                                           distribution_system_type: HPXML::HVACDistributionTypeDSE,
+                                           annual_heating_dse: 0.88,
+                                           annual_cooling_dse: 0.88)
+          next
+        end
+      end
+
       new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
                                        distribution_system_type: orig_hvac_distribution.distribution_system_type,
                                        annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
                                        annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
       next unless orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
 
-      orig_hvac_distribution.duct_leakage_measurements.each do |orig_leakage_measurement|
-        new_hpxml.hvac_distributions[-1].duct_leakage_measurements.add(duct_type: orig_leakage_measurement.duct_type,
-                                                                       duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
-                                                                       duct_leakage_value: orig_leakage_measurement.duct_leakage_value)
-      end
-      orig_hvac_distribution.ducts.each do |orig_duct|
-        new_hpxml.hvac_distributions[-1].ducts.add(duct_type: orig_duct.duct_type,
-                                                   duct_insulation_r_value: orig_duct.duct_insulation_r_value,
-                                                   duct_location: orig_duct.duct_location,
-                                                   duct_surface_area: orig_duct.duct_surface_area)
+      new_hvac_distribution = new_hpxml.hvac_distributions[-1]
+
+      if zero_leakage
+        # Zero leakage
+        new_hvac_distribution.duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
+                                                            duct_leakage_units: HPXML::UnitsCFM25,
+                                                            duct_leakage_value: 0.0,
+                                                            duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
+        new_hvac_distribution.duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
+                                                            duct_leakage_units: HPXML::UnitsCFM25,
+                                                            duct_leakage_value: 0.0,
+                                                            duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
+      else
+        orig_hvac_distribution.duct_leakage_measurements.each do |orig_leakage_measurement|
+          if orig_leakage_measurement.duct_leakage_total_or_to_outside == HPXML::DuctLeakageTotal
+            # Total duct leakage
+            if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014ADEGL')
+              fail "ERI Version #{@eri_version} does not support total duct leakage testing."
+            end
+
+            if @bldg_type == HPXML::ResidentialTypeApartment
+              # Apartment
+              duct_surface_area_conditioned = 0.0
+              duct_surface_area_total = 0.0
+              orig_hvac_distribution.ducts.each do |orig_duct|
+                if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? orig_duct.duct_location
+                  duct_surface_area_conditioned += orig_duct.duct_surface_area
+                end
+                duct_surface_area_total += orig_duct.duct_surface_area
+              end
+              leakage_to_outside = orig_leakage_measurement.duct_leakage_value * (1.0 - duct_surface_area_conditioned / duct_surface_area_total)
+              htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_hvac_distribution)
+              leakage_air_handler = [0.025 * 400.0 * htg_cap / 12000.0, 0.025 * 400.0 * clg_cap / 12000.0].min
+              leakage_to_outside += leakage_air_handler
+              leakage_to_outside = [leakage_to_outside, orig_leakage_measurement.duct_leakage_value].min
+            else # Dwellings/Townhouses
+              leakage_to_outside = 0.5 * orig_leakage_measurement.duct_leakage_value
+            end
+            new_hvac_distribution.duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
+                                                                duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
+                                                                duct_leakage_value: 0.5 * leakage_to_outside,
+                                                                duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
+            new_hvac_distribution.duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
+                                                                duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
+                                                                duct_leakage_value: 0.5 * leakage_to_outside,
+                                                                duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
+            break
+          else
+            # Duct leakage to outside
+            new_hvac_distribution.duct_leakage_measurements.add(duct_type: orig_leakage_measurement.duct_type,
+                                                                duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
+                                                                duct_leakage_value: orig_leakage_measurement.duct_leakage_value,
+                                                                duct_leakage_total_or_to_outside: orig_leakage_measurement.duct_leakage_total_or_to_outside)
+          end
+        end
+
+        orig_hvac_distribution.ducts.each do |orig_duct|
+          new_hvac_distribution.ducts.add(duct_type: orig_duct.duct_type,
+                                          duct_insulation_r_value: orig_duct.duct_insulation_r_value,
+                                          duct_location: orig_duct.duct_location,
+                                          duct_surface_area: orig_duct.duct_surface_area)
+        end
       end
     end
 
@@ -1482,11 +1562,13 @@ class EnergyRatingIndex301Ruleset
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location,
+                                          performance_adjustment: 0.0,
                                           tank_volume: tank_volume,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           heating_capacity: heating_capacity,
                                           energy_factor: energy_factor,
                                           recovery_efficiency: recovery_efficiency,
+                                          uses_desuperheater: false,
                                           temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
     end
 
@@ -1512,10 +1594,14 @@ class EnergyRatingIndex301Ruleset
         heating_capacity = Waterheater.calc_water_heater_capacity(orig_water_heater.fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
       end
 
-      performance_adjustment = orig_water_heater.performance_adjustment
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
         performance_adjustment = Waterheater.get_tankless_cycling_derate()
+      else
+        performance_adjustment = 0.0
       end
+
+      uses_desuperheater = orig_water_heater.uses_desuperheater
+      uses_desuperheater = false if uses_desuperheater.nil?
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
@@ -1528,7 +1614,7 @@ class EnergyRatingIndex301Ruleset
                                           heating_capacity: heating_capacity,
                                           energy_factor: energy_factor,
                                           recovery_efficiency: orig_water_heater.recovery_efficiency,
-                                          uses_desuperheater: orig_water_heater.uses_desuperheater,
+                                          uses_desuperheater: uses_desuperheater,
                                           jacket_r_value: orig_water_heater.jacket_r_value,
                                           related_hvac_idref: orig_water_heater.related_hvac_idref,
                                           standby_loss: orig_water_heater.standby_loss,
@@ -1673,14 +1759,16 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
     clothes_washer = orig_hpxml.clothes_washers[0]
+    reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
                                   location: HPXML::LocationLivingSpace,
-                                  integrated_modified_energy_factor: HotWaterAndAppliances.get_clothes_washer_reference_imef(),
-                                  rated_annual_kwh: HotWaterAndAppliances.get_clothes_washer_reference_ler(),
-                                  label_electric_rate: HotWaterAndAppliances.get_clothes_washer_reference_elec_rate(),
-                                  label_gas_rate: HotWaterAndAppliances.get_clothes_washer_reference_gas_rate(),
-                                  label_annual_gas_cost: HotWaterAndAppliances.get_clothes_washer_reference_agc(),
-                                  capacity: HotWaterAndAppliances.get_clothes_washer_reference_cap())
+                                  integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
+                                  rated_annual_kwh: reference_values[:rated_annual_kwh],
+                                  label_electric_rate: reference_values[:label_electric_rate],
+                                  label_gas_rate: reference_values[:label_gas_rate],
+                                  label_annual_gas_cost: reference_values[:label_annual_gas_cost],
+                                  capacity: reference_values[:capacity],
+                                  usage: reference_values[:usage])
   end
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
@@ -1693,7 +1781,8 @@ class EnergyRatingIndex301Ruleset
                                   label_electric_rate: clothes_washer.label_electric_rate,
                                   label_gas_rate: clothes_washer.label_gas_rate,
                                   label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
-                                  capacity: clothes_washer.capacity)
+                                  capacity: clothes_washer.capacity,
+                                  usage: clothes_washer.usage)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
@@ -1703,11 +1792,12 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     clothes_dryer = orig_hpxml.clothes_dryers[0]
+    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, clothes_dryer.fuel_type)
     new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
                                  location: HPXML::LocationLivingSpace,
                                  fuel_type: clothes_dryer.fuel_type,
-                                 combined_energy_factor: HotWaterAndAppliances.get_clothes_dryer_reference_cef(clothes_dryer.fuel_type),
-                                 control_type: HotWaterAndAppliances.get_clothes_dryer_reference_control())
+                                 combined_energy_factor: reference_values[:combined_energy_factor],
+                                 control_type: reference_values[:control_type])
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
@@ -1727,17 +1817,23 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
+    reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
-                              energy_factor: HotWaterAndAppliances.get_dishwasher_reference_ef(),
-                              place_setting_capacity: HotWaterAndAppliances.get_dishwasher_reference_cap())
+                              rated_annual_kwh: reference_values[:rated_annual_kwh],
+                              place_setting_capacity: reference_values[:place_setting_capacity],
+                              label_electric_rate: reference_values[:label_electric_rate],
+                              label_gas_rate: reference_values[:label_gas_rate],
+                              label_annual_gas_cost: reference_values[:label_annual_gas_cost])
   end
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
     new_hpxml.dishwashers.add(id: dishwasher.id,
-                              energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
-                              place_setting_capacity: dishwasher.place_setting_capacity)
+                              place_setting_capacity: dishwasher.place_setting_capacity,
+                              label_electric_rate: dishwasher.label_electric_rate,
+                              label_gas_rate: dishwasher.label_gas_rate,
+                              label_annual_gas_cost: dishwasher.label_annual_gas_cost)
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
@@ -1746,13 +1842,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
-    # Table 4.2.2.5(1) Lighting, Appliance and Miscellaneous Electric Loads in electric ERI Reference Homes
-    refrigerator_kwh = HotWaterAndAppliances.get_refrigerator_reference_annual_kwh(@nbeds)
-
     refrigerator = orig_hpxml.refrigerators[0]
+    reference_values = HotWaterAndAppliances.get_refrigerator_default_values(@nbeds)
     new_hpxml.refrigerators.add(id: refrigerator.id,
                                 location: HPXML::LocationLivingSpace,
-                                rated_annual_kwh: refrigerator_kwh)
+                                rated_annual_kwh: reference_values[:rated_annual_kwh])
   end
 
   def self.set_appliances_refrigerator_rated(orig_hpxml, new_hpxml)
@@ -1769,22 +1863,21 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
     cooking_range = orig_hpxml.cooking_ranges[0]
+    oven = orig_hpxml.ovens[0]
+    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
                                  fuel_type: cooking_range.fuel_type,
-                                 is_induction: HotWaterAndAppliances.get_range_oven_reference_is_induction())
-
-    oven = orig_hpxml.ovens[0]
+                                 is_induction: reference_values[:is_induction])
     new_hpxml.ovens.add(id: oven.id,
-                        is_convection: HotWaterAndAppliances.get_range_oven_reference_is_convection())
+                        is_convection: reference_values[:is_convection])
   end
 
   def self.set_appliances_cooking_range_oven_rated(orig_hpxml, new_hpxml)
     cooking_range = orig_hpxml.cooking_ranges[0]
+    oven = orig_hpxml.ovens[0]
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: cooking_range.is_induction)
-
-    oven = orig_hpxml.ovens[0]
     new_hpxml.ovens.add(id: oven.id,
                         is_convection: oven.is_convection)
   end
@@ -1942,12 +2035,20 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
     # Misc
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
     new_hpxml.plug_loads.add(id: 'MiscPlugLoad',
-                             plug_load_type: HPXML::PlugLoadTypeOther)
+                             plug_load_type: HPXML::PlugLoadTypeOther,
+                             kWh_per_year: kWh_per_year,
+                             frac_sensible: frac_sensible.round(3),
+                             frac_latent: frac_latent.round(3))
 
     # Television
+    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(@cfa, @nbeds)
     new_hpxml.plug_loads.add(id: 'TelevisionPlugLoad',
-                             plug_load_type: HPXML::PlugLoadTypeTelevision)
+                             plug_load_type: HPXML::PlugLoadTypeTelevision,
+                             kWh_per_year: kWh_per_year,
+                             frac_sensible: frac_sensible.round(3),
+                             frac_latent: frac_latent.round(3))
   end
 
   def self.set_misc_loads_rated(orig_hpxml, new_hpxml)
@@ -2194,12 +2295,28 @@ class EnergyRatingIndex301Ruleset
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
                                         location: HPXML::LocationLivingSpace, # TODO => 301 Standard doesn't specify the location
+                                        performance_adjustment: 0.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,
                                         heating_capacity: wh_cap,
                                         energy_factor: wh_ef,
                                         recovery_efficiency: wh_re,
+                                        uses_desuperheater: false,
                                         temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
+  end
+
+  def self.get_hvac_capacities_for_distribution_system(orig_hvac_dist)
+    htg_cap = 0.0
+    clg_cap = 0.0
+    hvac = orig_hvac_dist.hvac_systems.each do |hvac|
+      if hvac.respond_to?(:heating_capacity)
+        htg_cap = hvac.heating_capacity
+      end
+      if hvac.respond_to?(:cooling_capacity)
+        clg_cap = hvac.cooling_capacity
+      end
+    end
+    return htg_cap, clg_cap
   end
 
   def self.get_infiltration_volume(hpxml)

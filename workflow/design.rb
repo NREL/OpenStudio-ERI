@@ -96,10 +96,8 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir
   args = {}
   args['hpxml_path'] = output_hpxml
   args['weather_dir'] = File.absolute_path(File.join(basedir, '..', 'weather'))
-  args['epw_output_path'] = File.join(designdir, 'in.epw')
-  if debug
-    args['osm_output_path'] = File.join(designdir, 'in.osm')
-  end
+  args['output_dir'] = File.absolute_path(designdir)
+  args['debug'] = debug
   update_args_hash(measures, measure_subdir, args)
 
   # Add reporting measure to workflow

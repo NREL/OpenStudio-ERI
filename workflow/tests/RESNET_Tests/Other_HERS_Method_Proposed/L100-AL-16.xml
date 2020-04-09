@@ -27,6 +27,7 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
+          <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
@@ -389,7 +390,7 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.25</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallNorth'/>
           </Window>
           <Window>
@@ -398,7 +399,7 @@
             <Azimuth>90</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.25</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallEast'/>
           </Window>
           <Window>
@@ -407,7 +408,7 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.25</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
           <Window>
@@ -416,7 +417,7 @@
             <Azimuth>270</Azimuth>
             <UFactor>0.35</UFactor>
             <SHGC>0.25</SHGC>
-            <Operable>false</Operable>
+            <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallWest'/>
           </Window>
         </Windows>
@@ -563,8 +564,9 @@
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
+          <Usage>6.0</Usage>
           <RatedAnnualkWh>704.0</RatedAnnualkWh>
-          <LabelElectricRate>0.0803</LabelElectricRate>
+          <LabelElectricRate>0.08</LabelElectricRate>
           <LabelGasRate>0.58</LabelGasRate>
           <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
           <Capacity>2.874</Capacity>
@@ -578,8 +580,11 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
-          <EnergyFactor>0.46</EnergyFactor>
+          <RatedAnnualkWh>467.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
+          <LabelElectricRate>0.12</LabelElectricRate>
+          <LabelGasRate>1.09</LabelGasRate>
+          <LabelAnnualGasCost>33.12</LabelAnnualGasCost>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
