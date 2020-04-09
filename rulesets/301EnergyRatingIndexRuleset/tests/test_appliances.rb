@@ -16,49 +16,37 @@ class ApplianceTest < MiniTest::Test
   end
 
   def test_appliances_electric
-    hpxml_names = ['base.xml',
-                   'base-foundation-unconditioned-basement.xml',
+    hpxml_names = ['base-foundation-unconditioned-basement.xml',
                    'base-appliances-modified.xml']
 
     hpxml_names.each do |hpxml_name|
-      rated_location = HPXML::LocationLivingSpace
-      if hpxml_name == 'base-foundation-unconditioned-basement.xml'
-        rated_location = HPXML::LocationBasementUnconditioned
-      end
-
       # Reference Home, IAD, IAD Reference
       calc_types = [Constants.CalcTypeERIReferenceHome,
                     Constants.CalcTypeERIIndexAdjustmentDesign,
                     Constants.CalcTypeERIIndexAdjustmentReferenceHome]
       calc_types.each do |calc_type|
         hpxml = _test_measure(hpxml_name, calc_type)
-        _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, usage: 6, location: HPXML::LocationLivingSpace)
+        _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
-        _check_dishwasher(hpxml, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4)
         _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false)
       end
 
-      if hpxml_name != 'base-appliances-modified.xml'
-
-        # Rated Home
-        hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-        _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, usage: 6, location: rated_location)
-        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: rated_location)
-        _check_dishwasher(hpxml, annual_kwh: 307, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32)
-        _check_refrigerator(hpxml, annual_kwh: 650.0, location: rated_location)
+      # Rated Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      if hpxml_name == 'base-foundation-unconditioned-basement.xml'
+        _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationBasementUnconditioned)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationBasementUnconditioned)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 307, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4)
+        _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationBasementUnconditioned)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false)
-
       else
-
-        # Rated Home
-        hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-        _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, usage: 6, location: HPXML::LocationLivingSpace)
+        _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeMoisture, location: HPXML::LocationLivingSpace)
-        _check_dishwasher(hpxml, annual_kwh: 307, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32)
+        _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4)
         _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false)
-
       end
 
       # Test w/ 301-2019 pre-Addendum A
@@ -70,9 +58,9 @@ class ApplianceTest < MiniTest::Test
                     Constants.CalcTypeERIIndexAdjustmentReferenceHome]
       calc_types.each do |calc_type|
         hpxml = _test_measure(hpxml_name, calc_type)
-        _check_clothes_washer(hpxml, mef: nil, imef: 0.331, annual_kwh: 704, elec_rate: 0.08, gas_rate: 0.58, agc: 23, cap: 2.874, usage: 6, location: HPXML::LocationLivingSpace)
+        _check_clothes_washer(hpxml, mef: nil, imef: 0.331, annual_kwh: 704, elec_rate: 0.08, gas_rate: 0.58, agc: 23, cap: 2.874, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 2.62, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
-        _check_dishwasher(hpxml, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4)
         _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false)
       end
@@ -244,7 +232,7 @@ class ApplianceTest < MiniTest::Test
     return [kwh_per_yr, therms_per_yr, sens_btu_per_yr, lat_btu_per_yr]
   end
 
-  def _check_clothes_washer(hpxml, mef:, imef:, annual_kwh:, elec_rate:, gas_rate:, agc:, cap:, usage:, location:)
+  def _check_clothes_washer(hpxml, mef:, imef:, annual_kwh:, elec_rate:, gas_rate:, agc:, cap:, label_usage:, location:)
     assert_equal(1, hpxml.clothes_washers.size)
     clothes_washer = hpxml.clothes_washers[0]
     assert_equal(location, clothes_washer.location)
@@ -260,7 +248,7 @@ class ApplianceTest < MiniTest::Test
     assert_in_epsilon(gas_rate, clothes_washer.label_gas_rate, 0.01)
     assert_in_epsilon(agc, clothes_washer.label_annual_gas_cost, 0.01)
     assert_in_epsilon(cap, clothes_washer.capacity, 0.01)
-    assert_in_epsilon(usage, clothes_washer.usage, 0.01)
+    assert_in_epsilon(label_usage, clothes_washer.label_usage, 0.01)
 
     # Energy & Internal Gains
     nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
@@ -304,14 +292,24 @@ class ApplianceTest < MiniTest::Test
     end
   end
 
-  def _check_dishwasher(hpxml, annual_kwh:, cap:, elec_rate:, gas_rate:, agc:)
+  def _check_dishwasher(hpxml, ef:, annual_kwh:, cap:, elec_rate:, gas_rate:, agc:, label_usage:)
     assert_equal(1, hpxml.dishwashers.size)
     dishwasher = hpxml.dishwashers[0]
-    assert_in_epsilon(annual_kwh, dishwasher.rated_annual_kwh, 0.01)
+    if ef.nil?
+      assert_nil(dishwasher.energy_factor)
+    else
+      assert_in_epsilon(ef, dishwasher.energy_factor, 0.01)
+    end
+    if annual_kwh.nil?
+      assert_nil(dishwasher.rated_annual_kwh)
+    else
+      assert_in_epsilon(annual_kwh, dishwasher.rated_annual_kwh, 0.01)
+    end
     assert_in_epsilon(cap, dishwasher.place_setting_capacity, 0.01)
     assert_in_epsilon(elec_rate, dishwasher.label_electric_rate, 0.01)
     assert_in_epsilon(gas_rate, dishwasher.label_gas_rate, 0.01)
     assert_in_epsilon(agc, dishwasher.label_annual_gas_cost, 0.01)
+    assert_in_epsilon(label_usage, dishwasher.label_usage, 0.01)
 
     # Energy & Internal Gains
     nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)

@@ -2014,8 +2014,8 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
                               label_electric_rate: reference_values[:label_electric_rate],
                               label_gas_rate: reference_values[:label_gas_rate],
                               label_annual_gas_cost: reference_values[:label_annual_gas_cost],
-                              capacity: reference_values[:capacity],
-                              usage: reference_values[:usage])
+                              label_usage: reference_values[:label_usage],
+                              capacity: reference_values[:capacity])
   end
 end
 
@@ -2089,7 +2089,8 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
                           rated_annual_kwh: reference_values[:rated_annual_kwh],
                           label_electric_rate: reference_values[:label_electric_rate],
                           label_gas_rate: reference_values[:label_gas_rate],
-                          label_annual_gas_cost: reference_values[:label_annual_gas_cost])
+                          label_annual_gas_cost: reference_values[:label_annual_gas_cost],
+                          label_usage: reference_values[:label_usage])
   end
 end
 

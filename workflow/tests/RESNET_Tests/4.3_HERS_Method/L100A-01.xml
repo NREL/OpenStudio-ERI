@@ -384,11 +384,11 @@
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
-          <Usage>6.0</Usage>
           <RatedAnnualkWh>400.0</RatedAnnualkWh>
           <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
           <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
+          <LabelUsage>6.0</LabelUsage>
           <Capacity>3.0</Capacity>
         </ClothesWasher>
         <ClothesDryer>
@@ -405,6 +405,7 @@
           <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
           <LabelAnnualGasCost>33.12</LabelAnnualGasCost>
+          <LabelUsage>4.0</LabelUsage>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
