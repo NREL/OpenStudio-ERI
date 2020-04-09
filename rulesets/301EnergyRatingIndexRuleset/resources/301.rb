@@ -1822,7 +1822,8 @@ class EnergyRatingIndex301Ruleset
                               place_setting_capacity: reference_values[:place_setting_capacity],
                               label_electric_rate: reference_values[:label_electric_rate],
                               label_gas_rate: reference_values[:label_gas_rate],
-                              label_annual_gas_cost: reference_values[:label_annual_gas_cost])
+                              label_annual_gas_cost: reference_values[:label_annual_gas_cost],
+                              label_usage: reference_values[:label_usage])
   end
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
@@ -1833,7 +1834,8 @@ class EnergyRatingIndex301Ruleset
                               place_setting_capacity: dishwasher.place_setting_capacity,
                               label_electric_rate: dishwasher.label_electric_rate,
                               label_gas_rate: dishwasher.label_gas_rate,
-                              label_annual_gas_cost: dishwasher.label_annual_gas_cost)
+                              label_annual_gas_cost: dishwasher.label_annual_gas_cost,
+                              label_usage: dishwasher.label_usage)
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
