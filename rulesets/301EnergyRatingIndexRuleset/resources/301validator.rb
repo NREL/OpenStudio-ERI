@@ -453,7 +453,7 @@ class EnergyRatingIndex301Validator
         '../WaterFixture' => one_or_more, # See [WaterFixture]
         'SystemIdentifier' => one, # Required by HPXML schema
         'WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater" or text()="space-heating boiler with storage tank" or text()="space-heating boiler with tankless coil"]' => one, # See [WHType=Tank] or [WHType=Tankless] or [WHType=HeatPump] or [WHType=Indirect] or [WHType=CombiTankless]
-        'Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior"]' => zero_or_one,
+        'Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior"]' => one,
         'FractionDHWLoadServed' => one,
         'UsesDesuperheater' => zero_or_one, # See [Desuperheater]
       },
@@ -588,7 +588,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
-        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood"]' => one,
+        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one,
         'EnergyFactor | CombinedEnergyFactor' => one,
         'ControlType[text()="timer" or text()="moisture"]' => one,
       },
