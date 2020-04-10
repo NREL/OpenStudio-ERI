@@ -43,7 +43,9 @@ The building description is entered in HPXML's ``/HPXML/Building/BuildingDetails
 Building Summary
 ~~~~~~~~~~~~~~~~
 
-This section describes elements specified in HPXML's ``BuildingSummary``. It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, residential facility type, etc.
+This section describes elements specified in HPXML's ``BuildingSummary``. 
+It is used for high-level building information needed for an ERI calculation including conditioned floor area, number of bedrooms, number of conditioned floors, residential facility type, etc.
+Note that a walkout basement should be included in ``NumberofConditionedFloorsAboveGrade``.
 
 The ``BuildingSummary/Site/FuelTypesAvailable`` element is used to determine whether the home has access to natural gas or fossil fuel delivery (specified by any value other than "electricity").
 This information may be used for determining the heating system, as specified by the ERI 301 Standard.
