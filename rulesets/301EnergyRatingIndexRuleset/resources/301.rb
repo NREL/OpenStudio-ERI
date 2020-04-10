@@ -1765,8 +1765,8 @@ class EnergyRatingIndex301Ruleset
                                   label_electric_rate: reference_values[:label_electric_rate],
                                   label_gas_rate: reference_values[:label_gas_rate],
                                   label_annual_gas_cost: reference_values[:label_annual_gas_cost],
-                                  capacity: reference_values[:capacity],
-                                  usage: reference_values[:usage])
+                                  label_usage: reference_values[:label_usage],
+                                  capacity: reference_values[:capacity])
   end
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
@@ -1779,8 +1779,8 @@ class EnergyRatingIndex301Ruleset
                                   label_electric_rate: clothes_washer.label_electric_rate,
                                   label_gas_rate: clothes_washer.label_gas_rate,
                                   label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
-                                  capacity: clothes_washer.capacity,
-                                  usage: clothes_washer.usage)
+                                  label_usage: clothes_washer.label_usage,
+                                  capacity: clothes_washer.capacity)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
@@ -1817,21 +1817,25 @@ class EnergyRatingIndex301Ruleset
     dishwasher = orig_hpxml.dishwashers[0]
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
                               place_setting_capacity: reference_values[:place_setting_capacity],
                               label_electric_rate: reference_values[:label_electric_rate],
                               label_gas_rate: reference_values[:label_gas_rate],
-                              label_annual_gas_cost: reference_values[:label_annual_gas_cost])
+                              label_annual_gas_cost: reference_values[:label_annual_gas_cost],
+                              label_usage: reference_values[:label_usage])
   end
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
                               place_setting_capacity: dishwasher.place_setting_capacity,
                               label_electric_rate: dishwasher.label_electric_rate,
                               label_gas_rate: dishwasher.label_gas_rate,
-                              label_annual_gas_cost: dishwasher.label_annual_gas_cost)
+                              label_annual_gas_cost: dishwasher.label_annual_gas_cost,
+                              label_usage: dishwasher.label_usage)
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)

@@ -475,7 +475,7 @@ Clothes Washer
 **************
 
 An ``Appliances/ClothesWasher`` element must be specified.
-The efficiency of the clothes washer can either be entered as a ``ModifiedEnergyFactor`` or an ``IntegratedModifiedEnergyFactor``.
+The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
 Clothes Dryer
@@ -483,7 +483,7 @@ Clothes Dryer
 
 An ``Appliances/ClothesDryer`` element must be specified.
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
-The efficiency of the clothes dryer can either be entered as an ``EnergyFactor`` or ``CombinedEnergyFactor``.
+The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
 
 Dishwasher
@@ -491,7 +491,7 @@ Dishwasher
 
 An ``Appliances/Dishwasher`` element must be specified.
 The dishwasher's ``PlaceSettingCapacity`` must be provided.
-The efficiency of the dishwasher can either be entered as an ``EnergyFactor`` or ``RatedAnnualkWh``.
+The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` or an ``EnergyFactor``.
 
 Refrigerator
 ************
