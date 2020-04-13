@@ -510,8 +510,8 @@ class HVACtest < MiniTest::Test
                             [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
                             [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
                             [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73])
-      _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, 0.8, 0.1, _dse(calc_type)],
-                            [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)],
+      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)],
+                            [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, 0.8, 0.1, _dse(calc_type)],
                             [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)],
                             [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)])
       _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
@@ -528,11 +528,11 @@ class HVACtest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, calc_type)
     _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 0.2, nil, 0.73],
                           [HPXML::HVACTypeRoomAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 0.2, nil, 0.65])
-    _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeElectricity, nil, 0.1, nil],
+    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeElectricity, nil, 0.1, nil],
+                          [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 0.1, nil],
+                          [HPXML::HVACTypeBoiler, HPXML::FuelTypeElectricity, nil, 0.1, nil],
                           [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, nil, 0.1, nil],
                           [HPXML::HVACTypeElectricResistance, HPXML::FuelTypeElectricity, nil, 0.1, nil],
-                          [HPXML::HVACTypeFurnace, HPXML::FuelTypeElectricity, nil, 0.1, nil],
-                          [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 0.1, nil],
                           [HPXML::HVACTypeStove, HPXML::FuelTypeOil, nil, 0.1, nil],
                           [HPXML::HVACTypeWallFurnace, HPXML::FuelTypePropane, nil, 0.1, nil])
     _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 0.1, 0.2, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil],

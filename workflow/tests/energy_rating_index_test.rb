@@ -1595,6 +1595,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: CookingRange
     cooking_range = hpxml.cooking_ranges[0]
+    cooking_range.usage_multiplier = 1.0 if cooking_range.usage_multiplier.nil?
     oven = hpxml.ovens[0]
     cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cooking_range, oven)
     btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
@@ -1603,6 +1604,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: Refrigerator
     refrigerator = hpxml.refrigerators[0]
+    refrigerator.usage_multiplier = 1.0 if refrigerator.usage_multiplier.nil?
     rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_energy(refrigerator)
     btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (rf_frac_sens * btu)
@@ -1610,6 +1612,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: Dishwasher
     dishwasher = hpxml.dishwashers[0]
+    dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
     dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
     btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (dw_frac_sens * btu)
@@ -1617,6 +1620,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: ClothesWasher
     clothes_washer = hpxml.clothes_washers[0]
+    clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
     cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
     btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (cw_frac_sens * btu)
@@ -1624,6 +1628,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Appliances: ClothesDryer
     clothes_dryer = hpxml.clothes_dryers[0]
+    clothes_dryer.usage_multiplier = 1.0 if clothes_dryer.usage_multiplier.nil?
     cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(eri_version, nbeds, clothes_dryer, clothes_washer)
     btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
     xml_appl_sens += (cd_frac_sens * btu)
