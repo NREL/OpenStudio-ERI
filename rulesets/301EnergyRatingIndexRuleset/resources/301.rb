@@ -15,14 +15,6 @@ class EnergyRatingIndex301Ruleset
     @weather = weather
     @calc_type = calc_type
 
-    # Determine building type: single family detached or attached (including multifamily)
-    @is_attached_unit = false
-    (hpxml.rim_joists + hpxml.walls + hpxml.foundation_walls + hpxml.frame_floors).each do |surface|
-      next unless surface.exterior_adjacent_to.include? HPXML::LocationOtherHousingUnit
-
-      @is_attached_unit = true
-    end
-
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml)
@@ -443,7 +435,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Roofs
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
+    ceiling_ufactor = get_reference_ceiling_ufactor()
 
     ext_thermal_bndry_roofs = orig_hpxml.roofs.select { |roof| roof.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.inject(0, :+)
@@ -515,7 +507,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_rim_joists_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
+    ufactor = get_reference_wall_ufactor()
 
     ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_rim_joists.map { |rim_joist| rim_joist.area }.inject(0, :+)
@@ -579,7 +571,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_walls_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Above-grade walls
-    ufactor = Constructions.get_default_frame_wall_ufactor(@iecc_zone)
+    ufactor = get_reference_wall_ufactor()
 
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.inject(0, :+)
@@ -678,7 +670,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
-    wall_ufactor = Constructions.get_default_basement_wall_ufactor(@iecc_zone)
+    wall_ufactor = get_reference_basement_wall_ufactor()
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground or
@@ -769,7 +761,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_ceilings_reference(orig_hpxml, new_hpxml)
-    ceiling_ufactor = Constructions.get_default_ceiling_ufactor(@iecc_zone)
+    ceiling_ufactor = get_reference_ceiling_ufactor()
 
     # Table 4.2.2(1) - Ceilings
     orig_hpxml.frame_floors.each do |orig_frame_floor|
@@ -823,7 +815,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
+    floor_ufactor = get_reference_floor_ufactor()
 
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
@@ -872,7 +864,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_floors_iad(orig_hpxml, new_hpxml)
-    floor_ufactor = Constructions.get_default_floor_ufactor(@iecc_zone)
+    floor_ufactor = get_reference_floor_ufactor()
 
     # Add crawlspace floor
     new_hpxml.frame_floors.add(id: 'FloorAboveCrawlspace',
@@ -883,8 +875,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_slabs_reference(orig_hpxml, new_hpxml)
-    slab_perim_rvalue, slab_perim_depth = Constructions.get_default_slab_perimeter_rvalue_depth(@iecc_zone)
-    slab_under_rvalue, slab_under_width = Constructions.get_default_slab_under_rvalue_width()
+    slab_perim_rvalue, slab_perim_depth = get_reference_slab_perimeter_rvalue_depth()
+    slab_under_rvalue, slab_under_width = get_reference_slab_under_rvalue_width()
 
     orig_hpxml.slabs.each do |orig_slab|
       if orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
@@ -964,9 +956,10 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_windows_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Glazing
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
+    ufactor, shgc = get_reference_glazing_ufactor_shgc()
 
-    ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area = calc_wall_areas_for_windows(orig_hpxml)
+    ag_bndry_wall_area, bg_bndry_wall_area = orig_hpxml.thermal_boundary_wall_areas()
+    common_wall_area = orig_hpxml.common_wall_area()
 
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
@@ -1072,7 +1065,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Doors
-    ufactor, shgc = Constructions.get_default_ufactor_shgc(@iecc_zone)
+    ufactor, shgc = get_reference_glazing_ufactor_shgc()
 
     # Create new door
     new_hpxml.doors.add(id: 'DoorAreaNorth',
@@ -2202,7 +2195,8 @@ class EnergyRatingIndex301Ruleset
       end
       q_fan = q_tot - phi * (q_inf * a_ext)
     else
-      if @is_attached_unit # No infiltration credit for attached/multifamily
+      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+        # No infiltration credit for attached/multifamily
         return q_tot
       end
 
@@ -2445,38 +2439,83 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.calc_wall_areas_for_windows(orig_hpxml)
-    ag_bndry_wall_area = 0.0
-    bg_bndry_wall_area = 0.0
-    common_wall_area = 0.0 # Excludes foundation walls
-
-    orig_hpxml.walls.each do |orig_wall|
-      if orig_wall.is_thermal_boundary
-        ag_bndry_wall_area += orig_wall.area
-      elsif orig_wall.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
-        common_wall_area += orig_wall.area
-      end
+  def self.get_reference_floor_ufactor()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Floor Over Unconditioned Space U-Factor
+    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+      return 0.064
+    elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
+      return 0.047
+    elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 0.033
     end
+  end
 
-    orig_hpxml.rim_joists.each do |orig_rim_joist|
-      if orig_rim_joist.is_thermal_boundary
-        ag_bndry_wall_area += orig_rim_joist.area
-      elsif orig_rim_joist.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
-        common_wall_area += orig_rim_joist.area
-      end
+  def self.get_reference_ceiling_ufactor()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Ceiling U-Factor
+    if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
+      return 0.035
+    elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
+      return 0.030
+    elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 0.026
     end
+  end
 
-    orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      next unless orig_foundation_wall.is_thermal_boundary
-
-      height = orig_foundation_wall.height
-      bg_depth = orig_foundation_wall.depth_below_grade
-      area = orig_foundation_wall.area
-      ag_bndry_wall_area += (height - bg_depth) / height * area
-      bg_bndry_wall_area += bg_depth / height * area
+  def self.get_reference_basement_wall_ufactor()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Basement Wall U-Factor
+    if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
+      return 0.360
+    elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 0.059
     end
+  end
 
-    return ag_bndry_wall_area, bg_bndry_wall_area, common_wall_area
+  def self.get_reference_slab_perimeter_rvalue_depth()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Slab-on-Grade R-Value & Depth (ft)
+    if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
+      return 0.0, 0.0
+    elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
+      return 10.0, 2.0
+    elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 10.0, 4.0
+    end
+  end
+
+  def self.get_reference_slab_under_rvalue_width()
+    return 0.0, 0.0
+  end
+
+  def self.get_reference_glazing_ufactor_shgc()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Fenestration and Opaque Door U-Factor
+    # Glazed Fenestration Assembly SHGC
+    if ['1A', '1B', '1C'].include? @iecc_zone
+      return 1.2, 0.40
+    elsif ['2A', '2B', '2C'].include? @iecc_zone
+      return 0.75, 0.40
+    elsif ['3A', '3B', '3C'].include? @iecc_zone
+      return 0.65, 0.40
+    elsif ['4A', '4B'].include? @iecc_zone
+      return 0.40, 0.40
+    elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 0.35, 0.40
+    end
+  end
+
+  def self.get_reference_wall_ufactor()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Frame Wall U-Factor
+    if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
+      return 0.082
+    elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
+      return 0.060
+    elsif ['7', '8'].include? @iecc_zone
+      return 0.057
+    end
   end
 end
 
