@@ -2133,7 +2133,7 @@ class EnergyRatingIndex301Ruleset
       break unless ach50.nil?
     end
 
-    tot_cb_area, ext_cb_area = calc_compartmentalization_boundary_areas(orig_hpxml)
+    tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
     a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
 
     if @is_attached_unit && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
@@ -2186,7 +2186,7 @@ class EnergyRatingIndex301Ruleset
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
-      tot_cb_area, ext_cb_area = calc_compartmentalization_boundary_areas(orig_hpxml)
+      tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
       a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
       if [HPXML::MechVentTypeBalanced, HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? fan_type
         phi = 1.0
@@ -2220,50 +2220,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     return ext_cb_area / tot_cb_area
-  end
-
-  def self.calc_compartmentalization_boundary_areas(orig_hpxml)
-    # Returns:
-    # 1. Total Compartmentalization Boundary area (i.e., surface area surrounding infiltration volume)
-    # 2. Exterior Compartmentalization Boundary area (i.e., above excluding surfaces attached to garage or other housing units)
-
-    tot_cb_area = 0.0
-    ext_cb_area = 0.0
-
-    # Populate space_within_infil_volume hash for relevant attic/foundation space types
-    space_within_infil_volume = { HPXML::LocationLivingSpace => true }
-    orig_hpxml.attics.each do |orig_attic|
-      next unless orig_attic.attic_type == HPXML::AtticTypeUnvented
-
-      space_within_infil_volume[HPXML::LocationAtticUnvented] = orig_attic.within_infiltration_volume
-    end
-    orig_hpxml.foundations.each do |orig_foundation|
-      if orig_foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
-        space_within_infil_volume[HPXML::LocationBasementUnconditioned] = orig_foundation.within_infiltration_volume
-      elsif orig_foundation.foundation_type == HPXML::FoundationTypeCrawlspaceUnvented
-        space_within_infil_volume[HPXML::LocationCrawlspaceUnvented] = orig_foundation.within_infiltration_volume
-      end
-    end
-
-    # Get surfaces bounding infiltration volume
-    space_within_infil_volume.keys.each do |space_type|
-      next unless space_within_infil_volume[space_type]
-
-      (orig_hpxml.roofs + orig_hpxml.rim_joists + orig_hpxml.walls + orig_hpxml.foundation_walls + orig_hpxml.frame_floors + orig_hpxml.slabs).each do |orig_surface|
-        next unless [orig_surface.interior_adjacent_to, orig_surface.exterior_adjacent_to].include? space_type
-
-        # Exclude surfaces between two spaces that are both within infiltration volume
-        next if space_within_infil_volume[orig_surface.interior_adjacent_to] && space_within_infil_volume[orig_surface.exterior_adjacent_to]
-
-        # Update Compartmentalization Boundary areas
-        tot_cb_area += orig_surface.area
-        if not (orig_surface.exterior_adjacent_to.include?(HPXML::LocationOtherHousingUnit) || (orig_surface.exterior_adjacent_to == HPXML::LocationGarage))
-          ext_cb_area += orig_surface.area
-        end
-      end
-    end
-
-    return tot_cb_area, ext_cb_area
   end
 
   def self.add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids, load_frac, orig_system = nil)
