@@ -966,12 +966,12 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    if @is_attached_unit && (orig_hpxml.fraction_of_window_area_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
-      # Disable natural ventilation
-      fraction_operable = 0.0
-    else
-      # Default natural ventilation
-      fraction_operable = Airflow.get_default_fraction_of_operable_window_area()
+    fraction_operable = Airflow.get_default_fraction_of_operable_window_area() # Default natural ventilation
+    if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+      if (orig_hpxml.fraction_of_window_area_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+        # Disable natural ventilation
+        fraction_operable = 0.0
+      end
     end
 
     # Create equally distributed windows
@@ -2136,10 +2136,12 @@ class EnergyRatingIndex301Ruleset
     tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
     a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
 
-    if @is_attached_unit && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
-      cfm50 = ach50 * @infil_volume / 60.0
-      if cfm50 / tot_cb_area <= 0.30
-        ach50 *= a_ext
+    if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+      if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+        cfm50 = ach50 * @infil_volume / 60.0
+        if cfm50 / tot_cb_area <= 0.30
+          ach50 *= a_ext
+        end
       end
     end
 
@@ -2215,8 +2217,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
-    if not @is_attached_unit
-      return 1.0 # detached unit
+    if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeManufactured].include? @bldg_type
+      return 1.0
     end
 
     return ext_cb_area / tot_cb_area
