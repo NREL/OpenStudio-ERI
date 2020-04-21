@@ -1,5 +1,8 @@
 start_time = Time.now
 
+args = ARGV.dup
+ARGV.clear
+
 require 'optparse'
 require 'csv'
 require 'pathname'
@@ -591,7 +594,7 @@ OptionParser.new do |opts|
     puts opts
     exit!
   end
-end.parse!
+end.parse!(args)
 
 if options[:hourly_outputs].include? 'ALL'
   options[:hourly_outputs] = hourly_types[1..-1]
