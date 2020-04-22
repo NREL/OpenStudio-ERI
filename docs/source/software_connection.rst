@@ -4,7 +4,7 @@ ERI Use Case for HPXML
 HPXML is an flexible and extensible format, where nearly all elements in the schema are optional and custom elements can be included.
 Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML elements or enumeration choices required to run the workflow.
 
-Software developers should use the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb>`_ (defined as a set of conditional XPath expressions) as well as the `HPXML schema <https://github.com/NREL/OpenStudio-ERI/tree/master/measures/HPXMLtoOpenStudio/hpxml_schemas>`_ to construct valid HPXML files for ERI calculations.
+Software developers should use the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/rulesets/301EnergyRatingIndexRuleset/resources/301validator.rb>`_ (defined as a set of conditional XPath expressions) as well as the `HPXML schema <https://github.com/NREL/OpenStudio-ERI/tree/master/measures/HPXMLtoOpenStudio/hpxml_schemas>`_ to construct valid HPXML files for ERI calculations.
 
 ERI Version
 ~~~~~~~~~~~
@@ -15,7 +15,7 @@ A value of "latest" can be used to always point to the latest version available.
 
 .. note:: 
 
-  Valid choices for ERI version can be looked up in the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/measures/301EnergyRatingIndexRuleset/resources/301validator.rb>`_.
+  Valid choices for ERI version can be looked up in the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/rulesets/301EnergyRatingIndexRuleset/resources/301validator.rb>`_.
 
 Building Details
 ~~~~~~~~~~~~~~~~
