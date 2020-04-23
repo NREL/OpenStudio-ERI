@@ -186,7 +186,11 @@ Any window or glass door area should be specified as an ``Enclosure/Windows/Wind
 Windows are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as ``Area``.
 Windows must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
 Windows must also have an ``Azimuth`` specified, even if the attached wall does not.
+
 Finally, windows must have the ``FractionOperable`` property specified for determining natural ventilation.
+The input should solely reflect whether the windows are operable (can be opened), not how they are used by the occupants.
+If a ``Window`` represents a single window, the value should be 0 or 1.
+If a ``Window`` represents multiple windows (e.g., 4), the value should be between 0 and 1 (e.g., 0, 0.25, 0.5, 0.75, or 1).
 
 Overhangs (e.g., a roof eave) can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
 Overhangs are defined by the vertical distance between the overhang and the top of the window (``DistanceToTopOfWindow``), and the vertical distance between the overhang and the bottom of the window (``DistanceToBottomOfWindow``).
@@ -416,7 +420,6 @@ Solar Thermal
 
 A solar hot water system can be entered as a ``Systems/SolarThermal/SolarThermalSystem``.
 The ``SystemType`` element must be 'hot water' and the ``ConnectedTo`` element is required and must point to a ``WaterHeatingSystem``.
-Note that the connected water heater cannot be of type space-heating boiler or attached to a desuperheater.
 
 Solar hot water systems can be described with either simple or detailed inputs.
 

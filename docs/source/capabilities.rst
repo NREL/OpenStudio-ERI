@@ -11,6 +11,8 @@ The following ERI Standards and Addenda are currently available:
 - ANSI/RESNET/ICC 301-2014 Addendum E-2018, House Size Index Adjustment Factors, February 1, 2018
 - ANSI/RESNET/ICC 301-2014 Addendum G-2018, Solid State Lighting, February 2, 2018
 - ANSI/RESNET/ICC 301-2014 Addendum L-2018, Duct Leakage to Outside Test Exception, July 1, 2019
+- ANSI/RESNET/ICC 301-2019 "Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index".
+- ANSI/RESNET/ICC 301-2019 Addendum A-2019, Clothes Washers and Dryers and Dishwashers, July 1, 2020
 
 Modeling Capabilities
 ---------------------
