@@ -1800,6 +1800,12 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
     clothes_washer = orig_hpxml.clothes_washers[0]
+
+    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
+      # This fields are required but not used
+      clothes_washer.label_usage = 999
+    end
+
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
                                   location: clothes_washer.location,
                                   modified_energy_factor: clothes_washer.modified_energy_factor,
@@ -1857,6 +1863,15 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
+
+    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
+      # These fields are required but not used
+      dishwasher.label_electric_rate = 999
+      dishwasher.label_gas_rate = 999
+      dishwasher.label_annual_gas_cost = 999
+      dishwasher.label_usage = 999
+    end
+
     new_hpxml.dishwashers.add(id: dishwasher.id,
                               energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,

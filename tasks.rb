@@ -2474,10 +2474,19 @@ def create_sample_hpxmls
   XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
 
   # Older versions
-  Constants.ERIVersions.each do |eri_version|
-    next if eri_version.include? '2019'
+  Constants.ERIVersions[0..-2].each do |eri_version|
     hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
     hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = eri_version
+
+    if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
+      # Remove appliance inputs new as of 301-2019 Addendum A
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher/LabelUsage')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelElectricRate')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelGasRate')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelAnnualGasCost')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelUsage')
+    end
+
     XMLHelper.write_file(hpxml_doc, "workflow/sample_files/base-version-#{eri_version}.xml")
   end
 end

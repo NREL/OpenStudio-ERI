@@ -12,7 +12,7 @@
         <Timestep>60</Timestep>
       </SimulationControl>
       <ERICalculation>
-        <Version>2014ADEGL</Version>
+        <Version>2019</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
