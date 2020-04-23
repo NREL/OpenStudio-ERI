@@ -12,7 +12,7 @@
         <Timestep>60</Timestep>
       </SimulationControl>
       <ERICalculation>
-        <Version>latest</Version>
+        <Version>2014A</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -229,7 +229,7 @@
               <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
-            <FractionOperable>0.33</FractionOperable>
+            <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -243,7 +243,7 @@
               <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
-            <FractionOperable>0.33</FractionOperable>
+            <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -257,7 +257,7 @@
               <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
-            <FractionOperable>0.33</FractionOperable>
+            <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -271,7 +271,7 @@
               <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
-            <FractionOperable>0.33</FractionOperable>
+            <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
@@ -334,22 +334,6 @@
             <SystemIdentifier id='HVACDistribution'/>
             <DistributionSystemType>
               <AirDistribution>
-                <DuctLeakageMeasurement>
-                  <DuctType>supply</DuctType>
-                  <DuctLeakage>
-                    <Units>CFM25</Units>
-                    <Value>75.0</Value>
-                    <TotalOrToOutside>to outside</TotalOrToOutside>
-                  </DuctLeakage>
-                </DuctLeakageMeasurement>
-                <DuctLeakageMeasurement>
-                  <DuctType>return</DuctType>
-                  <DuctLeakage>
-                    <Units>CFM25</Units>
-                    <Value>25.0</Value>
-                    <TotalOrToOutside>to outside</TotalOrToOutside>
-                  </DuctLeakage>
-                </DuctLeakageMeasurement>
                 <Ducts>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>4.0</DuctInsulationRValue>
@@ -362,6 +346,9 @@
                   <DuctLocation>attic - unvented</DuctLocation>
                   <DuctSurfaceArea>50.0</DuctSurfaceArea>
                 </Ducts>
+                <extension>
+                  <DuctLeakageTestingExemption>true</DuctLeakageTestingExemption>
+                </extension>
               </AirDistribution>
             </DistributionSystemType>
           </HVACDistribution>
@@ -400,21 +387,6 @@
             <LowFlow>false</LowFlow>
           </WaterFixture>
         </WaterHeating>
-        <SolarThermal>
-          <SolarThermalSystem>
-            <SystemIdentifier id='SolarThermalSystem'/>
-            <SystemType>hot water</SystemType>
-            <CollectorArea>40.0</CollectorArea>
-            <CollectorLoopType>liquid indirect</CollectorLoopType>
-            <CollectorType>evacuated tube</CollectorType>
-            <CollectorAzimuth>180</CollectorAzimuth>
-            <CollectorTilt>20.0</CollectorTilt>
-            <CollectorRatedOpticalEfficiency>0.5</CollectorRatedOpticalEfficiency>
-            <CollectorRatedThermalLosses>0.2799</CollectorRatedThermalLosses>
-            <StorageVolume>60.0</StorageVolume>
-            <ConnectedTo idref='WaterHeater'/>
-          </SolarThermalSystem>
-        </SolarThermal>
       </Systems>
       <Appliances>
         <ClothesWasher>

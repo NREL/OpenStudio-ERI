@@ -2232,8 +2232,7 @@ def create_sample_hpxmls
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/sample_files/invalid_files/*.xml'), 'workflow/sample_files/invalid_files')
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/bad-site-neighbor-azimuth.xml',
-                  'invalid_files/cfis-with-hydronic-distribution.xml',
+  exclude_list = ['invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-washer-location-other.xml',
                   'invalid_files/clothes-dryer-location.xml',
@@ -2251,6 +2250,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
+                  'invalid_files/invalid-neighbor-shading-azimuth.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-timestep.xml',
@@ -2279,6 +2279,9 @@ def create_sample_hpxmls
                   'invalid_files/unattached-window.xml',
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
+                  'base-appliances-dehumidifier.xml',
+                  'base-appliances-dehumidifier-50percent.xml',
+                  'base-appliances-dehumidifier-ief.xml',
                   'base-appliances-none.xml',
                   'base-appliances-wood.xml',
                   'base-dhw-combi-tankless-outside.xml',
@@ -2287,6 +2290,7 @@ def create_sample_hpxmls
                   'base-dhw-desuperheater-gshp.xml',
                   'base-dhw-desuperheater-tankless.xml',
                   'base-dhw-indirect-outside.xml',
+                  'base-dhw-indirect-with-solar-fraction.xml',
                   'base-dhw-jacket-electric.xml',
                   'base-dhw-jacket-hpwh.xml',
                   'base-dhw-jacket-indirect.xml',
@@ -2320,14 +2324,16 @@ def create_sample_hpxmls
                   'base-hvac-wall-furnace-wood-only.xml',
                   'base-infiltration-ach-natural.xml',
                   'base-location-epw-filename.xml',
+                  'base-location-epw-filename-AMY-2012.xml',
+                  'base-mechvent-bath-kitchen-fans.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
                   'base-misc-lighting-none.xml',
+                  'base-misc-neighbor-shading.xml',
                   'base-misc-runperiod-1-month.xml',
                   'base-misc-timestep-10-mins.xml',
-                  'base-misc-usage-multiplier.xml',
-                  'base-site-neighbors.xml']
+                  'base-misc-usage-multiplier.xml']
   exclude_list.each do |exclude_file|
     if File.exist? "workflow/sample_files/#{exclude_file}"
       FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
@@ -2366,7 +2372,7 @@ def create_sample_hpxmls
   # ... and invalid test file (pre-Addendum L)
   hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
   hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014A'
-  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
 
   # Duct leakage total
   hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')

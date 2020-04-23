@@ -106,8 +106,8 @@ Thus, software tools can choose to use a single wall (or roof) surface to repres
 Air Leakage
 ***********
 
-Building air leakage characterized by air changes per hour or cfm at 50 pascals pressure difference (ACH50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``. 
-The ``Enclosure/AirInfiltration/AirInfiltrationMeasurement`` should be specified with ``HousePressure="50"`` and ``BuildingAirLeakage/UnitofMeasure="ACH"`` or ``BuildingAirLeakage/UnitofMeasure="CFM"``.
+Building air leakage characterized by air changes per hour or cfm at 50 pascals pressure difference (ACH50 or CFM50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``.
+The ``Enclosure/AirInfiltration/AirInfiltrationMeasurement`` should be specified with ``HousePressure='50'`` and ``BuildingAirLeakage/UnitofMeasure='ACH'`` or ``BuildingAirLeakage/UnitofMeasure='CFM'``.
 
 In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``AirInfiltrationMeasurement/InfiltrationVolume``.
 
@@ -115,8 +115,8 @@ Vented Attics/Crawlspaces
 *************************
 
 The ventilation rate for vented attics (or crawlspaces) can be specified using an ``Attic`` (or ``Foundation``) element.
-First, define the ``AtticType`` as ``Attic[Vented="true"]`` (or ``FoundationType`` as ``Crawlspace[Vented="true"]``).
-Then use the ``VentilationRate[UnitofMeasure="SLA"]/Value`` element to specify a specific leakage area (SLA).
+First, define the ``AtticType`` as ``Attic[Vented='true']`` (or ``FoundationType`` as ``Crawlspace[Vented='true']``).
+Then use the ``VentilationRate[UnitofMeasure='SLA']/Value`` element to specify a specific leakage area (SLA).
 If these elements are not provided, the ERI 301 Standard Reference Home defaults will be used.
 
 Roofs
@@ -191,10 +191,10 @@ So, a basement slab edge adjacent to a garage or crawlspace, for example, should
 Vertical insulation adjacent to the slab can be described by a ``PerimeterInsulation/Layer/NominalRValue`` and a ``PerimeterInsulationDepth``.
 
 Horizontal insulation under the slab can be described by a ``UnderSlabInsulation/Layer/NominalRValue``. 
-The insulation can either have a depth (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
+The insulation can either have a fixed width (``UnderSlabInsulationWidth``) or can span the entire slab (``UnderSlabInsulationSpansEntireSlab``).
 
 For foundation types without walls, the ``DepthBelowGrade`` element must be provided.
-For foundation types with walls, the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` values.
+For foundation types with walls, the ``DepthBelowGrade`` element is not used; instead the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` values.
 
 Windows
 *******
@@ -205,7 +205,7 @@ Windows are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as
 Windows must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
 Windows must also have an ``Azimuth`` specified, even if the attached wall does not.
 
-Overhangs can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
+Overhangs (e.g., a roof eave) can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
 Overhangs are defined by the vertical distance between the overhang and the top of the window (``DistanceToTopOfWindow``), and the vertical distance between the overhang and the bottom of the window (``DistanceToBottomOfWindow``).
 The difference between these two values equals the height of the window.
 
@@ -317,8 +317,9 @@ HVAC Distribution
 
 Each separate HVAC distribution system should be specified as a ``Systems/HVAC/HVACDistribution``.
 The three types of HVAC distribution systems allowed are ``AirDistribution``, ``HydronicDistribution``, and ``DSE``.
-There can be at most one heating system and one cooling system attached to a distribution system.
+There should be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
+Also, note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
 
 AirDistribution systems can have zero or more ``Ducts[DuctType="supply"]`` and zero or more ``Ducts[DuctType="return"]`` defined.
 Each duct must have ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` provided.
@@ -344,7 +345,7 @@ DSE systems are defined by ``AnnualHeatingDistributionSystemEfficiency`` and ``A
 Mechanical Ventilation
 **********************
 
-A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation="true"``.
+A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
 Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
@@ -368,7 +369,7 @@ For a CFIS system, the rated flow rate should equal the amount of outdoor air pr
 Whole House Fan
 ***************
 
-A single whole house fan may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForSeasonalCoolingLoadReduction="true"``.
+A single whole house fan may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForSeasonalCoolingLoadReduction='true'``.
 Required elements include ``RatedFlowRate`` and ``FanPower``.
 
 Water Heaters
@@ -429,24 +430,26 @@ Solar Thermal
 *************
 
 A solar hot water system can be entered as a ``Systems/SolarThermal/SolarThermalSystem``.
-The ``SystemType`` element must be 'hot water' and the ``ConnectedTo`` element is required and must point to a ``WaterHeatingSystem``.
-Note that the connected water heater cannot be of type space-heating boiler or attached to a desuperheater.
+The ``SystemType`` element must be 'hot water'.
 
 Solar hot water systems can be described with either simple or detailed inputs.
 
-If using simple inputs, the following element is required:
+If using simple inputs, the following elements are used:
 
-- ``SolarFraction``
+- ``SolarFraction``: Portion of total conventional hot water heating load (delivered energy and tank standby losses). Can be obtained from Directory of SRCC OG-300 Solar Water Heating System Ratings or NREL's `System Advisor Model <https://sam.nrel.gov/>`_ or equivalent.
+- ``ConnectedTo``: Optional. If not specified, applies to all water heaters in the building. If specified, must point to a ``WaterHeatingSystem``.
 
-If using detailed inputs, the following elements are required:
+If using detailed inputs, the following elements are used:
 
+- ``CollectorArea``
 - ``CollectorLoopType``: 'liquid indirect' or 'liquid direct' or 'passive thermosyphon'
 - ``CollectorType``: 'single glazing black' or 'double glazing black' or 'evacuated tube' or 'integrated collector storage'
 - ``CollectorAzimuth``
 - ``CollectorTilt``
-- ``CollectorRatedOpticalEfficiency``: FRTA (y-intercept); see Directory of SRCC Certified Solar Collector Ratings
-- ``CollectorRatedThermalLosses``: FRUL (slope, in units of Btu/hr-ft^2-R); see Directory of SRCC Certified Solar Collector Ratings
+- ``CollectorRatedOpticalEfficiency``: FRTA (y-intercept); see Directory of SRCC OG-100 Certified Solar Collector Ratings
+- ``CollectorRatedThermalLosses``: FRUL (slope, in units of Btu/hr-ft^2-R); see Directory of SRCC OG-100 Certified Solar Collector Ratings
 - ``StorageVolume``
+- ``ConnectedTo``: Must point to a ``WaterHeatingSystem``. The connected water heater cannot be of type space-heating boiler or attached to a desuperheater.
 
 Photovoltaics
 *************
