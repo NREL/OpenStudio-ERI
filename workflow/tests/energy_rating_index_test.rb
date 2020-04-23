@@ -60,9 +60,9 @@ class EnergyRatingIndexTest < Minitest::Test
     _test_reul(all_results, 'base-hvac', 'REUL Cooling (MBtu)')
   end
 
-  def test_invalid_files
+  def test_invalid
     test_name = 'invalid_files'
-    expected_error_msgs = { 'bad-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
+    expected_error_msgs = { 'invalid-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
                             'missing-elements.xml' => ['Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
                                                        'Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],

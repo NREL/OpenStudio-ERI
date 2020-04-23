@@ -2256,7 +2256,6 @@ def create_sample_hpxmls
                   'invalid_files/invalid-timestep.xml',
                   'invalid_files/invalid-window-height.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
-                  'invalid_files/invalid-wmo.xml',
                   'invalid_files/lighting-fractions.xml',
                   'invalid_files/mismatched-slab-and-foundation-wall.xml',
                   'invalid_files/missing-surfaces.xml',
@@ -2373,7 +2372,7 @@ def create_sample_hpxmls
   # ... and invalid test file (pre-Addendum L)
   hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
   hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014A'
-  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
+  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
 
   # Duct leakage total
   hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
