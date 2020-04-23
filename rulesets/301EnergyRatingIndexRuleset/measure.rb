@@ -88,26 +88,36 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     begin
       # Weather file
       weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-      weather_wmo = @orig_hpxml.climate_and_risk_zones.weather_station_wmo
-      epw_path = nil
-      cache_path = nil
-      CSV.foreach(File.join(weather_dir, 'data.csv'), headers: true) do |row|
-        next if row['wmo'] != weather_wmo
-
-        epw_path = File.join(weather_dir, row['filename'])
+      epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
+      if not epw_path.nil?
+        if not File.exist? epw_path
+          epw_path = File.join(weather_dir, epw_path)
+        end
         if not File.exist?(epw_path)
-          runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+          fail "'#{epw_path}' could not be found."
+        end
+      else
+        weather_wmo = @orig_hpxml.climate_and_risk_zones.weather_station_wmo
+        epw_path = nil
+        cache_path = nil
+        CSV.foreach(File.join(weather_dir, 'data.csv'), headers: true) do |row|
+          next if row['wmo'] != weather_wmo
+
+          epw_path = File.join(weather_dir, row['filename'])
+          if not File.exist?(epw_path)
+            runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
+            return false
+          end
+          break
+        end
+        if epw_path.nil?
+          runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
           return false
         end
-        cache_path = epw_path.gsub('.epw', '-cache.csv')
-        if not File.exist?(cache_path)
-          runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
-          return false
-        end
-        break
       end
-      if epw_path.nil?
-        runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
+      cache_path = epw_path.gsub('.epw', '-cache.csv')
+      if not File.exist?(cache_path)
+        runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
         return false
       end
 
