@@ -2414,6 +2414,16 @@ def create_sample_hpxmls
     next if eri_version.include? '2019'
     hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
     hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = eri_version
+
+    if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
+      # Remove appliance inputs new as of 301-2019 Addendum A
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher/LabelUsage')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelElectricRate')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelGasRate')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelAnnualGasCost')
+      XMLHelper.delete_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Appliances/Dishwasher/LabelUsage')
+    end
+
     XMLHelper.write_file(hpxml_doc, "workflow/sample_files/base-version-#{eri_version}.xml")
   end
 end
