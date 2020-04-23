@@ -966,7 +966,7 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
-    fraction_operable = Airflow.get_default_fraction_of_operable_window_area() # Default natural ventilation
+    fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (orig_hpxml.fraction_of_window_area_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
         # Disable natural ventilation
@@ -1015,7 +1015,7 @@ class EnergyRatingIndex301Ruleset
     avg_shgc = calc_area_weighted_sum(ext_thermal_bndry_windows, :shgc)
 
     # Default natural ventilation
-    fraction_operable = Airflow.get_default_fraction_of_operable_window_area()
+    fraction_operable = Airflow.get_default_fraction_of_windows_operable()
 
     # Create equally distributed windows
     for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
