@@ -63,6 +63,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_invalid
     test_name = 'invalid_files'
     expected_error_msgs = { 'invalid-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
+                            'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
                             'missing-elements.xml' => ['Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
                                                        'Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],
