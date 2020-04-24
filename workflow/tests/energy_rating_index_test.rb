@@ -552,22 +552,22 @@ class EnergyRatingIndexTest < Minitest::Test
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results['L100AD-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AD-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [4, 5, 6, 7].include? test_num
-        base_val = all_results['L100AD-HW-02.xml'].inject(:+)
+        base_val = all_results['L100AD-HW-02.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [9, 10].include? test_num
-        base_val = all_results['L100AM-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AM-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [11, 12, 13, 14].include? test_num
-        base_val = all_results['L100AM-HW-02.xml'].inject(:+)
+        base_val = all_results['L100AM-HW-02.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 8
-        mn_val = all_results[xml.gsub('AM', 'AD')].inject(:+)
+        mn_val = all_results[xml.gsub('AM', 'AD')][0..1].inject(:+)
         fail 'Missing value' if mn_val.nil?
       end
 
@@ -610,16 +610,16 @@ class EnergyRatingIndexTest < Minitest::Test
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results['L100AD-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AD-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [5, 6].include? test_num
-        base_val = all_results['L100AM-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AM-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 4
-        mn_val = all_results[xml.gsub('AM', 'AD')].inject(:+)
+        mn_val = all_results[xml.gsub('AM', 'AD')][0..1].inject(:+)
         fail 'Missing value' if mn_val.nil?
       end
 
@@ -1952,12 +1952,12 @@ class EnergyRatingIndexTest < Minitest::Test
     rated_recirc = nil
     rated_gpd = 0
     CSV.foreach(results_csv) do |row|
-      next if row.nil? or row[0].nil?
+      next if row.nil? || row[0].nil?
       if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
       elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
         rated_recirc = Float(row[1])
-      elsif row[0].start_with? "Hot Water:" and row[0].include? "(gal)"
+      elsif row[0].start_with?('Hot Water:') && row[0].include?('(gal)')
         rated_gpd += (Float(row[1]) / 365.0)
       end
     end
