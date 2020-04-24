@@ -785,6 +785,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_zone_temperatures'] = false
     args['include_timeseries_fuel_consumptions'] = false
     args['include_timeseries_end_use_consumptions'] = false
+    args['include_timeseries_hot_water_uses'] = false
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
     update_args_hash(measures, measure_subdir, args)
