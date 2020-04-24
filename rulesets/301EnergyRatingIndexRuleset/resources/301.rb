@@ -1540,7 +1540,7 @@ class EnergyRatingIndex301Ruleset
 
       energy_factor, recovery_efficiency = get_water_heater_ef_and_re(fuel_type, tank_volume)
 
-      heating_capacity = Waterheater.calc_water_heater_capacity(fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
+      heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
 
       location = orig_water_heater.location
       if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
@@ -1583,7 +1583,7 @@ class EnergyRatingIndex301Ruleset
 
       heating_capacity = orig_water_heater.heating_capacity
       if (orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeStorage) && heating_capacity.nil?
-        heating_capacity = Waterheater.calc_water_heater_capacity(orig_water_heater.fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
+        heating_capacity = Waterheater.get_default_heating_capacity(orig_water_heater.fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
       end
 
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
@@ -2296,7 +2296,7 @@ class EnergyRatingIndex301Ruleset
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    wh_cap = Waterheater.calc_water_heater_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
+    wh_cap = Waterheater.get_default_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
                                         fuel_type: wh_fuel_type,

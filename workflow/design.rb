@@ -105,6 +105,7 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir
   args['include_timeseries_zone_temperatures'] = hourly_outputs.include? 'temperatures'
   args['include_timeseries_fuel_consumptions'] = hourly_outputs.include? 'fuels'
   args['include_timeseries_end_use_consumptions'] = hourly_outputs.include? 'enduses'
+  args['include_timeseries_hot_water_uses'] = hourly_outputs.include? 'hotwater'
   args['include_timeseries_total_loads'] = hourly_outputs.include? 'loads'
   args['include_timeseries_component_loads'] = hourly_outputs.include? 'componentloads'
   update_args_hash(measures, measure_subdir, args)

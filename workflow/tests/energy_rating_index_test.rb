@@ -1642,7 +1642,7 @@ class EnergyRatingIndexTest < Minitest::Test
     s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
     # Water Use
-    xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_fixtures_gains_sens_lat(nbeds)
+    xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_water_gains_sens_lat(nbeds)
     s += "#{xml_water_sens} #{xml_water_lat}\n"
 
     # Occupants
