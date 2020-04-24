@@ -537,17 +537,17 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Test Case', 'DHW Energy (therms)', 'Recirc Pump (kWh)']
+      csv << ['Test Case', 'DHW Energy (therms)', 'Recirc Pump (kWh)', 'GPD']
       all_results.each_with_index do |(xml, result), i|
-        rated_dhw, rated_recirc = result
-        csv << [xml, (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2)]
+        rated_dhw, rated_recirc, rated_gpd = result
+        csv << [xml, (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2), rated_gpd.round(2)]
       end
     end
     puts "Wrote results to #{test_results_csv}."
 
     # Check results
     all_results.each_with_index do |(xml, result), i|
-      rated_dhw, rated_recirc = result
+      rated_dhw, rated_recirc, rated_gpd = result
       test_num = i + 1
 
       base_val = nil
@@ -595,17 +595,17 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Test Case', 'DHW Energy (therms)']
+      csv << ['Test Case', 'DHW Energy (therms)', 'GPD']
       all_results.each_with_index do |(xml, result), i|
-        rated_dhw, rated_recirc = result
-        csv << [xml, (rated_dhw * 10.0).round(2)]
+        rated_dhw, rated_recirc, rated_gpd = result
+        csv << [xml, (rated_dhw * 10.0).round(2), rated_gpd.round(2)]
       end
     end
     puts "Wrote results to #{test_results_csv}."
 
     # Check results
     all_results.each_with_index do |(xml, result), i|
-      rated_dhw, rated_recirc = result
+      rated_dhw, rated_recirc, rated_gpd = result
       test_num = i + 1
 
       base_val = nil
@@ -1950,14 +1950,18 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_hot_water(results_csv)
     rated_dhw = nil
     rated_recirc = nil
+    rated_gpd = 0
     CSV.foreach(results_csv) do |row|
+      next if row.nil? or row[0].nil?
       if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
       elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
         rated_recirc = Float(row[1])
+      elsif row[0].start_with? "Hot Water:" and row[0].include? "(gal)"
+        rated_gpd += (Float(row[1]) / 365.0)
       end
     end
-    return rated_dhw, rated_recirc
+    return rated_dhw, rated_recirc, rated_gpd
   end
 
   def _check_hot_water(test_num, curr_val, base_val = nil, mn_val = nil)
