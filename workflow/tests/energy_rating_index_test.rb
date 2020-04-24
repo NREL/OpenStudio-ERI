@@ -537,7 +537,7 @@ class EnergyRatingIndexTest < Minitest::Test
       csv << ['Test Case', 'DHW Energy (therms)', 'GPD']
       all_results.each_with_index do |(xml, result), i|
         rated_dhw, rated_recirc, rated_gpd = result
-        csv << [xml, (rated_dhw * 10.0).round(2), rated_gpd.round(2)]
+        csv << [xml, (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2), rated_gpd.round(2)]
       end
     end
     puts "Wrote results to #{test_results_csv}."
