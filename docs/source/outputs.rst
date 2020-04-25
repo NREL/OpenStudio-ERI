@@ -90,6 +90,9 @@ Component loads are currently disaggregated as follows:
    Internal Gains          Heat gains/losses due to appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
    ======================= =======================================================================================================================================
 
+8. **Hot Water Uses**
+Values, in gallons, are reported for hot water usage by end use.
+End uses include clothes washers, dishwashers, fixtures, and distribution waste.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
@@ -105,6 +108,7 @@ Depending on the hourly output types requested, CSV files may include:
 - ``enduses``: Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
 - ``loads``: Heating and cooling loads (in kBtu) for the building.
 - ``componentloads``: Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
+- ``hotwater``: Water use for each end use type (in gallons).
 
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
 

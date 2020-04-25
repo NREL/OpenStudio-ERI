@@ -537,37 +537,37 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Test Case', 'DHW Energy (therms)', 'Recirc Pump (kWh)']
+      csv << ['Test Case', 'DHW Energy (therms)', 'Recirc Pump (kWh)', 'GPD']
       all_results.each_with_index do |(xml, result), i|
-        rated_dhw, rated_recirc = result
-        csv << [xml, (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2)]
+        rated_dhw, rated_recirc, rated_gpd = result
+        csv << [xml, (rated_dhw * 10.0).round(2), (rated_recirc * 293.08).round(2), rated_gpd.round(2)]
       end
     end
     puts "Wrote results to #{test_results_csv}."
 
     # Check results
     all_results.each_with_index do |(xml, result), i|
-      rated_dhw, rated_recirc = result
+      rated_dhw, rated_recirc, rated_gpd = result
       test_num = i + 1
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results['L100AD-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AD-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [4, 5, 6, 7].include? test_num
-        base_val = all_results['L100AD-HW-02.xml'].inject(:+)
+        base_val = all_results['L100AD-HW-02.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [9, 10].include? test_num
-        base_val = all_results['L100AM-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AM-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [11, 12, 13, 14].include? test_num
-        base_val = all_results['L100AM-HW-02.xml'].inject(:+)
+        base_val = all_results['L100AM-HW-02.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 8
-        mn_val = all_results[xml.gsub('AM', 'AD')].inject(:+)
+        mn_val = all_results[xml.gsub('AM', 'AD')][0..1].inject(:+)
         fail 'Missing value' if mn_val.nil?
       end
 
@@ -595,31 +595,31 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Test Case', 'DHW Energy (therms)']
+      csv << ['Test Case', 'DHW Energy (therms)', 'GPD']
       all_results.each_with_index do |(xml, result), i|
-        rated_dhw, rated_recirc = result
-        csv << [xml, (rated_dhw * 10.0).round(2)]
+        rated_dhw, rated_recirc, rated_gpd = result
+        csv << [xml, (rated_dhw * 10.0).round(2), rated_gpd.round(2)]
       end
     end
     puts "Wrote results to #{test_results_csv}."
 
     # Check results
     all_results.each_with_index do |(xml, result), i|
-      rated_dhw, rated_recirc = result
+      rated_dhw, rated_recirc, rated_gpd = result
       test_num = i + 1
 
       base_val = nil
       if [2, 3].include? test_num
-        base_val = all_results['L100AD-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AD-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       elsif [5, 6].include? test_num
-        base_val = all_results['L100AM-HW-01.xml'].inject(:+)
+        base_val = all_results['L100AM-HW-01.xml'][0..1].inject(:+)
         fail 'Missing value' if base_val.nil?
       end
 
       mn_val = nil
       if test_num >= 4
-        mn_val = all_results[xml.gsub('AM', 'AD')].inject(:+)
+        mn_val = all_results[xml.gsub('AM', 'AD')][0..1].inject(:+)
         fail 'Missing value' if mn_val.nil?
       end
 
@@ -785,6 +785,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_zone_temperatures'] = false
     args['include_timeseries_fuel_consumptions'] = false
     args['include_timeseries_end_use_consumptions'] = false
+    args['include_timeseries_hot_water_uses'] = false
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
     update_args_hash(measures, measure_subdir, args)
@@ -1642,7 +1643,7 @@ class EnergyRatingIndexTest < Minitest::Test
     s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
     # Water Use
-    xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_fixtures_gains_sens_lat(nbeds)
+    xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_water_gains_sens_lat(nbeds)
     s += "#{xml_water_sens} #{xml_water_lat}\n"
 
     # Occupants
@@ -1950,14 +1951,18 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_hot_water(results_csv)
     rated_dhw = nil
     rated_recirc = nil
+    rated_gpd = 0
     CSV.foreach(results_csv) do |row|
+      next if row.nil? || row[0].nil?
       if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
       elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
         rated_recirc = Float(row[1])
+      elsif row[0].start_with?('Hot Water:') && row[0].include?('(gal)')
+        rated_gpd += (Float(row[1]) / 365.0)
       end
     end
-    return rated_dhw, rated_recirc
+    return rated_dhw, rated_recirc, rated_gpd
   end
 
   def _check_hot_water(test_num, curr_val, base_val = nil, mn_val = nil)

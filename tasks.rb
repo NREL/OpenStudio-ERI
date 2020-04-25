@@ -2328,6 +2328,7 @@ def create_sample_hpxmls
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
+                  'base-misc-defaults2.xml',
                   'base-misc-lighting-none.xml',
                   'base-misc-neighbor-shading.xml',
                   'base-misc-runperiod-1-month.xml',
