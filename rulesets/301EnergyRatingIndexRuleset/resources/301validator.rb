@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require 'oga'
+
 class EnergyRatingIndex301Validator
   def self.run_validator(hpxml_doc)
     # A hash of hashes that defines the XML elements used by the ERI HPXML Use Case.
@@ -44,7 +48,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC' => one, # See [ClimateZone]
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => one, # See [WeatherStation]
 
-        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration[AirInfiltrationMeasurement[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH" or UnitofMeasure="CFM"]/AirLeakage | AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
+        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[number(HousePressure)=50]/BuildingAirLeakage[UnitofMeasure="ACH" or UnitofMeasure="CFM"] | /HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]' => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
 
         '/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof' => zero_or_more, # See [Roof]
         '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => one_or_more, # See [Wall]
@@ -104,9 +108,10 @@ class EnergyRatingIndex301Validator
       },
 
       # [AirInfiltration]
-      '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[[HousePressure="50"]/BuildingAirLeakage[UnitofMeasure="ACH" or UnitofMeasure="CFM"]/AirLeakage | BuildingAirLeakage[UnitofMeasure="ACHnatural"]/AirLeakage]' => {
+      '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[number(HousePressure)=50 and (BuildingAirLeakage/UnitofMeasure="ACH" or BuildingAirLeakage/UnitofMeasure="CFM")] | /HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/UnitofMeasure="ACHnatural"]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'InfiltrationVolume' => one, # Assumes InfiltrationVolume = ConditionedVolume if not provided
+        'BuildingAirLeakage/AirLeakage' => one,
+        'InfiltrationVolume' => one,
       },
 
       # [Roof]
@@ -397,8 +402,8 @@ class EnergyRatingIndex301Validator
 
       ## [HVACDistType=Air]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
-        'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | extension/DuctLeakageTestingExemption[text()="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => one,
-        'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value | extension/DuctLeakageTestingExemption[text()="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value' => zero_or_one,
+        'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value | extension/DuctLeakageTestingExemption[text()="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25" and TotalOrToOutside="total"]/Value' => one,
+        'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value | extension/DuctLeakageTestingExemption[text()="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25" and TotalOrToOutside="total"]/Value' => zero_or_one,
         'Ducts[DuctType="supply"]' => zero_or_more, # See [HVACDuct]
         'Ducts[DuctType="return"]' => zero_or_more, # See [HVACDuct]
       },
@@ -425,18 +430,18 @@ class EnergyRatingIndex301Validator
       },
 
       ## [MechVentType=HRV]
-      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="heat recovery ventilator"]' => {
+      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="heat recovery ventilator"]' => {
         'SensibleRecoveryEfficiency | AdjustedSensibleRecoveryEfficiency' => one,
       },
 
       ## [MechVentType=ERV]
-      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="energy recovery ventilator"]' => {
+      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="energy recovery ventilator"]' => {
         'TotalRecoveryEfficiency | AdjustedTotalRecoveryEfficiency' => one,
         'SensibleRecoveryEfficiency | AdjustedSensibleRecoveryEfficiency' => one,
       },
 
       ## [MechVentType=CFIS]
-      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"][FanType="central fan integrated supply"]' => {
+      '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true" and FanType="central fan integrated supply"]' => {
         'AttachedToHVACDistributionSystem' => one,
       },
 
@@ -501,7 +506,7 @@ class EnergyRatingIndex301Validator
 
       ## [Desuperheater]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[UsesDesuperheater="true"]' => {
-        'WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater"]' => one, # Desuperheater is only supported with storage/tankless water heater
+        'WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater"]' => one, # Desuperheater is supported with storage water heater, tankless water heater and heat pump water heater
         'RelatedHVACSystem' => one, # HeatPump or CoolingSystem
       },
 
@@ -631,7 +636,7 @@ class EnergyRatingIndex301Validator
       },
 
       ## [LightingGroup]
-      '/HPXML/Building/BuildingDetails/Lighting/LightingGroup[ThirdPartyCertification="ERI Tier I" or ThirdPartyCertification="ERI Tier II"][Location="interior" or Location="exterior" or Location="garage"]' => {
+      '/HPXML/Building/BuildingDetails/Lighting/LightingGroup[(ThirdPartyCertification="ERI Tier I" or ThirdPartyCertification="ERI Tier II") and (Location="interior" or Location="exterior" or Location="garage")]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         'FractionofUnitsInLocation' => one,
       },
@@ -652,18 +657,18 @@ class EnergyRatingIndex301Validator
           next if expected_sizes.nil?
 
           xpath = combine_into_xpath(parent, child)
-          actual_size = REXML::XPath.first(hpxml_doc, "count(#{child})")
+          actual_size = hpxml_doc.xpath("#{child}").length
           check_number_of_elements(actual_size, expected_sizes, xpath, errors)
         end
       else # Conditional based on parent element existence
-        next if hpxml_doc.elements[parent].nil? # Skip if parent element doesn't exist
+        next if hpxml_doc.xpath(parent).empty? # Skip if parent element doesn't exist
 
-        hpxml_doc.elements.each(parent) do |parent_element|
+        hpxml_doc.xpath(parent).each do |parent_element|
           requirement.each do |child, expected_sizes|
             next if expected_sizes.nil?
 
             xpath = combine_into_xpath(parent, child)
-            actual_size = REXML::XPath.first(parent_element, "count(#{child})")
+            actual_size = parent_element.xpath("#{update_leading_predicates(child)}").length
             check_number_of_elements(actual_size, expected_sizes, xpath, errors)
           end
         end
@@ -691,5 +696,33 @@ class EnergyRatingIndex301Validator
     end
 
     return [parent, child].join(': ')
+  end
+
+  def self.update_leading_predicates(str)
+    # Examples:
+    #   "[foo='1' or foo='2']" => "(self::node()[foo='1' or foo='2'])"
+    #   "[foo] | bar" => "(self::node()[foo]) | bar"
+
+    add_str = '(self::node()'
+
+    # First check beginning of str
+    if str[0] == '['
+      str = add_str + str
+      # Find closing bracket match for ending parenthesis
+      count = 0
+      for i in add_str.size..str.size - 1
+        if str[i] == '['
+          count += 1
+        elsif str[i] == ']'
+          count -= 1
+        end
+        if count == 0
+          str = str[0..i] + ')' + str[i + 1..str.size]
+          break
+        end
+      end
+    end
+
+    return str
   end
 end

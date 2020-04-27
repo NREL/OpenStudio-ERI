@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
@@ -80,7 +82,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_downloading_weather
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --download-weather"
+    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --download-weather"
     system(command)
 
     num_epws_expected = File.readlines(File.join(File.dirname(__FILE__), '..', '..', 'weather', 'data.csv')).size - 1
@@ -102,7 +104,7 @@ class EnergyRatingIndexTest < Minitest::Test
     FileUtils.cp(data_csv, "#{data_csv}.bak")
 
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
+    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
     system(command)
 
     assert(File.exist?(cache_csv))
@@ -642,7 +644,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl #{File.absolute_path(__FILE__)} --name=foo"
+    command = "\"#{cli_path}\" #{File.absolute_path(__FILE__)} --name=foo"
     success = system(command)
     assert(success)
   end
@@ -684,7 +686,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
+    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
@@ -1026,7 +1028,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def _test_schema_validation(xml)
     # TODO: Remove this when schema validation is included with CLI calls
     schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
-    hpxml_doc = REXML::Document.new(File.read(xml))
+    hpxml_doc = XMLHelper.parse_file(xml)
     errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
     if errors.size > 0
       puts "#{xml}: #{errors}"

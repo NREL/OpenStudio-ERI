@@ -8,7 +8,7 @@ Setup
 
 To get started:
 
-#. Either download `OpenStudio 2.9.1 <https://github.com/NREL/OpenStudio/releases/tag/v2.9.1>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
+#. Either download `OpenStudio 3.0.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.0.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
 #. Download the `OpenStudio-ERI v0.8.0 Beta <https://github.com/NREL/OpenStudio-ERI/releases/tag/v0.8.0-beta>`_ release.
 #. To obtain all available weather files, run: ``openstudio workflow/energy_rating_index.rb --download-weather``
 
@@ -20,7 +20,7 @@ Running
 -------
 
 Run the ERI calculation on a provided sample HPXML file as follows:
-``openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/base.xml``
+``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml``
 
 Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) simulations will be executed in parallel on the local machine.
 
@@ -31,10 +31,10 @@ This will generate output as shown below:
 You can also request generation of hourly output CSV files as part of the calculation by providing one or more ``--hourly`` flags.
 
 To request all possible hourly outputs:
-``openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly ALL``
+``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly ALL``
 
 Or one or more specific hourly output types can be requested, e.g.:
-``openstudio --no-ssl workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly fuels --hourly temperatures``
+``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly fuels --hourly temperatures``
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 

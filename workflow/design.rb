@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Used by energy_rating_index.rb.
 # Separate ruby script to allow being called using system() on Windows.
 
@@ -122,9 +124,11 @@ def run_energyplus(designdir, debug)
       f << "Executing command '#{command}' from working directory '#{designdir}'"
     end
   end
+  pwd = Dir.pwd
   Dir.chdir(designdir) do
     system(command, err: IO.sysopen(File.join(designdir, 'stderr-energyplus'), 'w'))
   end
+  Dir.chdir(pwd) # Prevent OS "restoring original_directory" warning
 end
 
 def report_measure_errors_warnings(runner, designdir, debug)

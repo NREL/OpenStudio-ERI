@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 start_time = Time.now
 
 args = ARGV.dup
@@ -57,7 +59,7 @@ def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_
   hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\"")
+  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\"")
 
   return output_hpxml_path, designdir, pid
 end
@@ -75,10 +77,10 @@ def retrieve_eri_outputs(design_name, resultsdir, debug)
     next if data.empty?
 
     key = data[0]
-    key.gsub!('enduseElectricity', 'elec')
-    key.gsub!('enduseNaturalGas', 'gas')
-    key.gsub!('enduseFuelOil', 'oil')
-    key.gsub!('endusePropane', 'propane')
+    key = key.gsub('enduseElectricity', 'elec')
+    key = key.gsub('enduseNaturalGas', 'gas')
+    key = key.gsub('enduseFuelOil', 'oil')
+    key = key.gsub('endusePropane', 'propane')
 
     output_data[key.to_sym] = eval(data[1])
   end
@@ -512,8 +514,8 @@ def get_versions(hpxml_path)
 
   # Avoid REXML for performance reasons
   text = File.read(hpxml_path)
-  text.gsub!("\r", '')
-  text.gsub!("\n", '')
+  text = text.gsub("\r", '')
+  text = text.gsub("\n", '')
 
   # Check for versions
   ['ERICalculation'].each do |program|
@@ -601,7 +603,7 @@ if options[:hourly_outputs].include? 'ALL'
 end
 
 # Check for correct versions of OS
-os_version = '2.9.1'
+os_version = '3.0.0'
 if OpenStudio.openStudioVersion != os_version
   fail "OpenStudio version #{os_version} is required."
 end
