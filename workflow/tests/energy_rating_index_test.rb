@@ -669,6 +669,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Apply measures
     FileUtils.mkdir_p(File.dirname(output_hpxml_path))
     success = apply_measures(measures_dir, measures, runner, model)
+    show_output(runner.result) unless success
     assert(success)
   end
 
@@ -2105,7 +2106,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # during the eRatio test.
     # FUTURE: Remove this code (and workaround in 301.rb) if HERS tests are fixed.
 
-    ref_hpxml_doc = REXML::Document.new(File.read(ref_xml))
+    ref_hpxml_doc = XMLHelper.parse_file(ref_xml)
     orig_hpxml = HPXML.new(hpxml_path: orig_xml)
 
     # Retrieve mech vent values from orig
@@ -2113,9 +2114,8 @@ class EnergyRatingIndexTest < Minitest::Test
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
 
       # Store mech vent values in extension element
-      ref_mech_vent = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+      ref_mech_vent = XMLHelper.get_element(ref_hpxml_doc, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']")
       extension = XMLHelper.add_element(ref_mech_vent, 'extension')
-
       ventilation_fan = XMLHelper.add_element(extension, 'OverrideVentilationFan')
       sys_id = XMLHelper.add_element(ventilation_fan, 'SystemIdentifier')
       XMLHelper.add_attribute(sys_id, 'id', "Override#{orig_ventilation_fan.id}")
@@ -2131,7 +2131,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Retrieve infiltration values from orig
     orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
       # Store infiltration values in extension element
-      ref_infil = ref_hpxml_doc.elements['/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement']
+      ref_infil = XMLHelper.get_element(ref_hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement')
       extension = XMLHelper.add_element(ref_infil, 'extension')
       air_infiltration_measurement = XMLHelper.add_element(extension, 'OverrideAirInfiltrationMeasurement')
       sys_id = XMLHelper.add_element(air_infiltration_measurement, 'SystemIdentifier')

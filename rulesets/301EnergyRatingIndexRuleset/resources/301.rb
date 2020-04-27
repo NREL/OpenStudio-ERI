@@ -26,6 +26,7 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
+      hpxml.to_oga # FIXME: Needed for eRatio workaround
       hpxml = apply_reference_home_ruleset(hpxml)
     end
 
@@ -1384,7 +1385,7 @@ class EnergyRatingIndex301Ruleset
     orig_mech_vent_fan = nil
 
     # Check for eRatio workaround first
-    eratio_fan = XMLHelper.get_element(orig_hpxml.to_oga, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan")
+    eratio_fan = XMLHelper.get_element(orig_hpxml.doc, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan")
     if not eratio_fan.nil?
       orig_mech_vent_fan = HPXML::VentilationFan.new(orig_hpxml, eratio_fan)
     else
@@ -2090,7 +2091,7 @@ class EnergyRatingIndex301Ruleset
     air_infiltration_measurements = []
     # Check for eRatio workaround first
     if use_eratio_workaround
-      XMLHelper.get_elements(orig_hpxml.to_oga, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement') do |infil_measurement|
+      XMLHelper.get_elements(orig_hpxml.doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement').each do |infil_measurement|
         air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(orig_hpxml, infil_measurement)
       end
     end

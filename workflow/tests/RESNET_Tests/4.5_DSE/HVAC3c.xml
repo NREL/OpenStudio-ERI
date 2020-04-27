@@ -67,7 +67,9 @@
                 <Vented>true</Vented>
               </Attic>
             </AtticType>
-            <extension/ConstantACHnatural>2.4</extension/ConstantACHnatural>
+            <extension>
+              <ConstantACHnatural>2.4</ConstantACHnatural>
+            </extension>
           </Attic>
         </Attics>
         <Foundations>
