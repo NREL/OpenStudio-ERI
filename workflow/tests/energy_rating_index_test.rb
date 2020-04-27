@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
@@ -80,7 +82,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_downloading_weather
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --download-weather"
+    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --download-weather"
     system(command)
 
     num_epws_expected = File.readlines(File.join(File.dirname(__FILE__), '..', '..', 'weather', 'data.csv')).size - 1
@@ -102,7 +104,7 @@ class EnergyRatingIndexTest < Minitest::Test
     FileUtils.cp(data_csv, "#{data_csv}.bak")
 
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
+    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
     system(command)
 
     assert(File.exist?(cache_csv))
@@ -642,7 +644,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl #{File.absolute_path(__FILE__)} --name=foo"
+    command = "\"#{cli_path}\" #{File.absolute_path(__FILE__)} --name=foo"
     success = system(command)
     assert(success)
   end
@@ -667,6 +669,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Apply measures
     FileUtils.mkdir_p(File.dirname(output_hpxml_path))
     success = apply_measures(measures_dir, measures, runner, model)
+    show_output(runner.result) unless success
     assert(success)
   end
 
@@ -684,7 +687,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run energy_rating_index workflow
     cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" --no-ssl \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
+    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
@@ -1026,8 +1029,8 @@ class EnergyRatingIndexTest < Minitest::Test
   def _test_schema_validation(xml)
     # TODO: Remove this when schema validation is included with CLI calls
     schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
-    hpxml_doc = REXML::Document.new(File.read(xml))
-    errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
+    hpxml_doc = XMLHelper.parse_file(xml)
+    errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
     if errors.size > 0
       puts "#{xml}: #{errors}"
     end
@@ -2103,7 +2106,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # during the eRatio test.
     # FUTURE: Remove this code (and workaround in 301.rb) if HERS tests are fixed.
 
-    ref_hpxml_doc = REXML::Document.new(File.read(ref_xml))
+    ref_hpxml_doc = XMLHelper.parse_file(ref_xml)
     orig_hpxml = HPXML.new(hpxml_path: orig_xml)
 
     # Retrieve mech vent values from orig
@@ -2111,9 +2114,8 @@ class EnergyRatingIndexTest < Minitest::Test
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
 
       # Store mech vent values in extension element
-      ref_mech_vent = ref_hpxml_doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']"]
+      ref_mech_vent = XMLHelper.get_element(ref_hpxml_doc, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']")
       extension = XMLHelper.add_element(ref_mech_vent, 'extension')
-
       ventilation_fan = XMLHelper.add_element(extension, 'OverrideVentilationFan')
       sys_id = XMLHelper.add_element(ventilation_fan, 'SystemIdentifier')
       XMLHelper.add_attribute(sys_id, 'id', "Override#{orig_ventilation_fan.id}")
@@ -2129,7 +2131,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Retrieve infiltration values from orig
     orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
       # Store infiltration values in extension element
-      ref_infil = ref_hpxml_doc.elements['/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement']
+      ref_infil = XMLHelper.get_element(ref_hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement')
       extension = XMLHelper.add_element(ref_infil, 'extension')
       air_infiltration_measurement = XMLHelper.add_element(extension, 'OverrideAirInfiltrationMeasurement')
       sys_id = XMLHelper.add_element(air_infiltration_measurement, 'SystemIdentifier')

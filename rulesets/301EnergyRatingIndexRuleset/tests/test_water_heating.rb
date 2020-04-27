@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../workflow/tests/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
@@ -727,7 +729,11 @@ class WaterHeatingTest < MiniTest::Test
       whtype, fuel_type, temp, location, tank_vol, ef, jacket_r, standby_loss = systems[idx]
       assert_equal(whtype, water_heater.water_heater_type)
       assert_equal(location, water_heater.location)
-      assert_equal(fuel_type, water_heater.fuel_type)
+      if fuel_type.nil?
+        assert_nil(water_heater.fuel_type)
+      else
+        assert_equal(fuel_type, water_heater.fuel_type)
+      end
       if tank_vol.nil?
         assert_nil(water_heater.tank_volume)
       else
@@ -767,7 +773,11 @@ class WaterHeatingTest < MiniTest::Test
     else
       assert_in_epsilon(pipe_l, hot_water_distribution.standard_piping_length, 0.01)
     end
-    assert_equal(recirc_control, hot_water_distribution.recirculation_control_type)
+    if recirc_control.nil?
+      assert_nil(hot_water_distribution.recirculation_control_type)
+    else
+      assert_equal(recirc_control, hot_water_distribution.recirculation_control_type)
+    end
     if recirc_loop_l.nil?
       assert_nil(hot_water_distribution.recirculation_piping_length)
     else
@@ -798,8 +808,16 @@ class WaterHeatingTest < MiniTest::Test
 
   def _check_drain_water_heat_recovery(hpxml, facilities_connected, equal_flow, efficiency)
     hot_water_distribution = hpxml.hot_water_distributions[0]
-    assert_equal(facilities_connected, hot_water_distribution.dwhr_facilities_connected)
-    assert_equal(equal_flow, hot_water_distribution.dwhr_equal_flow)
+    if facilities_connected.nil?
+      assert_nil(hot_water_distribution.dwhr_facilities_connected)
+    else
+      assert_equal(facilities_connected, hot_water_distribution.dwhr_facilities_connected)
+    end
+    if equal_flow.nil?
+      assert_nil(hot_water_distribution.dwhr_equal_flow)
+    else
+      assert_equal(equal_flow, hot_water_distribution.dwhr_equal_flow)
+    end
     if efficiency.nil?
       assert_nil(hot_water_distribution.dwhr_efficiency)
     else

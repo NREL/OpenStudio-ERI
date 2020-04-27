@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/airflow'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
@@ -24,7 +26,7 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
-      hpxml.to_rexml # FIXME: Needed for eRatio workaround
+      hpxml.to_oga # FIXME: Needed for eRatio workaround
       hpxml = apply_reference_home_ruleset(hpxml)
     end
 
@@ -1383,7 +1385,7 @@ class EnergyRatingIndex301Ruleset
     orig_mech_vent_fan = nil
 
     # Check for eRatio workaround first
-    eratio_fan = orig_hpxml.doc.elements["/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan"]
+    eratio_fan = XMLHelper.get_element(orig_hpxml.doc, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan")
     if not eratio_fan.nil?
       orig_mech_vent_fan = HPXML::VentilationFan.new(orig_hpxml, eratio_fan)
     else
@@ -1547,13 +1549,12 @@ class EnergyRatingIndex301Ruleset
         # Hot water equipment shall be located in conditioned space.
         location = HPXML::LocationLivingSpace
       end
-      location.gsub!('unvented', 'vented')
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                          location: location,
+                                          location: location.gsub('unvented', 'vented'),
                                           performance_adjustment: 0.0,
                                           tank_volume: tank_volume,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
@@ -2090,7 +2091,7 @@ class EnergyRatingIndex301Ruleset
     air_infiltration_measurements = []
     # Check for eRatio workaround first
     if use_eratio_workaround
-      orig_hpxml.doc.elements.each('/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement') do |infil_measurement|
+      XMLHelper.get_elements(orig_hpxml.doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement').each do |infil_measurement|
         air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(orig_hpxml, infil_measurement)
       end
     end
