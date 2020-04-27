@@ -1029,7 +1029,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # TODO: Remove this when schema validation is included with CLI calls
     schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
     hpxml_doc = XMLHelper.parse_file(xml)
-    errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
+    errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
     if errors.size > 0
       puts "#{xml}: #{errors}"
     end
