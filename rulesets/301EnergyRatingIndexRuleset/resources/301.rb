@@ -445,7 +445,7 @@ class EnergyRatingIndex301Ruleset
 
     ext_thermal_bndry_roofs = orig_hpxml.roofs.select { |roof| roof.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.inject(0, :+)
-    avg_pitch = calc_area_weighted_sum(ext_thermal_bndry_roofs, :pitch)
+    avg_pitch = calc_area_weighted_avg(ext_thermal_bndry_roofs, :pitch, backup_value: 5)
     solar_abs = 0.75
     emittance = 0.90
 
@@ -642,9 +642,9 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_walls_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Above-grade walls
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
-    avg_solar_abs = calc_area_weighted_sum(ext_thermal_bndry_walls, :solar_absorptance)
-    avg_emittance = calc_area_weighted_sum(ext_thermal_bndry_walls, :emittance)
-    avg_r_value = calc_area_weighted_sum(ext_thermal_bndry_walls, :insulation_assembly_r_value, true)
+    avg_solar_abs = calc_area_weighted_avg(ext_thermal_bndry_walls, :solar_absorptance)
+    avg_emittance = calc_area_weighted_avg(ext_thermal_bndry_walls, :emittance)
+    avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_walls, :insulation_assembly_r_value, use_inverse: true)
 
     # Add 2355.52 sqft of exterior thermal boundary wall area
     new_hpxml.walls.add(id: 'WallArea',
@@ -1007,8 +1007,9 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_windows_iad(orig_hpxml, new_hpxml)
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
     ext_thermal_bndry_windows = orig_hpxml.windows.select { |window| window.is_exterior_thermal_boundary }
-    avg_ufactor = calc_area_weighted_sum(ext_thermal_bndry_windows, :ufactor)
-    avg_shgc = calc_area_weighted_sum(ext_thermal_bndry_windows, :shgc)
+    ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
+    avg_ufactor = calc_area_weighted_avg(ext_thermal_bndry_windows, :ufactor, backup_value: ref_ufactor)
+    avg_shgc = calc_area_weighted_avg(ext_thermal_bndry_windows, :shgc, backup_value: ref_shgc)
 
     # Create equally distributed windows
     for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
@@ -1081,7 +1082,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_doors_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
     ext_thermal_bndry_doors = orig_hpxml.doors.select { |door| door.is_exterior_thermal_boundary }
-    avg_r_value = calc_area_weighted_sum(ext_thermal_bndry_doors, :r_value, true)
+    ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
+    avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: ref_ufactor)
 
     # Create new door (since it's impossible to preserve the Rated Home's door orientation)
     # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
@@ -2415,7 +2417,7 @@ class EnergyRatingIndex301Ruleset
   end
 end
 
-def calc_area_weighted_sum(surfaces, attribute, use_inverse = false)
+def calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value: nil)
   sum_area = 0
   sum_val_times_area = 0
   surfaces.each do |surface|
@@ -2433,5 +2435,8 @@ def calc_area_weighted_sum(surfaces, attribute, use_inverse = false)
       return sum_val_times_area / sum_area
     end
   end
-  return 0
+  if not backup_value.nil?
+    return backup_value
+  end
+  fail "Unable to calculate area-weighted avg for #{attribute}."
 end
