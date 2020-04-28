@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41,
+Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ** Warning ** GetSurfaceData: Very small surface area[5.89412E-004], Surface=SURFACE DOORAREANORTH
@@ -29,6 +29,8 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41,
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
    ** Warning ** Output:Meter: invalid Key Name="FUELOIL#1:FACILITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="PROPANE:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="OTHERFUEL1:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="OTHERFUEL2:FACILITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="GARAGE LIGHTING:INTERIORLIGHTS:ELECTRICITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="CEILING FAN:INTERIOREQUIPMENT:ELECTRICITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
@@ -38,6 +40,8 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41,
    ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#1" - not found.
    ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
    ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
    ************* Testing Individual Branch Integrity
    ************* All Branches passed integrity testing
    ************* Testing Individual Supply Air Path Integrity
@@ -46,47 +50,27 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41,
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 01/09 16:00 - 17:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on each max iteration exceeded.
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 03/14 14:00 - 15:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/04 11:00 - 12:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.905E-005 m3/s/W.
-   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=04/07 17:00 - 18:00
+   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.811E-005 m3/s/W.
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=04/19 15:00 - 16:00
    **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
    **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/10 22:00 - 23:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 04/24 15:00 - 16:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 05/01 09:00 - 10:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 06/16 04:00 - 05:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 09/29 05:00 - 06:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 10/25 01:00 - 02:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 11/17 10:00 - 11:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
-   ** Warning ** SimHVAC: Maximum iterations (20) exceeded for all HVAC loops, at RUN PERIOD 1, 12/25 19:00 - 20:00
-   **   ~~~   ** The solution for one or more of the Air Loop HVAC systems did not appear to converge
    ************* Simulation Error Summary *************
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
    **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
    ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
    ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL2 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER GAS ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER OTHERFUEL1 ENERGY, Frequency=
    ************* There are 1 unused objects in input.
    ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
    ************* There are 2 unused schedules in input.
-   ************* There are 4 unused week schedules in input.
+   ************* There are 2 unused week schedules in input.
    ************* There are 5 unused day schedules in input.
    ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
    *************
@@ -94,10 +78,10 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41,
    ************* The following recurring error messages occurred.
    *************
    *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 29876 total times;
+   *************  **   ~~~   **   This error occurred 28356 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.017940E-005  Min=6.747739E-005
+   *************  **   ~~~   **   Max=7.015219E-005  Min=6.747658E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -109,4 +93,4 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 29910 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  7.66sec
+   ************* EnergyPlus Completed Successfully-- 28383 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  4.81sec
