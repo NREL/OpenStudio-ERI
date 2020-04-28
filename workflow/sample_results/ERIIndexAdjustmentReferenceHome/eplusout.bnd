@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
+Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57
 ! This file shows details about the branches, nodes, and other
 ! elements of the flow connections.
 ! This file is intended for use in "debugging" potential problems
@@ -38,7 +38,7 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
  Node,26,DHW LOOP DEMAND BYPASS PIPE OUTLET NODE,Water,1
  Node,27,DHW LOOP DEMAND OUTLET PIPE NODE,Water,1
  Node,28,NODE 24,Water,2
- Node,29,NODE 2,Air,0
+ Node,29,NODE 1,Air,0
  Node,30,NODE 7,Air,2
  Node,31,NODE 14,Air,2
  Node,32,MODEL OUTDOOR AIR NODE,Air,0
@@ -50,7 +50,7 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
 ! Suspicious nodes have 0 references.  It is normal for some nodes, however.
 ! Listing nodes with 0 references (culled from previous list):
 ! <Suspicious Node>,<NodeNumber>,<Node Name>,<Node Fluid Type>,<# Times Node Referenced After Definition>
- Suspicious Node,29,NODE 2,Air,0
+ Suspicious Node,29,NODE 1,Air,0
  Suspicious Node,32,MODEL OUTDOOR AIR NODE,Air,0
 ! ===============================================================
 ! <#Branch Lists>,<Number of Branch Lists>
@@ -200,7 +200,7 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
 ! <Controlled Zone>,<Controlled Zone Name>,<Equip List Name>,<Control List Name>,<Zone Node Name>,<# Inlet Nodes>,<# Exhaust Nodes>,<# Return Nodes>
 ! <Controlled Zone Inlet>,<Inlet Node Count>,<Controlled Zone Name>,<Supply Air Inlet Node Name>,<SD Sys:Cooling/Heating [DD:Cooling] Inlet Node Name>,<DD Sys:Heating Inlet Node Name>
 ! <Controlled Zone Exhaust>,<Exhaust Node Count>,<Controlled Zone Name>,<Exhaust Air Node Name>
- Controlled Zone,LIVING SPACE,LIVING SPACE EQUIPMENT LIST,,NODE 2,3,1,2
+ Controlled Zone,LIVING SPACE,LIVING SPACE EQUIPMENT LIST,,NODE 1,3,1,2
    Controlled Zone Inlet,1,LIVING SPACE,NODE 8,NODE 10,N/A
    Controlled Zone Inlet,2,LIVING SPACE,NODE 15,NODE 17,N/A
    Controlled Zone Inlet,3,LIVING SPACE,NODE 19,Undefined,N/A
@@ -287,7 +287,7 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
 ! <#Non-Parent Node Connections>,<Number of Non-Parent Node Connections>
  #Non-Parent Node Connections,59
 ! <Non-Parent Node Connection>,<Node Name>,<Node ObjectType>,<Node ObjectName>,<Node ConnectionType>,<Node FluidStream>
- Non-Parent Node Connection,NODE 2,ZONEHVAC:EQUIPMENTCONNECTIONS,LIVING SPACE,ZoneNode,1
+ Non-Parent Node Connection,NODE 1,ZONEHVAC:EQUIPMENTCONNECTIONS,LIVING SPACE,ZoneNode,1
  Non-Parent Node Connection,NODE 8,ZONEHVAC:EQUIPMENTCONNECTIONS,LIVING SPACE,ZoneInlet,1
  Non-Parent Node Connection,NODE 15,ZONEHVAC:EQUIPMENTCONNECTIONS,LIVING SPACE,ZoneInlet,1
  Non-Parent Node Connection,NODE 19,ZONEHVAC:EQUIPMENTCONNECTIONS,LIVING SPACE,ZoneInlet,1
@@ -306,12 +306,16 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
  Non-Parent Node Connection,DHW LOOP DEMAND BYPASS PIPE OUTLET NODE,PIPE:ADIABATIC,DHW LOOP DEMAND BYPASS PIPE,Outlet,1
  Non-Parent Node Connection,DHW LOOP DEMAND OUTLET PIPE NODE,PIPE:ADIABATIC,DHW LOOP DEMAND OUTLET PIPE,Inlet,1
  Non-Parent Node Connection,NODE 24,PIPE:ADIABATIC,DHW LOOP DEMAND OUTLET PIPE,Outlet,1
+ Non-Parent Node Connection,NODE 25,WATERUSE:CONNECTIONS,WATER USE CONNECTIONS 1,Inlet,1
+ Non-Parent Node Connection,NODE 31,WATERUSE:CONNECTIONS,WATER USE CONNECTIONS 1,Outlet,1
  Non-Parent Node Connection,DHW LOOP DEMAND INLET PIPE NODE,CONNECTOR:SPLITTER,DHW LOOP DEMAND SPLITTER,Inlet,1
  Non-Parent Node Connection,NODE 25,CONNECTOR:SPLITTER,DHW LOOP DEMAND SPLITTER,Outlet,1
  Non-Parent Node Connection,DHW LOOP DEMAND BYPASS PIPE INLET NODE,CONNECTOR:SPLITTER,DHW LOOP DEMAND SPLITTER,Outlet,1
  Non-Parent Node Connection,DHW LOOP DEMAND OUTLET PIPE NODE,CONNECTOR:MIXER,DHW LOOP DEMAND MIXER,Outlet,1
  Non-Parent Node Connection,NODE 31,CONNECTOR:MIXER,DHW LOOP DEMAND MIXER,Inlet,1
  Non-Parent Node Connection,DHW LOOP DEMAND BYPASS PIPE OUTLET NODE,CONNECTOR:MIXER,DHW LOOP DEMAND MIXER,Inlet,1
+ Non-Parent Node Connection,NODE 29,WATERHEATER:MIXED,WATER HEATER,Inlet,1
+ Non-Parent Node Connection,NODE 30,WATERHEATER:MIXED,WATER HEATER,Outlet,1
  Non-Parent Node Connection,NODE 28,CONNECTOR:SPLITTER,DHW LOOP SUPPLY SPLITTER,Inlet,1
  Non-Parent Node Connection,NODE 22,CONNECTOR:SPLITTER,DHW LOOP SUPPLY SPLITTER,Outlet,1
  Non-Parent Node Connection,NODE 29,CONNECTOR:SPLITTER,DHW LOOP SUPPLY SPLITTER,Outlet,1
@@ -340,9 +344,5 @@ Program Version,EnergyPlus, Version 9.2.0-921312fa1d, YMD=2020.03.10 07:41
  Non-Parent Node Connection,NODE 5,COIL:COOLING:DX:SINGLESPEED,CENTRAL AC CLG COIL,Outlet,1
  Non-Parent Node Connection,FURNACE UNITARY SYSTEM FAN - HEATING COIL NODE,COIL:HEATING:FUEL,FURNACE HTG COIL,Inlet,1
  Non-Parent Node Connection,NODE 12,COIL:HEATING:FUEL,FURNACE HTG COIL,Outlet,1
- Non-Parent Node Connection,NODE 25,WATERUSE:CONNECTIONS,WATER USE CONNECTIONS 1,Inlet,1
- Non-Parent Node Connection,NODE 31,WATERUSE:CONNECTIONS,WATER USE CONNECTIONS 1,Outlet,1
- Non-Parent Node Connection,NODE 29,WATERHEATER:MIXED,WATER HEATER,Inlet,1
- Non-Parent Node Connection,NODE 30,WATERHEATER:MIXED,WATER HEATER,Outlet,1
  Non-Parent Node Connection,NODE 20,PUMP:VARIABLESPEED,PUMP VARIABLE SPEED 1,Inlet,1
  Non-Parent Node Connection,NODE 28,PUMP:VARIABLESPEED,PUMP VARIABLE SPEED 1,Outlet,1

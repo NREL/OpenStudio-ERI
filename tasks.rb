@@ -2457,8 +2457,8 @@ if ARGV[0].to_sym == :generate_sample_outputs
 end
 
 if ARGV[0].to_sym == :update_version
-  eri_version_change = { from: '0.7.0',
-                         to: '0.8.0' }
+  eri_version_change = { from: '0.8.0',
+                         to: '0.9.0' }
 
   file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
 

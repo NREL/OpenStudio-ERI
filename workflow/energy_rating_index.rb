@@ -13,6 +13,7 @@ require 'parallel'
 require File.join(File.dirname(__FILE__), 'design.rb')
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
+require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
@@ -512,26 +513,13 @@ end
 def get_versions(hpxml_path)
   versions = {}
 
-  # Avoid REXML for performance reasons
-  text = File.read(hpxml_path)
-  text = text.gsub("\r", '')
-  text = text.gsub("\n", '')
+  hpxml_doc = XMLHelper.parse_file(hpxml_path)
 
   # Check for versions
   ['ERICalculation'].each do |program|
-    idx = text.index("<#{program}")
-    next unless not idx.nil?
+    version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version')
+    next if version.nil?
 
-    idx_end = text.index('>', idx)
-
-    str_v = '<Version'
-    idx_v = text.index(str_v, idx_end + 1)
-    idx_v_end = text.index('>', idx_v)
-
-    str_v2 = '</Version>'
-    idx_v2 = text.index(str_v2, idx_v)
-
-    version = text.slice(idx_v_end + 1, idx_v2 - idx_v_end - 1)
     versions[program] = version
   end
 
@@ -609,7 +597,7 @@ if OpenStudio.openStudioVersion != os_version
 end
 
 if options[:version]
-  workflow_version = '0.8.0'
+  workflow_version = '0.9.0'
   puts "OpenStudio-ERI v#{workflow_version}"
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
