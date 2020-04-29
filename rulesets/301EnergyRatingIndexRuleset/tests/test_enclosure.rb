@@ -6,6 +6,7 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
+require_relative 'util.rb'
 
 class EnclosureTest < MiniTest::Test
   def before_setup
@@ -968,6 +969,52 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_doors(hpxml, { 0 => [40, 2.86] })
+    
+    # Test MF unit w/ exterior doors
+    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_doors(hpxml, { 0 => [40, 4.4],
+                          180 => [40, 4.4] })
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_doors(hpxml, { 0 => [20, 2.86] })
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_doors(hpxml, { 0 => [20, 4.4] })
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_doors(hpxml, { 0 => [20, 2.86] })
+    
+    # Test MF unit w/ interior doors
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.doors.each do |door|
+      door.wall_idref = 'WallAdiabatic'
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_doors(hpxml, { 0 => [40, 4.4],
+                          180 => [40, 4.4] })
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_doors(hpxml)
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_doors(hpxml, { 0 => [20, 2.86] })
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_doors(hpxml, { 0 => [20, 2.86] })
+    
   end
 
   def test_enclosure_attic_ventilation
@@ -1439,14 +1486,5 @@ class EnclosureTest < MiniTest::Test
     else
       assert_in_epsilon(sla, crawl_sla, 0.001)
     end
-  end
-
-  def _change_eri_version(hpxml_name, version)
-    # Create derivative file w/ changed ERI version
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.header.eri_calculation_version = '2014'
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-    return hpxml_name
   end
 end

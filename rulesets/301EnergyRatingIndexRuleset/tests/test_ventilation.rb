@@ -6,6 +6,7 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
+require_relative 'util.rb'
 
 class VentTest < MiniTest::Test
   def before_setup
@@ -779,14 +780,5 @@ class VentTest < MiniTest::Test
     else
       assert_equal(1, num_whf)
     end
-  end
-
-  def _change_eri_version(hpxml_name, version)
-    # Create derivative file w/ changed ERI version
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.header.eri_calculation_version = '2014'
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-    return hpxml_name
   end
 end

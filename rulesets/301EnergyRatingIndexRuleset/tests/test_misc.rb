@@ -6,6 +6,7 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
+require_relative 'util.rb'
 
 class MiscTest < MiniTest::Test
   def before_setup

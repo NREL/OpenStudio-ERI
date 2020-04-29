@@ -1068,15 +1068,18 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Doors
     ufactor, shgc = get_reference_glazing_ufactor_shgc()
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new door
-    new_hpxml.doors.add(id: 'DoorAreaNorth',
-                        wall_idref: 'WallArea',
-                        area: Constructions.get_default_door_area(),
-                        azimuth: 0,
-                        r_value: 1.0 / ufactor)
+    # Create new exterior door
+    if exterior_area > 0
+      new_hpxml.doors.add(id: 'ExteriorDoorArea',
+                          wall_idref: 'WallArea',
+                          area: exterior_area,
+                          azimuth: 0,
+                          r_value: 1.0 / ufactor)
+    end
+    # TODO: Create adiabatic wall/door?
   end
 
   def self.set_enclosure_doors_rated(orig_hpxml, new_hpxml)
@@ -1094,15 +1097,19 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
     ext_thermal_bndry_doors = orig_hpxml.doors.select { |door| door.is_exterior_thermal_boundary }
     ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
-    avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: ref_ufactor)
+    avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: 1.0 / ref_ufactor)
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new door (since it's impossible to preserve the Rated Home's door orientation)
-    # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
-    new_hpxml.doors.add(id: 'DoorAreaNorth',
-                        wall_idref: 'WallArea',
-                        area: Constructions.get_default_door_area(),
-                        azimuth: 0,
-                        r_value: avg_r_value)
+    # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
+    # Note: Area is incorrect in 301-2014 table, should be “Area: Same as Energy Rating Reference Home”
+    if exterior_area > 0
+      new_hpxml.doors.add(id: 'ExteriorDoorArea',
+                          wall_idref: 'WallArea',
+                          area: exterior_area,
+                          azimuth: 0,
+                          r_value: avg_r_value)
+    end
+    # TODO: Create adiabatic wall/door?
   end
 
   def self.set_systems_hvac_reference(orig_hpxml, new_hpxml)
@@ -2494,6 +2501,31 @@ class EnergyRatingIndex301Ruleset
       return 0.057
     end
   end
+  
+  def self.get_reference_door_area(orig_hpxml)
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (@bldg_type == HPXML::ResidentialTypeApartment)
+      total_area = 20.0 # ft2
+    else
+      total_area = 40.0 # ft2
+    end
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
+      # Calculate portion of door area that is exterior by preserving ratio from rated home
+      orig_total_area = orig_hpxml.doors.map{ |d| d.area }.inject(0, :+)
+      orig_exterior_area = orig_hpxml.doors.select{ |d| d.is_exterior }.map{ |d| d.area }.inject(0, :+)
+      if orig_total_area <= 0
+        exterior_area = total_area
+      else
+        exterior_area =  total_area * orig_exterior_area / orig_total_area
+      end
+      interior_area = total_area - exterior_area
+      return exterior_area, interior_area
+    else
+      exterior_area = total_area
+      interior_area = 0.0
+      return exterior_area, interior_area
+    end
+  end
+
 end
 
 def calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value: nil)
