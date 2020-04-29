@@ -114,7 +114,7 @@ class VentTest < MiniTest::Test
     vent_fan.tested_flow_rate = nil
     vent_fan.hours_in_operation = 8
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -163,7 +163,7 @@ class VentTest < MiniTest::Test
     hpxml.building_construction.conditioned_building_volume = 8.0 * hpxml.building_construction.conditioned_floor_area
     hpxml.air_infiltration_measurements[0].infiltration_volume = 8.0 * hpxml.building_construction.conditioned_floor_area
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -191,7 +191,7 @@ class VentTest < MiniTest::Test
     vent_fan.hours_in_operation = 8
     vent_fan.tested_flow_rate = 10.0
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -237,7 +237,7 @@ class VentTest < MiniTest::Test
     vent_fan.tested_flow_rate = nil
     vent_fan.hours_in_operation = 8
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -283,7 +283,7 @@ class VentTest < MiniTest::Test
     vent_fan.tested_flow_rate = nil
     vent_fan.hours_in_operation = 8
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -786,7 +786,7 @@ class VentTest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.header.eri_calculation_version = '2014'
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     return hpxml_name
   end
 end

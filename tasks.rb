@@ -2461,18 +2461,16 @@ def create_sample_hpxmls
 
   # Older versions
   Constants.ERIVersions.each do |eri_version|
-    next if eri_version.include? '2019'
-
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.eri_calculation_version = eri_version
 
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
-      # Remove appliance inputs new as of 301-2019 Addendum A
-      hpxml.clothes_washers[0].label_usage = nil
-      hpxml.dishwashers[0].label_electric_rate = nil
-      hpxml.dishwashers[0].label_gas_rate = nil
-      hpxml.dishwashers[0].label_annual_gas_cost = nil
-      hpxml.dishwashers[0].label_usage = nil
+      # Arbitrary appliance inputs new as of 301-2019 Addendum A
+      hpxml.clothes_washers[0].label_usage = 999
+      hpxml.dishwashers[0].label_electric_rate = 999
+      hpxml.dishwashers[0].label_gas_rate = 999
+      hpxml.dishwashers[0].label_annual_gas_cost = 999
+      hpxml.dishwashers[0].label_usage = 999
     end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
