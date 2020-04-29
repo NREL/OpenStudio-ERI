@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?> 
+<?xml version='1.0' encoding='UTF-8'?>
 <HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='3.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
@@ -8,12 +8,12 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <SimulationControl>
-        <Timestep>60</Timestep>
-      </SimulationControl>
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <SimulationControl>
+        <Timestep>60</Timestep>
+      </SimulationControl>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -119,26 +119,11 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>1200.0</Area>
+            <Area>1490.0</Area>
             <SolarAbsorptance>0.7</SolarAbsorptance>
             <Emittance>0.92</Emittance>
             <Insulation>
               <SystemIdentifier id='WallInsulation'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
-            </Insulation>
-          </Wall>
-          <Wall>
-            <SystemIdentifier id='WallAtticGable'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <WallType>
-              <WoodStud/>
-            </WallType>
-            <Area>290.0</Area>
-            <SolarAbsorptance>0.7</SolarAbsorptance>
-            <Emittance>0.92</Emittance>
-            <Insulation>
-              <SystemIdentifier id='WallAtticGableInsulation'/>
               <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
@@ -266,7 +251,7 @@
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <FractionOperable>0.0</FractionOperable>
-            <AttachedToWall idref='WallAtticGable'/>
+            <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
             <SystemIdentifier id='AtticGableWindowWest'/>
@@ -275,7 +260,7 @@
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <FractionOperable>0.0</FractionOperable>
-            <AttachedToWall idref='WallAtticGable'/>
+            <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
         <Doors>

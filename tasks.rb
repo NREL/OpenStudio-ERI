@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def create_test_hpxmls
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
@@ -234,7 +236,7 @@ def create_test_hpxmls
         set_hpxml_misc_load_schedule(hpxml_file, hpxml)
       end
 
-      hpxml_doc = hpxml.to_rexml()
+      hpxml_doc = hpxml.to_oga()
 
       hpxml_path = File.join(tests_dir, derivative)
 
@@ -2415,69 +2417,65 @@ def create_sample_hpxmls
     hpxml_paths << hpxml_path
   end
   hpxml_paths.each do |hpxml_path|
-    hpxml_doc = XMLHelper.parse_file(hpxml_path)
-    eri_calculation = XMLHelper.create_elements_as_needed(hpxml_doc, ['HPXML', 'SoftwareInfo', 'extension', 'ERICalculation'])
-    if eri_calculation.elements['Version'].nil?
-      XMLHelper.add_element(eri_calculation, 'Version', 'latest')
-      XMLHelper.write_file(hpxml_doc, hpxml_path)
-    end
+    hpxml = HPXML.new(hpxml_path: hpxml_path)
+    hpxml.header.eri_calculation_version = 'latest'
+    XMLHelper.write_file(hpxml.to_oga, hpxml_path)
   end
 
   # Create additional files
 
   # Duct leakage exemption
-  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
-  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
-  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
-  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
-  XMLHelper.add_element(air_dist, 'extension/DuctLeakageTestingExemption', true)
-  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+  hpxml.hvac_distributions[0].duct_leakage_measurements.clear
+  hpxml.hvac_distributions[0].duct_leakage_testing_exemption = true
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
 
   # ... and invalid test file (pre-Addendum L)
-  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
-  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014A'
-  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+  hpxml.header.eri_calculation_version = '2014A'
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
 
   # Duct leakage total
-  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
-  air_dist = hpxml_doc.elements['/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution']
-  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
-  XMLHelper.delete_element(air_dist, 'DuctLeakageMeasurement')
-  supply_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeSupply}']")
-  return_ducts = XMLHelper.delete_element(air_dist, "Ducts[DuctType='#{HPXML::DuctTypeReturn}']")
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
   # Add total duct leakage
-  duct_leakage_measurement_el = XMLHelper.add_element(air_dist, 'DuctLeakageMeasurement')
-  duct_leakage_el = XMLHelper.add_element(duct_leakage_measurement_el, 'DuctLeakage')
-  XMLHelper.add_element(duct_leakage_el, 'Units', HPXML::UnitsCFM25)
-  XMLHelper.add_element(duct_leakage_el, 'Value', 150.0)
-  XMLHelper.add_element(duct_leakage_el, 'TotalOrToOutside', HPXML::DuctLeakageTotal)
-  # Add ducts back
-  air_dist << supply_ducts
-  air_dist << return_ducts
+  hpxml.hvac_distributions[0].duct_leakage_measurements.clear
+  hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_leakage_units: HPXML::UnitsCFM25,
+                                                            duct_leakage_value: 150,
+                                                            duct_leakage_total_or_to_outside: HPXML::DuctLeakageTotal)
   # Add supply duct in conditioned space
-  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
-  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeSupply)
-  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
-  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
-  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 105.0)
+  hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
+                                        duct_insulation_r_value: 4,
+                                        duct_location: HPXML::LocationLivingSpace,
+                                        duct_surface_area: 105)
   # Add return duct in conditioned space
-  ducts_el = XMLHelper.add_element(air_dist, 'Ducts')
-  XMLHelper.add_element(ducts_el, 'DuctType', HPXML::DuctTypeReturn)
-  XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', 4.0)
-  XMLHelper.add_element(ducts_el, 'DuctLocation', HPXML::LocationLivingSpace)
-  XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', 35.0)
-  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+  hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
+                                        duct_insulation_r_value: 4,
+                                        duct_location: HPXML::LocationLivingSpace,
+                                        duct_surface_area: 35)
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
 
   # ... and invalid test file (pre-Addendum L)
-  hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base-hvac-ducts-leakage-total.xml')
-  hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = '2014ADEG'
-  XMLHelper.write_file(hpxml_doc, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+  hpxml.header.eri_calculation_version = '2014ADEG'
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
 
   # Older versions
-  Constants.ERIVersions[0..-2].each do |eri_version|
-    hpxml_doc = XMLHelper.parse_file('workflow/sample_files/base.xml')
-    hpxml_doc.elements['/HPXML/SoftwareInfo/extension/ERICalculation/Version'].text = eri_version
-    XMLHelper.write_file(hpxml_doc, "workflow/sample_files/base-version-#{eri_version}.xml")
+  Constants.ERIVersions.each do |eri_version|
+    next if eri_version.include? '2019'
+
+    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+    hpxml.header.eri_calculation_version = eri_version
+
+    if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
+      # Remove appliance inputs new as of 301-2019 Addendum A
+      hpxml.clothes_washers[0].label_usage = nil
+      hpxml.dishwashers[0].label_electric_rate = nil
+      hpxml.dishwashers[0].label_gas_rate = nil
+      hpxml.dishwashers[0].label_annual_gas_cost = nil
+      hpxml.dishwashers[0].label_usage = nil
+    end
+
+    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
   end
 end
 
@@ -2509,7 +2507,7 @@ if ARGV[0].to_sym == :generate_sample_outputs
   FileUtils.mkdir_p('sample_results')
 
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" --no-ssl energy_rating_index.rb -x sample_files/base.xml --hourly fuels --hourly temperatures"
+  command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly fuels --hourly temperatures"
   system(command)
 
   dirs = ['ERIRatedHome',
@@ -2523,8 +2521,8 @@ if ARGV[0].to_sym == :generate_sample_outputs
 end
 
 if ARGV[0].to_sym == :update_version
-  eri_version_change = { from: '0.7.0',
-                         to: '0.8.0' }
+  eri_version_change = { from: '0.8.0',
+                         to: '0.9.0' }
 
   file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
 
@@ -2549,8 +2547,9 @@ if ARGV[0].to_sym == :update_measures
   # Apply rubocop
   cops = ['Layout',
           'Lint/DeprecatedClassMethods',
-          'Lint/StringConversionInInterpolation',
+          # 'Lint/RedundantStringCoercion', # Enable when rubocop is upgraded
           'Style/AndOr',
+          'Style/FrozenStringLiteralComment',
           'Style/HashSyntax',
           'Style/Next',
           'Style/NilComparison',
@@ -2563,7 +2562,7 @@ if ARGV[0].to_sym == :update_measures
   commands = ["\"require 'rubocop/rake_task'\"",
               "\"RuboCop::RakeTask.new(:rubocop) do |t| t.options = ['--auto-correct', '--format', 'simple', '--only', '#{cops.join(',')}'] end\"",
               '"Rake.application[:rubocop].invoke"']
-  command = "openstudio -e #{commands.join(' -e ')}"
+  command = "#{OpenStudio.getOpenStudioCLI} -e #{commands.join(' -e ')}"
   puts 'Applying rubocop auto-correct to measures...'
   system(command)
 

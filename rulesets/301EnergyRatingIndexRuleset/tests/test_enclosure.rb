@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../workflow/tests/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
@@ -890,7 +892,7 @@ class EnclosureTest < MiniTest::Test
       skylight.area = 700.0
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)

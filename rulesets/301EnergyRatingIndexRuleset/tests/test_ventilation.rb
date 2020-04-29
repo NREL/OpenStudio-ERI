@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../workflow/tests/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
@@ -67,7 +69,7 @@ class VentTest < MiniTest::Test
     vent_fan.hours_in_operation = 1
     vent_fan.fan_power = 1.0
     hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_rexml, @tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

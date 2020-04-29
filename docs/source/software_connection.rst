@@ -374,18 +374,18 @@ Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`
 
 Depending on the type of water heater specified, additional elements are required/available:
 
-========================================  ===================================  ===========  ==========  ===============  ========================  =================  =================  =========================================
-WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        RelatedHVACSystem  UsesDesuperheater  WaterHeaterInsulation/Jacket/JacketRValue
-========================================  ===================================  ===========  ==========  ===============  ========================  =================  =================  =========================================
-storage water heater                      required                             <any>        required    <optional>       required if non-electric                     <optional>         <optional>
-instantaneous water heater                required                             <any>                                                                                  <optional>
-heat pump water heater                    required                             electricity  required                                                                                     <optional>
-space-heating boiler with storage tank                                                      required                                               required                              <optional>
-space-heating boiler with tankless coil                                                                                                            required           
-========================================  ===================================  ===========  ==========  ===============  ========================  =================  =================  =========================================
+========================================  ===================================  ===========  ==========  ===============  ========================  =================  =========================================  ==============================
+WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        UsesDesuperheater  WaterHeaterInsulation/Jacket/JacketRValue  RelatedHVACSystem
+========================================  ===================================  ===========  ==========  ===============  ========================  =================  =========================================  ==============================
+storage water heater                      required                             <any>        required    <optional>       required if non-electric  <optional>         <optional>                                 required if uses desuperheater
+instantaneous water heater                required                             <any>                                                               <optional>                                                    required if uses desuperheater
+heat pump water heater                    required                             electricity  required                                               <optional>         <optional>                                 required if uses desuperheater
+space-heating boiler with storage tank                                                      required                                                                  <optional>                                 required         
+space-heating boiler with tankless coil                                                                                                                                                                          required
+========================================  ===================================  ===========  ==========  ===============  ========================  =================  =========================================  ==============================
 
 For combi boiler systems, the ``RelatedHVACSystem`` must point to a ``HeatingSystem`` of type "Boiler".
-For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr) can be entered as ``StandbyLoss``; if not provided, an average value will be used.
+For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr) can be entered as ``StandbyLoss``; if not provided, a default value based on the `AHRI Directory of Certified Product Performance <https://www.ahridirectory.org>`_ will be calculated.
 
 For water heaters that are connected to a desuperheater, the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
 

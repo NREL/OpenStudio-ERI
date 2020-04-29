@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # see the URL below for information on how to write OpenStudio measures
 # http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
@@ -134,35 +136,35 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
     # Write new HPXML file
     if hpxml_output_path.is_initialized
-      XMLHelper.write_file(@new_hpxml.to_rexml, hpxml_output_path.get)
+      XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
       runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
     end
 
     return true
   end
 
-  def validate_hpxml(runner, hpxml_input_path)
+  def validate_hpxml(runner, hpxml_path)
     is_valid = true
 
     schemas_dir = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources')
 
     # Validate input HPXML against schema
-    XMLHelper.validate(@orig_hpxml.doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), runner).each do |error|
-      runner.registerError("#{hpxml_input_path}: #{error}")
+    XMLHelper.validate(@orig_hpxml.doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), runner).each do |error|
+      runner.registerError("#{hpxml_path}: #{error}")
       is_valid = false
     end
 
     # Validate input HPXML against ERI Use Case
     errors = EnergyRatingIndex301Validator.run_validator(@orig_hpxml.doc)
     errors.each do |error|
-      runner.registerError("#{hpxml_input_path}: #{error}")
+      runner.registerError("#{hpxml_path}: #{error}")
       is_valid = false
     end
 
     # Check for additional errors
     errors = @orig_hpxml.check_for_errors()
     errors.each do |error|
-      runner.registerError("#{hpxml_input_path}: #{error}")
+      runner.registerError("#{hpxml_path}: #{error}")
       is_valid = false
     end
 
