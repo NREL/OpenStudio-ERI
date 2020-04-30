@@ -16,6 +16,8 @@ To get started:
 
   If the ``openstudio`` command is not found, it's because the executable is not in your PATH. Either add the executable to your PATH or point directly to the executable found in the openstudio-X.X.X/bin directory.
 
+.. _running:
+
 Running
 -------
 
