@@ -2244,8 +2244,6 @@ def create_sample_hpxmls
                   'invalid_files/duplicate-id.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities2.xml',
-                  'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities3.xml',
-                  'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities4.xml',
                   'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
                   'invalid_files/hvac-distribution-multiple-attached-heating.xml',
                   'invalid_files/hvac-distribution-return-duct-leakage-missing.xml',
