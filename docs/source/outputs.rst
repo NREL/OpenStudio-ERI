@@ -35,66 +35,156 @@ ERI______Home.csv
 ~~~~~~~~~~~~~~~~~
 
 A CSV file is written for each of the homes simulated (e.g., ``ERIReferenceHome.csv`` for the Reference home).
-The CSV file includes multiple sections with different outputs.
+The CSV file includes the following sections of output.
 
-1. **Annual Energy Consumption by Fuel Type**. 
-Current fuel types are: "Electricity", "Natural Gas", "Fuel Oil", "Propane".
-It also includes an "Electricity: Net" field that incorporates any renewable generation.
+See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
 
-2. **Annual Energy Consumption By Fuel Type and End Use**.
-Current fuel types are: "Electricity", "Natural Gas", "Fuel Oil", "Propane".
-Current end uses are: "Heating", "Heating Fans/Pumps", "Cooling", "Cooling Fans/Pumps", "Hot Water", "Hot Water Recirc Pump", "Hot Water Solar Thermal Pump", "Lighting Interior", "Lighting Garage", "Lighting Exterior", "Mech Vent", "Whole House Fan", "Refrigerator", "Dishwasher", "Clothes Washer", "Clothes Dryer", "Range/Oven", "Ceiling Fan", "Plug Loads", "PV" (negative value for generation).
+Annual Energy Consumption by Fuel Type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3. **Annual Building Loads**.
-Values are reported for heating, cooling, and hot water.
-Heating and cooling loads include duct losses.
-Hot water loads are grouped into A) Delivered (i.e., the load associated with hot water delivered), B) Tank Losses, C) Desuperheater, and D) Solar Thermal.
-The Delivered hot water load includes any contributions from desuperheaters or solar thermal systems.
+Current fuel types are: 
 
-4. **Annual Unmet Building Loads**.
-Values are reported for heating and cooling.
+   ========================== ===========================
+   Type                       Notes
+   ========================== ===========================
+   Electricity: Total (MBtu)
+   Electricity: Net (MBtu)    Excludes any PV generation.
+   Natural Gas: Total (MBtu)
+   Fuel Oil: Total (MBtu)
+   Propane: Total (MBtu)
+   Wood: Total (MBtu)         Currently unused for ERI.
+   Wood Pellets: Total (MBtu) Currently unused for ERI.
+   ========================== ===========================
+
+Annual Energy Consumption By Fuel Type and End Use
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current end use/fuel type combinations are:
+
+   ================================================ ========================= ================================= ==========
+   Type                                             Notes                     Type (cont'd)                     Notes
+   ================================================ ========================= ================================= ==========
+   Electricity: Heating (MBtu)                                                Natural Gas: Heating (MBtu)
+   Electricity: Heating Fans/Pumps (MBtu)                                     Natural Gas: Hot Water (MBtu)
+   Electricity: Cooling (MBtu)                                                Natural Gas: Clothes Dryer (MBtu)
+   Electricity: Cooling Fans/Pumps (MBtu)                                     Natural Gas: Range/Oven (MBtu)
+   Electricity: Hot Water (MBtu)                                              Fuel Oil: Heating (MBtu)
+   Electricity: Hot Water Recirc Pump (MBtu)                                  Fuel Oil: Hot Water (MBtu)
+   Electricity: Hot Water Solar Thermal Pump (MBtu)                           Fuel Oil: Clothes Dryer (MBtu)
+   Electricity: Lighting Interior (MBtu)                                      Fuel Oil: Range/Oven (MBtu)
+   Electricity: Lighting Garage (MBtu)                                        Propane: Heating (MBtu)
+   Electricity: Lighting Exterior (MBtu)                                      Propane: Hot Water (MBtu)
+   Electricity: Mech Vent (MBtu)                                              Propane: Clothes Dryer (MBtu)
+   Electricity: Whole House Fan (MBtu)                                        Propane: Range/Oven (MBtu)
+   Electricity: Refrigerator (MBtu)                                           Wood: Heating (MBtu)              Currently unused for ERI.
+   Electricity: Dehumidifier (MBtu)                 Currently unused for ERI. Wood: Hot Water (MBtu)            Currently unused for ERI.
+   Electricity: Dishwasher (MBtu)                                             Wood: Clothes Dryer (MBtu)        Currently unused for ERI.
+   Electricity: Clothes Washer (MBtu)                                         Wood: Range/Oven (MBtu)           Currently unused for ERI.
+   Electricity: Clothes Dryer (MBtu)                                          Wood Pellets: Heating (MBtu)      Currently unused for ERI.
+   Electricity: Range/Oven (MBtu)
+   Electricity: Ceiling Fan (MBtu)
+   Electricity: Television (MBtu)
+   Electricity: Plug Loads (MBtu)
+   Electricity: PV (MBtu)
+   ================================================ ========================= ================================= ==========
+
+Annual Building Loads
+^^^^^^^^^^^^^^^^^^^^^
+
+Current annual building loads are:
+
+   ===================================== ==================================================================
+   Type                                  Notes
+   ===================================== ==================================================================
+   Load: Heating (MBtu)                  Includes HVAC distribution losses.
+   Load: Cooling (MBtu)                  Includes HVAC distribution losses.
+   Load: Hot Water: Delivered (MBtu)     Includes contributions by desuperheaters or solar thermal systems.
+   Load: Hot Water: Tank Losses (MBtu)
+   Load: Hot Water: Desuperheater (MBtu) Load served by the desuperheater.
+   Load: Hot Water: Solar Thermal (MBtu) Load served by the solar thermal system.
+   ===================================== ==================================================================
+
+Annual Unmet Building Loads
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current annual unmet building loads are:
+
+   ========================== =====
+   Type                       Notes
+   ========================== =====
+   Unmet Load: Heating (MBtu)
+   Unmet Load: Cooling (MBtu)
+   ========================== =====
+
 These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
 An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
 
-5. **Peak Building Electricity**.
-Values, in Watts, are reported for the summer and winter seasons.
-The summer season is defined by the hours of the year when the cooling system is operating, and the winter season is defined by the hours of the year when the heating system is operating.
+Peak Building Electricity
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-6. **Peak Building Loads**.
-Values, in kBtu, are reported for heating and cooling.
-Heating and cooling peak loads include duct losses.
+Current peak building electricity outputs are:
 
-7. **Annual Component Building Loads**.
+   ================================== =========================================================
+   Type                               Notes
+   ================================== =========================================================
+   Peak Electricity: Winter Total (W) Winter season defined by operation of the heating system.
+   Peak Electricity: Summer Total (W) Summer season defined by operation of the cooling system.
+   ================================== =========================================================
+
+Peak Building Loads
+^^^^^^^^^^^^^^^^^^^
+
+Current peak building loads are:
+
+   ========================== ==================================
+   Type                       Notes
+   ========================== ==================================
+   Peak Load: Heating (kBtu)  Includes HVAC distribution losses.
+   Peak Load: Cooling (kBtu)  Includes HVAC distribution losses.
+   ========================== ==================================
+
+Annual Component Building Loads
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Component loads represent the estimated contribution of different building components to the annual heating/cooling building loads.
 The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
-Component loads are currently disaggregated as follows:
+Current component loads disaggregated by Heating/Cooling are:
    
-   ======================= =======================================================================================================================================
-   Component               Definition
-   ======================= =======================================================================================================================================
-   Roofs                   Heat transfer through HPXML ``Roof`` elements adjacent to conditioned space
-   Ceilings                Heat transfer through HPXML ``FrameFloor`` elements (inferred to be ceilings) adjacent to conditioned space
-   Walls                   Heat transfer through HPXML ``Wall`` elements adjacent to conditioned space
-   Rim Joists              Heat transfer through HPXML ``RimJoist`` elements adjacent to conditioned space
-   Foundation Walls        Heat transfer through HPXML ``FoundationWall`` elements adjacent to conditioned space
-   Doors                   Heat transfer through HPXML ``Door`` elements on surfaces adjacent to conditioned space
-   Windows                 Heat transfer through HPXML ``Window`` elements on surfaces adjacent to conditioned space, including direct/diffuse transmitted solar
-   Skylights               Heat transfer through HPXML ``Skylight`` elements on surfaces adjacent to conditioned space, including direct/diffuse transmitted solar
-   Floors                  Heat transfer through HPXML ``FrameFloor`` elements (inferred to be floors) adjacent to conditioned space
-   Slabs                   Heat transfer through HPXML ``Slab`` elements adjacent to conditioned space
-   Internal Mass           Heat transfer from additional assumed mass (furniture, interior walls, interior floors between stories) in conditioned space
-   Infiltration            Airflow induced by stack and wind effects
-   Natural Ventilation     Airflow through operable windows
-   Mechanical Ventilation  Airflow (and potentially fan heat gain) from a whole house mechanical ventilation system
-   Ducts                   Conduction and leakage losses through supply/return ducts outside conditioned space
-   Internal Gains          Heat gains/losses due to appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
-   ======================= =======================================================================================================================================
+   ================================================= =========================================================================================================
+   Type                                              Notes
+   ================================================= =========================================================================================================
+   Component Load: \*: Roofs (MBtu)                  Heat gain/loss through HPXML ``Roof`` elements adjacent to conditioned space
+   Component Load: \*: Ceilings (MBtu)               Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be ceilings) adjacent to conditioned space
+   Component Load: \*: Walls (MBtu)                  Heat gain/loss through HPXML ``Wall`` elements adjacent to conditioned space
+   Component Load: \*: Rim Joists (MBtu)             Heat gain/loss through HPXML ``RimJoist`` elements adjacent to conditioned space
+   Component Load: \*: Foundation Walls (MBtu)       Heat gain/loss through HPXML ``FoundationWall`` elements adjacent to conditioned space
+   Component Load: \*: Doors (MBtu)                  Heat gain/loss through HPXML ``Door`` elements adjacent to conditioned space
+   Component Load: \*: Windows (MBtu)                Heat gain/loss through HPXML ``Window`` elements adjacent to conditioned space, including solar
+   Component Load: \*: Skylights (MBtu)              Heat gain/loss through HPXML ``Skylight`` elements adjacent to conditioned space, including solar
+   Component Load: \*: Floors (MBtu)                 Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be floors) adjacent to conditioned space
+   Component Load: \*: Slabs (MBtu)                  Heat gain/loss through HPXML ``Slab`` elements adjacent to conditioned space
+   Component Load: \*: Internal Mass (MBtu)          Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
+   Component Load: \*: Infiltration (MBtu)           Heat gain/loss from airflow induced by stack and wind effects
+   Component Load: \*: Natural Ventilation (MBtu)    Heat gain/loss from airflow through operable windows
+   Component Load: \*: Mechanical Ventilation (MBtu) Heat gain/loss from airflow/fan energy from a whole house mechanical ventilation system
+   Component Load: \*: Whole House Fan (MBtu)        Heat gain/loss from airflow due to a whole house fan
+   Component Load: \*: Ducts (MBtu)                  Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
+   Component Load: \*: Internal Gains (MBtu)         Heat gain/loss from appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
+   ================================================= =========================================================================================================
 
-8. **Hot Water Uses**
-Values, in gallons, are reported for hot water usage by end use.
-End uses include clothes washers, dishwashers, fixtures, and distribution waste.
+Annual Hot Water Uses
+^^^^^^^^^^^^^^^^^^^^^
 
-See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
+Current annual hot water uses are:
+
+   =================================== =====
+   Type                                Notes
+   =================================== =====
+   Hot Water: Clothes Washer (gal)
+   Hot Water: Dishwasher (gal)
+   Hot Water: Fixtures (gal)           Showers and faucets.
+   Hot Water: Distribution Waste (gal) 
+   =================================== =====
 
 ERI______Home_Hourly.csv
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,16 +192,20 @@ ERI______Home_Hourly.csv
 See the :ref:`running` section for requesting hourly outputs.
 When requested, a CSV file of hourly outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv`` for the Reference home).
 
-Depending on the hourly output types requested, CSV files may include:
+Depending on the outputs requested, CSV files may include:
 
-- ``fuels``: Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
-- ``enduses``: Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
-- ``loads``: Heating and cooling loads (in kBtu) for the building.
-- ``componentloads``: Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
-- ``hotwater``: Water use for each end use type (in gallons).
-- ``temperatures``: Average space temperatures (in deg-F) for each space modeled (e.g., living space, vented attic, garage, unconditioned basement, crawlspace, etc.).
-- ``airflows``: Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
-- ``weather``: Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
+   =================================== =====
+   Type                                Notes
+   =================================== =====
+   Fuel Consumptions                   Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
+   End Use Consumptions                Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
+   Hot Water Uses                      Water use for each end use type (in gallons).
+   Total Loads                         Heating and cooling loads (in kBtu) for the building.
+   Component Loads                     Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
+   Zone Temperatures                   Average temperatures (in deg-F) for each space modeled (e.g., living space, attic, garage, basement, crawlspace, etc.).
+   Airflows                            Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
+   Weather                             Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
+   =================================== =====
 
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
 
