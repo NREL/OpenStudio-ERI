@@ -104,12 +104,14 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir
   measure_subdir = 'hpxml-measures/SimulationOutputReport'
   args = {}
   args['timeseries_frequency'] = 'hourly'
-  args['include_timeseries_zone_temperatures'] = hourly_outputs.include? 'temperatures'
   args['include_timeseries_fuel_consumptions'] = hourly_outputs.include? 'fuels'
   args['include_timeseries_end_use_consumptions'] = hourly_outputs.include? 'enduses'
   args['include_timeseries_hot_water_uses'] = hourly_outputs.include? 'hotwater'
   args['include_timeseries_total_loads'] = hourly_outputs.include? 'loads'
   args['include_timeseries_component_loads'] = hourly_outputs.include? 'componentloads'
+  args['include_timeseries_zone_temperatures'] = hourly_outputs.include? 'temperatures'
+  args['include_timeseries_airflows'] = hourly_outputs.include? 'airflows'
+  args['include_timeseries_weather'] = hourly_outputs.include? 'weather'
   update_args_hash(measures, measure_subdir, args)
 
   return measures
