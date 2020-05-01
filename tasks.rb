@@ -172,7 +172,6 @@ def create_test_hpxmls
       hpxml_files.each do |hpxml_file|
         set_hpxml_header(hpxml_file, hpxml)
         set_hpxml_site(hpxml_file, hpxml)
-        set_hpxml_building_occupancy(hpxml_file, hpxml)
         set_hpxml_building_construction(hpxml_file, hpxml)
         set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
         set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
@@ -206,7 +205,6 @@ def create_test_hpxmls
         set_hpxml_lighting(hpxml_file, hpxml)
         set_hpxml_ceiling_fans(hpxml_file, hpxml)
         set_hpxml_plug_loads(hpxml_file, hpxml)
-        set_hpxml_misc_load_schedule(hpxml_file, hpxml)
       end
 
       hpxml_doc = hpxml.to_oga()
@@ -274,6 +272,11 @@ def set_hpxml_header(hpxml_file, hpxml)
     # Pre-Addendum E
     hpxml.header.eri_calculation_version = '2014A'
   end
+  if hpxml_file.include?('RESNET_Tests/4.1_Standard_140')
+    hpxml.header.apply_ashrae140_assumptions = true
+  else
+    hpxml.header.apply_ashrae140_assumptions = nil
+  end
 end
 
 def set_hpxml_site(hpxml_file, hpxml)
@@ -282,17 +285,6 @@ def set_hpxml_site(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
     hpxml.site.fuels = [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas]
-  end
-end
-
-def set_hpxml_building_occupancy(hpxml_file, hpxml)
-  if hpxml_file.include?('RESNET_Tests/4.1_Standard_140') ||
-     hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
-     hpxml_file.include?('RESNET_Tests/4.5_DSE')
-    # Base configuration
-    hpxml.building_occupancy.number_of_residents = 0
-  else
-    hpxml.building_occupancy.number_of_residents = nil
   end
 end
 
@@ -336,11 +328,6 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
     hpxml.building_construction.number_of_conditioned_floors = 1
     hpxml.building_construction.conditioned_floor_area = 1539
     hpxml.building_construction.conditioned_building_volume = 12312
-  end
-  if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
-    hpxml.building_construction.use_only_ideal_air_system = true
-  else
-    hpxml.building_construction.use_only_ideal_air_system = nil
   end
 end
 
@@ -2197,21 +2184,6 @@ def set_hpxml_plug_loads(hpxml_file, hpxml)
     end
   else
     hpxml.plug_loads.clear()
-  end
-end
-
-def set_hpxml_misc_load_schedule(hpxml_file, hpxml)
-  if hpxml_file.include?('RESNET_Tests/4.1_Standard_140') ||
-     hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
-     hpxml_file.include?('RESNET_Tests/4.5_DSE')
-    # Base configuration
-    hpxml.misc_loads_schedule.weekday_fractions = '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066'
-    hpxml.misc_loads_schedule.weekend_fractions = '0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066'
-    hpxml.misc_loads_schedule.monthly_multipliers = '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0'
-  else
-    hpxml.misc_loads_schedule.weekday_fractions = nil
-    hpxml.misc_loads_schedule.weekend_fractions = nil
-    hpxml.misc_loads_schedule.monthly_multipliers = nil
   end
 end
 
