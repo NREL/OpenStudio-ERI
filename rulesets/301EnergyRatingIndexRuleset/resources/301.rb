@@ -1063,7 +1063,7 @@ class EnergyRatingIndex301Ruleset
     # Create new door
     new_hpxml.doors.add(id: 'DoorAreaNorth',
                         wall_idref: 'WallArea',
-                        area: Constructions.get_default_door_area(),
+                        area: get_reference_door_area(),
                         azimuth: 0,
                         r_value: 1.0 / ufactor)
   end
@@ -1089,7 +1089,7 @@ class EnergyRatingIndex301Ruleset
     # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
     new_hpxml.doors.add(id: 'DoorAreaNorth',
                         wall_idref: 'WallArea',
-                        area: Constructions.get_default_door_area(),
+                        area: get_reference_door_area(),
                         azimuth: 0,
                         r_value: avg_r_value)
   end
@@ -2414,6 +2414,10 @@ class EnergyRatingIndex301Ruleset
     elsif ['7', '8'].include? @iecc_zone
       return 0.057
     end
+  end
+
+  def self.get_reference_door_area()
+    return 40.0 # ft2
   end
 end
 

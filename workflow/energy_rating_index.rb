@@ -543,7 +543,7 @@ def calculate_eri(design_outputs, resultsdir)
   return results
 end
 
-hourly_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'temperatures']
+hourly_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
 
 options = {}
 OptionParser.new do |opts|
@@ -558,7 +558,7 @@ OptionParser.new do |opts|
   end
 
   options[:hourly_outputs] = []
-  opts.on('--hourly TYPE', hourly_types, "Request hourly output type (#{hourly_types[0..3].join(', ')},", "#{hourly_types[4..-1].join(', ')}); can be called multiple times") do |t|
+  opts.on('--hourly TYPE', hourly_types, "Request hourly output type (#{hourly_types[0..4].join(', ')},", "#{hourly_types[5..-1].join(', ')}); can be called multiple times") do |t|
     options[:hourly_outputs] << t
   end
 
