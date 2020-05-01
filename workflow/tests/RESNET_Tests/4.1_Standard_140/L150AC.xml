@@ -8,6 +8,7 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
+      <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
