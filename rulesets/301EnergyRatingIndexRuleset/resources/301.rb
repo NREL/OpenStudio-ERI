@@ -370,7 +370,7 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.attics.add(id: orig_attic.id,
                            attic_type: orig_attic.attic_type,
                            vented_attic_sla: orig_attic.vented_attic_sla,
-                           vented_attic_constant_ach: orig_attic.vented_attic_constant_ach)
+                           vented_attic_ach: orig_attic.vented_attic_ach)
     end
   end
 
@@ -2105,7 +2105,7 @@ class EnergyRatingIndex301Ruleset
 
     ach50 = nil
     air_infiltration_measurements.each do |infil_measurement|
-      if infil_measurement.unit_of_measure == HPXML::UnitsACHNatural
+      if (infil_measurement.unit_of_measure == HPXML::UnitsACHNatural) && infil_measurement.house_pressure.nil?
         nach = infil_measurement.air_leakage
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @infil_height, @weather)
         ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)

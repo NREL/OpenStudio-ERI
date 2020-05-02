@@ -311,7 +311,6 @@ def set_hpxml_attics(hpxml_file, hpxml)
   hpxml.attics.clear
   hpxml.attics.add(id: 'VentedAttic',
                    attic_type: HPXML::AtticTypeVented,
-                   vented_attic_constant_ach: nil,
                    vented_attic_sla: (1.0 / 300.0).round(5))
 end
 
@@ -1208,7 +1207,6 @@ def create_sample_hpxmls
                   'base-hvac-stove-wood-pellets-only.xml',
                   'base-hvac-undersized.xml',
                   'base-hvac-wall-furnace-wood-only.xml',
-                  'base-infiltration-ach-natural.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
