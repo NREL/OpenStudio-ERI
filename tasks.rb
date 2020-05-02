@@ -300,11 +300,6 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
 end
 
 def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
-  hpxml.air_infiltration_measurements.clear
-  hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
-                                          unit_of_measure: HPXML::UnitsACHNatural,
-                                          air_leakage: 0.67,
-                                          infiltration_volume: hpxml.building_construction.conditioned_building_volume)
 end
 
 def set_hpxml_attics(hpxml_file, hpxml)
