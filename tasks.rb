@@ -987,11 +987,13 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
 end
 
 def set_hpxml_clothes_dryer(hpxml_file, hpxml)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
+  if hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
+     hpxml_file.include?('RESNET_Tests/4.5_DSE') ||
+     ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
       'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
+      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include?(hpxml_file)
     # Standard gas
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear
@@ -1038,11 +1040,13 @@ def set_hpxml_refrigerator(hpxml_file, hpxml)
 end
 
 def set_hpxml_cooking_range(hpxml_file, hpxml)
-  if ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
+  if hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
+     hpxml_file.include?('RESNET_Tests/4.5_DSE') ||
+     ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
       'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
+      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include?(hpxml_file)
     # Standard gas
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear

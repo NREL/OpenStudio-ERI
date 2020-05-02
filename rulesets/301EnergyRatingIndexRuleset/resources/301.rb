@@ -1187,7 +1187,8 @@ class EnergyRatingIndex301Ruleset
                                     heating_efficiency_afue: orig_heating_system.heating_efficiency_afue,
                                     heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
-                                    electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy)
+                                    electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
+                                    heating_cfm: orig_heating_system.heating_cfm)
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1205,7 +1206,8 @@ class EnergyRatingIndex301Ruleset
                                     fraction_cool_load_served: orig_cooling_system.fraction_cool_load_served,
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
-                                    cooling_shr: orig_cooling_system.cooling_shr)
+                                    cooling_shr: orig_cooling_system.cooling_shr,
+                                    cooling_cfm: orig_cooling_system.cooling_cfm)
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
