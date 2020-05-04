@@ -112,7 +112,7 @@ class EnergyRatingIndex301Validator
         'SystemIdentifier' => one, # Required by HPXML schema
         '[(number(HousePressure)=50 and BuildingAirLeakage/UnitofMeasure!="ACHnatural") or (not(HousePressure) and BuildingAirLeakage/UnitofMeasure="ACHnatural")]' => one,
         'BuildingAirLeakage/AirLeakage' => one,
-        'InfiltrationVolume' => zero_or_one,
+        'InfiltrationVolume' => one,
       },
 
       # [Roof]
