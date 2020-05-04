@@ -370,7 +370,7 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.attics.add(id: orig_attic.id,
                            attic_type: orig_attic.attic_type,
                            vented_attic_sla: orig_attic.vented_attic_sla,
-                           vented_attic_constant_ach: orig_attic.vented_attic_constant_ach)
+                           vented_attic_ach: orig_attic.vented_attic_ach)
     end
   end
 
@@ -1187,7 +1187,8 @@ class EnergyRatingIndex301Ruleset
                                     heating_efficiency_afue: orig_heating_system.heating_efficiency_afue,
                                     heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
-                                    electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy)
+                                    electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
+                                    heating_cfm: orig_heating_system.heating_cfm)
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1205,7 +1206,8 @@ class EnergyRatingIndex301Ruleset
                                     fraction_cool_load_served: orig_cooling_system.fraction_cool_load_served,
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
-                                    cooling_shr: orig_cooling_system.cooling_shr)
+                                    cooling_shr: orig_cooling_system.cooling_shr,
+                                    cooling_cfm: orig_cooling_system.cooling_cfm)
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -2105,7 +2107,7 @@ class EnergyRatingIndex301Ruleset
 
     ach50 = nil
     air_infiltration_measurements.each do |infil_measurement|
-      if infil_measurement.unit_of_measure == HPXML::UnitsACHNatural
+      if (infil_measurement.unit_of_measure == HPXML::UnitsACHNatural) && infil_measurement.house_pressure.nil?
         nach = infil_measurement.air_leakage
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @infil_height, @weather)
         ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
