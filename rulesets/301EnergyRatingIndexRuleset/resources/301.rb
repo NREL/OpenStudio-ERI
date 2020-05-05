@@ -1126,7 +1126,7 @@ class EnergyRatingIndex301Ruleset
           add_reference_cooling_air_conditioner(new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
         end
       elsif not heat_pump.nil? # Heat pumps
-        add_reference_heat_pump(new_hpxml, hvacdist_ids, heat_pump.fraction_heat_load_served, heat_pump.fraction_cool_load_served, heat_pump)
+        add_reference_heat_pump(new_hpxml, heat_pump.fraction_heat_load_served, heat_pump.fraction_cool_load_served, heat_pump)
       end
     end
 
