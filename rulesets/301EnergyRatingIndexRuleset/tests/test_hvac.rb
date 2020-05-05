@@ -236,8 +236,8 @@ class HVACtest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 1.0, 1.0, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
+      _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
       _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
     end
@@ -260,8 +260,8 @@ class HVACtest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 1.0, 1.0, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
+      _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
       _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
     end
@@ -284,8 +284,8 @@ class HVACtest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 1.0, 1.0, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
+      _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
       _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
     end
@@ -308,8 +308,8 @@ class HVACtest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 1.0, 1.0, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
+      _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
       _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
     end
@@ -332,8 +332,8 @@ class HVACtest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeNaturalGas, 0.78, 25.0])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 1.0, 1.0, _dse(calc_type), 0.73, HPXML::FuelTypeNaturalGas, 0.78, 25.0])
+      _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
       _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
     end
@@ -355,8 +355,8 @@ class HVACtest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, nil, nil, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 1.0, 1.0, _dse(calc_type), 0.73, nil, nil, nil])
+      _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
       _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
     end
@@ -364,8 +364,8 @@ class HVACtest < MiniTest::Test
     # IAD Reference
     calc_type = Constants.CalcTypeERIIndexAdjustmentReferenceHome
     hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 1.0, 1.0, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
+    _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
     _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
 
@@ -508,10 +508,7 @@ class HVACtest < MiniTest::Test
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.65],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73])
+                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.65])
       _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)],
                             [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, 0.8, 0.1, _dse(calc_type)],
                             [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)],
@@ -519,9 +516,9 @@ class HVACtest < MiniTest::Test
       _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
                        [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
                        [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
+                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 0.1, 0.2, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil],
+                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 0.1, 0.2, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil],
+                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, 13, 0.1, 0.2, _dse(calc_type), 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
       _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
     end
 

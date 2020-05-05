@@ -1101,9 +1101,9 @@ class EnergyRatingIndex301Ruleset
     has_fuel = orig_hpxml.has_fuel_access()
     sum_frac_cool_load = (orig_hpxml.cooling_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_cool_load_served }.inject(0, :+)
     sum_frac_heat_load = (orig_hpxml.heating_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_heat_load_served }.inject(0, :+)
-    
+
     hvac_configurations = get_hvac_configurations(orig_hpxml)
-    
+
     hvac_configurations.each do |hvac_configuration|
       heating_system = hvac_configuration[:heating_system]
       cooling_system = hvac_configuration[:cooling_system]
@@ -1120,7 +1120,7 @@ class EnergyRatingIndex301Ruleset
         add_reference_cooling_air_conditioner(new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
       elsif (not heating_system.nil?) && (not cooling_system.nil?) # Both heating and cooling
         if heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
-          add_reference_heat_pump(new_hpxml, heating_system.fraction_heat_load_served, cooling_system.fraction_cool_load_served, heating_system)
+          add_reference_heat_pump(new_hpxml, heating_system.fraction_heat_load_served, cooling_system.fraction_cool_load_served, heating_system, cooling_system)
         else
           add_reference_heating_gas_furnace(new_hpxml, heating_system.fraction_heat_load_served, heating_system)
           add_reference_cooling_air_conditioner(new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
@@ -2217,7 +2217,7 @@ class EnergyRatingIndex301Ruleset
                                   seed_id: seed_id)
   end
 
-  def self.add_reference_heat_pump(new_hpxml, heat_load_frac, cool_load_frac, orig_system = nil)
+  def self.add_reference_heat_pump(new_hpxml, heat_load_frac, cool_load_frac, orig_system = nil, orig_system2 = nil)
     # SEER 13, HSPF 7.7 air source heat pump
     seed_id = nil
     dist_id = nil
@@ -2253,6 +2253,14 @@ class EnergyRatingIndex301Ruleset
       backup_capacity = -1
     end
 
+    shr = nil
+    if (not orig_system.nil?) && orig_system.respond_to?(:cooling_shr)
+      shr = orig_system.cooling_shr
+    end
+    if (not orig_system2.nil?) && orig_system2.respond_to?(:cooling_shr)
+      shr = orig_system2.cooling_shr
+    end
+
     new_hpxml.heat_pumps.add(id: "HeatPump#{new_hpxml.heat_pumps.size + 1}",
                              distribution_system_idref: dist_id,
                              heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
@@ -2269,7 +2277,7 @@ class EnergyRatingIndex301Ruleset
                              fraction_cool_load_served: cool_load_frac,
                              cooling_efficiency_seer: 13.0,
                              heating_efficiency_hspf: 7.7,
-                             # FIXME: cooling_shr: shr,
+                             cooling_shr: shr,
                              seed_id: seed_id)
   end
 
@@ -2330,7 +2338,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                        location: HPXML::LocationLivingSpace, # TODO => 301 Standard doesn't specify the location
+                                        location: HPXML::LocationLivingSpace, # TODO: 301 Standard doesn't specify the location
                                         performance_adjustment: 0.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,
