@@ -261,42 +261,6 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
-  def test_resnet_hers_method_301_2014_proposed
-    # Proposed New Method Test Suite (Approved by RESNET Board of Directors June 16, 2016)
-    all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2014_Proposed.3_HERS_Method',
-                                           'RESNET_Tests/Other_HERS_Method_301_2014_Proposed')
-
-    # Check results
-    all_results.each do |xml, results|
-      if xml.include? 'AC'
-        test_num = File.basename(xml).gsub('L100-AC-', '').gsub('.xml', '').to_i
-        test_loc = 'AC'
-      elsif xml.include? 'AL'
-        test_num = File.basename(xml).gsub('L100-AL-', '').gsub('.xml', '').to_i
-        test_loc = 'AL'
-      end
-      _check_method_results(results, test_num, test_num == 8, 'proposed', test_loc)
-    end
-  end
-
-  def test_resnet_hers_method_301_2014_task_group
-    # HERS Consistency Task Group files
-    all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2014_Task_Group.3_HERS_Method',
-                                           'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group')
-
-    # Check results
-    all_results.each do |xml, results|
-      if xml.include? 'CO'
-        test_num = File.basename(xml).gsub('L100A-CO-', '').gsub('.xml', '').to_i
-        test_loc = 'CO'
-      elsif xml.include? 'LV'
-        test_num = File.basename(xml).gsub('L100A-LV-', '').gsub('.xml', '').to_i
-        test_loc = 'LV'
-      end
-      _check_method_results(results, test_num, test_num == 2, 'task_group', test_loc)
-    end
-  end
-
   def test_resnet_hvac
     test_name = 'RESNET_Test_4.4_HVAC'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
@@ -1768,59 +1732,21 @@ class EnergyRatingIndexTest < Minitest::Test
   def _check_method_results(results, test_num, has_tankless_water_heater, version, test_loc = nil)
     using_iaf = false
 
-    if (version == '2019A') || (version == '2019') || (version == '2014')
-
-      cooling_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'elec', 4 => 'elec', 5 => 'elec' }
-      cooling_mepr =  { 1 => 10.00,  2 => 10.00,  3 => 10.00,  4 => 10.00,  5 => 10.00 }
-      heating_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'gas',  4 => 'elec', 5 => 'gas' }
-      heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96  }
-      hotwater_fuel = { 1 => 'elec', 2 => 'gas',  3 => 'elec', 4 => 'elec', 5 => 'elec' }
-      hotwater_mepr = { 1 => 0.88,   2 => 0.82,   3 => 0.88,   4 => 0.88,   5 => 0.88 }
-      if version == '2019A'
-        ec_x_la = { 1 => 20.45,  2 => 22.42,  3 => 21.28,  4 => 21.40,  5 => 22.42 }
-      else
-        ec_x_la = { 1 => 21.27,  2 => 23.33,  3 => 22.05,  4 => 22.35,  5 => 23.33 }
-      end
-      cfa = { 1 => 1539, 2 => 1539, 3 => 1539, 4 => 1539, 5 => 1539 }
-      nbr = { 1 => 3,    2 => 3,    3 => 2,    4 => 4,    5 => 3 }
-      nst = { 1 => 1,    2 => 1,    3 => 1,    4 => 1,    5 => 1 }
-      using_iaf = true if version != '2014'
-
-    elsif version == 'proposed'
-
-      if test_loc == 'AC'
-        cooling_fuel =  { 6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec', 13 => 'elec', 14 => 'elec', 15 => 'elec', 16 => 'elec', 17 => 'elec', 18 => 'elec', 19 => 'elec', 20 => 'elec', 21 => 'elec', 22 => 'elec' }
-        cooling_mepr =  { 6 => 13.00,  7 => 13.00,  8 => 13.00,  9 => 13.00,  10 => 13.00,  11 => 13.00,  12 => 13.00,  13 => 13.00,  14 => 21.00,  15 => 13.00,  16 => 13.00,  17 => 13.00,  18 => 13.00,  19 => 13.00,  20 => 13.00,  21 => 13.00,  22 => 13.00 }
-        heating_fuel =  { 6 => 'gas',  7 => 'gas',  8 => 'gas',  9 => 'gas',  10 => 'gas',  11 => 'gas',  12 => 'gas',  13 => 'gas',  14 => 'gas',  15 => 'gas',  16 => 'gas',  17 => 'gas',  18 => 'gas',  19 => 'elec', 20 => 'elec', 21 => 'gas',  22 => 'gas' }
-        heating_mepr =  { 6 => 0.80,   7 => 0.96,   8 => 0.80,   9 => 0.80,   10 => 0.80,   11 => 0.80,   12 => 0.80,   13 => 0.80,   14 => 0.80,   15 => 0.80,   16 => 0.80,   17 => 0.80,   18 => 0.80,   19 => 8.20,   20 => 12.0,   21 => 0.80,   22 => 0.80  }
-        hotwater_fuel = { 6 => 'gas',  7 => 'gas',  8 => 'gas',  9 => 'gas',  10 => 'gas',  11 => 'gas',  12 => 'elec', 13 => 'elec', 14 => 'gas',  15 => 'gas',  16 => 'gas',  17 => 'gas',  18 => 'gas',  19 => 'gas',  20 => 'gas',  21 => 'gas',  22 => 'gas' }
-        hotwater_mepr = { 6 => 0.62,   7 => 0.62,   8 => 0.83,   9 => 0.62,   10 => 0.62,   11 => 0.62,   12 => 0.95,   13 => 2.50,   14 => 0.62,   15 => 0.62,   16 => 0.62,   17 => 0.62,   18 => 0.62,   19 => 0.62,   20 => 0.62,   21 => 0.62,   22 => 0.62  }
-        ec_x_la =       { 6 => 21.86,  7 => 21.86,  8 => 21.86,  9 => 20.70,  10 => 23.02,  11 => 23.92,  12 => 21.86,  13 => 21.86,  14 => 21.86,  15 => 21.86,  16 => 21.86,  17 => 21.86,  18 => 21.86,  19 => 21.86,  20 => 21.86,  21 => 21.86,  22 => 21.86 }
-      elsif test_loc == 'AL'
-        cooling_fuel =  { 6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec', 13 => 'elec', 14 => 'elec', 15 => 'elec', 16 => 'elec', 17 => 'elec', 18 => 'elec', 19 => 'elec', 20 => 'elec', 21 => 'elec', 22 => 'elec' }
-        cooling_mepr =  { 6 => 14.00,  7 => 14.00,  8 => 14.00,  9 => 14.00,  10 => 14.00,  11 => 14.00,  12 => 14.00,  13 => 14.00,  14 => 21.00,  15 => 14.00,  16 => 14.00,  17 => 14.00,  18 => 14.00,  19 => 14.00,  20 => 14.00,  21 => 14.00,  22 => 14.00 }
-        heating_fuel =  { 6 => 'gas',  7 => 'gas',  8 => 'gas',  9 => 'gas',  10 => 'gas',  11 => 'gas',  12 => 'gas',  13 => 'gas',  14 => 'gas',  15 => 'gas',  16 => 'gas',  17 => 'gas',  18 => 'gas',  19 => 'elec', 20 => 'elec', 21 => 'gas',  22 => 'gas' }
-        heating_mepr =  { 6 => 0.80,   7 => 0.96,   8 => 0.80,   9 => 0.80,   10 => 0.80,   11 => 0.80,   12 => 0.80,   13 => 0.80,   14 => 0.80,   15 => 0.80,   16 => 0.80,   17 => 0.80,   18 => 0.80,   19 => 8.20,   20 => 12.0,   21 => 0.80,   22 => 0.80  }
-        hotwater_fuel = { 6 => 'gas',  7 => 'gas',  8 => 'gas',  9 => 'gas',  10 => 'gas',  11 => 'gas',  12 => 'elec', 13 => 'elec', 14 => 'gas',  15 => 'gas',  16 => 'gas',  17 => 'gas',  18 => 'gas',  19 => 'gas',  20 => 'gas',  21 => 'gas',  22 => 'gas' }
-        hotwater_mepr = { 6 => 0.62,   7 => 0.62,   8 => 0.83,   9 => 0.62,   10 => 0.62,   11 => 0.62,   12 => 0.95,   13 => 2.50,   14 => 0.62,   15 => 0.62,   16 => 0.62,   17 => 0.62,   18 => 0.62,   19 => 0.62,   20 => 0.62,   21 => 0.62,   22 => 0.62  }
-        ec_x_la =       { 6 => 21.86,  7 => 21.86,  8 => 21.86,  9 => 20.70,  10 => 23.02,  11 => 23.92,  12 => 21.86,  13 => 21.86,  14 => 21.86,  15 => 21.86,  16 => 21.86,  17 => 21.86,  18 => 21.86,  19 => 21.86,  20 => 21.86,  21 => 21.86,  22 => 21.86 }
-      end
-
-    elsif version == 'task_group'
-
-      cooling_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'elec', 4 => 'elec', 5 => 'elec', 6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
-      cooling_mepr =  { 1 => 10.00,  2 => 10.00,  3 => 10.00,  4 => 10.00,  5 => 10.00,  6 => 10.00,  7 => 10.00,  8 => 10.00,  9 => 10.00,  10 => 10.00,  11 => 10.00,  12 => 10.00  }
-      heating_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'gas',  4 => 'elec', 5 => 'gas',  6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
-      heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96,   6 => 6.80,   7 => 6.80,   8 => 6.80,   9 => 6.80,   10 => 6.80,   11 => 6.80,   12 => 6.80   }
-      hotwater_fuel = { 1 => 'elec', 2 => 'gas',  3 => 'elec', 4 => 'elec', 5 => 'elec', 6 => 'elec', 7 => 'elec', 8 => 'elec', 9 => 'elec', 10 => 'elec', 11 => 'elec', 12 => 'elec' }
-      hotwater_mepr = { 1 => 0.88,   2 => 0.82,   3 => 0.88,   4 => 0.88,   5 => 0.88,   6 => 0.88,   7 => 0.88,   8 => 0.88,   9 => 0.88,   10 => 0.88,   11 => 0.88,   12 => 0.88   }
-      ec_x_la =       { 1 => 21.27,  2 => 23.33,  3 => 22.05,  4 => 22.35,  5 => 23.33,  6 => 21.27,  7 => 21.27,  8 => 21.27,  9 => 21.27,  10 => 21.27,  11 => 21.27,  12 => 21.27  }
-
+    cooling_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'elec', 4 => 'elec', 5 => 'elec' }
+    cooling_mepr =  { 1 => 10.00,  2 => 10.00,  3 => 10.00,  4 => 10.00,  5 => 10.00 }
+    heating_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'gas',  4 => 'elec', 5 => 'gas' }
+    heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96  }
+    hotwater_fuel = { 1 => 'elec', 2 => 'gas',  3 => 'elec', 4 => 'elec', 5 => 'elec' }
+    hotwater_mepr = { 1 => 0.88,   2 => 0.82,   3 => 0.88,   4 => 0.88,   5 => 0.88 }
+    if version == '2019A'
+      ec_x_la = { 1 => 20.45,  2 => 22.42,  3 => 21.28,  4 => 21.40,  5 => 22.42 }
     else
-
-      fail 'Unexpected version.'
-
+      ec_x_la = { 1 => 21.27,  2 => 23.33,  3 => 22.05,  4 => 22.35,  5 => 23.33 }
     end
+    cfa = { 1 => 1539, 2 => 1539, 3 => 1539, 4 => 1539, 5 => 1539 }
+    nbr = { 1 => 3,    2 => 3,    3 => 2,    4 => 4,    5 => 3 }
+    nst = { 1 => 1,    2 => 1,    3 => 1,    4 => 1,    5 => 1 }
+    using_iaf = true if version != '2014'
 
     if heating_fuel[test_num] == 'gas'
       heating_a = 1.0943

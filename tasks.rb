@@ -96,64 +96,6 @@ def create_test_hpxmls
     'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-03.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
     'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-04.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
     'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml' => 'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-07.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-08.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-09.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-10.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-11.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-12.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-13.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-14.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-15.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-16.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-17.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-16.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-18.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-19.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-20.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-21.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-22.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-07.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-08.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-09.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-10.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-11.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-12.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-13.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-14.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-15.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-16.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-17.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-16.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-18.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-19.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-20.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-21.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-22.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-02.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-03.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-04.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-05.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-06.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-07.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-08.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-07.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-09.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-10.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-08.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-11.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-12.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-07.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml' => 'RESNET_Tests/4.1_Standard_140/L100AL.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-02.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-03.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-04.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-05.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-06.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-07.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-08.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-07.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-09.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-10.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-08.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-11.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-    'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-12.xml' => 'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-07.xml',
     'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml' => 'RESNET_Tests/4.1_Standard_140/L100AC.xml',
     'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-02.xml' => 'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
     'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-03.xml' => 'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
@@ -296,8 +238,6 @@ def set_hpxml_header(hpxml_file, hpxml)
   elsif hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
     hpxml.header.eri_calculation_version = '2014'
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE') ||
-        hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_Proposed') ||
-        hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_Task_Group') ||
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014')
     hpxml.header.eri_calculation_version = '2014A'
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA') ||
@@ -341,21 +281,13 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-09.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-09.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-03.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # 2 bedrooms
     hpxml.building_construction.number_of_bedrooms = 2
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-02.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-02.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-10.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-10.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-04.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-04.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-02.xml'].include? hpxml_file
     # 4 bedrooms
     hpxml.building_construction.number_of_bedrooms = 4
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
@@ -442,8 +374,6 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     hpxml.air_infiltration_measurements.clear()
@@ -455,9 +385,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
     hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
                                             unit_of_measure: HPXML::UnitsACHNatural,
                                             air_leakage: 0.335)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml',
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/02-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/04-L324.xml'].include? hpxml_file
     # 3 ACH50
@@ -498,16 +426,10 @@ def set_hpxml_attics(hpxml_file, hpxml)
 end
 
 def set_hpxml_foundations(hpxml_file, hpxml)
-  if hpxml_file.include? 'RESNET_Tests/Other_HERS_Method_301_2014_Proposed'
-    # Vented crawlspace
-    hpxml.foundations.clear()
-    hpxml.foundations.add(id: 'VentedCrawlspace',
-                          foundation_type: HPXML::FoundationTypeCrawlspaceVented,
-                          vented_crawlspace_sla: (1.0 / 150.0).round(5))
-  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
-         'RESNET_Tests/4.5_DSE/HVAC3b.xml',
-         'RESNET_Tests/4.5_DSE/HVAC3c.xml',
-         'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
+  if ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
+      'RESNET_Tests/4.5_DSE/HVAC3b.xml',
+      'RESNET_Tests/4.5_DSE/HVAC3c.xml',
+      'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
     hpxml.foundations.clear()
     hpxml.foundations.add(id: 'UnconditionedBasement',
                           foundation_type: HPXML::FoundationTypeBasementUnconditioned,
@@ -548,20 +470,6 @@ def set_hpxml_roofs(hpxml_file, hpxml)
     # Low Exterior Solar Absorptance
     for i in 0..hpxml.roofs.size - 1
       hpxml.roofs[i].solar_absorptance = 0.2
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-09.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-10.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-09.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-10.xml'].include? hpxml_file
-    # Radiant barrier
-    for i in 0..hpxml.roofs.size - 1
-      hpxml.roofs[i].radiant_barrier = true
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Solar absorptance = 0.75; Emittance = 0.90; Slope = 18.4 degrees (pitch = 4/12)
-    for i in 0..hpxml.roofs.size - 1
-      hpxml.roofs[i].solar_absorptance = 0.75
     end
   end
 end
@@ -688,13 +596,6 @@ def set_hpxml_walls(hpxml_file, hpxml)
     # Low Exterior Solar Absorptance
     for i in 0..hpxml.walls.size - 1
       hpxml.walls[i].solar_absorptance = 0.2
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Cavity insulation = R-13, grade I; Continuous sheathing insulation = R-5; Framing fraction = 0.25; Solar absorptance = 0.75
-    for i in 0..hpxml.walls.size - 3
-      hpxml.walls[i].insulation_assembly_r_value = 17.07
-      hpxml.walls[i].solar_absorptance = 0.75
     end
   end
 end
@@ -826,65 +727,6 @@ def set_hpxml_foundations_walls(hpxml_file, hpxml)
                                insulation_exterior_r_value: 0,
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # 2 ft. high crawlspace above grade
-    hpxml.foundation_walls.add(id: 'FoundationWallNorth',
-                               exterior_adjacent_to: HPXML::LocationGround,
-                               interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                               height: 2,
-                               area: 114,
-                               azimuth: 0,
-                               thickness: 6,
-                               depth_below_grade: 0,
-                               insulation_interior_r_value: 0,
-                               insulation_interior_distance_to_top: 0,
-                               insulation_interior_distance_to_bottom: 0,
-                               insulation_exterior_r_value: 0,
-                               insulation_exterior_distance_to_top: 0,
-                               insulation_exterior_distance_to_bottom: 0)
-    hpxml.foundation_walls.add(id: 'FoundationWallEast',
-                               exterior_adjacent_to: HPXML::LocationGround,
-                               interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                               height: 2,
-                               area: 54,
-                               azimuth: 90,
-                               thickness: 6,
-                               depth_below_grade: 0,
-                               insulation_interior_r_value: 0,
-                               insulation_interior_distance_to_top: 0,
-                               insulation_interior_distance_to_bottom: 0,
-                               insulation_exterior_r_value: 0,
-                               insulation_exterior_distance_to_top: 0,
-                               insulation_exterior_distance_to_bottom: 0)
-    hpxml.foundation_walls.add(id: 'FoundationWallSouth',
-                               exterior_adjacent_to: HPXML::LocationGround,
-                               interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                               height: 2,
-                               area: 114,
-                               azimuth: 180,
-                               thickness: 6,
-                               depth_below_grade: 0,
-                               insulation_interior_r_value: 0,
-                               insulation_interior_distance_to_top: 0,
-                               insulation_interior_distance_to_bottom: 0,
-                               insulation_exterior_r_value: 0,
-                               insulation_exterior_distance_to_top: 0,
-                               insulation_exterior_distance_to_bottom: 0)
-    hpxml.foundation_walls.add(id: 'FoundationWallWest',
-                               exterior_adjacent_to: HPXML::LocationGround,
-                               interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                               height: 2,
-                               area: 54,
-                               azimuth: 270,
-                               thickness: 6,
-                               depth_below_grade: 0,
-                               insulation_interior_r_value: 0,
-                               insulation_interior_distance_to_top: 0,
-                               insulation_interior_distance_to_bottom: 0,
-                               insulation_exterior_r_value: 0,
-                               insulation_exterior_distance_to_top: 0,
-                               insulation_exterior_distance_to_bottom: 0)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     for i in 0..hpxml.foundation_walls.size - 1
       hpxml.foundation_walls[i].interior_adjacent_to = HPXML::LocationBasementUnconditioned
@@ -924,18 +766,6 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
     # Uninsulated
     hpxml.frame_floors[1].insulation_assembly_r_value = 4.24
     hpxml.frame_floors[1].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Blown insulation = R-49, grade I; Framing fraction = 0.11
-    hpxml.frame_floors[0].insulation_assembly_r_value = 48.72
-    # Cavity insulation = R-30, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    hpxml.frame_floors[1].insulation_assembly_r_value = 28.66
-    hpxml.frame_floors[1].exterior_adjacent_to = HPXML::LocationCrawlspaceVented
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # Blown insulation = R-38, grade I; Framing fraction = 0.11
-    hpxml.frame_floors[0].insulation_assembly_r_value = 37.53
-    # Cavity insulation = R-19, grade I; Framing fraction = 0.13; Covering = 100% carpet and pad
-    hpxml.frame_floors[1].insulation_assembly_r_value = 19.45
-    hpxml.frame_floors[1].exterior_adjacent_to = HPXML::LocationCrawlspaceVented
   elsif ['RESNET_Tests/4.1_Standard_140/L302XC.xml',
          'RESNET_Tests/4.1_Standard_140/L322XC.xml',
          'RESNET_Tests/4.1_Standard_140/L324XC.xml',
@@ -995,21 +825,6 @@ def set_hpxml_slabs(hpxml_file, hpxml)
                     under_slab_insulation_r_value: 0,
                     carpet_fraction: 0,
                     carpet_r_value: 2.5)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # 2 ft. high crawlspace above grade
-    hpxml.slabs.add(id: 'Slab',
-                    interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                    area: 1539,
-                    thickness: 0,
-                    exposed_perimeter: 168,
-                    perimeter_insulation_depth: 0,
-                    under_slab_insulation_width: 0,
-                    under_slab_insulation_spans_entire_slab: nil,
-                    perimeter_insulation_r_value: 0,
-                    under_slab_insulation_r_value: 0,
-                    carpet_fraction: 0,
-                    carpet_r_value: 0)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     hpxml.slabs[0].interior_adjacent_to = HPXML::LocationBasementUnconditioned
   end
@@ -1042,9 +857,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
       hpxml.windows[i].shgc = 0.335
     end
   elsif ['RESNET_Tests/4.1_Standard_140/L140AC.xml',
-         'RESNET_Tests/4.1_Standard_140/L140AL.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-06.xml'].include? hpxml_file
+         'RESNET_Tests/4.1_Standard_140/L140AL.xml'].include? hpxml_file
     # No windows
     hpxml.windows.clear()
   elsif ['RESNET_Tests/4.1_Standard_140/L150AC.xml',
@@ -1079,24 +892,6 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         shgc: 0.67,
                         fraction_operable: 0.0,
                         wall_idref: wall)
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Base configuration
-    for i in 0..hpxml.windows.size - 1
-      hpxml.windows[i].ufactor = 0.32
-      hpxml.windows[i].shgc = 0.4
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # Base configuration
-    for i in 0..hpxml.windows.size - 1
-      hpxml.windows[i].ufactor = 0.35
-      hpxml.windows[i].shgc = 0.25
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-11.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-11.xml'].include? hpxml_file
-    # Window SHGC set to 0.01
-    for i in 0..hpxml.windows.size - 1
-      hpxml.windows[i].shgc = 0.01
     end
   end
   if hpxml_file.include?('RESNET_Tests/4.1_Standard_140') ||
@@ -1134,26 +929,12 @@ def set_hpxml_doors(hpxml_file, hpxml)
                       azimuth: azimuth,
                       r_value: 3.04)
     end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # U-factor = 0.35
-    for i in 0..hpxml.doors.size - 1
-      hpxml.doors[i].r_value = (1.0 / 0.35).round(2)
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # U-factor = 0.32
-    for i in 0..hpxml.doors.size - 1
-      hpxml.doors[i].r_value = (1.0 / 0.32).round(2)
-    end
   end
 end
 
 def set_hpxml_heating_systems(hpxml_file, hpxml)
   if ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
-      'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-19.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-20.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-19.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-20.xml'].include? hpxml_file
+      'RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     hpxml.heating_systems.clear()
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Gas furnace with AFUE = 82%
@@ -1184,9 +965,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.95,
                               fraction_heat_load_served: 1)
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-03.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 78%
     hpxml.heating_systems.clear()
     hpxml.heating_systems.add(id: 'HeatingSystem',
@@ -1196,9 +975,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.78,
                               fraction_heat_load_served: 1)
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-05.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 96%
     hpxml.heating_systems.clear()
     hpxml.heating_systems.add(id: 'HeatingSystem',
@@ -1265,31 +1042,12 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
     # Change to 61.0 kBtu/h
     hpxml.heating_systems[0].heating_capacity = 61000
     hpxml.heating_systems[0].heating_cfm = hpxml.heating_systems[0].heating_capacity * 360.0 / 12000.0
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Heating: gas furnace AFUE = 80%
-    hpxml.heating_systems.clear()
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
-                              heating_system_type: HPXML::HVACTypeFurnace,
-                              heating_system_fuel: HPXML::FuelTypeNaturalGas,
-                              heating_capacity: -1,
-                              heating_efficiency_afue: 0.8,
-                              fraction_heat_load_served: 1)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-07.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-07.xml'].include? hpxml_file
-    # High-efficiency gas furnace with AFUE = 96%
-    hpxml.heating_systems[0].heating_efficiency_afue = 0.96
   end
 end
 
 def set_hpxml_cooling_systems(hpxml_file, hpxml)
   if ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
-      'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-19.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-20.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-19.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-20.xml'].include? hpxml_file
+      'RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     hpxml.cooling_systems.clear()
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # central air conditioner with SEER = 11.0
@@ -1312,11 +1070,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 15)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-         'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-05.xml'].include? hpxml_file
+         'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
     # Cooling system – electric A/C with SEER = 10.0
     hpxml.cooling_systems.clear()
     hpxml.cooling_systems.add(id: 'CoolingSystem',
@@ -1364,40 +1118,12 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
     # Change to 55.0 kBtu/h
     hpxml.cooling_systems[0].cooling_capacity = 55000
     hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # Cooling: Air conditioner SEER = 14
-    hpxml.cooling_systems.clear()
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
-                              cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
-                              cooling_system_fuel: HPXML::FuelTypeElectricity,
-                              cooling_capacity: -1,
-                              fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 14)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Cooling: Air conditioner SEER = 13
-    hpxml.cooling_systems.clear()
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
-                              cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
-                              cooling_system_fuel: HPXML::FuelTypeElectricity,
-                              cooling_capacity: -1,
-                              fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 13)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-14.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-14.xml'].include? hpxml_file
-    # Change to high efficiency air conditioner SEER = 21
-    hpxml.cooling_systems[0].cooling_efficiency_seer = 21
   end
 end
 
 def set_hpxml_heat_pumps(hpxml_file, hpxml)
   if ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
-      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-03.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-05.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-03.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-05.xml'].include? hpxml_file
+      'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
     hpxml.heat_pumps.clear()
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Electric heat pump with HSPF = 7.5 and SEER = 12.0
@@ -1415,9 +1141,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 7.5,
                          cooling_efficiency_seer: 12)
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
     # Heating system – electric HP with HSPF = 6.8
     # Cooling system – electric A/C with SEER
     hpxml.heat_pumps.clear()
@@ -1434,9 +1158,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 6.8,
                          cooling_efficiency_seer: 10)
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-04.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-04.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml'].include? hpxml_file
     # Change to a high efficiency HP with HSPF = 9.85
     hpxml.heat_pumps[0].heating_efficiency_hspf = 9.85
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml'].include? hpxml_file
@@ -1471,70 +1193,6 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 9.85,
                          cooling_efficiency_seer: 13)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-19.xml'].include? hpxml_file
-    # Heat pump HVAC system with SEER=14, HSPF = 8.2
-    hpxml.heat_pumps.clear()
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
-                         heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
-                         heat_pump_fuel: HPXML::FuelTypeElectricity,
-                         cooling_capacity: -1,
-                         heating_capacity: -1,
-                         backup_heating_fuel: HPXML::FuelTypeElectricity,
-                         backup_heating_capacity: -1,
-                         backup_heating_efficiency_percent: 1.0,
-                         fraction_heat_load_served: 1,
-                         fraction_cool_load_served: 1,
-                         heating_efficiency_hspf: 8.2,
-                         cooling_efficiency_seer: 14)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-20.xml'].include? hpxml_file
-    # Heat pump HVAC system with SEER=14, HSPF = 12.0
-    hpxml.heat_pumps.clear()
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
-                         heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
-                         heat_pump_fuel: HPXML::FuelTypeElectricity,
-                         cooling_capacity: -1,
-                         heating_capacity: -1,
-                         backup_heating_fuel: HPXML::FuelTypeElectricity,
-                         backup_heating_capacity: -1,
-                         backup_heating_efficiency_percent: 1.0,
-                         fraction_heat_load_served: 1,
-                         fraction_cool_load_served: 1,
-                         heating_efficiency_hspf: 12,
-                         cooling_efficiency_seer: 14)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-19.xml'].include? hpxml_file
-    # Heat pump HVAC system with SEER=13, HSPF = 8.2
-    hpxml.heat_pumps.clear()
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
-                         heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
-                         heat_pump_fuel: HPXML::FuelTypeElectricity,
-                         cooling_capacity: -1,
-                         heating_capacity: -1,
-                         backup_heating_fuel: HPXML::FuelTypeElectricity,
-                         backup_heating_capacity: -1,
-                         backup_heating_efficiency_percent: 1.0,
-                         fraction_heat_load_served: 1,
-                         fraction_cool_load_served: 1,
-                         heating_efficiency_hspf: 8.2,
-                         cooling_efficiency_seer: 13)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-20.xml'].include? hpxml_file
-    # Heat pump HVAC system with SEER=13, HSPF = 12.0
-    hpxml.heat_pumps.clear()
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
-                         heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
-                         heat_pump_fuel: HPXML::FuelTypeElectricity,
-                         cooling_capacity: -1,
-                         heating_capacity: -1,
-                         backup_heating_fuel: HPXML::FuelTypeElectricity,
-                         backup_heating_capacity: -1,
-                         backup_heating_efficiency_percent: 1.0,
-                         fraction_heat_load_served: 1,
-                         fraction_cool_load_served: 1,
-                         heating_efficiency_hspf: 12,
-                         cooling_efficiency_seer: 13)
   end
 end
 
@@ -1561,11 +1219,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3e.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+      'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear()
     hpxml.hvac_distributions.add(id: 'HVACDistribution',
                                  distribution_system_type: HPXML::HVACDistributionTypeAir)
@@ -1594,15 +1248,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3e.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-08.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-12.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-08.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-12.xml'].include? hpxml_file
+      'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # No leakage
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear()
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
@@ -1619,18 +1265,6 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     for i in 0..hpxml.hvac_distributions[0].duct_leakage_measurements.size - 1
       hpxml.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 125
     end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-22.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-22.xml'].include? hpxml_file
-    # 4 cfm25 per 100 ft2 CFA with 50% return side and 50% supply side leakage
-    for i in 0..hpxml.hvac_distributions[0].duct_leakage_measurements.size - 1
-      hpxml.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 30.78
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-07.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-07.xml'].include? hpxml_file
-    # 123 cfm duct leakage with 50% in supply and 50% in return
-    for i in 0..hpxml.hvac_distributions[0].duct_leakage_measurements.size - 1
-      hpxml.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 61.5
-    end
   end
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
@@ -1638,9 +1272,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3e.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-      'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+      'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Supply duct area = 308 ft2; Return duct area = 77 ft2
     # Duct R-val = 0
     # Duct Location = 100% conditioned
@@ -1658,9 +1290,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     for i in 0..hpxml.hvac_distributions[0].ducts.size - 1
       hpxml.hvac_distributions[0].ducts[i].duct_location = HPXML::LocationBasementUnconditioned
     end
-  elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-08.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-08.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml',].include? hpxml_file
     # Change to Duct Location = 100% in attic
     for i in 0..hpxml.hvac_distributions[0].ducts.size - 1
       hpxml.hvac_distributions[0].ducts[i].duct_location = HPXML::LocationAtticVented
@@ -1671,33 +1301,6 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     for i in 0..hpxml.hvac_distributions[0].ducts.size - 1
       hpxml.hvac_distributions[0].ducts[i].duct_insulation_r_value = 6
     end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # 100% in conditioned space, including air handler; R-6 duct insulation
-    hpxml.hvac_distributions[0].ducts.clear()
-    hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
-                                          duct_insulation_r_value: 6,
-                                          duct_location: HPXML::LocationLivingSpace,
-                                          duct_surface_area: 415.5)
-    hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
-                                          duct_insulation_r_value: 6,
-                                          duct_location: HPXML::LocationLivingSpace,
-                                          duct_surface_area: 77)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-22.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-22.xml'].include? hpxml_file
-    # Change to crawlspace
-    for i in 0..hpxml.hvac_distributions[0].ducts.size - 1
-      hpxml.hvac_distributions[0].ducts[i].duct_location = HPXML::LocationCrawlspaceVented
-    end
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-07.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-07.xml'].include? hpxml_file
-    # Change to 385 ft2 supply ducts and 77 ft2 return ducts in ambient temperature environment with no solar radiation
-    for i in 0..hpxml.hvac_distributions[0].ducts.size - 1
-      hpxml.hvac_distributions[0].ducts[i].duct_insulation_r_value = 6
-      hpxml.hvac_distributions[0].ducts[i].duct_location = HPXML::LocationOutside
-    end
-    hpxml.hvac_distributions[0].ducts[0].duct_surface_area = 385
-    hpxml.hvac_distributions[0].ducts[1].duct_surface_area = 77
   end
 end
 
@@ -1736,60 +1339,6 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                total_recovery_efficiency: 0.4, # Unspecified
                                fan_power: 14.7,
                                used_for_whole_building_ventilation: true)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
-    # Exhaust fan = 58.7 cfm, continuous; Fan power = 14.7 watts
-    hpxml.ventilation_fans.clear()
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                               fan_type: HPXML::MechVentTypeExhaust,
-                               tested_flow_rate: 58.7,
-                               hours_in_operation: 24,
-                               fan_power: 14.7,
-                               used_for_whole_building_ventilation: true)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-09.xml'].include? hpxml_file
-    # Change to exhaust mechanical ventilation = 51.2 cfm continuous with fan power = 12.8 watts
-    hpxml.ventilation_fans[0].tested_flow_rate = 51.2
-    hpxml.ventilation_fans[0].fan_power = 12.8
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-10.xml'].include? hpxml_file
-    # Change to exhaust mechanical ventilation = 66.2 cfm continuous with fan power = 16.6 watts
-    hpxml.ventilation_fans[0].tested_flow_rate = 66.2
-    hpxml.ventilation_fans[0].fan_power = 16.6
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-15.xml'].include? hpxml_file
-    # Change to CFIS system at flow rate of 176.1 cfm and 33.33% duty cycle (8 hours per day)
-    hpxml.ventilation_fans.clear()
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                               fan_type: HPXML::MechVentTypeCFIS,
-                               tested_flow_rate: 176.1,
-                               hours_in_operation: 8,
-                               fan_power: 14.7,
-                               used_for_whole_building_ventilation: true,
-                               distribution_system_idref: 'HVACDistribution')
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml'].include? hpxml_file
-    # Exhaust fan = 56.2 cfm, continuous; Fan power = 14.0 watts
-    hpxml.ventilation_fans.clear()
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                               fan_type: HPXML::MechVentTypeExhaust,
-                               tested_flow_rate: 56.2,
-                               hours_in_operation: 24,
-                               fan_power: 14,
-                               used_for_whole_building_ventilation: true)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-09.xml'].include? hpxml_file
-    # Change to exhaust mechanical ventilation = 48.7 cfm continuous with fan power = 12.2 watts
-    hpxml.ventilation_fans[0].tested_flow_rate = 48.7
-    hpxml.ventilation_fans[0].fan_power = 12.2
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-10.xml'].include? hpxml_file
-    # Change to exhaust mechanical ventilation = 63.7 cfm continuous with fan power = 15.9 watts
-    hpxml.ventilation_fans[0].tested_flow_rate = 63.7
-    hpxml.ventilation_fans[0].fan_power = 15.9
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-15.xml'].include? hpxml_file
-    # Change to CFIS system at flow rate of 168.6 cfm and 33.33% duty cycle (8 hours per day)
-    hpxml.ventilation_fans.clear()
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                               fan_type: HPXML::MechVentTypeCFIS,
-                               tested_flow_rate: 168.6,
-                               hours_in_operation: 8,
-                               fan_power: 373,
-                               used_for_whole_building_ventilation: true,
-                               distribution_system_idref: 'HVACDistribution')
   end
 end
 
@@ -1799,9 +1348,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
     hpxml.water_heating_systems.clear()
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(id: 'WaterHeater',
@@ -1811,9 +1358,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     tank_volume: 40,
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.88)
-  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-02.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-02.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml'].include? hpxml_file
     # Tankless natural gas with EF = 0.82
     hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(id: 'WaterHeater',
@@ -1835,9 +1380,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     energy_factor: 0.56,
                                     recovery_efficiency: 0.78)
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-03.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-03.xml'].include? hpxml_file
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear()
     hpxml.water_heating_systems.add(id: 'WaterHeater',
@@ -1848,39 +1391,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.62,
                                     recovery_efficiency: 0.78)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-08.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-08.xml'].include? hpxml_file
-    # Tankless gas water heater with EF=0.83
-    hpxml.water_heating_systems.clear()
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    fuel_type: HPXML::FuelTypeNaturalGas,
-                                    water_heater_type: HPXML::WaterHeaterTypeTankless,
-                                    location: HPXML::LocationLivingSpace,
-                                    fraction_dhw_load_served: 1,
-                                    energy_factor: 0.83)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-12.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-12.xml'].include? hpxml_file
-    # Standard electric water heater EF = 0.95, RE = 0.98
-    hpxml.water_heating_systems.clear()
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    fuel_type: HPXML::FuelTypeElectricity,
-                                    water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                    location: HPXML::LocationLivingSpace,
-                                    tank_volume: 40,
-                                    fraction_dhw_load_served: 1,
-                                    energy_factor: 0.95,
-                                    recovery_efficiency: 0.98)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-13.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-13.xml'].include? hpxml_file
-    # Electric heat pump water heater EF = 2.5
-    hpxml.water_heating_systems.clear()
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    fuel_type: HPXML::FuelTypeElectricity,
-                                    water_heater_type: HPXML::WaterHeaterTypeHeatPump,
-                                    location: HPXML::LocationLivingSpace,
-                                    tank_volume: 40,
-                                    fraction_dhw_load_served: 1,
-                                    energy_factor: 2.5)
   end
 end
 
@@ -1892,25 +1402,12 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
     hpxml.hot_water_distributions.clear()
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Standard
     hpxml.hot_water_distributions.clear()
     hpxml.hot_water_distributions.add(id: 'HotWaterDstribution',
                                       system_type: HPXML::DHWDistTypeStandard,
                                       pipe_r_value: 0.0)
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-16.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-16.xml'].include? hpxml_file
-    # Change to recirculation: loop length = 156.92 ft.; branch piping length = 10 ft.; pump power = 50 watts; R-3 piping insulation; and control = none
-    hpxml.hot_water_distributions[0].system_type = HPXML::DHWDistTypeRecirc
-    hpxml.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecirControlTypeNone
-    hpxml.hot_water_distributions[0].recirculation_piping_length = 156.92
-    hpxml.hot_water_distributions[0].recirculation_branch_piping_length = 10
-    hpxml.hot_water_distributions[0].recirculation_pump_power = 50
-    hpxml.hot_water_distributions[0].pipe_r_value = 3
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-05.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-05.xml'].include? hpxml_file
     # Change to recirculation: Control = none; 50 W pump; Loop length is same as reference loop length; Branch length is 10 ft; All hot water pipes insulated to R-3
@@ -1920,15 +1417,11 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
     hpxml.hot_water_distributions[0].recirculation_pump_power = 50
     hpxml.hot_water_distributions[0].pipe_r_value = 3
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-06.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-17.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-17.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-06.xml'].include? hpxml_file
     # Change to recirculation: Control = manual
     hpxml.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecirControlTypeManual
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-07.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-07.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-18.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-18.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-07.xml'].include? hpxml_file
     # Change to drain Water Heat Recovery (DWHR) with all facilities connected; equal flow; DWHR eff = 54%
     hpxml.hot_water_distributions[0].dwhr_facilities_connected = HPXML::DWHRFacilitiesConnectedAll
     hpxml.hot_water_distributions[0].dwhr_equal_flow = true
@@ -1962,11 +1455,7 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
     hpxml.water_fixtures.clear()
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Standard
     hpxml.water_fixtures.clear()
     hpxml.water_fixtures.add(id: 'WaterFixture',
@@ -2029,15 +1518,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-02.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-11.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-11.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-02.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-02.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-05.xml'].include? hpxml_file
+         'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include? hpxml_file
     # Standard gas
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear()
@@ -2052,11 +1533,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Standard electric
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeElectricity)
     hpxml.clothes_dryers.clear()
@@ -2120,15 +1597,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-05.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-02.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-11.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-11.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-02.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-05.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-02.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-03.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-05.xml'].include? hpxml_file
+         'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include? hpxml_file
     # Standard gas
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear()
@@ -2141,11 +1610,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
-         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-CO-01.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Task_Group/L100A-LV-01.xml'].include? hpxml_file
+         'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Standard electric
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear()
@@ -2176,34 +1641,6 @@ def set_hpxml_lighting(hpxml_file, hpxml)
      hpxml_file.include?('RESNET_Tests/4.5_DSE')
     # Base configuration
     hpxml.lighting_groups.clear()
-  elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-21.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-21.xml'].include? hpxml_file
-    # 75% high efficiency interior and exterior
-    hpxml.lighting_groups.clear()
-    hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                              location: HPXML::LocationInterior,
-                              fration_of_units_in_location: 0.75,
-                              third_party_certification: HPXML::LightingTypeTierI)
-    hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                              location: HPXML::LocationExterior,
-                              fration_of_units_in_location: 0.75,
-                              third_party_certification: HPXML::LightingTypeTierI)
-    hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                              location: HPXML::LocationGarage,
-                              fration_of_units_in_location: 0.0,
-                              third_party_certification: HPXML::LightingTypeTierI)
-    hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                              location: HPXML::LocationInterior,
-                              fration_of_units_in_location: 0.0,
-                              third_party_certification: HPXML::LightingTypeTierII)
-    hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                              location: HPXML::LocationExterior,
-                              fration_of_units_in_location: 0.0,
-                              third_party_certification: HPXML::LightingTypeTierII)
-    hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                              location: HPXML::LocationGarage,
-                              fration_of_units_in_location: 0.0,
-                              third_party_certification: HPXML::LightingTypeTierII)
   else
     # ERI Reference
     fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
