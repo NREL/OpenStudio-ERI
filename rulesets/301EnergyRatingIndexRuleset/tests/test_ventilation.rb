@@ -23,7 +23,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 56.5, 24, 0.0) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 47.2, 24, 0.0) # Should have airflow but not fan energy
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -74,11 +74,11 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 56.5, 24, 35.4)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 47.2, 24, 34.8)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 101.2, 24, 101.2) # Increased runtime and fan power
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 99.6, 24, 99.6) # Increased runtime and fan power
 
     # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -92,11 +92,11 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 37.0, 24, 27.3)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 37.0, 24, 26.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 78.1, 24, 78.1) # Increased runtime and fan power
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 75.4, 24, 75.4) # Increased runtime and fan power
 
     # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -119,7 +119,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 56.5, 24, 0.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 47.2, 24, 0.1)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -168,7 +168,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 56.7, 24, 0.0)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 47.2, 24, 0.0)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -196,11 +196,11 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 56.5, 24, 35.4)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 47.2, 24, 34.8)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 101.2, 24, 35.4)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 99.6, 24, 34.8)
 
     # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -214,11 +214,11 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 37.0, 24, 27.3)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 37.0, 24, 26.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 78.1, 24, 27.3)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 75.4, 24, 26.4)
 
     # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -242,7 +242,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 56.5, 24, 0.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 47.2, 24, 0.1)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -288,7 +288,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 56.5, 24, 0.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 47.2, 24, 0.1)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -349,7 +349,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 56.5, 24, 35.4)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 47.2, 24, 34.8)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -367,7 +367,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 37.0, 24, 27.3)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeExhaust, 37.0, 24, 26.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -387,7 +387,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 56.5, 24, 35.4)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 47.2, 24, 34.8)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -405,7 +405,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 37.0, 24, 27.3)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 37.0, 24, 26.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -425,7 +425,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 33.2, 24, 54.7)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 26.8, 24, 52.8)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -443,7 +443,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 54.7)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 52.8)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -463,7 +463,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 26.8, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -481,7 +481,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -501,7 +501,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 26.8, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -519,7 +519,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -539,7 +539,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 26.8, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -557,7 +557,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -577,7 +577,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 33.2, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 26.8, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -595,7 +595,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 78.1)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 37.0, 24, 75.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -615,7 +615,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 56.5, 24, 35.4)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 47.2, 24, 34.8)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -633,7 +633,7 @@ class VentTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 37.0, 24, 27.3)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeSupply, 37.0, 24, 26.4)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
