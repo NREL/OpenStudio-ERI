@@ -969,10 +969,10 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_doors(hpxml, { 0 => [40, 2.86] })
-    
+
     # Test MF unit w/ exterior doors
     hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
-    
+
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_doors(hpxml, { 0 => [40, 4.4],
@@ -989,7 +989,7 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_doors(hpxml, { 0 => [20, 2.86] })
-    
+
     # Test MF unit w/ interior doors
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.doors.each do |door|
@@ -997,7 +997,7 @@ class EnclosureTest < MiniTest::Test
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-    
+
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_doors(hpxml, { 0 => [40, 4.4],
@@ -1014,7 +1014,6 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_doors(hpxml, { 0 => [20, 2.86] })
-    
   end
 
   def test_enclosure_attic_ventilation

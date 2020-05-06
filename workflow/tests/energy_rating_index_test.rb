@@ -562,7 +562,7 @@ class EnergyRatingIndexTest < Minitest::Test
       all_results[File.basename(xml)] = _get_reference_home_components(output_hpxml_path, test_num)
 
       # Re-simulate reference HPXML file
-      _override_ref_ref_mech_vent_infil(output_hpxml_path, xml)
+      _override_mech_vent_fan_power(output_hpxml_path)
       hpxmls, csvs, runtime = _run_eri(output_hpxml_path, test_name)
       worksheet_results = _get_csv_results(csvs[:worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
@@ -720,6 +720,12 @@ class EnergyRatingIndexTest < Minitest::Test
       end
     end
 
+    # Clean up
+    ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
+      in_epw = File.join(rundir, design, 'in.epw')
+      File.delete(in_epw) if File.exist? in_epw
+    end
+
     return hpxmls, csvs, runtime
   end
 
@@ -835,6 +841,10 @@ class EnergyRatingIndexTest < Minitest::Test
 
     csv_path = File.join(rundir, 'results_annual.csv')
     assert(File.exist?(csv_path))
+
+    # Clean up
+    in_epw = File.join(rundir, 'in.epw')
+    File.delete(in_epw) if File.exist? in_epw
 
     return sql_path, csv_path, sim_time
   end
@@ -1073,22 +1083,22 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Windows
     win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml)
-    results['North window area (ft2)'] = win_areas[0]
-    results['South window area (ft2)'] = win_areas[180]
-    results['East window area (ft2)'] = win_areas[90]
-    results['West window area (ft2)'] = win_areas[270]
+    results['North window area (ft2)'] = win_areas[0].round(2)
+    results['South window area (ft2)'] = win_areas[180].round(2)
+    results['East window area (ft2)'] = win_areas[90].round(2)
+    results['West window area (ft2)'] = win_areas[270].round(2)
     results['Window U-Factor'] = win_u
     results['Window SHGCo (heating)'] = win_shgc_htg
     results['Window SHGCo (cooling)'] = win_shgc_clg
 
     # Infiltration
     sla, ach50 = _get_infiltration(hpxml)
-    results['SLAo (ft2/ft2)'] = sla
+    results['SLAo (ft2/ft2)'] = sla.round(5)
 
     # Internal gains
     xml_it_sens, xml_it_lat = _get_internal_gains(hpxml)
-    results['Sensible Internal gains (Btu/day)'] = xml_it_sens
-    results['Latent Internal gains (Btu/day)'] = xml_it_lat
+    results['Sensible Internal gains (Btu/day)'] = xml_it_sens.round(0)
+    results['Latent Internal gains (Btu/day)'] = xml_it_lat.round(0)
 
     # HVAC
     afue, hspf, seer, dse = _get_hvac(hpxml)
@@ -1108,12 +1118,12 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Mechanical ventilation
     mv_kwh, mv_cfm = _get_mech_vent(hpxml)
-    results['Mechanical ventilation (kWh/y)'] = mv_kwh
+    results['Mechanical ventilation (kWh/y)'] = mv_kwh.round(2)
 
     # Domestic hot water
     ref_pipe_l, ref_loop_l = _get_dhw(hpxml)
-    results['DHW pipe length refPipeL'] = ref_pipe_l
-    results['DHW loop length refLoopL'] = ref_loop_l
+    results['DHW pipe length refPipeL'] = ref_pipe_l.round(1)
+    results['DHW loop length refLoopL'] = ref_loop_l.round(1)
 
     return results
   end
@@ -1283,19 +1293,18 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Internal gains
     if version == '2019A'
-      # FIXME: Waiting on official numbers below
       if test_num == 1
-        assert_in_epsilon(55114, results['Sensible Internal gains (Btu/day)'], epsilon)
-        assert_in_epsilon(13663, results['Latent Internal gains (Btu/day)'], epsilon)
+        assert_in_epsilon(55115, results['Sensible Internal gains (Btu/day)'], epsilon)
+        assert_in_epsilon(13666, results['Latent Internal gains (Btu/day)'], epsilon)
       elsif test_num == 2
         assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
-        assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
+        assert_in_epsilon(12568, results['Latent Internal gains (Btu/day)'], epsilon)
       elsif test_num == 3
-        assert_in_epsilon(47840, results['Sensible Internal gains (Btu/day)'], epsilon)
-        assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
+        assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
+        assert_in_epsilon(9152, results['Latent Internal gains (Btu/day)'], epsilon)
       else
-        assert_in_epsilon(82690, results['Sensible Internal gains (Btu/day)'], epsilon)
-        assert_in_epsilon(17765, results['Latent Internal gains (Btu/day)'], epsilon)
+        assert_in_epsilon(82691, results['Sensible Internal gains (Btu/day)'], epsilon)
+        assert_in_epsilon(17769, results['Latent Internal gains (Btu/day)'], epsilon)
       end
     else
       if test_num == 1
@@ -1348,7 +1357,7 @@ class EnergyRatingIndexTest < Minitest::Test
       if version == '2014'
         mv_kwh_yr = 379.1
       else
-        mv_kwh_yr = 786.4 # FIXME: Change to 762.8 when infiltration height of 9+5/12 is used
+        mv_kwh_yr = 762.8
       end
     end
     assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], mv_epsilon)
@@ -2106,53 +2115,21 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
-  def _override_ref_ref_mech_vent_infil(ref_xml, orig_xml)
-    # Override mech vent and infiltration that the Reference of the Reference sees,
-    # per email thread workaround, in order to prevent mech vent fan power from changing
-    # during the eRatio test.
-    # FUTURE: Remove this code (and workaround in 301.rb) if HERS tests are fixed.
-
-    ref_hpxml_doc = XMLHelper.parse_file(ref_xml)
-    orig_hpxml = HPXML.new(hpxml_path: orig_xml)
-
-    # Retrieve mech vent values from orig
-    orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
-      next unless orig_ventilation_fan.used_for_whole_building_ventilation
-
-      # Store mech vent values in extension element
-      ref_mech_vent = XMLHelper.get_element(ref_hpxml_doc, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']")
-      extension = XMLHelper.add_element(ref_mech_vent, 'extension')
-      ventilation_fan = XMLHelper.add_element(extension, 'OverrideVentilationFan')
-      sys_id = XMLHelper.add_element(ventilation_fan, 'SystemIdentifier')
-      XMLHelper.add_attribute(sys_id, 'id', "Override#{orig_ventilation_fan.id}")
-      XMLHelper.add_element(ventilation_fan, 'FanType', orig_ventilation_fan.fan_type)
-      XMLHelper.add_element(ventilation_fan, 'TestedFlowRate', Float(orig_ventilation_fan.tested_flow_rate))
-      XMLHelper.add_element(ventilation_fan, 'HoursInOperation', Float(orig_ventilation_fan.hours_in_operation))
-      XMLHelper.add_element(ventilation_fan, 'UsedForWholeBuildingVentilation', true)
-      XMLHelper.add_element(ventilation_fan, 'TotalRecoveryEfficiency', Float(orig_ventilation_fan.total_recovery_efficiency)) unless orig_ventilation_fan.total_recovery_efficiency.nil?
-      XMLHelper.add_element(ventilation_fan, 'SensibleRecoveryEfficiency', Float(orig_ventilation_fan.sensible_recovery_efficiency)) unless orig_ventilation_fan.sensible_recovery_efficiency.nil?
-      XMLHelper.add_element(ventilation_fan, 'FanPower', Float(orig_ventilation_fan.fan_power))
-    end
-
-    # Retrieve infiltration values from orig
-    orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
-      # Store infiltration values in extension element
-      ref_infil = XMLHelper.get_element(ref_hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement')
-      extension = XMLHelper.add_element(ref_infil, 'extension')
-      air_infiltration_measurement = XMLHelper.add_element(extension, 'OverrideAirInfiltrationMeasurement')
-      sys_id = XMLHelper.add_element(air_infiltration_measurement, 'SystemIdentifier')
-      XMLHelper.add_attribute(sys_id, 'id', "Override#{orig_infil_measurement.id}")
-      XMLHelper.add_element(air_infiltration_measurement, 'HousePressure', Float(orig_infil_measurement.house_pressure)) unless orig_infil_measurement.house_pressure.nil?
-      if (not orig_infil_measurement.unit_of_measure.nil?) && (not orig_infil_measurement.air_leakage.nil?)
-        building_air_leakage = XMLHelper.add_element(air_infiltration_measurement, 'BuildingAirLeakage')
-        XMLHelper.add_element(building_air_leakage, 'UnitofMeasure', orig_infil_measurement.unit_of_measure)
-        XMLHelper.add_element(building_air_leakage, 'AirLeakage', Float(orig_infil_measurement.air_leakage))
+  def _override_mech_vent_fan_power(ref_xml)
+    ref_hpxml = HPXML.new(hpxml_path: ref_xml)
+    ref_hpxml.ventilation_fans.each do |ventilation_fan|
+      next unless ventilation_fan.used_for_whole_building_ventilation
+      if (ventilation_fan.fan_type == HPXML::MechVentTypeSupply) || (ventilation_fan.fan_type == HPXML::MechVentTypeExhaust)
+        ventilation_fan.fan_power = 0.35 * ventilation_fan.tested_flow_rate
+      elsif ventilation_fan.fan_type == HPXML::MechVentTypeBalanced
+        ventilation_fan.fan_power = 0.70 * ventilation_fan.tested_flow_rate
+      elsif (ventilation_fan.fan_type == HPXML::MechVentTypeERV) || (ventilation_fan.fan_type == HPXML::MechVentTypeHRV)
+        ventilation_fan.fan_power = 1.00 * ventilation_fan.tested_flow_rate
+      elsif ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+        ventilation_fan.fan_power = 0.50 * ventilation_fan.tested_flow_rate
       end
-      XMLHelper.add_element(air_infiltration_measurement, 'InfiltrationVolume', Float(orig_infil_measurement.infiltration_volume)) unless orig_infil_measurement.infiltration_volume.nil?
     end
-
-    # Update saved file
-    XMLHelper.write_file(ref_hpxml_doc, ref_xml)
+    XMLHelper.write_file(ref_hpxml.to_oga, ref_xml)
   end
 
   def _rm_path(path)

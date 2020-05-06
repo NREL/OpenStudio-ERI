@@ -26,7 +26,6 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
-      hpxml.to_oga # FIXME: Needed for eRatio workaround
       hpxml = apply_reference_home_ruleset(hpxml)
     end
 
@@ -233,7 +232,6 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infil_volume = get_infiltration_volume(orig_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
@@ -257,7 +255,6 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infil_volume = get_infiltration_volume(orig_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
@@ -281,7 +278,6 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = 2
     @cvolume = 20400
     @infil_volume = 20400
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
@@ -322,7 +318,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Air exchange rate
 
-    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml, false)
+    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
 
     # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
@@ -522,7 +518,7 @@ class EnergyRatingIndex301Ruleset
     if sum_gross_area > 0
       new_hpxml.rim_joists.add(id: 'RimJoistArea',
                                exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: HPXML::LocationLivingSpace,
+                               interior_adjacent_to: ext_thermal_bndry_rim_joists[0].interior_adjacent_to,
                                area: sum_gross_area,
                                azimuth: nil,
                                solar_absorptance: solar_abs,
@@ -1402,18 +1398,12 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
+    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
+
     orig_mech_vent_fan = nil
-
-    # Check for eRatio workaround first
-    eratio_fan = XMLHelper.get_element(orig_hpxml.doc, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan")
-    if not eratio_fan.nil?
-      orig_mech_vent_fan = HPXML::VentilationFan.new(orig_hpxml, eratio_fan)
-    else
-      orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
-        next unless orig_ventilation_fan.used_for_whole_building_ventilation
-
-        orig_mech_vent_fan = orig_ventilation_fan
-      end
+    orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
+      next unless orig_ventilation_fan.used_for_whole_building_ventilation
+      orig_mech_vent_fan = orig_ventilation_fan
     end
 
     fan_type = nil
@@ -1434,7 +1424,7 @@ class EnergyRatingIndex301Ruleset
       fan_type = HPXML::MechVentTypeExhaust
       fan_power_w = 0.0
     else
-      q_fan_power = calc_rated_home_qfan(orig_hpxml, fan_type, true) # Use Rated Home fan type
+      q_fan_power = calc_rated_home_qfan(orig_hpxml, fan_type) # Use Rated Home fan type
 
       # Treat CFIS like supply ventilation
       if fan_type == HPXML::MechVentTypeCFIS
@@ -1458,6 +1448,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_rated(orig_hpxml, new_hpxml)
+    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
+
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
@@ -1467,7 +1459,7 @@ class EnergyRatingIndex301Ruleset
       hours_in_operation = orig_ventilation_fan.hours_in_operation
 
       # Calculate min airflow rate
-      min_q_fan = calc_rated_home_qfan(orig_hpxml, orig_ventilation_fan.fan_type, false)
+      min_q_fan = calc_rated_home_qfan(orig_hpxml, orig_ventilation_fan.fan_type)
       if tested_flow_rate.nil?
         # Calculate airflow rate based on increased infiltration rate
         tested_flow_rate = min_q_fan
@@ -1527,6 +1519,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
+
+    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     q_tot = calc_mech_vent_q_tot()
 
@@ -2131,18 +2125,10 @@ class EnergyRatingIndex301Ruleset
     return ef.round(2), re
   end
 
-  def self.calc_rated_home_infiltration_ach50(orig_hpxml, use_eratio_workaround)
+  def self.calc_rated_home_infiltration_ach50(orig_hpxml)
     air_infiltration_measurements = []
-    # Check for eRatio workaround first
-    if use_eratio_workaround
-      XMLHelper.get_elements(orig_hpxml.doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement').each do |infil_measurement|
-        air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(orig_hpxml, infil_measurement)
-      end
-    end
-    if air_infiltration_measurements.empty?
-      orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
-        air_infiltration_measurements << orig_infil_measurement
-      end
+    orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
+      air_infiltration_measurements << orig_infil_measurement
     end
 
     ach50 = nil
@@ -2198,8 +2184,8 @@ class EnergyRatingIndex301Ruleset
     return ach50
   end
 
-  def self.calc_rated_home_qfan(orig_hpxml, fan_type, use_eratio_workaround)
-    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml, use_eratio_workaround)
+  def self.calc_rated_home_qfan(orig_hpxml, fan_type)
+    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
     q_tot = calc_mech_vent_q_tot()
     q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
@@ -2236,10 +2222,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     return [q_fan, 0].max
-  end
-
-  def self.calc_mech_vent_h_vert_distance()
-    return Float(@ncfl_ag) * @infil_volume / @cfa # inferred vertical distance between lowest and highest above-grade points within the pressure boundary
   end
 
   def self.calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
@@ -2501,7 +2483,7 @@ class EnergyRatingIndex301Ruleset
       return 0.057
     end
   end
-  
+
   def self.get_reference_door_area(orig_hpxml)
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (@bldg_type == HPXML::ResidentialTypeApartment)
       total_area = 20.0 # ft2
@@ -2510,12 +2492,12 @@ class EnergyRatingIndex301Ruleset
     end
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
       # Calculate portion of door area that is exterior by preserving ratio from rated home
-      orig_total_area = orig_hpxml.doors.map{ |d| d.area }.inject(0, :+)
-      orig_exterior_area = orig_hpxml.doors.select{ |d| d.is_exterior }.map{ |d| d.area }.inject(0, :+)
+      orig_total_area = orig_hpxml.doors.map { |d| d.area }.inject(0, :+)
+      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior }.map { |d| d.area }.inject(0, :+)
       if orig_total_area <= 0
         exterior_area = total_area
       else
-        exterior_area =  total_area * orig_exterior_area / orig_total_area
+        exterior_area = total_area * orig_exterior_area / orig_total_area
       end
       interior_area = total_area - exterior_area
       return exterior_area, interior_area
@@ -2525,7 +2507,6 @@ class EnergyRatingIndex301Ruleset
       return exterior_area, interior_area
     end
   end
-
 end
 
 def calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value: nil)

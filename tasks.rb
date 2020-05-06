@@ -456,27 +456,18 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             unit_of_measure: HPXML::UnitsACHNatural,
                                             air_leakage: 0.335)
   elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AC-06.xml',
-         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file
+         'RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/02-L100.xml',
+         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/04-L324.xml'].include? hpxml_file
     # 3 ACH50
     hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
                                             house_pressure: 50,
                                             unit_of_measure: HPXML::UnitsACH,
                                             air_leakage: 3)
-  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml'].include? hpxml_file
-    hpxml.air_infiltration_measurements.clear()
-    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
-                                            unit_of_measure: HPXML::UnitsACH,
-                                            house_pressure: 50,
-                                            air_leakage: 11.61)
-  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/02-L100.xml',
-         'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/04-L324.xml'].include? hpxml_file
-    hpxml.air_infiltration_measurements.clear()
-    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
-                                            unit_of_measure: HPXML::UnitsACH,
-                                            house_pressure: 50,
-                                            air_leakage: 3.0)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/03-L304.xml'].include? hpxml_file
+    # 5 ACH50
     hpxml.air_infiltration_measurements.clear()
     hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
                                             unit_of_measure: HPXML::UnitsACH,
@@ -1735,13 +1726,14 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                fan_power: 14.7,
                                used_for_whole_building_ventilation: true)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
-    # Balanced whole-dwelling mechanical ventilation with a 60% heat recovery system
+    # Balanced whole-dwelling mechanical ventilation with a 60% energy recovery system
     hpxml.ventilation_fans.clear()
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                               fan_type: HPXML::MechVentTypeHRV,
+                               fan_type: HPXML::MechVentTypeERV,
                                tested_flow_rate: 56.2,
                                hours_in_operation: 24,
                                sensible_recovery_efficiency: 0.6,
+                               total_recovery_efficiency: 0.4, # Unspecified
                                fan_power: 14.7,
                                used_for_whole_building_ventilation: true)
   elsif ['RESNET_Tests/Other_HERS_Method_301_2014_Proposed/L100-AL-06.xml'].include? hpxml_file

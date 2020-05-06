@@ -53,7 +53,7 @@
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>11.61</AirLeakage>
+              <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>12312.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
