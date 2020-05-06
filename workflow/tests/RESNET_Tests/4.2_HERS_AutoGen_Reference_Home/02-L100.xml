@@ -551,7 +551,7 @@
       </Appliances>
       <Lighting>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_CompactFluorescent_interior'/>
+          <SystemIdentifier id='LightingGroup1'/>
           <Location>interior</Location>
           <FractionofUnitsInLocation>0.1</FractionofUnitsInLocation>
           <LightingType>
@@ -559,7 +559,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_FluorescentTube_interior'/>
+          <SystemIdentifier id='LightingGroup2'/>
           <Location>interior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -567,7 +567,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_LightEmittingDiode_interior'/>
+          <SystemIdentifier id='LightingGroup3'/>
           <Location>interior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -575,7 +575,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_CompactFluorescent_exterior'/>
+          <SystemIdentifier id='LightingGroup4'/>
           <Location>exterior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -583,7 +583,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_FluorescentTube_exterior'/>
+          <SystemIdentifier id='LightingGroup5'/>
           <Location>exterior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -591,7 +591,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_LightEmittingDiode_exterior'/>
+          <SystemIdentifier id='LightingGroup6'/>
           <Location>exterior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -599,7 +599,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_CompactFluorescent_garage'/>
+          <SystemIdentifier id='LightingGroup7'/>
           <Location>garage</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -607,7 +607,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_FluorescentTube_garage'/>
+          <SystemIdentifier id='LightingGroup8'/>
           <Location>garage</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -615,7 +615,7 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup_LightEmittingDiode_garage'/>
+          <SystemIdentifier id='LightingGroup9'/>
           <Location>garage</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>

@@ -1073,9 +1073,9 @@ def set_hpxml_lighting(hpxml_file, hpxml)
   # ERI Reference
   hpxml.lighting_groups.clear
   ltg_fracs = Lighting.get_default_fractions()
-  ltg_fracs.each do |key, fraction|
+  ltg_fracs.each_with_index do |(key, fraction), i|
     location, lighting_type = key
-    hpxml.lighting_groups.add(id: "LightingGroup_#{lighting_type}_#{location}",
+    hpxml.lighting_groups.add(id: "LightingGroup#{i + 1}",
                               location: location,
                               fraction_of_units_in_location: fraction,
                               lighting_type: lighting_type)
