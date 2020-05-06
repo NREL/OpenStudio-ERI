@@ -44,12 +44,12 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>4A</ClimateZone>
+          <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Baltimore, MD</Name>
-          <WMO>724060</WMO>
+          <Name>Denver, CO</Name>
+          <WMO>725650</WMO>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -301,11 +301,11 @@
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
               <HeatingCapacity>64000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
-                <Value>0.92</Value>
+                <Value>1.0</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
             </HeatingSystem>

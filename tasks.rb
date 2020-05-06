@@ -1071,32 +1071,15 @@ end
 
 def set_hpxml_lighting(hpxml_file, hpxml)
   # ERI Reference
-  fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
   hpxml.lighting_groups.clear
-  hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                            location: HPXML::LocationInterior,
-                            fration_of_units_in_location: fFI_int,
-                            third_party_certification: HPXML::LightingTypeTierI)
-  hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                            location: HPXML::LocationExterior,
-                            fration_of_units_in_location: fFI_ext,
-                            third_party_certification: HPXML::LightingTypeTierI)
-  hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                            location: HPXML::LocationGarage,
-                            fration_of_units_in_location: fFI_grg,
-                            third_party_certification: HPXML::LightingTypeTierI)
-  hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                            location: HPXML::LocationInterior,
-                            fration_of_units_in_location: fFII_int,
-                            third_party_certification: HPXML::LightingTypeTierII)
-  hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                            location: HPXML::LocationExterior,
-                            fration_of_units_in_location: fFII_ext,
-                            third_party_certification: HPXML::LightingTypeTierII)
-  hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                            location: HPXML::LocationGarage,
-                            fration_of_units_in_location: fFII_grg,
-                            third_party_certification: HPXML::LightingTypeTierII)
+  ltg_fracs = Lighting.get_default_fractions()
+  ltg_fracs.each do |key, fraction|
+    location, lighting_type = key
+    hpxml.lighting_groups.add(id: "LightingGroup_#{lighting_type}_#{location}",
+                              location: location,
+                              fraction_of_units_in_location: fraction,
+                              lighting_type: lighting_type)
+  end
 end
 
 def get_eri_version(hpxml)
@@ -1212,7 +1195,6 @@ def create_sample_hpxmls
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
                   'base-misc-defaults2.xml',
-                  'base-misc-lighting-none.xml',
                   'base-misc-neighbor-shading.xml',
                   'base-misc-runperiod-1-month.xml',
                   'base-misc-timestep-10-mins.xml',

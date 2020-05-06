@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>251a6e8b-d592-42ac-bd3c-f14de1a18a45</version_id>
-  <version_modified>20200505T010548Z</version_modified>
+  <version_id>ee0ce676-ad5a-429f-aa00-782f0f7bd219</version_id>
+  <version_modified>20200506T172333Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -89,12 +89,6 @@
       <checksum>CEFB7B51</checksum>
     </file>
     <file>
-      <filename>test_lighting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>73A34EA4</checksum>
-    </file>
-    <file>
       <filename>test_appliances.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -130,22 +124,28 @@
       <checksum>975256B5</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>334DE324</checksum>
-    </file>
-    <file>
       <filename>test_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>2CDF7A0C</checksum>
     </file>
     <file>
+      <filename>test_lighting.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FFAD8A68</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>4B260AE2</checksum>
+    </file>
+    <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>E71ED9E4</checksum>
+      <checksum>B6C08ACC</checksum>
     </file>
   </files>
 </measure>

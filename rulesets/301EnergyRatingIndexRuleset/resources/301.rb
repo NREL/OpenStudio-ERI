@@ -1895,110 +1895,46 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_lighting_reference(orig_hpxml, new_hpxml)
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
+    ltg_fracs = Lighting.get_default_fractions()
 
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFI_int,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFI_ext,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFI_grg,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFII_int,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFII_ext,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFII_grg,
-                                  third_party_certification: HPXML::LightingTypeTierII)
+    orig_hpxml.lighting_groups.each do |orig_lg|
+      fraction = ltg_fracs[[orig_lg.location, orig_lg.lighting_type]]
+      next if fraction.nil?
+
+      new_hpxml.lighting_groups.add(id: orig_lg.id,
+                                    location: orig_lg.location,
+                                    fraction_of_units_in_location: fraction,
+                                    lighting_type: orig_lg.lighting_type)
+    end
   end
 
   def self.set_lighting_rated(orig_hpxml, new_hpxml)
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = nil
     orig_hpxml.lighting_groups.each do |orig_lg|
-      if (orig_lg.location == HPXML::LocationInterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierI)
-        fFI_int = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationExterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierI)
-        fFI_ext = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationGarage) && (orig_lg.third_party_certification == HPXML::LightingTypeTierI)
-        fFI_grg = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationInterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierII)
-        fFII_int = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationExterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierII)
-        fFII_ext = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationGarage) && (orig_lg.third_party_certification == HPXML::LightingTypeTierII)
-        fFII_grg = orig_lg.fration_of_units_in_location
-      end
+      next unless [HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? orig_lg.location
+      next unless [HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? orig_lg.lighting_type
+      new_hpxml.lighting_groups.add(id: orig_lg.id,
+                                    location: orig_lg.location,
+                                    fraction_of_units_in_location: orig_lg.fraction_of_units_in_location,
+                                    lighting_type: orig_lg.lighting_type)
     end
-
-    # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
-    if fFI_int + fFII_int < 0.1
-      fFI_int = 0.1 - fFII_int
-    end
-
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFI_int,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFI_ext,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFI_grg,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFII_int,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFII_ext,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFII_grg,
-                                  third_party_certification: HPXML::LightingTypeTierII)
   end
 
   def self.set_lighting_iad(orig_hpxml, new_hpxml)
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
+    orig_hpxml.lighting_groups.each do |orig_lg|
+      next unless [HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? orig_lg.location
+      next unless [HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? orig_lg.lighting_type
 
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFI_int,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFI_ext,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFI_grg,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFII_int,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFII_ext,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFII_grg,
-                                  third_party_certification: HPXML::LightingTypeTierII)
+      if [HPXML::LocationInterior, HPXML::LocationExterior].include?(orig_lg.location) && (orig_lg.lighting_type == HPXML::LightingTypeCFL)
+        fraction = 0.75
+      else
+        fraction = 0
+      end
+
+      new_hpxml.lighting_groups.add(id: orig_lg.id,
+                                    location: orig_lg.location,
+                                    fraction_of_units_in_location: fraction,
+                                    lighting_type: orig_lg.lighting_type)
+    end
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
