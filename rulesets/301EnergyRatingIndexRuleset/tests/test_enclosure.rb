@@ -24,7 +24,7 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, 10.1) # 0.3 nACH
+    _check_infiltration(hpxml, 9.3) # 0.3 nACH
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -70,7 +70,7 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, 10.1) # 0.3 nACH
+    _check_infiltration(hpxml, 9.3) # 0.3 nACH
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
