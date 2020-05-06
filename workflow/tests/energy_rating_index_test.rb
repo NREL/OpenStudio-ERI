@@ -1589,23 +1589,29 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Lighting
     xml_ltg_sens = 0.0
-    fFI_int = fFI_ext = fFI_grg = fFII_int = fFII_ext = fFII_grg = nil
+    f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led = nil
     hpxml.lighting_groups.each do |lg|
-      if (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationInterior)
-        fFI_int = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationExterior)
-        fFI_ext = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationGarage)
-        fFI_grg = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationInterior)
-        fFII_int = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationExterior)
-        fFII_ext = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationGarage)
-        fFII_grg = lg.fration_of_units_in_location
+      if (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationInterior)
+        f_int_cfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationExterior)
+        f_ext_cfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationGarage)
+        f_grg_cfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationInterior)
+        f_int_lfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationExterior)
+        f_ext_lfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationGarage)
+        f_grg_lfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationInterior)
+        f_int_led = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationExterior)
+        f_ext_led = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationGarage)
+        f_grg_led = lg.fraction_of_units_in_location
       end
     end
-    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
     xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
     s += "#{xml_ltg_sens}\n"
 
