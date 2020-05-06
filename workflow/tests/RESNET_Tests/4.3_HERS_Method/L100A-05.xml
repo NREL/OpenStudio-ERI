@@ -426,40 +426,76 @@
       </Appliances>
       <Lighting>
         <LightingGroup>
-          <SystemIdentifier id='Lighting_TierI_Interior'/>
+          <SystemIdentifier id='LightingGroup_CompactFluorescent_interior'/>
           <Location>interior</Location>
           <FractionofUnitsInLocation>0.1</FractionofUnitsInLocation>
-          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
+          <LightingType>
+            <CompactFluorescent/>
+          </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='Lighting_TierI_Exterior'/>
-          <Location>exterior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='Lighting_TierI_Garage'/>
-          <Location>garage</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <ThirdPartyCertification>ERI Tier I</ThirdPartyCertification>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='Lighting_TierII_Interior'/>
+          <SystemIdentifier id='LightingGroup_FluorescentTube_interior'/>
           <Location>interior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+          <LightingType>
+            <FluorescentTube/>
+          </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='Lighting_TierII_Exterior'/>
+          <SystemIdentifier id='LightingGroup_LightEmittingDiode_interior'/>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <LightingType>
+            <LightEmittingDiode/>
+          </LightingType>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup_CompactFluorescent_exterior'/>
           <Location>exterior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+          <LightingType>
+            <CompactFluorescent/>
+          </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='Lighting_TierII_Garage'/>
+          <SystemIdentifier id='LightingGroup_FluorescentTube_exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <LightingType>
+            <FluorescentTube/>
+          </LightingType>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup_LightEmittingDiode_exterior'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <LightingType>
+            <LightEmittingDiode/>
+          </LightingType>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup_CompactFluorescent_garage'/>
           <Location>garage</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <ThirdPartyCertification>ERI Tier II</ThirdPartyCertification>
+          <LightingType>
+            <CompactFluorescent/>
+          </LightingType>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup_FluorescentTube_garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <LightingType>
+            <FluorescentTube/>
+          </LightingType>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup_LightEmittingDiode_garage'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <LightingType>
+            <LightEmittingDiode/>
+          </LightingType>
         </LightingGroup>
       </Lighting>
     </BuildingDetails>

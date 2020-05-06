@@ -628,16 +628,19 @@ class EnergyRatingIndex301Validator
 
       # [Lighting]
       '/HPXML/Building/BuildingDetails/Lighting' => {
-        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="interior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="exterior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="garage"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="interior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="exterior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="garage"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/CompactFluorescent and Location="interior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/CompactFluorescent and Location="exterior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/CompactFluorescent and Location="garage"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/FluorescentTube and Location="interior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/FluorescentTube and Location="exterior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/FluorescentTube and Location="garage"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/LightEmittingDiode and Location="interior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/LightEmittingDiode and Location="exterior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/LightEmittingDiode and Location="garage"]' => one, # See [LightingGroup]
       },
 
       ## [LightingGroup]
-      '/HPXML/Building/BuildingDetails/Lighting/LightingGroup[(ThirdPartyCertification="ERI Tier I" or ThirdPartyCertification="ERI Tier II") and (Location="interior" or Location="exterior" or Location="garage")]' => {
+      'LightingGroup[LightingType[LightEmittingDiode | CompactFluorescent | FluorescentTube] and Location[text()="interior" or text()="exterior" or text()="garage"]]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         'FractionofUnitsInLocation' => one,
       },

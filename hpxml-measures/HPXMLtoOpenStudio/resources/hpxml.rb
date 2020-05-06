@@ -118,8 +118,9 @@ class HPXML < Object
   HVACTypeWallFurnace = 'WallFurnace'
   LeakinessTight = 'tight'
   LeakinessAverage = 'average'
-  LightingTypeTierI = 'ERI Tier I'
-  LightingTypeTierII = 'ERI Tier II'
+  LightingTypeCFL = 'CompactFluorescent'
+  LightingTypeLED = 'LightEmittingDiode'
+  LightingTypeLFL = 'FluorescentTube'
   LocationAtticUnconditioned = 'attic - unconditioned'
   LocationAtticUnvented = 'attic - unvented'
   LocationAtticVented = 'attic - vented'
@@ -2267,6 +2268,15 @@ class HPXML < Object
       fail "Attached HVAC distribution system '#{@distribution_system_idref}' not found for HVAC system '#{@id}'."
     end
 
+    def attached_cooling_system
+      return if distribution_system.nil?
+      distribution_system.hvac_systems.each do |hvac_system|
+        next if hvac_system.id == @id
+        return hvac_system
+      end
+      return
+    end
+
     def delete
       @hpxml_object.heating_systems.delete(self)
       @hpxml_object.water_heating_systems.each do |water_heating_system|
@@ -2373,6 +2383,15 @@ class HPXML < Object
         return hvac_distribution
       end
       fail "Attached HVAC distribution system '#{@distribution_system_idref}' not found for HVAC system '#{@id}'."
+    end
+
+    def attached_heating_system
+      return if distribution_system.nil?
+      distribution_system.hvac_systems.each do |hvac_system|
+        next if hvac_system.id == @id
+        return hvac_system
+      end
+      return
     end
 
     def delete
@@ -3798,7 +3817,7 @@ class HPXML < Object
   end
 
   class LightingGroup < BaseElement
-    ATTRS = [:id, :location, :fration_of_units_in_location, :third_party_certification]
+    ATTRS = [:id, :location, :fraction_of_units_in_location, :lighting_type]
     attr_accessor(*ATTRS)
 
     def delete
@@ -3818,8 +3837,11 @@ class HPXML < Object
       sys_id = XMLHelper.add_element(lighting_group, 'SystemIdentifier')
       XMLHelper.add_attribute(sys_id, 'id', @id)
       XMLHelper.add_element(lighting_group, 'Location', @location) unless @location.nil?
-      XMLHelper.add_element(lighting_group, 'FractionofUnitsInLocation', Float(@fration_of_units_in_location)) unless @fration_of_units_in_location.nil?
-      XMLHelper.add_element(lighting_group, 'ThirdPartyCertification', @third_party_certification) unless @third_party_certification.nil?
+      XMLHelper.add_element(lighting_group, 'FractionofUnitsInLocation', Float(@fraction_of_units_in_location)) unless @fraction_of_units_in_location.nil?
+      if not @lighting_type.nil?
+        lighting_type = XMLHelper.add_element(lighting_group, 'LightingType')
+        XMLHelper.add_element(lighting_type, @lighting_type)
+      end
     end
 
     def from_oga(lighting_group)
@@ -3827,8 +3849,8 @@ class HPXML < Object
 
       @id = HPXML::get_id(lighting_group)
       @location = XMLHelper.get_value(lighting_group, 'Location')
-      @fration_of_units_in_location = HPXML::to_float_or_nil(XMLHelper.get_value(lighting_group, 'FractionofUnitsInLocation'))
-      @third_party_certification = XMLHelper.get_value(lighting_group, 'ThirdPartyCertification')
+      @fraction_of_units_in_location = HPXML::to_float_or_nil(XMLHelper.get_value(lighting_group, 'FractionofUnitsInLocation'))
+      @lighting_type = XMLHelper.get_child_name(lighting_group, 'LightingType')
     end
   end
 
@@ -4132,10 +4154,10 @@ class HPXML < Object
     # Check sum of lighting fractions in a location <= 1
     ltg_fracs = {}
     @lighting_groups.each do |lighting_group|
-      next if lighting_group.location.nil? || lighting_group.fration_of_units_in_location.nil?
+      next if lighting_group.location.nil? || lighting_group.fraction_of_units_in_location.nil?
 
       ltg_fracs[lighting_group.location] = 0 if ltg_fracs[lighting_group.location].nil?
-      ltg_fracs[lighting_group.location] += lighting_group.fration_of_units_in_location
+      ltg_fracs[lighting_group.location] += lighting_group.fraction_of_units_in_location
     end
     ltg_fracs.each do |location, sum|
       next if sum <= 1
