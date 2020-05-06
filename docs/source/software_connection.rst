@@ -92,18 +92,23 @@ Thus, software tools can choose to use a single wall (or roof) surface to repres
 Air Leakage
 ***********
 
-Building air leakage characterized by air changes per hour or cfm at 50 pascals pressure difference (ACH50 or CFM50) is entered at ``Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/AirLeakage``.
-The ``Enclosure/AirInfiltration/AirInfiltrationMeasurement`` should be specified with ``HousePressure='50'`` and ``BuildingAirLeakage/UnitofMeasure='ACH'`` or ``BuildingAirLeakage/UnitofMeasure='CFM'``.
+Building air leakage is entered using ``Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
+Air leakage can be provided in one of three ways:
+
+#. nACH (natural air changes per hour): Use ``BuildingAirLeakage/UnitofMeasure='ACHnatural'``
+#. ACH50 (air changes per hour at 50Pa): Use ``BuildingAirLeakage/UnitofMeasure='ACH'`` and ``HousePressure='50'``
+#. CFM50 (cubic feet per minute at 50Pa): Use ``BuildingAirLeakage/UnitofMeasure='CFM'`` and ``HousePressure='50'``
 
 In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``AirInfiltrationMeasurement/InfiltrationVolume``.
 
 Vented Attics/Crawlspaces
 *************************
 
-The ventilation rate for vented attics (or crawlspaces) can be specified using an ``Attic`` (or ``Foundation``) element.
+The ventilation rate for vented attics (or vented crawlspaces) can be specified using an ``Attic`` (or ``Foundation``) element.
 First, define the ``AtticType`` as ``Attic[Vented='true']`` (or ``FoundationType`` as ``Crawlspace[Vented='true']``).
-Then use the ``VentilationRate[UnitofMeasure='SLA']/Value`` element to specify a specific leakage area (SLA).
-If these elements are not provided, the ERI 301 Standard Reference Home defaults will be used.
+Then specify the specific leakage area (SLA) using the ``VentilationRate[UnitofMeasure='SLA']/Value`` element.
+For vented attics, the natural air changes per hour (nACH) can instead be specified using ``UnitofMeasure='ACHnatural'``.
+If the ventilation rate is not provided, the ERI 301 Standard Reference Home defaults will be used.
 
 Roofs
 *****
@@ -505,13 +510,14 @@ The ``FuelType`` of the range and whether it ``IsInduction``, as well as whether
 Lighting
 ~~~~~~~~
 
-The building's lighting is described by six ``Lighting/LightingGroup`` elements, each of which is the combination of:
+The building's lighting is described by nine ``Lighting/LightingGroup`` elements, each of which is the combination of:
 
-- ``LightingGroup/ThirdPartyCertification``: 'ERI Tier I' (fluorescent) and 'ERI Tier II' (LEDs, outdoor lamps controlled by photocells, or indoor lamps controlled by motion sensor)
+- ``LightingType``: 'LightEmittingDiode', 'CompactFluorescent', and 'FluorescentTube'
 - ``LightingGroup/Location``: 'interior', 'garage', and 'exterior'
 
 The fraction of lamps of the given type in the given location are provided as the ``LightingGroup/FractionofUnitsInLocation``.
 The fractions for a given location cannot sum to greater than 1.
+If the fractions sum to less than 1, the remainder is assumed to be incandescent lighting.
 Garage lighting values are ignored if the building has no garage.
 
 Ceiling Fans

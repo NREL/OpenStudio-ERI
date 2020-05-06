@@ -48,7 +48,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC' => one, # See [ClimateZone]
         '/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation' => one, # See [WeatherStation]
 
-        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[number(HousePressure)=50]/BuildingAirLeakage[UnitofMeasure="ACH" or UnitofMeasure="CFM"] | /HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage[UnitofMeasure="ACHnatural"]' => one, # ACH50, CFM50, or nACH; see [AirInfiltration]
+        '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]]' => one, # see [AirInfiltration]
 
         '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => zero_or_more, # See [Attic]
         '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation' => zero_or_more, # See [Foundation]
@@ -110,8 +110,9 @@ class EnergyRatingIndex301Validator
       },
 
       # [AirInfiltration]
-      '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[number(HousePressure)=50 and (BuildingAirLeakage/UnitofMeasure="ACH" or BuildingAirLeakage/UnitofMeasure="CFM")] | /HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/UnitofMeasure="ACHnatural"]' => {
+      '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        '[(number(HousePressure)=50 and BuildingAirLeakage/UnitofMeasure!="ACHnatural") or (not(HousePressure) and BuildingAirLeakage/UnitofMeasure="ACHnatural")]' => one,
         'BuildingAirLeakage/AirLeakage' => one,
         'InfiltrationVolume' => one,
       },
@@ -144,7 +145,7 @@ class EnergyRatingIndex301Validator
 
       ## [VentedAttic]
       '/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[InteriorAdjacentTo="attic - vented"]' => {
-        '../../Attics/Attic[AtticType/Attic[Vented="true"]]/VentilationRate[UnitofMeasure="SLA"]/Value | ../../Attics/Attic[AtticType/Attic[Vented="true"]]/extension/ConstantACHnatural' => zero_or_one,
+        '../../Attics/Attic[AtticType/Attic[Vented="true"]]/VentilationRate[UnitofMeasure="SLA" or UnitofMeasure="ACHnatural"]/Value' => zero_or_one,
       },
 
       ## [UnventedAttic]
@@ -658,16 +659,19 @@ class EnergyRatingIndex301Validator
 
       # [Lighting]
       '/HPXML/Building/BuildingDetails/Lighting' => {
-        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="interior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="exterior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier I" and Location="garage"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="interior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="exterior"]' => one, # See [LightingGroup]
-        'LightingGroup[ThirdPartyCertification="ERI Tier II" and Location="garage"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/CompactFluorescent and Location="interior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/CompactFluorescent and Location="exterior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/CompactFluorescent and Location="garage"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/FluorescentTube and Location="interior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/FluorescentTube and Location="exterior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/FluorescentTube and Location="garage"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/LightEmittingDiode and Location="interior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/LightEmittingDiode and Location="exterior"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType/LightEmittingDiode and Location="garage"]' => one, # See [LightingGroup]
       },
 
       ## [LightingGroup]
-      '/HPXML/Building/BuildingDetails/Lighting/LightingGroup[(ThirdPartyCertification="ERI Tier I" or ThirdPartyCertification="ERI Tier II") and (Location="interior" or Location="exterior" or Location="garage")]' => {
+      'LightingGroup[LightingType[LightEmittingDiode | CompactFluorescent | FluorescentTube] and Location[text()="interior" or text()="exterior" or text()="garage"]]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         'FractionofUnitsInLocation' => one,
       },

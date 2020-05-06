@@ -18,19 +18,19 @@ class LightingTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
+    _check_lighting(hpxml, 0.4, 0.4, 0.4, 0.1, 0.1, 0.1, 0.25, 0.25, 0.25)
 
     # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
+    _check_lighting(hpxml, 0.75, 0.75, 0, 0, 0, 0, 0, 0, 0)
 
     # IAD Reference
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
   end
 
   def test_lighting_pre_addendum_g
@@ -38,19 +38,19 @@ class LightingTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25)
+    _check_lighting(hpxml, 0.4, 0.4, 0.4, 0.1, 0.1, 0.1, 0.25, 0.25, 0.25)
 
     # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml, 0.75, 0.75, 0.75, 0.0, 0.0, 0.0)
+    _check_lighting(hpxml, 0.75, 0.75, 0, 0, 0, 0, 0, 0, 0)
 
     # IAD Reference
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0)
+    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
   end
 
   def test_ceiling_fans
@@ -118,24 +118,30 @@ class LightingTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _check_lighting(hpxml, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
-    assert_equal(6, hpxml.lighting_groups.size)
+  def _check_lighting(hpxml, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
+    assert_equal(9, hpxml.lighting_groups.size)
     hpxml.lighting_groups.each do |lg|
-      assert([HPXML::LightingTypeTierI, HPXML::LightingTypeTierII].include? lg.third_party_certification)
+      assert([HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? lg.lighting_type)
       assert([HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? lg.location)
 
-      if (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationInterior)
-        assert_in_epsilon(fFI_int, lg.fration_of_units_in_location, 0.01)
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationExterior)
-        assert_in_epsilon(fFI_ext, lg.fration_of_units_in_location, 0.01)
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationGarage)
-        assert_in_epsilon(fFI_grg, lg.fration_of_units_in_location, 0.01)
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationInterior)
-        assert_in_epsilon(fFII_int, lg.fration_of_units_in_location, 0.01)
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationExterior)
-        assert_in_epsilon(fFII_ext, lg.fration_of_units_in_location, 0.01)
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationGarage)
-        assert_in_epsilon(fFII_grg, lg.fration_of_units_in_location, 0.01)
+      if (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationInterior)
+        assert_in_epsilon(f_int_cfl, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationExterior)
+        assert_in_epsilon(f_ext_cfl, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationGarage)
+        assert_in_epsilon(f_grg_cfl, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationInterior)
+        assert_in_epsilon(f_int_lfl, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationExterior)
+        assert_in_epsilon(f_ext_lfl, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationGarage)
+        assert_in_epsilon(f_grg_lfl, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationInterior)
+        assert_in_epsilon(f_int_led, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationExterior)
+        assert_in_epsilon(f_ext_led, lg.fraction_of_units_in_location, 0.01)
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationGarage)
+        assert_in_epsilon(f_grg_led, lg.fraction_of_units_in_location, 0.01)
       end
     end
   end

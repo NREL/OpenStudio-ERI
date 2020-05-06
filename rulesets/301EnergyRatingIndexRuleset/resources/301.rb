@@ -42,7 +42,6 @@ class EnergyRatingIndex301Ruleset
     set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
-    set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
     set_enclosure_attics_reference(orig_hpxml, new_hpxml)
     set_enclosure_foundations_reference(orig_hpxml, new_hpxml)
     set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
@@ -55,6 +54,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_windows_reference(orig_hpxml, new_hpxml)
     set_enclosure_skylights_reference(orig_hpxml, new_hpxml)
     set_enclosure_doors_reference(orig_hpxml, new_hpxml)
+    set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
 
     # Systems
     set_systems_hvac_reference(orig_hpxml, new_hpxml)
@@ -92,7 +92,6 @@ class EnergyRatingIndex301Ruleset
     set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
-    set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
     set_enclosure_attics_rated(orig_hpxml, new_hpxml)
     set_enclosure_foundations_rated(orig_hpxml, new_hpxml)
     set_enclosure_roofs_rated(orig_hpxml, new_hpxml)
@@ -105,6 +104,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_windows_rated(orig_hpxml, new_hpxml)
     set_enclosure_skylights_rated(orig_hpxml, new_hpxml)
     set_enclosure_doors_rated(orig_hpxml, new_hpxml)
+    set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
 
     # Systems
     set_systems_hvac_rated(orig_hpxml, new_hpxml)
@@ -144,7 +144,6 @@ class EnergyRatingIndex301Ruleset
     set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
-    set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
     set_enclosure_attics_iad(orig_hpxml, new_hpxml)
     set_enclosure_foundations_iad(orig_hpxml, new_hpxml)
     set_enclosure_roofs_iad(orig_hpxml, new_hpxml)
@@ -157,6 +156,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_windows_iad(orig_hpxml, new_hpxml)
     set_enclosure_skylights_iad(orig_hpxml, new_hpxml)
     set_enclosure_doors_iad(orig_hpxml, new_hpxml)
+    set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
 
     # Systems
     set_systems_hvac_iad(orig_hpxml, new_hpxml)
@@ -303,11 +303,10 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Air exchange rate
+    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
+
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
-
-    # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
@@ -316,11 +315,9 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Air exchange rate
+    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
-
-    # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
@@ -329,14 +326,13 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
+    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
+
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
     elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
       ach50 = 3.0
     end
-
-    # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
@@ -364,7 +360,7 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.attics.add(id: orig_attic.id,
                            attic_type: orig_attic.attic_type,
                            vented_attic_sla: orig_attic.vented_attic_sla,
-                           vented_attic_constant_ach: orig_attic.vented_attic_constant_ach)
+                           vented_attic_ach: orig_attic.vented_attic_ach)
     end
   end
 
@@ -1201,7 +1197,8 @@ class EnergyRatingIndex301Ruleset
                                     heating_efficiency_afue: orig_heating_system.heating_efficiency_afue,
                                     heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
-                                    electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy)
+                                    electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
+                                    heating_cfm: orig_heating_system.heating_cfm)
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1219,7 +1216,8 @@ class EnergyRatingIndex301Ruleset
                                     fraction_cool_load_served: orig_cooling_system.fraction_cool_load_served,
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
-                                    cooling_shr: orig_cooling_system.cooling_shr)
+                                    cooling_shr: orig_cooling_system.cooling_shr,
+                                    cooling_cfm: orig_cooling_system.cooling_cfm)
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1398,8 +1396,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
-
     orig_mech_vent_fan = nil
     orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
@@ -1448,8 +1444,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_rated(orig_hpxml, new_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
-
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
@@ -1517,11 +1511,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
-
     q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm
@@ -1939,110 +1928,46 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_lighting_reference(orig_hpxml, new_hpxml)
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_reference_fractions()
+    ltg_fracs = Lighting.get_default_fractions()
 
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFI_int,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFI_ext,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFI_grg,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFII_int,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFII_ext,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFII_grg,
-                                  third_party_certification: HPXML::LightingTypeTierII)
+    orig_hpxml.lighting_groups.each do |orig_lg|
+      fraction = ltg_fracs[[orig_lg.location, orig_lg.lighting_type]]
+      next if fraction.nil?
+
+      new_hpxml.lighting_groups.add(id: orig_lg.id,
+                                    location: orig_lg.location,
+                                    fraction_of_units_in_location: fraction,
+                                    lighting_type: orig_lg.lighting_type)
+    end
   end
 
   def self.set_lighting_rated(orig_hpxml, new_hpxml)
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = nil
     orig_hpxml.lighting_groups.each do |orig_lg|
-      if (orig_lg.location == HPXML::LocationInterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierI)
-        fFI_int = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationExterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierI)
-        fFI_ext = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationGarage) && (orig_lg.third_party_certification == HPXML::LightingTypeTierI)
-        fFI_grg = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationInterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierII)
-        fFII_int = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationExterior) && (orig_lg.third_party_certification == HPXML::LightingTypeTierII)
-        fFII_ext = orig_lg.fration_of_units_in_location
-      elsif (orig_lg.location == HPXML::LocationGarage) && (orig_lg.third_party_certification == HPXML::LightingTypeTierII)
-        fFII_grg = orig_lg.fration_of_units_in_location
-      end
+      next unless [HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? orig_lg.location
+      next unless [HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? orig_lg.lighting_type
+      new_hpxml.lighting_groups.add(id: orig_lg.id,
+                                    location: orig_lg.location,
+                                    fraction_of_units_in_location: orig_lg.fraction_of_units_in_location,
+                                    lighting_type: orig_lg.lighting_type)
     end
-
-    # For rating purposes, the Rated Home shall not have qFFIL less than 0.10 (10%).
-    if fFI_int + fFII_int < 0.1
-      fFI_int = 0.1 - fFII_int
-    end
-
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFI_int,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFI_ext,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFI_grg,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFII_int,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFII_ext,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFII_grg,
-                                  third_party_certification: HPXML::LightingTypeTierII)
   end
 
   def self.set_lighting_iad(orig_hpxml, new_hpxml)
-    fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg = Lighting.get_iad_fractions()
+    orig_hpxml.lighting_groups.each do |orig_lg|
+      next unless [HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? orig_lg.location
+      next unless [HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? orig_lg.lighting_type
 
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFI_int,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFI_ext,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierI_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFI_grg,
-                                  third_party_certification: HPXML::LightingTypeTierI)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Interior',
-                                  location: HPXML::LocationInterior,
-                                  fration_of_units_in_location: fFII_int,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Exterior',
-                                  location: HPXML::LocationExterior,
-                                  fration_of_units_in_location: fFII_ext,
-                                  third_party_certification: HPXML::LightingTypeTierII)
-    new_hpxml.lighting_groups.add(id: 'Lighting_TierII_Garage',
-                                  location: HPXML::LocationGarage,
-                                  fration_of_units_in_location: fFII_grg,
-                                  third_party_certification: HPXML::LightingTypeTierII)
+      if [HPXML::LocationInterior, HPXML::LocationExterior].include?(orig_lg.location) && (orig_lg.lighting_type == HPXML::LightingTypeCFL)
+        fraction = 0.75
+      else
+        fraction = 0
+      end
+
+      new_hpxml.lighting_groups.add(id: orig_lg.id,
+                                    location: orig_lg.location,
+                                    fraction_of_units_in_location: fraction,
+                                    lighting_type: orig_lg.lighting_type)
+    end
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
@@ -2133,7 +2058,7 @@ class EnergyRatingIndex301Ruleset
 
     ach50 = nil
     air_infiltration_measurements.each do |infil_measurement|
-      if infil_measurement.unit_of_measure == HPXML::UnitsACHNatural
+      if (infil_measurement.unit_of_measure == HPXML::UnitsACHNatural) && infil_measurement.house_pressure.nil?
         nach = infil_measurement.air_leakage
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @infil_height, @weather)
         ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)

@@ -200,10 +200,10 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      output_hpxml_path = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
-      _run_ruleset(Constants.CalcTypeERIIndexAdjustmentDesign, xml, output_hpxml_path)
+      out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
+      _run_ruleset(Constants.CalcTypeERIIndexAdjustmentDesign, xml, out_xml)
       test_num = File.basename(xml)[0, 2].to_i
-      all_results[File.basename(xml)] = _get_iad_home_components(output_hpxml_path, test_num)
+      all_results[File.basename(xml)] = _get_iad_home_components(out_xml, test_num)
     end
     assert(all_results.size > 0)
 
@@ -270,21 +270,24 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.4_HVAC')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      next if xml.include? '_ERIRatedHome'
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
+      out_xml = File.join(File.dirname(xml), File.basename(xml).gsub('.xml', '_ERIRatedHome.xml'))
+      _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
+      sql_path, csv_path, sim_time = _run_simulation(out_xml, test_name)
 
       is_heat = false
       if xml.include? 'HVAC2'
         is_heat = true
       end
-
       is_electric_heat = true
       if xml.include?('HVAC2a') || xml.include?('HVAC2b')
         is_electric_heat = false
       end
-
       hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
       all_results[File.basename(xml)] = [hvac, hvac_fan]
+
+      File.delete(out_xml)
     end
     assert(all_results.size > 0)
 
@@ -322,21 +325,22 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.5_DSE')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      next if xml.include? '_ERIRatedHome'
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name, true)
+      out_xml = File.join(File.dirname(xml), File.basename(xml).gsub('.xml', '_ERIRatedHome.xml'))
+      _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
+      sql_path, csv_path, sim_time = _run_simulation(out_xml, test_name, true)
 
       is_heat = false
       if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
         is_heat = true
       end
-
       is_electric_heat = false
-
       hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
-
       dse, seasonal_temp, percent_min, percent_max = _calc_dse(xml, sql_path)
-
       all_results[File.basename(xml)] = [hvac, hvac_fan, seasonal_temp, dse, percent_min, percent_max]
+
+      File.delete(out_xml)
     end
     assert(all_results.size > 0)
 
@@ -461,18 +465,6 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
-  def test_resnet_verification_building_attributes
-    # TODO
-  end
-
-  def test_resnet_verification_mechanical_ventilation
-    # TODO
-  end
-
-  def test_resnet_verification_appliances
-    # TODO
-  end
-
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     cli_path = OpenStudio.getOpenStudioCLI
@@ -520,14 +512,14 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      output_hpxml_path = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
-      _run_ruleset(Constants.CalcTypeERIReferenceHome, xml, output_hpxml_path)
+      out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
+      _run_ruleset(Constants.CalcTypeERIReferenceHome, xml, out_xml)
       test_num = File.basename(xml)[0, 2].to_i
-      all_results[File.basename(xml)] = _get_reference_home_components(output_hpxml_path, test_num)
+      all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num)
 
       # Re-simulate reference HPXML file
-      _override_mech_vent_fan_power(output_hpxml_path)
-      hpxmls, csvs, runtime = _run_eri(output_hpxml_path, test_name)
+      _override_mech_vent_fan_power(out_xml)
+      hpxmls, csvs, runtime = _run_eri(out_xml, test_name)
       worksheet_results = _get_csv_results(csvs[:worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
     end
@@ -580,7 +572,7 @@ class EnergyRatingIndexTest < Minitest::Test
     return all_results
   end
 
-  def _run_ruleset(design, xml, output_hpxml_path)
+  def _run_ruleset(design, xml, out_xml)
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     measures_dir = File.join(File.dirname(__FILE__), '../..')
@@ -592,14 +584,19 @@ class EnergyRatingIndexTest < Minitest::Test
     args = {}
     args['calc_type'] = design
     args['hpxml_input_path'] = File.absolute_path(xml)
-    args['hpxml_output_path'] = output_hpxml_path
+    args['hpxml_output_path'] = out_xml
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measures
-    FileUtils.mkdir_p(File.dirname(output_hpxml_path))
+    FileUtils.mkdir_p(File.dirname(out_xml))
     success = apply_measures(measures_dir, measures, runner, model)
     show_output(runner.result) unless success
     assert(success)
+    assert(File.exist?(out_xml))
+
+    hpxml = XMLHelper.parse_file(out_xml)
+    XMLHelper.delete_element(XMLHelper.get_element(hpxml, '/HPXML/SoftwareInfo/extension/ERICalculation'), 'Design')
+    XMLHelper.write_file(hpxml, out_xml)
   end
 
   def _run_eri(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
@@ -719,13 +716,15 @@ class EnergyRatingIndexTest < Minitest::Test
     # Add reporting measure to workflow
     measure_subdir = 'hpxml-measures/SimulationOutputReport'
     args = {}
-    args['timeseries_frequency'] = 'hourly'
-    args['include_timeseries_zone_temperatures'] = false
+    args['timeseries_frequency'] = 'none'
     args['include_timeseries_fuel_consumptions'] = false
     args['include_timeseries_end_use_consumptions'] = false
     args['include_timeseries_hot_water_uses'] = false
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
+    args['include_timeseries_zone_temperatures'] = false
+    args['include_timeseries_airflows'] = false
+    args['include_timeseries_weather'] = false
     update_args_hash(measures, measure_subdir, args)
 
     # Apply measure
@@ -1629,23 +1628,29 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Lighting
     xml_ltg_sens = 0.0
-    fFI_int = fFI_ext = fFI_grg = fFII_int = fFII_ext = fFII_grg = nil
+    f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led = nil
     hpxml.lighting_groups.each do |lg|
-      if (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationInterior)
-        fFI_int = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationExterior)
-        fFI_ext = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierI) && (lg.location == HPXML::LocationGarage)
-        fFI_grg = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationInterior)
-        fFII_int = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationExterior)
-        fFII_ext = lg.fration_of_units_in_location
-      elsif (lg.third_party_certification == HPXML::LightingTypeTierII) && (lg.location == HPXML::LocationGarage)
-        fFII_grg = lg.fration_of_units_in_location
+      if (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationInterior)
+        f_int_cfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationExterior)
+        f_ext_cfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationGarage)
+        f_grg_cfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationInterior)
+        f_int_lfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationExterior)
+        f_ext_lfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationGarage)
+        f_grg_lfl = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationInterior)
+        f_int_led = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationExterior)
+        f_ext_led = lg.fraction_of_units_in_location
+      elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationGarage)
+        f_grg_led = lg.fraction_of_units_in_location
       end
     end
-    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, fFI_int, fFI_ext, fFI_grg, fFII_int, fFII_ext, fFII_grg)
+    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
     xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
     s += "#{xml_ltg_sens}\n"
 
