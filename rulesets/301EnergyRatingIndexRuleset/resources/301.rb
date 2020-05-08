@@ -1098,8 +1098,6 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
-    ref_hvacdist_ids = []
-
     has_fuel = orig_hpxml.has_fuel_access()
     sum_frac_cool_load = (orig_hpxml.cooling_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_cool_load_served }.inject(0, :+)
     sum_frac_heat_load = (orig_hpxml.heating_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_heat_load_served }.inject(0, :+)
@@ -1110,28 +1108,28 @@ class EnergyRatingIndex301Ruleset
       next unless orig_heating_system.heating_system_fuel != HPXML::FuelTypeElectricity
 
       if orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler
-        add_reference_heating_gas_boiler(new_hpxml, ref_hvacdist_ids, orig_heating_system.fraction_heat_load_served, orig_heating_system)
+        add_reference_heating_gas_boiler(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
       else
-        add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids, orig_heating_system.fraction_heat_load_served, orig_heating_system)
+        add_reference_heating_gas_furnace(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
       end
     end
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_gas_furnace(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Cooling
     orig_hpxml.cooling_systems.each do |orig_cooling_system|
       next unless orig_cooling_system.fraction_cool_load_served > 0
 
-      add_reference_cooling_air_conditioner(new_hpxml, ref_hvacdist_ids, orig_cooling_system.fraction_cool_load_served, orig_cooling_system)
+      add_reference_cooling_air_conditioner(new_hpxml, orig_cooling_system.fraction_cool_load_served, orig_cooling_system)
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       next unless orig_heat_pump.fraction_cool_load_served > 0
 
-      add_reference_cooling_air_conditioner(new_hpxml, ref_hvacdist_ids, orig_heat_pump.fraction_cool_load_served, orig_heat_pump)
+      add_reference_cooling_air_conditioner(new_hpxml, orig_heat_pump.fraction_cool_load_served, orig_heat_pump)
     end
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_cooling_air_conditioner(new_hpxml, ref_hvacdist_ids, (1.0 - sum_frac_cool_load).round(3))
+      add_reference_cooling_air_conditioner(new_hpxml, (1.0 - sum_frac_cool_load).round(3))
     end
 
     # HeatPump
@@ -1139,15 +1137,15 @@ class EnergyRatingIndex301Ruleset
       next unless orig_heating_system.fraction_heat_load_served > 0
       next unless orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
 
-      add_reference_heating_heat_pump(new_hpxml, ref_hvacdist_ids, orig_heating_system.fraction_heat_load_served, orig_heating_system)
+      add_reference_heating_heat_pump(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       next unless orig_heat_pump.fraction_heat_load_served > 0
 
-      add_reference_heating_heat_pump(new_hpxml, ref_hvacdist_ids, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
+      add_reference_heating_heat_pump(new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
     end
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_heat_pump(new_hpxml, ref_hvacdist_ids, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_heat_pump(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Table 303.4.1(1) - Thermostat
@@ -1164,14 +1162,12 @@ class EnergyRatingIndex301Ruleset
                                 ceiling_fan_cooling_setpoint_temp_offset: clg_ceiling_fan_offset)
 
     # Distribution system
-    add_reference_distribution_system(new_hpxml, ref_hvacdist_ids)
+    add_reference_distribution_system(new_hpxml)
   end
 
   def self.set_systems_hvac_rated(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
-
-    ref_hvacdist_ids = []
 
     has_fuel = orig_hpxml.has_fuel_access()
     sum_frac_cool_load = (orig_hpxml.cooling_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_cool_load_served }.inject(0, :+)
@@ -1192,7 +1188,7 @@ class EnergyRatingIndex301Ruleset
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_gas_furnace(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Retain cooling system(s)
@@ -1211,7 +1207,7 @@ class EnergyRatingIndex301Ruleset
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_cooling_air_conditioner(new_hpxml, ref_hvacdist_ids, (1.0 - sum_frac_cool_load).round(3))
+      add_reference_cooling_air_conditioner(new_hpxml, (1.0 - sum_frac_cool_load).round(3))
     end
 
     # Retain heat pump(s)
@@ -1239,7 +1235,7 @@ class EnergyRatingIndex301Ruleset
     end
     # Add reference heat pump for residual load
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_heat_pump(new_hpxml, ref_hvacdist_ids, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_heat_pump(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Table 303.4.1(1) - Thermostat
@@ -1366,7 +1362,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Add DSE distribution for these systems
-    add_reference_distribution_system(new_hpxml, ref_hvacdist_ids)
+    add_reference_distribution_system(new_hpxml)
   end
 
   def self.set_systems_hvac_iad(orig_hpxml, new_hpxml)
@@ -2102,19 +2098,34 @@ class EnergyRatingIndex301Ruleset
     return [q_fan, 0].max
   end
 
-  def self.add_reference_heating_gas_furnace(new_hpxml, ref_hvacdist_ids, load_frac, orig_system = nil)
+  def self.get_new_distribution_id(new_hpxml)
+    i = 0
+    while true
+      i += 1
+      dist_id = "HVACDistributionDSE_#{i}"
+      found_id = false
+      (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
+        next if hvac.distribution_system_idref.nil?
+        next unless hvac.distribution_system_idref == dist_id
+        found_id = true
+      end
+      return dist_id if not found_id
+    end
+  end
+
+  def self.add_reference_heating_gas_furnace(new_hpxml, load_frac, orig_system = nil)
     # 78% AFUE gas furnace
-    seed_id = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
         seed_id = orig_system.id
       end
+      dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
-    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
-                                  distribution_system_idref: ref_hvacdist_ids[-1],
+                                  distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeFurnace,
                                   heating_system_fuel: HPXML::FuelTypeNaturalGas,
                                   heating_capacity: -1, # Use Manual J auto-sizing
@@ -2123,19 +2134,19 @@ class EnergyRatingIndex301Ruleset
                                   seed_id: seed_id)
   end
 
-  def self.add_reference_heating_gas_boiler(new_hpxml, ref_hvacdist_ids, load_frac, orig_system = nil)
+  def self.add_reference_heating_gas_boiler(new_hpxml, load_frac, orig_system = nil)
     # 80% AFUE gas boiler
-    seed_id = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
         seed_id = orig_system.id
       end
+      dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
-    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
-                                  distribution_system_idref: ref_hvacdist_ids[-1],
+                                  distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeBoiler,
                                   heating_system_fuel: HPXML::FuelTypeNaturalGas,
                                   heating_capacity: -1, # Use Manual J auto-sizing
@@ -2144,22 +2155,18 @@ class EnergyRatingIndex301Ruleset
                                   seed_id: seed_id)
   end
 
-  def self.add_reference_heating_heat_pump(new_hpxml, ref_hvacdist_ids, load_frac, orig_system = nil)
+  def self.add_reference_heating_heat_pump(new_hpxml, load_frac, orig_system = nil)
     # 7.7 HSPF air source heat pump
-    seed_id = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
         seed_id = orig_system.id
       end
+      dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     # Handle backup
-    backup_fuel = nil
-    backup_efficiency_percent = nil
-    backup_efficiency_afue = nil
-    backup_capacity = nil
-    backup_switchover_temp = nil
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
       # Dual-fuel HP
       if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity
@@ -2177,9 +2184,8 @@ class EnergyRatingIndex301Ruleset
       backup_capacity = -1
     end
 
-    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.heat_pumps.add(id: "HeatPump#{new_hpxml.heat_pumps.size + 1}",
-                             distribution_system_idref: ref_hvacdist_ids[-1],
+                             distribution_system_idref: dist_id,
                              heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                              heat_pump_fuel: HPXML::FuelTypeElectricity,
                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
@@ -2197,21 +2203,20 @@ class EnergyRatingIndex301Ruleset
                              seed_id: seed_id)
   end
 
-  def self.add_reference_cooling_air_conditioner(new_hpxml, ref_hvacdist_ids, load_frac, orig_system = nil)
+  def self.add_reference_cooling_air_conditioner(new_hpxml, load_frac, orig_system = nil)
     # 13 SEER electric air conditioner
-    seed_id = nil
-    shr = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
         seed_id = orig_system.id
       end
       shr = orig_system.cooling_shr
+      dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
-    ref_hvacdist_ids << "HVACDistribution_DSE#{ref_hvacdist_ids.size + 1}"
     new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
-                                  distribution_system_idref: ref_hvacdist_ids[-1],
+                                  distribution_system_idref: dist_id,
                                   cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                                   cooling_system_fuel: HPXML::FuelTypeElectricity,
                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
@@ -2222,10 +2227,19 @@ class EnergyRatingIndex301Ruleset
                                   seed_id: seed_id)
   end
 
-  def self.add_reference_distribution_system(new_hpxml, ref_hvacdist_ids)
-    # Table 4.2.2(1) - Thermal distribution systems
-    ref_hvacdist_ids.each do |ref_hvacdist_id|
-      new_hpxml.hvac_distributions.add(id: ref_hvacdist_id,
+  def self.add_reference_distribution_system(new_hpxml)
+    (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
+      next if hvac.distribution_system_idref.nil?
+
+      found_dist = false
+      new_hpxml.hvac_distributions.each do |hvac_distribution|
+        next unless hvac_distribution.id == hvac.distribution_system_idref
+        found_dist = true
+      end
+      next if found_dist
+
+      # Add new DSE distribution if distribution doesn't already exist
+      new_hpxml.hvac_distributions.add(id: hvac.distribution_system_idref,
                                        distribution_system_type: HPXML::HVACDistributionTypeDSE,
                                        annual_heating_dse: 0.8,
                                        annual_cooling_dse: 0.8)
