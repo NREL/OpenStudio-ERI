@@ -2109,8 +2109,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_heating_gas_furnace(new_hpxml, load_frac, orig_system = nil)
     # 78% AFUE gas furnace
-    seed_id = nil
-    dist_id = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
@@ -2132,8 +2130,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_heating_gas_boiler(new_hpxml, load_frac, orig_system = nil)
     # 80% AFUE gas boiler
-    seed_id = nil
-    dist_id = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
@@ -2155,8 +2151,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_heat_pump(new_hpxml, heat_load_frac, cool_load_frac, orig_system = nil, orig_system2 = nil)
     # SEER 13, HSPF 7.7 air source heat pump
-    seed_id = nil
-    dist_id = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
@@ -2167,11 +2161,6 @@ class EnergyRatingIndex301Ruleset
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     # Handle backup
-    backup_fuel = nil
-    backup_efficiency_percent = nil
-    backup_efficiency_afue = nil
-    backup_capacity = nil
-    backup_switchover_temp = nil
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
       # Dual-fuel HP
       if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity
@@ -2219,9 +2208,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.add_reference_cooling_air_conditioner(new_hpxml, load_frac, orig_system = nil)
     # 13 SEER electric air conditioner
-    seed_id = nil
-    shr = nil
-    dist_id = nil
     if not orig_system.nil?
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
         # Map reference home system back to rated home system
@@ -2245,7 +2231,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.add_reference_distribution_system(new_hpxml)
-    # Table 4.2.2(1) - Thermal distribution systems
     (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
       next if hvac.distribution_system_idref.nil?
 
