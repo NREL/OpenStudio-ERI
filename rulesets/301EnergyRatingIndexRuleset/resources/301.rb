@@ -1819,6 +1819,7 @@ class EnergyRatingIndex301Ruleset
     dishwasher = orig_hpxml.dishwashers[0]
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              location: HPXML::LocationLivingSpace,
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
                               place_setting_capacity: reference_values[:place_setting_capacity],
@@ -1840,6 +1841,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              location: dishwasher.location,
                               energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
                               place_setting_capacity: dishwasher.place_setting_capacity,
@@ -1879,6 +1881,7 @@ class EnergyRatingIndex301Ruleset
     oven = orig_hpxml.ovens[0]
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
+                                 location: HPXML::LocationLivingSpace,
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: reference_values[:is_induction])
     new_hpxml.ovens.add(id: oven.id,
@@ -1889,6 +1892,7 @@ class EnergyRatingIndex301Ruleset
     cooking_range = orig_hpxml.cooking_ranges[0]
     oven = orig_hpxml.ovens[0]
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
+                                 location: cooking_range.location,
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: cooking_range.is_induction)
     new_hpxml.ovens.add(id: oven.id,

@@ -607,6 +607,7 @@ class EnergyRatingIndex301Validator
       # [Dishwasher]
       '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
         'RatedAnnualkWh | EnergyFactor' => one,
         'PlaceSettingCapacity' => one,
       },
@@ -621,6 +622,7 @@ class EnergyRatingIndex301Validator
       # [CookingRange]
       '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one,
         'IsInduction' => one,
         '../Oven/IsConvection' => one,
