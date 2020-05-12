@@ -1017,6 +1017,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
+                        location: HPXML::LocationLivingSpace,
                         place_setting_capacity: reference_values[:place_setting_capacity],
                         rated_annual_kwh: reference_values[:rated_annual_kwh],
                         label_electric_rate: reference_values[:label_electric_rate],
@@ -1046,6 +1047,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: 'Range',
+                             location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              is_induction: reference_values[:is_induction])
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
@@ -1057,6 +1059,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: 'Range',
+                             location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              is_induction: reference_values[:is_induction])
   end

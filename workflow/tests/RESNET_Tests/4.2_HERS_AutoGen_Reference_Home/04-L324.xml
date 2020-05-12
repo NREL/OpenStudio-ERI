@@ -562,6 +562,7 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
+          <Location>living space</Location>
           <RatedAnnualkWh>467.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
           <LabelElectricRate>0.12</LabelElectricRate>
@@ -576,6 +577,7 @@
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range'/>
+          <Location>living space</Location>
           <FuelType>natural gas</FuelType>
           <IsInduction>false</IsInduction>
         </CookingRange>
