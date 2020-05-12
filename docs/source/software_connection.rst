@@ -328,7 +328,7 @@ Each separate HVAC distribution system should be specified as a ``Systems/HVAC/H
 The three types of HVAC distribution systems allowed are ``AirDistribution``, ``HydronicDistribution``, and ``DSE``.
 There should be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
-Also, note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
+Also note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
 
 AirDistribution systems can have zero or more ``Ducts[DuctType="supply"]`` and zero or more ``Ducts[DuctType="return"]`` defined.
 Each duct must have ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfaceArea`` provided.
@@ -481,7 +481,7 @@ Appliances
 This section describes elements specified in HPXML's ``Appliances``.
 Many of the appliances' inputs are derived from EnergyGuide labels.
 
-The ``Location`` for clothes washers, clothes dryers, and refrigerators can be provided, while dishwashers and cooking ranges are assumed to be in the living space.
+The ``Location`` for all appliances must be provided.
 
 Clothes Washer
 **************

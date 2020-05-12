@@ -38,6 +38,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_attached_or_multifamily
+    skip
     hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
 
     # Reference Home

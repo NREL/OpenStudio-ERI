@@ -1017,6 +1017,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
+                        location: HPXML::LocationLivingSpace,
                         place_setting_capacity: reference_values[:place_setting_capacity],
                         rated_annual_kwh: reference_values[:rated_annual_kwh],
                         label_electric_rate: reference_values[:label_electric_rate],
@@ -1046,6 +1047,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: 'Range',
+                             location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              is_induction: reference_values[:is_induction])
   elsif ['RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
@@ -1057,6 +1059,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: 'Range',
+                             location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              is_induction: reference_values[:is_induction])
   end
@@ -1101,14 +1104,25 @@ def create_sample_hpxmls
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/sample_files/invalid_files/*.xml'), 'workflow/sample_files/invalid_files')
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/cfis-with-hydronic-distribution.xml',
+  exclude_list = ['invalid_files/appliances-location-unconditioned-space.xml',
+                  'invalid_files/attached-multifamily-window-outside-condition.xml',
+                  'invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
-                  'invalid_files/clothes-washer-location-other.xml',
                   'invalid_files/clothes-dryer-location.xml',
-                  'invalid_files/clothes-dryer-location-other.xml',
+                  'invalid_files/cooking-range-location.xml',
+                  'invalid_files/dishwasher-location.xml',
                   'invalid_files/duct-location.xml',
-                  'invalid_files/duct-location-other.xml',
+                  'invalid_files/duct-location-unconditioned-space.xml',
                   'invalid_files/duplicate-id.xml',
+                  'invalid_files/enclosure-attic-missing-roof.xml',
+                  'invalid_files/enclosure-basement-missing-exterior-foundation-wall.xml',
+                  'invalid_files/enclosure-basement-missing-slab.xml',
+                  'invalid_files/enclosure-garage-missing-exterior-wall.xml',
+                  'invalid_files/enclosure-garage-missing-roof-ceiling.xml',
+                  'invalid_files/enclosure-garage-missing-slab.xml',
+                  'invalid_files/enclosure-living-missing-ceiling-roof.xml',
+                  'invalid_files/enclosure-living-missing-exterior-wall.xml',
+                  'invalid_files/enclosure-living-missing-floor-slab.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities2.xml',
                   'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
@@ -1124,8 +1138,6 @@ def create_sample_hpxmls
                   'invalid_files/invalid-window-height.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/lighting-fractions.xml',
-                  'invalid_files/mismatched-slab-and-foundation-wall.xml',
-                  'invalid_files/missing-surfaces.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
                   'invalid_files/orphaned-hvac-distribution.xml',
@@ -1134,7 +1146,6 @@ def create_sample_hpxmls
                   'invalid_files/solar-thermal-system-with-desuperheater.xml',
                   'invalid_files/solar-thermal-system-with-dhw-indirect.xml',
                   'invalid_files/refrigerator-location.xml',
-                  'invalid_files/refrigerator-location-other.xml',
                   'invalid_files/repeated-relatedhvac-desuperheater.xml',
                   'invalid_files/repeated-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-runperiod.xml',
@@ -1170,6 +1181,11 @@ def create_sample_hpxmls
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
                   'base-dhw-tankless-wood.xml',
+                  'base-enclosure-attached-multifamily.xml',
+                  'base-enclosure-other-heated-space.xml',
+                  'base-enclosure-other-housing-unit.xml',
+                  'base-enclosure-other-multifamily-buffer-space.xml',
+                  'base-enclosure-other-non-freezing-space.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',
                   'base-foundation-complex.xml',
