@@ -1201,6 +1201,7 @@ def create_sample_hpxmls
                   'base-hvac-wall-furnace-wood-only.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
+                  'base-mechvent-cfis-dse.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',

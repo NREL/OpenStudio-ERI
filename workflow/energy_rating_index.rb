@@ -467,6 +467,9 @@ end
 
 def cache_weather
   # Process all epw files through weather.rb and serialize objects
+  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/materials'
+  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/psychrometrics'
+  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
