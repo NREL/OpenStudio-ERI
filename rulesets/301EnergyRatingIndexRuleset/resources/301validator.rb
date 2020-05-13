@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'oga'
-
 class EnergyRatingIndex301Validator
   def self.run_validator(hpxml_doc)
     # A hash of hashes that defines the XML elements used by the ERI HPXML Use Case.
@@ -197,13 +195,18 @@ class EnergyRatingIndex301Validator
       # [FrameFloor]
       '/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit above" or text()="other housing unit below"]' => one,
+        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit"]' => one, # See [FrameFloorAdjacentToOther]
         'InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]' => one,
         'Area' => one,
         'Insulation/SystemIdentifier' => one, # Required by HPXML schema
         'Insulation/AssemblyEffectiveRValue' => one,
       },
 
+      ## [FrameFloorAdjacentToOther]
+      '/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[ExteriorAdjacentTo[text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]]' => {
+        'extension/OtherSpaceAboveOrBelow[text()="above" or text()="below"]' => one,
+      },
+      
       # [Slab]
       '/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab' => {
         'SystemIdentifier' => one, # Required by HPXML schema

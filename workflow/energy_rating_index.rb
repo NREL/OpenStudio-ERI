@@ -10,6 +10,7 @@ require 'csv'
 require 'pathname'
 require 'fileutils'
 require 'parallel'
+require 'oga'
 require File.join(File.dirname(__FILE__), 'design.rb')
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
