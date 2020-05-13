@@ -206,7 +206,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor[ExteriorAdjacentTo[text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]]' => {
         'extension/OtherSpaceAboveOrBelow[text()="above" or text()="below"]' => one,
       },
-      
+
       # [Slab]
       '/HPXML/Building/BuildingDetails/Enclosure/Slabs/Slab' => {
         'SystemIdentifier' => one, # Required by HPXML schema
