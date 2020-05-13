@@ -3,6 +3,7 @@
 require 'openstudio'
 require 'pathname'
 require 'csv'
+require 'oga'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/airflow'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
