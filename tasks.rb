@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 def create_test_hpxmls
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-
   this_dir = File.dirname(__FILE__)
   tests_dir = File.join(this_dir, 'workflow/tests')
 
@@ -1085,6 +1081,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
+                        location: HPXML::LocationLivingSpace,
                         place_setting_capacity: default_values[:place_setting_capacity],
                         rated_annual_kwh: default_values[:rated_annual_kwh],
                         label_electric_rate: default_values[:label_electric_rate],
@@ -1120,6 +1117,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: 'Range',
+                             location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              is_induction: default_values[:is_induction])
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
@@ -1133,6 +1131,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: 'Range',
+                             location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              is_induction: default_values[:is_induction])
   end
@@ -1165,8 +1164,6 @@ def get_eri_version(hpxml)
 end
 
 def create_sample_hpxmls
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-
   # Copy sample files from hpxml-measures subtree
   puts 'Copying sample files...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
@@ -1175,14 +1172,25 @@ def create_sample_hpxmls
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/sample_files/invalid_files/*.xml'), 'workflow/sample_files/invalid_files')
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/cfis-with-hydronic-distribution.xml',
+  exclude_list = ['invalid_files/appliances-location-unconditioned-space.xml',
+                  'invalid_files/attached-multifamily-window-outside-condition.xml',
+                  'invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
-                  'invalid_files/clothes-washer-location-other.xml',
                   'invalid_files/clothes-dryer-location.xml',
-                  'invalid_files/clothes-dryer-location-other.xml',
+                  'invalid_files/cooking-range-location.xml',
+                  'invalid_files/dishwasher-location.xml',
                   'invalid_files/duct-location.xml',
-                  'invalid_files/duct-location-other.xml',
+                  'invalid_files/duct-location-unconditioned-space.xml',
                   'invalid_files/duplicate-id.xml',
+                  'invalid_files/enclosure-attic-missing-roof.xml',
+                  'invalid_files/enclosure-basement-missing-exterior-foundation-wall.xml',
+                  'invalid_files/enclosure-basement-missing-slab.xml',
+                  'invalid_files/enclosure-garage-missing-exterior-wall.xml',
+                  'invalid_files/enclosure-garage-missing-roof-ceiling.xml',
+                  'invalid_files/enclosure-garage-missing-slab.xml',
+                  'invalid_files/enclosure-living-missing-ceiling-roof.xml',
+                  'invalid_files/enclosure-living-missing-exterior-wall.xml',
+                  'invalid_files/enclosure-living-missing-floor-slab.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities.xml',
                   'invalid_files/heat-pump-mixed-fixed-and-autosize-capacities2.xml',
                   'invalid_files/hvac-distribution-multiple-attached-cooling.xml',
@@ -1198,8 +1206,6 @@ def create_sample_hpxmls
                   'invalid_files/invalid-window-height.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/lighting-fractions.xml',
-                  'invalid_files/mismatched-slab-and-foundation-wall.xml',
-                  'invalid_files/missing-surfaces.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
                   'invalid_files/orphaned-hvac-distribution.xml',
@@ -1208,7 +1214,6 @@ def create_sample_hpxmls
                   'invalid_files/solar-thermal-system-with-desuperheater.xml',
                   'invalid_files/solar-thermal-system-with-dhw-indirect.xml',
                   'invalid_files/refrigerator-location.xml',
-                  'invalid_files/refrigerator-location-other.xml',
                   'invalid_files/repeated-relatedhvac-desuperheater.xml',
                   'invalid_files/repeated-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-runperiod.xml',
@@ -1265,6 +1270,7 @@ def create_sample_hpxmls
                   'base-hvac-wall-furnace-wood-only.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
+                  'base-mechvent-cfis-dse.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
@@ -1409,7 +1415,12 @@ if ARGV[0].to_sym == :update_version
 end
 
 if ARGV[0].to_sym == :update_measures
+  require 'oga'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')

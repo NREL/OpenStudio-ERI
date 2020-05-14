@@ -1,16 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/airflow'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/geometry'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
-
 class EnergyRatingIndex301Ruleset
   def self.apply_ruleset(hpxml, calc_type, weather)
     # Global variables
@@ -204,7 +193,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.remove_surfaces_from_iad(orig_hpxml)
-    # Remove garage surfaces and adiabatic walls.
+    # Remove garage, multifamily buffer, and adiabatic surfaces as appropriate.
 
     # Garage only
     (orig_hpxml.roofs + orig_hpxml.frame_floors + orig_hpxml.slabs).each do |orig_surface|
@@ -214,10 +203,10 @@ class EnergyRatingIndex301Ruleset
       orig_surface.delete
     end
 
-    # Garage and adiabatic
+    # Garage, multifamily buffer, and adiabatic
     (orig_hpxml.rim_joists + orig_hpxml.walls + orig_hpxml.foundation_walls).each do |orig_surface|
-      next unless [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_surface.interior_adjacent_to) ||
-                  [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_surface.exterior_adjacent_to)
+      next unless [HPXML::LocationGarage, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherHousingUnit].include?(orig_surface.interior_adjacent_to) ||
+                  [HPXML::LocationGarage, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherHousingUnit].include?(orig_surface.exterior_adjacent_to)
 
       orig_surface.delete
     end
@@ -235,6 +224,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
+    new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
@@ -258,6 +248,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
+    new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
@@ -281,6 +272,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
+    new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
@@ -645,23 +637,6 @@ class EnergyRatingIndex301Ruleset
                         solar_absorptance: avg_solar_abs,
                         emittance: avg_emittance,
                         insulation_assembly_r_value: avg_r_value)
-
-    # Preserve non-thermal boundary walls adjacent to attic
-    orig_hpxml.walls.each do |orig_wall|
-      next if orig_wall.is_thermal_boundary
-      next unless [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include? orig_wall.interior_adjacent_to
-
-      new_hpxml.walls.add(id: orig_wall.id,
-                          exterior_adjacent_to: orig_wall.exterior_adjacent_to,
-                          interior_adjacent_to: orig_wall.interior_adjacent_to,
-                          wall_type: orig_wall.wall_type,
-                          area: orig_wall.area,
-                          azimuth: orig_wall.azimuth,
-                          solar_absorptance: orig_wall.solar_absorptance,
-                          emittance: orig_wall.emittance,
-                          insulation_id: orig_wall.insulation_id,
-                          insulation_assembly_r_value: orig_wall.insulation_assembly_r_value)
-    end
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
@@ -774,7 +749,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value)
+                                 insulation_assembly_r_value: insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 
@@ -788,7 +764,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to,
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value)
+                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 
@@ -840,7 +817,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value)
+                                 insulation_assembly_r_value: insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 
@@ -854,7 +832,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to,
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value)
+                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 
@@ -1778,7 +1757,7 @@ class EnergyRatingIndex301Ruleset
     clothes_washer = orig_hpxml.clothes_washers[0]
     reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
-                                  location: HPXML::LocationLivingSpace,
+                                  location: clothes_washer.location.gsub('unvented', 'vented'),
                                   integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
                                   rated_annual_kwh: reference_values[:rated_annual_kwh],
                                   label_electric_rate: reference_values[:label_electric_rate],
@@ -1809,15 +1788,15 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
+    new_hpxml.clothes_washers[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     clothes_dryer = orig_hpxml.clothes_dryers[0]
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, clothes_dryer.fuel_type)
     new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
-                                 location: HPXML::LocationLivingSpace,
+                                 location: clothes_dryer.location.gsub('unvented', 'vented'),
                                  fuel_type: clothes_dryer.fuel_type,
                                  combined_energy_factor: reference_values[:combined_energy_factor],
                                  control_type: reference_values[:control_type])
@@ -1834,14 +1813,15 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+    new_hpxml.clothes_dryers[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              location: dishwasher.location.gsub('unvented', 'vented'),
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
                               place_setting_capacity: reference_values[:place_setting_capacity],
@@ -1863,6 +1843,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              location: dishwasher.location,
                               energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
                               place_setting_capacity: dishwasher.place_setting_capacity,
@@ -1873,15 +1854,15 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
+    new_hpxml.dishwashers[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     refrigerator = orig_hpxml.refrigerators[0]
     reference_values = HotWaterAndAppliances.get_refrigerator_default_values(@nbeds)
     new_hpxml.refrigerators.add(id: refrigerator.id,
-                                location: HPXML::LocationLivingSpace,
+                                location: refrigerator.location.gsub('unvented', 'vented'),
                                 rated_annual_kwh: reference_values[:rated_annual_kwh])
   end
 
@@ -1893,8 +1874,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
+    new_hpxml.refrigerators[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
@@ -1902,6 +1883,7 @@ class EnergyRatingIndex301Ruleset
     oven = orig_hpxml.ovens[0]
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
+                                 location: cooking_range.location.gsub('unvented', 'vented'),
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: reference_values[:is_induction])
     new_hpxml.ovens.add(id: oven.id,
@@ -1912,6 +1894,7 @@ class EnergyRatingIndex301Ruleset
     cooking_range = orig_hpxml.cooking_ranges[0]
     oven = orig_hpxml.ovens[0]
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
+                                 location: cooking_range.location,
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: cooking_range.is_induction)
     new_hpxml.ovens.add(id: oven.id,
@@ -1919,8 +1902,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_cooking_range_oven_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+    new_hpxml.cooking_ranges[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_lighting_reference(orig_hpxml, new_hpxml)
@@ -2311,7 +2294,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                        location: HPXML::LocationLivingSpace, # TODO => 301 Standard doesn't specify the location
+                                        location: HPXML::LocationLivingSpace,
                                         performance_adjustment: 0.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,

@@ -304,7 +304,7 @@ class VentTest < MiniTest::Test
   end
 
   def test_mech_vent_attached_or_multifamily
-    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

@@ -86,7 +86,7 @@ class EnclosureTest < MiniTest::Test
 
     # Test attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
     # Create derivative file for testing
-    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                fan_type: HPXML::MechVentTypeSupply,
@@ -117,7 +117,7 @@ class EnclosureTest < MiniTest::Test
 
     # Test attached dwelling where Aext < 0.5 and exhaust mech vent
     # Create derivative file for testing
-    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                fan_type: HPXML::MechVentTypeExhaust,
@@ -241,7 +241,7 @@ class EnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_roofs(hpxml, 1300, 33.33, 0.75, 0.9)
 
-    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -273,11 +273,11 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml, 2645.52, (23.0 * 2355.52 + 4.0 * 290) / 2645.52, 0.7, 0.92)
+    _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml, 2645.52, (16.67 * 2355.52 + 4.0 * 290) / 2645.52, 0.75, 0.9)
+    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
 
     hpxml_name = 'base-atticroof-conditioned.xml'
 
@@ -291,13 +291,13 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml, 2405.52, ((23.0 * 1200 + 22.3 * 240) / 1440 * 2355.52 + 4.0 * 50) / 2405.52, 0.7, 0.92)
+    _check_walls(hpxml, 2355.52, (23.0 * 1200 + 22.3 * 240) / 1440, 0.7, 0.92)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml, 2405.52, (16.67 * 2355.52 + 4.0 * 50) / 2405.52, 0.75, 0.9)
+    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
 
-    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -748,7 +748,7 @@ class EnclosureTest < MiniTest::Test
                                   90 => [108, 0.35, 0.40],
                                   270 => [108, 0.35, 0.40] })
 
-    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -971,16 +971,16 @@ class EnclosureTest < MiniTest::Test
     _check_doors(hpxml, { 0 => [40, 2.86] })
 
     # Test MF unit w/ exterior doors
-    hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, { 0 => [40, 4.4],
+    _check_doors(hpxml, { 0 => [80, 4.4],
                           180 => [40, 4.4] })
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_doors(hpxml, { 0 => [20, 2.86] })
+    _check_doors(hpxml, { 0 => [13.33, 2.86] })
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -993,14 +993,14 @@ class EnclosureTest < MiniTest::Test
     # Test MF unit w/ interior doors
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.doors.each do |door|
-      door.wall_idref = 'WallAdiabatic'
+      door.wall_idref = 'WallOtherHousingUnit'
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, { 0 => [40, 4.4],
+    _check_doors(hpxml, { 0 => [80, 4.4],
                           180 => [40, 4.4] })
 
     # Reference Home
