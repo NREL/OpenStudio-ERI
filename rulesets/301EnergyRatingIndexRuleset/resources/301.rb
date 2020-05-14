@@ -1,16 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/airflow'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/geometry'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
-
 class EnergyRatingIndex301Ruleset
   def self.apply_ruleset(hpxml, calc_type, weather)
     # Global variables
@@ -239,6 +228,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
+    new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
@@ -263,6 +253,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
+    new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
@@ -287,6 +278,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
+    new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
@@ -785,7 +777,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value)
+                                 insulation_assembly_r_value: insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 
@@ -799,7 +792,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to,
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value)
+                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 
@@ -851,7 +845,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value)
+                                 insulation_assembly_r_value: insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 
@@ -865,7 +860,8 @@ class EnergyRatingIndex301Ruleset
                                  interior_adjacent_to: orig_frame_floor.interior_adjacent_to,
                                  area: orig_frame_floor.area,
                                  insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value)
+                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value,
+                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
     end
   end
 

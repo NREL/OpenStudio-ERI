@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 def create_test_hpxmls
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-
   this_dir = File.dirname(__FILE__)
   tests_dir = File.join(this_dir, 'workflow/tests')
 
@@ -1094,8 +1090,6 @@ def get_eri_version(hpxml)
 end
 
 def create_sample_hpxmls
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-
   # Copy sample files from hpxml-measures subtree
   puts 'Copying sample files...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
@@ -1207,6 +1201,7 @@ def create_sample_hpxmls
                   'base-hvac-wall-furnace-wood-only.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
+                  'base-mechvent-cfis-dse.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
@@ -1353,7 +1348,12 @@ if ARGV[0].to_sym == :update_version
 end
 
 if ARGV[0].to_sym == :update_measures
+  require 'oga'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
