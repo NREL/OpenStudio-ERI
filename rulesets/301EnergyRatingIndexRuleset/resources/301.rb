@@ -1551,7 +1551,7 @@ class EnergyRatingIndex301Ruleset
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location.gsub('unvented', 'vented'),
-                                          performance_adjustment: 0.0,
+                                          performance_adjustment: 1.0,
                                           tank_volume: tank_volume,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           heating_capacity: heating_capacity,
@@ -1584,9 +1584,9 @@ class EnergyRatingIndex301Ruleset
       end
 
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
-        performance_adjustment = Waterheater.get_tankless_cycling_derate()
+        performance_adjustment = Waterheater.get_default_performance_adjustment(orig_water_heater)
       else
-        performance_adjustment = 0.0
+        performance_adjustment = 1.0
       end
 
       uses_desuperheater = orig_water_heater.uses_desuperheater
@@ -2257,7 +2257,7 @@ class EnergyRatingIndex301Ruleset
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
                                         location: HPXML::LocationLivingSpace, # TODO => 301 Standard doesn't specify the location
-                                        performance_adjustment: 0.0,
+                                        performance_adjustment: 1.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,
                                         heating_capacity: wh_cap,
