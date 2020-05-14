@@ -64,6 +64,54 @@ class EnergyRatingIndexTest < Minitest::Test
     _test_reul(all_results, 'base-hvac', 'REUL Cooling (MBtu)')
   end
 
+  def test_sample_files_301_2014
+    test_name = 'sample_files_301_2014'
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
+    File.delete(test_results_csv) if File.exist? test_results_csv
+
+    # Run simulations
+    files = 'base*.xml'
+    all_results = {}
+    xmldir = "#{File.dirname(__FILE__)}/../sample_files"
+    Dir["#{xmldir}/#{files}"].sort.each do |xml|
+      next if xml.include? 'base-version'
+      # Create derivative file
+
+      hpxml = HPXML.new(hpxml_path: xml)
+      hpxml.header.eri_calculation_version = '2014ADEGL'
+      xml2014 = File.absolute_path(File.join(xmldir, File.basename(xml, '.xml') + '_301_2014' + File.extname(xml)))
+      XMLHelper.write_file(hpxml.to_oga, xml2014)
+
+      hpxmls, csvs, runtime = _run_eri(xml2014, test_name, hourly_output: true)
+      all_results[File.basename(xml2014)] = _get_csv_results(csvs[:results])
+      all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
+    end
+    assert(all_results.size > 0)
+
+    # Write results to csv
+    keys = all_results.values[0].keys
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['XML'] + keys
+      all_results.each_with_index do |(xml, results), i|
+        csv_line = [File.basename(xml)]
+        keys.each do |key|
+          csv_line << results[key]
+        end
+        csv << csv_line
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Cross-simulation tests
+
+    # Verify that REUL Hot Water is identical across water heater types
+    _test_reul(all_results, 'base-dhw', 'REUL Hot Water (MBtu)')
+
+    # Verify that REUL Heating/Cooling are identical across HVAC types
+    _test_reul(all_results, 'base-hvac', 'REUL Heating (MBtu)')
+    _test_reul(all_results, 'base-hvac', 'REUL Cooling (MBtu)')
+  end
+
   def test_invalid
     test_name = 'invalid_files'
     expected_error_msgs = { 'invalid-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
