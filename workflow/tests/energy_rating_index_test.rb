@@ -1613,7 +1613,7 @@ class EnergyRatingIndexTest < Minitest::Test
         f_grg_led = lg.fraction_of_units_in_location
       end
     end
-    int_kwh, ext_kwh, grg_kwh = Lighting.calc_lighting_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
+    int_kwh, ext_kwh, grg_kwh = Lighting.calc_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
     xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
     s += "#{xml_ltg_sens}\n"
 
