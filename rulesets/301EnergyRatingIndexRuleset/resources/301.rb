@@ -520,7 +520,7 @@ class EnergyRatingIndex301Ruleset
     if sum_gross_area > 0
       new_hpxml.rim_joists.add(id: 'RimJoistArea',
                                exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: HPXML::LocationLivingSpace,
+                               interior_adjacent_to: ext_thermal_bndry_rim_joists[0].interior_adjacent_to,
                                area: sum_gross_area,
                                azimuth: nil,
                                solar_absorptance: solar_abs,
