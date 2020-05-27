@@ -142,12 +142,13 @@ def create_test_hpxmls
       hpxml = HPXML.new
       hpxml_files.each do |hpxml_file|
         if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
-          hpxml = get_standard_140_hpxml(File.join(tests_dir, hpxml_file))
+          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file), collapse_enclosure: false)
           next
         end
         set_hpxml_header(hpxml_file, hpxml)
         set_hpxml_site(hpxml_file, hpxml)
         set_hpxml_building_construction(hpxml_file, hpxml)
+        set_hpxml_building_occupancy(hpxml_file, hpxml)
         set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
         set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
         set_hpxml_attics(hpxml_file, hpxml)
@@ -176,6 +177,7 @@ def create_test_hpxmls
         set_hpxml_cooking_range(hpxml_file, hpxml)
         set_hpxml_oven(hpxml_file, hpxml)
         set_hpxml_lighting(hpxml_file, hpxml)
+        set_hpxml_plug_loads(hpxml_file, hpxml)
       end
 
       next if derivative.include? 'RESNET_Tests/4.1_Standard_140'
@@ -229,26 +231,6 @@ end
 def get_standard_140_hpxml(hpxml_path)
   hpxml = HPXML.new(hpxml_path: hpxml_path, collapse_enclosure: false)
 
-  # Strip to bare geometry. RESNET test files use only the 140 geometry;
-  # internal gains and other assumptions come from 301.
-  hpxml.building_occupancy.number_of_residents = nil
-  hpxml.windows.each do |window|
-    window.interior_shading_factor_summer = nil
-    window.interior_shading_factor_winter = nil
-  end
-  hpxml.hvac_controls.clear
-  hpxml.plug_loads.clear
-  hpxml.misc_loads_schedule.weekday_fractions = nil
-  hpxml.misc_loads_schedule.weekend_fractions = nil
-  hpxml.misc_loads_schedule.monthly_multipliers = nil
-
-  # Add climate zones
-  hpxml.climate_and_risk_zones.iecc_year = 2006
-  if hpxml.climate_and_risk_zones.weather_station_wmo == '724660'
-    hpxml.climate_and_risk_zones.iecc_zone = '5B'
-  elsif hpxml.climate_and_risk_zones.weather_station_wmo == '723860'
-    hpxml.climate_and_risk_zones.iecc_zone = '3B'
-  end
   return hpxml
 end
 
@@ -293,17 +275,22 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
   end
 end
 
+def set_hpxml_building_occupancy(hpxml_file, hpxml)
+  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
+    hpxml.building_occupancy.number_of_residents = nil
+  end
+end
+
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
+  hpxml.climate_and_risk_zones.iecc_year = 2006
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Baltimore
-    hpxml.climate_and_risk_zones.iecc_year = 2006
     hpxml.climate_and_risk_zones.iecc_zone = '4A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
     hpxml.climate_and_risk_zones.weather_station_wmo = '724060'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
-    hpxml.climate_and_risk_zones.iecc_year = 2006
     hpxml.climate_and_risk_zones.iecc_zone = '3A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
@@ -311,18 +298,20 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
-    hpxml.climate_and_risk_zones.iecc_year = 2006
     hpxml.climate_and_risk_zones.iecc_zone = '1A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
     hpxml.climate_and_risk_zones.weather_station_wmo = '722020'
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
-    hpxml.climate_and_risk_zones.iecc_year = 2006
     hpxml.climate_and_risk_zones.iecc_zone = '7'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
     hpxml.climate_and_risk_zones.weather_station_wmo = '727450'
+  elsif hpxml.climate_and_risk_zones.weather_station_wmo == '724660'
+    hpxml.climate_and_risk_zones.iecc_zone = '5B'
+  elsif hpxml.climate_and_risk_zones.weather_station_wmo == '723860'
+    hpxml.climate_and_risk_zones.iecc_zone = '3B'
   end
 end
 
@@ -496,6 +485,12 @@ def set_hpxml_slabs(hpxml_file, hpxml)
 end
 
 def set_hpxml_windows(hpxml_file, hpxml)
+  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
+    hpxml.windows.each do |window|
+      window.interior_shading_factor_summer = nil
+      window.interior_shading_factor_winter = nil
+    end
+  end
 end
 
 def set_hpxml_skylights(hpxml_file, hpxml)
@@ -614,6 +609,16 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
     # Change to 61.0 kBtu/h
     hpxml.heating_systems[0].heating_capacity = 61000
     hpxml.heating_systems[0].heating_cfm = hpxml.heating_systems[0].heating_capacity * 360.0 / 12000.0
+  elsif hpxml_file.include? 'Hot_Water'
+    # Natural gas furnace with AFUE = 78%
+    hpxml.heating_systems.clear
+    hpxml.heating_systems.add(id: 'HeatingSystem',
+                              distribution_system_idref: 'HVACDistribution',
+                              heating_system_type: HPXML::HVACTypeFurnace,
+                              heating_system_fuel: HPXML::FuelTypeNaturalGas,
+                              heating_capacity: -1,
+                              heating_efficiency_afue: 0.78,
+                              fraction_heat_load_served: 1)
   end
 end
 
@@ -622,7 +627,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
       'RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     hpxml.cooling_systems.clear
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
-    # central air conditioner with SEER = 11.0
+    # Central air conditioner with SEER = 11.0
     hpxml.cooling_systems.clear
     hpxml.cooling_systems.add(id: 'CoolingSystem',
                               distribution_system_idref: 'HVACDistribution',
@@ -690,6 +695,16 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
     # Change to 55.0 kBtu/h
     hpxml.cooling_systems[0].cooling_capacity = 55000
     hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
+  elsif hpxml_file.include? 'Hot_Water'
+    # Central air conditioner with SEER = 13.0
+    hpxml.cooling_systems.clear
+    hpxml.cooling_systems.add(id: 'CoolingSystem',
+                              distribution_system_idref: 'HVACDistribution',
+                              cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
+                              cooling_system_fuel: HPXML::FuelTypeElectricity,
+                              cooling_capacity: -1,
+                              fraction_cool_load_served: 1,
+                              cooling_efficiency_seer: 13)
   end
 end
 
@@ -807,6 +822,10 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
                                  distribution_system_type: HPXML::HVACDistributionTypeDSE,
                                  annual_heating_dse: 1,
                                  annual_cooling_dse: 1)
+  elsif hpxml_file.include? 'Hot_Water'
+    hpxml.hvac_distributions.clear
+    hpxml.hvac_distributions.add(id: 'HVACDistribution',
+                                 distribution_system_type: HPXML::HVACDistributionTypeAir)
   end
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
@@ -814,7 +833,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
+      'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include?(hpxml_file) ||
+     hpxml_file.include?('Hot_Water')
     # No leakage
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
@@ -838,7 +858,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
       'RESNET_Tests/4.5_DSE/HVAC3a.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
+      'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include?(hpxml_file) ||
+     hpxml_file.include?('Hot_Water')
     # Supply duct area = 308 ft2; Return duct area = 77 ft2
     # Duct R-val = 0
     # Duct Location = 100% conditioned
@@ -1154,6 +1175,15 @@ def set_hpxml_lighting(hpxml_file, hpxml)
                               location: location,
                               fraction_of_units_in_location: fraction,
                               lighting_type: lighting_type)
+  end
+end
+
+def set_hpxml_plug_loads(hpxml_file, hpxml)
+  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
+    hpxml.plug_loads.clear
+    hpxml.misc_loads_schedule.weekday_fractions = nil
+    hpxml.misc_loads_schedule.weekend_fractions = nil
+    hpxml.misc_loads_schedule.monthly_multipliers = nil
   end
 end
 
