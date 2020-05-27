@@ -757,9 +757,9 @@ class WaterHeatingTest < MiniTest::Test
         assert_in_epsilon(standby_loss, water_heater.standby_loss, 0.01)
       end
       if whtype == HPXML::WaterHeaterTypeTankless
-        assert_equal(0.08, water_heater.performance_adjustment)
+        assert_equal(0.92, water_heater.performance_adjustment)
       else
-        assert_equal(0.0, water_heater.performance_adjustment)
+        assert_equal(1.0, water_heater.performance_adjustment)
       end
     end
   end

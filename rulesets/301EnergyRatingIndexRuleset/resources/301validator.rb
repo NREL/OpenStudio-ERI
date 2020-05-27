@@ -292,7 +292,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
-        'HeatingSystemType[ElectricResistance | Furnace | WallFurnace | Boiler | Stove]' => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=Boiler] or [HeatingType=Stove]
+        'HeatingSystemType[ElectricResistance | Furnace | WallFurnace | FloorFurnace | Boiler | Stove | PortableHeater | Fireplace]' => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=FloorFurnace] or [HeatingType=Boiler] or [HeatingType=Stove] or [HeatingType=PortableHeater] or [HeatingType=Fireplace]
         'HeatingCapacity' => one,
         'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatingSystems and HeatPumps
         'ElectricAuxiliaryEnergy' => zero_or_one, # If not provided, uses 301 defaults for fuel furnace/boiler and zero otherwise
@@ -309,14 +309,21 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Furnace]' => {
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
-        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=WallFurnace]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/WallFurnace]' => {
         'DistributionSystem' => zero,
-        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
+        'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+      },
+
+      ## [HeatingType=FloorFurnace]
+      '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/FloorFurnace]' => {
+        'DistributionSystem' => zero,
+        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
@@ -324,14 +331,28 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler]' => {
         '../../HVACDistribution[DistributionSystemType/HydronicDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
-        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
       },
 
       ## [HeatingType=Stove]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Stove]' => {
         'DistributionSystem' => zero,
-        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one, # See [HeatingType=FuelEquipment] if not electricity
+        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
+        'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+      },
+
+      ## [HeatingType=PortableHeater]
+      '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/PortableHeater]' => {
+        'DistributionSystem' => zero,
+        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
+        'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+      },
+
+      ## [HeatingType=Fireplace]
+      '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Fireplace]' => {
+        'DistributionSystem' => zero,
+        'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
@@ -378,7 +399,7 @@ class EnergyRatingIndex301Validator
         'HeatingCapacity' => one,
         'CoolingCapacity' => one,
         'CoolingSensibleHeatFraction' => zero_or_one,
-        'BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane"]' => zero_or_one, # See [HeatPumpBackup]
+        'BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]' => zero_or_one, # See [HeatPumpBackup]
         'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatPumps and HeatingSystems
         'FractionCoolLoadServed' => one, # Must sum to <= 1 across all HeatPumps and CoolingSystems
       },
@@ -432,6 +453,7 @@ class EnergyRatingIndex301Validator
 
       ## [HVACDistType=Air]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution' => {
+        '../../ConditionedFloorAreaServed' => one,
         'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value | extension/DuctLeakageTestingExemption[text()="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25" and TotalOrToOutside="total"]/Value' => one,
         'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[Units="CFM25" and TotalOrToOutside="to outside"]/Value | extension/DuctLeakageTestingExemption[text()="true"] | DuctLeakageMeasurement/DuctLeakage[Units="CFM25" and TotalOrToOutside="total"]/Value' => zero_or_one,
         'Ducts[DuctType="supply"]' => zero_or_more, # See [HVACDuct]
@@ -446,7 +468,7 @@ class EnergyRatingIndex301Validator
       ## [HVACDuct]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
         'DuctInsulationRValue' => one,
-        'DuctLocation[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="outside" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
+        'DuctLocation[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="exterior wall" or text()="under slab" or text()="roof deck" or text()="outside" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'DuctSurfaceArea' => one,
       },
 
@@ -495,7 +517,7 @@ class EnergyRatingIndex301Validator
 
       ## [WHType=Tank]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="storage water heater"]' => {
-        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one, # If not electricity, see [WHType=FuelTank]
+        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one, # If not electricity, see [WHType=FuelTank]
         'TankVolume' => one,
         'HeatingCapacity' => zero_or_one,
         'EnergyFactor | UniformEnergyFactor' => one,
@@ -509,7 +531,7 @@ class EnergyRatingIndex301Validator
 
       ## [WHType=Tankless]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[WaterHeaterType="instantaneous water heater"]' => {
-        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one,
+        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'EnergyFactor | UniformEnergyFactor' => one,
       },
 
@@ -629,7 +651,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
-        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one,
+        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'EnergyFactor | CombinedEnergyFactor' => one,
         'ControlType[text()="timer" or text()="moisture"]' => one,
       },
@@ -657,7 +679,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
-        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity"]' => one,
+        'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'IsInduction' => one,
         '../Oven/IsConvection' => one,
       },

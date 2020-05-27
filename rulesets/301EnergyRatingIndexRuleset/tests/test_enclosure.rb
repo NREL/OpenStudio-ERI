@@ -24,7 +24,7 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, 9.3) # 0.3 nACH
+    _check_infiltration(hpxml, 9.3)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -319,11 +319,11 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml, 1760, (23.0 * 1200 + 4.0 * 560) / 1760, 0.7, 0.92)
+    _check_walls(hpxml, 1873, (23.0 * 1200 + 4.0 * 673) / 1873, 0.7, 0.92)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml, 1760, (16.67 * 1200 + 4.0 * 560) / 1760, 0.75, 0.9)
+    _check_walls(hpxml, 1873, (16.67 * 1200 + 4.0 * 673) / 1873, 0.75, 0.9)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -975,12 +975,12 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, { 0 => [80, 4.4],
+    _check_doors(hpxml, { 0 => [40, 4.4],
                           180 => [40, 4.4] })
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_doors(hpxml, { 0 => [13.33, 2.86] })
+    _check_doors(hpxml, { 0 => [20, 2.86] })
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -1000,8 +1000,7 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, { 0 => [80, 4.4],
-                          180 => [40, 4.4] })
+    _check_doors(hpxml)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -1009,11 +1008,11 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_doors(hpxml, { 0 => [20, 2.86] })
+    _check_doors(hpxml)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_doors(hpxml, { 0 => [20, 2.86] })
+    _check_doors(hpxml)
   end
 
   def test_enclosure_attic_ventilation

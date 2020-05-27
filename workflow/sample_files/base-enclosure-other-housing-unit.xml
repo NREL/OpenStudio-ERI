@@ -206,13 +206,6 @@
             <Azimuth>180</Azimuth>
             <RValue>4.4</RValue>
           </Door>
-          <Door>
-            <SystemIdentifier id='DoorOnWallOtherHousingUnit'/>
-            <AttachedToWall idref='WallOtherHousingUnit'/>
-            <Area>40.0</Area>
-            <Azimuth>0</Azimuth>
-            <RValue>4.4</RValue>
-          </Door>
         </Doors>
       </Enclosure>
       <Systems>
@@ -287,6 +280,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
+            <ConditionedFloorAreaServed>1350.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <WaterHeating>

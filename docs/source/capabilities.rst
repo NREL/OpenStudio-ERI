@@ -47,7 +47,8 @@ The following building features/technologies are available for modeling:
   
     - Electric Resistance
     - Furnaces
-    - Wall Furnaces & Stoves
+    - Wall/Floor Furnaces
+    - Stoves & Portable Heaters
     - Boilers
     
   - Cooling Systems

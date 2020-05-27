@@ -28,7 +28,7 @@ Note that the Reference Home, Rated Home and Index Adjustment Home (if applicabl
 
 This will generate output as shown below:
 
-.. image:: https://user-images.githubusercontent.com/5861765/63288138-3e167000-c279-11e9-9a18-b0a2327ed89d.png
+.. image:: https://user-images.githubusercontent.com/5861765/82058115-8be1cc80-9681-11ea-9288-8b1eca5ec422.png
 
 You can also request generation of hourly output CSV files as part of the calculation by providing one or more ``--hourly`` flags.
 

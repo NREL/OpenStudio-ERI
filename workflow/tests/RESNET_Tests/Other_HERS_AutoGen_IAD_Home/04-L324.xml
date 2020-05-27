@@ -526,6 +526,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
+            <ConditionedFloorAreaServed>3078.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <MechanicalVentilation>

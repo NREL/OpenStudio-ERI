@@ -295,7 +295,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
+    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
 
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
@@ -307,7 +307,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
+    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
 
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     new_hpxml.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
@@ -318,7 +318,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
+    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
 
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
@@ -1282,7 +1282,8 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
                                        distribution_system_type: orig_hvac_distribution.distribution_system_type,
                                        annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
-                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
+                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse,
+                                       conditioned_floor_area_served: orig_hvac_distribution.conditioned_floor_area_served)
       next unless orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
 
       new_hvac_distribution = new_hpxml.hvac_distributions[-1]
@@ -1557,7 +1558,7 @@ class EnergyRatingIndex301Ruleset
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location.gsub('unvented', 'vented'),
-                                          performance_adjustment: 0.0,
+                                          performance_adjustment: 1.0,
                                           tank_volume: tank_volume,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           heating_capacity: heating_capacity,
@@ -1590,9 +1591,9 @@ class EnergyRatingIndex301Ruleset
       end
 
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
-        performance_adjustment = Waterheater.get_tankless_cycling_derate()
+        performance_adjustment = Waterheater.get_default_performance_adjustment(orig_water_heater)
       else
-        performance_adjustment = 0.0
+        performance_adjustment = 1.0
       end
 
       uses_desuperheater = orig_water_heater.uses_desuperheater
@@ -2295,7 +2296,7 @@ class EnergyRatingIndex301Ruleset
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
                                         location: HPXML::LocationLivingSpace,
-                                        performance_adjustment: 0.0,
+                                        performance_adjustment: 1.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,
                                         heating_capacity: wh_cap,
@@ -2417,7 +2418,7 @@ class EnergyRatingIndex301Ruleset
       orig_total_area = orig_hpxml.doors.map { |d| d.area }.inject(0, :+)
       orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior }.map { |d| d.area }.inject(0, :+)
       if orig_total_area <= 0
-        exterior_area = total_area
+        exterior_area = 0
       else
         exterior_area = total_area * orig_exterior_area / orig_total_area
       end

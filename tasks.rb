@@ -889,6 +889,9 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts[i].duct_insulation_r_value = 6
     end
   end
+  if hpxml.hvac_distributions.size == 1
+    hpxml.hvac_distributions[0].conditioned_floor_area_served = hpxml.building_construction.conditioned_floor_area
+  end
 end
 
 def set_hpxml_ventilation_fans(hpxml_file, hpxml)
@@ -1229,6 +1232,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
+                  'invalid_files/invalid-distribution-cfa-served.xml',
                   'invalid_files/invalid-neighbor-shading-azimuth.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
@@ -1236,6 +1240,7 @@ def create_sample_hpxmls
                   'invalid_files/invalid-window-height.xml',
                   'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/lighting-fractions.xml',
+                  'invalid_files/missing-duct-location.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
                   'invalid_files/orphaned-hvac-distribution.xml',
@@ -1259,7 +1264,6 @@ def create_sample_hpxmls
                   'base-appliances-dehumidifier-50percent.xml',
                   'base-appliances-dehumidifier-ief.xml',
                   'base-appliances-none.xml',
-                  'base-appliances-wood.xml',
                   'base-dhw-combi-tankless-outside.xml',
                   'base-dhw-desuperheater-var-speed.xml',
                   'base-dhw-desuperheater-2-speed.xml',
@@ -1274,15 +1278,12 @@ def create_sample_hpxmls
                   'base-dhw-tank-heat-pump-outside.xml',
                   'base-dhw-tank-heat-pump-with-solar.xml',
                   'base-dhw-tank-heat-pump-with-solar-fraction.xml',
-                  'base-dhw-tank-wood.xml',
                   'base-dhw-tankless-electric-outside.xml',
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
-                  'base-dhw-tankless-wood.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',
                   'base-foundation-complex.xml',
-                  'base-hvac-boiler-wood-only.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-var-speed.xml',
@@ -1290,14 +1291,9 @@ def create_sample_hpxmls
                   'base-hvac-ducts-leakage-percent.xml',
                   'base-hvac-flowrate.xml',
                   'base-hvac-furnace-x3-dse.xml',
-                  'base-hvac-furnace-wood-only.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
-                  'base-hvac-portable-heater-electric-only.xml',
-                  'base-hvac-stove-wood-only.xml',
-                  'base-hvac-stove-wood-pellets-only.xml',
                   'base-hvac-undersized.xml',
-                  'base-hvac-wall-furnace-wood-only.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
                   'base-mechvent-cfis-dse.xml',
