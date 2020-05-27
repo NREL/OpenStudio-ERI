@@ -32,7 +32,6 @@ class EnergyRatingIndex301Ruleset
     set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
-    set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
     set_enclosure_attics_reference(orig_hpxml, new_hpxml)
     set_enclosure_foundations_reference(orig_hpxml, new_hpxml)
     set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
@@ -45,6 +44,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_windows_reference(orig_hpxml, new_hpxml)
     set_enclosure_skylights_reference(orig_hpxml, new_hpxml)
     set_enclosure_doors_reference(orig_hpxml, new_hpxml)
+    set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
 
     # Systems
     set_systems_hvac_reference(orig_hpxml, new_hpxml)
@@ -82,7 +82,6 @@ class EnergyRatingIndex301Ruleset
     set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
-    set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
     set_enclosure_attics_rated(orig_hpxml, new_hpxml)
     set_enclosure_foundations_rated(orig_hpxml, new_hpxml)
     set_enclosure_roofs_rated(orig_hpxml, new_hpxml)
@@ -95,6 +94,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_windows_rated(orig_hpxml, new_hpxml)
     set_enclosure_skylights_rated(orig_hpxml, new_hpxml)
     set_enclosure_doors_rated(orig_hpxml, new_hpxml)
+    set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
 
     # Systems
     set_systems_hvac_rated(orig_hpxml, new_hpxml)
@@ -134,7 +134,6 @@ class EnergyRatingIndex301Ruleset
     set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
-    set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
     set_enclosure_attics_iad(orig_hpxml, new_hpxml)
     set_enclosure_foundations_iad(orig_hpxml, new_hpxml)
     set_enclosure_roofs_iad(orig_hpxml, new_hpxml)
@@ -147,6 +146,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_windows_iad(orig_hpxml, new_hpxml)
     set_enclosure_skylights_iad(orig_hpxml, new_hpxml)
     set_enclosure_doors_iad(orig_hpxml, new_hpxml)
+    set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
 
     # Systems
     set_systems_hvac_iad(orig_hpxml, new_hpxml)
@@ -224,7 +224,6 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infil_volume = get_infiltration_volume(orig_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
@@ -249,7 +248,6 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infil_volume = get_infiltration_volume(orig_hpxml)
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
@@ -274,7 +272,6 @@ class EnergyRatingIndex301Ruleset
     @ncfl_ag = 2
     @cvolume = 20400
     @infil_volume = 20400
-    @infil_height = Airflow.calc_inferred_infiltration_height(@cfa, @ncfl, @ncfl_ag, @infil_volume, new_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
@@ -301,6 +298,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
+    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+
     # Table 4.2.2(1) - Air exchange rate
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
@@ -314,6 +313,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
+    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+
     # Table 4.2.2(1) - Air exchange rate
 
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml, false)
@@ -327,6 +328,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
+    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
@@ -517,7 +520,7 @@ class EnergyRatingIndex301Ruleset
     if sum_gross_area > 0
       new_hpxml.rim_joists.add(id: 'RimJoistArea',
                                exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: HPXML::LocationLivingSpace,
+                               interior_adjacent_to: ext_thermal_bndry_rim_joists[0].interior_adjacent_to,
                                area: sum_gross_area,
                                azimuth: nil,
                                solar_absorptance: solar_abs,
@@ -1289,7 +1292,8 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
                                        distribution_system_type: orig_hvac_distribution.distribution_system_type,
                                        annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
-                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
+                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse,
+                                       conditioned_floor_area_served: orig_hvac_distribution.conditioned_floor_area_served)
       next unless orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
 
       new_hvac_distribution = new_hpxml.hvac_distributions[-1]

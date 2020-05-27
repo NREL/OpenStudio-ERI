@@ -434,6 +434,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
+            <ConditionedFloorAreaServed>3600.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <WaterHeating>

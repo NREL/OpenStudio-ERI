@@ -22,7 +22,7 @@ class EnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, 10.1)
+    _check_infiltration(hpxml, 9.3)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -202,41 +202,23 @@ class EnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_walls(hpxml, 2405.52, (16.67 * 2355.52 + 4.0 * 50) / 2405.52, 0.75, 0.9)
 
-    # hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
-
-    # Rated Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    # _check_walls(hpxml, 1200, (23.0 * 420 + 4.0 * 780) / 1200, 0.7, 0.92)
-
-    # Reference Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    # _check_walls(hpxml, 1200, (16.67 * 420 + 4.0 * 780) / 1200, 0.75, 0.9)
-
-    # IAD Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    # _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
-
-    # IAD Reference Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    # _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
-
     hpxml_name = 'base-enclosure-garage.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml, 1760, (23.0 * 1200 + 4.0 * 560) / 1760, 0.7, 0.92)
+    _check_walls(hpxml, 1873, (23.0 * 1200 + 4.0 * 673) / 1873, 0.7, 0.92)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml, 1760, (16.67 * 1200 + 4.0 * 560) / 1760, 0.75, 0.9)
+    _check_walls(hpxml, 1873, (16.67 * 1200 + 4.0 * 673) / 1873, 0.75, 0.9)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
+    _check_walls(hpxml, 2468.52, (23.0 * 2355.52 + 4.0 * 113) / 2468.52, 0.7, 0.92)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
+    _check_walls(hpxml, 2468.52, (16.67 * 2355.52 + 4.0 * 113) / 2468.52, 0.75, 0.9)
   end
 
   def test_enclosure_rim_joists
