@@ -2068,6 +2068,7 @@ class EnergyRatingIndex301Ruleset
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
 
       has_mech_vent = true
+      next unless (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
       if orig_ventilation_fan.tested_flow_rate.nil? || ((a_ext < 0.5) && (orig_ventilation_fan.fan_type == HPXML::MechVentTypeExhaust))
         min_nach = 0.30
       end

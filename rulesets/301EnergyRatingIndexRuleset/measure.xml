@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>a9713f18-3da7-4019-be41-8beba6cf0f6e</version_id>
-  <version_modified>20200528T012408Z</version_modified>
+  <version_id>7a7d3060-4b9f-4232-9b71-668524ed5373</version_id>
+  <version_modified>20200528T195314Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -124,22 +124,10 @@
       <checksum>900D9326</checksum>
     </file>
     <file>
-      <filename>test_ventilation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>66B6F707</checksum>
-    </file>
-    <file>
       <filename>test_enclosure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>E4A12057</checksum>
-    </file>
-    <file>
-      <filename>301.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>4A49E38C</checksum>
     </file>
     <file>
       <filename>test_appliances.rb</filename>
@@ -152,6 +140,18 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>227F8793</checksum>
+    </file>
+    <file>
+      <filename>test_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>98A72885</checksum>
+    </file>
+    <file>
+      <filename>301.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>223842BB</checksum>
     </file>
   </files>
 </measure>
