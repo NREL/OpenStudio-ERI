@@ -1072,7 +1072,6 @@ class EnergyRatingIndex301Ruleset
     exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
     # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
-    # Note: Area is incorrect in 301-2014 table, should be “Area: Same as Energy Rating Reference Home”
     if exterior_area > 0
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
                           wall_idref: 'WallArea',

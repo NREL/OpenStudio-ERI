@@ -104,13 +104,28 @@ Air leakage can be provided in one of three ways:
 
 In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``AirInfiltrationMeasurement/InfiltrationVolume``.
 
-Vented Attics/Crawlspaces
-*************************
+Attics
+******
 
-The ventilation rate for vented attics (or vented crawlspaces) can be specified using an ``Attic`` (or ``Foundation``) element.
-First, define the ``AtticType`` as ``Attic[Vented='true']`` (or ``FoundationType`` as ``Crawlspace[Vented='true']``).
-Then specify the specific leakage area (SLA) using the ``VentilationRate[UnitofMeasure='SLA']/Value`` element.
-For vented attics, the natural air changes per hour (nACH) can instead be specified using ``UnitofMeasure='ACHnatural'``.
+If the building has an unvented attic, an ``Enclosure/Attics/Attic/AtticType/Attic[Vented='false']`` element must be defined.
+It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
+
+If the building has a vented attic, an ``Enclosure/Attics/Attic/AtticType/Attic[Vented='true']`` element may be defined in order to specify the ventilation rate.
+The ventilation rate can be entered as a specific leakage area using ``VentilationRate[UnitofMeasure='SLA']/Value`` or as natural air changes per hour using ``VentilationRate[UnitofMeasure='ACHnatural']/Value``.
+If the ventilation rate is not provided, the ERI 301 Standard Reference Home defaults will be used.
+
+Foundations
+***********
+
+If the building has an unconditioned basement, an ``Enclosure/Foundations/Foundation/FoundationType/Basement[Conditioned='false']`` element must be defined.
+It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
+In addition, the ``ThermalBoundary`` element must be specified as either "foundation wall" or "frame floor".
+
+If the building has an unvented crawlspace, an ``Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='false']`` element must be defined.
+It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
+
+If the building has a vented crawlspace, an ``Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='true']`` element may be defined in order to specify the ventilation rate.
+The ventilation rate can be entered as a specific leakage area using ``VentilationRate[UnitofMeasure='SLA']/Value``.
 If the ventilation rate is not provided, the ERI 301 Standard Reference Home defaults will be used.
 
 Roofs
