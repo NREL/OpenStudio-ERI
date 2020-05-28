@@ -2075,14 +2075,81 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_hot_water(test_num, curr_val, base_val = nil, mn_val = nil)
-    # FIXME: Waiting on official results
+    # Table 4.6.2(1): Acceptance Criteria for Hot Water Tests
+    if test_num == 1
+      min_max_abs = [19.52, 19.72]
+    elsif test_num == 2
+      min_max_abs = [25.95, 26.33]
+      min_max_base_delta_percent = [-33.69, -32.76]
+    elsif test_num == 3
+      min_max_abs = [17.42, 17.49]
+      min_max_base_delta_percent = [10.60, 11.48]
+    elsif test_num == 4
+      min_max_abs = [25.12, 25.50]
+      min_max_base_delta_percent = [3.14, 3.19]
+    elsif test_num == 5
+      min_max_abs = [56.38, 57.10]
+      min_max_base_delta_percent = [-117.33, -116.82]
+    elsif test_num == 6
+      min_max_abs = [22.79, 23.08]
+      min_max_base_delta_percent = [12.15, 12.35]
+    elsif test_num == 7
+      min_max_abs = [20.69, 20.91]
+      min_max_base_delta_percent = [20.25, 20.61]
+    elsif test_num == 8
+      min_max_abs = [10.98, 11.01]
+      min_max_mn_delta_percent = [43.59, 44.33]
+    elsif test_num == 9
+      min_max_abs = [13.59, 13.66]
+      min_max_base_delta_percent = [-24.27, -23.56]
+      min_max_mn_delta_percent = [47.58, 48.17]
+    elsif test_num == 10
+      min_max_abs = [9.02, 9.13]
+      min_max_base_delta_percent = [16.99, 17.91]
+      min_max_mn_delta_percent = [47.68, 48.31]
+    elsif test_num == 11
+      min_max_abs = [13.27, 13.34]
+      min_max_base_delta_percent = [2.32, 2.36]
+      min_max_mn_delta_percent = [47.12, 47.73]
+    elsif test_num == 12
+      min_max_abs = [31.13, 31.25]
+      min_max_base_delta_percent = [-129.08, -128.80]
+      min_max_mn_delta_percent = [44.73, 45.32]
+    elsif test_num == 13
+      min_max_abs = [12.31, 12.37]
+      min_max_base_delta_percent = [9.39, 9.49]
+      min_max_mn_delta_percent = [45.91, 46.49]
+    elsif test_num == 14
+      min_max_abs = [12.06, 12.12]
+      min_max_base_delta_percent = [11.22, 11.29]
+      min_max_mn_delta_percent = [41.61, 42.13]
+    else
+      fail 'Unexpected test.'
+    end
+
+    base_delta_percent = nil
+    mn_delta_percent = nil
+    if (not min_max_base_delta_percent.nil?) && (not base_val.nil?)
+      base_delta_percent = (base_val - curr_val) / base_val * 100.0 # %
+    end
+    if (not min_max_mn_delta_percent.nil?) && (not mn_val.nil?)
+      mn_delta_percent = (mn_val - curr_val) / mn_val * 100.0 # %
+    end
+
+    assert_operator(curr_val, :>=, min_max_abs[0])
+    assert_operator(curr_val, :<=, min_max_abs[1])
+    if not base_delta_percent.nil?
+      assert_operator(base_delta_percent, :>=, min_max_base_delta_percent[0])
+      assert_operator(base_delta_percent, :<=, min_max_base_delta_percent[1])
+    end
+    if not mn_delta_percent.nil?
+      assert_operator(mn_delta_percent, :>=, min_max_mn_delta_percent[0])
+      assert_operator(mn_delta_percent, :<=, min_max_mn_delta_percent[1])
+    end
   end
 
   def _check_hot_water_301_2019_pre_addendum_a(test_num, curr_val, base_val = nil, mn_val = nil)
     # Table 4.6.2(1): Acceptance Criteria for Hot Water Tests
-    min_max_abs = nil
-    min_max_base_delta_percent = nil
-    min_max_mn_delta_percent = nil
     if test_num == 1
       min_max_abs = [19.11, 19.73]
     elsif test_num == 2
@@ -2143,24 +2210,20 @@ class EnergyRatingIndexTest < Minitest::Test
       mn_delta_percent = (mn_val - curr_val) / mn_val * 100.0 # %
     end
 
-    assert_operator(curr_val, :>, min_max_abs[0])
-    assert_operator(curr_val, :<, min_max_abs[1])
+    assert_operator(curr_val, :>=, min_max_abs[0])
+    assert_operator(curr_val, :<=, min_max_abs[1])
     if not base_delta_percent.nil?
-      assert_operator(base_delta_percent, :>, min_max_base_delta_percent[0])
-      assert_operator(base_delta_percent, :<, min_max_base_delta_percent[1])
+      assert_operator(base_delta_percent, :>=, min_max_base_delta_percent[0])
+      assert_operator(base_delta_percent, :<=, min_max_base_delta_percent[1])
     end
     if not mn_delta_percent.nil?
-      assert_operator(mn_delta_percent, :>, min_max_mn_delta_percent[0])
-      assert_operator(mn_delta_percent, :<, min_max_mn_delta_percent[1])
+      assert_operator(mn_delta_percent, :>=, min_max_mn_delta_percent[0])
+      assert_operator(mn_delta_percent, :<=, min_max_mn_delta_percent[1])
     end
   end
 
   def _check_hot_water_301_2014_pre_addendum_a(test_num, curr_val, base_val = nil, mn_val = nil)
     # Acceptance criteria from Hot Water Performance Tests Excel spreadsheet
-    min_max_abs = nil
-    min_max_fl_delta_abs = nil
-    min_max_base_delta_percent = nil
-    min_max_fl_delta_percent = nil
     if test_num == 1
       min_max_abs = [18.2, 22.0]
     elsif test_num == 2
@@ -2193,20 +2256,20 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     if not min_max_abs.nil?
-      assert_operator(curr_val, :>, min_max_abs[0])
-      assert_operator(curr_val, :<, min_max_abs[1])
+      assert_operator(curr_val, :>=, min_max_abs[0])
+      assert_operator(curr_val, :<=, min_max_abs[1])
     end
     if not base_delta.nil?
-      assert_operator(base_delta, :>, min_max_base_delta_percent[0])
-      assert_operator(base_delta, :<, min_max_base_delta_percent[1])
+      assert_operator(base_delta, :>=, min_max_base_delta_percent[0])
+      assert_operator(base_delta, :<=, min_max_base_delta_percent[1])
     end
     if not fl_delta.nil?
-      assert_operator(fl_delta, :>, min_max_fl_delta_abs[0])
-      assert_operator(fl_delta, :<, min_max_fl_delta_abs[1])
+      assert_operator(fl_delta, :>=, min_max_fl_delta_abs[0])
+      assert_operator(fl_delta, :<=, min_max_fl_delta_abs[1])
     end
     if not fl_delta_percent.nil?
-      assert_operator(fl_delta_percent, :>, min_max_fl_delta_percent[0])
-      assert_operator(fl_delta_percent, :<, min_max_fl_delta_percent[1])
+      assert_operator(fl_delta_percent, :>=, min_max_fl_delta_percent[0])
+      assert_operator(fl_delta_percent, :<=, min_max_fl_delta_percent[1])
     end
   end
 
