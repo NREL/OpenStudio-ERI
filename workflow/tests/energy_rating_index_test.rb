@@ -85,6 +85,8 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls, csvs, runtime = _run_eri(xml2014, test_name, hourly_output: true)
       all_results[File.basename(xml2014)] = _get_csv_results(csvs[:results])
       all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
+
+      File.delete(xml2014)
     end
     assert(all_results.size > 0)
 
