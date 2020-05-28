@@ -113,11 +113,11 @@ class ApplianceTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_clothes_washer(hpxml, nil, 0.331, 704, 0.08, 0.58, 23, 2.874, HPXML::LocationLivingSpace)
-    _check_clothes_dryer(hpxml, HPXML::FuelTypeElectricity, nil, 2.62, HPXML::ClothesDryerControlTypeTimer, HPXML::LocationLivingSpace)
-    _check_dishwasher(hpxml, nil, 467, 12, HPXML::LocationLivingSpace)
-    _check_refrigerator(hpxml, 691.0, HPXML::LocationLivingSpace)
-    _check_cooking_range(hpxml, HPXML::FuelTypeElectricity, false, false, HPXML::LocationLivingSpace)
+    _check_clothes_washer(hpxml, nil, 0.331, 704, 0.08, 0.58, 23, 2.874, HPXML::LocationBasementUnconditioned)
+    _check_clothes_dryer(hpxml, HPXML::FuelTypeElectricity, nil, 2.62, HPXML::ClothesDryerControlTypeTimer, HPXML::LocationBasementUnconditioned)
+    _check_dishwasher(hpxml, nil, 467, 12, HPXML::LocationBasementUnconditioned)
+    _check_refrigerator(hpxml, 691.0, HPXML::LocationBasementUnconditioned)
+    _check_cooking_range(hpxml, HPXML::FuelTypeElectricity, false, false, HPXML::LocationBasementUnconditioned)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
