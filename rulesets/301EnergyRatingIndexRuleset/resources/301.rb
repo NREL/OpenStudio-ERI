@@ -1755,7 +1755,7 @@ class EnergyRatingIndex301Ruleset
     clothes_washer = orig_hpxml.clothes_washers[0]
     reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
-                                  location: HPXML::LocationLivingSpace,
+                                  location: clothes_washer.location.gsub('unvented', 'vented'),
                                   integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
                                   rated_annual_kwh: reference_values[:rated_annual_kwh],
                                   label_electric_rate: reference_values[:label_electric_rate],
@@ -1788,13 +1788,14 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
+    new_hpxml.clothes_washers[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     clothes_dryer = orig_hpxml.clothes_dryers[0]
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, clothes_dryer.fuel_type)
     new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
-                                 location: HPXML::LocationLivingSpace,
+                                 location: clothes_dryer.location.gsub('unvented', 'vented'),
                                  fuel_type: clothes_dryer.fuel_type,
                                  combined_energy_factor: reference_values[:combined_energy_factor],
                                  control_type: reference_values[:control_type])
@@ -1813,13 +1814,14 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+    new_hpxml.clothes_dryers[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     dishwasher = orig_hpxml.dishwashers[0]
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: dishwasher.id,
-                              location: HPXML::LocationLivingSpace,
+                              location: dishwasher.location.gsub('unvented', 'vented'),
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
                               place_setting_capacity: reference_values[:place_setting_capacity],
@@ -1854,13 +1856,14 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
+    new_hpxml.dishwashers[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     refrigerator = orig_hpxml.refrigerators[0]
     reference_values = HotWaterAndAppliances.get_refrigerator_default_values(@nbeds)
     new_hpxml.refrigerators.add(id: refrigerator.id,
-                                location: HPXML::LocationLivingSpace,
+                                location: refrigerator.location.gsub('unvented', 'vented'),
                                 rated_annual_kwh: reference_values[:rated_annual_kwh])
   end
 
@@ -1874,6 +1877,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
+    new_hpxml.refrigerators[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
@@ -1881,7 +1885,7 @@ class EnergyRatingIndex301Ruleset
     oven = orig_hpxml.ovens[0]
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: cooking_range.id,
-                                 location: HPXML::LocationLivingSpace,
+                                 location: cooking_range.location.gsub('unvented', 'vented'),
                                  fuel_type: cooking_range.fuel_type,
                                  is_induction: reference_values[:is_induction])
     new_hpxml.ovens.add(id: oven.id,
@@ -1902,6 +1906,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_cooking_range_oven_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+    new_hpxml.cooking_ranges[0].location = HPXML::LocationLivingSpace
   end
 
   def self.set_lighting_reference(orig_hpxml, new_hpxml)
@@ -2260,7 +2265,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                        location: HPXML::LocationLivingSpace, # TODO => 301 Standard doesn't specify the location
+                                        location: HPXML::LocationLivingSpace,
                                         performance_adjustment: 1.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,
