@@ -296,6 +296,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
     @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+    @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
@@ -303,22 +304,28 @@ class EnergyRatingIndex301Ruleset
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
                                                 air_leakage: ach50.round(2),
-                                                infiltration_volume: @infil_volume)
+                                                infiltration_volume: @infil_volume,
+                                                infiltration_height: @infil_height,
+                                                a_ext: @infil_a_ext.round(3))
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
     @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+    @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     new_hpxml.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
                                                 air_leakage: ach50.round(2),
-                                                infiltration_volume: @infil_volume)
+                                                infiltration_volume: @infil_volume,
+                                                infiltration_height: @infil_height,
+                                                a_ext: @infil_a_ext.round(3))
   end
 
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
     @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+    @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
@@ -329,7 +336,9 @@ class EnergyRatingIndex301Ruleset
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
                                                 air_leakage: ach50,
-                                                infiltration_volume: @infil_volume)
+                                                infiltration_volume: @infil_volume,
+                                                infiltration_height: @infil_height,
+                                                a_ext: @infil_a_ext.round(3))
   end
 
   def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
@@ -1389,7 +1398,7 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, fan_type, orig_hpxml)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, fan_type)
 
     if fan_type.nil?
       fan_type = HPXML::MechVentTypeExhaust
@@ -1498,7 +1507,7 @@ class EnergyRatingIndex301Ruleset
       break
     end
     fan_type = HPXML::MechVentTypeBalanced
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, fan_type)
 
     new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                    fan_type: fan_type,
@@ -2049,14 +2058,12 @@ class EnergyRatingIndex301Ruleset
       break unless ach50.nil?
     end
 
-    tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
-    a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
-
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
         cfm50 = ach50 * @infil_volume / 60.0
+        tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
         if cfm50 / tot_cb_area <= 0.30
-          ach50 *= a_ext
+          ach50 *= @infil_a_ext
         end
       end
     end
@@ -2069,7 +2076,7 @@ class EnergyRatingIndex301Ruleset
 
       has_mech_vent = true
       next unless (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
-      if orig_ventilation_fan.tested_flow_rate.nil? || ((a_ext < 0.5) && (orig_ventilation_fan.fan_type == HPXML::MechVentTypeExhaust))
+      if orig_ventilation_fan.tested_flow_rate.nil? || ((@infil_a_ext < 0.5) && (orig_ventilation_fan.fan_type == HPXML::MechVentTypeExhaust))
         min_nach = 0.30
       end
     end
@@ -2093,7 +2100,7 @@ class EnergyRatingIndex301Ruleset
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
     q_tot = calc_mech_vent_q_tot()
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
+    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type)
     return q_fan_power
   end
 
@@ -2101,18 +2108,16 @@ class EnergyRatingIndex301Ruleset
     return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
+  def self.calc_mech_vent_q_fan(q_tot, sla, fan_type)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
-      tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
-      a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
       if [HPXML::MechVentTypeBalanced, HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? fan_type
         phi = 1.0
       else
         phi = q_inf / q_tot
       end
-      q_fan = q_tot - phi * (q_inf * a_ext)
+      q_fan = q_tot - phi * (q_inf * @infil_a_ext)
     else
       if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
         # No infiltration credit for attached/multifamily
@@ -2129,7 +2134,8 @@ class EnergyRatingIndex301Ruleset
     return [q_fan, 0].max
   end
 
-  def self.calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
+  def self.calc_mech_vent_Aext_ratio(hpxml)
+    tot_cb_area, ext_cb_area = hpxml.compartmentalization_boundary_areas()
     if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeManufactured].include? @bldg_type
       return 1.0
     end
