@@ -15,7 +15,6 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
-      hpxml.to_oga # FIXME: Needed for eRatio workaround
       hpxml = apply_reference_home_ruleset(hpxml)
     end
 
@@ -178,9 +177,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml = HPXML.new
 
     @eri_version = orig_hpxml.header.eri_calculation_version
-    # FIXME: Switch when 301-2019 is ready
-    # @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
-    @eri_version = '2014ADEGL' if @eri_version == 'latest'
+    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
     new_hpxml.header.xml_type = orig_hpxml.header.xml_type
     new_hpxml.header.xml_generated_by = 'OpenStudio-ERI'
@@ -196,7 +193,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.remove_surfaces_from_iad(orig_hpxml)
-    # Remove garage surfaces and adiabatic walls.
+    # Remove garage, multifamily buffer, and adiabatic surfaces as appropriate.
 
     # Garage only
     (orig_hpxml.roofs + orig_hpxml.frame_floors + orig_hpxml.slabs).each do |orig_surface|
@@ -206,10 +203,10 @@ class EnergyRatingIndex301Ruleset
       orig_surface.delete
     end
 
-    # Garage and adiabatic
+    # Garage, multifamily buffer, and adiabatic
     (orig_hpxml.rim_joists + orig_hpxml.walls + orig_hpxml.foundation_walls).each do |orig_surface|
-      next unless [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_surface.interior_adjacent_to) ||
-                  [HPXML::LocationGarage, HPXML::LocationOtherHousingUnit].include?(orig_surface.exterior_adjacent_to)
+      next unless [HPXML::LocationGarage, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherHousingUnit].include?(orig_surface.interior_adjacent_to) ||
+                  [HPXML::LocationGarage, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherHousingUnit].include?(orig_surface.exterior_adjacent_to)
 
       orig_surface.delete
     end
@@ -300,11 +297,8 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
     @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
 
-    # Table 4.2.2(1) - Air exchange rate
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
-
-    # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
@@ -315,11 +309,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
     @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
 
-    # Table 4.2.2(1) - Air exchange rate
-
-    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml, false)
-
-    # Air Infiltration
+    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     new_hpxml.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
@@ -330,14 +320,11 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
     @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
 
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
     elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
       ach50 = 3.0
     end
-
-    # Air Infiltration
     new_hpxml.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                 house_pressure: 50,
                                                 unit_of_measure: HPXML::UnitsACH,
@@ -404,8 +391,7 @@ class EnergyRatingIndex301Ruleset
       next unless orig_foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
 
       vented_crawl_sla = orig_foundation.vented_crawlspace_sla
-      if vented_crawl_sla.nil? || (vented_crawl_sla < reference_crawlspace_sla)
-        # FUTURE: Allow approved ground cover
+      if vented_crawl_sla.nil? || (vented_crawl_sla < reference_crawlspace_sla) # FUTURE: Allow approved ground cover
         vented_crawl_sla = reference_crawlspace_sla
       end
       new_hpxml.foundations.add(id: orig_foundation.id,
@@ -651,23 +637,6 @@ class EnergyRatingIndex301Ruleset
                         solar_absorptance: avg_solar_abs,
                         emittance: avg_emittance,
                         insulation_assembly_r_value: avg_r_value)
-
-    # Preserve non-thermal boundary walls adjacent to attic
-    orig_hpxml.walls.each do |orig_wall|
-      next if orig_wall.is_thermal_boundary
-      next unless [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include? orig_wall.interior_adjacent_to
-
-      new_hpxml.walls.add(id: orig_wall.id,
-                          exterior_adjacent_to: orig_wall.exterior_adjacent_to,
-                          interior_adjacent_to: orig_wall.interior_adjacent_to,
-                          wall_type: orig_wall.wall_type,
-                          area: orig_wall.area,
-                          azimuth: orig_wall.azimuth,
-                          solar_absorptance: orig_wall.solar_absorptance,
-                          emittance: orig_wall.emittance,
-                          insulation_id: orig_wall.insulation_id,
-                          insulation_assembly_r_value: orig_wall.insulation_assembly_r_value)
-    end
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
@@ -971,6 +940,14 @@ class EnergyRatingIndex301Ruleset
 
     shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
 
+    fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
+    if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+      if (orig_hpxml.fraction_of_windows_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+        # Disable natural ventilation
+        fraction_operable = 0.0
+      end
+    end
+
     # Create equally distributed windows
     for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
       new_hpxml.windows.add(id: "WindowArea#{orientation}",
@@ -980,6 +957,7 @@ class EnergyRatingIndex301Ruleset
                             shgc: shgc,
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
+                            fraction_operable: fraction_operable,
                             wall_idref: 'WallArea')
     end
   end
@@ -999,6 +977,7 @@ class EnergyRatingIndex301Ruleset
                             overhangs_distance_to_bottom_of_window: orig_window.overhangs_distance_to_bottom_of_window,
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
+                            fraction_operable: orig_window.fraction_operable,
                             wall_idref: orig_window.wall_idref)
     end
   end
@@ -1010,6 +989,9 @@ class EnergyRatingIndex301Ruleset
     avg_ufactor = calc_area_weighted_avg(ext_thermal_bndry_windows, :ufactor, backup_value: ref_ufactor)
     avg_shgc = calc_area_weighted_avg(ext_thermal_bndry_windows, :shgc, backup_value: ref_shgc)
 
+    # Default natural ventilation
+    fraction_operable = Airflow.get_default_fraction_of_windows_operable()
+
     # Create equally distributed windows
     for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
       new_hpxml.windows.add(id: "WindowArea#{orientation}",
@@ -1019,6 +1001,7 @@ class EnergyRatingIndex301Ruleset
                             shgc: avg_shgc,
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
+                            fraction_operable: fraction_operable,
                             wall_idref: 'WallArea')
     end
   end
@@ -1056,15 +1039,18 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
-    # Table 4.2.2(1) - Doors
     ufactor, shgc = get_reference_glazing_ufactor_shgc()
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new door
-    new_hpxml.doors.add(id: 'DoorAreaNorth',
-                        wall_idref: 'WallArea',
-                        area: get_reference_door_area(),
-                        azimuth: 0,
-                        r_value: 1.0 / ufactor)
+    # Create new exterior door
+    if exterior_area > 0
+      new_hpxml.doors.add(id: 'ExteriorDoorArea',
+                          wall_idref: 'WallArea',
+                          area: exterior_area,
+                          azimuth: 0,
+                          r_value: 1.0 / ufactor)
+    end
+    # TODO: Create adiabatic wall/door?
   end
 
   def self.set_enclosure_doors_rated(orig_hpxml, new_hpxml)
@@ -1082,15 +1068,18 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
     ext_thermal_bndry_doors = orig_hpxml.doors.select { |door| door.is_exterior_thermal_boundary }
     ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
-    avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: ref_ufactor)
+    avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: 1.0 / ref_ufactor)
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new door (since it's impossible to preserve the Rated Home's door orientation)
-    # Note: Area is incorrect in table, should be “Area: Same as Energy Rating Reference Home”
-    new_hpxml.doors.add(id: 'DoorAreaNorth',
-                        wall_idref: 'WallArea',
-                        area: get_reference_door_area(),
-                        azimuth: 0,
-                        r_value: avg_r_value)
+    # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
+    if exterior_area > 0
+      new_hpxml.doors.add(id: 'ExteriorDoorArea',
+                          wall_idref: 'WallArea',
+                          area: exterior_area,
+                          azimuth: 0,
+                          r_value: avg_r_value)
+    end
+    # TODO: Create adiabatic wall/door?
   end
 
   def self.set_systems_hvac_reference(orig_hpxml, new_hpxml)
@@ -1383,17 +1372,9 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
     orig_mech_vent_fan = nil
-
-    # Check for eRatio workaround first
-    eratio_fan = XMLHelper.get_element(orig_hpxml.doc, "/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation='true']/extension/OverrideVentilationFan")
-    if not eratio_fan.nil?
-      orig_mech_vent_fan = HPXML::VentilationFan.new(orig_hpxml, eratio_fan)
-    else
-      orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
-        next unless orig_ventilation_fan.used_for_whole_building_ventilation
-
-        orig_mech_vent_fan = orig_ventilation_fan
-      end
+    orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
+      next unless orig_ventilation_fan.used_for_whole_building_ventilation
+      orig_mech_vent_fan = orig_ventilation_fan
     end
 
     fan_type = nil
@@ -1406,31 +1387,25 @@ class EnergyRatingIndex301Ruleset
     q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm for airflow rate using Reference Home infiltration
-    # http://www.resnet.us/standards/Interpretation_on_Reference_Home_Air_Exchange_Rate_approved.pdf
+    # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla)
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, fan_type, orig_hpxml)
 
     if fan_type.nil?
       fan_type = HPXML::MechVentTypeExhaust
       fan_power_w = 0.0
     else
-      q_fan_power = calc_rated_home_qfan(orig_hpxml, true) # Use Rated Home fan type
+      q_fan_power = calc_rated_home_qfan(orig_hpxml, fan_type) # Use Rated Home fan type
 
       # Treat CFIS like supply ventilation
       if fan_type == HPXML::MechVentTypeCFIS
         fan_type = HPXML::MechVentTypeSupply
       end
 
-      fan_power_w = nil
-      if (fan_type == HPXML::MechVentTypeSupply) || (fan_type == HPXML::MechVentTypeExhaust)
-        w_cfm = 0.35
-        fan_power_w = w_cfm * q_fan_power
-      elsif fan_type == HPXML::MechVentTypeBalanced
-        w_cfm = 0.70
-        fan_power_w = w_cfm * q_fan_power
-      elsif (fan_type == HPXML::MechVentTypeERV) || (fan_type == HPXML::MechVentTypeHRV)
-        w_cfm = 1.00
-        fan_power_w = w_cfm * q_fan_power
+      fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(fan_type)
+      fan_power_w = fan_w_per_cfm * q_fan_power
+
+      if (fan_type == HPXML::MechVentTypeERV) || (fan_type == HPXML::MechVentTypeHRV)
         fan_type = HPXML::MechVentTypeBalanced
       end
     end
@@ -1448,23 +1423,53 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
 
-      # Calculate min airflow rate
-      min_q_fan = calc_rated_home_qfan(orig_hpxml, false)
-
-      fan_w_per_cfm = orig_ventilation_fan.fan_power / orig_ventilation_fan.tested_flow_rate
-      q_fan = orig_ventilation_fan.tested_flow_rate * orig_ventilation_fan.hours_in_operation / 24.0
-      hours_in_operation = orig_ventilation_fan.hours_in_operation
-      if q_fan < min_q_fan
-        # First try increasing operation to meet minimum
-        hours_in_operation = [min_q_fan / q_fan * hours_in_operation, 24].min
-        q_fan = orig_ventilation_fan.tested_flow_rate * hours_in_operation / 24.0
-      end
       tested_flow_rate = orig_ventilation_fan.tested_flow_rate
-      if q_fan < min_q_fan
-        # Finally resort to increasing airflow rate
-        tested_flow_rate *= min_q_fan / q_fan
+      fan_power = orig_ventilation_fan.fan_power
+      hours_in_operation = orig_ventilation_fan.hours_in_operation
+
+      # Calculate min airflow rate
+      min_q_fan = calc_rated_home_qfan(orig_hpxml, orig_ventilation_fan.fan_type)
+      if tested_flow_rate.nil?
+        # Calculate airflow rate based on increased infiltration rate
+        tested_flow_rate = min_q_fan
+        if fan_power.nil?
+          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_ventilation_fan.fan_type)
+          if orig_ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+            # For CFIS systems, the cfm used to determine fan watts shall be the larger of
+            # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
+            htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_ventilation_fan.distribution_system)
+            q_fan = [400.0 * clg_cap / 12000.0, 240.0 * htg_cap / 12000.0].max
+            fan_power = fan_w_per_cfm * q_fan
+          else
+            fan_power = fan_w_per_cfm * tested_flow_rate
+          end
+        end
+        hours_in_operation = 24
+        if tested_flow_rate <= 0
+          # Where a Rated Home has mechanical ventilation but the flowrate has not been measured ...
+          # and where Qfan ≤ 0 (cfm) ... Rated Home fan energy shall be zero.
+          # https://www.resnet.us/wp-content/uploads/IR-301-2019-001-FanEnergyUnmeasuredMechVentilation_final.pdf
+          fan_power = 0
+        end
+      else
+        if fan_power.nil?
+          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_ventilation_fan.fan_type)
+        else
+          fan_w_per_cfm = fan_power / tested_flow_rate
+        end
+        q_fan = tested_flow_rate * hours_in_operation / 24.0
+        if q_fan < min_q_fan
+          # First try increasing operation to meet minimum
+          hours_in_operation = [min_q_fan / q_fan * hours_in_operation, 24.0].min
+          q_fan = tested_flow_rate * hours_in_operation / 24.0
+        end
+        if q_fan < min_q_fan
+          # Finally resort to increasing airflow rate
+          tested_flow_rate *= min_q_fan / q_fan
+          q_fan = tested_flow_rate * hours_in_operation / 24.0
+        end
+        fan_power = fan_w_per_cfm * tested_flow_rate
       end
-      fan_power = fan_w_per_cfm * tested_flow_rate
 
       new_hpxml.ventilation_fans.add(id: orig_ventilation_fan.id,
                                      fan_type: orig_ventilation_fan.fan_type,
@@ -1481,9 +1486,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Whole-House Mechanical ventilation fan energy
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Air exchange rate
-
     q_tot = calc_mech_vent_q_tot()
 
     # Calculate fan cfm
@@ -1496,7 +1498,7 @@ class EnergyRatingIndex301Ruleset
       break
     end
     fan_type = HPXML::MechVentTypeBalanced
-    q_fan = calc_mech_vent_q_fan(q_tot, sla)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
 
     new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                    fan_type: fan_type,
@@ -1786,7 +1788,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
     new_hpxml.clothes_washers[0].location = HPXML::LocationLivingSpace
   end
@@ -1812,7 +1813,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     new_hpxml.clothes_dryers[0].location = HPXML::LocationLivingSpace
   end
@@ -1854,7 +1854,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     new_hpxml.dishwashers[0].location = HPXML::LocationLivingSpace
   end
@@ -1875,7 +1874,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     new_hpxml.refrigerators[0].location = HPXML::LocationLivingSpace
   end
@@ -1904,7 +1902,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_cooking_range_oven_iad(orig_hpxml, new_hpxml)
-    # Table 4.3.1(1) Configuration of Index Adjustment Design - Lighting, Appliances and Miscellaneous Electric Loads (MELs)
     set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
     new_hpxml.cooking_ranges[0].location = HPXML::LocationLivingSpace
   end
@@ -2032,18 +2029,10 @@ class EnergyRatingIndex301Ruleset
     return ef.round(2), re
   end
 
-  def self.calc_rated_home_infiltration_ach50(orig_hpxml, use_eratio_workaround)
+  def self.calc_rated_home_infiltration_ach50(orig_hpxml)
     air_infiltration_measurements = []
-    # Check for eRatio workaround first
-    if use_eratio_workaround
-      XMLHelper.get_elements(orig_hpxml.doc, '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement/extension/OverrideAirInfiltrationMeasurement').each do |infil_measurement|
-        air_infiltration_measurements << HPXML::AirInfiltrationMeasurement.new(orig_hpxml, infil_measurement)
-      end
-    end
-    if air_infiltration_measurements.empty?
-      orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
-        air_infiltration_measurements << orig_infil_measurement
-      end
+    orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
+      air_infiltration_measurements << orig_infil_measurement
     end
 
     ach50 = nil
@@ -2060,15 +2049,36 @@ class EnergyRatingIndex301Ruleset
       break unless ach50.nil?
     end
 
+    tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
+    a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
+
+    if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+      if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+        cfm50 = ach50 * @infil_volume / 60.0
+        if cfm50 / tot_cb_area <= 0.30
+          ach50 *= a_ext
+        end
+      end
+    end
+
+    # Apply min Natural ACH?
+    min_nach = nil
     has_mech_vent = false
     orig_hpxml.ventilation_fans.each do |orig_ventilation_fan|
       next unless orig_ventilation_fan.used_for_whole_building_ventilation
 
       has_mech_vent = true
+      next unless (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+      if orig_ventilation_fan.tested_flow_rate.nil? || ((a_ext < 0.5) && (orig_ventilation_fan.fan_type == HPXML::MechVentTypeExhaust))
+        min_nach = 0.30
+      end
     end
 
     if not has_mech_vent
       min_nach = 0.30
+    end
+
+    if not min_nach.nil?
       min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @infil_height, @weather)
       min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infil_volume)
       if ach50 < min_ach50
@@ -2079,32 +2089,52 @@ class EnergyRatingIndex301Ruleset
     return ach50
   end
 
-  def self.calc_rated_home_qfan(orig_hpxml, use_eratio_workaround)
-    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml, use_eratio_workaround)
+  def self.calc_rated_home_qfan(orig_hpxml, fan_type)
+    ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
     q_tot = calc_mech_vent_q_tot()
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla)
+    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
+    return q_fan_power
   end
 
   def self.calc_mech_vent_q_tot()
     return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla)
-    if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-      # No infiltration credit for attached/multifamily
-      return q_tot
-    end
-
+  def self.calc_mech_vent_q_fan(q_tot, sla, fan_type, orig_hpxml)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-    if q_inf > 2.0 / 3.0 * q_tot
-      q_fan = q_tot - 2.0 / 3.0 * q_tot
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
+      tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
+      a_ext = calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
+      if [HPXML::MechVentTypeBalanced, HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? fan_type
+        phi = 1.0
+      else
+        phi = q_inf / q_tot
+      end
+      q_fan = q_tot - phi * (q_inf * a_ext)
     else
-      q_fan = q_tot - q_inf
+      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+        # No infiltration credit for attached/multifamily
+        return q_tot
+      end
+
+      if q_inf > 2.0 / 3.0 * q_tot
+        q_fan = q_tot - 2.0 / 3.0 * q_tot
+      else
+        q_fan = q_tot - q_inf
+      end
     end
 
     return [q_fan, 0].max
+  end
+
+  def self.calc_mech_vent_Aext_ratio(tot_cb_area, ext_cb_area)
+    if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeManufactured].include? @bldg_type
+      return 1.0
+    end
+
+    return ext_cb_area / tot_cb_area
   end
 
   def self.get_new_distribution_id(new_hpxml)
@@ -2377,8 +2407,28 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.get_reference_door_area()
-    return 40.0 # ft2
+  def self.get_reference_door_area(orig_hpxml)
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (@bldg_type == HPXML::ResidentialTypeApartment)
+      total_area = 20.0 # ft2
+    else
+      total_area = 40.0 # ft2
+    end
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
+      # Calculate portion of door area that is exterior by preserving ratio from rated home
+      orig_total_area = orig_hpxml.doors.map { |d| d.area }.inject(0, :+)
+      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior }.map { |d| d.area }.inject(0, :+)
+      if orig_total_area <= 0
+        exterior_area = 0
+      else
+        exterior_area = total_area * orig_exterior_area / orig_total_area
+      end
+      interior_area = total_area - exterior_area
+      return exterior_area, interior_area
+    else
+      exterior_area = total_area
+      interior_area = 0.0
+      return exterior_area, interior_area
+    end
   end
 end
 

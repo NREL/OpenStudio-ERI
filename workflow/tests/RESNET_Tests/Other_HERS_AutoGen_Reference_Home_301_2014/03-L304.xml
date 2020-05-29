@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014</Version>
+        <Version>2014A</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -210,17 +210,37 @@
               <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FloorOverFoundation'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+        </FrameFloors>
+        <Slabs>
+          <Slab>
+            <SystemIdentifier id='Slab'/>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1539.0</Area>
-            <Insulation>
-              <SystemIdentifier id='FloorOverFoundationInsulation'/>
-              <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
-            </Insulation>
-          </FrameFloor>
-        </FrameFloors>
+            <Thickness>4.0</Thickness>
+            <ExposedPerimeter>168.0</ExposedPerimeter>
+            <PerimeterInsulationDepth>2.5</PerimeterInsulationDepth>
+            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+            <DepthBelowGrade>0.0</DepthBelowGrade>
+            <PerimeterInsulation>
+              <SystemIdentifier id='SlabPerimeterInsulation'/>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>5.4</NominalRValue>
+              </Layer>
+            </PerimeterInsulation>
+            <UnderSlabInsulation>
+              <SystemIdentifier id='SlabUnderSlabInsulation'/>
+              <Layer>
+                <InstallationType>continuous</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+              </Layer>
+            </UnderSlabInsulation>
+            <extension>
+              <CarpetFraction>1.0</CarpetFraction>
+              <CarpetRValue>2.08</CarpetRValue>
+            </extension>
+          </Slab>
+        </Slabs>
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>
@@ -277,39 +297,89 @@
         </Doors>
       </Enclosure>
       <Systems>
-        <WaterHeating>
-          <WaterHeatingSystem>
-            <SystemIdentifier id='WaterHeater'/>
-            <FuelType>natural gas</FuelType>
-            <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>living space</Location>
-            <TankVolume>40.0</TankVolume>
-            <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <EnergyFactor>0.56</EnergyFactor>
-            <RecoveryEfficiency>0.78</RecoveryEfficiency>
-          </WaterHeatingSystem>
-          <HotWaterDistribution>
-            <SystemIdentifier id='HotWaterDstribution'/>
-            <SystemType>
-              <Standard>
-                <PipingLength>88.46</PipingLength>
-              </Standard>
-            </SystemType>
-            <PipeInsulation>
-              <PipeRValue>0.0</PipeRValue>
-            </PipeInsulation>
-          </HotWaterDistribution>
-          <WaterFixture>
-            <SystemIdentifier id='WaterFixture'/>
-            <WaterFixtureType>shower head</WaterFixtureType>
-            <LowFlow>false</LowFlow>
-          </WaterFixture>
-          <WaterFixture>
-            <SystemIdentifier id='WaterFixture2'/>
-            <WaterFixtureType>faucet</WaterFixtureType>
-            <LowFlow>false</LowFlow>
-          </WaterFixture>
-        </WaterHeating>
+        <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem'/>
+              <HeatingSystemType>
+                <ElectricResistance/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
+              <HeatingCapacity>-1.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+            </HeatingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='CoolingSystem'/>
+              <DistributionSystem idref='HVACDistribution'/>
+              <CoolingSystemType>central air conditioner</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>-1.0</CoolingCapacity>
+              <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>15.0</Value>
+              </AnnualCoolingEfficiency>
+            </CoolingSystem>
+          </HVACPlant>
+          <HVACControl>
+            <SystemIdentifier id='HVACControl'/>
+            <ControlType>manual thermostat</ControlType>
+            <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
+            <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
+          </HVACControl>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution'/>
+            <DistributionSystemType>
+              <AirDistribution>
+                <DuctLeakageMeasurement>
+                  <DuctType>supply</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>0.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <DuctLeakageMeasurement>
+                  <DuctType>return</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>0.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
+                  <DuctLocation>living space</DuctLocation>
+                  <DuctSurfaceArea>308.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
+                  <DuctLocation>living space</DuctLocation>
+                  <DuctSurfaceArea>77.0</DuctSurfaceArea>
+                </Ducts>
+              </AirDistribution>
+            </DistributionSystemType>
+            <ConditionedFloorAreaServed>1539.0</ConditionedFloorAreaServed>
+          </HVACDistribution>
+        </HVAC>
+        <MechanicalVentilation>
+          <VentilationFans>
+            <VentilationFan>
+              <SystemIdentifier id='MechanicalVentilation'/>
+              <FanType>balanced</FanType>
+              <TestedFlowRate>56.2</TestedFlowRate>
+              <HoursInOperation>24.0</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <FanPower>14.7</FanPower>
+            </VentilationFan>
+          </VentilationFans>
+        </MechanicalVentilation>
       </Systems>
       <Appliances>
         <ClothesWasher>

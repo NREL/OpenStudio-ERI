@@ -26,6 +26,9 @@
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
         </Site>
+        <BuildingOccupancy>
+          <NumberofResidents>0.0</NumberofResidents>
+        </BuildingOccupancy>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
@@ -228,6 +231,11 @@
             <Azimuth>0</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
+            <InteriorShading>
+              <SystemIdentifier id='WindowNorthInteriorShading'/>
+              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
+              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+            </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallNorth'/>
           </Window>
@@ -237,6 +245,11 @@
             <Azimuth>90</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
+            <InteriorShading>
+              <SystemIdentifier id='WindowEastInteriorShading'/>
+              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
+              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+            </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallEast'/>
           </Window>
@@ -246,6 +259,11 @@
             <Azimuth>180</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
+            <InteriorShading>
+              <SystemIdentifier id='WindowSouthInteriorShading'/>
+              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
+              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+            </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallSouth'/>
           </Window>
@@ -255,6 +273,11 @@
             <Azimuth>270</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
+            <InteriorShading>
+              <SystemIdentifier id='WindowWestInteriorShading'/>
+              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
+              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+            </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='WallWest'/>
           </Window>
@@ -326,19 +349,19 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
-          <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
-          <RatedAnnualkWh>704.0</RatedAnnualkWh>
-          <LabelElectricRate>0.08</LabelElectricRate>
-          <LabelGasRate>0.58</LabelGasRate>
-          <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
+          <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
+          <RatedAnnualkWh>400.0</RatedAnnualkWh>
+          <LabelElectricRate>0.12</LabelElectricRate>
+          <LabelGasRate>1.09</LabelGasRate>
+          <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
           <LabelUsage>6.0</LabelUsage>
-          <Capacity>2.874</Capacity>
+          <Capacity>3.0</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
-          <CombinedEnergyFactor>2.32</CombinedEnergyFactor>
+          <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
         </ClothesDryer>
         <Dishwasher>
@@ -441,6 +464,25 @@
           </LightingType>
         </LightingGroup>
       </Lighting>
+      <MiscLoads>
+        <PlugLoad>
+          <SystemIdentifier id='PlugLoadMisc'/>
+          <PlugLoadType>other</PlugLoadType>
+          <Load>
+            <Units>kWh/year</Units>
+            <Value>7302.0</Value>
+          </Load>
+          <extension>
+            <FracSensible>0.82</FracSensible>
+            <FracLatent>0.18</FracLatent>
+          </extension>
+        </PlugLoad>
+        <extension>
+          <WeekdayScheduleFractions>0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066</WeekdayScheduleFractions>
+          <WeekendScheduleFractions>0.020, 0.020, 0.020, 0.020, 0.020, 0.034, 0.043, 0.085, 0.050, 0.030, 0.030, 0.041, 0.030, 0.025, 0.026, 0.026, 0.039, 0.042, 0.045, 0.070, 0.070, 0.073, 0.073, 0.066</WeekendScheduleFractions>
+          <MonthlyScheduleMultipliers>1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0</MonthlyScheduleMultipliers>
+        </extension>
+      </MiscLoads>
     </BuildingDetails>
   </Building>
 </HPXML>

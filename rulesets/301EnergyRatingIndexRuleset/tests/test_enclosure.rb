@@ -6,6 +6,7 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'
+require_relative 'util.rb'
 
 class EnclosureTest < MiniTest::Test
   def before_setup
@@ -18,6 +19,7 @@ class EnclosureTest < MiniTest::Test
   end
 
   def test_enclosure_infiltration
+    # Test w/o mech vent
     hpxml_name = 'base.xml'
 
     # Rated Home
@@ -36,6 +38,7 @@ class EnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml, 6.67)
 
+    # Test w/ mech vent
     hpxml_name = 'base-mechvent-exhaust.xml'
 
     # Rated Home
@@ -53,6 +56,98 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml, 6.67)
+
+    # Test w/ unmeasured mech vent
+    # Create derivative file for testing
+    hpxml_name = 'base-mechvent-exhaust.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    vent_fan = hpxml.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
+    vent_fan.tested_flow_rate = nil
+    vent_fan.hours_in_operation = 1
+    vent_fan.fan_power = 1.0
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml, 9.3) # 0.3 nACH
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml, 7.09)
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml, 3.0)
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml, 6.67)
+
+    # Test attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
+    # Create derivative file for testing
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
+                               fan_type: HPXML::MechVentTypeSupply,
+                               tested_flow_rate: 110.0,
+                               hours_in_operation: 24.0,
+                               used_for_whole_building_ventilation: true,
+                               fan_power: 30.0)
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml, 0.32)
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml, 7.09)
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml, 3.0)
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml, 6.67)
+
+    # Test attached dwelling where Aext < 0.5 and exhaust mech vent
+    # Create derivative file for testing
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
+                               fan_type: HPXML::MechVentTypeExhaust,
+                               tested_flow_rate: 110.0,
+                               hours_in_operation: 24.0,
+                               used_for_whole_building_ventilation: true,
+                               fan_power: 30.0)
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml, 10.1)
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml, 7.09)
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml, 3.0)
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml, 6.67)
+
+    # FIXME: Add 301-2014 tests
+    # FIXME: Add tests for new 301-2019 space types HPXML file
   end
 
   def test_enclosure_roofs
@@ -146,23 +241,23 @@ class EnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_roofs(hpxml, 1300, 33.33, 0.75, 0.9)
 
-    # hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Rated Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    # _check_roofs(hpxml, nil, nil, nil, nil)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_roofs(hpxml, nil, nil, nil, nil)
 
     # Reference Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    # _check_roofs(hpxml, nil, nil, nil, nil)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_roofs(hpxml, nil, nil, nil, nil)
 
     # IAD Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    # _check_roofs(hpxml, nil, nil, nil, nil)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_roofs(hpxml, nil, nil, nil, nil)
 
     # IAD Reference Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    # _check_roofs(hpxml, nil, nil, nil, nil)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_roofs(hpxml, nil, nil, nil, nil)
   end
 
   def test_enclosure_walls
@@ -178,11 +273,11 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml, 2645.52, (23.0 * 2355.52 + 4.0 * 290) / 2645.52, 0.7, 0.92)
+    _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml, 2645.52, (16.67 * 2355.52 + 4.0 * 290) / 2645.52, 0.75, 0.9)
+    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
 
     hpxml_name = 'base-atticroof-conditioned.xml'
 
@@ -196,11 +291,29 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml, 2405.52, ((23.0 * 1200 + 22.3 * 240) / 1440 * 2355.52 + 4.0 * 50) / 2405.52, 0.7, 0.92)
+    _check_walls(hpxml, 2355.52, (23.0 * 1200 + 22.3 * 240) / 1440, 0.7, 0.92)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml, 2405.52, (16.67 * 2355.52 + 4.0 * 50) / 2405.52, 0.75, 0.9)
+    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
+
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_walls(hpxml, 1200, (23.0 * 420 + 4.0 * 780) / 1200, 0.7, 0.92)
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_walls(hpxml, 1200, (16.67 * 420 + 4.0 * 780) / 1200, 0.75, 0.9)
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
 
     hpxml_name = 'base-enclosure-garage.xml'
 
@@ -214,11 +327,11 @@ class EnclosureTest < MiniTest::Test
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml, 2468.52, (23.0 * 2355.52 + 4.0 * 113) / 2468.52, 0.7, 0.92)
+    _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml, 2468.52, (16.67 * 2355.52 + 4.0 * 113) / 2468.52, 0.75, 0.9)
+    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
   end
 
   def test_enclosure_rim_joists
@@ -510,31 +623,31 @@ class EnclosureTest < MiniTest::Test
     hpxml_names.each do |hpxml_name|
       # Rated Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-                              180 => [108, 0.33, 0.45],
-                              90 => [72, 0.33, 0.45],
-                              270 => [72, 0.33, 0.45] })
+      _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                    180 => [108, 0.33, 0.45],
+                                    90 => [72, 0.33, 0.45],
+                                    270 => [72, 0.33, 0.45] })
 
       # Reference Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_windows(hpxml, { 0 => [89.5, 0.35, 0.40],
-                              180 => [89.5, 0.35, 0.40],
-                              90 => [89.5, 0.35, 0.40],
-                              270 => [89.5, 0.35, 0.40] })
+      _check_windows(hpxml, 0.67, { 0 => [89.5, 0.35, 0.40],
+                                    180 => [89.5, 0.35, 0.40],
+                                    90 => [89.5, 0.35, 0.40],
+                                    270 => [89.5, 0.35, 0.40] })
 
       # IAD Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-                              180 => [108, 0.33, 0.45],
-                              90 => [108, 0.33, 0.45],
-                              270 => [108, 0.33, 0.45] })
+      _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                    180 => [108, 0.33, 0.45],
+                                    90 => [108, 0.33, 0.45],
+                                    270 => [108, 0.33, 0.45] })
 
       # IAD Reference Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_windows(hpxml, { 0 => [108, 0.35, 0.40],
-                              180 => [108, 0.35, 0.40],
-                              90 => [108, 0.35, 0.40],
-                              270 => [108, 0.35, 0.40] })
+      _check_windows(hpxml, 0.67, { 0 => [108, 0.35, 0.40],
+                                    180 => [108, 0.35, 0.40],
+                                    90 => [108, 0.35, 0.40],
+                                    270 => [108, 0.35, 0.40] })
     end
 
     hpxml_names = ['base-foundation-ambient.xml',
@@ -546,122 +659,192 @@ class EnclosureTest < MiniTest::Test
     hpxml_names.each do |hpxml_name|
       # Rated Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-                              180 => [108, 0.33, 0.45],
-                              90 => [72, 0.33, 0.45],
-                              270 => [72, 0.33, 0.45] })
+      _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                    180 => [108, 0.33, 0.45],
+                                    90 => [72, 0.33, 0.45],
+                                    270 => [72, 0.33, 0.45] })
 
       # Reference Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_windows(hpxml, { 0 => [60.75, 0.35, 0.40],
-                              180 => [60.75, 0.35, 0.40],
-                              90 => [60.75, 0.35, 0.40],
-                              270 => [60.75, 0.35, 0.40] })
+      _check_windows(hpxml, 0.67, { 0 => [60.75, 0.35, 0.40],
+                                    180 => [60.75, 0.35, 0.40],
+                                    90 => [60.75, 0.35, 0.40],
+                                    270 => [60.75, 0.35, 0.40] })
 
       # IAD Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-                              180 => [108, 0.33, 0.45],
-                              90 => [108, 0.33, 0.45],
-                              270 => [108, 0.33, 0.45] })
+      _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                    180 => [108, 0.33, 0.45],
+                                    90 => [108, 0.33, 0.45],
+                                    270 => [108, 0.33, 0.45] })
 
       # IAD Reference Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_windows(hpxml, { 0 => [108, 0.35, 0.40],
-                              180 => [108, 0.35, 0.40],
-                              90 => [108, 0.35, 0.40],
-                              270 => [108, 0.35, 0.40] })
+      _check_windows(hpxml, 0.67, { 0 => [108, 0.35, 0.40],
+                                    180 => [108, 0.35, 0.40],
+                                    90 => [108, 0.35, 0.40],
+                                    270 => [108, 0.35, 0.40] })
     end
 
     hpxml_name = 'base-atticroof-cathedral.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-                            180 => [108, 0.33, 0.45],
-                            90 => [120, 0.33, 0.45],
-                            270 => [120, 0.33, 0.45] })
+    frac_operable = (432.0 * 0.67) / (432.0 + 24.0)
+    _check_windows(hpxml, frac_operable, { 0 => [108, 0.33, 0.45],
+                                           180 => [108, 0.33, 0.45],
+                                           90 => [120, 0.33, 0.45],
+                                           270 => [120, 0.33, 0.45] })
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_windows(hpxml, { 0 => [93.5, 0.35, 0.40],
-                            180 => [93.5, 0.35, 0.40],
-                            90 => [93.5, 0.35, 0.40],
-                            270 => [93.5, 0.35, 0.40] })
+    _check_windows(hpxml, 0.67, { 0 => [93.5, 0.35, 0.40],
+                                  180 => [93.5, 0.35, 0.40],
+                                  90 => [93.5, 0.35, 0.40],
+                                  270 => [93.5, 0.35, 0.40] })
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-                            180 => [108, 0.33, 0.45],
-                            90 => [108, 0.33, 0.45],
-                            270 => [108, 0.33, 0.45] })
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [108, 0.33, 0.45],
+                                  270 => [108, 0.33, 0.45] })
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_windows(hpxml, { 0 => [108, 0.35, 0.40],
-                            180 => [108, 0.35, 0.40],
-                            90 => [108, 0.35, 0.40],
-                            270 => [108, 0.35, 0.40] })
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.35, 0.40],
+                                  180 => [108, 0.35, 0.40],
+                                  90 => [108, 0.35, 0.40],
+                                  270 => [108, 0.35, 0.40] })
 
     hpxml_name = 'base-atticroof-conditioned.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-                            180 => [108, 0.33, 0.45],
-                            90 => [120, 0.33, 0.45],
-                            270 => [170, (0.3 * 62 + 0.33 * 108) / 170, 0.45] })
+    frac_operable = (432.0 * 0.67) / (432.0 + 74.0)
+    _check_windows(hpxml, frac_operable, { 0 => [108, 0.33, 0.45],
+                                           180 => [108, 0.33, 0.45],
+                                           90 => [120, 0.33, 0.45],
+                                           270 => [170, (0.3 * 62 + 0.33 * 108) / 170, 0.45] })
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_windows(hpxml, { 0 => [128.6, 0.35, 0.40],
-                            180 => [128.6, 0.35, 0.40],
-                            90 => [128.6, 0.35, 0.40],
-                            270 => [128.6, 0.35, 0.40] })
+    _check_windows(hpxml, 0.67, { 0 => [128.6, 0.35, 0.40],
+                                  180 => [128.6, 0.35, 0.40],
+                                  90 => [128.6, 0.35, 0.40],
+                                  270 => [128.6, 0.35, 0.40] })
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_windows(hpxml, { 0 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
-                            180 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
-                            90 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
-                            270 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45] })
+    _check_windows(hpxml, 0.67, { 0 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
+                                  180 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
+                                  90 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45],
+                                  270 => [108, (0.3 * 62 + 0.33 * 444) / 506, 0.45] })
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_windows(hpxml, { 0 => [108, 0.35, 0.40],
-                            180 => [108, 0.35, 0.40],
-                            90 => [108, 0.35, 0.40],
-                            270 => [108, 0.35, 0.40] })
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.35, 0.40],
+                                  180 => [108, 0.35, 0.40],
+                                  90 => [108, 0.35, 0.40],
+                                  270 => [108, 0.35, 0.40] })
 
-    # hpxml_name = 'base-enclosure-adiabatic-surfaces.xml'
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Rated Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    # _check_windows(hpxml, { 0 => [37.8, 0.33, 0.45],
-    #                        180 => [37.8, 0.33, 0.45],
-    #                        90 => [25.2, 0.33, 0.45],
-    #                        270 => [25.2, 0.33, 0.45] })
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_windows(hpxml, 0.67, { 0 => [37.8, 0.33, 0.45],
+                                  180 => [37.8, 0.33, 0.45],
+                                  90 => [25.2, 0.33, 0.45],
+                                  270 => [25.2, 0.33, 0.45] })
 
     # Reference Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    # _check_windows(hpxml, { 0 => [43.4, 0.35, 0.40],
-    #                        180 => [43.4, 0.35, 0.40],
-    #                        90 => [43.4, 0.35, 0.40],
-    #                        270 => [43.4, 0.35, 0.40] })
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_windows(hpxml, 0.67, { 0 => [43.4, 0.35, 0.40],
+                                  180 => [43.4, 0.35, 0.40],
+                                  90 => [43.4, 0.35, 0.40],
+                                  270 => [43.4, 0.35, 0.40] })
 
     # IAD Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    # _check_windows(hpxml, { 0 => [108, 0.33, 0.45],
-    #                        180 => [108, 0.33, 0.45],
-    #                        90 => [108, 0.33, 0.45],
-    #                        270 => [108, 0.33, 0.45] })
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [108, 0.33, 0.45],
+                                  270 => [108, 0.33, 0.45] })
 
     # IAD Reference Home
-    # hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    # _check_windows(hpxml, { 0 => [108, 0.35, 0.40],
-    #                        180 => [108, 0.35, 0.40],
-    #                        90 => [108, 0.35, 0.40],
-    #                        270 => [108, 0.35, 0.40] })
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.35, 0.40],
+                                  180 => [108, 0.35, 0.40],
+                                  90 => [108, 0.35, 0.40],
+                                  270 => [108, 0.35, 0.40] })
+
+    # Create derivative file for testing w/o operable windows
+    # Rated/Reference Home windows should not be operable
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.windows.each do |window|
+      window.fraction_operable = 0.0
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_windows(hpxml, 0.0, { 0 => [37.8, 0.33, 0.45],
+                                 180 => [37.8, 0.33, 0.45],
+                                 90 => [25.2, 0.33, 0.45],
+                                 270 => [25.2, 0.33, 0.45] })
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_windows(hpxml, 0.0, { 0 => [43.4, 0.35, 0.40],
+                                 180 => [43.4, 0.35, 0.40],
+                                 90 => [43.4, 0.35, 0.40],
+                                 270 => [43.4, 0.35, 0.40] })
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [108, 0.33, 0.45],
+                                  270 => [108, 0.33, 0.45] })
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.35, 0.40],
+                                  180 => [108, 0.35, 0.40],
+                                  90 => [108, 0.35, 0.40],
+                                  270 => [108, 0.35, 0.40] })
+
+    # But in 301-2014, the Reference Home windows are still operable
+    hpxml_name = _change_eri_version(hpxml_name, '2014')
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_windows(hpxml, 0.0, { 0 => [37.8, 0.33, 0.45],
+                                 180 => [37.8, 0.33, 0.45],
+                                 90 => [25.2, 0.33, 0.45],
+                                 270 => [25.2, 0.33, 0.45] })
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_windows(hpxml, 0.67, { 0 => [43.4, 0.35, 0.40],
+                                  180 => [43.4, 0.35, 0.40],
+                                  90 => [43.4, 0.35, 0.40],
+                                  270 => [43.4, 0.35, 0.40] })
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.33, 0.45],
+                                  180 => [108, 0.33, 0.45],
+                                  90 => [108, 0.33, 0.45],
+                                  270 => [108, 0.33, 0.45] })
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_windows(hpxml, 0.67, { 0 => [108, 0.35, 0.40],
+                                  180 => [108, 0.35, 0.40],
+                                  90 => [108, 0.35, 0.40],
+                                  270 => [108, 0.35, 0.40] })
   end
 
   def test_enclosure_skylights
@@ -786,6 +969,50 @@ class EnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_doors(hpxml, { 0 => [40, 2.86] })
+
+    # Test MF unit w/ exterior doors
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_doors(hpxml, { 0 => [40, 4.4],
+                          180 => [40, 4.4] })
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_doors(hpxml, { 0 => [20, 2.86] })
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_doors(hpxml, { 0 => [20, 4.4] })
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_doors(hpxml, { 0 => [20, 2.86] })
+
+    # Test MF unit w/ interior doors
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.doors.each do |door|
+      door.wall_idref = 'WallOtherHousingUnit'
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_doors(hpxml)
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_doors(hpxml)
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_doors(hpxml)
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_doors(hpxml)
   end
 
   def test_enclosure_attic_ventilation
@@ -1131,15 +1358,18 @@ class EnclosureTest < MiniTest::Test
     end
   end
 
-  def _check_windows(hpxml, azimuth_values = {})
+  def _check_windows(hpxml, frac_operable, azimuth_values = {})
+    area_total = 0.0
+    area_operable = 0.0
     azimuth_area_values = {}
     azimuth_ufactor_x_area_values = {} # Area-weighted
     azimuth_shgc_x_area_values = {} # Area-weighted
     hpxml.windows.each do |window|
-      azimuth =
+      area_total += window.area
+      area_operable += (window.area * window.fraction_operable)
 
-        # Init if needed
-        azimuth_area_values[window.azimuth] = [] if azimuth_area_values[window.azimuth].nil?
+      # Init if needed
+      azimuth_area_values[window.azimuth] = [] if azimuth_area_values[window.azimuth].nil?
       azimuth_ufactor_x_area_values[window.azimuth] = [] if azimuth_ufactor_x_area_values[window.azimuth].nil?
       azimuth_shgc_x_area_values[window.azimuth] = [] if azimuth_shgc_x_area_values[window.azimuth].nil?
 
@@ -1152,6 +1382,8 @@ class EnclosureTest < MiniTest::Test
     assert_equal(azimuth_values.keys.size, azimuth_area_values.size)
     assert_equal(azimuth_values.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(azimuth_values.keys.size, azimuth_shgc_x_area_values.size)
+
+    assert_in_epsilon(frac_operable, area_operable / area_total, 0.001)
 
     azimuth_values.each do |azimuth, values|
       area, ufactor, shgc = values

@@ -34,7 +34,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/Transaction' => one, # Required by HPXML schema
-        '/HPXML/SoftwareInfo/extension/ERICalculation[Version="latest" or Version="2014ADEGL" or Version="2014ADEG" or Version="2014ADE" or Version="2014AD" or Version="2014A" or Version="2014"]' => one, # Choose version of 301 standard and addenda (e.g., A, D, E, G)
+        '/HPXML/SoftwareInfo/extension/ERICalculation[Version="latest" or Version="2019A" or Version="2019" or Version="2014ADEGL" or Version="2014ADEG" or Version="2014ADE" or Version="2014AD" or Version="2014A" or Version="2014"]' => one, # Choose version of 301 standard and addenda (e.g., A, D, E, G)
 
         '/HPXML/Building' => one,
         '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
@@ -48,6 +48,8 @@ class EnergyRatingIndex301Validator
 
         '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]]' => one, # see [AirInfiltration]
 
+        '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => zero_or_more, # See [Attic]
+        '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation' => zero_or_more, # See [Foundation]
         '/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof' => zero_or_more, # See [Roof]
         '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => one_or_more, # See [Wall]
         '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => zero_or_more, # See [RimJoist]
@@ -113,10 +115,22 @@ class EnergyRatingIndex301Validator
         'InfiltrationVolume' => one,
       },
 
+      # [Attic]
+      '/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic' => {
+        'SystemIdentifier' => one, # Required by HPXML schema
+        'AtticType' => one, # Required by HPXML schema
+      },
+
+      # [Foundation]
+      '/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation' => {
+        'SystemIdentifier' => one, # Required by HPXML schema
+        'FoundationType' => one, # Required by HPXML schema
+      },
+
       # [Roof]
       '/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'InteriorAdjacentTo[text()="attic - vented" or text()="attic - unvented" or text()="living space" or text()="garage"]' => one, # See [VentedAttic]
+        'InteriorAdjacentTo[text()="attic - vented" or text()="attic - unvented" or text()="living space" or text()="garage"]' => one, # See [VentedAttic] or [UnventedAttic]
         'Area' => one,
         'Azimuth' => zero_or_one,
         'SolarAbsorptance' => one,
@@ -132,10 +146,15 @@ class EnergyRatingIndex301Validator
         '../../Attics/Attic[AtticType/Attic[Vented="true"]]/VentilationRate[UnitofMeasure="SLA" or UnitofMeasure="ACHnatural"]/Value' => zero_or_one,
       },
 
+      ## [UnventedAttic]
+      "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - unvented']" => {
+        "../../Attics/Attic[AtticType/Attic[Vented='false']]/WithinInfiltrationVolume" => one,
+      },
+
       # [Wall]
       '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit"]' => one,
+        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]' => one,
         'WallType[WoodStud | DoubleWoodStud | ConcreteMasonryUnit | StructurallyInsulatedPanel | InsulatedConcreteForms | SteelFrame | SolidConcrete | StructuralBrick | StrawBale | Stone | LogWall]' => one,
         'Area' => one,
@@ -149,7 +168,7 @@ class EnergyRatingIndex301Validator
       # [RimJoist]
       '/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit"]' => one,
+        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]' => one,
         'Area' => one,
         'Azimuth' => zero_or_one,
@@ -162,8 +181,8 @@ class EnergyRatingIndex301Validator
       # [FoundationWall]
       '/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'ExteriorAdjacentTo[text()="ground" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit"]' => one,
-        'InteriorAdjacentTo[text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]' => one, # See [VentedCrawlspace] or [UnconditionedBasement]
+        'ExteriorAdjacentTo[text()="ground" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
+        'InteriorAdjacentTo[text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]' => one, # See [VentedCrawlspace] or [UnventedCrawlspace] or [UnconditionedBasement]
         'Height' => one,
         'Area' => one,
         'Azimuth' => zero_or_one,
@@ -180,9 +199,15 @@ class EnergyRatingIndex301Validator
         '../../Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]/VentilationRate[UnitofMeasure="SLA"]/Value' => zero_or_one,
       },
 
+      ## [UnventedCrawlspace]
+      "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='crawlspace - unvented']" => {
+        "../../Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]/WithinInfiltrationVolume" => one,
+      },
+
       ## [UnconditionedBasement]
       '/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo="basement - unconditioned"]' => {
         '../../Foundations/Foundation[FoundationType/Basement[Conditioned="false"]]/ThermalBoundary' => one,
+        '../../Foundations/Foundation[FoundationType/Basement[Conditioned="false"]]/WithinInfiltrationVolume' => one,
       },
 
       ## [FoundationWallInsLayer]
@@ -195,7 +220,7 @@ class EnergyRatingIndex301Validator
       # [FrameFloor]
       '/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit"]' => one, # See [FrameFloorAdjacentToOther]
+        'ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]' => one,
         'Area' => one,
         'Insulation/SystemIdentifier' => one, # Required by HPXML schema
@@ -233,6 +258,7 @@ class EnergyRatingIndex301Validator
         'UFactor' => one,
         'SHGC' => one,
         'Overhangs' => zero_or_one, # See [WindowOverhang]
+        'FractionOperable' => one,
         'AttachedToWall' => one,
       },
 
@@ -442,7 +468,7 @@ class EnergyRatingIndex301Validator
       ## [HVACDuct]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
         'DuctInsulationRValue' => one,
-        'DuctLocation[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="exterior wall" or text()="under slab" or text()="roof deck" or text()="outside"]' => one,
+        'DuctLocation[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="exterior wall" or text()="under slab" or text()="roof deck" or text()="outside" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'DuctSurfaceArea' => one,
       },
 
@@ -450,9 +476,9 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
         'FanType[text()="energy recovery ventilator" or text()="heat recovery ventilator" or text()="exhaust only" or text()="supply only" or text()="balanced" or text()="central fan integrated supply"]' => one, # See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS]
-        'TestedFlowRate' => one,
+        'TestedFlowRate' => zero_or_one,
         'HoursInOperation' => one,
-        'FanPower' => one,
+        'FanPower' => zero_or_one,
       },
 
       ## [MechVentType=HRV]
@@ -484,7 +510,7 @@ class EnergyRatingIndex301Validator
         '../WaterFixture' => one_or_more, # See [WaterFixture]
         'SystemIdentifier' => one, # Required by HPXML schema
         'WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater" or text()="space-heating boiler with storage tank" or text()="space-heating boiler with tankless coil"]' => one, # See [WHType=Tank] or [WHType=Tankless] or [WHType=HeatPump] or [WHType=Indirect] or [WHType=CombiTankless]
-        'Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior"]' => one,
+        'Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'FractionDHWLoadServed' => one,
         'UsesDesuperheater' => zero_or_one, # See [Desuperheater]
       },
@@ -611,19 +637,20 @@ class EnergyRatingIndex301Validator
       # [ClothesWasher]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
         'ModifiedEnergyFactor | IntegratedModifiedEnergyFactor' => one,
         'RatedAnnualkWh' => one,
         'LabelElectricRate' => one,
         'LabelGasRate' => one,
         'LabelAnnualGasCost' => one,
+        'LabelUsage' => one,
         'Capacity' => one,
       },
 
       # [ClothesDryer]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'EnergyFactor | CombinedEnergyFactor' => one,
         'ControlType[text()="timer" or text()="moisture"]' => one,
@@ -632,22 +659,26 @@ class EnergyRatingIndex301Validator
       # [Dishwasher]
       '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
         'RatedAnnualkWh | EnergyFactor' => one,
+        'LabelElectricRate' => one,
+        'LabelGasRate' => one,
+        'LabelAnnualGasCost' => one,
+        'LabelUsage' => one,
         'PlaceSettingCapacity' => one,
       },
 
       # [Refrigerator]
       '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
         'RatedAnnualkWh' => one,
       },
 
       # [CookingRange]
       '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'IsInduction' => one,
         '../Oven/IsConvection' => one,

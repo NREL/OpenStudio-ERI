@@ -50,9 +50,10 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='InfiltrationMeasurement'/>
+            <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
-              <UnitofMeasure>ACHnatural</UnitofMeasure>
-              <AirLeakage>0.335</AirLeakage>
+              <UnitofMeasure>ACH</UnitofMeasure>
+              <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>24624.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
@@ -532,10 +533,11 @@
           <VentilationFans>
             <VentilationFan>
               <SystemIdentifier id='MechanicalVentilation'/>
-              <FanType>heat recovery ventilator</FanType>
+              <FanType>energy recovery ventilator</FanType>
               <TestedFlowRate>56.2</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <TotalRecoveryEfficiency>0.4</TotalRecoveryEfficiency>
               <SensibleRecoveryEfficiency>0.6</SensibleRecoveryEfficiency>
               <FanPower>14.7</FanPower>
             </VentilationFan>
@@ -546,13 +548,13 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <Location>living space</Location>
-          <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
-          <RatedAnnualkWh>704.0</RatedAnnualkWh>
-          <LabelElectricRate>0.08</LabelElectricRate>
-          <LabelGasRate>0.58</LabelGasRate>
-          <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
+          <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
+          <RatedAnnualkWh>400.0</RatedAnnualkWh>
+          <LabelElectricRate>0.12</LabelElectricRate>
+          <LabelGasRate>1.09</LabelGasRate>
+          <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
           <LabelUsage>6.0</LabelUsage>
-          <Capacity>2.874</Capacity>
+          <Capacity>3.0</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>

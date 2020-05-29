@@ -1,21 +1,3 @@
-Software Connection
-===================
-
-In order to connect a software tool to the OpenStudio-ERI workflow, the software tool must be able to export its building description in `HPXML file <https://hpxml.nrel.gov/>`_ format.
-
-HPXML Overview
---------------
-
-HPXML is an open data standard for collecting and transferring home energy data. 
-Requiring HPXML files as the input to the ERI workflow significantly reduces the complexity and effort for software developers to leverage the EnergyPlus simulation engine.
-It also simplifies the process of applying the ERI 301 ruleset.
-
-The `HPXML Toolbox website <https://hpxml.nrel.gov/>`_ provides several resources for software developers, including:
-
-#. An interactive schema validator
-#. A data dictionary
-#. An implementation guide
-
 ERI Use Case for HPXML
 ----------------------
 
@@ -96,6 +78,9 @@ crawlspace - vented                                                            E
 crawlspace - unvented                                                          EnergyPlus calculation
 garage                                                                         EnergyPlus calculation
 other housing unit              Conditioned space of an adjacent housing unit  Same as conditioned space
+other heated space              E.g., shared laundry/equipment space           Average of conditioned space and outside; minimum of 68F
+other multifamily buffer space  E.g., enclosed unconditioned stairwell         Average of conditioned space and outside; minimum of 50F
+other non-freezing space        E.g., parking garage ceiling                   Floats with outside; minimum of 40F
 ==============================  =============================================  ========================================================
 
 .. warning::
@@ -119,13 +104,28 @@ Air leakage can be provided in one of three ways:
 
 In addition, the building's volume associated with the air leakage measurement is provided in HPXML's ``AirInfiltrationMeasurement/InfiltrationVolume``.
 
-Vented Attics/Crawlspaces
-*************************
+Attics
+******
 
-The ventilation rate for vented attics (or vented crawlspaces) can be specified using an ``Attic`` (or ``Foundation``) element.
-First, define the ``AtticType`` as ``Attic[Vented='true']`` (or ``FoundationType`` as ``Crawlspace[Vented='true']``).
-Then specify the specific leakage area (SLA) using the ``VentilationRate[UnitofMeasure='SLA']/Value`` element.
-For vented attics, the natural air changes per hour (nACH) can instead be specified using ``UnitofMeasure='ACHnatural'``.
+If the building has an unvented attic, an ``Enclosure/Attics/Attic/AtticType/Attic[Vented='false']`` element must be defined.
+It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
+
+If the building has a vented attic, an ``Enclosure/Attics/Attic/AtticType/Attic[Vented='true']`` element may be defined in order to specify the ventilation rate.
+The ventilation rate can be entered as a specific leakage area using ``VentilationRate[UnitofMeasure='SLA']/Value`` or as natural air changes per hour using ``VentilationRate[UnitofMeasure='ACHnatural']/Value``.
+If the ventilation rate is not provided, the ERI 301 Standard Reference Home defaults will be used.
+
+Foundations
+***********
+
+If the building has an unconditioned basement, an ``Enclosure/Foundations/Foundation/FoundationType/Basement[Conditioned='false']`` element must be defined.
+It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
+In addition, the ``ThermalBoundary`` element must be specified as either "foundation wall" or "frame floor".
+
+If the building has an unvented crawlspace, an ``Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='false']`` element must be defined.
+It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
+
+If the building has a vented crawlspace, an ``Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='true']`` element may be defined in order to specify the ventilation rate.
+The ventilation rate can be entered as a specific leakage area using ``VentilationRate[UnitofMeasure='SLA']/Value``.
 If the ventilation rate is not provided, the ERI 301 Standard Reference Home defaults will be used.
 
 Roofs
@@ -214,6 +214,11 @@ Any window or glass door area should be specified as an ``Enclosure/Windows/Wind
 Windows are defined by *full-assembly* NFRC ``UFactor`` and ``SHGC``, as well as ``Area``.
 Windows must reference a HPXML ``Enclosures/Walls/Wall`` element via the ``AttachedToWall``.
 Windows must also have an ``Azimuth`` specified, even if the attached wall does not.
+
+Finally, windows must have the ``FractionOperable`` property specified for determining natural ventilation.
+The input should solely reflect whether the windows are operable (can be opened), not how they are used by the occupants.
+If a ``Window`` represents a single window, the value should be 0 or 1.
+If a ``Window`` represents multiple windows (e.g., 4), the value should be between 0 and 1 (e.g., 0, 0.25, 0.5, 0.75, or 1).
 
 Overhangs (e.g., a roof eave) can optionally be defined for a window by specifying a ``Window/Overhangs`` element.
 Overhangs are defined by the vertical distance between the overhang and the top of the window (``DistanceToTopOfWindow``), and the vertical distance between the overhang and the bottom of the window (``DistanceToBottomOfWindow``).
@@ -343,9 +348,9 @@ Each duct must have ``DuctInsulationRValue``, ``DuctLocation``, and ``DuctSurfac
 
 ``DuctLocation`` must be one of the following:
 
-==============================  =============================================  =========================================================
+==============================  =============================================  ========================================================
 Location                        Description                                    Temperature
-==============================  =============================================  =========================================================
+==============================  =============================================  ========================================================
 living space                    Above-grade conditioned floor area             EnergyPlus calculation
 basement - conditioned          Below-grade conditioned floor area             EnergyPlus calculation
 basement - unconditioned                                                       EnergyPlus calculation
@@ -358,7 +363,11 @@ exterior wall                                                                  A
 under slab                                                                     Ground
 roof deck                                                                      Outside
 outside                                                                        Outside
-==============================  =============================================  =========================================================
+other housing unit              Conditioned space of an adjacent housing unit  Same as conditioned space
+other heated space              E.g., shared laundry/equipment space           Average of conditioned space and outside; minimum of 68F
+other multifamily buffer space  E.g., enclosed unconditioned stairwell         Average of conditioned space and outside; minimum of 50F
+other non-freezing space        E.g., parking garage ceiling                   Floats with outside; minimum of 40F
+==============================  =============================================  ========================================================
 
 AirDistribution systems must also have duct leakage testing provided in one of three ways:
 
@@ -382,7 +391,10 @@ Mechanical Ventilation
 **********************
 
 A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
-Inputs including ``FanType``, ``TestedFlowRate``, ``HoursInOperation``, and ``FanPower`` must be provided.
+Inputs including ``FanType`` and ``HoursInOperation`` must be provided.
+
+The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, it should not be provided and the airflow rate will be defaulted.
+Likewise the fan power for the highest airflow setting should be entered as ``FanPower``; if unknown, it should not be provided and the fan power will be defaulted.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -397,7 +409,7 @@ balanced
 central fan integrated supply (CFIS)                                                       required
 ====================================  ==========================  =======================  ================================
 
-Note that AdjustedSensibleRecoveryEfficiency and AdjustedTotalRecoveryEfficiency can be provided instead.
+Note that AdjustedSensibleRecoveryEfficiency/AdjustedTotalRecoveryEfficiency can be provided instead of SensibleRecoveryEfficiency/TotalRecoveryEfficiency.
 
 In many situations, the rated flow rate should be the value derived from actual testing of the system.
 For a CFIS system, the rated flow rate should equal the amount of outdoor air provided to the distribution system.
@@ -413,12 +425,11 @@ Water Heaters
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
 Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
-
 The ``Location`` must be one of the following:
 
-==============================  =============================================  =========================================================
+==============================  =============================================  ========================================================
 Location                        Description                                    Temperature
-==============================  =============================================  =========================================================
+==============================  =============================================  ========================================================
 living space                    Above-grade conditioned floor area             EnergyPlus calculation
 basement - conditioned          Below-grade conditioned floor area             EnergyPlus calculation
 basement - unconditioned                                                       EnergyPlus calculation
@@ -427,8 +438,12 @@ attic - vented                                                                 E
 garage                                                                         EnergyPlus calculation
 crawlspace - unvented                                                          EnergyPlus calculation
 crawlspace - vented                                                            EnergyPlus calculation
-other exterior                  Outside                                        EnergyPlus calculation
-==============================  =============================================  =========================================================
+other exterior                  Outside                                        Outside
+other housing unit              Conditioned space of an adjacent housing unit  Same as conditioned space
+other heated space              E.g., shared laundry/equipment space           Average of conditioned space and outside; minimum of 68F
+other multifamily buffer space  E.g., enclosed unconditioned stairwell         Average of conditioned space and outside; minimum of 50F
+other non-freezing space        E.g., parking garage ceiling                   Floats with outside; minimum of 40F
+==============================  =============================================  ========================================================
 
 Depending on the type of water heater specified, additional elements are required/available:
 
@@ -524,7 +539,7 @@ Appliances
 This section describes elements specified in HPXML's ``Appliances``.
 Many of the appliances' inputs are derived from EnergyGuide labels.
 
-The ``Location`` for all appliances must be provided as one of the following:
+The ``Location`` for each appliance must be provided as one of the following:
 
 ==============================  ====================================================================
 Location                        Description                                                         
@@ -533,6 +548,7 @@ living space                    Above-grade conditioned floor area
 basement - conditioned          Below-grade conditioned floor area
 basement - unconditioned  
 garage                    
+other                           Any attached/multifamily space outside the unit, in which internal gains are neglected
 ==============================  ====================================================================
 
 Clothes Washer
@@ -554,8 +570,8 @@ Dishwasher
 **********
 
 An ``Appliances/Dishwasher`` element must be specified.
-The dishwasher's ``PlaceSettingCapacity`` must be provided.
 The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` or an ``EnergyFactor``.
+The dishwasher's ``PlaceSettingCapacity`` also must be provided as well as other inputs from the EnergyGuide label.
 
 Refrigerator
 ************

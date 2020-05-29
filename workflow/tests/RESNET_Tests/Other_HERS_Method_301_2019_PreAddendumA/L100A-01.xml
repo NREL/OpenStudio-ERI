@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014A</Version>
+        <Version>2019</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -30,7 +30,7 @@
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
-          <NumberofBedrooms>4</NumberofBedrooms>
+          <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
         </BuildingConstruction>
@@ -300,7 +300,7 @@
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>9.85</Value>
+                <Value>6.8</Value>
               </AnnualHeatingEfficiency>
             </HeatPump>
           </HVACPlant>
@@ -412,7 +412,7 @@
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>
           <Location>living space</Location>
-          <RatedAnnualkWh>709.0</RatedAnnualkWh>
+          <RatedAnnualkWh>691.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='Range'/>
