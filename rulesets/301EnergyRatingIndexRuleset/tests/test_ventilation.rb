@@ -316,7 +316,7 @@ class VentTest < MiniTest::Test
 
     # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 96.3, 24, 67.4)
+    _check_mech_vent(hpxml, HPXML::MechVentTypeBalanced, 70.6, 24, 49.4)
 
     # IAD Reference
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
