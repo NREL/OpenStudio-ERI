@@ -1292,7 +1292,6 @@ def create_sample_hpxmls
                   'base-hvac-flowrate.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
-                  'base-hvac-mini-split-heat-pump-ductless-no-backup.xml',
                   'base-hvac-undersized.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
