@@ -1395,13 +1395,7 @@ class EnergyRatingIndex301Ruleset
 
     q_tot = calc_mech_vent_q_tot()
 
-    # Calculate fan cfm for airflow rate using Reference Home infiltration
-    # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
-    ref_sla = 0.00036
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, fan_type)
-
     if fan_type.nil?
-      fan_type = HPXML::MechVentTypeExhaust
       fan_power_w = 0.0
     else
       q_fan_power = calc_rated_home_qfan(orig_hpxml, fan_type) # Use Rated Home fan type
@@ -1418,6 +1412,12 @@ class EnergyRatingIndex301Ruleset
         fan_type = HPXML::MechVentTypeBalanced
       end
     end
+
+    # Calculate fan cfm for airflow rate using Reference Home infiltration
+    # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
+    ref_sla = 0.00036
+    fan_type = HPXML::MechVentTypeBalanced # Always supplement infiltration w/ balanced airflow, per P. Fairey, FSEC
+    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, fan_type)
 
     new_hpxml.ventilation_fans.add(id: sys_id,
                                    fan_type: fan_type,
