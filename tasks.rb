@@ -1409,7 +1409,7 @@ if ARGV[0].to_sym == :generate_sample_outputs
   FileUtils.mkdir_p('sample_results')
 
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly fuels --hourly temperatures"
+  command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly ALL"
   system(command)
 
   dirs = ['ERIRatedHome',
@@ -1423,8 +1423,8 @@ if ARGV[0].to_sym == :generate_sample_outputs
 end
 
 if ARGV[0].to_sym == :update_version
-  eri_version_change = { from: '0.8.0',
-                         to: '0.9.0' }
+  eri_version_change = { from: '0.9.0',
+                         to: '0.10.0' }
 
   file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
 
@@ -1434,6 +1434,7 @@ if ARGV[0].to_sym == :update_version
 
     # To write changes to the file, use:
     File.open(file_name, 'w') { |file| file.puts new_contents }
+    puts "Updated from version #{eri_version_change[:from]} to version #{eri_version_change[:to]} in #{file_name}."
   end
 
   puts 'Done. Now check all changed files before committing.'
