@@ -593,7 +593,7 @@ The building's lighting is described by nine ``Lighting/LightingGroup`` elements
 - ``LightingType``: ``LightEmittingDiode``, ``CompactFluorescent``, and ``FluorescentTube``
 - ``LightingGroup/Location``: 'interior', 'garage', and 'exterior'
 
-Use ``LightEmittingDiode`` for Tier I qualifying light fixtures; use ``CompactFluorescent`` and/or ``FluorescentTube`` for Tier II qualifying light fixtures.
+Use ``LightEmittingDiode`` for Tier II qualifying light fixtures; use ``CompactFluorescent`` and/or ``FluorescentTube`` for Tier I qualifying light fixtures.
 
 The fraction of lamps of the given type in the given location are provided as the ``LightingGroup/FractionofUnitsInLocation``.
 The fractions for a given location cannot sum to greater than 1.
