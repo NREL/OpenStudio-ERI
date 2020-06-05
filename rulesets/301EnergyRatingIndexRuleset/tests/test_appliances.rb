@@ -241,7 +241,7 @@ class ApplianceTest < MiniTest::Test
       sens_btu_per_yr = (135 + 38 * nbeds) * 365.0
       lat_btu_per_yr = (15 + 4.3 * nbeds) * 365.0
     else
-      kwh_per_yr = (38 + 10 * nbeds) * 46.5 / 45.6 # adjusted because of 2014 Addendum A typo fix
+      kwh_per_yr = (38 + 10 * nbeds)
       sens_btu_per_yr = (95 + 26 * nbeds) * 365.0
       lat_btu_per_yr = (11 + 2.8 * nbeds) * 365.0
     end
