@@ -1206,7 +1206,6 @@ def create_sample_hpxmls
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/appliances-location-unconditioned-space.xml',
-                  'invalid_files/attached-multifamily-window-outside-condition.xml',
                   'invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
