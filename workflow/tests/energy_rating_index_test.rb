@@ -534,10 +534,14 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
+      out_xml = File.join(@test_files_dir, File.basename(xml))
+      _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
+      sql_path, csv_path, sim_time = _run_simulation(out_xml, test_name)
 
       all_results[File.basename(xml)] = _get_hot_water(csv_path)
       assert_operator(all_results[File.basename(xml)][0], :>, 0)
+
+      File.delete(out_xml)
     end
     assert(all_results.size > 0)
 
