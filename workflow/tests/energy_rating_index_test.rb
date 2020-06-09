@@ -534,10 +534,14 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
+      out_xml = File.join(@test_files_dir, File.basename(xml))
+      _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
+      sql_path, csv_path, sim_time = _run_simulation(out_xml, test_name)
 
       all_results[File.basename(xml)] = _get_hot_water(csv_path)
       assert_operator(all_results[File.basename(xml)][0], :>, 0)
+
+      File.delete(out_xml)
     end
     assert(all_results.size > 0)
 
@@ -2077,52 +2081,52 @@ class EnergyRatingIndexTest < Minitest::Test
   def _check_hot_water(test_num, curr_val, base_val = nil, mn_val = nil)
     # Table 4.6.2(1): Acceptance Criteria for Hot Water Tests
     if test_num == 1
-      min_max_abs = [19.52, 19.72]
+      min_max_abs = [19.34, 19.88]
     elsif test_num == 2
-      min_max_abs = [25.95, 26.33]
-      min_max_base_delta_percent = [-33.69, -32.76]
+      min_max_abs = [25.76, 26.55]
+      min_max_base_delta_percent = [-33.92, -32.59]
     elsif test_num == 3
-      min_max_abs = [17.42, 17.49]
-      min_max_base_delta_percent = [10.60, 11.48]
+      min_max_abs = [17.27, 17.65]
+      min_max_base_delta_percent = [10.60, 11.49]
     elsif test_num == 4
-      min_max_abs = [25.12, 25.50]
-      min_max_base_delta_percent = [3.14, 3.19]
+      min_max_abs = [24.94, 25.71]
+      min_max_base_delta_percent = [3.13, 3.22]
     elsif test_num == 5
-      min_max_abs = [56.38, 57.10]
-      min_max_base_delta_percent = [-117.33, -116.82]
+      min_max_abs = [55.93, 57.58]
+      min_max_base_delta_percent = [-118.39, -115.70]
     elsif test_num == 6
-      min_max_abs = [22.79, 23.08]
-      min_max_base_delta_percent = [12.15, 12.35]
+      min_max_abs = [22.61, 23.28]
+      min_max_base_delta_percent = [12.08, 12.46]
     elsif test_num == 7
-      min_max_abs = [20.69, 20.91]
-      min_max_base_delta_percent = [20.25, 20.61]
+      min_max_abs = [20.51, 21.09]
+      min_max_base_delta_percent = [20.14, 20.78]
     elsif test_num == 8
-      min_max_abs = [10.98, 11.01]
-      min_max_mn_delta_percent = [43.59, 44.33]
+      min_max_abs = [10.87, 11.12]
+      min_max_mn_delta_percent = [43.21, 44.60]
     elsif test_num == 9
-      min_max_abs = [13.59, 13.66]
-      min_max_base_delta_percent = [-24.27, -23.56]
-      min_max_mn_delta_percent = [47.58, 48.17]
+      min_max_abs = [13.47, 13.79]
+      min_max_base_delta_percent = [-24.44, -23.47]
+      min_max_mn_delta_percent = [47.18, 48.56]
     elsif test_num == 10
-      min_max_abs = [9.02, 9.13]
-      min_max_base_delta_percent = [16.99, 17.91]
-      min_max_mn_delta_percent = [47.68, 48.31]
+      min_max_abs = [8.94, 9.20]
+      min_max_base_delta_percent = [16.99, 18.01]
+      min_max_mn_delta_percent = [47.28, 48.70]
     elsif test_num == 11
-      min_max_abs = [13.27, 13.34]
-      min_max_base_delta_percent = [2.32, 2.36]
-      min_max_mn_delta_percent = [47.12, 47.73]
+      min_max_abs = [13.15, 13.46]
+      min_max_base_delta_percent = [2.30, 2.37]
+      min_max_mn_delta_percent = [46.73, 48.12]
     elsif test_num == 12
-      min_max_abs = [31.13, 31.25]
-      min_max_base_delta_percent = [-129.08, -128.80]
-      min_max_mn_delta_percent = [44.73, 45.32]
+      min_max_abs = [30.84, 31.55]
+      min_max_base_delta_percent = [-130.29, -127.53]
+      min_max_mn_delta_percent = [44.35, 45.67]
     elsif test_num == 13
-      min_max_abs = [12.31, 12.37]
-      min_max_base_delta_percent = [9.39, 9.49]
-      min_max_mn_delta_percent = [45.91, 46.49]
+      min_max_abs = [12.19, 12.48]
+      min_max_base_delta_percent = [9.30, 9.57]
+      min_max_mn_delta_percent = [45.51, 46.85]
     elsif test_num == 14
-      min_max_abs = [12.06, 12.12]
-      min_max_base_delta_percent = [11.22, 11.29]
-      min_max_mn_delta_percent = [41.61, 42.13]
+      min_max_abs = [11.95, 12.23]
+      min_max_base_delta_percent = [11.12, 11.39]
+      min_max_mn_delta_percent = [41.23, 42.42]
     else
       fail 'Unexpected test.'
     end

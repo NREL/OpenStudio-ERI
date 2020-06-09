@@ -3,26 +3,6 @@ Shadowing Combinations
 ..In the following, only the first 10 reference surfaces will be shown.
 ..But all surfaces are used in the calculations.
 ==================================
-Surface=WALLATTICGABLE:0 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=WALLATTICGABLE:180 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=WALLATTICGABLE:270 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
-Surface=WALLATTICGABLE:90 is used as Receiving Surface in calculations and is convex.
-Number of general casting surfaces=0
-Number of back surfaces=0
-Number of receiving sub surfaces=0
-==================================
 Surface=SURFACE 1 REVERSED is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
@@ -63,13 +43,13 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE DOORAREANORTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE EXTERIORDOORAREA is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=DOORAREANORTH
+....Surface=EXTERIORDOORAREA
 ==================================
-Surface=DOORAREANORTH is not used as Receiving Surface in calculations.
+Surface=EXTERIORDOORAREA is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0

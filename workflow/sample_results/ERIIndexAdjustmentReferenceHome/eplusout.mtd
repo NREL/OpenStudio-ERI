@@ -100,7 +100,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=whole house fan:InteriorEquipment:Electricity [J]
 
- Meters for 283,WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy [J]
+ Meters for 279,WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING SPACE [J]
@@ -108,7 +108,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=water heater EC adjustment:InteriorEquipment:Electricity [J]
 
- Meters for 433,ATTIC - VENTED:Zone Air System Sensible Heating Energy [J]
+ Meters for 429,ATTIC - VENTED:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:ATTIC - VENTED [J]
@@ -116,7 +116,7 @@
   OnMeter=Heating:EnergyTransfer:Zone:ATTIC - VENTED [J]
   OnMeter=General:Heating:EnergyTransfer [J]
 
- Meters for 506,ATTIC - VENTED:Zone Air System Sensible Cooling Energy [J]
+ Meters for 502,ATTIC - VENTED:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:ATTIC - VENTED [J]
@@ -124,7 +124,7 @@
   OnMeter=Cooling:EnergyTransfer:Zone:ATTIC - VENTED [J]
   OnMeter=General:Cooling:EnergyTransfer [J]
 
- Meters for 543,CRAWLSPACE - VENTED:Zone Air System Sensible Heating Energy [J]
+ Meters for 539,CRAWLSPACE - VENTED:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:CRAWLSPACE - VENTED [J]
@@ -132,7 +132,7 @@
   OnMeter=Heating:EnergyTransfer:Zone:CRAWLSPACE - VENTED [J]
   OnMeter=General:Heating:EnergyTransfer [J]
 
- Meters for 568,CRAWLSPACE - VENTED:Zone Air System Sensible Cooling Energy [J]
+ Meters for 564,CRAWLSPACE - VENTED:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:CRAWLSPACE - VENTED [J]
@@ -140,7 +140,7 @@
   OnMeter=Cooling:EnergyTransfer:Zone:CRAWLSPACE - VENTED [J]
   OnMeter=General:Cooling:EnergyTransfer [J]
 
- Meters for 581,LIVING SPACE:Zone Air System Sensible Heating Energy [J]
+ Meters for 577,LIVING SPACE:Zone Air System Sensible Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:LIVING SPACE [J]
@@ -148,7 +148,7 @@
   OnMeter=Heating:EnergyTransfer:Zone:LIVING SPACE [J]
   OnMeter=General:Heating:EnergyTransfer [J]
 
- Meters for 606,LIVING SPACE:Zone Air System Sensible Cooling Energy [J]
+ Meters for 602,LIVING SPACE:Zone Air System Sensible Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Building [J]
   OnMeter=EnergyTransfer:Zone:LIVING SPACE [J]
@@ -156,223 +156,217 @@
   OnMeter=Cooling:EnergyTransfer:Zone:LIVING SPACE [J]
   OnMeter=General:Cooling:EnergyTransfer [J]
 
- Meters for 620,IDEAL:Zone Ideal Loads Supply Air Total Heating Energy [J]
+ Meters for 616,IDEAL:Zone Ideal Loads Supply Air Total Heating Energy [J]
   OnMeter=DistrictHeating:Facility [J]
   OnMeter=DistrictHeating:HVAC [J]
   OnMeter=Heating:DistrictHeating [J]
   OnMeter=General:Heating:DistrictHeating [J]
 
- Meters for 669,IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy [J]
+ Meters for 665,IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy [J]
   OnMeter=DistrictCooling:Facility [J]
   OnMeter=DistrictCooling:HVAC [J]
   OnMeter=Cooling:DistrictCooling [J]
   OnMeter=General:Cooling:DistrictCooling [J]
 
- Meters for 718,CENTRAL AC SUPPLY FAN:Fan Electric Energy [J]
+ Meters for 716,CENTRAL AC AND FURNACE SUPPLY FAN:Fan Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Fans:Electricity [J]
   OnMeter=supply fan:Fans:Electricity [J]
 
- Meters for 755,FURNACE SUPPLY FAN:Fan Electric Energy [J]
+ Meters for 754,CENTRAL AC AND FURNACE HTG COIL:Heating Coil Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:HVAC [J]
+  OnMeter=HeatingCoils:EnergyTransfer [J]
+
+ Meters for 779,CENTRAL AC AND FURNACE HTG COIL:Heating Coil Gas Energy [J]
+  OnMeter=Gas:Facility [J]
+  OnMeter=Gas:HVAC [J]
+  OnMeter=Heating:Gas [J]
+  OnMeter=General:Heating:Gas [J]
+
+ Meters for 828,CENTRAL AC AND FURNACE HTG COIL:Heating Coil Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
-  OnMeter=Fans:Electricity [J]
-  OnMeter=supply fan:Fans:Electricity [J]
+  OnMeter=Heating:Electricity [J]
+  OnMeter=General:Heating:Electricity [J]
 
- Meters for 758,CENTRAL AC CLG COIL:Cooling Coil Total Cooling Energy [J]
+ Meters for 853,CENTRAL AC AND FURNACE HTG COIL:Heating Coil Ancillary Gas Energy [J]
+  OnMeter=Gas:Facility [J]
+  OnMeter=Gas:HVAC [J]
+  OnMeter=Heating:Gas [J]
+  OnMeter=General:Heating:Gas [J]
+
+ Meters for 854,CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Total Cooling Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:HVAC [J]
   OnMeter=CoolingCoils:EnergyTransfer [J]
 
- Meters for 783,CENTRAL AC CLG COIL:Cooling Coil Electric Energy [J]
+ Meters for 867,CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Cooling:Electricity [J]
   OnMeter=General:Cooling:Electricity [J]
 
- Meters for 808,FURNACE HTG COIL:Heating Coil Heating Energy [J]
-  OnMeter=EnergyTransfer:Facility [J]
-  OnMeter=EnergyTransfer:HVAC [J]
-  OnMeter=HeatingCoils:EnergyTransfer [J]
-
- Meters for 821,FURNACE HTG COIL:Heating Coil Gas Energy [J]
-  OnMeter=Gas:Facility [J]
-  OnMeter=Gas:HVAC [J]
-  OnMeter=Heating:Gas [J]
-  OnMeter=General:Heating:Gas [J]
-
- Meters for 870,FURNACE HTG COIL:Heating Coil Electric Energy [J]
+ Meters for 892,CENTRAL AC AND FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:HVAC [J]
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 895,FURNACE HTG COIL:Heating Coil Ancillary Gas Energy [J]
-  OnMeter=Gas:Facility [J]
-  OnMeter=Gas:HVAC [J]
-  OnMeter=Heating:Gas [J]
-  OnMeter=General:Heating:Gas [J]
-
- Meters for 896,FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy [J]
-  OnMeter=Electricity:Facility [J]
-  OnMeter=Electricity:HVAC [J]
-  OnMeter=Heating:Electricity [J]
-  OnMeter=General:Heating:Electricity [J]
-
- Meters for 897,Whole Building:Facility Total Purchased Electric Energy [J]
+ Meters for 893,Whole Building:Facility Total Purchased Electric Energy [J]
   OnMeter=ElectricityPurchased:Facility [J]
   OnMeter=ElectricityPurchased:Plant [J]
   OnMeter=Cogeneration:ElectricityPurchased [J]
   OnMeter=General:Cogeneration:ElectricityPurchased [J]
 
- Meters for 946,Whole Building:Facility Total Surplus Electric Energy [J]
+ Meters for 942,Whole Building:Facility Total Surplus Electric Energy [J]
   OnMeter=ElectricitySurplusSold:Facility [J]
   OnMeter=ElectricitySurplusSold:Plant [J]
   OnMeter=Cogeneration:ElectricitySurplusSold [J]
   OnMeter=General:Cogeneration:ElectricitySurplusSold [J]
 
- Meters for 995,Whole Building:Facility Net Purchased Electric Energy [J]
+ Meters for 991,Whole Building:Facility Net Purchased Electric Energy [J]
   OnMeter=ElectricityNet:Facility [J]
   OnMeter=ElectricityNet:Plant [J]
   OnMeter=Cogeneration:ElectricityNet [J]
   OnMeter=General:Cogeneration:ElectricityNet [J]
 
- Meters for 1044,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
+ Meters for 1040,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Pumps:Electricity [J]
   OnMeter=General:Pumps:Electricity [J]
 
- Meters for 1082,CLOTHES WASHER:Water Use Equipment Total Volume [m3]
+ Meters for 1078,CLOTHES WASHER:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=clothes washer:WaterSystems:Water [m3]
 
- Meters for 1131,CLOTHES WASHER:Water Use Equipment Mains Water Volume [m3]
+ Meters for 1127,CLOTHES WASHER:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=clothes washer:WaterSystems:MainsWater [m3]
 
- Meters for 1180,CLOTHES WASHER:Water Use Equipment Heating Energy [J]
+ Meters for 1176,CLOTHES WASHER:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=clothes washer:WaterSystems:EnergyTransfer [J]
 
- Meters for 1218,DISHWASHER:Water Use Equipment Total Volume [m3]
+ Meters for 1214,DISHWASHER:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=dishwasher:WaterSystems:Water [m3]
 
- Meters for 1231,DISHWASHER:Water Use Equipment Mains Water Volume [m3]
+ Meters for 1227,DISHWASHER:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=dishwasher:WaterSystems:MainsWater [m3]
 
- Meters for 1244,DISHWASHER:Water Use Equipment Heating Energy [J]
+ Meters for 1240,DISHWASHER:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=dishwasher:WaterSystems:EnergyTransfer [J]
 
- Meters for 1258,DHW FIXTURES:Water Use Equipment Total Volume [m3]
+ Meters for 1254,DHW FIXTURES:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=dhw fixtures:WaterSystems:Water [m3]
 
- Meters for 1271,DHW FIXTURES:Water Use Equipment Mains Water Volume [m3]
+ Meters for 1267,DHW FIXTURES:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=dhw fixtures:WaterSystems:MainsWater [m3]
 
- Meters for 1284,DHW FIXTURES:Water Use Equipment Heating Energy [J]
+ Meters for 1280,DHW FIXTURES:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=dhw fixtures:WaterSystems:EnergyTransfer [J]
 
- Meters for 1298,DHW DISTRIBUTION WASTE:Water Use Equipment Total Volume [m3]
+ Meters for 1294,DHW DISTRIBUTION WASTE:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=dhw distribution waste:WaterSystems:Water [m3]
 
- Meters for 1311,DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume [m3]
+ Meters for 1307,DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=dhw distribution waste:WaterSystems:MainsWater [m3]
 
- Meters for 1324,DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy [J]
+ Meters for 1320,DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=dhw distribution waste:WaterSystems:EnergyTransfer [J]
 
- Meters for 1337,WATER USE CONNECTIONS 1:Water Use Connections Plant Hot Water Energy [J]
+ Meters for 1333,WATER USE CONNECTIONS 1:Water Use Connections Plant Hot Water Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
   OnMeter=General:WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 1387,WATER HEATER:Water Heater Source Side Heat Transfer Energy [J]
+ Meters for 1383,WATER HEATER:Water Heater Source Side Heat Transfer Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
   OnMeter=General:WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 1390,WATER HEATER:Water Heater Electric Energy [J]
+ Meters for 1386,WATER HEATER:Water Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 1416,WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy [J]
+ Meters for 1412,WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 1418,WATER HEATER:Water Heater On Cycle Parasitic Electric Energy [J]
+ Meters for 1414,WATER HEATER:Water Heater On Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 1419,WATER HEATER:Water Heater Water Volume [m3]
+ Meters for 1415,WATER HEATER:Water Heater Water Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=General:WaterSystems:Water [m3]
 
- Meters for 1432,WATER HEATER:Water Heater Mains Water Volume [m3]
+ Meters for 1428,WATER HEATER:Water Heater Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=General:WaterSystems:MainsWater [m3]
 
- Meters for 1445,CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy [J]
+ Meters for 1441,CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Crankcase Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Cooling:Electricity [J]
   OnMeter=General:Cooling:Electricity [J]
 
- Meters for 1453,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+ Meters for 1449,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1478,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1474,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1479,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1475,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
@@ -391,16 +385,15 @@
   MISC TV:Electric Equipment Electric Energy
   WHOLE HOUSE FAN:Electric Equipment Electric Energy
   WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy
-  CENTRAL AC SUPPLY FAN:Fan Electric Energy
-  FURNACE SUPPLY FAN:Fan Electric Energy
-  CENTRAL AC CLG COIL:Cooling Coil Electric Energy
-  FURNACE HTG COIL:Heating Coil Electric Energy
-  FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
+  CENTRAL AC AND FURNACE SUPPLY FAN:Fan Electric Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Electric Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Electric Energy
+  CENTRAL AC AND FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
   PUMP VARIABLE SPEED 1:Pump Electric Energy
   WATER HEATER:Water Heater Electric Energy
   WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy
   WATER HEATER:Water Heater On Cycle Parasitic Electric Energy
-  CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Crankcase Heater Electric Energy
 
  For Meter=ExteriorLights:Electricity [J], ResourceType=Electricity, EndUse=ExteriorLights, contents are:
   EXTERIOR LIGHTING:Exterior Lights Electric Energy
@@ -514,8 +507,8 @@
   CRAWLSPACE - VENTED:Zone Air System Sensible Cooling Energy
   LIVING SPACE:Zone Air System Sensible Heating Energy
   LIVING SPACE:Zone Air System Sensible Cooling Energy
-  CENTRAL AC CLG COIL:Cooling Coil Total Cooling Energy
-  FURNACE HTG COIL:Heating Coil Heating Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Heating Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Total Cooling Energy
   CLOTHES WASHER:Water Use Equipment Heating Energy
   DISHWASHER:Water Use Equipment Heating Energy
   DHW FIXTURES:Water Use Equipment Heating Energy
@@ -604,61 +597,58 @@
   IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy
 
  For Meter=Electricity:HVAC [J], ResourceType=Electricity, Group=HVAC, contents are:
-  CENTRAL AC SUPPLY FAN:Fan Electric Energy
-  FURNACE SUPPLY FAN:Fan Electric Energy
-  CENTRAL AC CLG COIL:Cooling Coil Electric Energy
-  FURNACE HTG COIL:Heating Coil Electric Energy
-  FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
+  CENTRAL AC AND FURNACE SUPPLY FAN:Fan Electric Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Electric Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Electric Energy
+  CENTRAL AC AND FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
 
  For Meter=Fans:Electricity [J], ResourceType=Electricity, EndUse=Fans, contents are:
-  CENTRAL AC SUPPLY FAN:Fan Electric Energy
-  FURNACE SUPPLY FAN:Fan Electric Energy
+  CENTRAL AC AND FURNACE SUPPLY FAN:Fan Electric Energy
 
  For Meter=supply fan:Fans:Electricity [J], ResourceType=Electricity, EndUse=Fans, contents are:
-  CENTRAL AC SUPPLY FAN:Fan Electric Energy
-  FURNACE SUPPLY FAN:Fan Electric Energy
+  CENTRAL AC AND FURNACE SUPPLY FAN:Fan Electric Energy
 
  For Meter=EnergyTransfer:HVAC [J], ResourceType=EnergyTransfer, Group=HVAC, contents are:
-  CENTRAL AC CLG COIL:Cooling Coil Total Cooling Energy
-  FURNACE HTG COIL:Heating Coil Heating Energy
-
- For Meter=CoolingCoils:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=CoolingCoils, contents are:
-  CENTRAL AC CLG COIL:Cooling Coil Total Cooling Energy
-
- For Meter=Cooling:Electricity [J], ResourceType=Electricity, EndUse=Cooling, contents are:
-  CENTRAL AC CLG COIL:Cooling Coil Electric Energy
-  CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy
-
- For Meter=General:Cooling:Electricity [J], ResourceType=Electricity, EndUse=Cooling, contents are:
-  CENTRAL AC CLG COIL:Cooling Coil Electric Energy
-  CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Heating Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Total Cooling Energy
 
  For Meter=HeatingCoils:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=HeatingCoils, contents are:
-  FURNACE HTG COIL:Heating Coil Heating Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Heating Energy
 
  For Meter=Gas:Facility [J], ResourceType=Gas, contents are:
-  FURNACE HTG COIL:Heating Coil Gas Energy
-  FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
 
  For Meter=Gas:HVAC [J], ResourceType=Gas, Group=HVAC, contents are:
-  FURNACE HTG COIL:Heating Coil Gas Energy
-  FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
 
  For Meter=Heating:Gas [J], ResourceType=Gas, EndUse=Heating, contents are:
-  FURNACE HTG COIL:Heating Coil Gas Energy
-  FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
 
  For Meter=General:Heating:Gas [J], ResourceType=Gas, EndUse=Heating, contents are:
-  FURNACE HTG COIL:Heating Coil Gas Energy
-  FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Gas Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Ancillary Gas Energy
 
  For Meter=Heating:Electricity [J], ResourceType=Electricity, EndUse=Heating, contents are:
-  FURNACE HTG COIL:Heating Coil Electric Energy
-  FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Electric Energy
+  CENTRAL AC AND FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
 
  For Meter=General:Heating:Electricity [J], ResourceType=Electricity, EndUse=Heating, contents are:
-  FURNACE HTG COIL:Heating Coil Electric Energy
-  FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
+  CENTRAL AC AND FURNACE HTG COIL:Heating Coil Electric Energy
+  CENTRAL AC AND FURNACE UNITARY SYSTEM:Unitary System Heating Ancillary Electric Energy
+
+ For Meter=CoolingCoils:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=CoolingCoils, contents are:
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Total Cooling Energy
+
+ For Meter=Cooling:Electricity [J], ResourceType=Electricity, EndUse=Cooling, contents are:
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Electric Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Crankcase Heater Electric Energy
+
+ For Meter=General:Cooling:Electricity [J], ResourceType=Electricity, EndUse=Cooling, contents are:
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Electric Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Crankcase Heater Electric Energy
 
  For Meter=ElectricityPurchased:Facility [J], ResourceType=ElectricityPurchased, contents are:
   Whole Building:Facility Total Purchased Electric Energy
@@ -701,7 +691,7 @@
   WATER HEATER:Water Heater Electric Energy
   WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy
   WATER HEATER:Water Heater On Cycle Parasitic Electric Energy
-  CENTRAL AC CLG COIL:Cooling Coil Crankcase Heater Electric Energy
+  CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Crankcase Heater Electric Energy
 
  For Meter=Pumps:Electricity [J], ResourceType=Electricity, EndUse=Pumps, contents are:
   PUMP VARIABLE SPEED 1:Pump Electric Energy

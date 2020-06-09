@@ -8,6 +8,7 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
+      <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
@@ -20,12 +21,6 @@
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
-        <Site>
-          <FuelTypesAvailable>
-            <Fuel>electricity</Fuel>
-            <Fuel>natural gas</Fuel>
-          </FuelTypesAvailable>
-        </Site>
         <BuildingOccupancy>
           <NumberofResidents>0.0</NumberofResidents>
         </BuildingOccupancy>
@@ -69,8 +64,8 @@
               </Attic>
             </AtticType>
             <VentilationRate>
-              <UnitofMeasure>SLA</UnitofMeasure>
-              <Value>0.00333</Value>
+              <UnitofMeasure>ACHnatural</UnitofMeasure>
+              <Value>2.4</Value>
             </VentilationRate>
           </Attic>
         </Attics>
@@ -379,125 +374,6 @@
           </HVACDistribution>
         </HVAC>
       </Systems>
-      <Appliances>
-        <ClothesWasher>
-          <SystemIdentifier id='ClothesWasher'/>
-          <Location>living space</Location>
-          <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
-          <RatedAnnualkWh>400.0</RatedAnnualkWh>
-          <LabelElectricRate>0.12</LabelElectricRate>
-          <LabelGasRate>1.09</LabelGasRate>
-          <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
-          <LabelUsage>6.0</LabelUsage>
-          <Capacity>3.0</Capacity>
-        </ClothesWasher>
-        <ClothesDryer>
-          <SystemIdentifier id='ClothesDryer'/>
-          <Location>living space</Location>
-          <FuelType>natural gas</FuelType>
-          <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
-          <ControlType>timer</ControlType>
-        </ClothesDryer>
-        <Dishwasher>
-          <SystemIdentifier id='Dishwasher'/>
-          <Location>living space</Location>
-          <RatedAnnualkWh>467.0</RatedAnnualkWh>
-          <PlaceSettingCapacity>12</PlaceSettingCapacity>
-          <LabelElectricRate>0.12</LabelElectricRate>
-          <LabelGasRate>1.09</LabelGasRate>
-          <LabelAnnualGasCost>33.12</LabelAnnualGasCost>
-          <LabelUsage>4.0</LabelUsage>
-        </Dishwasher>
-        <Refrigerator>
-          <SystemIdentifier id='Refrigerator'/>
-          <Location>living space</Location>
-          <RatedAnnualkWh>691.0</RatedAnnualkWh>
-        </Refrigerator>
-        <CookingRange>
-          <SystemIdentifier id='Range'/>
-          <Location>living space</Location>
-          <FuelType>natural gas</FuelType>
-          <IsInduction>false</IsInduction>
-        </CookingRange>
-        <Oven>
-          <SystemIdentifier id='Oven'/>
-          <IsConvection>false</IsConvection>
-        </Oven>
-      </Appliances>
-      <Lighting>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup1'/>
-          <Location>interior</Location>
-          <FractionofUnitsInLocation>0.1</FractionofUnitsInLocation>
-          <LightingType>
-            <CompactFluorescent/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup2'/>
-          <Location>interior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <FluorescentTube/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup3'/>
-          <Location>interior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <LightEmittingDiode/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup4'/>
-          <Location>exterior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <CompactFluorescent/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup5'/>
-          <Location>exterior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <FluorescentTube/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup6'/>
-          <Location>exterior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <LightEmittingDiode/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup7'/>
-          <Location>garage</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <CompactFluorescent/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup8'/>
-          <Location>garage</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <FluorescentTube/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup9'/>
-          <Location>garage</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <LightEmittingDiode/>
-          </LightingType>
-        </LightingGroup>
-      </Lighting>
       <MiscLoads>
         <PlugLoad>
           <SystemIdentifier id='PlugLoadMisc'/>

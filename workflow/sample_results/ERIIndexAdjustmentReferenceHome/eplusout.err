@@ -1,7 +1,7 @@
-Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
+Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.06.05 10:53,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
-   ** Warning ** GetSurfaceData: Very small surface area[5.89412E-004], Surface=SURFACE DOORAREANORTH
+   ** Warning ** GetSurfaceData: Very small surface area[5.89412E-004], Surface=SURFACE EXTERIORDOORAREA
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
    ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
    **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
@@ -14,17 +14,13 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
-   ** Warning ** GetInputViewFactors: ComplexFenestrationProperty:SolarAbsorbedLayers="LIVING SPACE", not enough values.
-   **   ~~~   ** ...Number of input values [198] is less than the required number=[400] Missing surface pairs will have a zero view factor.
    ** Warning ** Surfaces in Zone/Enclosure="CRAWLSPACE - VENTED" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
-   ** Warning ** GetInputViewFactors: Output:DaylightFactors="LIVING SPACE", not enough values.
-   **   ~~~   ** ...Number of input values [198] is less than the required number=[400] Missing surface pairs will have a zero view factor.
-   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC CLG COIL but not at the AHRI test condition due to curve out of bound.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC AND FURNACE CLG COIL but not at the AHRI test condition due to curve out of bound.
    **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
    ** Warning ** Output:Meter: invalid Key Name="FUELOIL#1:FACILITY" - not found.
@@ -42,6 +38,8 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
    ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
    ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
    ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:OTHERFUEL2" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:OTHERFUEL2" - not found.
    ************* Testing Individual Branch Integrity
    ************* All Branches passed integrity testing
    ************* Testing Individual Supply Air Path Integrity
@@ -50,8 +48,8 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.905E-005 m3/s/W.
-   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=05/08 16:00 - 17:00
+   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC AND FURNACE CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.827E-005 m3/s/W.
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=04/19 17:00 - 18:00
    **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
    **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
    **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
@@ -59,14 +57,15 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
    **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
-   ************* Key=furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL2 ENERGY, Frequency=
+   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL FUELOIL#1 ENERGY, Frequency=
+   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
+   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL OTHERFUEL2 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER GAS ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER FUELOIL#1 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER OTHERFUEL2 ENERGY, Frequency=
    ************* There are 1 unused objects in input.
    ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
    ************* There are 2 unused schedules in input.
@@ -77,11 +76,11 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
    ************* ===== Recurring Error Summary =====
    ************* The following recurring error messages occurred.
    *************
-   *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 26172 total times;
+   *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC AND FURNACE CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
+   *************  **   ~~~   **   This error occurred 13390 total times;
    *************  **   ~~~   **   during Warmup 0 times;
    *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.017045E-005  Min=6.748305E-005
+   *************  **   ~~~   **   Max=7.015310E-005  Min=6.746815E-005
    *************
    *************
    ************* ===== Final Error Summary =====
@@ -93,4 +92,4 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 26199 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  4.96sec
+   ************* EnergyPlus Completed Successfully-- 13417 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  5.45sec

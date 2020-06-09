@@ -73,13 +73,13 @@ Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0
 ==================================
-Surface=SURFACE DOORAREANORTH is used as Receiving Surface in calculations and is convex.
+Surface=SURFACE EXTERIORDOORAREA is used as Receiving Surface in calculations and is convex.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=1
-....Surface=DOORAREANORTH
+....Surface=EXTERIORDOORAREA
 ==================================
-Surface=DOORAREANORTH is not used as Receiving Surface in calculations.
+Surface=EXTERIORDOORAREA is not used as Receiving Surface in calculations.
 Number of general casting surfaces=0
 Number of back surfaces=0
 Number of receiving sub surfaces=0

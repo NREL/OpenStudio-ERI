@@ -235,7 +235,9 @@ def get_standard_140_hpxml(hpxml_path)
 end
 
 def set_hpxml_header(hpxml_file, hpxml)
-  hpxml.header.apply_ashrae140_assumptions = nil
+  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+    hpxml.header.apply_ashrae140_assumptions = nil
+  end
   if hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
     hpxml.header.eri_calculation_version = '2014'
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE') ||
@@ -251,10 +253,12 @@ def set_hpxml_header(hpxml_file, hpxml)
 end
 
 def set_hpxml_site(hpxml_file, hpxml)
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
   hpxml.site.fuels = [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas]
 end
 
 def set_hpxml_building_construction(hpxml_file, hpxml)
+  hpxml.building_construction.use_only_ideal_air_system = nil
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
       'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
@@ -276,7 +280,7 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
 end
 
 def set_hpxml_building_occupancy(hpxml_file, hpxml)
-  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
+  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.building_occupancy.number_of_residents = nil
   end
 end
@@ -316,9 +320,10 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
 end
 
 def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
-  if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml',
+  if hpxml_file.include?('Hot_Water') ||
+     ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/01-L100.xml',
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/02-L100.xml',
-      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/04-L324.xml'].include? hpxml_file
+      'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/04-L324.xml'].include?(hpxml_file)
     # 3 ACH50
     hpxml.air_infiltration_measurements.clear
     hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
@@ -338,6 +343,8 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
 end
 
 def set_hpxml_attics(hpxml_file, hpxml)
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
   hpxml.attics.clear
   hpxml.attics.add(id: 'VentedAttic',
                    attic_type: HPXML::AtticTypeVented,
@@ -345,16 +352,7 @@ def set_hpxml_attics(hpxml_file, hpxml)
 end
 
 def set_hpxml_foundations(hpxml_file, hpxml)
-  if ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3b.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3c.xml',
-      'RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
-    hpxml.foundations.clear
-    hpxml.foundations.add(id: 'UnconditionedBasement',
-                          foundation_type: HPXML::FoundationTypeBasementUnconditioned,
-                          unconditioned_basement_thermal_boundary: HPXML::FoundationThermalBoundaryFloor,
-                          within_infiltration_volume: false)
-  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
+  if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     hpxml.foundations.clear
     hpxml.foundations.add(id: 'UnventedCrawlspace',
                           foundation_type: HPXML::FoundationTypeCrawlspaceUnvented,
@@ -485,7 +483,7 @@ def set_hpxml_slabs(hpxml_file, hpxml)
 end
 
 def set_hpxml_windows(hpxml_file, hpxml)
-  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
+  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.windows.each do |window|
       window.interior_shading_factor_summer = nil
       window.interior_shading_factor_winter = nil
@@ -1048,6 +1046,8 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
 end
 
 def set_hpxml_clothes_washer(hpxml_file, hpxml)
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
   default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   hpxml.clothes_washers.clear
   hpxml.clothes_washers.add(id: 'ClothesWasher',
@@ -1062,9 +1062,9 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
 end
 
 def set_hpxml_clothes_dryer(hpxml_file, hpxml)
-  if hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
-     hpxml_file.include?('RESNET_Tests/4.5_DSE') ||
-     ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
+  if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
@@ -1102,6 +1102,8 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
 end
 
 def set_hpxml_dishwasher(hpxml_file, hpxml)
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
   default_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
@@ -1115,6 +1117,8 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
 end
 
 def set_hpxml_refrigerator(hpxml_file, hpxml)
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
   # Standard
   default_values = HotWaterAndAppliances.get_refrigerator_default_values(hpxml.building_construction.number_of_bedrooms)
   hpxml.refrigerators.clear
@@ -1124,9 +1128,9 @@ def set_hpxml_refrigerator(hpxml_file, hpxml)
 end
 
 def set_hpxml_cooking_range(hpxml_file, hpxml)
-  if hpxml_file.include?('RESNET_Tests/4.4_HVAC') ||
-     hpxml_file.include?('RESNET_Tests/4.5_DSE') ||
-     ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
+  if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-02.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
@@ -1162,6 +1166,8 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
 end
 
 def set_hpxml_oven(hpxml_file, hpxml)
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
   default_values = HotWaterAndAppliances.get_range_oven_default_values()
   hpxml.ovens.clear
   hpxml.ovens.add(id: 'Oven',
@@ -1169,7 +1175,8 @@ def set_hpxml_oven(hpxml_file, hpxml)
 end
 
 def set_hpxml_lighting(hpxml_file, hpxml)
-  # ERI Reference
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
   hpxml.lighting_groups.clear
   ltg_fracs = Lighting.get_default_fractions()
   ltg_fracs.each_with_index do |(key, fraction), i|
@@ -1182,12 +1189,12 @@ def set_hpxml_lighting(hpxml_file, hpxml)
 end
 
 def set_hpxml_plug_loads(hpxml_file, hpxml)
-  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
-    hpxml.plug_loads.clear
-    hpxml.misc_loads_schedule.weekday_fractions = nil
-    hpxml.misc_loads_schedule.weekend_fractions = nil
-    hpxml.misc_loads_schedule.monthly_multipliers = nil
-  end
+  return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
+  hpxml.plug_loads.clear
+  hpxml.misc_loads_schedule.weekday_fractions = nil
+  hpxml.misc_loads_schedule.weekend_fractions = nil
+  hpxml.misc_loads_schedule.monthly_multipliers = nil
 end
 
 def get_eri_version(hpxml)
@@ -1206,7 +1213,6 @@ def create_sample_hpxmls
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/appliances-location-unconditioned-space.xml',
-                  'invalid_files/attached-multifamily-window-outside-condition.xml',
                   'invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
@@ -1409,7 +1415,7 @@ if ARGV[0].to_sym == :generate_sample_outputs
   FileUtils.mkdir_p('sample_results')
 
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly fuels --hourly temperatures"
+  command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly ALL"
   system(command)
 
   dirs = ['ERIRatedHome',
@@ -1423,8 +1429,8 @@ if ARGV[0].to_sym == :generate_sample_outputs
 end
 
 if ARGV[0].to_sym == :update_version
-  eri_version_change = { from: '0.8.0',
-                         to: '0.9.0' }
+  eri_version_change = { from: '0.9.0',
+                         to: '0.10.0' }
 
   file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
 
@@ -1434,6 +1440,7 @@ if ARGV[0].to_sym == :update_version
 
     # To write changes to the file, use:
     File.open(file_name, 'w') { |file| file.puts new_contents }
+    puts "Updated from version #{eri_version_change[:from]} to version #{eri_version_change[:to]} in #{file_name}."
   end
 
   puts 'Done. Now check all changed files before committing.'

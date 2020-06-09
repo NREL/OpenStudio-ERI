@@ -1,4 +1,4 @@
-! Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.04.27 17:57,
+! Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.06.05 10:53,
 ! Output:Meter Objects (applicable to this run)
 Output:Meter,Electricity:Facility,hourly; !- [J]
 Output:Meter:Cumulative,Electricity:Facility,hourly; !- [J]

@@ -40,10 +40,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -10.4277605762507, 35.4817881539005, 5.4864, !- X,Y,Z Vertex 1 {m}
-  -10.4277608386813, 25.6522835071749, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
-  -7.68033076677774, 25.6522834338234, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
-  -7.68033050434718, 35.481788080549, 5.4864; !- X,Y,Z Vertex 4 {m}
+  -11.5828382762507, 34.326710423062, 5.4864, !- X,Y,Z Vertex 1 {m}
+  -11.5828385386813, 24.4972057763364, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  -8.83540846677774, 24.4972057029848, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  -8.83540820434718, 34.3267103497104, 5.4864; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Roof:180,                               !- Name
@@ -56,10 +56,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -32.7343568764476, -35.481789604027, 5.4864, !- X,Y,Z Vertex 1 {m}
-  -32.7343568764476, -25.6522849573014, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
-  -35.4817869483512, -25.6522849573014, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
-  -35.4817869483512, -35.481789604027, 5.4864; !- X,Y,Z Vertex 4 {m}
+  -31.5792792072862, -34.32671184235, 5.4864, !- X,Y,Z Vertex 1 {m}
+  -31.5792792072862, -24.4972071956244, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  -34.3267092791897, -24.4972071956244, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  -34.3267092791897, -34.32671184235, 5.4864; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Roof:270,                               !- Name
@@ -72,10 +72,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -35.481790041002, 32.7343564027968, 5.4864, !- X,Y,Z Vertex 1 {m}
-  -25.6522853942764, 32.7343565340121, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
-  -25.6522854309522, 35.4817866059156, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
-  -35.4817900776778, 35.4817864747003, 5.4864; !- X,Y,Z Vertex 4 {m}
+  -34.3267122639057, 31.5792787490546, 5.4864, !- X,Y,Z Vertex 1 {m}
+  -24.4972076171801, 31.5792788802699, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  -24.4972076538559, 34.3267089521734, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  -34.3267123005814, 34.3267088209582, 5.4864; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Roof:90,                                !- Name
@@ -88,10 +88,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  35.481789167052, -32.7343573500984, 5.4864, !- X,Y,Z Vertex 1 {m}
-  25.6522845203264, -32.7343572188832, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
-  25.6522844836507, -35.4817872907867, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
-  35.4817891303762, -35.481787422002, 5.4864; !- X,Y,Z Vertex 4 {m}
+  34.3267114207943, -31.5792796655177, 5.4864, !- X,Y,Z Vertex 1 {m}
+  24.4972067740687, -31.5792795343024, 10.4011523233628, !- X,Y,Z Vertex 2 {m}
+  24.4972067373929, -34.326709606206, 10.4011523233628, !- X,Y,Z Vertex 3 {m}
+  34.3267113841185, -34.3267097374213, 5.4864; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Surface 1 Reversed,                     !- Name
@@ -109,76 +109,12 @@ BuildingSurface:Detailed,
   5.27929086146994, 5.27929086146994, 5.4864, !- X,Y,Z Vertex 3 {m}
   5.27929086146994, -5.27929086146994, 5.4864; !- X,Y,Z Vertex 4 {m}
 
-BuildingSurface:Detailed,
-  WallAtticGable:0,                       !- Name
-  Wall,                                   !- Surface Type
-  WallAtticGable construction,            !- Construction Name
-  attic - vented,                         !- Zone Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  -34.5527573644375, 35.4817877860576, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -34.5527573644375, 35.4817877860576, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -33.1716323644375, 35.4817877860576, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -33.1716323644375, 35.4817877860576, 0.6096; !- X,Y,Z Vertex 4 {m}
-
-BuildingSurface:Detailed,
-  WallAtticGable:180,                     !- Name
-  Wall,                                   !- Surface Type
-  WallAtticGable construction,            !- Construction Name
-  attic - vented,                         !- Zone Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  -11.3662765452323, -35.4817887024963, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -11.3662765452323, -35.4817887024963, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -12.7474015452323, -35.4817887393699, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -12.7474015452323, -35.4817887393699, 0.6096; !- X,Y,Z Vertex 4 {m}
-
-BuildingSurface:Detailed,
-  WallAtticGable:270,                     !- Name
-  Wall,                                   !- Surface Type
-  WallAtticGable construction,            !- Construction Name
-  attic - vented,                         !- Zone Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  -35.4817888542261, 11.3662760715815, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -35.4817888542261, 11.3662760715815, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -35.4817889095365, 12.7474010715815, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -35.4817889095365, 12.7474010715815, 0.6096; !- X,Y,Z Vertex 4 {m}
-
-BuildingSurface:Detailed,
-  WallAtticGable:90,                      !- Name
-  Wall,                                   !- Surface Type
-  WallAtticGable construction,            !- Construction Name
-  attic - vented,                         !- Zone Name
-  Outdoors,                               !- Outside Boundary Condition
-  ,                                       !- Outside Boundary Condition Object
-  SunExposed,                             !- Sun Exposure
-  WindExposed,                            !- Wind Exposure
-  ,                                       !- View Factor to Ground
-  ,                                       !- Number of Vertices
-  35.4817885507664, -11.3662770188832, 0.6096, !- X,Y,Z Vertex 1 {m}
-  35.4817885507664, -11.3662770188832, 5.4864, !- X,Y,Z Vertex 2 {m}
-  35.4817885692032, -12.7474020188832, 5.4864, !- X,Y,Z Vertex 3 {m}
-  35.4817885692032, -12.7474020188832, 0.6096; !- X,Y,Z Vertex 4 {m}
-
 ZoneInfiltration:EffectiveLeakageArea,
   infil|attic - vented,                   !- Name
   attic - vented,                         !- Zone Name
   Always On Discrete,                     !- Schedule Name
   3716.1216,                              !- Effective Air Leakage Area {cm2}
-  0.000809810683305682,                   !- Stack Coefficient
+  0.000406474765779909,                   !- Stack Coefficient
   0.1;                                    !- Wind Coefficient
 
 ZoneMixing,
@@ -222,10 +158,10 @@ BuildingSurface:Detailed,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -6.75130023556246, 35.4817884298517, 0, !- X,Y,Z Vertex 1 {m}
-  -6.75130023556246, 35.4817884298517, 0.6096, !- X,Y,Z Vertex 2 {m}
-  35.4817877644375, 35.4817884298517, 0.6096, !- X,Y,Z Vertex 3 {m}
-  35.4817877644375, 35.4817884298517, 0;  !- X,Y,Z Vertex 4 {m}
+  -7.90637793556246, 34.3267106990133, 0, !- X,Y,Z Vertex 1 {m}
+  -7.90637793556246, 34.3267106990133, 0.6096, !- X,Y,Z Vertex 2 {m}
+  34.3267100644375, 34.3267106990133, 0.6096, !- X,Y,Z Vertex 3 {m}
+  34.3267100644375, 34.3267106990133, 0;  !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   Slab,                                   !- Name
@@ -358,7 +294,7 @@ BuildingSurface:Detailed,
   -5.27929086146994, 5.27929086146994, 3.048; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
-  surface DoorAreaNorth,                  !- Name
+  surface ExteriorDoorArea,               !- Name
   Wall,                                   !- Surface Type
   AdiabaticWallConstruction 1,            !- Construction Name
   living space,                           !- Zone Name
@@ -368,25 +304,25 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -13.1847771644375, 35.4817880742847, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -13.1847771644375, 35.4817880742847, 2.642716, !- X,Y,Z Vertex 2 {m}
-  -11.356691107466, 35.4817880742847, 2.642716, !- X,Y,Z Vertex 3 {m}
-  -11.356691107466, 35.4817880742847, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -14.3398548644375, 34.3267103434463, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -14.3398548644375, 34.3267103434463, 2.642716, !- X,Y,Z Vertex 2 {m}
+  -12.511768807466, 34.3267103434463, 2.642716, !- X,Y,Z Vertex 3 {m}
+  -12.511768807466, 34.3267103434463, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
-  DoorAreaNorth,                          !- Name
+  ExteriorDoorArea,                       !- Name
   Door,                                   !- Surface Type
   Door,                                   !- Construction Name
-  surface DoorAreaNorth,                  !- Building Surface Name
+  surface ExteriorDoorArea,               !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
   ,                                       !- View Factor to Ground
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -13.1846771644375, 35.4817880742847, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -13.1846771644375, 35.4817880742847, 2.642616, !- X,Y,Z Vertex 2 {m}
-  -11.356791107466, 35.4817880742847, 2.642616, !- X,Y,Z Vertex 3 {m}
-  -11.356791107466, 35.4817880742847, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -14.3397548644375, 34.3267103434463, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -14.3397548644375, 34.3267103434463, 2.642616, !- X,Y,Z Vertex 2 {m}
+  -12.511868807466, 34.3267103434463, 2.642616, !- X,Y,Z Vertex 3 {m}
+  -12.511868807466, 34.3267103434463, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowAreaEast,                 !- Name
@@ -399,10 +335,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  35.4817889224466, -23.5756268188832, 0.6096, !- X,Y,Z Vertex 1 {m}
-  35.4817889224466, -23.5756268188832, 1.8289, !- X,Y,Z Vertex 2 {m}
-  35.4817890323073, -31.8054268188832, 1.8289, !- X,Y,Z Vertex 3 {m}
-  35.4817890323073, -31.8054268188832, 0.6096; !- X,Y,Z Vertex 4 {m}
+  34.3267111761888, -22.4205491343024, 0.6096, !- X,Y,Z Vertex 1 {m}
+  34.3267111761888, -22.4205491343024, 1.8289, !- X,Y,Z Vertex 2 {m}
+  34.3267112860494, -30.6503491343024, 1.8289, !- X,Y,Z Vertex 3 {m}
+  34.3267112860494, -30.6503491343024, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowAreaEast,                         !- Name
@@ -414,10 +350,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  35.481788922448, -23.5757268188832, 0.6097, !- X,Y,Z Vertex 1 {m}
-  35.481788922448, -23.5757268188832, 1.8289, !- X,Y,Z Vertex 2 {m}
-  35.4817890323059, -31.8053268188832, 1.8289, !- X,Y,Z Vertex 3 {m}
-  35.4817890323059, -31.8053268188832, 0.6097; !- X,Y,Z Vertex 4 {m}
+  34.3267111761901, -22.4206491343024, 0.6097, !- X,Y,Z Vertex 1 {m}
+  34.3267111761901, -22.4206491343024, 1.8289, !- X,Y,Z Vertex 2 {m}
+  34.326711286048, -30.6502491343024, 1.8289, !- X,Y,Z Vertex 3 {m}
+  34.326711286048, -30.6502491343024, 0.6097; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowAreaNorth,                !- Name
@@ -430,10 +366,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -22.3434075644375, 35.4817879947537, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -22.3434075644375, 35.4817879947537, 1.8289, !- X,Y,Z Vertex 2 {m}
-  -14.1136075644375, 35.4817879947537, 1.8289, !- X,Y,Z Vertex 3 {m}
-  -14.1136075644375, 35.4817879947537, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -23.4984852644375, 34.3267102639152, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -23.4984852644375, 34.3267102639152, 1.8289, !- X,Y,Z Vertex 2 {m}
+  -15.2686852644375, 34.3267102639152, 1.8289, !- X,Y,Z Vertex 3 {m}
+  -15.2686852644375, 34.3267102639152, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowAreaNorth,                        !- Name
@@ -445,10 +381,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -22.3433075644375, 35.4817879947537, 0.6097, !- X,Y,Z Vertex 1 {m}
-  -22.3433075644375, 35.4817879947537, 1.8289, !- X,Y,Z Vertex 2 {m}
-  -14.1137075644375, 35.4817879947537, 1.8289, !- X,Y,Z Vertex 3 {m}
-  -14.1137075644375, 35.4817879947537, 0.6097; !- X,Y,Z Vertex 4 {m}
+  -23.4983852644375, 34.3267102639152, 0.6097, !- X,Y,Z Vertex 1 {m}
+  -23.4983852644375, 34.3267102639152, 1.8289, !- X,Y,Z Vertex 2 {m}
+  -15.2687852644375, 34.3267102639152, 1.8289, !- X,Y,Z Vertex 3 {m}
+  -15.2687852644375, 34.3267102639152, 0.6097; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowAreaSouth,                !- Name
@@ -461,10 +397,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -23.5756263452323, -35.4817892371606, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -23.5756263452323, -35.4817892371606, 1.8289, !- X,Y,Z Vertex 2 {m}
-  -31.8054263452323, -35.4817894568819, 1.8289, !- X,Y,Z Vertex 3 {m}
-  -31.8054263452323, -35.4817894568819, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -22.4205486760709, -34.3267114754835, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -22.4205486760709, -34.3267114754835, 1.8289, !- X,Y,Z Vertex 2 {m}
+  -30.6503486760709, -34.3267116952048, 1.8289, !- X,Y,Z Vertex 3 {m}
+  -30.6503486760709, -34.3267116952048, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowAreaSouth,                        !- Name
@@ -476,10 +412,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -23.5757263452323, -35.4817892371633, 0.6097, !- X,Y,Z Vertex 1 {m}
-  -23.5757263452323, -35.4817892371633, 1.8289, !- X,Y,Z Vertex 2 {m}
-  -31.8053263452323, -35.4817894568792, 1.8289, !- X,Y,Z Vertex 3 {m}
-  -31.8053263452323, -35.4817894568792, 0.6097; !- X,Y,Z Vertex 4 {m}
+  -22.4206486760709, -34.3267114754862, 0.6097, !- X,Y,Z Vertex 1 {m}
+  -22.4206486760709, -34.3267114754862, 1.8289, !- X,Y,Z Vertex 2 {m}
+  -30.6502486760709, -34.3267116952021, 1.8289, !- X,Y,Z Vertex 3 {m}
+  -30.6502486760709, -34.3267116952021, 0.6097; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   surface WindowAreaWest,                 !- Name
@@ -492,10 +428,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -35.4817895518746, 23.5756258715815, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -35.4817895518746, 23.5756258715815, 1.8289, !- X,Y,Z Vertex 2 {m}
-  -35.4817898814565, 31.8054258715815, 1.8289, !- X,Y,Z Vertex 3 {m}
-  -35.4817898814565, 31.8054258715815, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -34.3267117747782, 22.4205482178393, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -34.3267117747782, 22.4205482178393, 1.8289, !- X,Y,Z Vertex 2 {m}
+  -34.3267121043601, 30.6503482178393, 1.8289, !- X,Y,Z Vertex 3 {m}
+  -34.3267121043601, 30.6503482178393, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 FenestrationSurface:Detailed,
   WindowAreaWest,                         !- Name
@@ -507,10 +443,10 @@ FenestrationSurface:Detailed,
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
-  -35.4817895518786, 23.5757258715815, 0.6097, !- X,Y,Z Vertex 1 {m}
-  -35.4817895518786, 23.5757258715815, 1.8289, !- X,Y,Z Vertex 2 {m}
-  -35.4817898814525, 31.8053258715815, 1.8289, !- X,Y,Z Vertex 3 {m}
-  -35.4817898814525, 31.8053258715815, 0.6097; !- X,Y,Z Vertex 4 {m}
+  -34.3267117747822, 22.4206482178393, 0.6097, !- X,Y,Z Vertex 1 {m}
+  -34.3267117747822, 22.4206482178393, 1.8289, !- X,Y,Z Vertex 2 {m}
+  -34.3267121043561, 30.6502482178393, 1.8289, !- X,Y,Z Vertex 3 {m}
+  -34.3267121043561, 30.6502482178393, 0.6097; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallArea:0,                             !- Name
@@ -523,10 +459,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -32.2426019644375, 35.4817878675504, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -32.2426019644375, 35.4817878675504, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -23.2723379644375, 35.4817878675504, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -23.2723379644375, 35.4817878675504, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -33.3976796644375, 34.3267101367119, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -33.3976796644375, 34.3267101367119, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -24.4274156644375, 34.3267101367119, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -24.4274156644375, 34.3267101367119, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallArea:180,                           !- Name
@@ -539,10 +475,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -13.6764319452323, -35.4817888456662, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -13.6764319452323, -35.4817888456662, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -22.6466959452323, -35.4817890851565, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -22.6466959452323, -35.4817890851565, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -12.5213542760709, -34.326711083989, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -12.5213542760709, -34.326711083989, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -21.4916182760709, -34.3267113234793, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -21.4916182760709, -34.3267113234793, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallArea:270,                           !- Name
@@ -555,10 +491,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -35.4817890282346, 13.6764314715815, 0.6096, !- X,Y,Z Vertex 1 {m}
-  -35.4817890282346, 13.6764314715815, 5.4864, !- X,Y,Z Vertex 2 {m}
-  -35.4817893874701, 22.6466954715815, 5.4864, !- X,Y,Z Vertex 3 {m}
-  -35.4817893874701, 22.6466954715815, 0.6096; !- X,Y,Z Vertex 4 {m}
+  -34.3267112511382, 12.5213538178394, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -34.3267112511382, 12.5213538178394, 5.4864, !- X,Y,Z Vertex 2 {m}
+  -34.3267116103737, 21.4916178178394, 5.4864, !- X,Y,Z Vertex 3 {m}
+  -34.3267116103737, 21.4916178178394, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 BuildingSurface:Detailed,
   WallArea:90,                            !- Name
@@ -571,10 +507,10 @@ BuildingSurface:Detailed,
   WindExposed,                            !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  35.4817886630978, -13.6764324188832, 0.6096, !- X,Y,Z Vertex 1 {m}
-  35.4817886630978, -13.6764324188832, 5.4864, !- X,Y,Z Vertex 2 {m}
-  35.4817887828429, -22.6466964188832, 5.4864, !- X,Y,Z Vertex 3 {m}
-  35.4817887828429, -22.6466964188832, 0.6096; !- X,Y,Z Vertex 4 {m}
+  34.3267109168399, -12.5213547343024, 0.6096, !- X,Y,Z Vertex 1 {m}
+  34.3267109168399, -12.5213547343024, 5.4864, !- X,Y,Z Vertex 2 {m}
+  34.3267110365851, -21.4916187343024, 5.4864, !- X,Y,Z Vertex 3 {m}
+  34.3267110365851, -21.4916187343024, 0.6096; !- X,Y,Z Vertex 4 {m}
 
 InternalMass,
   furniture mass living space living,     !- Name
@@ -608,7 +544,7 @@ Lights,
   living space,                           !- Zone or ZoneList Name
   lighting schedule,                      !- Schedule Name
   LightingLevel,                          !- Design Level Calculation Method
-  715.056621468289,                       !- Lighting Level {W}
+  715.05662146829,                        !- Lighting Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
   0,                                      !- Return Air Fraction
@@ -1671,7 +1607,7 @@ ElectricEquipment,
   living space,                           !- Zone or ZoneList Name
   clothes dryer,                          !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
-  217.210567096207,                       !- Design Level {W}
+  163.659404231144,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
   0.015,                                  !- Fraction Latent
@@ -1684,7 +1620,7 @@ ElectricEquipment,
   living space,                           !- Zone or ZoneList Name
   clothes washer schedule,                !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
-  12656.0278360729,                       !- Design Level {W}
+  17994.2012743962,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
   0.03,                                   !- Fraction Latent
@@ -1710,7 +1646,7 @@ ElectricEquipment,
   living space,                           !- Zone or ZoneList Name
   dishwasher schedule,                    !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
-  17955.9738492765,                       !- Design Level {W}
+  13794.3152210238,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
   0.3,                                    !- Fraction Latent
@@ -1734,7 +1670,7 @@ ElectricEquipment,
 ElectricEquipment,
   mech vent bath fan,                     !- Name
   living space,                           !- Zone or ZoneList Name
-  mech vent bath exhaust schedule,        !- Schedule Name
+  mech vent bath fan schedule,            !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
@@ -1760,7 +1696,7 @@ ElectricEquipment,
 ElectricEquipment,
   mech vent range fan,                    !- Name
   living space,                           !- Zone or ZoneList Name
-  mech vent range exhaust schedule,       !- Schedule Name
+  mech vent range fan schedule,           !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
   0,                                      !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
@@ -1810,36 +1746,6 @@ ElectricEquipment,
   whole house fan;                        !- End-Use Subcategory
 
 OtherEquipment,
-  erv or hrv latent load equip,           !- Name
-  None,                                   !- Fuel Type
-  living space,                           !- Zone or ZoneList Name
-  Always On Discrete,                     !- Schedule Name
-  EquipmentLevel,                         !- Design Level Calculation Method
-  0,                                      !- Design Level {W}
-  ,                                       !- Power per Zone Floor Area {W/m2}
-  ,                                       !- Power per Person {W/person}
-  1,                                      !- Fraction Latent
-  0,                                      !- Fraction Radiant
-  0,                                      !- Fraction Lost
-  ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
-  General;                                !- End-Use Subcategory
-
-OtherEquipment,
-  erv or hrv sensible load equip,         !- Name
-  None,                                   !- Fuel Type
-  living space,                           !- Zone or ZoneList Name
-  Always On Discrete,                     !- Schedule Name
-  EquipmentLevel,                         !- Design Level Calculation Method
-  0,                                      !- Design Level {W}
-  ,                                       !- Power per Zone Floor Area {W/m2}
-  ,                                       !- Power per Person {W/person}
-  0,                                      !- Fraction Latent
-  0,                                      !- Fraction Radiant
-  0,                                      !- Fraction Lost
-  ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
-  General;                                !- End-Use Subcategory
-
-OtherEquipment,
   water heater EC adjustment,             !- Name
   electricity,                            !- Fuel Type
   living space,                           !- Zone or ZoneList Name
@@ -1883,20 +1789,6 @@ OtherEquipment,
   0,                                      !- Fraction Lost
   ,                                       !- Carbon Dioxide Generation Rate {m3/s-W}
   water Sensible;                         !- End-Use Subcategory
-
-ZoneInfiltration:DesignFlowRate,
-  ducts flow,                             !- Name
-  living space,                           !- Zone or ZoneList Name
-  Always On Discrete,                     !- Schedule Name
-  Flow/Zone,                              !- Design Flow Rate Calculation Method
-  0,                                      !- Design Flow Rate {m3/s}
-  ,                                       !- Flow per Zone Floor Area {m3/s-m2}
-  ,                                       !- Flow per Exterior Surface Area {m3/s-m2}
-  ,                                       !- Air Changes per Hour {1/hr}
-  ,                                       !- Constant Term Coefficient
-  ,                                       !- Temperature Term Coefficient
-  ,                                       !- Velocity Term Coefficient
-  ;                                       !- Velocity Squared Term Coefficient
 
 ZoneInfiltration:DesignFlowRate,
   infil flow,                             !- Name
@@ -2003,11 +1895,11 @@ Schedule:Week:Daily,
   heating setpoint allday1,               !- Thursday Schedule:Day Name
   heating setpoint allday1,               !- Friday Schedule:Day Name
   heating setpoint allday1,               !- Saturday Schedule:Day Name
-  Schedule Day 6,                         !- Holiday Schedule:Day Name
-  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 3,                         !- Holiday Schedule:Day Name
+  Schedule Day 3,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 3,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 3,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 3;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   heating setpoint,                       !- Name
@@ -2019,7 +1911,7 @@ Schedule:Year,
   31;                                     !- End Day 1
 
 Schedule:Day:Interval,
-  Schedule Day 6,                         !- Name
+  Schedule Day 3,                         !- Name
   Temperature,                            !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
@@ -2041,11 +1933,11 @@ Schedule:Week:Daily,
   cooling setpoint allday1,               !- Thursday Schedule:Day Name
   cooling setpoint allday1,               !- Friday Schedule:Day Name
   cooling setpoint allday1,               !- Saturday Schedule:Day Name
-  Schedule Day 7,                         !- Holiday Schedule:Day Name
-  Schedule Day 7,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 7,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 7,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 7;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 4,                         !- Holiday Schedule:Day Name
+  Schedule Day 4,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 4,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 4,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 4;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   cooling setpoint,                       !- Name
@@ -2057,7 +1949,7 @@ Schedule:Year,
   31;                                     !- End Day 1
 
 Schedule:Day:Interval,
-  Schedule Day 7,                         !- Name
+  Schedule Day 4,                         !- Name
   Temperature,                            !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
@@ -2074,49 +1966,34 @@ ZoneHVAC:EquipmentConnections,
 NodeList,
   living space Inlet Node List,           !- Name
   Node 8,                                 !- Node Name 1
-  Node 15,                                !- Node Name 2
-  Node 19;                                !- Node Name 3
+  Node 12;                                !- Node Name 2
 
 NodeList,
   living space Exhaust Node List,         !- Name
-  Node 18;                                !- Node Name 1
+  Node 11;                                !- Node Name 1
 
 NodeList,
   living space Return Node List,          !- Name
-  Node 9,                                 !- Node Name 1
-  Node 16;                                !- Node Name 2
+  Node 9;                                 !- Node Name 1
 
 AirTerminal:SingleDuct:ConstantVolume:NoReheat,
-  central ac living space terminal,       !- Name
+  central ac and furnace terminal,        !- Name
   Always On Discrete,                     !- Availability Schedule Name
   Node 10,                                !- Air Inlet Node Name
   Node 8,                                 !- Air Outlet Node Name
-  0.333712939891349;                      !- Maximum Air Flow Rate {m3/s}
+  0.32555599209268;                       !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
-  ADU central ac living space terminal,   !- Name
+  ADU central ac and furnace terminal,    !- Name
   Node 8,                                 !- Air Distribution Unit Outlet Node Name
   AirTerminal:SingleDuct:ConstantVolume:NoReheat, !- Air Terminal Object Type
-  central ac living space terminal;       !- Air Terminal Name
-
-AirTerminal:SingleDuct:ConstantVolume:NoReheat,
-  furnace living space terminal,          !- Name
-  Always On Discrete,                     !- Availability Schedule Name
-  Node 17,                                !- Air Inlet Node Name
-  Node 15,                                !- Air Outlet Node Name
-  0.337166095761099;                      !- Maximum Air Flow Rate {m3/s}
-
-ZoneHVAC:AirDistributionUnit,
-  ADU furnace living space terminal,      !- Name
-  Node 15,                                !- Air Distribution Unit Outlet Node Name
-  AirTerminal:SingleDuct:ConstantVolume:NoReheat, !- Air Terminal Object Type
-  furnace living space terminal;          !- Air Terminal Name
+  central ac and furnace terminal;        !- Air Terminal Name
 
 ZoneHVAC:IdealLoadsAirSystem,
   ideal,                                  !- Name
   ,                                       !- Availability Schedule Name
-  Node 19,                                !- Zone Supply Air Node Name
-  Node 18,                                !- Zone Exhaust Air Node Name
+  Node 12,                                !- Zone Supply Air Node Name
+  Node 11,                                !- Zone Exhaust Air Node Name
   ,                                       !- System Inlet Air Node Name
   50,                                     !- Maximum Heating Supply Air Temperature {C}
   10,                                     !- Minimum Cooling Supply Air Temperature {C}
@@ -2145,23 +2022,17 @@ ZoneHVAC:EquipmentList,
   living space Equipment List,            !- Name
   SequentialLoad,                         !- Load Distribution Scheme
   ZoneHVAC:AirDistributionUnit,           !- Zone Equipment Object Type 1
-  ADU central ac living space terminal,   !- Zone Equipment Name 1
+  ADU central ac and furnace terminal,    !- Zone Equipment Name 1
   1,                                      !- Zone Equipment Cooling Sequence 1
   1,                                      !- Zone Equipment Heating or No-Load Sequence 1
-  Sequential Fraction Schedule,           !- Zone Equipment Sequential Cooling Fraction Schedule Name 1
-  Sequential Fraction Schedule 1,         !- Zone Equipment Sequential Heating Fraction Schedule Name 1
-  ZoneHVAC:AirDistributionUnit,           !- Zone Equipment Object Type 2
-  ADU furnace living space terminal,      !- Zone Equipment Name 2
+  Sequential Fraction Schedule 1,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 1
+  Sequential Fraction Schedule,           !- Zone Equipment Sequential Heating Fraction Schedule Name 1
+  ZoneHVAC:IdealLoadsAirSystem,           !- Zone Equipment Object Type 2
+  ideal,                                  !- Zone Equipment Name 2
   2,                                      !- Zone Equipment Cooling Sequence 2
   2,                                      !- Zone Equipment Heating or No-Load Sequence 2
-  Sequential Fraction Schedule 3,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 2
-  Sequential Fraction Schedule 2,         !- Zone Equipment Sequential Heating Fraction Schedule Name 2
-  ZoneHVAC:IdealLoadsAirSystem,           !- Zone Equipment Object Type 3
-  ideal,                                  !- Zone Equipment Name 3
-  3,                                      !- Zone Equipment Cooling Sequence 3
-  3,                                      !- Zone Equipment Heating or No-Load Sequence 3
-  Sequential Fraction Schedule 4,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 3
-  Sequential Fraction Schedule 5;         !- Zone Equipment Sequential Heating Fraction Schedule Name 3
+  Sequential Fraction Schedule 2,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 2
+  Sequential Fraction Schedule 3;         !- Zone Equipment Sequential Heating Fraction Schedule Name 2
 
 SimulationControl,
   No,                                     !- Do Zone Sizing Calculation
@@ -2281,13 +2152,13 @@ Material,
   1339.84,                                !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
   0.9,                                    !- Solar Absorptance
-  0.7;                                    !- Visible Absorptance
+  0.9;                                    !- Visible Absorptance
 
 Material,
   FloorIns,                               !- Name
   Rough,                                  !- Roughness
   0.1397,                                 !- Thickness {m}
-  0.0419946180374429,                     !- Conductivity {W/m-K}
+  0.038021830880164,                      !- Conductivity {W/m-K}
   92.3553,                                !- Density {kg/m3}
   1139.71374674761,                       !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
@@ -2440,19 +2311,8 @@ Material,
 Material,
   WallStudAndCavity 1,                    !- Name
   Rough,                                  !- Roughness
-  0.1397,                                 !- Thickness {m}
-  0.727959376833552,                      !- Conductivity {W/m-K}
-  139.0536,                               !- Density {kg/m3}
-  1170.23755760369,                       !- Specific Heat {J/kg-K}
-  0.9,                                    !- Thermal Absorptance
-  0.7,                                    !- Solar Absorptance
-  0.7;                                    !- Visible Absorptance
-
-Material,
-  WallStudAndCavity 2,                    !- Name
-  Rough,                                  !- Roughness
   0.0889,                                 !- Thickness {m}
-  0.3778262968944,                        !- Conductivity {W/m-K}
+  0.377826158412609,                      !- Conductivity {W/m-K}
   52.34794524,                            !- Density {kg/m3}
   1209.88641434781,                       !- Specific Heat {J/kg-K}
   0.9,                                    !- Thermal Absorptance
@@ -2460,7 +2320,7 @@ Material,
   0.7;                                    !- Visible Absorptance
 
 Material,
-  WallStudAndCavity 3,                    !- Name
+  WallStudAndCavity 2,                    !- Name
   Rough,                                  !- Roughness
   0.0889,                                 !- Thickness {m}
   0.391763531157105,                      !- Conductivity {W/m-K}
@@ -2665,14 +2525,14 @@ Construction,
   AdiabaticWallConstruction,              !- Name
   Stucco&#44 Medium/Dark,                 !- Layer 1
   WallRigidIns 1,                         !- Layer 2
-  WallStudAndCavity 2,                    !- Layer 3
+  WallStudAndCavity 1,                    !- Layer 3
   Drywall 0.5 in.;                        !- Layer 4
 
 Construction,
   AdiabaticWallConstruction 1,            !- Name
   Stucco&#44 Medium/Dark,                 !- Layer 1
   WallRigidIns 2,                         !- Layer 2
-  WallStudAndCavity 2,                    !- Layer 3
+  WallStudAndCavity 1,                    !- Layer 3
   Drywall 0.5 in.;                        !- Layer 4
 
 Construction,
@@ -2697,15 +2557,13 @@ Construction,
   FloorBelowAttic construction,           !- Name
   FloorIns,                               !- Layer 1
   WallRigidIns,                           !- Layer 2
-  Plywood 0.75 in.,                       !- Layer 3
-  Floor Covering;                         !- Layer 4
+  Plywood 0.75 in.;                       !- Layer 3
 
 Construction,
   FloorBelowAttic construction Reversed,  !- Name
-  Floor Covering,                         !- Layer 1
-  Plywood 0.75 in.,                       !- Layer 2
-  WallRigidIns,                           !- Layer 3
-  FloorIns;                               !- Layer 4
+  Plywood 0.75 in.,                       !- Layer 1
+  WallRigidIns,                           !- Layer 2
+  FloorIns;                               !- Layer 3
 
 Construction,
   FoundationWall construction,            !- Name
@@ -2718,7 +2576,7 @@ Construction,
 Construction,
   PartitionWallConstruction,              !- Name
   Drywall 0.5 in.,                        !- Layer 1
-  WallStudAndCavity 3,                    !- Layer 2
+  WallStudAndCavity 2,                    !- Layer 2
   Drywall 0.5 in.;                        !- Layer 3
 
 Construction,
@@ -2738,12 +2596,6 @@ Construction,
   RoofSheathing,                          !- Layer 3
   WallStudAndCavity,                      !- Layer 4
   Drywall 0.5 in.;                        !- Layer 5
-
-Construction,
-  WallAtticGable construction,            !- Name
-  Wood&#44 Light,                         !- Layer 1
-  RoofSheathing,                          !- Layer 2
-  WallStudAndCavity 1;                    !- Layer 3
 
 Construction,
   WindowConstruction,                     !- Name
@@ -2778,8 +2630,7 @@ ScheduleTypeLimits,
   OnOff,                                  !- Name
   0,                                      !- Lower Limit Value {BasedOnField A3}
   1,                                      !- Upper Limit Value {BasedOnField A3}
-  Discrete,                               !- Numeric Type
-  availability;                           !- Unit Type
+  Discrete;                               !- Numeric Type
 
 ScheduleTypeLimits,
   OnOff 1,                                !- Name
@@ -2788,14 +2639,21 @@ ScheduleTypeLimits,
   Discrete,                               !- Numeric Type
   availability;                           !- Unit Type
 
+ScheduleTypeLimits,
+  OnOff 2,                                !- Name
+  0,                                      !- Lower Limit Value {BasedOnField A3}
+  1,                                      !- Upper Limit Value {BasedOnField A3}
+  Discrete,                               !- Numeric Type
+  availability;                           !- Unit Type
+
 Schedule:Constant,
   Always Off Discrete,                    !- Name
-  OnOff 1,                                !- Schedule Type Limits Name
+  OnOff 2,                                !- Schedule Type Limits Name
   0;                                      !- Hourly Value
 
 Schedule:Constant,
   Always On Discrete,                     !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  OnOff 1,                                !- Schedule Type Limits Name
   1;                                      !- Hourly Value
 
 Schedule:Constant,
@@ -2816,7 +2674,7 @@ Schedule:Constant,
 Schedule:Constant,
   Sequential Fraction Schedule 1,         !- Name
   Fractional,                             !- Schedule Type Limits Name
-  0;                                      !- Hourly Value
+  1;                                      !- Hourly Value
 
 Schedule:Constant,
   Sequential Fraction Schedule 2,         !- Name
@@ -2825,16 +2683,6 @@ Schedule:Constant,
 
 Schedule:Constant,
   Sequential Fraction Schedule 3,         !- Name
-  Fractional,                             !- Schedule Type Limits Name
-  0;                                      !- Hourly Value
-
-Schedule:Constant,
-  Sequential Fraction Schedule 4,         !- Name
-  Fractional,                             !- Schedule Type Limits Name
-  1;                                      !- Hourly Value
-
-Schedule:Constant,
-  Sequential Fraction Schedule 5,         !- Name
   Fractional,                             !- Schedule Type Limits Name
   1;                                      !- Hourly Value
 
@@ -4105,14 +3953,14 @@ Schedule:Day:Interval,
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
-  mech vent bath exhaust schedule allday1, !- Name
+  mech vent bath fan schedule allday1,    !- Name
   OnOff,                                  !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   0;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
-  mech vent range exhaust schedule allday1, !- Name
+  mech vent range fan schedule allday1,   !- Name
   OnOff,                                  !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
@@ -4687,13 +4535,6 @@ Schedule:Day:Interval,
   1;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
-  natural vent temp schedule allday1,     !- Name
-  Temperature,                            !- Schedule Type Limits Name
-  No,                                     !- Interpolate to Timestep
-  24:00,                                  !- Time 1 {hh:mm}
-  22.7777777777778;                       !- Value Until Time 1
-
-Schedule:Day:Interval,
   occupants schedule allday1,             !- Name
   Fractional,                             !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
@@ -4716,7 +4557,7 @@ Schedule:Day:Interval,
 
 Schedule:Day:Interval,
   Schedule Day 1,                         !- Name
-  Fractional,                             !- Schedule Type Limits Name
+  OnOff,                                  !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   0;                                      !- Value Until Time 1
@@ -4772,7 +4613,7 @@ Schedule:Day:Interval,
 
 Schedule:Day:Interval,
   Schedule Day 18,                        !- Name
-  Temperature,                            !- Schedule Type Limits Name
+  OnOff,                                  !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   0;                                      !- Value Until Time 1
@@ -4786,27 +4627,6 @@ Schedule:Day:Interval,
 
 Schedule:Day:Interval,
   Schedule Day 2,                         !- Name
-  Fractional,                             !- Schedule Type Limits Name
-  No,                                     !- Interpolate to Timestep
-  24:00,                                  !- Time 1 {hh:mm}
-  0;                                      !- Value Until Time 1
-
-Schedule:Day:Interval,
-  Schedule Day 20,                        !- Name
-  OnOff,                                  !- Schedule Type Limits Name
-  No,                                     !- Interpolate to Timestep
-  24:00,                                  !- Time 1 {hh:mm}
-  0;                                      !- Value Until Time 1
-
-Schedule:Day:Interval,
-  Schedule Day 3,                         !- Name
-  ActivityLevel,                          !- Schedule Type Limits Name
-  No,                                     !- Interpolate to Timestep
-  24:00,                                  !- Time 1 {hh:mm}
-  117.228428068889;                       !- Value Until Time 1
-
-Schedule:Day:Interval,
-  Schedule Day 4,                         !- Name
   OnOff,                                  !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
@@ -4814,10 +4634,24 @@ Schedule:Day:Interval,
 
 Schedule:Day:Interval,
   Schedule Day 5,                         !- Name
-  OnOff,                                  !- Schedule Type Limits Name
+  Fractional,                             !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
   0;                                      !- Value Until Time 1
+
+Schedule:Day:Interval,
+  Schedule Day 6,                         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0;                                      !- Value Until Time 1
+
+Schedule:Day:Interval,
+  Schedule Day 7,                         !- Name
+  ActivityLevel,                          !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  117.228428068889;                       !- Value Until Time 1
 
 Schedule:Day:Interval,
   Schedule Day 8,                         !- Name
@@ -5221,11 +5055,11 @@ Schedule:Week:Daily,
   cooling season allday1,                 !- Thursday Schedule:Day Name
   cooling season allday1,                 !- Friday Schedule:Day Name
   cooling season allday1,                 !- Saturday Schedule:Day Name
-  Schedule Day 5,                         !- Holiday Schedule:Day Name
-  Schedule Day 5,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 5,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 5,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 5;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 2,                         !- Holiday Schedule:Day Name
+  Schedule Day 2,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 2,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 2,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 2;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   cooling season,                         !- Name
@@ -5245,11 +5079,11 @@ Schedule:Week:Daily,
   cooling season schedule allday1,        !- Thursday Schedule:Day Name
   cooling season schedule allday1,        !- Friday Schedule:Day Name
   cooling season schedule allday1,        !- Saturday Schedule:Day Name
-  Schedule Day 1,                         !- Holiday Schedule:Day Name
-  Schedule Day 1,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 1;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 5,                         !- Holiday Schedule:Day Name
+  Schedule Day 5,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 5;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Week:Daily,
   cooling season schedule Week Rule - Apr29-May5, !- Name
@@ -5260,11 +5094,11 @@ Schedule:Week:Daily,
   cooling season schedule allday5,        !- Thursday Schedule:Day Name
   cooling season schedule allday5,        !- Friday Schedule:Day Name
   cooling season schedule allday5,        !- Saturday Schedule:Day Name
-  Schedule Day 1,                         !- Holiday Schedule:Day Name
-  Schedule Day 1,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 1;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 5,                         !- Holiday Schedule:Day Name
+  Schedule Day 5,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 5;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Week:Daily,
   cooling season schedule Week Rule - May6-Oct27, !- Name
@@ -5275,11 +5109,11 @@ Schedule:Week:Daily,
   cooling season schedule allday5,        !- Thursday Schedule:Day Name
   cooling season schedule allday5,        !- Friday Schedule:Day Name
   cooling season schedule allday5,        !- Saturday Schedule:Day Name
-  Schedule Day 1,                         !- Holiday Schedule:Day Name
-  Schedule Day 1,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 1;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 5,                         !- Holiday Schedule:Day Name
+  Schedule Day 5,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 5;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Week:Daily,
   cooling season schedule Week Rule - Oct28-Nov3, !- Name
@@ -5290,11 +5124,11 @@ Schedule:Week:Daily,
   cooling season schedule allday11,       !- Thursday Schedule:Day Name
   cooling season schedule allday11,       !- Friday Schedule:Day Name
   cooling season schedule allday11,       !- Saturday Schedule:Day Name
-  Schedule Day 1,                         !- Holiday Schedule:Day Name
-  Schedule Day 1,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 1;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 5,                         !- Holiday Schedule:Day Name
+  Schedule Day 5,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 5;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Week:Daily,
   cooling season schedule Week Rule - Nov4-Dec31, !- Name
@@ -5305,11 +5139,11 @@ Schedule:Week:Daily,
   cooling season schedule allday11,       !- Thursday Schedule:Day Name
   cooling season schedule allday11,       !- Friday Schedule:Day Name
   cooling season schedule allday11,       !- Saturday Schedule:Day Name
-  Schedule Day 1,                         !- Holiday Schedule:Day Name
-  Schedule Day 1,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 1,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 1;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 5,                         !- Holiday Schedule:Day Name
+  Schedule Day 5,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 5,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 5;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   cooling season schedule,                !- Name
@@ -5701,11 +5535,11 @@ Schedule:Week:Daily,
   heating season allday1,                 !- Thursday Schedule:Day Name
   heating season allday1,                 !- Friday Schedule:Day Name
   heating season allday1,                 !- Saturday Schedule:Day Name
-  Schedule Day 4,                         !- Holiday Schedule:Day Name
-  Schedule Day 4,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 4,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 4,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 4;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 1,                         !- Holiday Schedule:Day Name
+  Schedule Day 1,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 1,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 1,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 1;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   heating season,                         !- Name
@@ -5717,38 +5551,14 @@ Schedule:Year,
   31;                                     !- End Day 1
 
 Schedule:Week:Daily,
-  mech vent bath exhaust schedule Week Rule - Jan1-Dec31, !- Name
-  mech vent bath exhaust schedule allday1, !- Sunday Schedule:Day Name
-  mech vent bath exhaust schedule allday1, !- Monday Schedule:Day Name
-  mech vent bath exhaust schedule allday1, !- Tuesday Schedule:Day Name
-  mech vent bath exhaust schedule allday1, !- Wednesday Schedule:Day Name
-  mech vent bath exhaust schedule allday1, !- Thursday Schedule:Day Name
-  mech vent bath exhaust schedule allday1, !- Friday Schedule:Day Name
-  mech vent bath exhaust schedule allday1, !- Saturday Schedule:Day Name
-  Schedule Day 20,                        !- Holiday Schedule:Day Name
-  Schedule Day 20,                        !- SummerDesignDay Schedule:Day Name
-  Schedule Day 20,                        !- WinterDesignDay Schedule:Day Name
-  Schedule Day 20,                        !- CustomDay1 Schedule:Day Name
-  Schedule Day 20;                        !- CustomDay2 Schedule:Day Name
-
-Schedule:Year,
-  mech vent bath exhaust schedule,        !- Name
-  OnOff,                                  !- Schedule Type Limits Name
-  mech vent bath exhaust schedule Week Rule - Jan1-Dec31, !- Schedule:Week Name 1
-  1,                                      !- Start Month 1
-  1,                                      !- Start Day 1
-  12,                                     !- End Month 1
-  31;                                     !- End Day 1
-
-Schedule:Week:Daily,
-  mech vent range exhaust schedule Week Rule - Jan1-Dec31, !- Name
-  mech vent range exhaust schedule allday1, !- Sunday Schedule:Day Name
-  mech vent range exhaust schedule allday1, !- Monday Schedule:Day Name
-  mech vent range exhaust schedule allday1, !- Tuesday Schedule:Day Name
-  mech vent range exhaust schedule allday1, !- Wednesday Schedule:Day Name
-  mech vent range exhaust schedule allday1, !- Thursday Schedule:Day Name
-  mech vent range exhaust schedule allday1, !- Friday Schedule:Day Name
-  mech vent range exhaust schedule allday1, !- Saturday Schedule:Day Name
+  mech vent bath fan schedule Week Rule - Jan1-Dec31, !- Name
+  mech vent bath fan schedule allday1,    !- Sunday Schedule:Day Name
+  mech vent bath fan schedule allday1,    !- Monday Schedule:Day Name
+  mech vent bath fan schedule allday1,    !- Tuesday Schedule:Day Name
+  mech vent bath fan schedule allday1,    !- Wednesday Schedule:Day Name
+  mech vent bath fan schedule allday1,    !- Thursday Schedule:Day Name
+  mech vent bath fan schedule allday1,    !- Friday Schedule:Day Name
+  mech vent bath fan schedule allday1,    !- Saturday Schedule:Day Name
   Schedule Day 19,                        !- Holiday Schedule:Day Name
   Schedule Day 19,                        !- SummerDesignDay Schedule:Day Name
   Schedule Day 19,                        !- WinterDesignDay Schedule:Day Name
@@ -5756,9 +5566,33 @@ Schedule:Week:Daily,
   Schedule Day 19;                        !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
-  mech vent range exhaust schedule,       !- Name
+  mech vent bath fan schedule,            !- Name
   OnOff,                                  !- Schedule Type Limits Name
-  mech vent range exhaust schedule Week Rule - Jan1-Dec31, !- Schedule:Week Name 1
+  mech vent bath fan schedule Week Rule - Jan1-Dec31, !- Schedule:Week Name 1
+  1,                                      !- Start Month 1
+  1,                                      !- Start Day 1
+  12,                                     !- End Month 1
+  31;                                     !- End Day 1
+
+Schedule:Week:Daily,
+  mech vent range fan schedule Week Rule - Jan1-Dec31, !- Name
+  mech vent range fan schedule allday1,   !- Sunday Schedule:Day Name
+  mech vent range fan schedule allday1,   !- Monday Schedule:Day Name
+  mech vent range fan schedule allday1,   !- Tuesday Schedule:Day Name
+  mech vent range fan schedule allday1,   !- Wednesday Schedule:Day Name
+  mech vent range fan schedule allday1,   !- Thursday Schedule:Day Name
+  mech vent range fan schedule allday1,   !- Friday Schedule:Day Name
+  mech vent range fan schedule allday1,   !- Saturday Schedule:Day Name
+  Schedule Day 18,                        !- Holiday Schedule:Day Name
+  Schedule Day 18,                        !- SummerDesignDay Schedule:Day Name
+  Schedule Day 18,                        !- WinterDesignDay Schedule:Day Name
+  Schedule Day 18,                        !- CustomDay1 Schedule:Day Name
+  Schedule Day 18;                        !- CustomDay2 Schedule:Day Name
+
+Schedule:Year,
+  mech vent range fan schedule,           !- Name
+  OnOff,                                  !- Schedule Type Limits Name
+  mech vent range fan schedule Week Rule - Jan1-Dec31, !- Schedule:Week Name 1
   1,                                      !- Start Month 1
   1,                                      !- Start Day 1
   12,                                     !- End Month 1
@@ -6173,30 +6007,6 @@ Schedule:Year,
   31;                                     !- End Day 1
 
 Schedule:Week:Daily,
-  natural vent temp schedule Week Rule - Jan1-Dec31, !- Name
-  natural vent temp schedule allday1,     !- Sunday Schedule:Day Name
-  natural vent temp schedule allday1,     !- Monday Schedule:Day Name
-  natural vent temp schedule allday1,     !- Tuesday Schedule:Day Name
-  natural vent temp schedule allday1,     !- Wednesday Schedule:Day Name
-  natural vent temp schedule allday1,     !- Thursday Schedule:Day Name
-  natural vent temp schedule allday1,     !- Friday Schedule:Day Name
-  natural vent temp schedule allday1,     !- Saturday Schedule:Day Name
-  Schedule Day 18,                        !- Holiday Schedule:Day Name
-  Schedule Day 18,                        !- SummerDesignDay Schedule:Day Name
-  Schedule Day 18,                        !- WinterDesignDay Schedule:Day Name
-  Schedule Day 18,                        !- CustomDay1 Schedule:Day Name
-  Schedule Day 18;                        !- CustomDay2 Schedule:Day Name
-
-Schedule:Year,
-  natural vent temp schedule,             !- Name
-  Temperature,                            !- Schedule Type Limits Name
-  natural vent temp schedule Week Rule - Jan1-Dec31, !- Schedule:Week Name 1
-  1,                                      !- Start Month 1
-  1,                                      !- Start Day 1
-  12,                                     !- End Month 1
-  31;                                     !- End Day 1
-
-Schedule:Week:Daily,
   occupants schedule Week Rule - Jan1-Dec31, !- Name
   occupants schedule allday1,             !- Sunday Schedule:Day Name
   occupants schedule allday1,             !- Monday Schedule:Day Name
@@ -6205,11 +6015,11 @@ Schedule:Week:Daily,
   occupants schedule allday1,             !- Thursday Schedule:Day Name
   occupants schedule allday1,             !- Friday Schedule:Day Name
   occupants schedule allday1,             !- Saturday Schedule:Day Name
-  Schedule Day 2,                         !- Holiday Schedule:Day Name
-  Schedule Day 2,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 2,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 2,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 2;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 6,                         !- Holiday Schedule:Day Name
+  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   occupants schedule,                     !- Name
@@ -6222,18 +6032,18 @@ Schedule:Year,
 
 Schedule:Week:Daily,
   Schedule Ruleset 1 Week Rule - Jan1-Dec31, !- Name
-  Schedule Day 3,                         !- Sunday Schedule:Day Name
-  Schedule Day 3,                         !- Monday Schedule:Day Name
-  Schedule Day 3,                         !- Tuesday Schedule:Day Name
-  Schedule Day 3,                         !- Wednesday Schedule:Day Name
-  Schedule Day 3,                         !- Thursday Schedule:Day Name
-  Schedule Day 3,                         !- Friday Schedule:Day Name
-  Schedule Day 3,                         !- Saturday Schedule:Day Name
-  Schedule Day 3,                         !- Holiday Schedule:Day Name
-  Schedule Day 3,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 3,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 3,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 3;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 7,                         !- Sunday Schedule:Day Name
+  Schedule Day 7,                         !- Monday Schedule:Day Name
+  Schedule Day 7,                         !- Tuesday Schedule:Day Name
+  Schedule Day 7,                         !- Wednesday Schedule:Day Name
+  Schedule Day 7,                         !- Thursday Schedule:Day Name
+  Schedule Day 7,                         !- Friday Schedule:Day Name
+  Schedule Day 7,                         !- Saturday Schedule:Day Name
+  Schedule Day 7,                         !- Holiday Schedule:Day Name
+  Schedule Day 7,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 7,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 7,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 7;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   Schedule Ruleset 1,                     !- Name
@@ -7732,27 +7542,27 @@ OutdoorAir:Node,
   Model Outdoor Air Node;                 !- Name
 
 AirLoopHVAC,
-  central ac airloop,                     !- Name
+  central ac and furnace airloop,         !- Name
   ,                                       !- Controller List Name
-  central ac airloopAvailability Manager List, !- Availability Manager List Name
-  0.333712939891349,                      !- Design Supply Air Flow Rate {m3/s}
-  central ac airloop Supply Branches,     !- Branch List Name
+  central ac and furnace airloopAvailability Manager List, !- Availability Manager List Name
+  0.32555599209268,                       !- Design Supply Air Flow Rate {m3/s}
+  central ac and furnace airloop Supply Branches, !- Branch List Name
   ,                                       !- Connector List Name
   Node 4,                                 !- Supply Side Inlet Node Name
   Node 7,                                 !- Demand Side Outlet Node Name
-  central ac airloop Demand Inlet Nodes,  !- Demand Side Inlet Node Names
-  central ac airloop Supply Outlet Nodes; !- Supply Side Outlet Node Names
+  central ac and furnace airloop Demand Inlet Nodes, !- Demand Side Inlet Node Names
+  central ac and furnace airloop Supply Outlet Nodes; !- Supply Side Outlet Node Names
 
 NodeList,
-  central ac airloop Supply Outlet Nodes, !- Name
+  central ac and furnace airloop Supply Outlet Nodes, !- Name
   Node 5;                                 !- Node Name 1
 
 NodeList,
-  central ac airloop Demand Inlet Nodes,  !- Name
+  central ac and furnace airloop Demand Inlet Nodes, !- Name
   Node 6;                                 !- Node Name 1
 
 Sizing:System,
-  central ac airloop,                     !- AirLoop Name
+  central ac and furnace airloop,         !- AirLoop Name
   Sensible,                               !- Type of Load to Size On
   Autosize,                               !- Design Outdoor Air Flow Rate {m3/s}
   0.3,                                    !- Central Heating Maximum System Air Flow Ratio
@@ -7791,28 +7601,28 @@ Sizing:System,
   OnOff;                                  !- Central Cooling Capacity Control Method
 
 AvailabilityManagerAssignmentList,
-  central ac airloopAvailability Manager List, !- Name
+  central ac and furnace airloopAvailability Manager List, !- Name
   AvailabilityManager:Scheduled,          !- Availability Manager Object Type 1
-  central ac airloop Availability Manager; !- Availability Manager Name 1
+  central ac and furnace airloop Availability Manager; !- Availability Manager Name 1
 
 AvailabilityManager:Scheduled,
-  central ac airloop Availability Manager, !- Name
+  central ac and furnace airloop Availability Manager, !- Name
   Always On Discrete;                     !- Schedule Name
 
 BranchList,
-  central ac airloop Supply Branches,     !- Name
-  central ac airloop Main Branch;         !- Branch Name 1
+  central ac and furnace airloop Supply Branches, !- Name
+  central ac and furnace airloop Main Branch; !- Branch Name 1
 
 Branch,
-  central ac airloop Main Branch,         !- Name
+  central ac and furnace airloop Main Branch, !- Name
   ,                                       !- Pressure Drop Curve Name
   AirLoopHVAC:UnitarySystem,              !- Component Object Type 1
-  central ac unitary system,              !- Component Name 1
+  central ac and furnace unitary system,  !- Component Name 1
   Node 4,                                 !- Component Inlet Node Name 1
   Node 5;                                 !- Component Outlet Node Name 1
 
 AirLoopHVAC:UnitarySystem,
-  central ac unitary system,              !- Name
+  central ac and furnace unitary system,  !- Name
   Load,                                   !- Control Type
   living space,                           !- Controlling Zone or Thermostat Location
   None,                                   !- Dehumidification Control Type
@@ -7820,26 +7630,26 @@ AirLoopHVAC:UnitarySystem,
   Node 4,                                 !- Air Inlet Node Name
   Node 5,                                 !- Air Outlet Node Name
   Fan:OnOff,                              !- Supply Fan Object Type
-  central ac supply fan,                  !- Supply Fan Name
+  central ac and furnace supply fan,      !- Supply Fan Name
   BlowThrough,                            !- Fan Placement
   Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
-  ,                                       !- Heating Coil Object Type
-  ,                                       !- Heating Coil Name
+  Coil:Heating:Fuel,                      !- Heating Coil Object Type
+  central ac and furnace htg coil,        !- Heating Coil Name
   1,                                      !- DX Heating Coil Sizing Ratio
   Coil:Cooling:DX:SingleSpeed,            !- Cooling Coil Object Type
-  central ac clg coil,                    !- Cooling Coil Name
+  central ac and furnace clg coil,        !- Cooling Coil Name
   No,                                     !- Use DOAS DX Cooling Coil
   2,                                      !- Minimum Supply Air Temperature {C}
   SensibleOnlyLoadControl,                !- Latent Load Control
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0.333712939891349,                      !- Cooling Supply Air Flow Rate {m3/s}
+  0.32555599209268,                       !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
   SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
-  0,                                      !- Heating Supply Air Flow Rate {m3/s}
+  0.321751568611706,                      !- Heating Supply Air Flow Rate {m3/s}
   ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -7861,15 +7671,15 @@ AirLoopHVAC:UnitarySystem,
   0;                                      !- Ancillary Off-Cycle Electric Power {W}
 
 Fan:OnOff,
-  central ac supply fan,                  !- Name
+  central ac and furnace supply fan,      !- Name
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
-  580.04340090045,                        !- Pressure Rise {Pa}
-  0.333717659365781,                      !- Maximum Flow Rate {m3/s}
+  523.389018295125,                       !- Pressure Rise {Pa}
+  0.325560711567112,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 4,                                 !- Air Inlet Node Name
-  central ac unitary system Fan - Cooling Coil Node, !- Air Outlet Node Name
+  central ac and furnace unitary system Fan - Cooling Coil Node, !- Air Outlet Node Name
   Fan On Off Power Curve,                 !- Fan Power Ratio Function of Speed Ratio Curve Name
   Fan On Off Efficiency Curve,            !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
   supply fan;                             !- End-Use Subcategory
@@ -7890,6 +7700,19 @@ Curve:Cubic,
   0,                                      !- Coefficient4 x**3
   0,                                      !- Minimum Value of x {BasedOnField A2}
   1;                                      !- Maximum Value of x {BasedOnField A2}
+
+Coil:Heating:Fuel,
+  central ac and furnace htg coil,        !- Name
+  Always On Discrete,                     !- Availability Schedule Name
+  NaturalGas,                             !- Fuel Type
+  0.78,                                   !- Burner Efficiency
+  9049.14592157462,                       !- Nominal Capacity {W}
+  central ac and furnace unitary system Cooling Coil - Heating Coil Node, !- Air Inlet Node Name
+  Node 5,                                 !- Air Outlet Node Name
+  ,                                       !- Temperature Setpoint Node Name
+  0,                                      !- Parasitic Electric Load {W}
+  ,                                       !- Part Load Fraction Correlation Curve Name
+  0;                                      !- Parasitic Fuel Load {W}
 
 Curve:Biquadratic,
   Cool-Cap-fT1,                           !- Name
@@ -7915,7 +7738,7 @@ Curve:Quadratic,
   2;                                      !- Maximum Curve Output {BasedOnField A3}
 
 Curve:Biquadratic,
-  Cool-EIR-fT1,                           !- Name
+  Cool-eir-fT1,                           !- Name
   -0.304282997,                           !- Coefficient1 Constant
   0.1180477062,                           !- Coefficient2 x
   -0.00342466704,                         !- Coefficient3 x**2
@@ -7928,7 +7751,7 @@ Curve:Biquadratic,
   51.66;                                  !- Maximum Value of y {BasedOnField A3}
 
 Curve:Quadratic,
-  Cool-EIR-fFF1,                          !- Name
+  Cool-eir-fFF1,                          !- Name
   1.32299905,                             !- Coefficient1 Constant
   -0.477711207,                           !- Coefficient2 x
   0.154712157,                            !- Coefficient3 x**2
@@ -7948,19 +7771,19 @@ Curve:Quadratic,
   1;                                      !- Maximum Curve Output {BasedOnField A3}
 
 Coil:Cooling:DX:SingleSpeed,
-  central ac clg coil,                    !- Name
+  central ac and furnace clg coil,        !- Name
   Always On Discrete,                     !- Availability Schedule Name
-  4983.48390492338,                       !- Gross Rated Total Cooling Capacity {W}
+  4861.67257186209,                       !- Gross Rated Total Cooling Capacity {W}
   0.740402528813699,                      !- Gross Rated Sensible Heat Ratio
   3.99990781858502,                       !- Gross Rated Cooling COP {W/W}
-  0.258209551286673,                      !- Rated Air Flow Rate {m3/s}
+  0.251898133360689,                      !- Rated Air Flow Rate {m3/s}
   773.3912012006,                         !- Rated Evaporator Fan Power Per Volume Flow Rate {W/(m3/s)}
-  central ac unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
-  Node 5,                                 !- Air Outlet Node Name
+  central ac and furnace unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
+  central ac and furnace unitary system Cooling Coil - Heating Coil Node, !- Air Outlet Node Name
   Cool-Cap-fT1,                           !- Total Cooling Capacity Function of Temperature Curve Name
   Cool-Cap-fFF1,                          !- Total Cooling Capacity Function of Flow Fraction Curve Name
-  Cool-EIR-fT1,                           !- Energy Input Ratio Function of Temperature Curve Name
-  Cool-EIR-fFF1,                          !- Energy Input Ratio Function of Flow Fraction Curve Name
+  Cool-eir-fT1,                           !- Energy Input Ratio Function of Temperature Curve Name
+  Cool-eir-fFF1,                          !- Energy Input Ratio Function of Flow Fraction Curve Name
   Cool-PLF-fPLR1,                         !- Part Load Fraction Correlation Curve Name
   ,                                       !- Minimum Outdoor Dry-Bulb Temperature for Compressor Operation {C}
   1000,                                   !- Nominal Time for Condensate Removal to Begin {s}
@@ -7980,239 +7803,44 @@ Coil:Cooling:DX:SingleSpeed,
   10;                                     !- Basin Heater Setpoint Temperature {C}
 
 AirLoopHVAC:SupplyPath,
-  central ac airloop Node 6 Supply Path,  !- Name
+  central ac and furnace airloop Node 6 Supply Path, !- Name
   Node 6,                                 !- Supply Air Path Inlet Node Name
   AirLoopHVAC:ZoneSplitter,               !- Component Object Type 1
-  central ac zone splitter;               !- Component Name 1
+  central ac and furnace zone splitter;   !- Component Name 1
 
 AirLoopHVAC:ZoneSplitter,
-  central ac zone splitter,               !- Name
+  central ac and furnace zone splitter,   !- Name
   Node 6,                                 !- Inlet Node Name
   Node 10;                                !- Outlet Node Name 1
 
 AirLoopHVAC:ReturnPath,
-  central ac airloop Return Path,         !- Name
+  central ac and furnace airloop Return Path, !- Name
   Node 7,                                 !- Return Air Path Outlet Node Name
   AirLoopHVAC:ZoneMixer,                  !- Component Object Type 1
-  central ac zone mixer;                  !- Component Name 1
+  central ac and furnace zone mixer;      !- Component Name 1
 
 AirLoopHVAC:ZoneMixer,
-  central ac zone mixer,                  !- Name
+  central ac and furnace zone mixer,      !- Name
   Node 7,                                 !- Outlet Node Name
   Node 9;                                 !- Inlet Node Name 1
-
-AirLoopHVAC,
-  furnace airloop,                        !- Name
-  ,                                       !- Controller List Name
-  furnace airloopAvailability Manager List, !- Availability Manager List Name
-  0.337166095761099,                      !- Design Supply Air Flow Rate {m3/s}
-  furnace airloop Supply Branches,        !- Branch List Name
-  ,                                       !- Connector List Name
-  Node 11,                                !- Supply Side Inlet Node Name
-  Node 14,                                !- Demand Side Outlet Node Name
-  furnace airloop Demand Inlet Nodes,     !- Demand Side Inlet Node Names
-  furnace airloop Supply Outlet Nodes;    !- Supply Side Outlet Node Names
-
-NodeList,
-  furnace airloop Supply Outlet Nodes,    !- Name
-  Node 12;                                !- Node Name 1
-
-NodeList,
-  furnace airloop Demand Inlet Nodes,     !- Name
-  Node 13;                                !- Node Name 1
-
-Sizing:System,
-  furnace airloop,                        !- AirLoop Name
-  Sensible,                               !- Type of Load to Size On
-  Autosize,                               !- Design Outdoor Air Flow Rate {m3/s}
-  0.3,                                    !- Central Heating Maximum System Air Flow Ratio
-  7,                                      !- Preheat Design Temperature {C}
-  0.008,                                  !- Preheat Design Humidity Ratio {kgWater/kgDryAir}
-  12.8,                                   !- Precool Design Temperature {C}
-  0.008,                                  !- Precool Design Humidity Ratio {kgWater/kgDryAir}
-  12.8,                                   !- Central Cooling Design Supply Air Temperature {C}
-  16.7,                                   !- Central Heating Design Supply Air Temperature {C}
-  NonCoincident,                          !- Type of Zone Sum to Use
-  Yes,                                    !- 100% Outdoor Air in Cooling
-  Yes,                                    !- 100% Outdoor Air in Heating
-  0.0085,                                 !- Central Cooling Design Supply Air Humidity Ratio {kgWater/kgDryAir}
-  0.008,                                  !- Central Heating Design Supply Air Humidity Ratio {kgWater/kgDryAir}
-  DesignDay,                              !- Cooling Supply Air Flow Rate Method
-  0,                                      !- Cooling Supply Air Flow Rate {m3/s}
-  0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
-  1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
-  DesignDay,                              !- Heating Supply Air Flow Rate Method
-  0,                                      !- Heating Supply Air Flow Rate {m3/s}
-  0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
-  1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
-  1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
-  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
-  ZoneSum,                                !- System Outdoor Air Method
-  1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
-  CoolingDesignCapacity,                  !- Cooling Design Capacity Method
-  Autosize,                               !- Cooling Design Capacity {W}
-  234.7,                                  !- Cooling Design Capacity Per Floor Area {W/m2}
-  1,                                      !- Fraction of Autosized Cooling Design Capacity
-  HeatingDesignCapacity,                  !- Heating Design Capacity Method
-  Autosize,                               !- Heating Design Capacity {W}
-  157,                                    !- Heating Design Capacity Per Floor Area {W/m2}
-  1,                                      !- Fraction of Autosized Heating Design Capacity
-  OnOff;                                  !- Central Cooling Capacity Control Method
-
-AvailabilityManagerAssignmentList,
-  furnace airloopAvailability Manager List, !- Name
-  AvailabilityManager:Scheduled,          !- Availability Manager Object Type 1
-  furnace airloop Availability Manager;   !- Availability Manager Name 1
-
-AvailabilityManager:Scheduled,
-  furnace airloop Availability Manager,   !- Name
-  Always On Discrete;                     !- Schedule Name
-
-BranchList,
-  furnace airloop Supply Branches,        !- Name
-  furnace airloop Main Branch;            !- Branch Name 1
-
-Branch,
-  furnace airloop Main Branch,            !- Name
-  ,                                       !- Pressure Drop Curve Name
-  AirLoopHVAC:UnitarySystem,              !- Component Object Type 1
-  furnace unitary system,                 !- Component Name 1
-  Node 11,                                !- Component Inlet Node Name 1
-  Node 12;                                !- Component Outlet Node Name 1
-
-AirLoopHVAC:UnitarySystem,
-  furnace unitary system,                 !- Name
-  Load,                                   !- Control Type
-  living space,                           !- Controlling Zone or Thermostat Location
-  None,                                   !- Dehumidification Control Type
-  Always On Discrete,                     !- Availability Schedule Name
-  Node 11,                                !- Air Inlet Node Name
-  Node 12,                                !- Air Outlet Node Name
-  Fan:OnOff,                              !- Supply Fan Object Type
-  furnace supply fan,                     !- Supply Fan Name
-  BlowThrough,                            !- Fan Placement
-  Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
-  Coil:Heating:Fuel,                      !- Heating Coil Object Type
-  furnace htg coil,                       !- Heating Coil Name
-  1,                                      !- DX Heating Coil Sizing Ratio
-  ,                                       !- Cooling Coil Object Type
-  ,                                       !- Cooling Coil Name
-  No,                                     !- Use DOAS DX Cooling Coil
-  2,                                      !- Minimum Supply Air Temperature {C}
-  SensibleOnlyLoadControl,                !- Latent Load Control
-  ,                                       !- Supplemental Heating Coil Object Type
-  ,                                       !- Supplemental Heating Coil Name
-  SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0,                                      !- Cooling Supply Air Flow Rate {m3/s}
-  ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
-  ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
-  ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
-  SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
-  0.337166095761099,                      !- Heating Supply Air Flow Rate {m3/s}
-  ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
-  ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
-  ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
-  ,                                       !- No Load Supply Air Flow Rate Method
-  0,                                      !- No Load Supply Air Flow Rate {m3/s}
-  ,                                       !- No Load Supply Air Flow Rate Per Floor Area {m3/s-m2}
-  ,                                       !- No Load Fraction of Autosized Cooling Supply Air Flow Rate
-  ,                                       !- No Load Fraction of Autosized Heating Supply Air Flow Rate
-  ,                                       !- No Load Supply Air Flow Rate Per Unit of Capacity During Cooling Operation {m3/s-W}
-  ,                                       !- No Load Supply Air Flow Rate Per Unit of Capacity During Heating Operation {m3/s-W}
-  48.8888888888889,                       !- Maximum Supply Air Temperature {C}
-  21,                                     !- Maximum Outdoor Dry-Bulb Temperature for Supplemental Heater Operation {C}
-  ,                                       !- Outdoor Dry-Bulb Temperature Sensor Node Name
-  2.5,                                    !- Maximum Cycling Rate {cycles/hr}
-  60,                                     !- Heat Pump Time Constant {s}
-  0.01,                                   !- Fraction of On-Cycle Power Use
-  60,                                     !- Heat Pump Fan Delay Time {s}
-  0,                                      !- Ancillary On-Cycle Electric Power {W}
-  0;                                      !- Ancillary Off-Cycle Electric Power {W}
-
-Fan:OnOff,
-  furnace supply fan,                     !- Name
-  Always On Discrete,                     !- Availability Schedule Name
-  0.75,                                   !- Fan Total Efficiency
-  515.755059104914,                       !- Pressure Rise {Pa}
-  0.337170815235531,                      !- Maximum Flow Rate {m3/s}
-  1,                                      !- Motor Efficiency
-  1,                                      !- Motor In Airstream Fraction
-  Node 11,                                !- Air Inlet Node Name
-  furnace unitary system Fan - Heating Coil Node, !- Air Outlet Node Name
-  Fan On Off Power Curve 1,               !- Fan Power Ratio Function of Speed Ratio Curve Name
-  Fan On Off Efficiency Curve 1,          !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
-  supply fan;                             !- End-Use Subcategory
-
-Curve:Exponent,
-  Fan On Off Power Curve 1,               !- Name
-  1,                                      !- Coefficient1 Constant
-  0,                                      !- Coefficient2 Constant
-  0,                                      !- Coefficient3 Constant
-  0,                                      !- Minimum Value of x {BasedOnField A2}
-  1;                                      !- Maximum Value of x {BasedOnField A2}
-
-Curve:Cubic,
-  Fan On Off Efficiency Curve 1,          !- Name
-  1,                                      !- Coefficient1 Constant
-  0,                                      !- Coefficient2 x
-  0,                                      !- Coefficient3 x**2
-  0,                                      !- Coefficient4 x**3
-  0,                                      !- Minimum Value of x {BasedOnField A2}
-  1;                                      !- Maximum Value of x {BasedOnField A2}
-
-Coil:Heating:Fuel,
-  furnace htg coil,                       !- Name
-  Always On Discrete,                     !- Availability Schedule Name
-  NaturalGas,                             !- Fuel Type
-  0.78,                                   !- Burner Efficiency
-  9482.6738950008,                        !- Nominal Capacity {W}
-  furnace unitary system Fan - Heating Coil Node, !- Air Inlet Node Name
-  Node 12,                                !- Air Outlet Node Name
-  ,                                       !- Temperature Setpoint Node Name
-  0,                                      !- Parasitic Electric Load {W}
-  ,                                       !- Part Load Fraction Correlation Curve Name
-  0;                                      !- Parasitic Fuel Load {W}
-
-AirLoopHVAC:SupplyPath,
-  furnace airloop Node 13 Supply Path,    !- Name
-  Node 13,                                !- Supply Air Path Inlet Node Name
-  AirLoopHVAC:ZoneSplitter,               !- Component Object Type 1
-  furnace zone splitter;                  !- Component Name 1
-
-AirLoopHVAC:ZoneSplitter,
-  furnace zone splitter,                  !- Name
-  Node 13,                                !- Inlet Node Name
-  Node 17;                                !- Outlet Node Name 1
-
-AirLoopHVAC:ReturnPath,
-  furnace airloop Return Path,            !- Name
-  Node 14,                                !- Return Air Path Outlet Node Name
-  AirLoopHVAC:ZoneMixer,                  !- Component Object Type 1
-  furnace zone mixer;                     !- Component Name 1
-
-AirLoopHVAC:ZoneMixer,
-  furnace zone mixer,                     !- Name
-  Node 14,                                !- Outlet Node Name
-  Node 16;                                !- Inlet Node Name 1
 
 PlantLoop,
   dhw loop,                               !- Name
   Water,                                  !- Fluid Type
   ,                                       !- User Defined Fluid Type
   dhw loop Operation Schemes,             !- Plant Equipment Operation Scheme Name
-  Node 21,                                !- Loop Temperature Setpoint Node Name
+  Node 14,                                !- Loop Temperature Setpoint Node Name
   100,                                    !- Maximum Loop Temperature {C}
   0,                                      !- Minimum Loop Temperature {C}
   0.01,                                   !- Maximum Loop Flow Rate {m3/s}
   0,                                      !- Minimum Loop Flow Rate {m3/s}
   0.003,                                  !- Plant Loop Volume {m3}
-  Node 20,                                !- Plant Side Inlet Node Name
-  Node 21,                                !- Plant Side Outlet Node Name
+  Node 13,                                !- Plant Side Inlet Node Name
+  Node 14,                                !- Plant Side Outlet Node Name
   dhw loop Supply Branches,               !- Plant Side Branch List Name
   dhw loop Supply Connector List,         !- Plant Side Connector List Name
-  Node 23,                                !- Demand Side Inlet Node Name
-  Node 24,                                !- Demand Side Outlet Node Name
+  Node 16,                                !- Demand Side Inlet Node Name
+  Node 17,                                !- Demand Side Outlet Node Name
   dhw loop Demand Branches,               !- Demand Side Branch List Name
   dhw loop Demand Connector List,         !- Demand Side Connector List Name
   Optimal,                                !- Load Distribution Scheme
@@ -8260,13 +7888,13 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pump:VariableSpeed,                     !- Component Object Type 1
   Pump Variable Speed 1,                  !- Component Name 1
-  Node 20,                                !- Component Inlet Node Name 1
-  Node 28;                                !- Component Outlet Node Name 1
+  Node 13,                                !- Component Inlet Node Name 1
+  Node 21;                                !- Component Outlet Node Name 1
 
 Pump:VariableSpeed,
   Pump Variable Speed 1,                  !- Name
-  Node 20,                                !- Inlet Node Name
-  Node 28,                                !- Outlet Node Name
+  Node 13,                                !- Inlet Node Name
+  Node 21,                                !- Outlet Node Name
   0.01,                                   !- Design Maximum Flow Rate {m3/s}
   1,                                      !- Design Pump Head {Pa}
   0,                                      !- Design Power Consumption {W}
@@ -8300,21 +7928,21 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pipe:Adiabatic,                         !- Component Object Type 1
   Pipe Adiabatic 1,                       !- Component Name 1
-  Node 22,                                !- Component Inlet Node Name 1
-  Node 26;                                !- Component Outlet Node Name 1
+  Node 15,                                !- Component Inlet Node Name 1
+  Node 19;                                !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   Pipe Adiabatic 1,                       !- Name
-  Node 22,                                !- Inlet Node Name
-  Node 26;                                !- Outlet Node Name
+  Node 15,                                !- Inlet Node Name
+  Node 19;                                !- Outlet Node Name
 
 Branch,
   dhw loop Supply Branch 2,               !- Name
   ,                                       !- Pressure Drop Curve Name
   WaterHeater:Mixed,                      !- Component Object Type 1
   water heater,                           !- Component Name 1
-  Node 29,                                !- Component Inlet Node Name 1
-  Node 30;                                !- Component Outlet Node Name 1
+  Node 22,                                !- Component Inlet Node Name 1
+  Node 23;                                !- Component Outlet Node Name 1
 
 WaterHeater:Mixed,
   water heater,                           !- Name
@@ -8347,8 +7975,8 @@ WaterHeater:Mixed,
   ,                                       !- Peak Use Flow Rate {m3/s}
   ,                                       !- Use Flow Rate Fraction Schedule Name
   ,                                       !- Cold Water Supply Temperature Schedule Name
-  Node 29,                                !- Use Side Inlet Node Name
-  Node 30,                                !- Use Side Outlet Node Name
+  Node 22,                                !- Use Side Inlet Node Name
+  Node 23,                                !- Use Side Outlet Node Name
   1,                                      !- Use Side Effectiveness
   ,                                       !- Source Side Inlet Node Name
   ,                                       !- Source Side Outlet Node Name
@@ -8365,19 +7993,19 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pipe:Adiabatic,                         !- Component Object Type 1
   Pipe Adiabatic 2,                       !- Component Name 1
-  Node 27,                                !- Component Inlet Node Name 1
-  Node 21;                                !- Component Outlet Node Name 1
+  Node 20,                                !- Component Inlet Node Name 1
+  Node 14;                                !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   Pipe Adiabatic 2,                       !- Name
-  Node 27,                                !- Inlet Node Name
-  Node 21;                                !- Outlet Node Name
+  Node 20,                                !- Inlet Node Name
+  Node 14;                                !- Outlet Node Name
 
 SetpointManager:Scheduled,
   Setpoint Manager Scheduled 1,           !- Name
   Temperature,                            !- Control Variable
   dhw temp,                               !- Schedule Name
-  Node 21;                                !- Setpoint Node or NodeList Name
+  Node 14;                                !- Setpoint Node or NodeList Name
 
 BranchList,
   dhw loop Demand Branches,               !- Name
@@ -8410,12 +8038,12 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pipe:Adiabatic,                         !- Component Object Type 1
   dhw loop Demand Inlet Pipe,             !- Component Name 1
-  Node 23,                                !- Component Inlet Node Name 1
+  Node 16,                                !- Component Inlet Node Name 1
   dhw loop Demand Inlet Pipe Node;        !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   dhw loop Demand Inlet Pipe,             !- Name
-  Node 23,                                !- Inlet Node Name
+  Node 16,                                !- Inlet Node Name
   dhw loop Demand Inlet Pipe Node;        !- Outlet Node Name
 
 Branch,
@@ -8423,13 +8051,13 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   WaterUse:Connections,                   !- Component Object Type 1
   Water Use Connections 1,                !- Component Name 1
-  Node 25,                                !- Component Inlet Node Name 1
-  Node 31;                                !- Component Outlet Node Name 1
+  Node 18,                                !- Component Inlet Node Name 1
+  Node 24;                                !- Component Outlet Node Name 1
 
 WaterUse:Connections,
   Water Use Connections 1,                !- Name
-  Node 25,                                !- Inlet Node Name
-  Node 31,                                !- Outlet Node Name
+  Node 18,                                !- Inlet Node Name
+  Node 24,                                !- Outlet Node Name
   ,                                       !- Supply Water Storage Tank Name
   ,                                       !- Reclamation Water Storage Tank Name
   ,                                       !- Hot Water Supply Temperature Schedule Name
@@ -8445,14 +8073,14 @@ WaterUse:Connections,
 WaterUse:Equipment,
   clothes washer,                         !- Name
   clothes washer,                         !- End-Use Subcategory
-  0.00027349657536519,                    !- Peak Flow Rate {m3/s}
+  0.000307691502629111,                   !- Peak Flow Rate {m3/s}
   clothes washer schedule,                !- Flow Rate Fraction Schedule Name
   WH Setpoint Temp;                       !- Target Temperature Schedule Name
 
 WaterUse:Equipment,
   dishwasher,                             !- Name
   dishwasher,                             !- End-Use Subcategory
-  0.000174197704803142,                   !- Peak Flow Rate {m3/s}
+  0.000174325089340194,                   !- Peak Flow Rate {m3/s}
   dishwasher schedule,                    !- Flow Rate Fraction Schedule Name
   WH Setpoint Temp;                       !- Target Temperature Schedule Name
 
@@ -8489,12 +8117,12 @@ Branch,
   Pipe:Adiabatic,                         !- Component Object Type 1
   dhw loop Demand Outlet Pipe,            !- Component Name 1
   dhw loop Demand Outlet Pipe Node,       !- Component Inlet Node Name 1
-  Node 24;                                !- Component Outlet Node Name 1
+  Node 17;                                !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   dhw loop Demand Outlet Pipe,            !- Name
   dhw loop Demand Outlet Pipe Node,       !- Inlet Node Name
-  Node 24;                                !- Outlet Node Name
+  Node 17;                                !- Outlet Node Name
 
 PlantEquipmentOperationSchemes,
   dhw loop Operation Schemes,             !- Name
@@ -8522,6 +8150,20 @@ Site:Location,
   -104.65,                                !- Longitude {deg}
   -7,                                     !- Time Zone {hr}
   1650;                                   !- Elevation {m}
+
+Site:GroundTemperature:Shallow,
+  6.71281269969541,                       !- January Surface Ground Temperature {C}
+  4.94206058328814,                       !- February Surface Ground Temperature {C}
+  4.80025240351138,                       !- March Surface Ground Temperature {C}
+  5.64056476180591,                       !- April Surface Ground Temperature {C}
+  9.01395062150234,                       !- May Surface Ground Temperature {C}
+  12.3716218187986,                       !- June Surface Ground Temperature {C}
+  15.2825432986395,                       !- July Surface Ground Temperature {C}
+  17.1265404634639,                       !- August Surface Ground Temperature {C}
+  17.2831981509722,                       !- September Surface Ground Temperature {C}
+  15.7834163910108,                       !- October Surface Ground Temperature {C}
+  12.9467251179508,                       !- November Surface Ground Temperature {C}
+  9.69205359695242;                       !- December Surface Ground Temperature {C}
 
 Site:WaterMainsTemperature,
   Schedule,                               !- Calculation Method
@@ -8557,603 +8199,6 @@ Foundation:Kiva:Settings,
   3,                                      !- Maximum Cell Growth Coefficient {dimensionless}
   Hourly;                                 !- Simulation Timestep
 
-ZoneProperty:UserViewFactors:bySurfaceName,
-  living space,                           !- Zone or ZoneList Name
-  FloorAboveCrawlspace,                   !- From Surface 1
-  FloorBelowAttic,                        !- To Surface 1
-  0.1115700745,                           !- View Factor 1
-  FloorAboveCrawlspace,                   !- From Surface 2
-  inferred conditioned ceiling,           !- To Surface 2
-  0.1115700745,                           !- View Factor 2
-  FloorAboveCrawlspace,                   !- From Surface 3
-  inferred conditioned floor,             !- To Surface 3
-  0.1115700745,                           !- View Factor 3
-  FloorAboveCrawlspace,                   !- From Surface 4
-  WallArea:0,                             !- To Surface 4
-  0.0437800972,                           !- View Factor 4
-  FloorAboveCrawlspace,                   !- From Surface 5
-  WallArea:180,                           !- To Surface 5
-  0.0437800972,                           !- View Factor 5
-  FloorAboveCrawlspace,                   !- From Surface 6
-  WallArea:270,                           !- To Surface 6
-  0.0437800972,                           !- View Factor 6
-  FloorAboveCrawlspace,                   !- From Surface 7
-  WallArea:90,                            !- To Surface 7
-  0.0437800972,                           !- View Factor 7
-  FloorAboveCrawlspace,                   !- From Surface 8
-  WindowAreaEast,                         !- To Surface 8
-  0.0100413067,                           !- View Factor 8
-  FloorAboveCrawlspace,                   !- From Surface 9
-  WindowAreaNorth,                        !- To Surface 9
-  0.0100413067,                           !- View Factor 9
-  FloorAboveCrawlspace,                   !- From Surface 10
-  WindowAreaSouth,                        !- To Surface 10
-  0.0100413067,                           !- View Factor 10
-  FloorAboveCrawlspace,                   !- From Surface 11
-  WindowAreaWest,                         !- To Surface 11
-  0.0100413067,                           !- View Factor 11
-  FloorAboveCrawlspace,                   !- From Surface 12
-  furniture mass living space living,     !- To Surface 12
-  0.223140149,                            !- View Factor 12
-  FloorAboveCrawlspace,                   !- From Surface 13
-  living space Living Partition,          !- To Surface 13
-  0.223140149,                            !- View Factor 13
-  FloorBelowAttic,                        !- From Surface 14
-  FloorAboveCrawlspace,                   !- To Surface 14
-  0.1255811756,                           !- View Factor 14
-  FloorBelowAttic,                        !- From Surface 15
-  inferred conditioned floor,             !- To Surface 15
-  0.1255811756,                           !- View Factor 15
-  FloorBelowAttic,                        !- From Surface 16
-  WallArea:0,                             !- To Surface 16
-  0.0492780533,                           !- View Factor 16
-  FloorBelowAttic,                        !- From Surface 17
-  WallArea:180,                           !- To Surface 17
-  0.0492780533,                           !- View Factor 17
-  FloorBelowAttic,                        !- From Surface 18
-  WallArea:270,                           !- To Surface 18
-  0.0492780533,                           !- View Factor 18
-  FloorBelowAttic,                        !- From Surface 19
-  WallArea:90,                            !- To Surface 19
-  0.0492780533,                           !- View Factor 19
-  FloorBelowAttic,                        !- From Surface 20
-  WindowAreaEast,                         !- To Surface 20
-  0.0113023058,                           !- View Factor 20
-  FloorBelowAttic,                        !- From Surface 21
-  WindowAreaNorth,                        !- To Surface 21
-  0.0113023058,                           !- View Factor 21
-  FloorBelowAttic,                        !- From Surface 22
-  WindowAreaSouth,                        !- To Surface 22
-  0.0113023058,                           !- View Factor 22
-  FloorBelowAttic,                        !- From Surface 23
-  WindowAreaWest,                         !- To Surface 23
-  0.0113023058,                           !- View Factor 23
-  FloorBelowAttic,                        !- From Surface 24
-  furniture mass living space living,     !- To Surface 24
-  0.2511623512,                           !- View Factor 24
-  FloorBelowAttic,                        !- From Surface 25
-  living space Living Partition,          !- To Surface 25
-  0.2511623512,                           !- View Factor 25
-  inferred conditioned ceiling,           !- From Surface 26
-  FloorAboveCrawlspace,                   !- To Surface 26
-  0.1255811756,                           !- View Factor 26
-  inferred conditioned ceiling,           !- From Surface 27
-  inferred conditioned floor,             !- To Surface 27
-  0.1255811756,                           !- View Factor 27
-  inferred conditioned ceiling,           !- From Surface 28
-  WallArea:0,                             !- To Surface 28
-  0.0492780533,                           !- View Factor 28
-  inferred conditioned ceiling,           !- From Surface 29
-  WallArea:180,                           !- To Surface 29
-  0.0492780533,                           !- View Factor 29
-  inferred conditioned ceiling,           !- From Surface 30
-  WallArea:270,                           !- To Surface 30
-  0.0492780533,                           !- View Factor 30
-  inferred conditioned ceiling,           !- From Surface 31
-  WallArea:90,                            !- To Surface 31
-  0.0492780533,                           !- View Factor 31
-  inferred conditioned ceiling,           !- From Surface 32
-  WindowAreaEast,                         !- To Surface 32
-  0.0113023058,                           !- View Factor 32
-  inferred conditioned ceiling,           !- From Surface 33
-  WindowAreaNorth,                        !- To Surface 33
-  0.0113023058,                           !- View Factor 33
-  inferred conditioned ceiling,           !- From Surface 34
-  WindowAreaSouth,                        !- To Surface 34
-  0.0113023058,                           !- View Factor 34
-  inferred conditioned ceiling,           !- From Surface 35
-  WindowAreaWest,                         !- To Surface 35
-  0.0113023058,                           !- View Factor 35
-  inferred conditioned ceiling,           !- From Surface 36
-  furniture mass living space living,     !- To Surface 36
-  0.2511623512,                           !- View Factor 36
-  inferred conditioned ceiling,           !- From Surface 37
-  living space Living Partition,          !- To Surface 37
-  0.2511623512,                           !- View Factor 37
-  inferred conditioned floor,             !- From Surface 38
-  FloorAboveCrawlspace,                   !- To Surface 38
-  0.1115700745,                           !- View Factor 38
-  inferred conditioned floor,             !- From Surface 39
-  FloorBelowAttic,                        !- To Surface 39
-  0.1115700745,                           !- View Factor 39
-  inferred conditioned floor,             !- From Surface 40
-  inferred conditioned ceiling,           !- To Surface 40
-  0.1115700745,                           !- View Factor 40
-  inferred conditioned floor,             !- From Surface 41
-  WallArea:0,                             !- To Surface 41
-  0.0437800972,                           !- View Factor 41
-  inferred conditioned floor,             !- From Surface 42
-  WallArea:180,                           !- To Surface 42
-  0.0437800972,                           !- View Factor 42
-  inferred conditioned floor,             !- From Surface 43
-  WallArea:270,                           !- To Surface 43
-  0.0437800972,                           !- View Factor 43
-  inferred conditioned floor,             !- From Surface 44
-  WallArea:90,                            !- To Surface 44
-  0.0437800972,                           !- View Factor 44
-  inferred conditioned floor,             !- From Surface 45
-  WindowAreaEast,                         !- To Surface 45
-  0.0100413067,                           !- View Factor 45
-  inferred conditioned floor,             !- From Surface 46
-  WindowAreaNorth,                        !- To Surface 46
-  0.0100413067,                           !- View Factor 46
-  inferred conditioned floor,             !- From Surface 47
-  WindowAreaSouth,                        !- To Surface 47
-  0.0100413067,                           !- View Factor 47
-  inferred conditioned floor,             !- From Surface 48
-  WindowAreaWest,                         !- To Surface 48
-  0.0100413067,                           !- View Factor 48
-  inferred conditioned floor,             !- From Surface 49
-  furniture mass living space living,     !- To Surface 49
-  0.223140149,                            !- View Factor 49
-  inferred conditioned floor,             !- From Surface 50
-  living space Living Partition,          !- To Surface 50
-  0.223140149,                            !- View Factor 50
-  surface DoorAreaNorth,                  !- From Surface 51
-  FloorAboveCrawlspace,                   !- To Surface 51
-  0.1058511476,                           !- View Factor 51
-  surface DoorAreaNorth,                  !- From Surface 52
-  FloorBelowAttic,                        !- To Surface 52
-  0.1058511476,                           !- View Factor 52
-  surface DoorAreaNorth,                  !- From Surface 53
-  inferred conditioned ceiling,           !- To Surface 53
-  0.1058511476,                           !- View Factor 53
-  surface DoorAreaNorth,                  !- From Surface 54
-  inferred conditioned floor,             !- To Surface 54
-  0.1058511476,                           !- View Factor 54
-  surface DoorAreaNorth,                  !- From Surface 55
-  WallArea:180,                           !- To Surface 55
-  0.0415359903,                           !- View Factor 55
-  surface DoorAreaNorth,                  !- From Surface 56
-  WallArea:270,                           !- To Surface 56
-  0.0415359903,                           !- View Factor 56
-  surface DoorAreaNorth,                  !- From Surface 57
-  WallArea:90,                            !- To Surface 57
-  0.0415359903,                           !- View Factor 57
-  surface DoorAreaNorth,                  !- From Surface 58
-  furniture mass living space living,     !- To Surface 58
-  0.2117022951,                           !- View Factor 58
-  surface DoorAreaNorth,                  !- From Surface 59
-  living space Living Partition,          !- To Surface 59
-  0.2117022951,                           !- View Factor 59
-  surface WindowAreaEast,                 !- From Surface 60
-  FloorAboveCrawlspace,                   !- To Surface 60
-  0.1054789197,                           !- View Factor 60
-  surface WindowAreaEast,                 !- From Surface 61
-  FloorBelowAttic,                        !- To Surface 61
-  0.1054789197,                           !- View Factor 61
-  surface WindowAreaEast,                 !- From Surface 62
-  inferred conditioned ceiling,           !- To Surface 62
-  0.1054789197,                           !- View Factor 62
-  surface WindowAreaEast,                 !- From Surface 63
-  inferred conditioned floor,             !- To Surface 63
-  0.1054789197,                           !- View Factor 63
-  surface WindowAreaEast,                 !- From Surface 64
-  WallArea:0,                             !- To Surface 64
-  0.0413899281,                           !- View Factor 64
-  surface WindowAreaEast,                 !- From Surface 65
-  WallArea:180,                           !- To Surface 65
-  0.0413899281,                           !- View Factor 65
-  surface WindowAreaEast,                 !- From Surface 66
-  WallArea:270,                           !- To Surface 66
-  0.0413899281,                           !- View Factor 66
-  surface WindowAreaEast,                 !- From Surface 67
-  furniture mass living space living,     !- To Surface 67
-  0.2109578394,                           !- View Factor 67
-  surface WindowAreaEast,                 !- From Surface 68
-  living space Living Partition,          !- To Surface 68
-  0.2109578394,                           !- View Factor 68
-  surface WindowAreaNorth,                !- From Surface 69
-  FloorAboveCrawlspace,                   !- To Surface 69
-  0.1058511476,                           !- View Factor 69
-  surface WindowAreaNorth,                !- From Surface 70
-  FloorBelowAttic,                        !- To Surface 70
-  0.1058511476,                           !- View Factor 70
-  surface WindowAreaNorth,                !- From Surface 71
-  inferred conditioned ceiling,           !- To Surface 71
-  0.1058511476,                           !- View Factor 71
-  surface WindowAreaNorth,                !- From Surface 72
-  inferred conditioned floor,             !- To Surface 72
-  0.1058511476,                           !- View Factor 72
-  surface WindowAreaNorth,                !- From Surface 73
-  WallArea:180,                           !- To Surface 73
-  0.0415359903,                           !- View Factor 73
-  surface WindowAreaNorth,                !- From Surface 74
-  WallArea:270,                           !- To Surface 74
-  0.0415359903,                           !- View Factor 74
-  surface WindowAreaNorth,                !- From Surface 75
-  WallArea:90,                            !- To Surface 75
-  0.0415359903,                           !- View Factor 75
-  surface WindowAreaNorth,                !- From Surface 76
-  furniture mass living space living,     !- To Surface 76
-  0.2117022951,                           !- View Factor 76
-  surface WindowAreaNorth,                !- From Surface 77
-  living space Living Partition,          !- To Surface 77
-  0.2117022951,                           !- View Factor 77
-  surface WindowAreaSouth,                !- From Surface 78
-  FloorAboveCrawlspace,                   !- To Surface 78
-  0.1054789197,                           !- View Factor 78
-  surface WindowAreaSouth,                !- From Surface 79
-  FloorBelowAttic,                        !- To Surface 79
-  0.1054789197,                           !- View Factor 79
-  surface WindowAreaSouth,                !- From Surface 80
-  inferred conditioned ceiling,           !- To Surface 80
-  0.1054789197,                           !- View Factor 80
-  surface WindowAreaSouth,                !- From Surface 81
-  inferred conditioned floor,             !- To Surface 81
-  0.1054789197,                           !- View Factor 81
-  surface WindowAreaSouth,                !- From Surface 82
-  WallArea:0,                             !- To Surface 82
-  0.0413899281,                           !- View Factor 82
-  surface WindowAreaSouth,                !- From Surface 83
-  WallArea:270,                           !- To Surface 83
-  0.0413899281,                           !- View Factor 83
-  surface WindowAreaSouth,                !- From Surface 84
-  WallArea:90,                            !- To Surface 84
-  0.0413899281,                           !- View Factor 84
-  surface WindowAreaSouth,                !- From Surface 85
-  furniture mass living space living,     !- To Surface 85
-  0.2109578394,                           !- View Factor 85
-  surface WindowAreaSouth,                !- From Surface 86
-  living space Living Partition,          !- To Surface 86
-  0.2109578394,                           !- View Factor 86
-  surface WindowAreaWest,                 !- From Surface 87
-  FloorAboveCrawlspace,                   !- To Surface 87
-  0.1054789197,                           !- View Factor 87
-  surface WindowAreaWest,                 !- From Surface 88
-  FloorBelowAttic,                        !- To Surface 88
-  0.1054789197,                           !- View Factor 88
-  surface WindowAreaWest,                 !- From Surface 89
-  inferred conditioned ceiling,           !- To Surface 89
-  0.1054789197,                           !- View Factor 89
-  surface WindowAreaWest,                 !- From Surface 90
-  inferred conditioned floor,             !- To Surface 90
-  0.1054789197,                           !- View Factor 90
-  surface WindowAreaWest,                 !- From Surface 91
-  WallArea:0,                             !- To Surface 91
-  0.0413899281,                           !- View Factor 91
-  surface WindowAreaWest,                 !- From Surface 92
-  WallArea:180,                           !- To Surface 92
-  0.0413899281,                           !- View Factor 92
-  surface WindowAreaWest,                 !- From Surface 93
-  WallArea:90,                            !- To Surface 93
-  0.0413899281,                           !- View Factor 93
-  surface WindowAreaWest,                 !- From Surface 94
-  furniture mass living space living,     !- To Surface 94
-  0.2109578394,                           !- View Factor 94
-  surface WindowAreaWest,                 !- From Surface 95
-  living space Living Partition,          !- To Surface 95
-  0.2109578394,                           !- View Factor 95
-  WallArea:0,                             !- From Surface 96
-  FloorAboveCrawlspace,                   !- To Surface 96
-  0.1058511476,                           !- View Factor 96
-  WallArea:0,                             !- From Surface 97
-  FloorBelowAttic,                        !- To Surface 97
-  0.1058511476,                           !- View Factor 97
-  WallArea:0,                             !- From Surface 98
-  inferred conditioned ceiling,           !- To Surface 98
-  0.1058511476,                           !- View Factor 98
-  WallArea:0,                             !- From Surface 99
-  inferred conditioned floor,             !- To Surface 99
-  0.1058511476,                           !- View Factor 99
-  WallArea:0,                             !- From Surface 100
-  WallArea:180,                           !- To Surface 100
-  0.0415359903,                           !- View Factor 100
-  WallArea:0,                             !- From Surface 101
-  WallArea:270,                           !- To Surface 101
-  0.0415359903,                           !- View Factor 101
-  WallArea:0,                             !- From Surface 102
-  WallArea:90,                            !- To Surface 102
-  0.0415359903,                           !- View Factor 102
-  WallArea:0,                             !- From Surface 103
-  furniture mass living space living,     !- To Surface 103
-  0.2117022951,                           !- View Factor 103
-  WallArea:0,                             !- From Surface 104
-  living space Living Partition,          !- To Surface 104
-  0.2117022951,                           !- View Factor 104
-  WallArea:180,                           !- From Surface 105
-  FloorAboveCrawlspace,                   !- To Surface 105
-  0.1054789197,                           !- View Factor 105
-  WallArea:180,                           !- From Surface 106
-  FloorBelowAttic,                        !- To Surface 106
-  0.1054789197,                           !- View Factor 106
-  WallArea:180,                           !- From Surface 107
-  inferred conditioned ceiling,           !- To Surface 107
-  0.1054789197,                           !- View Factor 107
-  WallArea:180,                           !- From Surface 108
-  inferred conditioned floor,             !- To Surface 108
-  0.1054789197,                           !- View Factor 108
-  WallArea:180,                           !- From Surface 109
-  WallArea:0,                             !- To Surface 109
-  0.0413899281,                           !- View Factor 109
-  WallArea:180,                           !- From Surface 110
-  WallArea:270,                           !- To Surface 110
-  0.0413899281,                           !- View Factor 110
-  WallArea:180,                           !- From Surface 111
-  WallArea:90,                            !- To Surface 111
-  0.0413899281,                           !- View Factor 111
-  WallArea:180,                           !- From Surface 112
-  furniture mass living space living,     !- To Surface 112
-  0.2109578394,                           !- View Factor 112
-  WallArea:180,                           !- From Surface 113
-  living space Living Partition,          !- To Surface 113
-  0.2109578394,                           !- View Factor 113
-  WallArea:270,                           !- From Surface 114
-  FloorAboveCrawlspace,                   !- To Surface 114
-  0.1054789197,                           !- View Factor 114
-  WallArea:270,                           !- From Surface 115
-  FloorBelowAttic,                        !- To Surface 115
-  0.1054789197,                           !- View Factor 115
-  WallArea:270,                           !- From Surface 116
-  inferred conditioned ceiling,           !- To Surface 116
-  0.1054789197,                           !- View Factor 116
-  WallArea:270,                           !- From Surface 117
-  inferred conditioned floor,             !- To Surface 117
-  0.1054789197,                           !- View Factor 117
-  WallArea:270,                           !- From Surface 118
-  WallArea:0,                             !- To Surface 118
-  0.0413899281,                           !- View Factor 118
-  WallArea:270,                           !- From Surface 119
-  WallArea:180,                           !- To Surface 119
-  0.0413899281,                           !- View Factor 119
-  WallArea:270,                           !- From Surface 120
-  WallArea:90,                            !- To Surface 120
-  0.0413899281,                           !- View Factor 120
-  WallArea:270,                           !- From Surface 121
-  furniture mass living space living,     !- To Surface 121
-  0.2109578394,                           !- View Factor 121
-  WallArea:270,                           !- From Surface 122
-  living space Living Partition,          !- To Surface 122
-  0.2109578394,                           !- View Factor 122
-  WallArea:90,                            !- From Surface 123
-  FloorAboveCrawlspace,                   !- To Surface 123
-  0.1054789197,                           !- View Factor 123
-  WallArea:90,                            !- From Surface 124
-  FloorBelowAttic,                        !- To Surface 124
-  0.1054789197,                           !- View Factor 124
-  WallArea:90,                            !- From Surface 125
-  inferred conditioned ceiling,           !- To Surface 125
-  0.1054789197,                           !- View Factor 125
-  WallArea:90,                            !- From Surface 126
-  inferred conditioned floor,             !- To Surface 126
-  0.1054789197,                           !- View Factor 126
-  WallArea:90,                            !- From Surface 127
-  WallArea:0,                             !- To Surface 127
-  0.0413899281,                           !- View Factor 127
-  WallArea:90,                            !- From Surface 128
-  WallArea:180,                           !- To Surface 128
-  0.0413899281,                           !- View Factor 128
-  WallArea:90,                            !- From Surface 129
-  WallArea:270,                           !- To Surface 129
-  0.0413899281,                           !- View Factor 129
-  WallArea:90,                            !- From Surface 130
-  furniture mass living space living,     !- To Surface 130
-  0.2109578394,                           !- View Factor 130
-  WallArea:90,                            !- From Surface 131
-  living space Living Partition,          !- To Surface 131
-  0.2109578394,                           !- View Factor 131
-  DoorAreaNorth,                          !- From Surface 132
-  FloorAboveCrawlspace,                   !- To Surface 132
-  0.1058511476,                           !- View Factor 132
-  DoorAreaNorth,                          !- From Surface 133
-  FloorBelowAttic,                        !- To Surface 133
-  0.1058511476,                           !- View Factor 133
-  DoorAreaNorth,                          !- From Surface 134
-  inferred conditioned ceiling,           !- To Surface 134
-  0.1058511476,                           !- View Factor 134
-  DoorAreaNorth,                          !- From Surface 135
-  inferred conditioned floor,             !- To Surface 135
-  0.1058511476,                           !- View Factor 135
-  DoorAreaNorth,                          !- From Surface 136
-  WallArea:180,                           !- To Surface 136
-  0.0415359903,                           !- View Factor 136
-  DoorAreaNorth,                          !- From Surface 137
-  WallArea:270,                           !- To Surface 137
-  0.0415359903,                           !- View Factor 137
-  DoorAreaNorth,                          !- From Surface 138
-  WallArea:90,                            !- To Surface 138
-  0.0415359903,                           !- View Factor 138
-  DoorAreaNorth,                          !- From Surface 139
-  furniture mass living space living,     !- To Surface 139
-  0.2117022951,                           !- View Factor 139
-  DoorAreaNorth,                          !- From Surface 140
-  living space Living Partition,          !- To Surface 140
-  0.2117022951,                           !- View Factor 140
-  WindowAreaEast,                         !- From Surface 141
-  FloorAboveCrawlspace,                   !- To Surface 141
-  0.1054789197,                           !- View Factor 141
-  WindowAreaEast,                         !- From Surface 142
-  FloorBelowAttic,                        !- To Surface 142
-  0.1054789197,                           !- View Factor 142
-  WindowAreaEast,                         !- From Surface 143
-  inferred conditioned ceiling,           !- To Surface 143
-  0.1054789197,                           !- View Factor 143
-  WindowAreaEast,                         !- From Surface 144
-  inferred conditioned floor,             !- To Surface 144
-  0.1054789197,                           !- View Factor 144
-  WindowAreaEast,                         !- From Surface 145
-  WallArea:0,                             !- To Surface 145
-  0.0413899281,                           !- View Factor 145
-  WindowAreaEast,                         !- From Surface 146
-  WallArea:180,                           !- To Surface 146
-  0.0413899281,                           !- View Factor 146
-  WindowAreaEast,                         !- From Surface 147
-  WallArea:270,                           !- To Surface 147
-  0.0413899281,                           !- View Factor 147
-  WindowAreaEast,                         !- From Surface 148
-  furniture mass living space living,     !- To Surface 148
-  0.2109578394,                           !- View Factor 148
-  WindowAreaEast,                         !- From Surface 149
-  living space Living Partition,          !- To Surface 149
-  0.2109578394,                           !- View Factor 149
-  WindowAreaNorth,                        !- From Surface 150
-  FloorAboveCrawlspace,                   !- To Surface 150
-  0.1058511476,                           !- View Factor 150
-  WindowAreaNorth,                        !- From Surface 151
-  FloorBelowAttic,                        !- To Surface 151
-  0.1058511476,                           !- View Factor 151
-  WindowAreaNorth,                        !- From Surface 152
-  inferred conditioned ceiling,           !- To Surface 152
-  0.1058511476,                           !- View Factor 152
-  WindowAreaNorth,                        !- From Surface 153
-  inferred conditioned floor,             !- To Surface 153
-  0.1058511476,                           !- View Factor 153
-  WindowAreaNorth,                        !- From Surface 154
-  WallArea:180,                           !- To Surface 154
-  0.0415359903,                           !- View Factor 154
-  WindowAreaNorth,                        !- From Surface 155
-  WallArea:270,                           !- To Surface 155
-  0.0415359903,                           !- View Factor 155
-  WindowAreaNorth,                        !- From Surface 156
-  WallArea:90,                            !- To Surface 156
-  0.0415359903,                           !- View Factor 156
-  WindowAreaNorth,                        !- From Surface 157
-  furniture mass living space living,     !- To Surface 157
-  0.2117022951,                           !- View Factor 157
-  WindowAreaNorth,                        !- From Surface 158
-  living space Living Partition,          !- To Surface 158
-  0.2117022951,                           !- View Factor 158
-  WindowAreaSouth,                        !- From Surface 159
-  FloorAboveCrawlspace,                   !- To Surface 159
-  0.1054789197,                           !- View Factor 159
-  WindowAreaSouth,                        !- From Surface 160
-  FloorBelowAttic,                        !- To Surface 160
-  0.1054789197,                           !- View Factor 160
-  WindowAreaSouth,                        !- From Surface 161
-  inferred conditioned ceiling,           !- To Surface 161
-  0.1054789197,                           !- View Factor 161
-  WindowAreaSouth,                        !- From Surface 162
-  inferred conditioned floor,             !- To Surface 162
-  0.1054789197,                           !- View Factor 162
-  WindowAreaSouth,                        !- From Surface 163
-  WallArea:0,                             !- To Surface 163
-  0.0413899281,                           !- View Factor 163
-  WindowAreaSouth,                        !- From Surface 164
-  WallArea:270,                           !- To Surface 164
-  0.0413899281,                           !- View Factor 164
-  WindowAreaSouth,                        !- From Surface 165
-  WallArea:90,                            !- To Surface 165
-  0.0413899281,                           !- View Factor 165
-  WindowAreaSouth,                        !- From Surface 166
-  furniture mass living space living,     !- To Surface 166
-  0.2109578394,                           !- View Factor 166
-  WindowAreaSouth,                        !- From Surface 167
-  living space Living Partition,          !- To Surface 167
-  0.2109578394,                           !- View Factor 167
-  WindowAreaWest,                         !- From Surface 168
-  FloorAboveCrawlspace,                   !- To Surface 168
-  0.1054789197,                           !- View Factor 168
-  WindowAreaWest,                         !- From Surface 169
-  FloorBelowAttic,                        !- To Surface 169
-  0.1054789197,                           !- View Factor 169
-  WindowAreaWest,                         !- From Surface 170
-  inferred conditioned ceiling,           !- To Surface 170
-  0.1054789197,                           !- View Factor 170
-  WindowAreaWest,                         !- From Surface 171
-  inferred conditioned floor,             !- To Surface 171
-  0.1054789197,                           !- View Factor 171
-  WindowAreaWest,                         !- From Surface 172
-  WallArea:0,                             !- To Surface 172
-  0.0413899281,                           !- View Factor 172
-  WindowAreaWest,                         !- From Surface 173
-  WallArea:180,                           !- To Surface 173
-  0.0413899281,                           !- View Factor 173
-  WindowAreaWest,                         !- From Surface 174
-  WallArea:90,                            !- To Surface 174
-  0.0413899281,                           !- View Factor 174
-  WindowAreaWest,                         !- From Surface 175
-  furniture mass living space living,     !- To Surface 175
-  0.2109578394,                           !- View Factor 175
-  WindowAreaWest,                         !- From Surface 176
-  living space Living Partition,          !- To Surface 176
-  0.2109578394,                           !- View Factor 176
-  furniture mass living space living,     !- From Surface 177
-  FloorAboveCrawlspace,                   !- To Surface 177
-  0.1342781374,                           !- View Factor 177
-  furniture mass living space living,     !- From Surface 178
-  FloorBelowAttic,                        !- To Surface 178
-  0.1342781374,                           !- View Factor 178
-  furniture mass living space living,     !- From Surface 179
-  inferred conditioned ceiling,           !- To Surface 179
-  0.1342781374,                           !- View Factor 179
-  furniture mass living space living,     !- From Surface 180
-  inferred conditioned floor,             !- To Surface 180
-  0.1342781374,                           !- View Factor 180
-  furniture mass living space living,     !- From Surface 181
-  WallArea:180,                           !- To Surface 181
-  0.0526907411,                           !- View Factor 181
-  furniture mass living space living,     !- From Surface 182
-  WallArea:270,                           !- To Surface 182
-  0.0526907411,                           !- View Factor 182
-  furniture mass living space living,     !- From Surface 183
-  WallArea:90,                            !- To Surface 183
-  0.0526907411,                           !- View Factor 183
-  furniture mass living space living,     !- From Surface 184
-  WindowAreaEast,                         !- To Surface 184
-  0.0120850324,                           !- View Factor 184
-  furniture mass living space living,     !- From Surface 185
-  WindowAreaSouth,                        !- To Surface 185
-  0.0120850324,                           !- View Factor 185
-  furniture mass living space living,     !- From Surface 186
-  WindowAreaWest,                         !- To Surface 186
-  0.0120850324,                           !- View Factor 186
-  furniture mass living space living,     !- From Surface 187
-  living space Living Partition,          !- To Surface 187
-  0.2685562749,                           !- View Factor 187
-  living space Living Partition,          !- From Surface 188
-  FloorAboveCrawlspace,                   !- To Surface 188
-  0.1342781374,                           !- View Factor 188
-  living space Living Partition,          !- From Surface 189
-  FloorBelowAttic,                        !- To Surface 189
-  0.1342781374,                           !- View Factor 189
-  living space Living Partition,          !- From Surface 190
-  inferred conditioned ceiling,           !- To Surface 190
-  0.1342781374,                           !- View Factor 190
-  living space Living Partition,          !- From Surface 191
-  inferred conditioned floor,             !- To Surface 191
-  0.1342781374,                           !- View Factor 191
-  living space Living Partition,          !- From Surface 192
-  WallArea:180,                           !- To Surface 192
-  0.0526907411,                           !- View Factor 192
-  living space Living Partition,          !- From Surface 193
-  WallArea:270,                           !- To Surface 193
-  0.0526907411,                           !- View Factor 193
-  living space Living Partition,          !- From Surface 194
-  WallArea:90,                            !- To Surface 194
-  0.0526907411,                           !- View Factor 194
-  living space Living Partition,          !- From Surface 195
-  WindowAreaEast,                         !- To Surface 195
-  0.0120850324,                           !- View Factor 195
-  living space Living Partition,          !- From Surface 196
-  WindowAreaSouth,                        !- To Surface 196
-  0.0120850324,                           !- View Factor 196
-  living space Living Partition,          !- From Surface 197
-  WindowAreaWest,                         !- To Surface 197
-  0.0120850324,                           !- View Factor 197
-  living space Living Partition,          !- From Surface 198
-  furniture mass living space living,     !- To Surface 198
-  0.2685562749;                           !- View Factor 198
-
 Exterior:Lights,
   exterior lighting,                      !- Name
   lighting schedule,                      !- Schedule Name
@@ -9163,34 +8208,20 @@ Exterior:Lights,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac supply fan clg disaggregate, !- Variable Name
+  central ac and furnace supply fan clg disaggregate, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  furnace supply fan htg primary disaggregate, !- Variable Name
+  central ac and furnace supply fan htg primary disaggregate, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,
-  central_ac_airloop_Fan_RTF;             !- Erl Variable Name 1
-
-EnergyManagementSystem:GlobalVariable,
-  erv_or_hrv_latent_load;                 !- Erl Variable Name 1
-
-EnergyManagementSystem:GlobalVariable,
-  erv_or_hrv_sensible_load;               !- Erl Variable Name 1
-
-EnergyManagementSystem:GlobalVariable,
-  furnace_airloop_Fan_RTF;                !- Erl Variable Name 1
+  central_ac_and_furnace_airloop_Fan_RTF; !- Erl Variable Name 1
 
 EnergyManagementSystem:InternalVariable,
-  central_ac_airloop_max_sup_fan_mfr,     !- Name
-  central ac supply fan,                  !- Internal Data Index Key Name
-  Fan Maximum Mass Flow Rate;             !- Internal Data Type
-
-EnergyManagementSystem:InternalVariable,
-  furnace_airloop_max_sup_fan_mfr,        !- Name
-  furnace supply fan,                     !- Internal Data Index Key Name
+  central_ac_and_furnace_airloop_max_sup_fan_mfr, !- Name
+  central ac and furnace supply fan,      !- Internal Data Index Key Name
   Fan Maximum Mass Flow Rate;             !- Internal Data Type
 
 EnergyManagementSystem:Sensor,
@@ -9202,11 +8233,6 @@ EnergyManagementSystem:Sensor,
   airflow_loss,                           !- Name
   living space,                           !- Output:Variable or Output:Meter Index Key Name
   Zone Infiltration Sensible Heat Loss Energy; !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
-  airflow_sp_s,                           !- Name
-  natural vent temp schedule,             !- Output:Variable or Output:Meter Index Key Name
-  Schedule Value;                         !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   airflow_tin_s,                          !- Name
@@ -9224,18 +8250,28 @@ EnergyManagementSystem:Sensor,
   Zone Air Humidity Ratio;                !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_airloop_Fan_RTF_s,           !- Name
-  central ac supply fan,                  !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_airloop_Fan_RTF_s, !- Name
+  central ac and furnace supply fan,      !- Output:Variable or Output:Meter Index Key Name
   Fan Runtime Fraction;                   !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_clg_coil_s,                  !- Name
-  central ac clg coil,                    !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_clg_coil_s,      !- Name
+  central ac and furnace clg coil,        !- Output:Variable or Output:Meter Index Key Name
   Cooling Coil Electric Energy;           !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_supply_fan_s,                !- Name
-  central ac supply fan,                  !- Output:Variable or Output:Meter Index Key Name
+  central_ac_and_furnace_htg_coil_s,      !- Name
+  central ac and furnace htg coil,        !- Output:Variable or Output:Meter Index Key Name
+  Heating Coil Gas Energy;                !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  central_ac_and_furnace_supply_fan_s,    !- Name
+  central ac and furnace supply fan,      !- Output:Variable or Output:Meter Index Key Name
+  Fan Electric Energy;                    !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  central_ac_and_furnace_supply_fan_s_1,  !- Name
+  central ac and furnace supply fan,      !- Output:Variable or Output:Meter Index Key Name
   Fan Electric Energy;                    !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
@@ -9247,6 +8283,11 @@ EnergyManagementSystem:Sensor,
   clg_load_tot,                           !- Name
   ,                                       !- Output:Variable or Output:Meter Index Key Name
   Cooling:EnergyTransfer;                 !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  clg_sp_s,                               !- Name
+  cooling setpoint,                       !- Output:Variable or Output:Meter Index Key Name
+  Schedule Value;                         !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   cool_season,                            !- Name
@@ -9264,21 +8305,6 @@ EnergyManagementSystem:Sensor,
   Water Heater Runtime Fraction;          !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  furnace_airloop_Fan_RTF_s,              !- Name
-  furnace supply fan,                     !- Output:Variable or Output:Meter Index Key Name
-  Fan Runtime Fraction;                   !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
-  furnace_htg_coil_s,                     !- Name
-  furnace htg coil,                       !- Output:Variable or Output:Meter Index Key Name
-  Heating Coil Gas Energy;                !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
-  furnace_supply_fan_s,                   !- Name
-  furnace supply fan,                     !- Output:Variable or Output:Meter Index Key Name
-  Fan Electric Energy;                    !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
   htg_load_liv,                           !- Name
   ,                                       !- Output:Variable or Output:Meter Index Key Name
   Heating:EnergyTransfer:Zone:LIVING SPACE; !- Output:Variable or Output:Meter Name
@@ -9287,6 +8313,11 @@ EnergyManagementSystem:Sensor,
   htg_load_tot,                           !- Name
   ,                                       !- Output:Variable or Output:Meter Index Key Name
   Heating:EnergyTransfer;                 !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  htg_sp_s,                               !- Name
+  heating setpoint,                       !- Output:Variable or Output:Meter Index Key Name
+  Schedule Value;                         !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   ig_ee_conv,                             !- Name
@@ -9474,18 +8505,13 @@ EnergyManagementSystem:Sensor,
   Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  mech_vent_bath_sch_s,                   !- Name
-  mech vent bath exhaust schedule,        !- Output:Variable or Output:Meter Index Key Name
+  mech_vent_bath_fan_sch_s,               !- Name
+  mech vent bath fan schedule,            !- Output:Variable or Output:Meter Index Key Name
   Schedule Value;                         !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  mech_vent_range_sch_s,                  !- Name
-  mech vent range exhaust schedule,       !- Output:Variable or Output:Meter Index Key Name
-  Schedule Value;                         !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
-  mech_vent_wh_sch_s,                     !- Name
-  Always On Discrete,                     !- Output:Variable or Output:Meter Index Key Name
+  mech_vent_range_fan_sch_s,              !- Name
+  mech vent range fan schedule,           !- Output:Variable or Output:Meter Index Key Name
   Schedule Value;                         !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
@@ -9504,16 +8530,6 @@ EnergyManagementSystem:Sensor,
   Electric Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  mv_conv_3,                              !- Name
-  erv or hrv latent load equip,           !- Output:Variable or Output:Meter Index Key Name
-  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
-  mv_conv_4,                              !- Name
-  erv or hrv sensible load equip,         !- Output:Variable or Output:Meter Index Key Name
-  Other Equipment Convective Heating Energy; !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
   mv_rad,                                 !- Name
   mech vent bath fan,                     !- Output:Variable or Output:Meter Index Key Name
   Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
@@ -9527,16 +8543,6 @@ EnergyManagementSystem:Sensor,
   mv_rad_2,                               !- Name
   mech vent range fan,                    !- Output:Variable or Output:Meter Index Key Name
   Electric Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
-  mv_rad_3,                               !- Name
-  erv or hrv latent load equip,           !- Output:Variable or Output:Meter Index Key Name
-  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
-
-EnergyManagementSystem:Sensor,
-  mv_rad_4,                               !- Name
-  erv or hrv sensible load equip,         !- Output:Variable or Output:Meter Index Key Name
-  Other Equipment Radiant Heating Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   natural_vent_nva_s,                     !- Name
@@ -9580,7 +8586,7 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Sensor,
   ss_conv,                                !- Name
-  DoorAreaNorth,                          !- Output:Variable or Output:Meter Index Key Name
+  ExteriorDoorArea,                       !- Output:Variable or Output:Meter Index Key Name
   Surface Inside Face Convection Heat Gain Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
@@ -9605,7 +8611,7 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Sensor,
   ss_ig,                                  !- Name
-  DoorAreaNorth,                          !- Output:Variable or Output:Meter Index Key Name
+  ExteriorDoorArea,                       !- Output:Variable or Output:Meter Index Key Name
   Surface Inside Face Internal Gains Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
@@ -9630,12 +8636,12 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Sensor,
   ss_lgt,                                 !- Name
-  DoorAreaNorth,                          !- Output:Variable or Output:Meter Index Key Name
+  ExteriorDoorArea,                       !- Output:Variable or Output:Meter Index Key Name
   Surface Inside Face Lights Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   ss_sol,                                 !- Name
-  DoorAreaNorth,                          !- Output:Variable or Output:Meter Index Key Name
+  ExteriorDoorArea,                       !- Output:Variable or Output:Meter Index Key Name
   Surface Inside Face Solar Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
@@ -9660,7 +8666,7 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Sensor,
   ss_surf,                                !- Name
-  DoorAreaNorth,                          !- Output:Variable or Output:Meter Index Key Name
+  ExteriorDoorArea,                       !- Output:Variable or Output:Meter Index Key Name
   Surface Inside Face Net Surface Thermal Radiation Heat Gain Energy; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
@@ -9969,24 +8975,6 @@ EnergyManagementSystem:Sensor,
   Schedule Value;                         !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Actuator,
-  ducts_flow_act,                         !- Name
-  ducts flow,                             !- Actuated Component Unique Name
-  Zone Infiltration,                      !- Actuated Component Type
-  Air Exchange Flow Rate;                 !- Actuated Component Control Type
-
-EnergyManagementSystem:Actuator,
-  erv_or_hrv_latent_load_equip_act,       !- Name
-  erv or hrv latent load equip,           !- Actuated Component Unique Name
-  OtherEquipment,                         !- Actuated Component Type
-  Power Level;                            !- Actuated Component Control Type
-
-EnergyManagementSystem:Actuator,
-  erv_or_hrv_sensible_load_equip_act,     !- Name
-  erv or hrv sensible load equip,         !- Actuated Component Unique Name
-  OtherEquipment,                         !- Actuated Component Type
-  Power Level;                            !- Actuated Component Control Type
-
-EnergyManagementSystem:Actuator,
   infil_flow_act,                         !- Name
   infil flow,                             !- Actuated Component Unique Name
   Zone Infiltration,                      !- Actuated Component Type
@@ -10035,10 +9023,17 @@ EnergyManagementSystem:Actuator,
   Air Exchange Flow Rate;                 !- Actuated Component Control Type
 
 EnergyManagementSystem:Program,
-  central_ac_supply_fan_disaggregate_program, !- Name
-  Set central_ac_supply_fan_clg = 0,      !- Program Line 1
-  If central_ac_clg_coil_s > 0,           !- Program Line 2
-  Set central_ac_supply_fan_clg = central_ac_supply_fan_s, !- Program Line 3
+  central_ac_and_furnace_supply_fan_disaggregate_program, !- Name
+  Set central_ac_and_furnace_supply_fan_clg = 0, !- Program Line 1
+  If central_ac_and_furnace_clg_coil_s > 0, !- Program Line 2
+  Set central_ac_and_furnace_supply_fan_clg = central_ac_and_furnace_supply_fan_s, !- Program Line 3
+  EndIf;                                  !- Program Line 4
+
+EnergyManagementSystem:Program,
+  central_ac_and_furnace_supply_fan_disaggregate_program_1, !- Name
+  Set central_ac_and_furnace_supply_fan_primary_htg = 0, !- Program Line 1
+  If central_ac_and_furnace_htg_coil_s > 0, !- Program Line 2
+  Set central_ac_and_furnace_supply_fan_primary_htg = central_ac_and_furnace_supply_fan_s_1, !- Program Line 3
   EndIf;                                  !- Program Line 4
 
 EnergyManagementSystem:Program,
@@ -10084,80 +9079,72 @@ EnergyManagementSystem:Program,
   Set hr_intgains = hr_intgains - ig_lgt_conv - ig_lgt_rad - ig_lgt_vis, !- Program Line 39
   Set hr_intgains = hr_intgains - ig_ppl_conv - ig_ppl_rad, !- Program Line 40
   Set hr_intgains = hr_intgains + dhw_loss * (1.0*(1-dhw_rtf) + 1.0*dhw_rtf), !- Program Line 41
-  Set hr_airflow_rate = infil_flow_act + mech_vent_flow_act + ducts_flow_act + natural_vent_flow_act + whole_house_fan_flow_act, !- Program Line 42
+  Set hr_airflow_rate = infil_flow_act + mech_vent_flow_act + natural_vent_flow_act + whole_house_fan_flow_act, !- Program Line 42
   If hr_airflow_rate > 0,                 !- Program Line 43
   Set hr_infil = (airflow_loss - airflow_gain) * infil_flow_act / hr_airflow_rate, !- Program Line 44
   Set hr_natvent = (airflow_loss - airflow_gain) * natural_vent_flow_act / hr_airflow_rate, !- Program Line 45
   Set hr_whf = (airflow_loss - airflow_gain) * whole_house_fan_flow_act / hr_airflow_rate, !- Program Line 46
   Set hr_mechvent = ((airflow_loss - airflow_gain) * mech_vent_flow_act / hr_airflow_rate), !- Program Line 47
-  Set hr_ducts = ((airflow_loss - airflow_gain) * ducts_flow_act / hr_airflow_rate), !- Program Line 48
-  Else,                                   !- Program Line 49
-  Set hr_infil = 0,                       !- Program Line 50
-  Set hr_natvent = 0,                     !- Program Line 51
-  Set hr_whf = 0,                         !- Program Line 52
-  Set hr_mechvent = 0,                    !- Program Line 53
-  Set hr_ducts = 0,                       !- Program Line 54
-  EndIf,                                  !- Program Line 55
-  Set hr_mechvent = hr_mechvent - mv_conv - mv_rad - mv_conv_1 - mv_rad_1 - mv_conv_2 - mv_rad_2 - mv_conv_3 - mv_rad_3 - mv_conv_4 - mv_rad_4, !- Program Line 56
-  Set htg_mode = 0,                       !- Program Line 57
-  Set clg_mode = 0,                       !- Program Line 58
-  If (htg_load_liv > 0),                  !- Program Line 59
-  Set htg_mode = 1,                       !- Program Line 60
-  ElseIf (clg_load_liv > 0),              !- Program Line 61
-  Set clg_mode = 1,                       !- Program Line 62
-  ElseIf (cool_season > 0),               !- Program Line 63
-  Set clg_mode = 1,                       !- Program Line 64
-  Else,                                   !- Program Line 65
-  Set htg_mode = 1,                       !- Program Line 66
-  EndIf,                                  !- Program Line 67
-  Set loads_htg_walls = hr_walls * htg_mode, !- Program Line 68
-  Set loads_htg_rim_joists = hr_rim_joists * htg_mode, !- Program Line 69
-  Set loads_htg_foundation_walls = hr_foundation_walls * htg_mode, !- Program Line 70
-  Set loads_htg_floors = hr_floors * htg_mode, !- Program Line 71
-  Set loads_htg_slabs = hr_slabs * htg_mode, !- Program Line 72
-  Set loads_htg_ceilings = hr_ceilings * htg_mode, !- Program Line 73
-  Set loads_htg_roofs = hr_roofs * htg_mode, !- Program Line 74
-  Set loads_htg_windows = hr_windows * htg_mode, !- Program Line 75
-  Set loads_htg_doors = hr_doors * htg_mode, !- Program Line 76
-  Set loads_htg_skylights = hr_skylights * htg_mode, !- Program Line 77
-  Set loads_htg_internal_mass = hr_internal_mass * htg_mode, !- Program Line 78
-  Set loads_htg_intgains = hr_intgains * htg_mode, !- Program Line 79
-  Set loads_htg_infil = hr_infil * htg_mode, !- Program Line 80
-  Set loads_htg_mechvent = hr_mechvent * htg_mode, !- Program Line 81
-  Set loads_htg_natvent = hr_natvent * htg_mode, !- Program Line 82
-  Set loads_htg_whf = hr_whf * htg_mode,  !- Program Line 83
-  Set loads_htg_ducts = hr_ducts * htg_mode, !- Program Line 84
-  Set loads_clg_walls = -hr_walls * clg_mode, !- Program Line 85
-  Set loads_clg_rim_joists = -hr_rim_joists * clg_mode, !- Program Line 86
-  Set loads_clg_foundation_walls = -hr_foundation_walls * clg_mode, !- Program Line 87
-  Set loads_clg_floors = -hr_floors * clg_mode, !- Program Line 88
-  Set loads_clg_slabs = -hr_slabs * clg_mode, !- Program Line 89
-  Set loads_clg_ceilings = -hr_ceilings * clg_mode, !- Program Line 90
-  Set loads_clg_roofs = -hr_roofs * clg_mode, !- Program Line 91
-  Set loads_clg_windows = -hr_windows * clg_mode, !- Program Line 92
-  Set loads_clg_doors = -hr_doors * clg_mode, !- Program Line 93
-  Set loads_clg_skylights = -hr_skylights * clg_mode, !- Program Line 94
-  Set loads_clg_internal_mass = -hr_internal_mass * clg_mode, !- Program Line 95
-  Set loads_clg_intgains = -hr_intgains * clg_mode, !- Program Line 96
-  Set loads_clg_infil = -hr_infil * clg_mode, !- Program Line 97
-  Set loads_clg_mechvent = -hr_mechvent * clg_mode, !- Program Line 98
-  Set loads_clg_natvent = -hr_natvent * clg_mode, !- Program Line 99
-  Set loads_clg_whf = -hr_whf * clg_mode, !- Program Line 100
-  Set loads_clg_ducts = -hr_ducts * clg_mode, !- Program Line 101
-  Set loads_htg_tot = 0,                  !- Program Line 102
-  Set loads_clg_tot = 0,                  !- Program Line 103
-  If htg_load_liv > 0,                    !- Program Line 104
-  Set loads_htg_tot = htg_load_tot - clg_load_tot, !- Program Line 105
-  ElseIf clg_load_liv > 0,                !- Program Line 106
-  Set loads_clg_tot = clg_load_tot - htg_load_tot, !- Program Line 107
-  EndIf;                                  !- Program Line 108
-
-EnergyManagementSystem:Program,
-  furnace_supply_fan_disaggregate_program, !- Name
-  Set furnace_supply_fan_primary_htg = 0, !- Program Line 1
-  If furnace_htg_coil_s > 0,              !- Program Line 2
-  Set furnace_supply_fan_primary_htg = furnace_supply_fan_s, !- Program Line 3
-  EndIf;                                  !- Program Line 4
+  Else,                                   !- Program Line 48
+  Set hr_infil = 0,                       !- Program Line 49
+  Set hr_natvent = 0,                     !- Program Line 50
+  Set hr_whf = 0,                         !- Program Line 51
+  Set hr_mechvent = 0,                    !- Program Line 52
+  EndIf,                                  !- Program Line 53
+  Set hr_mechvent = hr_mechvent - mv_conv - mv_rad - mv_conv_1 - mv_rad_1 - mv_conv_2 - mv_rad_2, !- Program Line 54
+  Set hr_ducts = 0,                       !- Program Line 55
+  Set htg_mode = 0,                       !- Program Line 56
+  Set clg_mode = 0,                       !- Program Line 57
+  If (htg_load_liv > 0),                  !- Program Line 58
+  Set htg_mode = 1,                       !- Program Line 59
+  ElseIf (clg_load_liv > 0),              !- Program Line 60
+  Set clg_mode = 1,                       !- Program Line 61
+  ElseIf (cool_season > 0),               !- Program Line 62
+  Set clg_mode = 1,                       !- Program Line 63
+  Else,                                   !- Program Line 64
+  Set htg_mode = 1,                       !- Program Line 65
+  EndIf,                                  !- Program Line 66
+  Set loads_htg_walls = hr_walls * htg_mode, !- Program Line 67
+  Set loads_htg_rim_joists = hr_rim_joists * htg_mode, !- Program Line 68
+  Set loads_htg_foundation_walls = hr_foundation_walls * htg_mode, !- Program Line 69
+  Set loads_htg_floors = hr_floors * htg_mode, !- Program Line 70
+  Set loads_htg_slabs = hr_slabs * htg_mode, !- Program Line 71
+  Set loads_htg_ceilings = hr_ceilings * htg_mode, !- Program Line 72
+  Set loads_htg_roofs = hr_roofs * htg_mode, !- Program Line 73
+  Set loads_htg_windows = hr_windows * htg_mode, !- Program Line 74
+  Set loads_htg_doors = hr_doors * htg_mode, !- Program Line 75
+  Set loads_htg_skylights = hr_skylights * htg_mode, !- Program Line 76
+  Set loads_htg_internal_mass = hr_internal_mass * htg_mode, !- Program Line 77
+  Set loads_htg_intgains = hr_intgains * htg_mode, !- Program Line 78
+  Set loads_htg_infil = hr_infil * htg_mode, !- Program Line 79
+  Set loads_htg_mechvent = hr_mechvent * htg_mode, !- Program Line 80
+  Set loads_htg_natvent = hr_natvent * htg_mode, !- Program Line 81
+  Set loads_htg_whf = hr_whf * htg_mode,  !- Program Line 82
+  Set loads_htg_ducts = hr_ducts * htg_mode, !- Program Line 83
+  Set loads_clg_walls = -hr_walls * clg_mode, !- Program Line 84
+  Set loads_clg_rim_joists = -hr_rim_joists * clg_mode, !- Program Line 85
+  Set loads_clg_foundation_walls = -hr_foundation_walls * clg_mode, !- Program Line 86
+  Set loads_clg_floors = -hr_floors * clg_mode, !- Program Line 87
+  Set loads_clg_slabs = -hr_slabs * clg_mode, !- Program Line 88
+  Set loads_clg_ceilings = -hr_ceilings * clg_mode, !- Program Line 89
+  Set loads_clg_roofs = -hr_roofs * clg_mode, !- Program Line 90
+  Set loads_clg_windows = -hr_windows * clg_mode, !- Program Line 91
+  Set loads_clg_doors = -hr_doors * clg_mode, !- Program Line 92
+  Set loads_clg_skylights = -hr_skylights * clg_mode, !- Program Line 93
+  Set loads_clg_internal_mass = -hr_internal_mass * clg_mode, !- Program Line 94
+  Set loads_clg_intgains = -hr_intgains * clg_mode, !- Program Line 95
+  Set loads_clg_infil = -hr_infil * clg_mode, !- Program Line 96
+  Set loads_clg_mechvent = -hr_mechvent * clg_mode, !- Program Line 97
+  Set loads_clg_natvent = -hr_natvent * clg_mode, !- Program Line 98
+  Set loads_clg_whf = -hr_whf * clg_mode, !- Program Line 99
+  Set loads_clg_ducts = -hr_ducts * clg_mode, !- Program Line 100
+  Set loads_htg_tot = 0,                  !- Program Line 101
+  Set loads_clg_tot = 0,                  !- Program Line 102
+  If htg_load_liv > 0,                    !- Program Line 103
+  Set loads_htg_tot = htg_load_tot - clg_load_tot, !- Program Line 104
+  ElseIf clg_load_liv > 0,                !- Program Line 105
+  Set loads_clg_tot = clg_load_tot - htg_load_tot, !- Program Line 106
+  EndIf;                                  !- Program Line 107
 
 EnergyManagementSystem:Program,
   infil_program,                          !- Name
@@ -10176,48 +9163,31 @@ EnergyManagementSystem:Program,
   Set n = 0.65,                           !- Program Line 13
   Set sft = (f_t*0.5),                    !- Program Line 14
   Set temp1 = ((c*Cw)*((sft*site_vw_s)^(2*n)))^2, !- Program Line 15
-  Set Qn = (((c*Cs*(dT^n))^2)+temp1)^0.5, !- Program Line 16
-  Set ERVSupInPb = out_pb_s,              !- Program Line 17
-  Set ERVSupInTemp = airflow_tt_s,        !- Program Line 18
-  Set ERVSupInW = out_wt_s,               !- Program Line 19
-  Set ERVSupRho = (@RhoAirFnPbTdbW ERVSupInPb ERVSupInTemp ERVSupInW), !- Program Line 20
-  Set ERVSupCp = (@CpAirFnW ERVSupInW),   !- Program Line 21
-  Set ERVSupInEnth = (@HFnTdbW ERVSupInTemp ERVSupInW), !- Program Line 22
-  Set ERVSecInTemp = airflow_tin_s,       !- Program Line 23
-  Set ERVSecInW = airflow_win_s,          !- Program Line 24
-  Set ERVSecCp = (@CpAirFnW ERVSecInW),   !- Program Line 25
-  Set ERVSecInEnth = (@HFnTdbW ERVSecInTemp ERVSecInW), !- Program Line 26
-  Set ERV_MFR = 0.016046213068800004 * ERVSupRho, !- Program Line 27
-  Set ERVCpMin = (@Min ERVSupCp ERVSecCp), !- Program Line 28
-  Set ERVSupOutTemp = ERVSupInTemp + ERVCpMin/ERVSupCp * 0.0 * (ERVSecInTemp - ERVSupInTemp), !- Program Line 29
-  Set ERVSupOutW = ERVSupInW + ERVCpMin/ERVSupCp * 0.0 * (ERVSecInW - ERVSupInW), !- Program Line 30
-  Set ERVSupOutEnth = (@HFnTdbW ERVSupOutTemp ERVSupOutW), !- Program Line 31
-  Set ERVSensHeatTrans = ERV_MFR * ERVSupCp * (ERVSupOutTemp - ERVSupInTemp), !- Program Line 32
-  Set ERVTotalHeatTrans = ERV_MFR * (ERVSupOutEnth - ERVSupInEnth), !- Program Line 33
-  Set ERVLatHeatTrans = ERVTotalHeatTrans - ERVSensHeatTrans, !- Program Line 34
-  Set ERVTotalToLv = ERV_MFR * (ERVSupOutEnth - ERVSecInEnth), !- Program Line 35
-  Set ERVSensToLv = ERV_MFR * ERVSecCp * (ERVSupOutTemp - ERVSecInTemp), !- Program Line 36
-  Set ERVLatToLv = ERVTotalToLv - ERVSensToLv, !- Program Line 37
-  Set erv_or_hrv_sensible_load_equip_act = ERVSensToLv, !- Program Line 38
-  Set erv_or_hrv_latent_load_equip_act = ERVLatToLv, !- Program Line 39
-  Set QWHV = mech_vent_wh_sch_s*0.016,    !- Program Line 40
-  Set Qrange = 0,                         !- Program Line 41
-  Set Qdryer = 0.0,                       !- Program Line 42
-  Set Qbath = 0,                          !- Program Line 43
-  Set QductsOut = 0,                      !- Program Line 44
-  Set QductsIn = 0,                       !- Program Line 45
-  Set Qout = Qrange+Qbath+Qdryer+QductsOut, !- Program Line 46
-  Set Qin = QductsIn,                     !- Program Line 47
-  Set Qu = (@Abs (Qout-Qin)),             !- Program Line 48
-  Set mech_vent_house_fan_act = QWHV * 41.97226343457059 / 0.016046213068800004, !- Program Line 49
-  Set Q_tot_flow = (((Qu^2)+(Qn^2))^0.5), !- Program Line 50
-  Set Q_tot_flow = (@Max Q_tot_flow 0),   !- Program Line 51
-  Set mech_vent_flow_act = (@Abs ((Qout - QductsOut) - (Qin - QductsIn))), !- Program Line 52
-  Set ducts_flow_act = (@Abs (QductsOut - QductsIn)), !- Program Line 53
-  Set infil_flow_act = Q_tot_flow - mech_vent_flow_act - ducts_flow_act, !- Program Line 54
-  If infil_flow_act < 0,                  !- Program Line 55
-  Set infil_flow_act = 0,                 !- Program Line 56
-  EndIf;                                  !- Program Line 57
+  Set Qinf = (((c*Cs*(dT^n))^2)+temp1)^0.5, !- Program Line 16
+  Set Qinf = (@Max Qinf 0),               !- Program Line 17
+  Set mech_vent_house_fan_act = 41.97226343457059, !- Program Line 18
+  Set QWHV = 0.004,                       !- Program Line 19
+  Set Qrange = 0,                         !- Program Line 20
+  Set Qbath = 0,                          !- Program Line 21
+  Set Qexhaust = Qrange+Qbath,            !- Program Line 22
+  Set Qsupply = 0,                        !- Program Line 23
+  Set Qexhaust = Qexhaust+QWHV,           !- Program Line 24
+  Set Qsupply = Qsupply+QWHV,             !- Program Line 25
+  Set Qfan = (@Max Qexhaust Qsupply),     !- Program Line 26
+  If Qfan > 0,                            !- Program Line 27
+  Set Qavg = ((Qexhaust + Qsupply) / 2.0), !- Program Line 28
+  If ((@Abs (Qexhaust - Qavg)) / Qavg) <= 0.1, !- Program Line 29
+  Set phi = 1,                            !- Program Line 30
+  Else,                                   !- Program Line 31
+  Set phi = (Qinf / (Qinf + Qfan)),       !- Program Line 32
+  EndIf,                                  !- Program Line 33
+  Set Qinf_adj = phi * Qinf,              !- Program Line 34
+  Else,                                   !- Program Line 35
+  Set Qinf_adj = Qinf,                    !- Program Line 36
+  EndIf,                                  !- Program Line 37
+  Set mech_vent_flow_act = Qfan,          !- Program Line 38
+  Set infil_flow_act = Qinf_adj,          !- Program Line 39
+  Set balanced_mechvent_flow_rate = 0;    !- Program Line 40
 
 EnergyManagementSystem:Program,
   natural_vent_program,                   !- Name
@@ -10228,7 +9198,7 @@ EnergyManagementSystem:Program,
   Set Phiout = (@RhFnTdbWPb Tout Wout Pbar), !- Program Line 5
   Set MaxHR = 0.0115,                     !- Program Line 6
   Set MaxRH = 0.7,                        !- Program Line 7
-  Set Tnvsp = airflow_sp_s,               !- Program Line 8
+  Set Tnvsp = (htg_sp_s + clg_sp_s) / 2,  !- Program Line 8
   Set NVavail = natural_vent_nva_s,       !- Program Line 9
   Set WHFavail = whole_house_fan_nva_s,   !- Program Line 10
   Set ClgSsnAvail = cool_season,          !- Program Line 11
@@ -10243,7 +9213,7 @@ EnergyManagementSystem:Program,
   Set whole_house_fan_mix_act = WHF_Flow*Adj, !- Program Line 20
   Set whole_house_fan_act = 0.0*Adj,      !- Program Line 21
   ElseIf (NVavail > 0),                   !- Program Line 22
-  Set NVArea = 16133.913538559998,        !- Program Line 23
+  Set NVArea = 16133.913538560002,        !- Program Line 23
   Set Cs = 0.00019046418327605956,        !- Program Line 24
   Set Cw = 8.97707065726015e-05,          !- Program Line 25
   Set Tdiff = Tin-Tout,                   !- Program Line 26
@@ -10269,15 +9239,14 @@ EnergyManagementSystem:Program,
   Set water_heater_ec_adj_act = 0.0 * wh_e_cons; !- Program Line 2
 
 EnergyManagementSystem:ProgramCallingManager,
-  airflow program calling manager,        !- Name
-  BeginTimestepBeforePredictor,           !- EnergyPlus Model Calling Point
-  infil_program,                          !- Program Name 1
-  natural_vent_program;                   !- Program Name 2
+  central ac and furnace supply fan disaggregate program calling manager, !- Name
+  EndOfSystemTimestepBeforeHVACReporting, !- EnergyPlus Model Calling Point
+  central_ac_and_furnace_supply_fan_disaggregate_program; !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
-  central ac supply fan disaggregate program calling manager, !- Name
+  central ac and furnace supply fan disaggregate program calling manager 1, !- Name
   EndOfSystemTimestepBeforeHVACReporting, !- EnergyPlus Model Calling Point
-  central_ac_supply_fan_disaggregate_program; !- Program Name 1
+  central_ac_and_furnace_supply_fan_disaggregate_program_1; !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
   component_loads_program calling manager, !- Name
@@ -10285,9 +9254,14 @@ EnergyManagementSystem:ProgramCallingManager,
   component_loads_program;                !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
-  furnace supply fan disaggregate program calling manager, !- Name
-  EndOfSystemTimestepBeforeHVACReporting, !- EnergyPlus Model Calling Point
-  furnace_supply_fan_disaggregate_program; !- Program Name 1
+  infil_program calling manager,          !- Name
+  BeginTimestepBeforePredictor,           !- EnergyPlus Model Calling Point
+  infil_program;                          !- Program Name 1
+
+EnergyManagementSystem:ProgramCallingManager,
+  natural_vent_program calling manager,   !- Name
+  BeginTimestepBeforePredictor,           !- EnergyPlus Model Calling Point
+  natural_vent_program;                   !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
   water heater EC_adj ProgramManager,     !- Name
@@ -10295,19 +9269,19 @@ EnergyManagementSystem:ProgramCallingManager,
   water_heater_EC_adj;                    !- Program Name 1
 
 EnergyManagementSystem:OutputVariable,
-  central ac supply fan clg disaggregate, !- Name
-  central_ac_supply_fan_clg,              !- EMS Variable Name
+  central ac and furnace supply fan clg disaggregate, !- Name
+  central_ac_and_furnace_supply_fan_clg,  !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
-  central_ac_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
+  central_ac_and_furnace_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
-  furnace supply fan htg primary disaggregate, !- Name
-  furnace_supply_fan_primary_htg,         !- EMS Variable Name
+  central ac and furnace supply fan htg primary disaggregate, !- Name
+  central_ac_and_furnace_supply_fan_primary_htg, !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
-  furnace_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
+  central_ac_and_furnace_supply_fan_disaggregate_program_1, !- EMS Program or Subroutine Name
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
@@ -10447,11 +9421,11 @@ Output:Meter,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  Heating:DistrictHeating,                !- Key Name
+  clothes dryer:InteriorEquipment:OtherFuel2, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  Cooling:DistrictCooling,                !- Key Name
+  cooking range:InteriorEquipment:OtherFuel2, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -10472,6 +9446,16 @@ Output:Variable,
 Output:Variable,
   *,                                      !- Key Value
   Water Use Equipment Hot Water Volume,   !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Zone Ideal Loads Zone Sensible Heating Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  *,                                      !- Key Value
+  Zone Ideal Loads Zone Sensible Cooling Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Table:Monthly,
@@ -10959,42 +9943,42 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac clg coil,                    !- Key Value
+  central ac and furnace clg coil,        !- Key Value
   Cooling Coil Electric Energy,           !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac clg coil,                    !- Key Value
+  central ac and furnace clg coil,        !- Key Value
   Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  furnace htg coil,                       !- Key Value
+  central ac and furnace htg coil,        !- Key Value
   Heating Coil Gas Energy,                !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  furnace htg coil,                       !- Key Value
+  central ac and furnace htg coil,        !- Key Value
   Heating Coil FuelOil#1 Energy,          !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  furnace htg coil,                       !- Key Value
+  central ac and furnace htg coil,        !- Key Value
   Heating Coil Propane Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  furnace htg coil,                       !- Key Value
+  central ac and furnace htg coil,        !- Key Value
   Heating Coil OtherFuel1 Energy,         !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  furnace htg coil,                       !- Key Value
+  central ac and furnace htg coil,        !- Key Value
   Heating Coil OtherFuel2 Energy,         !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  furnace htg coil,                       !- Key Value
+  central ac and furnace htg coil,        !- Key Value
   Heating Coil Heating Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
@@ -11035,6 +10019,11 @@ Output:Variable,
 
 Output:Variable,
   water heater,                           !- Key Value
+  Water Heater OtherFuel2 Energy,         !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
   Water Heater Heat Loss Energy,          !- Variable Name
   runperiod;                              !- Reporting Frequency
 
@@ -11045,12 +10034,12 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac supply fan clg disaggregate, !- Variable Name
+  central ac and furnace supply fan clg disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  furnace supply fan htg primary disaggregate, !- Variable Name
+  central ac and furnace supply fan htg primary disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
