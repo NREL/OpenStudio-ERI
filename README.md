@@ -8,7 +8,9 @@ OpenStudio-ERI
 
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
 
-For more information, please visit the [documentation](https://openstudio-eri.readthedocs.io/en/latest).
+![OS-ERI workflow](https://user-images.githubusercontent.com/5861765/84286087-797d7600-aafb-11ea-9e2e-879dc63498f3.png)
+
+This project leverages an HPXML to OpenStudio Measure from the [OpenStudio-HPXML project](https://github.com/NREL/OpenStudio-HPXML) for translating HPXML to an EnergyPlus simulation.
 
 ## License
 
