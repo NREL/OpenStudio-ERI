@@ -82,8 +82,8 @@ class EnergyRatingIndexTest < Minitest::Test
       xml2014 = File.absolute_path(File.join(xmldir, File.basename(xml, '.xml') + '_301_2014' + File.extname(xml)))
       XMLHelper.write_file(hpxml.to_oga, xml2014)
 
-      hpxmls, csvs, runtime = _run_eri(xml2014, test_name, hourly_output: true)
-      all_results[File.basename(xml2014)] = _get_csv_results(csvs[:results])
+      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name, hourly_output: true)
+      all_results[File.basename(xml2014)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
 
       File.delete(xml2014)
@@ -559,8 +559,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
       # Re-simulate reference HPXML file
       _override_mech_vent_fan_power(out_xml)
-      hpxmls, csvs, runtime = _run_eri(out_xml, test_name)
-      worksheet_results = _get_csv_results(csvs[:worksheet])
+      hpxmls, csvs, runtime = _run_workflow(out_xml, test_name)
+      worksheet_results = _get_csv_results(csvs[:eri_worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
     end
     assert(all_results.size > 0)
@@ -590,8 +590,8 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      hpxmls, csvs, runtime = _run_eri(xml, test_name)
-      all_results[xml] = _get_csv_results(csvs[:results])
+      hpxmls, csvs, runtime = _run_workflow(xml, test_name)
+      all_results[xml] = _get_csv_results(csvs[:eri_results])
     end
     assert(all_results.size > 0)
 
