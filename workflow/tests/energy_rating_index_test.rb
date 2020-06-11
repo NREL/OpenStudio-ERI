@@ -34,8 +34,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = _run_eri(xml, test_name, hourly_output: true)
-      all_results[File.basename(xml)] = _get_csv_results(csvs[:results])
+      hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+      all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml)]['Workflow Runtime (s)'] = runtime
     end
     assert(all_results.size > 0)
@@ -82,8 +82,8 @@ class EnergyRatingIndexTest < Minitest::Test
       xml2014 = File.absolute_path(File.join(xmldir, File.basename(xml, '.xml') + '_301_2014' + File.extname(xml)))
       XMLHelper.write_file(hpxml.to_oga, xml2014)
 
-      hpxmls, csvs, runtime = _run_eri(xml2014, test_name, hourly_output: true)
-      all_results[File.basename(xml2014)] = _get_csv_results(csvs[:results])
+      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name, hourly_output: true)
+      all_results[File.basename(xml2014)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
 
       File.delete(xml2014)
@@ -114,7 +114,7 @@ class EnergyRatingIndexTest < Minitest::Test
     _test_reul(all_results, 'base-hvac', 'REUL Cooling (MBtu)')
   end
 
-  def test_invalid
+  def test_sample_files_invalid
     test_name = 'invalid_files'
     expected_error_msgs = { 'invalid-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
                             'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
@@ -128,22 +128,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _run_eri(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
+      _run_workflow(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
     end
-  end
-
-  def test_downloading_weather
-    cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --download-weather"
-    system(command)
-
-    num_epws_expected = File.readlines(File.join(File.dirname(__FILE__), '..', '..', 'weather', 'data.csv')).size - 1
-    num_epws_actual = Dir[File.join(File.dirname(__FILE__), '..', '..', 'weather', '*.epw')].count
-    assert_equal(num_epws_expected, num_epws_actual)
-
-    num_cache_expected = File.readlines(File.join(File.dirname(__FILE__), '..', '..', 'weather', 'data.csv')).size - 1
-    num_cache_actual = Dir[File.join(File.dirname(__FILE__), '..', '..', 'weather', '*-cache.csv')].count
-    assert_equal(num_cache_expected, num_cache_actual)
   end
 
   def test_weather_cache
@@ -573,8 +559,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
       # Re-simulate reference HPXML file
       _override_mech_vent_fan_power(out_xml)
-      hpxmls, csvs, runtime = _run_eri(out_xml, test_name)
-      worksheet_results = _get_csv_results(csvs[:worksheet])
+      hpxmls, csvs, runtime = _run_workflow(out_xml, test_name)
+      worksheet_results = _get_csv_results(csvs[:eri_worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
     end
     assert(all_results.size > 0)
@@ -604,8 +590,8 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      hpxmls, csvs, runtime = _run_eri(xml, test_name)
-      all_results[xml] = _get_csv_results(csvs[:results])
+      hpxmls, csvs, runtime = _run_workflow(xml, test_name)
+      all_results[xml] = _get_csv_results(csvs[:eri_results])
     end
     assert(all_results.size > 0)
 
@@ -653,7 +639,7 @@ class EnergyRatingIndexTest < Minitest::Test
     XMLHelper.write_file(hpxml, out_xml)
   end
 
-  def _run_eri(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
+  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
@@ -686,10 +672,14 @@ class EnergyRatingIndexTest < Minitest::Test
     hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
     hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
     csvs = {}
-    csvs[:results] = File.join(rundir, 'results', 'ERI_Results.csv')
-    csvs[:worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
+    csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
+    csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
     csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
     csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
+    if using_iaf
+      csvs[:iad_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.csv')
+      csvs[:iadref_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+    end
     if expect_error
       if expect_error_msgs.nil?
         flunk "No error message defined for #{File.basename(xml)}."
@@ -712,26 +702,17 @@ class EnergyRatingIndexTest < Minitest::Test
       end
     else
       # Check all output files exist
-      assert(File.exist?(hpxmls[:ref]))
-      assert(File.exist?(hpxmls[:rated]))
-      assert(File.exist?(csvs[:results]))
-      assert(File.exist?(csvs[:worksheet]))
-      if using_iaf
-        hpxmls[:iad] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.xml')
-        assert(File.exist?(hpxmls[:iad]))
-        hpxmls[:iadref] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.xml')
-        assert(File.exist?(hpxmls[:iadref]))
-        csvs[:iad_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.csv')
-        csvs[:iadref_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+      hpxmls.keys.each do |k|
+        assert(File.exist?(hpxmls[k]))
+      end
+      csvs.keys.each do |k|
+        assert(File.exist?(csvs[k]))
       end
 
       # Check HPXMLs are valid
       _test_schema_validation(xml)
-      _test_schema_validation(hpxmls[:ref])
-      _test_schema_validation(hpxmls[:rated])
-      if using_iaf
-        _test_schema_validation(hpxmls[:iad])
-        _test_schema_validation(hpxmls[:iadref])
+      hpxmls.keys.each do |k|
+        _test_schema_validation(hpxmls[k])
       end
     end
 

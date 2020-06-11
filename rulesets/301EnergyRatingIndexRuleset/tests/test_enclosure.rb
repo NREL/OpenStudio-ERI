@@ -8,7 +8,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
-class EnclosureTest < MiniTest::Test
+class ERIEnclosureTest < MiniTest::Test
   def before_setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')

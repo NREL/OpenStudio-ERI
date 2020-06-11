@@ -8,7 +8,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
-class WaterHeatingTest < MiniTest::Test
+class ERIWaterHeatingTest < MiniTest::Test
   def before_setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
   end

@@ -8,9 +8,14 @@ require_relative '../measure.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
-class LightingTest < MiniTest::Test
+class ERILightingTest < MiniTest::Test
   def before_setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
+  end
+
+  def after_teardown
+    File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 
   def test_lighting
@@ -77,6 +82,40 @@ class LightingTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     avg_fan_w = 42.6
     _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
+  end
+
+  def test_ceiling_fans_nbeds_5
+    hpxml_name = 'base-enclosure-beds-5.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.ceiling_fans.add(id: 'CeilingFans',
+                           efficiency: 100,
+                           quantity: 2)
+
+    # Save new file
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    medium_cfm = 3000.0
+
+    # Reference Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 6)
+
+    # Rated Home
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    avg_fan_w = 30.0
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 6)
+
+    # IAD
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+
+    # IAD Reference
+    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    avg_fan_w = 42.6
+    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
   end
 
   def _test_measure(hpxml_name, calc_type)
