@@ -1588,8 +1588,7 @@ class EnergyRatingIndex301Ruleset
       energy_factor = orig_water_heater.energy_factor
       if energy_factor.nil?
         if not [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
-          wh_uef = orig_water_heater.uniform_energy_factor
-          energy_factor = Waterheater.calc_ef_from_uef(wh_uef, orig_water_heater.water_heater_type, orig_water_heater.fuel_type)
+          energy_factor = Waterheater.calc_ef_from_uef(orig_water_heater)
         end
       end
 
