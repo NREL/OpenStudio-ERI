@@ -83,7 +83,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
     _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeMoisture, location: HPXML::LocationLivingSpace)
-    _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
+    _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 6, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
     _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
     _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
 

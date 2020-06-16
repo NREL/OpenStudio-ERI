@@ -88,16 +88,44 @@
         </Foundations>
         <Roofs>
           <Roof>
-            <SystemIdentifier id='Roof'/>
+            <SystemIdentifier id='Roof1'/>
             <InteriorAdjacentTo>attic - unvented</InteriorAdjacentTo>
-            <Area>1510.0</Area>
-            <RoofType>asphalt or fiberglass shingles</RoofType>
-            <SolarAbsorptance>0.7</SolarAbsorptance>
+            <Area>503.0</Area>
+            <RoofType>slate or tile shingles</RoofType>
+            <RoofColor>light</RoofColor>
             <Emittance>0.92</Emittance>
             <Pitch>6.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
-              <SystemIdentifier id='RoofInsulation'/>
+              <SystemIdentifier id='Roof1Insulation'/>
+              <AssemblyEffectiveRValue>2.3</AssemblyEffectiveRValue>
+            </Insulation>
+          </Roof>
+          <Roof>
+            <SystemIdentifier id='Roof2'/>
+            <InteriorAdjacentTo>attic - unvented</InteriorAdjacentTo>
+            <Area>503.0</Area>
+            <RoofType>metal surfacing</RoofType>
+            <RoofColor>reflective</RoofColor>
+            <Emittance>0.92</Emittance>
+            <Pitch>6.0</Pitch>
+            <RadiantBarrier>false</RadiantBarrier>
+            <Insulation>
+              <SystemIdentifier id='Roof2Insulation'/>
+              <AssemblyEffectiveRValue>2.3</AssemblyEffectiveRValue>
+            </Insulation>
+          </Roof>
+          <Roof>
+            <SystemIdentifier id='Roof3'/>
+            <InteriorAdjacentTo>attic - unvented</InteriorAdjacentTo>
+            <Area>503.0</Area>
+            <RoofType>wood shingles or shakes</RoofType>
+            <RoofColor>dark</RoofColor>
+            <Emittance>0.92</Emittance>
+            <Pitch>6.0</Pitch>
+            <RadiantBarrier>false</RadiantBarrier>
+            <Insulation>
+              <SystemIdentifier id='Roof3Insulation'/>
               <AssemblyEffectiveRValue>2.3</AssemblyEffectiveRValue>
             </Insulation>
           </Roof>
@@ -375,14 +403,13 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeater'/>
-            <FuelType>natural gas</FuelType>
+            <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
-            <TankVolume>50.0</TankVolume>
+            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>40000.0</HeatingCapacity>
-            <EnergyFactor>0.59</EnergyFactor>
-            <RecoveryEfficiency>0.76</RecoveryEfficiency>
+            <HeatingCapacity>18767.0</HeatingCapacity>
+            <EnergyFactor>0.95</EnergyFactor>
             <HotWaterTemperature>125.0</HotWaterTemperature>
           </WaterHeatingSystem>
           <HotWaterDistribution>
