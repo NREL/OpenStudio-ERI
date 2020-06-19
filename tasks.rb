@@ -1192,9 +1192,6 @@ def set_hpxml_plug_loads(hpxml_file, hpxml)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
 
   hpxml.plug_loads.clear
-  hpxml.misc_loads_schedule.weekday_fractions = nil
-  hpxml.misc_loads_schedule.weekend_fractions = nil
-  hpxml.misc_loads_schedule.monthly_multipliers = nil
 end
 
 def get_eri_version(hpxml)
@@ -1255,6 +1252,8 @@ def create_sample_hpxmls
                   'invalid_files/solar-thermal-system-with-desuperheater.xml',
                   'invalid_files/solar-thermal-system-with-dhw-indirect.xml',
                   'invalid_files/refrigerator-location.xml',
+                  'invalid_files/refrigerators-multiple-primary.xml',
+                  'invalid_files/refrigerators-no-primary.xml',
                   'invalid_files/repeated-relatedhvac-desuperheater.xml',
                   'invalid_files/repeated-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-runperiod.xml',
@@ -1308,6 +1307,8 @@ def create_sample_hpxmls
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
                   'base-misc-defaults2.xml',
+                  'base-misc-large-uncommon-loads.xml',
+                  'base-misc-large-uncommon-loads2.xml',
                   'base-misc-neighbor-shading.xml',
                   'base-misc-runperiod-1-month.xml',
                   'base-misc-timestep-10-mins.xml',
