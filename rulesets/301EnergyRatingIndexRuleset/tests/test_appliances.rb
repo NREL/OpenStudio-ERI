@@ -399,7 +399,7 @@ class ERIApplianceTest < MiniTest::Test
     nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
     if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
       refrigerator.usage_multiplier = 1.0
-      rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_energy(refrigerator)
+      rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
       btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
 
       expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_rf_ref_energy_gains(nbeds)
