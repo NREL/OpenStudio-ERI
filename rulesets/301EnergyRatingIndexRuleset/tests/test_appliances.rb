@@ -83,7 +83,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
     _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeMoisture, location: HPXML::LocationLivingSpace)
-    _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
+    _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 6, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
     _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
     _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
 
@@ -399,7 +399,7 @@ class ERIApplianceTest < MiniTest::Test
     nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
     if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
       refrigerator.usage_multiplier = 1.0
-      rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_energy(refrigerator)
+      rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
       btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
 
       expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_rf_ref_energy_gains(nbeds)

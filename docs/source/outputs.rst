@@ -61,32 +61,52 @@ Annual Energy Consumption By Fuel Type and End Use
 
 Current end use/fuel type combinations are:
 
-   ================================================ ========================= ================================= ==========
-   Type                                             Notes                     Type (cont'd)                     Notes
-   ================================================ ========================= ================================= ==========
-   Electricity: Heating (MBtu)                                                Natural Gas: Heating (MBtu)
-   Electricity: Heating Fans/Pumps (MBtu)                                     Natural Gas: Hot Water (MBtu)
-   Electricity: Cooling (MBtu)                                                Natural Gas: Clothes Dryer (MBtu)
-   Electricity: Cooling Fans/Pumps (MBtu)                                     Natural Gas: Range/Oven (MBtu)
-   Electricity: Hot Water (MBtu)                                              Fuel Oil: Heating (MBtu)
-   Electricity: Hot Water Recirc Pump (MBtu)                                  Fuel Oil: Hot Water (MBtu)
-   Electricity: Hot Water Solar Thermal Pump (MBtu)                           Fuel Oil: Clothes Dryer (MBtu)
-   Electricity: Lighting Interior (MBtu)                                      Fuel Oil: Range/Oven (MBtu)
-   Electricity: Lighting Garage (MBtu)                                        Propane: Heating (MBtu)
-   Electricity: Lighting Exterior (MBtu)                                      Propane: Hot Water (MBtu)
-   Electricity: Mech Vent (MBtu)                                              Propane: Clothes Dryer (MBtu)
-   Electricity: Whole House Fan (MBtu)                                        Propane: Range/Oven (MBtu)
-   Electricity: Refrigerator (MBtu)                                           Wood: Heating (MBtu)              Currently unused for ERI.
-   Electricity: Dehumidifier (MBtu)                 Currently unused for ERI. Wood: Hot Water (MBtu)            Currently unused for ERI.
-   Electricity: Dishwasher (MBtu)                                             Wood: Clothes Dryer (MBtu)        Currently unused for ERI.
-   Electricity: Clothes Washer (MBtu)                                         Wood: Range/Oven (MBtu)           Currently unused for ERI.
-   Electricity: Clothes Dryer (MBtu)                                          Wood Pellets: Heating (MBtu)      Currently unused for ERI.
+   ================================================ =========================
+   Type                                             Notes
+   ================================================ =========================
+   Electricity: Heating (MBtu)
+   Electricity: Heating Fans/Pumps (MBtu)
+   Electricity: Cooling (MBtu)
+   Electricity: Cooling Fans/Pumps (MBtu)
+   Electricity: Hot Water (MBtu)
+   Electricity: Hot Water Recirc Pump (MBtu)
+   Electricity: Hot Water Solar Thermal Pump (MBtu)
+   Electricity: Lighting Interior (MBtu)
+   Electricity: Lighting Garage (MBtu)
+   Electricity: Lighting Exterior (MBtu)
+   Electricity: Mech Vent (MBtu)
+   Electricity: Whole House Fan (MBtu)
+   Electricity: Refrigerator (MBtu)
+   Electricity: Dehumidifier (MBtu)                 Currently unused for ERI.
+   Electricity: Dishwasher (MBtu)
+   Electricity: Clothes Washer (MBtu)
+   Electricity: Clothes Dryer (MBtu)
    Electricity: Range/Oven (MBtu)
    Electricity: Ceiling Fan (MBtu)
    Electricity: Television (MBtu)
    Electricity: Plug Loads (MBtu)
    Electricity: PV (MBtu)
-   ================================================ ========================= ================================= ==========
+   Natural Gas: Heating (MBtu)
+   Natural Gas: Hot Water (MBtu)
+   Natural Gas: Clothes Dryer (MBtu)
+   Natural Gas: Range/Oven (MBtu)
+   Fuel Oil: Heating (MBtu)
+   Fuel Oil: Hot Water (MBtu)
+   Fuel Oil: Clothes Dryer (MBtu)
+   Fuel Oil: Range/Oven (MBtu)
+   Propane: Heating (MBtu)
+   Propane: Hot Water (MBtu)
+   Propane: Clothes Dryer (MBtu)
+   Propane: Range/Oven (MBtu)
+   Wood Cord: Heating (MBtu)
+   Wood Cord: Hot Water (MBtu)
+   Wood Cord: Clothes Dryer (MBtu)
+   Wood Cord: Range/Oven (MBtu)
+   Wood Pellets: Heating (MBtu)
+   Wood Pellets: Hot Water (MBtu)
+   Wood Pellets: Clothes Dryer (MBtu)
+   Wood Pellets: Range/Oven (MBtu)
+   ================================================ =========================
 
 Annual Building Loads
 ^^^^^^^^^^^^^^^^^^^^^

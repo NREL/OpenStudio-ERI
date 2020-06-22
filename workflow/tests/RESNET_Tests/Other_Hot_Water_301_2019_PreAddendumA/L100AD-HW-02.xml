@@ -78,6 +78,7 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>0</Azimuth>
+            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -92,6 +93,7 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>180</Azimuth>
+            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -112,6 +114,7 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>0</Azimuth>
+            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -128,6 +131,7 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>90</Azimuth>
+            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -144,6 +148,7 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>180</Azimuth>
+            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -160,6 +165,7 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>270</Azimuth>
+            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -176,6 +182,7 @@
             </WallType>
             <Area>60.75</Area>
             <Azimuth>90</Azimuth>
+            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -192,6 +199,7 @@
             </WallType>
             <Area>60.75</Area>
             <Azimuth>270</Azimuth>
+            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>

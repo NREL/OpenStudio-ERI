@@ -1731,7 +1731,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Appliances: Refrigerator
     refrigerator = hpxml.refrigerators[0]
     refrigerator.usage_multiplier = 1.0 if refrigerator.usage_multiplier.nil?
-    rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_energy(refrigerator)
+    rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
     btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (rf_frac_sens * btu)
     xml_appl_lat += (rf_frac_lat * btu)
