@@ -297,23 +297,47 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
 
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_names = ['base-enclosure-other-housing-unit.xml',
+                   'base-enclosure-other-heated-space.xml']
 
-    # Rated Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml, 1200, (23.0 * 420 + 4.0 * 780) / 1200, 0.7, 0.92)
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_walls(hpxml, 1200, (23.0 * 420 + 4.0 * 780) / 1200, 0.7, 0.92)
 
-    # Reference Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml, 1200, (16.67 * 420 + 4.0 * 780) / 1200, 0.75, 0.9)
+      # Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_walls(hpxml, 1200, (16.67 * 420 + 4.0 * 780) / 1200, 0.75, 0.9)
 
-    # IAD Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
+      # IAD Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
 
-    # IAD Reference Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
+      # IAD Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
+    end
+
+    hpxml_names = ['base-enclosure-other-multifamily-buffer-space.xml',
+                   'base-enclosure-other-non-freezing-space.xml']
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_walls(hpxml, 1200, 23.0, 0.7, 0.92)
+
+      # Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_walls(hpxml, 1200, 16.67, 0.75, 0.9)
+
+      # IAD Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
+
+      # IAD Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
+    end
 
     hpxml_name = 'base-enclosure-garage.xml'
 
@@ -557,6 +581,50 @@ class ERIEnclosureTest < MiniTest::Test
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_floors(hpxml, 2400, (33.33 * 1200 + 30.3 * 1200) / 2400)
+
+    hpxml_names = ['base-enclosure-other-housing-unit.xml',
+                   'base-enclosure-other-heated-space.xml']
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_floors(hpxml, 2700, 2.1)
+
+      # Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_floors(hpxml, 2700, 2.1)
+
+      # IAD Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      _check_floors(hpxml, 2400, (2.1 * 1200 + 30.3 * 1200) / 2400)
+
+      # IAD Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      _check_floors(hpxml, 2400, (2.1 * 1200 + 30.3 * 1200) / 2400)
+    end
+
+    hpxml_names = ['base-enclosure-other-multifamily-buffer-space.xml',
+                   'base-enclosure-other-non-freezing-space.xml']
+
+    hpxml_names.each do |hpxml_name|
+      # Rated Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+      _check_floors(hpxml, 2700, 18.7)
+
+      # Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+      _check_floors(hpxml, 2700, (33.33 * 1350 + 30.3 * 1350) / 2700)
+
+      # IAD Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+      puts hpxml.frame_floors.to_s
+      _check_floors(hpxml, 2400, (18.7 * 1200 + 30.3 * 1200) / 2400)
+
+      # IAD Reference Home
+      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+      puts hpxml.frame_floors.to_s
+      _check_floors(hpxml, 2400, (33.3 * 1200 + 30.3 * 1200) / 2400)
+    end
   end
 
   def test_enclosure_slabs
