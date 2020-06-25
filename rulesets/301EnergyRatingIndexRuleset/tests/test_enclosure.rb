@@ -405,7 +405,7 @@ class ERIEnclosureTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml, 1200, 16.95, 0, 8, 8, 7)
+    _check_foundation_walls(hpxml, 1200, 10.0, 0, 8, 8, 7)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -423,7 +423,7 @@ class ERIEnclosureTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml, 1200, 16.95, 0, 8, 8, 7)
+    _check_foundation_walls(hpxml, 1200, 10.0, 0, 8, 8, 7)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -459,7 +459,7 @@ class ERIEnclosureTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml, 1200, 16.95, 0, 8, 8, 7)
+    _check_foundation_walls(hpxml, 1200, 10.0, 0, 8, 8, 7)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -617,12 +617,10 @@ class ERIEnclosureTest < MiniTest::Test
 
       # IAD Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      puts hpxml.frame_floors.to_s
       _check_floors(hpxml, 2400, (18.7 * 1200 + 30.3 * 1200) / 2400)
 
       # IAD Reference Home
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      puts hpxml.frame_floors.to_s
       _check_floors(hpxml, 2400, (33.3 * 1200 + 30.3 * 1200) / 2400)
     end
   end

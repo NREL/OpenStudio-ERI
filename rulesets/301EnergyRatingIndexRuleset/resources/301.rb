@@ -649,7 +649,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
-    wall_ufactor = get_reference_basement_wall_ufactor()
+    wall_rvalue = get_reference_basement_wall_rvalue()
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground or
@@ -665,21 +665,14 @@ class EnergyRatingIndex301Ruleset
       end
 
       if is_insulated
-        insulation_assembly_r_value = 1.0 / wall_ufactor
-        insulation_interior_r_value = nil
-        insulation_interior_distance_to_top = nil
-        insulation_interior_distance_to_bottom = nil
-        insulation_exterior_r_value = nil
-        insulation_exterior_distance_to_top = nil
-        insulation_exterior_distance_to_bottom = nil
+        insulation_exterior_r_value = wall_rvalue
       else
-        insulation_interior_r_value = 0
-        insulation_interior_distance_to_top = 0
-        insulation_interior_distance_to_bottom = 0
         insulation_exterior_r_value = 0
-        insulation_exterior_distance_to_top = 0
+      end
+      if insulation_exterior_r_value > 0
+        insulation_exterior_distance_to_bottom = orig_foundation_wall.height
+      else
         insulation_exterior_distance_to_bottom = 0
-        insulation_assembly_r_value = nil
       end
       new_hpxml.foundation_walls.add(id: orig_foundation_wall.id,
                                      exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
@@ -690,13 +683,12 @@ class EnergyRatingIndex301Ruleset
                                      thickness: orig_foundation_wall.thickness,
                                      depth_below_grade: orig_foundation_wall.depth_below_grade,
                                      insulation_id: orig_foundation_wall.insulation_id,
-                                     insulation_interior_r_value: insulation_interior_r_value,
-                                     insulation_interior_distance_to_top: insulation_interior_distance_to_top,
-                                     insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
+                                     insulation_interior_r_value: 0,
+                                     insulation_interior_distance_to_top: 0,
+                                     insulation_interior_distance_to_bottom: 0,
                                      insulation_exterior_r_value: insulation_exterior_r_value,
-                                     insulation_exterior_distance_to_top: insulation_exterior_distance_to_top,
-                                     insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom,
-                                     insulation_assembly_r_value: insulation_assembly_r_value)
+                                     insulation_exterior_distance_to_top: 0,
+                                     insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom)
     end
   end
 
@@ -2357,13 +2349,13 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.get_reference_basement_wall_ufactor()
+  def self.get_reference_basement_wall_rvalue()
     # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
-    # Basement Wall U-Factor
+    # Basement Wall Exterior R-Value
     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-      return 0.360
+      return 0.0
     elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-      return 0.059
+      return 10.0
     end
   end
 
