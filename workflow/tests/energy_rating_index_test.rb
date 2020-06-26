@@ -1135,8 +1135,14 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Above-grade wall infrared emittance (ε)'] = wall_emiss
 
     # Basement walls
-    bsmt_wall_u = _get_basement_walls(hpxml)
+    bsmt_wall_r = _get_basement_walls(hpxml)
     if test_num == 4
+      # TODO: This will be removed once the RESNET form is updated
+      if bsmt_wall_r == 0
+        bsmt_wall_u = 0.360
+      elsif bsmt_wall_r == 10
+        bsmt_wall_u = 0.059
+      end
       results['Basement walls (Uo)'] = bsmt_wall_u
     else
       results['Basement walls (Uo)'] = 'n/a'
@@ -1575,14 +1581,15 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_basement_walls(hpxml)
-    u_factor = num = 0.0
+    r_value = num = 0.0
     hpxml.foundation_walls.each do |foundation_wall|
       next unless foundation_wall.is_exterior_thermal_boundary
 
-      u_factor += 1.0 / foundation_wall.insulation_assembly_r_value
+      r_value += foundation_wall.insulation_exterior_r_value
+      r_value += foundation_wall.insulation_interior_r_value
       num += 1
     end
-    return u_factor / num
+    return r_value / num
   end
 
   def _get_above_grade_floors(hpxml)
