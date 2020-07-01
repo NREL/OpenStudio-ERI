@@ -714,6 +714,18 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls.keys.each do |k|
         _test_schema_validation(hpxmls[k])
       end
+      
+      # Check run.log for OS warnings
+      ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
+        next unless File.exist? File.join(rundir, design, 'run.log')
+
+        run_log = File.readlines(File.join(rundir, design, 'run.log')).map(&:strip)
+        run_log.each do |log_line|
+          next unless log_line.include? 'OS Message:'
+
+          flunk "Unexpected warning found in #{design} run.log: #{log_line}"
+        end
+      end
     end
 
     # Clean up
