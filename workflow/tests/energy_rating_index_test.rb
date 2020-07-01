@@ -714,7 +714,7 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls.keys.each do |k|
         _test_schema_validation(hpxmls[k])
       end
-      
+
       # Check run.log for OS warnings
       ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
         next unless File.exist? File.join(rundir, design, 'run.log')
