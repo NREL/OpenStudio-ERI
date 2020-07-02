@@ -18,17 +18,6 @@ require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
-def rm_path(path)
-  if Dir.exist?(path)
-    FileUtils.rm_r(path)
-  end
-  while true
-    break if not Dir.exist?(path)
-
-    sleep(0.01)
-  end
-end
-
 def hourly_outputs_for_run(run, hourly_outputs)
   if (run == [Constants.CalcTypeERIRatedHome]) || (run == [Constants.CalcTypeERIReferenceHome])
     return hourly_outputs
@@ -41,7 +30,6 @@ def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   design_name, designdir = get_design_name_and_dir(output_dir, run)
-  rm_path(designdir)
   hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
   output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
@@ -56,7 +44,6 @@ def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
   design_name, designdir = get_design_name_and_dir(output_dir, run)
-  rm_path(designdir)
   output_hpxml_path = get_output_hpxml(resultsdir, designdir)
   hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
@@ -120,7 +107,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     if rated_output[:hpxml_heat_fuels][s] == HPXML::FuelTypeElectricity
       coeff_heat_a = 2.2561
       coeff_heat_b = 0.0
-    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWood, HPXML::FuelTypeWoodPellets].include? rated_output[:hpxml_heat_fuels][s]
+    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? rated_output[:hpxml_heat_fuels][s]
       coeff_heat_a = 1.0943
       coeff_heat_b = 0.4030
     end
@@ -235,7 +222,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     if rated_output[:hpxml_dwh_fuels][s] == HPXML::FuelTypeElectricity
       coeff_dhw_a = 0.9200
       coeff_dhw_b = 0.0
-    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWood, HPXML::FuelTypeWoodPellets].include? rated_output[:hpxml_dwh_fuels][s]
+    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? rated_output[:hpxml_dwh_fuels][s]
       coeff_dhw_a = 1.1877
       coeff_dhw_b = 1.0130
     end
@@ -732,5 +719,5 @@ versions.each do |program, version|
   puts "ERI: #{results[:eri].round(2)}"
 end
 
-puts "Output files written to '#{File.basename(resultsdir)}' directory."
+puts "Output files written to #{resultsdir}"
 puts "Completed in #{(Time.now - start_time).round(1)} seconds."

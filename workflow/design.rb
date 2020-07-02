@@ -21,68 +21,10 @@ def get_output_hpxml(resultsdir, designdir)
 end
 
 def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
-  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  os_log = OpenStudio::StringStreamLogSink.new
-  os_log.setLogLevel(OpenStudio::Warn)
-
+  measures_dir = File.join(File.dirname(__FILE__), '..')
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   output_hpxml = get_output_hpxml(resultsdir, designdir)
 
-  measures_dir = File.join(File.dirname(__FILE__), '..')
-  measures = get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir, designdir)
-
-  Dir.mkdir(designdir)
-
-  model = OpenStudio::Model::Model.new
-  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-
-  # Use print instead of puts in here (see https://stackoverflow.com/a/5044669)
-  print "[#{design_name}] Creating input...\n"
-
-  # Apply model measures
-  success = apply_measures(measures_dir, measures, runner, model, true, 'OpenStudio::Measure::ModelMeasure')
-  report_measure_errors_warnings(runner, designdir, debug)
-  report_os_warnings(os_log, designdir)
-
-  if not success
-    print "[#{design_name}] Creating input unsuccessful.\n"
-    return output_hpxml
-  end
-
-  # Translate model
-  forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
-  forward_translator.setExcludeLCCObjects(true)
-  model_idf = forward_translator.translateModel(model)
-  report_ft_errors_warnings(forward_translator, designdir)
-
-  # Apply reporting measure output requests
-  apply_energyplus_output_requests(measures_dir, measures, runner, model, model_idf)
-
-  # Write model to IDF
-  File.open(File.join(designdir, 'in.idf'), 'w') { |f| f << model_idf.to_s }
-
-  print "[#{design_name}] Running simulation...\n"
-  run_energyplus(designdir, debug)
-
-  print "[#{design_name}] Processing output...\n"
-
-  # Apply measures
-  runner.setLastEnergyPlusSqlFilePath(File.join(designdir, 'eplusout.sql'))
-  success = apply_measures(measures_dir, measures, runner, model, true, 'OpenStudio::Measure::ReportingMeasure')
-  report_measure_errors_warnings(runner, designdir, debug)
-  report_os_warnings(os_log, designdir)
-
-  if not success
-    print "[#{design_name}] Processing output unsuccessful.\n"
-    return output_hpxml
-  end
-
-  print "[#{design_name}] Done.\n"
-
-  return output_hpxml
-end
-
-def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir, designdir)
   measures = {}
 
   if not run[0].nil?
@@ -118,69 +60,10 @@ def get_measures_to_run(run, hpxml, output_hpxml, hourly_outputs, debug, basedir
   args['include_timeseries_weather'] = hourly_outputs.include? 'weather'
   update_args_hash(measures, measure_subdir, args)
 
-  return measures
-end
+  results = run_hpxml_workflow(designdir, hpxml, measures, measures_dir, debug,
+                               print_prefix: "[#{design_name}] ")
 
-def run_energyplus(designdir, debug)
-  # getEnergyPlusDirectory can be unreliable, using getOpenStudioCLI instead
-  ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
-  command = "\"#{ep_path}\" -w in.epw in.idf > stdout-energyplus"
-  if debug
-    File.open(File.join(designdir, 'run.log'), 'a') do |f|
-      f << "Executing command '#{command}' from working directory '#{designdir}'"
-    end
-  end
-  pwd = Dir.pwd
-  Dir.chdir(designdir) do
-    system(command, err: IO.sysopen(File.join(designdir, 'stderr-energyplus'), 'w'))
-  end
-  Dir.chdir(pwd) # Prevent OS "restoring original_directory" warning
-end
-
-def report_measure_errors_warnings(runner, designdir, debug)
-  # Report warnings/errors
-  File.open(File.join(designdir, 'run.log'), 'a') do |f|
-    if debug
-      runner.result.stepInfo.each do |s|
-        f << "Info: #{s}\n"
-      end
-    end
-    runner.result.stepWarnings.each do |s|
-      f << "Warning: #{s}\n"
-    end
-    runner.result.stepErrors.each do |s|
-      f << "Error: #{s}\n"
-    end
-  end
-  runner.reset
-end
-
-def report_ft_errors_warnings(forward_translator, designdir)
-  # Report warnings/errors
-  File.open(File.join(designdir, 'run.log'), 'a') do |f|
-    forward_translator.warnings.each do |s|
-      f << "FT Warning: #{s.logMessage}\n"
-    end
-    forward_translator.errors.each do |s|
-      f << "FT Error: #{s.logMessage}\n"
-    end
-  end
-end
-
-def report_os_warnings(os_log, designdir)
-  File.open(File.join(designdir, 'run.log'), 'a') do |f|
-    os_log.logMessages.each do |s|
-      next if s.logMessage.include?("Object of type 'Schedule:Constant' and named 'Always") && s.logMessage.include?('points to an object named') && s.logMessage.include?('but that object cannot be located')
-      next if s.logMessage.include? 'Cannot find current Workflow Step'
-      next if s.logMessage.include? 'WorkflowStepResult value called with undefined stepResult'
-      next if s.logMessage.include? 'Data will be treated as typical (TMY)'
-      next if s.logMessage.include? "'Propane' is deprecated for Coil_Heating_GasFields:FuelType, use 'Propane' instead"
-      next if s.logMessage.include? 'Appears there are no design condition fields in the EPW file'
-
-      f << "OS Message: #{s.logMessage}\n"
-    end
-  end
-  os_log.resetStringStream
+  return output_hpxml
 end
 
 if ARGV.size == 7

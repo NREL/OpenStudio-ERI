@@ -1213,6 +1213,7 @@ def create_sample_hpxmls
                   'invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
+                  'invalid_files/coal-for-non-boiler-heating.xml',
                   'invalid_files/cooking-range-location.xml',
                   'invalid_files/dishwasher-location.xml',
                   'invalid_files/duct-location.xml',
@@ -1235,6 +1236,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
+                  'invalid_files/invalid-daylight-saving.xml',
                   'invalid_files/invalid-distribution-cfa-served.xml',
                   'invalid_files/invalid-neighbor-shading-azimuth.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
@@ -1265,6 +1267,7 @@ def create_sample_hpxmls
                   'invalid_files/unattached-window.xml',
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
+                  'base-appliances-coal.xml',
                   'base-appliances-dehumidifier.xml',
                   'base-appliances-dehumidifier-50percent.xml',
                   'base-appliances-dehumidifier-ief.xml',
@@ -1279,6 +1282,7 @@ def create_sample_hpxmls
                   'base-dhw-jacket-electric.xml',
                   'base-dhw-jacket-hpwh.xml',
                   'base-dhw-jacket-indirect.xml',
+                  'base-dhw-tank-coal.xml',
                   'base-dhw-tank-gas-outside.xml',
                   'base-dhw-tank-heat-pump-outside.xml',
                   'base-dhw-tank-heat-pump-with-solar.xml',
@@ -1291,6 +1295,7 @@ def create_sample_hpxmls
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',
                   'base-foundation-complex.xml',
+                  'base-hvac-boiler-coal-only.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-var-speed.xml',
@@ -1310,9 +1315,11 @@ def create_sample_hpxmls
                   'base-misc-large-uncommon-loads.xml',
                   'base-misc-large-uncommon-loads2.xml',
                   'base-misc-neighbor-shading.xml',
-                  'base-misc-runperiod-1-month.xml',
-                  'base-misc-timestep-10-mins.xml',
-                  'base-misc-usage-multiplier.xml']
+                  'base-misc-usage-multiplier.xml',
+                  'base-simcontrol-daylight-saving-custom.xml',
+                  'base-simcontrol-daylight-saving-disabled.xml',
+                  'base-simcontrol-runperiod-1-month.xml',
+                  'base-simcontrol-timestep-10-mins.xml']
   exclude_list.each do |exclude_file|
     if File.exist? "workflow/sample_files/#{exclude_file}"
       FileUtils.rm_f("workflow/sample_files/#{exclude_file}")
