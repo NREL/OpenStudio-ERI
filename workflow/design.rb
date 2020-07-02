@@ -61,7 +61,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   update_args_hash(measures, measure_subdir, args)
 
   results = run_hpxml_workflow(designdir, hpxml, measures, measures_dir, debug: debug,
-                               print_prefix: "[#{design_name}] ")
+                                                                         print_prefix: "[#{design_name}] ")
 
   return output_hpxml
 end

@@ -964,46 +964,48 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_ashrae_140_results(htg_loads, clg_loads)
+    # Interim acceptance criteria as of 7/2/2020
+
     # Annual Heating Loads
     assert_operator(htg_loads['L100AC'], :<=, 79.48)
-    assert_operator(htg_loads['L100AC'], :>=, 45.28)
+    assert_operator(htg_loads['L100AC'], :>=, 48.35)
     assert_operator(htg_loads['L110AC'], :<=, 103.99)
-    assert_operator(htg_loads['L110AC'], :>=, 71.51)
+    assert_operator(htg_loads['L110AC'], :>=, 71.88)
     assert_operator(htg_loads['L120AC'], :<=, 64.30)
-    assert_operator(htg_loads['L120AC'], :>=, 33.76)
+    assert_operator(htg_loads['L120AC'], :>=, 35.98)
     assert_operator(htg_loads['L130AC'], :<=, 53.98)
-    assert_operator(htg_loads['L130AC'], :>=, 37.75)
+    assert_operator(htg_loads['L130AC'], :>=, 39.75)
     assert_operator(htg_loads['L140AC'], :<=, 56.48)
     assert_operator(htg_loads['L140AC'], :>=, 43.24)
     assert_operator(htg_loads['L150AC'], :<=, 71.33)
-    assert_operator(htg_loads['L150AC'], :>=, 35.50)
+    assert_operator(htg_loads['L150AC'], :>=, 39.76)
     assert_operator(htg_loads['L155AC'], :<=, 74.18)
-    assert_operator(htg_loads['L155AC'], :>=, 39.17)
+    assert_operator(htg_loads['L155AC'], :>=, 42.66)
     assert_operator(htg_loads['L160AC'], :<=, 81.00)
-    assert_operator(htg_loads['L160AC'], :>=, 45.63)
+    assert_operator(htg_loads['L160AC'], :>=, 48.78)
     assert_operator(htg_loads['L170AC'], :<=, 92.40)
-    assert_operator(htg_loads['L170AC'], :>=, 54.16)
+    assert_operator(htg_loads['L170AC'], :>=, 58.11)
     assert_operator(htg_loads['L200AC'], :<=, 185.87)
     assert_operator(htg_loads['L200AC'], :>=, 106.41)
     assert_operator(htg_loads['L202AC'], :<=, 190.05)
     assert_operator(htg_loads['L202AC'], :>=, 111.32)
     assert_operator(htg_loads['L302XC'], :<=, 90.52)
-    assert_operator(htg_loads['L302XC'], :>=, 14.52)
+    assert_operator(htg_loads['L302XC'], :>=, 19.20)
     assert_operator(htg_loads['L304XC'], :<=, 75.32)
-    assert_operator(htg_loads['L304XC'], :>=, 18.84)
+    assert_operator(htg_loads['L304XC'], :>=, 23.51)
     assert_operator(htg_loads['L322XC'], :<=, 118.20)
-    assert_operator(htg_loads['L322XC'], :>=, 16.79)
+    assert_operator(htg_loads['L322XC'], :>=, 18.71)
     assert_operator(htg_loads['L324XC'], :<=, 80.04)
-    assert_operator(htg_loads['L324XC'], :>=, 30.50)
+    assert_operator(htg_loads['L324XC'], :>=, 32.71)
 
     # Annual Heating Load Deltas
-    assert_operator(htg_loads['L110AC'] - htg_loads['L100AC'], :<=, 28.12)
-    assert_operator(htg_loads['L110AC'] - htg_loads['L100AC'], :>=, 18.66)
+    assert_operator(htg_loads['L110AC'] - htg_loads['L100AC'], :<=, 29.68)
+    assert_operator(htg_loads['L110AC'] - htg_loads['L100AC'], :>=, 17.43)
     assert_operator(htg_loads['L120AC'] - htg_loads['L100AC'], :<=, -7.67)
     assert_operator(htg_loads['L120AC'] - htg_loads['L100AC'], :>=, -18.57)
-    # assert_operator(htg_loads['L130AC']-htg_loads['L100AC'], :<=, -5.68) # FIXME: Uncomment when E+ window simple model bugfix is available
+    # assert_operator(htg_loads['L130AC']-htg_loads['L100AC'], :<=, -5.88) # FIXME: Uncomment when E+ window simple model bugfix is available
     assert_operator(htg_loads['L130AC'] - htg_loads['L100AC'], :>=, -27.50)
-    assert_operator(htg_loads['L140AC'] - htg_loads['L100AC'], :<=, 1.86)
+    assert_operator(htg_loads['L140AC'] - htg_loads['L100AC'], :<=, 0.37)
     assert_operator(htg_loads['L140AC'] - htg_loads['L100AC'], :>=, -24.42)
     assert_operator(htg_loads['L150AC'] - htg_loads['L100AC'], :<=, -3.02)
     assert_operator(htg_loads['L150AC'] - htg_loads['L100AC'], :>=, -12.53)
@@ -1015,55 +1017,55 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(htg_loads['L170AC'] - htg_loads['L100AC'], :>=, 7.12)
     assert_operator(htg_loads['L200AC'] - htg_loads['L100AC'], :<=, 107.66)
     assert_operator(htg_loads['L200AC'] - htg_loads['L100AC'], :>=, 56.39)
-    assert_operator(htg_loads['L202AC'] - htg_loads['L200AC'], :<=, 11.10)
+    assert_operator(htg_loads['L202AC'] - htg_loads['L200AC'], :<=, 11.25)
     assert_operator(htg_loads['L202AC'] - htg_loads['L200AC'], :>=, -0.51)
     assert_operator(htg_loads['L302XC'] - htg_loads['L100AC'], :<=, 14.50)
-    assert_operator(htg_loads['L302XC'] - htg_loads['L100AC'], :>=, -31.96)
+    assert_operator(htg_loads['L302XC'] - htg_loads['L100AC'], :>=, -31.43)
     assert_operator(htg_loads['L302XC'] - htg_loads['L304XC'], :<=, 17.75)
-    assert_operator(htg_loads['L302XC'] - htg_loads['L304XC'], :>=, -4.60)
+    assert_operator(htg_loads['L302XC'] - htg_loads['L304XC'], :>=, -4.46)
     assert_operator(htg_loads['L322XC'] - htg_loads['L100AC'], :<=, 39.29)
-    assert_operator(htg_loads['L322XC'] - htg_loads['L100AC'], :>=, -31.30)
+    assert_operator(htg_loads['L322XC'] - htg_loads['L100AC'], :>=, -33.54)
     assert_operator(htg_loads['L322XC'] - htg_loads['L324XC'], :<=, 38.27)
-    assert_operator(htg_loads['L322XC'] - htg_loads['L324XC'], :>=, -14.25)
+    assert_operator(htg_loads['L322XC'] - htg_loads['L324XC'], :>=, -14.17)
 
     # Annual Cooling Loads
     assert_operator(clg_loads['L100AL'], :<=, 64.88)
-    assert_operator(clg_loads['L100AL'], :>=, 39.53)
+    assert_operator(clg_loads['L100AL'], :>=, 41.47)
     assert_operator(clg_loads['L110AL'], :<=, 68.50)
-    assert_operator(clg_loads['L110AL'], :>=, 43.86)
+    assert_operator(clg_loads['L110AL'], :>=, 46.80)
     assert_operator(clg_loads['L120AL'], :<=, 60.14)
-    assert_operator(clg_loads['L120AL'], :>=, 38.08)
+    assert_operator(clg_loads['L120AL'], :>=, 40.08)
     assert_operator(clg_loads['L130AL'], :<=, 45.26)
-    assert_operator(clg_loads['L130AL'], :>=, 29.19)
+    assert_operator(clg_loads['L130AL'], :>=, 30.98)
     assert_operator(clg_loads['L140AL'], :<=, 30.54)
-    assert_operator(clg_loads['L140AL'], :>=, 19.44)
+    assert_operator(clg_loads['L140AL'], :>=, 19.52)
     assert_operator(clg_loads['L150AL'], :<=, 82.33)
-    assert_operator(clg_loads['L150AL'], :>=, 48.53)
+    assert_operator(clg_loads['L150AL'], :>=, 49.46)
     assert_operator(clg_loads['L155AL'], :<=, 63.06)
-    assert_operator(clg_loads['L155AL'], :>=, 33.19)
+    assert_operator(clg_loads['L155AL'], :>=, 35.58)
     assert_operator(clg_loads['L160AL'], :<=, 72.99)
-    assert_operator(clg_loads['L160AL'], :>=, 49.62)
+    assert_operator(clg_loads['L160AL'], :>=, 51.26)
     assert_operator(clg_loads['L170AL'], :<=, 53.31)
-    assert_operator(clg_loads['L170AL'], :>=, 32.00)
+    assert_operator(clg_loads['L170AL'], :>=, 34.05)
     assert_operator(clg_loads['L200AL'], :<=, 83.43)
-    assert_operator(clg_loads['L200AL'], :>=, 52.49)
+    assert_operator(clg_loads['L200AL'], :>=, 56.18)
     assert_operator(clg_loads['L202AL'], :<=, 75.96)
-    assert_operator(clg_loads['L202AL'], :>=, 44.99)
+    assert_operator(clg_loads['L202AL'], :>=, 49.50)
 
     # Annual Cooling Load Deltas
     assert_operator(clg_loads['L110AL'] - clg_loads['L100AL'], :<=, 7.84)
     assert_operator(clg_loads['L110AL'] - clg_loads['L100AL'], :>=, -0.98)
     assert_operator(clg_loads['L120AL'] - clg_loads['L100AL'], :<=, 0.68)
     assert_operator(clg_loads['L120AL'] - clg_loads['L100AL'], :>=, -8.67)
-    assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :<=, -9.53)
+    assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :<=, -9.69)
     assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :>=, -24.40)
-    assert_operator(clg_loads['L140AL'] - clg_loads['L100AL'], :<=, -19.76)
+    assert_operator(clg_loads['L140AL'] - clg_loads['L100AL'], :<=, -20.29)
     assert_operator(clg_loads['L140AL'] - clg_loads['L100AL'], :>=, -38.68)
     assert_operator(clg_loads['L150AL'] - clg_loads['L100AL'], :<=, 20.55)
-    assert_operator(clg_loads['L150AL'] - clg_loads['L100AL'], :>=, 8.72)
+    assert_operator(clg_loads['L150AL'] - clg_loads['L100AL'], :>=, 7.50)
     assert_operator(clg_loads['L155AL'] - clg_loads['L150AL'], :<=, -9.64)
     assert_operator(clg_loads['L155AL'] - clg_loads['L150AL'], :>=, -22.29)
-    assert_operator(clg_loads['L160AL'] - clg_loads['L100AL'], :<=, 12.58)
+    assert_operator(clg_loads['L160AL'] - clg_loads['L100AL'], :<=, 12.78)
     assert_operator(clg_loads['L160AL'] - clg_loads['L100AL'], :>=, 3.88)
     assert_operator(clg_loads['L170AL'] - clg_loads['L100AL'], :<=, -4.83)
     assert_operator(clg_loads['L170AL'] - clg_loads['L100AL'], :>=, -15.74)
@@ -1916,28 +1918,30 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_hvac_test_results(xml, results, base_results)
+    # Interim acceptance criteria as of 7/2/2020
+
     percent_min = nil
     percent_max = nil
 
     # Table 4.4.4.1(2): Air Conditioning System Acceptance Criteria
     if xml == 'HVAC1b.xml'
-      percent_min = -21.2
-      percent_max = -17.4
+      percent_min = -23.58
+      percent_max = -17.38
     end
 
     # Table 4.4.4.2(2): Gas Heating System Acceptance Criteria
     if xml == 'HVAC2b.xml'
-      percent_min = -13.3
-      percent_max = -11.6
+      percent_min = -13.30
+      percent_max = -11.57
     end
 
     # Table 4.4.4.2(4): Electric Heating System Acceptance Criteria
     if xml == 'HVAC2d.xml'
-      percent_min = -29.0
-      percent_max = -16.7
+      percent_min = -44.31
+      percent_max = -14.36
     elsif xml == 'HVAC2e.xml'
-      percent_min = 41.8
-      percent_max = 80.8
+      percent_min = 41.81
+      percent_max = 113.11
     end
 
     if xml == 'HVAC2b.xml'
@@ -1950,9 +1954,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
     percent_change = (curr_val - base_val) / base_val * 100.0
 
-    # FIXME: Test checks currently disabled
-    # assert_operator(percent_change, :>=, percent_min)
-    # assert_operator(percent_change, :<=, percent_max)
+    assert_operator(percent_change, :>=, percent_min)
+    assert_operator(percent_change, :<=, percent_max)
   end
 
   def _check_dse_test_results(xml, results)
