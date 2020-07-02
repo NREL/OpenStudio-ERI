@@ -615,7 +615,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def _run_ruleset(design, xml, out_xml)
     model = OpenStudio::Model::Model.new
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    measures_dir = File.join(File.dirname(__FILE__), '../..')
+    measures_dir = File.join(File.dirname(__FILE__), '..', '..')
 
     measures = {}
 
@@ -714,6 +714,18 @@ class EnergyRatingIndexTest < Minitest::Test
       hpxmls.keys.each do |k|
         _test_schema_validation(hpxmls[k])
       end
+
+      # Check run.log for OS warnings
+      ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
+        next unless File.exist? File.join(rundir, design, 'run.log')
+
+        run_log = File.readlines(File.join(rundir, design, 'run.log')).map(&:strip)
+        run_log.each do |log_line|
+          next unless log_line.include? 'OS Message:'
+
+          flunk "Unexpected warning found in #{design} run.log: #{log_line}"
+        end
+      end
     end
 
     # Clean up
@@ -726,17 +738,9 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _run_simulation(xml, test_name, request_dse_outputs = false)
-    puts "Running #{xml}..."
-
+    measures_dir = File.join(File.dirname(__FILE__), '..', '..')
     xml = File.absolute_path(xml)
-
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
-    _rm_path(rundir)
-    FileUtils.mkdir_p(rundir)
-
-    model = OpenStudio::Model::Model.new
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    measures_dir = File.join(File.dirname(__FILE__), '../..')
 
     measures = {}
 
@@ -766,80 +770,28 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_weather'] = false
     update_args_hash(measures, measure_subdir, args)
 
-    # Apply measure
-    success = apply_measures(measures_dir, measures, runner, model, true, 'OpenStudio::Measure::ModelMeasure')
-
-    # Report warnings/errors
-    File.open(File.join(rundir, 'run.log'), 'w') do |f|
-      runner.result.stepWarnings.each do |s|
-        f << "Warning: #{s}\n"
-      end
-      runner.result.stepErrors.each do |s|
-        f << "Error: #{s}\n"
-      end
-    end
-    assert(success)
-
+    output_vars = []
+    output_meters = []
     if request_dse_outputs
       # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
       #       based on EnergyPlus hourly outputs for DSE tests.
       #       When this happens, we can just call _run_simulation.rb instead.
 
-      # Thermal zone temperatures
-      output_var = OpenStudio::Model::OutputVariable.new('Zone Mean Air Temperature', model)
-      output_var.setReportingFrequency('hourly')
-      output_var.setKeyValue('*')
+      output_vars = [['Zone Mean Air Temperature', 'hourly', '*'],
+                     ['Fan Runtime Fraction', 'hourly', '*']]
 
-      # Fan runtime fraction
-      output_var = OpenStudio::Model::OutputVariable.new('Fan Runtime Fraction', model)
-      output_var.setReportingFrequency('hourly')
-      output_var.setKeyValue('*')
-
-      # Heating season?
-      output_meter = OpenStudio::Model::OutputMeter.new(model)
-      output_meter.setName('Heating:EnergyTransfer')
-      output_meter.setReportingFrequency('hourly')
-
-      # Cooling season?
-      output_meter = OpenStudio::Model::OutputMeter.new(model)
-      output_meter.setName('Cooling:EnergyTransfer')
-      output_meter.setReportingFrequency('hourly')
+      output_meters = [['Heating:EnergyTransfer', 'hourly'],
+                       ['Cooling:EnergyTransfer', 'hourly']]
     end
 
-    # Translate model to IDF
-    forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
-    forward_translator.setExcludeLCCObjects(true)
-    model_idf = forward_translator.translateModel(model)
+    results = run_hpxml_workflow(rundir, xml, measures, measures_dir,
+                                 output_vars: output_vars,
+                                 output_meters: output_meters)
 
-    # Apply reporting measure output requests
-    apply_energyplus_output_requests(measures_dir, measures, runner, model, model_idf)
-
-    # Write IDF
-    File.open(File.join(rundir, 'in.idf'), 'w') { |f| f << model_idf.to_s }
-
-    # Run EnergyPlus
-    ep_path = File.absolute_path(File.join(OpenStudio.getOpenStudioCLI.to_s, '..', '..', 'EnergyPlus', 'energyplus'))
-    command = "cd #{rundir} && #{ep_path} -w in.epw in.idf > stdout-energyplus"
-    start_time = Time.now
-    system(command, err: File::NULL)
-    sim_time = (Time.now - start_time).round(1)
-    puts "Completed #{File.basename(xml)} simulation in #{sim_time}s."
+    assert(results[:success])
 
     sql_path = File.join(rundir, 'eplusout.sql')
     assert(File.exist?(sql_path))
-
-    # Apply reporting measures
-    runner.setLastEnergyPlusSqlFilePath(sql_path)
-    success = apply_measures(measures_dir, measures, runner, model, true, 'OpenStudio::Measure::ReportingMeasure')
-    File.open(File.join(rundir, 'run.log'), 'a') do |f|
-      runner.result.stepWarnings.each do |s|
-        f << "Warning: #{s}\n"
-      end
-      runner.result.stepErrors.each do |s|
-        f << "Error: #{s}\n"
-      end
-    end
-    assert(success)
 
     csv_path = File.join(rundir, 'results_annual.csv')
     assert(File.exist?(csv_path))
@@ -848,7 +800,7 @@ class EnergyRatingIndexTest < Minitest::Test
     in_epw = File.join(rundir, 'in.epw')
     File.delete(in_epw) if File.exist? in_epw
 
-    return sql_path, csv_path, sim_time
+    return sql_path, csv_path, results[:sim_time]
   end
 
   def _test_reul(all_results, files_include, result_name)
@@ -873,9 +825,6 @@ class EnergyRatingIndexTest < Minitest::Test
     results = _get_csv_results(csv_path)
     htg_load = results['Load: Heating (MBtu)'].round(2)
     clg_load = results['Load: Cooling (MBtu)'].round(2)
-
-    assert_operator(htg_load, :>, 0)
-    assert_operator(clg_load, :>, 0)
 
     return htg_load, clg_load
   end
