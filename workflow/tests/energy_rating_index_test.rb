@@ -1137,15 +1137,9 @@ class EnergyRatingIndexTest < Minitest::Test
     # Basement walls
     bsmt_wall_r = _get_basement_walls(hpxml)
     if test_num == 4
-      # TODO: This will be removed once the RESNET form is updated
-      if bsmt_wall_r == 0
-        bsmt_wall_u = 0.360
-      elsif bsmt_wall_r == 10
-        bsmt_wall_u = 0.059
-      end
-      results['Basement walls (Uo)'] = bsmt_wall_u
+      results['Basement walls insulation R-Value'] = bsmt_wall_r
     else
-      results['Basement walls (Uo)'] = 'n/a'
+      results['Basement walls insulation R-Value'] = 'n/a'
     end
 
     # Above-grade floors
@@ -1332,17 +1326,23 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Basement walls
     if test_num == 4
-      assert_in_delta(0.059, results['Basement walls (Uo)'], 0.001)
+      assert_in_delta(10, results['Basement walls insulation R-Value'], 0.001)
+    else
+      assert_equal('n/a', results['Basement walls insulation R-Value'])
     end
 
     # Above-grade floors
     if test_num <= 2
       assert_in_delta(0.047, results['Above-grade floors (Uo)'], 0.001)
+    else
+      assert_equal('n/a', results['Above-grade floors (Uo)'])
     end
 
     # Slab insulation
     if test_num >= 3
       assert_equal(0, results['Slab insulation R-Value'])
+    else
+      assert_equal('n/a', results['Slab insulation R-Value'])
     end
 
     # Ceilings
@@ -1362,12 +1362,17 @@ class EnergyRatingIndexTest < Minitest::Test
     # Crawlspace vent area
     if test_num == 2
       assert_in_epsilon(10.26, results['Crawlspace vent area (ft2)'], epsilon)
+    else
+      assert_equal('n/a', results['Crawlspace vent area (ft2)'])
     end
 
     # Slabs
     if test_num >= 3
       assert_in_epsilon(307.8, results['Exposed masonry floor area (ft2)'], epsilon)
       assert_equal(2.0, results['Carpet & pad R-Value'])
+    else
+      assert_equal('n/a', results['Exposed masonry floor area (ft2)'])
+      assert_equal('n/a', results['Carpet & pad R-Value'])
     end
 
     # Doors
