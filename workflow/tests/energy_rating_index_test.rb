@@ -365,7 +365,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name, true)
+      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
 
       is_heat = false
       if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
@@ -373,8 +373,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
       is_electric_heat = false
       hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
-      dse, seasonal_temp, percent_min, percent_max = _calc_dse(xml, sql_path)
-      all_results[File.basename(xml)] = [hvac, hvac_fan, seasonal_temp, dse, percent_min, percent_max]
+      all_results[File.basename(xml)] = [hvac, hvac_fan]
     end
     assert(all_results.size > 0)
 
@@ -401,16 +400,16 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Test Case', 'Heat/Cool (kWh or therm)', 'HVAC Fan (kWh)', 'Seasonal Duct Zone Temperature (F)', 'Seasonal DSE', 'Criteria Min (%)', 'Criteria Max (%)', 'Test Value (%)']
+      csv << ['Test Case', 'Heat/Cool (kWh or therm)', 'HVAC Fan (kWh)']
       all_results.each_with_index do |(xml, results), i|
         next unless ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
 
-        csv << [xml, results[0], results[1], results[2], results[3], results[4], results[5], results[6]]
+        csv << [xml, results[0], results[1]]
       end
       all_results.each_with_index do |(xml, results), i|
         next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
 
-        csv << [xml, results[0], results[1], results[2], results[3], results[4], results[5], results[6]]
+        csv << [xml, results[0], results[1]]
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -737,7 +736,7 @@ class EnergyRatingIndexTest < Minitest::Test
     return hpxmls, csvs, runtime
   end
 
-  def _run_simulation(xml, test_name, request_dse_outputs = false)
+  def _run_simulation(xml, test_name)
     measures_dir = File.join(File.dirname(__FILE__), '..', '..')
     xml = File.absolute_path(xml)
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -770,23 +769,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_weather'] = false
     update_args_hash(measures, measure_subdir, args)
 
-    output_vars = []
-    output_meters = []
-    if request_dse_outputs
-      # TODO: Remove this code someday when we no longer need to adjust ASHRAE 152 space temperatures
-      #       based on EnergyPlus hourly outputs for DSE tests.
-      #       When this happens, we can just call _run_simulation.rb instead.
-
-      output_vars = [['Zone Mean Air Temperature', 'hourly', '*'],
-                     ['Fan Runtime Fraction', 'hourly', '*']]
-
-      output_meters = [['Heating:EnergyTransfer', 'hourly'],
-                       ['Cooling:EnergyTransfer', 'hourly']]
-    end
-
-    results = run_hpxml_workflow(rundir, xml, measures, measures_dir,
-                                 output_vars: output_vars,
-                                 output_meters: output_meters)
+    results = run_hpxml_workflow(rundir, xml, measures, measures_dir)
 
     assert(results[:success])
 
@@ -964,7 +947,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_ashrae_140_results(htg_loads, clg_loads)
-    # Interim acceptance criteria as of 7/2/2020
+    # Interim acceptance criteria as of 7/10/2020
 
     # Annual Heating Loads
     assert_operator(htg_loads['L100AC'], :<=, 79.48)
@@ -1918,7 +1901,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_hvac_test_results(xml, results, base_results)
-    # Interim acceptance criteria as of 7/2/2020
+    # Interim acceptance criteria as of 7/10/2020
 
     percent_min = nil
     percent_max = nil
@@ -1959,36 +1942,33 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_dse_test_results(xml, results)
+    # Interim acceptance criteria as of 7/10/2020
+
     # Table 4.5.3(2): Heating Energy DSE Comparison Test Acceptance Criteria
-    # if xml == 'HVAC3b.xml'
-    #  percent_min = 21.4
-    #  percent_max = 31.4
-    # elsif xml == 'HVAC3c.xml'
-    #  percent_min = 2.5
-    #  percent_max = 12.5
-    # elsif xml == 'HVAC3d.xml'
-    #  percent_min = 15.0
-    #  percent_max = 25.0
-    # end
+    if xml == 'HVAC3b.xml'
+      percent_min = 5.06
+      percent_max = 31.40
+    elsif xml == 'HVAC3c.xml'
+      percent_min = 1.93
+      percent_max = 12.50
+    elsif xml == 'HVAC3d.xml'
+      percent_min = 4.49
+      percent_max = 25.00
+    end
 
     # Table 4.5.4(2): Cooling Energy DSE Comparison Test Acceptance Criteria
-    # if xml == 'HVAC3f.xml'
-    #  percent_min = 26.2
-    #  percent_max = 36.2
-    # elsif xml == 'HVAC3g.xml'
-    #  percent_min = 6.5
-    #  percent_max = 16.5
-    # elsif xml == 'HVAC3h.xml'
-    #  percent_min = 21.1
-    #  percent_max = 31.1
-    # end
+    if xml == 'HVAC3f.xml'
+      percent_min = 19.54
+      percent_max = 36.20
+    elsif xml == 'HVAC3g.xml'
+      percent_min = 6.28
+      percent_max = 16.50
+    elsif xml == 'HVAC3h.xml'
+      percent_min = 14.76
+      percent_max = 31.10
+    end
 
-    # Test criteria calculated using EnergyPlus seasonal duct zone temperatures
-    # via ASHRAE 152 spreadsheet calculations.
-    percent_min = results[4]
-    percent_max = results[5]
-
-    percent_change = results[6]
+    percent_change = results[2]
 
     assert_operator(percent_change, :>, percent_min)
     assert_operator(percent_change, :<, percent_max)
