@@ -1069,11 +1069,11 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Above-grade wall infrared emittance (ε)'] = wall_emiss
 
     # Basement walls
-    bsmt_wall_u = _get_basement_walls(hpxml)
+    bsmt_wall_r = _get_basement_walls(hpxml)
     if test_num == 4
-      results['Basement walls (Uo)'] = bsmt_wall_u
+      results['Basement walls insulation R-Value'] = bsmt_wall_r
     else
-      results['Basement walls (Uo)'] = 'n/a'
+      results['Basement walls insulation R-Value'] = 'n/a'
     end
 
     # Above-grade floors
@@ -1260,17 +1260,23 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Basement walls
     if test_num == 4
-      assert_in_delta(0.059, results['Basement walls (Uo)'], 0.001)
+      assert_in_delta(10, results['Basement walls insulation R-Value'], 0.001)
+    else
+      assert_equal('n/a', results['Basement walls insulation R-Value'])
     end
 
     # Above-grade floors
     if test_num <= 2
       assert_in_delta(0.047, results['Above-grade floors (Uo)'], 0.001)
+    else
+      assert_equal('n/a', results['Above-grade floors (Uo)'])
     end
 
     # Slab insulation
     if test_num >= 3
       assert_equal(0, results['Slab insulation R-Value'])
+    else
+      assert_equal('n/a', results['Slab insulation R-Value'])
     end
 
     # Ceilings
@@ -1290,12 +1296,17 @@ class EnergyRatingIndexTest < Minitest::Test
     # Crawlspace vent area
     if test_num == 2
       assert_in_epsilon(10.26, results['Crawlspace vent area (ft2)'], epsilon)
+    else
+      assert_equal('n/a', results['Crawlspace vent area (ft2)'])
     end
 
     # Slabs
     if test_num >= 3
       assert_in_epsilon(307.8, results['Exposed masonry floor area (ft2)'], epsilon)
       assert_equal(2.0, results['Carpet & pad R-Value'])
+    else
+      assert_equal('n/a', results['Exposed masonry floor area (ft2)'])
+      assert_equal('n/a', results['Carpet & pad R-Value'])
     end
 
     # Doors
@@ -1509,14 +1520,15 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_basement_walls(hpxml)
-    u_factor = num = 0.0
+    r_value = num = 0.0
     hpxml.foundation_walls.each do |foundation_wall|
       next unless foundation_wall.is_exterior_thermal_boundary
 
-      u_factor += 1.0 / foundation_wall.insulation_assembly_r_value
+      r_value += foundation_wall.insulation_exterior_r_value
+      r_value += foundation_wall.insulation_interior_r_value
       num += 1
     end
-    return u_factor / num
+    return r_value / num
   end
 
   def _get_above_grade_floors(hpxml)
