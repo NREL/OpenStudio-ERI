@@ -9,9 +9,6 @@
   <SoftwareInfo>
     <extension>
       <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
-      <ERICalculation>
-        <Version>latest</Version>
-      </ERICalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -34,10 +31,6 @@
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-          <ClimateZone>5B</ClimateZone>
-        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Colorado Springs, CO</Name>
@@ -332,7 +325,6 @@
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
-            <ControlType>manual thermostat</ControlType>
             <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
