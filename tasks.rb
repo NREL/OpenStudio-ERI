@@ -247,7 +247,7 @@ def set_hpxml_header(hpxml_file, hpxml)
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA') ||
         hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
     hpxml.header.eri_calculation_version = '2019'
-  else
+  elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.header.eri_calculation_version = 'latest'
   end
 end
@@ -312,10 +312,10 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
     hpxml.climate_and_risk_zones.weather_station_wmo = '727450'
-  elsif hpxml.climate_and_risk_zones.weather_station_wmo == '724660'
-    hpxml.climate_and_risk_zones.iecc_zone = '5B'
-  elsif hpxml.climate_and_risk_zones.weather_station_wmo == '723860'
-    hpxml.climate_and_risk_zones.iecc_zone = '3B'
+  elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+    if hpxml.climate_and_risk_zones.weather_station_wmo == '724660'
+      hpxml.climate_and_risk_zones.iecc_zone = '5B'
+    end
   end
 end
 
@@ -339,6 +339,9 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             house_pressure: 50,
                                             air_leakage: 5,
                                             infiltration_volume: hpxml.building_construction.conditioned_building_volume)
+  elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
+    hpxml.air_infiltration_measurements[0].infiltration_volume = 12312
+    hpxml.air_infiltration_measurements[0].air_leakage = 0.67
   end
 end
 
@@ -442,17 +445,12 @@ end
 
 def set_hpxml_frame_floors(hpxml_file, hpxml)
   if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
-    hpxml.frame_floors.clear
-    hpxml.frame_floors.add(id: 'FloorUnderAttic',
-                           exterior_adjacent_to: HPXML::LocationAtticVented,
-                           interior_adjacent_to: HPXML::LocationLivingSpace,
-                           area: 1539,
-                           insulation_assembly_r_value: 18.45)
+    # R-11 floor from ASHRAE 140 but with 13% framing factor instead of 10%
     hpxml.frame_floors.add(id: 'FloorOverFoundation',
                            exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
                            interior_adjacent_to: HPXML::LocationLivingSpace,
                            area: 1539,
-                           insulation_assembly_r_value: 14.15)
+                           insulation_assembly_r_value: 13.85)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Uninsulated
     hpxml.frame_floors[1].insulation_assembly_r_value = 4.24
@@ -782,12 +780,14 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
 end
 
 def set_hpxml_hvac_controls(hpxml_file, hpxml)
-  hpxml.hvac_controls.clear
-  if hpxml.heating_systems.size + hpxml.cooling_systems.size + hpxml.heat_pumps.size > 0
-    hpxml.hvac_controls.add(id: 'HVACControl',
-                            control_type: HPXML::HVACControlTypeManual,
-                            heating_setpoint_temp: 68,
-                            cooling_setpoint_temp: 78)
+  if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+    hpxml.hvac_controls.clear
+    if hpxml.heating_systems.size + hpxml.cooling_systems.size + hpxml.heat_pumps.size > 0
+      hpxml.hvac_controls.add(id: 'HVACControl',
+                              control_type: HPXML::HVACControlTypeManual,
+                              heating_setpoint_temp: 68,
+                              cooling_setpoint_temp: 78)
+    end
   end
 end
 
