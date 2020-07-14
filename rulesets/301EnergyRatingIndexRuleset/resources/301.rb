@@ -1391,20 +1391,32 @@ class EnergyRatingIndex301Ruleset
                                      fan_power: 0.0,
                                      used_for_whole_building_ventilation: true)
     else
-      # Airflow and fan power
+
+      # Calculate weighted-average fan W/cfm
+      target_cfms = calc_rated_home_mech_vent_target_cfms(orig_hpxml, mech_vent_fans)
+      sum_fan_w = 0.0
+      sum_fan_cfm = 0.0
+      mech_vent_fans.each do |orig_ventilation_fan|
+        if [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? orig_ventilation_fan.fan_type
+          sum_fan_w += (1.00 * target_cfms[orig_ventilation_fan.id])
+        elsif orig_ventilation_fan.is_balanced?
+          sum_fan_w += (0.70 * target_cfms[orig_ventilation_fan.id])
+        else
+          sum_fan_w += (0.35 * target_cfms[orig_ventilation_fan.id])
+        end
+        sum_fan_cfm += target_cfms[orig_ventilation_fan.id]
+      end
+
+      # Calculate fan power
       frac_imbalanced = calc_mech_vent_frac_imbalanced(orig_hpxml.ventilation_fans)
       q_fan_power = calc_rated_home_qfan(orig_hpxml, frac_imbalanced) # cfm for energy use calculation; Use Rated Home fan type
-      if frac_imbalanced == 0.0 # Balanced
-        if mech_vent_fans.select { |f| [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f.fan_type }.size > 0 # Has recovery?
-          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(HPXML::MechVentTypeERV) # Use W/cfm for balanced w/ recovery
-        else
-          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(HPXML::MechVentTypeBalanced) # Use W/cfm for balanced w/o recovery
-        end
-      else # Imbalanced
-        fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(HPXML::MechVentTypeExhaust) # Use W/cfm for supply/exhaust only
+      if sum_fan_cfm > 0
+        fan_power_w = sum_fan_w / sum_fan_cfm * q_fan_power
+      else
+        fan_power_w = 0.0
       end
-      fan_power_w = fan_w_per_cfm * q_fan_power
 
+      # Airflow and fan power
       new_hpxml.ventilation_fans.add(id: sys_id,
                                      fan_type: HPXML::MechVentTypeBalanced,
                                      tested_flow_rate: q_fan_airflow,
@@ -1496,13 +1508,13 @@ class EnergyRatingIndex301Ruleset
       break
     end
     q_fan = calc_mech_vent_q_fan(q_tot, sla, 0.0)
-    fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(HPXML::MechVentTypeBalanced)
+    fan_power_w = 0.70 * q_fan
 
     new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                    fan_type: HPXML::MechVentTypeBalanced,
                                    tested_flow_rate: q_fan,
                                    hours_in_operation: 24,
-                                   fan_power: fan_w_per_cfm * q_fan,
+                                   fan_power: fan_power_w,
                                    used_for_whole_building_ventilation: true)
   end
 
@@ -2027,6 +2039,9 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.calc_rated_home_mech_vent_target_cfms(orig_hpxml, mech_vent_fans)
+    # Calculates the target average airflow rate for each mechanical
+    # ventilation system based on their measured value (if available)
+    # and the minimum continuous ventilation rate Qfan.
     supply_fans = mech_vent_fans.select { |f| f.includes_supply_air? && !f.is_balanced? }
     exhaust_fans = mech_vent_fans.select { |f| f.includes_exhaust_air? && !f.is_balanced? }
     balanced_fans = mech_vent_fans.select { |f| f.is_balanced? }

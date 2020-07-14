@@ -727,6 +727,10 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
+
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 75.4, 24, 37.7],
@@ -752,6 +756,10 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
+
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 50.0, 24, 25.0],
@@ -776,6 +784,10 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 39.6])
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -825,6 +837,10 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 39.1])
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
@@ -879,6 +895,10 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 30.3])
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
