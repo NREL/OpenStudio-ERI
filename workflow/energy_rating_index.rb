@@ -14,6 +14,7 @@ require 'oga'
 require File.join(File.dirname(__FILE__), 'design.rb')
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
+require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/version'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 basedir = File.expand_path(File.dirname(__FILE__))
@@ -588,10 +589,7 @@ if options[:hourly_outputs].include? 'ALL'
 end
 
 # Check for correct versions of OS
-os_version = '3.0.0'
-if OpenStudio.openStudioVersion != os_version
-  fail "OpenStudio version #{os_version} is required."
-end
+Version.check_openstudio_version()
 
 if options[:version]
   workflow_version = '0.10.0'
