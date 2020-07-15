@@ -7,6 +7,7 @@ require 'optparse'
 require 'pathname'
 require 'openstudio'
 require_relative '../HPXMLtoOpenStudio/resources/meta_measure'
+require_relative '../HPXMLtoOpenStudio/resources/version'
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
@@ -38,7 +39,9 @@ def run_workflow(basedir, rundir, hpxml, debug, hourly_outputs)
   args['include_timeseries_weather'] = hourly_outputs.include? 'weather'
   update_args_hash(measures, measure_subdir, args)
 
-  run_hpxml_workflow(rundir, hpxml, measures, measures_dir, debug: debug)
+  results = run_hpxml_workflow(rundir, hpxml, measures, measures_dir, debug: debug)
+
+  return results[:success]
 end
 
 hourly_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
@@ -77,8 +80,7 @@ OptionParser.new do |opts|
 end.parse!
 
 if options[:version]
-  workflow_version = '0.10.0'
-  puts "OpenStudio-HPXML v#{workflow_version}"
+  puts "OpenStudio-HPXML v#{Version::OS_HPXML_Version}"
   exit!
 end
 
@@ -111,6 +113,8 @@ rundir = File.join(options[:output_dir], 'run')
 
 # Run design
 puts "HPXML: #{options[:hpxml]}"
-run_workflow(basedir, rundir, options[:hpxml], options[:debug], options[:hourly_outputs])
+success = run_workflow(basedir, rundir, options[:hpxml], options[:debug], options[:hourly_outputs])
 
-puts "Completed in #{(Time.now - start_time).round(1)} seconds."
+if success
+  puts "Completed in #{(Time.now - start_time).round(1)} seconds."
+end

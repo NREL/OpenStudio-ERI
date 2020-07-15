@@ -14,6 +14,7 @@ require 'oga'
 require File.join(File.dirname(__FILE__), 'design.rb')
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
+require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/version'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 basedir = File.expand_path(File.dirname(__FILE__))
@@ -411,44 +412,15 @@ def write_results(results, resultsdir, design_outputs, results_iad)
 end
 
 def download_epws
-  weather_dir = File.join(File.dirname(__FILE__), '..', 'weather')
+  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
 
-  require 'net/http'
   require 'tempfile'
-
   tmpfile = Tempfile.new('epw')
 
-  url = URI.parse('https://data.nrel.gov/files/128/tmy3s-cache-csv.zip')
-  http = Net::HTTP.new(url.host, url.port)
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-  params = { 'User-Agent' => 'curl/7.43.0', 'Accept-Encoding' => 'identity' }
-  request = Net::HTTP::Get.new(url.path, params)
-  request.content_type = 'application/zip, application/octet-stream'
-
-  http.request request do |response|
-    total = response.header['Content-Length'].to_i
-    if total == 0
-      fail 'Did not successfully download zip file.'
-    end
-
-    size = 0
-    progress = 0
-    open tmpfile, 'wb' do |io|
-      response.read_body do |chunk|
-        io.write chunk
-        size += chunk.size
-        new_progress = (size * 100) / total
-        unless new_progress == progress
-          puts 'Downloading %s (%3d%%) ' % [url.path, new_progress]
-        end
-        progress = new_progress
-      end
-    end
-  end
+  UrlResolver.fetch('https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip', tmpfile)
 
   puts 'Extracting weather files...'
+  weather_dir = File.join(File.dirname(__FILE__), '..', 'weather')
   unzip_file = OpenStudio::UnzipFile.new(tmpfile.path.to_s)
   unzip_file.extractAllFiles(OpenStudio::toPath(weather_dir))
 
@@ -588,10 +560,7 @@ if options[:hourly_outputs].include? 'ALL'
 end
 
 # Check for correct versions of OS
-os_version = '3.0.0'
-if OpenStudio.openStudioVersion != os_version
-  fail "OpenStudio version #{os_version} is required."
-end
+Version.check_openstudio_version()
 
 if options[:version]
   workflow_version = '0.10.0'

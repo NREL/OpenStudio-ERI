@@ -46,7 +46,7 @@ The ``ClimateandRiskZones/WeatherStation`` element specifies the EnergyPlus weat
 The weather file can be entered in one of two ways:
 
 #. Using ``WeatherStation/WMO``, which must be one of the acceptable TMY3 WMO station numbers found in the ``weather/data.csv`` file.
-   The full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/files/128/tmy3s-cache-csv.zip>`_.
+   The full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
 #. Using ``WeatherStation/extension/EPWFilePath``.
 
 In addition to using the TMY3 weather files that are provided, custom weather files can be used if they are in EPW file format.
@@ -403,15 +403,17 @@ HPXML Mechanical Ventilation
 ****************************
 
 This section describes elements specified in HPXML's ``Systems/MechanicalVentilation``.
-``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` elements can be used to specify whole-house mechanical ventilation systems and whole house fans.
+``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` elements can be used to specify whole building ventilation systems and/or cooling load reduction.
 
 Whole Building Ventilation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A single whole-house mechanical ventilation system may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
+Mechanical ventilation systems that provide whole building ventilation may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
 Inputs including ``FanType`` and ``HoursInOperation`` must be provided.
 
 The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, it should not be provided and the airflow rate will be defaulted.
+For a CFIS system, the flow rate should equal the amount of outdoor air provided to the distribution system.
+
 Likewise the fan power for the highest airflow setting should be entered as ``FanPower``; if unknown, it should not be provided and the fan power will be defaulted.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
@@ -427,16 +429,15 @@ balanced
 central fan integrated supply (CFIS)                                                       required
 ====================================  ==========================  =======================  ================================
 
-Note that AdjustedSensibleRecoveryEfficiency/AdjustedTotalRecoveryEfficiency can be provided instead of SensibleRecoveryEfficiency/TotalRecoveryEfficiency.
-
-In many situations, the rated flow rate should be the value derived from actual testing of the system.
-For a CFIS system, the rated flow rate should equal the amount of outdoor air provided to the distribution system.
+Note that ``AdjustedSensibleRecoveryEfficiency`` and ``AdjustedTotalRecoveryEfficiency`` can be provided instead of ``SensibleRecoveryEfficiency`` and ``TotalRecoveryEfficiency``.
 
 Cooling Load Reduction
 ~~~~~~~~~~~~~~~~~~~~~~
 
-A single whole house fan may be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForSeasonalCoolingLoadReduction='true'``.
+Whole house fans that provide cooling load reduction may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForSeasonalCoolingLoadReduction='true'``.
 Required elements include ``RatedFlowRate`` and ``FanPower``.
+
+The whole house fan is assumed to operate during hours of favorable outdoor conditions and will take priority over operable windows (natural ventilation).
 
 HPXML Water Heating Systems
 ***************************
