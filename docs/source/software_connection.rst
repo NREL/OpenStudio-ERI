@@ -588,14 +588,14 @@ other                           Any attached/multifamily space outside the unit,
 HPXML Clothes Washer
 ********************
 
-An ``Appliances/ClothesWasher`` element must be specified.
+A single ``Appliances/ClothesWasher`` element may be specified.
 The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
 HPXML Clothes Dryer
 *******************
 
-An ``Appliances/ClothesDryer`` element must be specified.
+A single ``Appliances/ClothesDryer`` element may be specified.
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
@@ -603,20 +603,20 @@ The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyF
 HPXML Dishwasher
 ****************
 
-An ``Appliances/Dishwasher`` element must be specified.
+A single ``Appliances/Dishwasher`` element may be specified.
 The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` or an ``EnergyFactor``.
 The dishwasher's ``PlaceSettingCapacity`` also must be provided as well as other inputs from the EnergyGuide label.
 
 HPXML Refrigerator
 ******************
 
-An ``Appliances/Refrigerator`` element must be specified.
+A single ``Appliances/Refrigerator`` element may be specified.
 The efficiency of the refrigerator must be entered as ``RatedAnnualkWh``.
 
 HPXML Cooking Range/Oven
 ************************
 
-``Appliances/CookingRange`` and ``Appliances/Oven`` elements must be specified.
+A single pair of ``Appliances/CookingRange`` and ``Appliances/Oven`` elements may be specified.
 The ``FuelType`` of the range and whether it ``IsInduction``, as well as whether the oven ``IsConvection``, must be provided.
 
 HPXML Lighting

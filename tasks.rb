@@ -1271,7 +1271,6 @@ def create_sample_hpxmls
                   'base-appliances-dehumidifier.xml',
                   'base-appliances-dehumidifier-50percent.xml',
                   'base-appliances-dehumidifier-ief.xml',
-                  'base-appliances-none.xml',
                   'base-dhw-combi-tankless-outside.xml',
                   'base-dhw-desuperheater-var-speed.xml',
                   'base-dhw-desuperheater-2-speed.xml',
