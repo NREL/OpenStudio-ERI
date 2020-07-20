@@ -588,14 +588,22 @@ other                           Any attached/multifamily space outside the unit,
 HPXML Clothes Washer
 ********************
 
-An ``Appliances/ClothesWasher`` element must be specified.
+A single ``Appliances/ClothesWasher`` element may be specified.
+
+If no clothes washer is located within the Rated Home, a clothes washer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
+If there are multiple clothes washers, the clothes washer with the highest Label Energy Rating (kWh/yr) shall be used.
+
 The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
 HPXML Clothes Dryer
 *******************
 
-An ``Appliances/ClothesDryer`` element must be specified.
+A single ``Appliances/ClothesDryer`` element may be specified.
+
+If no clothes dryer is located within the Rated Home, a clothes dryer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
+If there are multiple clothes dryers, the clothes dryer with the lowest Energy Factor or Combined Energy Factor shall be used.
+
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
@@ -603,20 +611,28 @@ The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyF
 HPXML Dishwasher
 ****************
 
-An ``Appliances/Dishwasher`` element must be specified.
+A single ``Appliances/Dishwasher`` element may be specified.
+
+If no dishwasher is located within the Rated Home, a dishwasher in the nearest shared kitchen in the building shall be used only if available for daily use by the occupants of the Rated Home.
+If there are multiple dishwashers, the dishwasher with the lowest Energy Factor (highest kWh/yr) shall be used.
+
 The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` or an ``EnergyFactor``.
 The dishwasher's ``PlaceSettingCapacity`` also must be provided as well as other inputs from the EnergyGuide label.
 
 HPXML Refrigerator
 ******************
 
-An ``Appliances/Refrigerator`` element must be specified.
+A single ``Appliances/Refrigerator`` element may be specified.
+
+If there are multiple refrigerators, the total energy consumption of all refrigerators/freezers shall be used along with the location that represents the majority of power consumption.
+
 The efficiency of the refrigerator must be entered as ``RatedAnnualkWh``.
 
 HPXML Cooking Range/Oven
 ************************
 
-``Appliances/CookingRange`` and ``Appliances/Oven`` elements must be specified.
+A single pair of ``Appliances/CookingRange`` and ``Appliances/Oven`` elements may be specified.
+
 The ``FuelType`` of the range and whether it ``IsInduction``, as well as whether the oven ``IsConvection``, must be provided.
 
 HPXML Lighting

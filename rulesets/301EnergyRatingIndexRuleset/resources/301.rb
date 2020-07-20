@@ -1763,10 +1763,17 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
-    clothes_washer = orig_hpxml.clothes_washers[0]
+    if orig_hpxml.clothes_washers.empty?
+      id = 'ClothesWasher'
+      location = HPXML::LocationLivingSpace
+    else
+      clothes_washer = orig_hpxml.clothes_washers[0]
+      id = clothes_washer.id
+      location = clothes_washer.location.gsub('unvented', 'vented')
+    end
     reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
-    new_hpxml.clothes_washers.add(id: clothes_washer.id,
-                                  location: clothes_washer.location.gsub('unvented', 'vented'),
+    new_hpxml.clothes_washers.add(id: id,
+                                  location: location,
                                   integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
                                   rated_annual_kwh: reference_values[:rated_annual_kwh],
                                   label_electric_rate: reference_values[:label_electric_rate],
@@ -1777,23 +1784,27 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
-    clothes_washer = orig_hpxml.clothes_washers[0]
+    if orig_hpxml.clothes_washers.empty?
+      set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
+    else
+      clothes_washer = orig_hpxml.clothes_washers[0]
 
-    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
-      # This fields are required but not used
-      clothes_washer.label_usage = 999
+      if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
+        # This fields are required but not used
+        clothes_washer.label_usage = 999
+      end
+
+      new_hpxml.clothes_washers.add(id: clothes_washer.id,
+                                    location: clothes_washer.location,
+                                    modified_energy_factor: clothes_washer.modified_energy_factor,
+                                    integrated_modified_energy_factor: clothes_washer.integrated_modified_energy_factor,
+                                    rated_annual_kwh: clothes_washer.rated_annual_kwh,
+                                    label_electric_rate: clothes_washer.label_electric_rate,
+                                    label_gas_rate: clothes_washer.label_gas_rate,
+                                    label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
+                                    label_usage: clothes_washer.label_usage,
+                                    capacity: clothes_washer.capacity)
     end
-
-    new_hpxml.clothes_washers.add(id: clothes_washer.id,
-                                  location: clothes_washer.location,
-                                  modified_energy_factor: clothes_washer.modified_energy_factor,
-                                  integrated_modified_energy_factor: clothes_washer.integrated_modified_energy_factor,
-                                  rated_annual_kwh: clothes_washer.rated_annual_kwh,
-                                  label_electric_rate: clothes_washer.label_electric_rate,
-                                  label_gas_rate: clothes_washer.label_gas_rate,
-                                  label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
-                                  label_usage: clothes_washer.label_usage,
-                                  capacity: clothes_washer.capacity)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
@@ -1802,23 +1813,36 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
-    clothes_dryer = orig_hpxml.clothes_dryers[0]
-    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, clothes_dryer.fuel_type)
-    new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
-                                 location: clothes_dryer.location.gsub('unvented', 'vented'),
-                                 fuel_type: clothes_dryer.fuel_type,
+    if orig_hpxml.clothes_dryers.empty?
+      id = 'ClothesDryer'
+      location = HPXML::LocationLivingSpace
+      fuel_type = HPXML::FuelTypeElectricity
+    else
+      clothes_dryer = orig_hpxml.clothes_dryers[0]
+      id = clothes_dryer.id
+      location = clothes_dryer.location.gsub('unvented', 'vented')
+      fuel_type = clothes_dryer.fuel_type
+    end
+    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, fuel_type)
+    new_hpxml.clothes_dryers.add(id: id,
+                                 location: location,
+                                 fuel_type: fuel_type,
                                  combined_energy_factor: reference_values[:combined_energy_factor],
                                  control_type: reference_values[:control_type])
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
-    clothes_dryer = orig_hpxml.clothes_dryers[0]
-    new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
-                                 location: clothes_dryer.location,
-                                 fuel_type: clothes_dryer.fuel_type,
-                                 energy_factor: clothes_dryer.energy_factor,
-                                 combined_energy_factor: clothes_dryer.combined_energy_factor,
-                                 control_type: clothes_dryer.control_type)
+    if orig_hpxml.clothes_dryers.empty?
+      set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+    else
+      clothes_dryer = orig_hpxml.clothes_dryers[0]
+      new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
+                                   location: clothes_dryer.location,
+                                   fuel_type: clothes_dryer.fuel_type,
+                                   energy_factor: clothes_dryer.energy_factor,
+                                   combined_energy_factor: clothes_dryer.combined_energy_factor,
+                                   control_type: clothes_dryer.control_type)
+    end
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)
@@ -1827,10 +1851,17 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
-    dishwasher = orig_hpxml.dishwashers[0]
+    if orig_hpxml.dishwashers.empty?
+      id = 'Dishwasher'
+      location = HPXML::LocationLivingSpace
+    else
+      dishwasher = orig_hpxml.dishwashers[0]
+      id = dishwasher.id
+      location = dishwasher.location.gsub('unvented', 'vented')
+    end
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
-    new_hpxml.dishwashers.add(id: dishwasher.id,
-                              location: dishwasher.location.gsub('unvented', 'vented'),
+    new_hpxml.dishwashers.add(id: id,
+                              location: location,
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
                               place_setting_capacity: reference_values[:place_setting_capacity],
@@ -1841,25 +1872,29 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
-    dishwasher = orig_hpxml.dishwashers[0]
+    if orig_hpxml.dishwashers.empty?
+      set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
+    else
+      dishwasher = orig_hpxml.dishwashers[0]
 
-    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
-      # These fields are required but not used
-      dishwasher.label_electric_rate = 999
-      dishwasher.label_gas_rate = 999
-      dishwasher.label_annual_gas_cost = 999
-      dishwasher.label_usage = 999
+      if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
+        # These fields are required but not used
+        dishwasher.label_electric_rate = 999
+        dishwasher.label_gas_rate = 999
+        dishwasher.label_annual_gas_cost = 999
+        dishwasher.label_usage = 999
+      end
+
+      new_hpxml.dishwashers.add(id: dishwasher.id,
+                                location: dishwasher.location,
+                                energy_factor: dishwasher.energy_factor,
+                                rated_annual_kwh: dishwasher.rated_annual_kwh,
+                                place_setting_capacity: dishwasher.place_setting_capacity,
+                                label_electric_rate: dishwasher.label_electric_rate,
+                                label_gas_rate: dishwasher.label_gas_rate,
+                                label_annual_gas_cost: dishwasher.label_annual_gas_cost,
+                                label_usage: dishwasher.label_usage)
     end
-
-    new_hpxml.dishwashers.add(id: dishwasher.id,
-                              location: dishwasher.location,
-                              energy_factor: dishwasher.energy_factor,
-                              rated_annual_kwh: dishwasher.rated_annual_kwh,
-                              place_setting_capacity: dishwasher.place_setting_capacity,
-                              label_electric_rate: dishwasher.label_electric_rate,
-                              label_gas_rate: dishwasher.label_gas_rate,
-                              label_annual_gas_cost: dishwasher.label_annual_gas_cost,
-                              label_usage: dishwasher.label_usage)
   end
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
@@ -1868,18 +1903,29 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
-    refrigerator = orig_hpxml.refrigerators[0]
+    if orig_hpxml.refrigerators.empty?
+      id = 'Refrigerator'
+      location = HPXML::LocationLivingSpace
+    else
+      refrigerator = orig_hpxml.refrigerators[0]
+      id = refrigerator.id
+      location = refrigerator.location.gsub('unvented', 'vented')
+    end
     reference_values = HotWaterAndAppliances.get_refrigerator_default_values(@nbeds)
-    new_hpxml.refrigerators.add(id: refrigerator.id,
-                                location: refrigerator.location.gsub('unvented', 'vented'),
+    new_hpxml.refrigerators.add(id: id,
+                                location: location,
                                 rated_annual_kwh: reference_values[:rated_annual_kwh])
   end
 
   def self.set_appliances_refrigerator_rated(orig_hpxml, new_hpxml)
-    refrigerator = orig_hpxml.refrigerators[0]
-    new_hpxml.refrigerators.add(id: refrigerator.id,
-                                location: refrigerator.location,
-                                rated_annual_kwh: refrigerator.rated_annual_kwh)
+    if orig_hpxml.refrigerators.empty?
+      set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
+    else
+      refrigerator = orig_hpxml.refrigerators[0]
+      new_hpxml.refrigerators.add(id: refrigerator.id,
+                                  location: refrigerator.location,
+                                  rated_annual_kwh: refrigerator.rated_annual_kwh)
+    end
   end
 
   def self.set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
@@ -1888,26 +1934,41 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
-    cooking_range = orig_hpxml.cooking_ranges[0]
-    oven = orig_hpxml.ovens[0]
+    if orig_hpxml.cooking_ranges.empty?
+      range_id = 'CookingRange'
+      location = HPXML::LocationLivingSpace
+      fuel_type = HPXML::FuelTypeElectricity
+      oven_id = 'Oven'
+    else
+      cooking_range = orig_hpxml.cooking_ranges[0]
+      range_id = cooking_range.id
+      location = cooking_range.location.gsub('unvented', 'vented')
+      fuel_type = cooking_range.fuel_type
+      oven = orig_hpxml.ovens[0]
+      oven_id = oven.id
+    end
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
-    new_hpxml.cooking_ranges.add(id: cooking_range.id,
-                                 location: cooking_range.location.gsub('unvented', 'vented'),
-                                 fuel_type: cooking_range.fuel_type,
+    new_hpxml.cooking_ranges.add(id: range_id,
+                                 location: location,
+                                 fuel_type: fuel_type,
                                  is_induction: reference_values[:is_induction])
-    new_hpxml.ovens.add(id: oven.id,
+    new_hpxml.ovens.add(id: oven_id,
                         is_convection: reference_values[:is_convection])
   end
 
   def self.set_appliances_cooking_range_oven_rated(orig_hpxml, new_hpxml)
-    cooking_range = orig_hpxml.cooking_ranges[0]
-    oven = orig_hpxml.ovens[0]
-    new_hpxml.cooking_ranges.add(id: cooking_range.id,
-                                 location: cooking_range.location,
-                                 fuel_type: cooking_range.fuel_type,
-                                 is_induction: cooking_range.is_induction)
-    new_hpxml.ovens.add(id: oven.id,
-                        is_convection: oven.is_convection)
+    if orig_hpxml.cooking_ranges.empty?
+      set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+    else
+      cooking_range = orig_hpxml.cooking_ranges[0]
+      oven = orig_hpxml.ovens[0]
+      new_hpxml.cooking_ranges.add(id: cooking_range.id,
+                                   location: cooking_range.location,
+                                   fuel_type: cooking_range.fuel_type,
+                                   is_induction: cooking_range.is_induction)
+      new_hpxml.ovens.add(id: oven.id,
+                          is_convection: oven.is_convection)
+    end
   end
 
   def self.set_appliances_cooking_range_oven_iad(orig_hpxml, new_hpxml)

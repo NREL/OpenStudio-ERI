@@ -74,11 +74,12 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem' => zero_or_one, # See [SolarThermalSystem]
         '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => zero_or_more, # See [PVSystem]
 
-        '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => one, # See [ClothesWasher]
-        '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => one, # See [ClothesDryer]
-        '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => one, # See [Dishwasher]
-        '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => one, # See [Refrigerator]
-        '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => one, # See [CookingRange]
+        '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => zero_or_one, # See [ClothesWasher]
+        '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => zero_or_one, # See [ClothesDryer]
+        '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => zero_or_one, # See [Dishwasher]
+        '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => zero_or_one, # See [Refrigerator]
+        '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => zero_or_one, # See [CookingRange]
+        '/HPXML/Building/BuildingDetails/Appliances/Oven' => zero_or_one, # See [Oven]
 
         '/HPXML/Building/BuildingDetails/Lighting' => one, # See [Lighting]
         '/HPXML/Building/BuildingDetails/Lighting/CeilingFan' => zero_or_more, # See [CeilingFan]
@@ -684,11 +685,18 @@ class EnergyRatingIndex301Validator
 
       # [CookingRange]
       '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
+        '../Oven' => one, # See [Oven]
         'SystemIdentifier' => one, # Required by HPXML schema
         'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'IsInduction' => one,
-        '../Oven/IsConvection' => one,
+      },
+
+      # [Oven]
+      '/HPXML/Building/BuildingDetails/Appliances/Oven' => {
+        '../CookingRange' => one, # See [CookingRange]
+        'SystemIdentifier' => one, # Required by HPXML schema
+        'IsConvection' => one,
       },
 
       # [Lighting]
