@@ -663,6 +663,9 @@
           <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
           <LabelUsage>6.0</LabelUsage>
           <Capacity>3.2</Capacity>
+          <extension>
+            <RatioOfDwellingUnitsToSharedClothesWashers>5</RatioOfDwellingUnitsToSharedClothesWashers>
+          </extension>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
@@ -670,6 +673,9 @@
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
+          <extension>
+            <RatioOfDwellingUnitsToSharedClothesDryers>5</RatioOfDwellingUnitsToSharedClothesDryers>
+          </extension>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>

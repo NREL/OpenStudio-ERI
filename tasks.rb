@@ -1334,7 +1334,7 @@ def create_sample_hpxmls
     end
   end
 
-  # Add ERI version
+  # Update HPXMLs as needed
   hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
@@ -1344,7 +1344,18 @@ def create_sample_hpxmls
   end
   hpxml_paths.each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
+
+    # Add ERI version
     hpxml.header.eri_calculation_version = 'latest'
+
+    # Shared clothes washer/dryer? Add ratio extension
+    if !hpxml.clothes_washers.empty? && hpxml.clothes_washers[0].is_shared
+      hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = 5
+    end
+    if !hpxml.clothes_dryers.empty? && hpxml.clothes_dryers[0].is_shared
+      hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = 5
+    end
+
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
   end
 
