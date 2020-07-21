@@ -645,7 +645,7 @@ class EnergyRatingIndex301Validator
       # [ClothesWasher]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one, # See [ClothesWasher=Shared]
         'ModifiedEnergyFactor | IntegratedModifiedEnergyFactor' => one,
         'RatedAnnualkWh' => one,
         'LabelElectricRate' => one,
@@ -655,13 +655,23 @@ class EnergyRatingIndex301Validator
         'Capacity' => one,
       },
 
+      ## [ClothesWasher=Shared]
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[Location="other"]' => {
+        'extension/RatioOfDwellingUnitsToSharedClothesWashers' => one,
+      },
+
       # [ClothesDryer]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one, # See [ClothesDryer=Shared]
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'EnergyFactor | CombinedEnergyFactor' => one,
         'ControlType[text()="timer" or text()="moisture"]' => one,
+      },
+
+      ## [ClothesDryer=Shared]
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[Location="other"]' => {
+        'extension/RatioOfDwellingUnitsToSharedClothesDryers' => one,
       },
 
       # [Dishwasher]

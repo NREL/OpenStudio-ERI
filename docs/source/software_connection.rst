@@ -80,7 +80,7 @@ basement - unconditioned                                                       E
 crawlspace - vented                                                            EnergyPlus calculation
 crawlspace - unvented                                                          EnergyPlus calculation
 garage                                                                         EnergyPlus calculation
-other housing unit              Conditioned space of an adjacent housing unit  Same as conditioned space
+other housing unit              E.g., adjacent unit or conditioned corridor    Same as conditioned space
 other heated space              E.g., shared laundry/equipment space           Average of conditioned space and outside; minimum of 68F
 other multifamily buffer space  E.g., enclosed unconditioned stairwell         Average of conditioned space and outside; minimum of 50F
 other non-freezing space        E.g., parking garage ceiling                   Floats with outside; minimum of 40F
@@ -369,7 +369,7 @@ exterior wall                                                                  A
 under slab                                                                     Ground
 roof deck                                                                      Outside
 outside                                                                        Outside
-other housing unit              Conditioned space of an adjacent housing unit  Same as conditioned space
+other housing unit              E.g., adjacent unit or conditioned corridor    Same as conditioned space
 other heated space              E.g., shared laundry/equipment space           Average of conditioned space and outside; minimum of 68F
 other multifamily buffer space  E.g., enclosed unconditioned stairwell         Average of conditioned space and outside; minimum of 50F
 other non-freezing space        E.g., parking garage ceiling                   Floats with outside; minimum of 40F
@@ -458,7 +458,7 @@ garage                                                                         E
 crawlspace - unvented                                                          EnergyPlus calculation
 crawlspace - vented                                                            EnergyPlus calculation
 other exterior                  Outside                                        Outside
-other housing unit              Conditioned space of an adjacent housing unit  Same as conditioned space
+other housing unit              E.g., adjacent unit or conditioned corridor    Same as conditioned space
 other heated space              E.g., shared laundry/equipment space           Average of conditioned space and outside; minimum of 68F
 other multifamily buffer space  E.g., enclosed unconditioned stairwell         Average of conditioned space and outside; minimum of 50F
 other non-freezing space        E.g., parking garage ceiling                   Floats with outside; minimum of 40F
@@ -575,15 +575,18 @@ Many of the appliances' inputs are derived from EnergyGuide labels.
 
 The ``Location`` for each appliance must be provided as one of the following:
 
-==============================  ====================================================================
-Location                        Description                                                         
-==============================  ====================================================================
+==============================  ===========================================
+Location                        Description                                
+==============================  ===========================================
 living space                    Above-grade conditioned floor area
 basement - conditioned          Below-grade conditioned floor area
 basement - unconditioned  
 garage                    
-other                           Any attached/multifamily space outside the unit, in which internal gains are neglected
-==============================  ====================================================================
+other housing unit              E.g., adjacent unit or conditioned corridor
+other heated space              E.g., shared laundry/equipment space       
+other multifamily buffer space  E.g., enclosed unconditioned stairwell     
+other non-freezing space        E.g., parking garage ceiling               
+==============================  ===========================================
 
 HPXML Clothes Washer
 ********************
@@ -596,6 +599,8 @@ If there are multiple clothes washers, the clothes washer with the highest Label
 The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
+If a clothes washer is located in one of the "other ..." locations indicating that it is a shared appliance in a SFA/MF building, the ``extension/RatioOfDwellingUnitsToSharedClothesWashers`` element must be provided.
+
 HPXML Clothes Dryer
 *******************
 
@@ -607,6 +612,7 @@ If there are multiple clothes dryers, the clothes dryer with the lowest Energy F
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
+If a clothes dryer is located in one of the "other ..." locations indicating that it is a shared appliance in a SFA/MF building, the ``extension/RatioOfDwellingUnitsToSharedClothesDryers`` element must be provided.
 
 HPXML Dishwasher
 ****************
