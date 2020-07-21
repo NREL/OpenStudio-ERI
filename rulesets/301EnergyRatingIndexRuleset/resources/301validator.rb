@@ -645,7 +645,7 @@ class EnergyRatingIndex301Validator
       # [ClothesWasher]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one, # See [ClothesWasher=Shared]
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one, # See [ClothesWasher=Shared]
         'ModifiedEnergyFactor | IntegratedModifiedEnergyFactor' => one,
         'RatedAnnualkWh' => one,
         'LabelElectricRate' => one,
@@ -656,28 +656,28 @@ class EnergyRatingIndex301Validator
       },
 
       ## [ClothesWasher=Shared]
-      '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[Location="other"]' => {
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[Location="other housing unit" or Location="other heated space" or Location="other multifamily buffer space" or Location="other non-freezing space"]' => {
         'extension/RatioOfDwellingUnitsToSharedClothesWashers' => one,
       },
 
       # [ClothesDryer]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one, # See [ClothesDryer=Shared]
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one, # See [ClothesDryer=Shared]
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'EnergyFactor | CombinedEnergyFactor' => one,
         'ControlType[text()="timer" or text()="moisture"]' => one,
       },
 
       ## [ClothesDryer=Shared]
-      '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[Location="other"]' => {
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[Location="other housing unit" or Location="other heated space" or Location="other multifamily buffer space" or Location="other non-freezing space"]' => {
         'extension/RatioOfDwellingUnitsToSharedClothesDryers' => one,
       },
 
       # [Dishwasher]
       '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'RatedAnnualkWh | EnergyFactor' => one,
         'LabelElectricRate' => one,
         'LabelGasRate' => one,
@@ -689,7 +689,7 @@ class EnergyRatingIndex301Validator
       # [Refrigerator]
       '/HPXML/Building/BuildingDetails/Appliances/Refrigerator' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'RatedAnnualkWh' => one,
       },
 
@@ -697,7 +697,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Appliances/CookingRange' => {
         '../Oven' => one, # See [Oven]
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other"]' => one,
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'IsInduction' => one,
       },
