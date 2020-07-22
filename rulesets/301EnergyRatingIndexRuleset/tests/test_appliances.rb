@@ -185,23 +185,44 @@ class ERIApplianceTest < MiniTest::Test
     end
   end
 
-  def test_shared_clothes_washers_dryers_with_ratio_greater_than_14
+  def test_shared_clothes_washers_dryers
     hpxml_name = 'base-enclosure-attached-multifamily.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = 15
-    hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = 15
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    [14, 15].each do |ratio_of_units_to_appliance|
+      hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+      hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = ratio_of_units_to_appliance
+      hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = ratio_of_units_to_appliance
+      hpxml_name = File.basename(@tmp_hpxml_path)
+      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home, IAD, IAD Reference
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      # Reference Home, IAD, IAD Reference
+      calc_types = [Constants.CalcTypeERIReferenceHome,
+                    Constants.CalcTypeERIRatedHome,
+                    Constants.CalcTypeERIIndexAdjustmentDesign,
+                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+      calc_types.each do |calc_type|
+        hpxml = _test_measure(hpxml_name, calc_type)
+        if ratio_of_units_to_appliance > 14
+          # Reference appliances
+          _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
+          _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+        else
+          # Business as usual
+          if calc_type == Constants.CalcTypeERIRatedHome
+            _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationOtherHousingUnit)
+            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationOtherHeatedSpace)
+          else
+            if calc_type == Constants.CalcTypeERIReferenceHome
+              washer_location = HPXML::LocationOtherHousingUnit
+              dryer_location = HPXML::LocationOtherHeatedSpace
+            else
+              washer_location = HPXML::LocationLivingSpace
+              dryer_location = HPXML::LocationLivingSpace
+            end
+            _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: washer_location)
+            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: dryer_location)
+          end
+        end
+      end
     end
   end
 
