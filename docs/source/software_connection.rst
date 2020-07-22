@@ -599,7 +599,7 @@ If there are multiple clothes washers, the clothes washer with the highest Label
 The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
-If a clothes washer is located in one of the "other ..." locations indicating that it is a shared appliance in a SFA/MF building, the ``extension/RatioOfDwellingUnitsToSharedClothesWashers`` element must be provided.
+If a clothes washer is located in one of the "other ..." locations indicating that it is a shared appliance in an Attached/Multifamily building, the ``extension/RatioOfDwellingUnitsToSharedClothesWashers`` element must be provided.
 
 HPXML Clothes Dryer
 *******************
@@ -612,7 +612,7 @@ If there are multiple clothes dryers, the clothes dryer with the lowest Energy F
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
-If a clothes dryer is located in one of the "other ..." locations indicating that it is a shared appliance in a SFA/MF building, the ``extension/RatioOfDwellingUnitsToSharedClothesDryers`` element must be provided.
+If a clothes dryer is located in one of the "other ..." locations indicating that it is a shared appliance in an Attached/Multifamily building, the ``extension/RatioOfDwellingUnitsToSharedClothesDryers`` element must be provided.
 
 HPXML Dishwasher
 ****************
