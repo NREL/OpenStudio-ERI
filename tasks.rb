@@ -1246,6 +1246,10 @@ def create_sample_hpxmls
                   'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/lighting-fractions.xml',
                   'invalid_files/missing-duct-location.xml',
+                  'invalid_files/multifamily-reference-appliance.xml',
+                  'invalid_files/multifamily-reference-duct.xml',
+                  'invalid_files/multifamily-reference-surface.xml',
+                  'invalid_files/multifamily-reference-water-heater.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
                   'invalid_files/orphaned-hvac-distribution.xml',
@@ -1303,6 +1307,8 @@ def create_sample_hpxmls
                   'base-hvac-flowrate.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
+                  'base-hvac-mini-split-air-conditioner-only-ducted.xml',
+                  'base-hvac-mini-split-air-conditioner-only-ductless.xml',
                   'base-hvac-undersized.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
@@ -1313,6 +1319,7 @@ def create_sample_hpxmls
                   'base-misc-defaults2.xml',
                   'base-misc-large-uncommon-loads.xml',
                   'base-misc-large-uncommon-loads2.xml',
+                  'base-misc-lighting-detailed.xml',
                   'base-misc-neighbor-shading.xml',
                   'base-misc-usage-multiplier.xml',
                   'base-simcontrol-daylight-saving-custom.xml',
@@ -1327,7 +1334,7 @@ def create_sample_hpxmls
     end
   end
 
-  # Add ERI version
+  # Update HPXMLs as needed
   hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
@@ -1337,7 +1344,18 @@ def create_sample_hpxmls
   end
   hpxml_paths.each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
+
+    # Add ERI version
     hpxml.header.eri_calculation_version = 'latest'
+
+    # Shared clothes washer/dryer? Add ratio extension
+    if !hpxml.clothes_washers.empty? && hpxml.clothes_washers[0].is_shared
+      hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = 5
+    end
+    if !hpxml.clothes_dryers.empty? && hpxml.clothes_dryers[0].is_shared
+      hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = 5
+    end
+
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
   end
 
