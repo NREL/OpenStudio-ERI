@@ -443,7 +443,7 @@ HPXML Water Heating Systems
 ***************************
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
-Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
+Inputs including ``WaterHeaterType``, ``IsSharedSystem``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
 The ``Location`` must be one of the following:
 
 ==============================  ==================================  ========================================================  =========================
@@ -481,6 +481,9 @@ For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr)
 
 For water heaters that are connected to a desuperheater, the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
 
+If the water heater is a shared system (i.e., serving multiple dwelling units or a shared laundry/equipment room), it should be described using ``IsSharedSystem='true'``.
+In addition, the ``NumberofUnitsServed`` must be specified, where the value is the number of dwelling units served either indirectly (e.g., via shared laundry/equipment room) or directly.
+
 HPXML Hot Water Distribution
 ****************************
 
@@ -490,19 +493,28 @@ Inputs including ``SystemType`` and ``PipeInsulation/PipeRValue`` must be provid
 Standard
 ~~~~~~~~
 
-For a ``SystemType/Standard`` (non-recirculating) system, the following element is required:
+For a ``SystemType/Standard`` (non-recirculating) system within the dwelling unit, the following element is required:
 
-- ``PipingLength``: Measured length of hot water piping from the hot water heater to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
+- ``PipingLength``: Measured length of hot water piping from the hot water heater (or from a shared recirculation loop serving multiple dwelling units) to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
 
 Recirculation
 ~~~~~~~~~~~~~
 
-For a ``SystemType/Recirculation`` system, the following elements are required:
+For a ``SystemType/Recirculation`` system within the dwelling unit, the following elements are required:
 
-- ``ControlType``
+- ``ControlType``: One of "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
 - ``RecirculationPipingLoopLength``: Measured recirculation loop length including both supply and return sides, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements
 - ``BranchPipingLoopLength``: Measured length of the branch hot water piping from the recirculation loop to the farthest hot water fixture from the recirculation loop, measured longitudinally from plans, assuming the branch hot water piping does not run diagonally
-- ``PumpPower``
+- ``PumpPower``: Pump power in Watts.
+
+Shared Recirculation
+~~~~~~~~~~~~~~~~~~~~
+
+In addition to the hot water distribution systems within the dwelling unit, the pump energy use of a shared recirculation system can also be described using the following elements:
+
+- `extension/SharedRecirculation/NumberofUnitsServed`: Number of dwelling units served by the shared pump.
+- `extension/SharedRecirculation/PumpPower`: Shared pump power in Watts.
+- `extension/SharedRecirculation/ControlType`: One of "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
 
 Drain Water Heat Recovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~
