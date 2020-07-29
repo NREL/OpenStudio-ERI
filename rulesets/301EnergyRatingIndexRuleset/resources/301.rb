@@ -1544,6 +1544,8 @@ class EnergyRatingIndex301Ruleset
       tank_volume = orig_water_heater.tank_volume
       if [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeTankless].include? orig_water_heater.water_heater_type
         tank_volume = 40.0
+      elsif orig_water_heater.is_shared_system
+        tank_volume = 40.0
       end
 
       # Set fuel type for combi systems
@@ -1564,6 +1566,7 @@ class EnergyRatingIndex301Ruleset
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
+                                          is_shared_system: false,
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location.gsub('unvented', 'vented'),
@@ -1609,6 +1612,7 @@ class EnergyRatingIndex301Ruleset
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
+                                          is_shared_system: orig_water_heater.is_shared_system,
                                           fuel_type: orig_water_heater.fuel_type,
                                           water_heater_type: orig_water_heater.water_heater_type,
                                           location: orig_water_heater.location,
@@ -2503,6 +2507,7 @@ class EnergyRatingIndex301Ruleset
     wh_cap = Waterheater.get_default_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
+                                        is_shared_system: false,
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
                                         location: HPXML::LocationLivingSpace,
