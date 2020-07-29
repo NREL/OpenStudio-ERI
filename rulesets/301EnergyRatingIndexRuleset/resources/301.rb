@@ -1567,6 +1567,7 @@ class EnergyRatingIndex301Ruleset
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
                                           is_shared_system: false,
+                                          number_of_units_served: 1,
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location.gsub('unvented', 'vented'),
@@ -1613,6 +1614,7 @@ class EnergyRatingIndex301Ruleset
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
                                           is_shared_system: orig_water_heater.is_shared_system,
+                                          number_of_units_served: orig_water_heater.number_of_units_served,
                                           fuel_type: orig_water_heater.fuel_type,
                                           water_heater_type: orig_water_heater.water_heater_type,
                                           location: orig_water_heater.location,
@@ -1699,7 +1701,11 @@ class EnergyRatingIndex301Ruleset
                                           recirculation_pump_power: hot_water_distribution.recirculation_pump_power,
                                           dwhr_facilities_connected: hot_water_distribution.dwhr_facilities_connected,
                                           dwhr_equal_flow: hot_water_distribution.dwhr_equal_flow,
-                                          dwhr_efficiency: hot_water_distribution.dwhr_efficiency)
+                                          dwhr_efficiency: hot_water_distribution.dwhr_efficiency,
+                                          has_shared_recirculation: hot_water_distribution.has_shared_recirculation,
+                                          shared_recirculation_number_of_units_served: hot_water_distribution.shared_recirculation_number_of_units_served,
+                                          shared_recirculation_pump_power: hot_water_distribution.shared_recirculation_pump_power,
+                                          shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
 
     # New water fixtures
     orig_hpxml.water_fixtures.each do |orig_water_fixture|
@@ -2508,6 +2514,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
                                         is_shared_system: false,
+                                        number_of_units_served: 1,
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
                                         location: HPXML::LocationLivingSpace,

@@ -290,7 +290,7 @@ class ERIWaterHeatingTest < MiniTest::Test
       _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
     end
   end
-  
+
   def test_water_heating_tank_gas
     hpxml_name = 'base-dhw-tank-gas.xml'
 
@@ -521,7 +521,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeCombiTankless, nil, 125.0, HPXML::LocationLivingSpace, nil, nil])
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeCombiTankless, nil, 125.0, HPXML::LocationLivingSpace, nil, nil, 1])
     _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 50, nil, nil, nil, nil)
     _check_water_fixtures(hpxml, true, false)
     _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
@@ -605,7 +605,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeCombiStorage, nil, 125.0, HPXML::LocationLivingSpace, 50, nil, nil, 1.0, 1])
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeCombiStorage, nil, 125.0, HPXML::LocationLivingSpace, 50, nil, 1, nil, 1.0])
     _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 50, nil, nil, nil, nil)
     _check_water_fixtures(hpxml, true, false)
     _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
@@ -656,15 +656,15 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeNaturalGas, 125.0, HPXML::LocationOtherMultifamilyBufferSpace, 40, 0.59, 6])
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeNaturalGas, 125.0, HPXML::LocationOtherMultifamilyBufferSpace, 40, 0.59, 1])
     _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 93.5, nil, nil, nil, nil)
     _check_water_fixtures(hpxml, false, false)
     _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeNaturalGas, 125.0, HPXML::LocationOtherMultifamilyBufferSpace, 50, 0.59, 1])
-    _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 50, nil, nil, nil, nil)
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeNaturalGas, 125.0, HPXML::LocationOtherMultifamilyBufferSpace, 50, 0.59, 6])
+    _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 50, nil, nil, nil, nil, 220, 6, HPXML::DHWRecirControlTypeTimer)
     _check_water_fixtures(hpxml, true, false)
     _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
 
@@ -674,6 +674,38 @@ class ERIWaterHeatingTest < MiniTest::Test
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeNaturalGas, 125.0, HPXML::LocationLivingSpace, 40, 0.59, 1])
+      _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 89.28, nil, nil, nil, nil)
+      _check_water_fixtures(hpxml, false, false)
+      _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
+    end
+  end
+
+  def test_water_heating_shared_equipment_room
+    hpxml_name = 'base-dhw-shared-water-heater-equipment-room.xml'
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 125.0, HPXML::LocationOtherHeatedSpace, 40, 0.9172, 1],
+                               [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 125.0, HPXML::LocationOtherHeatedSpace, 40, 0.9172, 1])
+    _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 93.5, nil, nil, nil, nil)
+    _check_water_fixtures(hpxml, false, false)
+    _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 125.0, HPXML::LocationOtherHeatedSpace, 40, 0.95, 1],
+                               [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 125.0, HPXML::LocationOtherHeatedSpace, 40, 0.95, 6])
+    _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 50, nil, nil, nil, nil)
+    _check_water_fixtures(hpxml, true, false)
+    _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
+
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 125.0, HPXML::LocationLivingSpace, 40, 0.9172, 1],
+                                 [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 125.0, HPXML::LocationLivingSpace, 40, 0.9172, 1])
       _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 89.28, nil, nil, nil, nil)
       _check_water_fixtures(hpxml, false, false)
       _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
@@ -713,7 +745,7 @@ class ERIWaterHeatingTest < MiniTest::Test
       _check_solar_thermal_system(hpxml, false)
     end
   end
-  
+
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
@@ -798,7 +830,8 @@ class ERIWaterHeatingTest < MiniTest::Test
     end
   end
 
-  def _check_hot_water_distribution(hpxml, disttype, pipe_r, pipe_l, recirc_control, recirc_loop_l, recirc_branch_l, recirc_pump_power)
+  def _check_hot_water_distribution(hpxml, disttype, pipe_r, pipe_l, recirc_control, recirc_loop_l, recirc_branch_l, recirc_pump_power, 
+                                    shared_recirc_power = nil, shared_recirc_num_units_served = nil, shared_recirc_control_type = nil)
     assert_equal(1, hpxml.hot_water_distributions.size)
     hot_water_distribution = hpxml.hot_water_distributions[0]
     assert_equal(disttype, hot_water_distribution.system_type)
@@ -827,6 +860,21 @@ class ERIWaterHeatingTest < MiniTest::Test
       assert_nil(hot_water_distribution.recirculation_pump_power)
     else
       assert_in_epsilon(recirc_pump_power, hot_water_distribution.recirculation_pump_power, 0.01)
+    end
+    if shared_recirc_power.nil?
+      assert_nil(hot_water_distribution.shared_recirculation_pump_power)
+    else
+      assert_in_epsilon(shared_recirc_power, hot_water_distribution.shared_recirculation_pump_power, 0.01)
+    end
+    if shared_recirc_num_units_served.nil?
+      assert_nil(hot_water_distribution.shared_recirculation_number_of_units_served)
+    else
+      assert_equal(shared_recirc_num_units_served, hot_water_distribution.shared_recirculation_number_of_units_served)
+    end
+    if shared_recirc_control_type.nil?
+      assert_nil(hot_water_distribution.shared_recirculation_control_type)
+    else
+      assert_equal(shared_recirc_control_type, hot_water_distribution.shared_recirculation_control_type)
     end
   end
 
