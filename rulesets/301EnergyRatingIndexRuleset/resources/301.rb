@@ -1788,6 +1788,7 @@ class EnergyRatingIndex301Ruleset
 
     reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: id,
+                                  is_shared_appliance: false,
                                   location: location,
                                   integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
                                   rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1817,6 +1818,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
+                                  is_shared_appliance: clothes_washer.is_shared_appliance,
                                   location: clothes_washer.location,
                                   modified_energy_factor: clothes_washer.modified_energy_factor,
                                   integrated_modified_energy_factor: clothes_washer.integrated_modified_energy_factor,
@@ -1851,6 +1853,7 @@ class EnergyRatingIndex301Ruleset
 
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, fuel_type)
     new_hpxml.clothes_dryers.add(id: id,
+                                 is_shared_appliance: false,
                                  location: location,
                                  fuel_type: fuel_type,
                                  combined_energy_factor: reference_values[:combined_energy_factor],
@@ -1871,6 +1874,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
+                                 is_shared_appliance: clothes_dryer.is_shared_appliance,
                                  location: clothes_dryer.location,
                                  fuel_type: clothes_dryer.fuel_type,
                                  energy_factor: clothes_dryer.energy_factor,
@@ -1897,6 +1901,7 @@ class EnergyRatingIndex301Ruleset
 
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: id,
+                              is_shared_appliance: false,
                               location: location,
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1924,6 +1929,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              is_shared_appliance: dishwasher.is_shared_appliance,
                               location: dishwasher.location,
                               energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
