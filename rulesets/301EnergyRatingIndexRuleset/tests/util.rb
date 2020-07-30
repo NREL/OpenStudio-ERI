@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def _change_eri_version(hpxml_name, version)
   # Create derivative file w/ changed ERI version
   hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))

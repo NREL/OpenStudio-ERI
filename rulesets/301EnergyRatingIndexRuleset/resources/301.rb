@@ -2029,6 +2029,7 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.lighting_groups.each do |orig_lg|
       next unless [HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? orig_lg.location
       next unless [HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? orig_lg.lighting_type
+
       new_hpxml.lighting_groups.add(id: orig_lg.id,
                                     location: orig_lg.location,
                                     fraction_of_units_in_location: orig_lg.fraction_of_units_in_location,
@@ -2356,6 +2357,7 @@ class EnergyRatingIndex301Ruleset
       (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
         next if hvac.distribution_system_idref.nil?
         next unless hvac.distribution_system_idref == dist_id
+
         found_id = true
       end
       return dist_id if not found_id
@@ -2483,6 +2485,7 @@ class EnergyRatingIndex301Ruleset
       found_dist = false
       new_hpxml.hvac_distributions.each do |hvac_distribution|
         next unless hvac_distribution.id == hvac.distribution_system_idref
+
         found_dist = true
       end
       next if found_dist
@@ -2663,5 +2666,6 @@ def calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value
   if not backup_value.nil?
     return backup_value
   end
+
   fail "Unable to calculate area-weighted avg for #{attribute}."
 end

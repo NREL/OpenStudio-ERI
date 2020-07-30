@@ -75,6 +75,7 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       next if xml.include? 'base-version'
+
       # Create derivative file
 
       hpxml = HPXML.new(hpxml_path: xml)
@@ -1992,6 +1993,7 @@ class EnergyRatingIndexTest < Minitest::Test
     rated_gpd = 0
     CSV.foreach(results_csv) do |row|
       next if row.nil? || row[0].nil?
+
       if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
       elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
@@ -2206,6 +2208,7 @@ class EnergyRatingIndexTest < Minitest::Test
     ref_hpxml = HPXML.new(hpxml_path: ref_xml)
     ref_hpxml.ventilation_fans.each do |ventilation_fan|
       next unless ventilation_fan.used_for_whole_building_ventilation
+
       if (ventilation_fan.fan_type == HPXML::MechVentTypeSupply) || (ventilation_fan.fan_type == HPXML::MechVentTypeExhaust)
         ventilation_fan.fan_power = 0.35 * ventilation_fan.tested_flow_rate
       elsif ventilation_fan.fan_type == HPXML::MechVentTypeBalanced

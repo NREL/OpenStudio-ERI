@@ -973,6 +973,7 @@ class ERIMechVentTest < MiniTest::Test
     num_mech_vent = 0
     hpxml.ventilation_fans.each_with_index do |ventilation_fan, idx|
       next unless ventilation_fan.used_for_whole_building_ventilation
+
       fantype, flowrate, hours, power, sre, tre, asre, atre = systems[idx]
 
       num_mech_vent += 1
