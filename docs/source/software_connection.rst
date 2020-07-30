@@ -611,7 +611,11 @@ If there are multiple clothes washers, the clothes washer with the highest Label
 The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
-If a clothes washer is located in one of the "other ..." locations indicating that it is a shared appliance in an Attached/Multifamily building, the ``extension/RatioOfDwellingUnitsToSharedClothesWashers`` element must be provided.
+``IsSharedAppliance`` must also be provided.
+If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, additional elements must be provided:
+
+- ``extension/RatioOfDwellingUnitsToSharedClothesWashers``: Ratio of dwelling units to shared clothes washers
+- ``AttachedToWaterHeatingSystem``: Must reference a shared water heating system
 
 HPXML Clothes Dryer
 *******************
@@ -624,7 +628,10 @@ If there are multiple clothes dryers, the clothes dryer with the lowest Energy F
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
-If a clothes dryer is located in one of the "other ..." locations indicating that it is a shared appliance in an Attached/Multifamily building, the ``extension/RatioOfDwellingUnitsToSharedClothesDryers`` element must be provided.
+``IsSharedAppliance`` must also be provided.
+If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, additional elements must be provided:
+
+- ``extension/RatioOfDwellingUnitsToSharedClothesDryers``: Ratio of dwelling units to shared clothes washers
 
 HPXML Dishwasher
 ****************
@@ -636,6 +643,11 @@ If there are multiple dishwashers, the dishwasher with the lowest Energy Factor 
 
 The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` or an ``EnergyFactor``.
 The dishwasher's ``PlaceSettingCapacity`` also must be provided as well as other inputs from the EnergyGuide label.
+
+``IsSharedAppliance`` must also be provided.
+If set to true, indicating that the appliance is in a shared kitchen that serves multiple units, additional elements must be provided:
+
+- ``AttachedToWaterHeatingSystem``: Must reference a shared water heating system
 
 HPXML Refrigerator
 ******************

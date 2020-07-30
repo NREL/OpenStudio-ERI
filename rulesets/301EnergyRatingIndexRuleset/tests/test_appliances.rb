@@ -186,7 +186,7 @@ class ERIApplianceTest < MiniTest::Test
   end
 
   def test_shared_clothes_washers_dryers
-    hpxml_name = 'base-enclosure-attached-multifamily.xml'
+    hpxml_name = 'base-dhw-shared-water-heater-equipment-room.xml'
     [14, 15].each do |ratio_of_units_to_appliance|
       hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
       hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = ratio_of_units_to_appliance
@@ -208,18 +208,16 @@ class ERIApplianceTest < MiniTest::Test
         else
           # Business as usual
           if calc_type == Constants.CalcTypeERIRatedHome
-            _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationOtherHousingUnit)
+            _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
             _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationOtherHeatedSpace)
           else
             if calc_type == Constants.CalcTypeERIReferenceHome
-              washer_location = HPXML::LocationOtherHousingUnit
-              dryer_location = HPXML::LocationOtherHeatedSpace
+              location = HPXML::LocationOtherHeatedSpace
             else
-              washer_location = HPXML::LocationLivingSpace
-              dryer_location = HPXML::LocationLivingSpace
+              location = HPXML::LocationLivingSpace
             end
-            _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: washer_location)
-            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: dryer_location)
+            _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: location)
+            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: location)
           end
         end
       end

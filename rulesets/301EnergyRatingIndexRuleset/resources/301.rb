@@ -1780,7 +1780,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_washers.empty?
       clothes_washer = orig_hpxml.clothes_washers[0]
-      if not (clothes_washer.is_shared && clothes_washer.ratio_of_units_to_clothes_washers > 14)
+      if not (clothes_washer.is_shared_appliance && clothes_washer.ratio_of_units_to_clothes_washers > 14)
         id = clothes_washer.id
         location = clothes_washer.location.gsub('unvented', 'vented')
       end
@@ -1806,7 +1806,7 @@ class EnergyRatingIndex301Ruleset
 
     clothes_washer = orig_hpxml.clothes_washers[0]
 
-    if clothes_washer.is_shared && clothes_washer.ratio_of_units_to_clothes_washers > 14
+    if clothes_washer.is_shared_appliance && clothes_washer.ratio_of_units_to_clothes_washers > 14
       set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
       return
     end
@@ -1842,7 +1842,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_dryers.empty?
       clothes_dryer = orig_hpxml.clothes_dryers[0]
-      if not (clothes_dryer.is_shared && clothes_dryer.ratio_of_units_to_clothes_dryers > 14)
+      if not (clothes_dryer.is_shared_appliance && clothes_dryer.ratio_of_units_to_clothes_dryers > 14)
         id = clothes_dryer.id
         location = clothes_dryer.location.gsub('unvented', 'vented')
         fuel_type = clothes_dryer.fuel_type
@@ -1865,7 +1865,7 @@ class EnergyRatingIndex301Ruleset
 
     clothes_dryer = orig_hpxml.clothes_dryers[0]
 
-    if clothes_dryer.is_shared && clothes_dryer.ratio_of_units_to_clothes_dryers > 14
+    if clothes_dryer.is_shared_appliance && clothes_dryer.ratio_of_units_to_clothes_dryers > 14
       set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
       return
     end

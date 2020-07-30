@@ -658,7 +658,8 @@ class EnergyRatingIndex301Validator
       # [ClothesWasher]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one, # See [ClothesWasher=Shared]
+        'IsSharedAppliance' => one, # See [ClothesWasher=Shared]
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'ModifiedEnergyFactor | IntegratedModifiedEnergyFactor' => one,
         'RatedAnnualkWh' => one,
         'LabelElectricRate' => one,
@@ -669,27 +670,30 @@ class EnergyRatingIndex301Validator
       },
 
       ## [ClothesWasher=Shared]
-      '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[Location="other housing unit" or Location="other heated space" or Location="other multifamily buffer space" or Location="other non-freezing space"]' => {
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[IsSharedAppliance="true"]' => {
+        'AttachedToWaterHeatingSystem' => one,
         'extension/RatioOfDwellingUnitsToSharedClothesWashers' => one,
       },
 
       # [ClothesDryer]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one, # See [ClothesDryer=Shared]
+        'IsSharedAppliance' => one, # See [ClothesDryer=Shared]
+        'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'EnergyFactor | CombinedEnergyFactor' => one,
         'ControlType[text()="timer" or text()="moisture"]' => one,
       },
 
       ## [ClothesDryer=Shared]
-      '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[Location="other housing unit" or Location="other heated space" or Location="other multifamily buffer space" or Location="other non-freezing space"]' => {
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[IsSharedAppliance="true"]' => {
         'extension/RatioOfDwellingUnitsToSharedClothesDryers' => one,
       },
 
       # [Dishwasher]
       '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
         'SystemIdentifier' => one, # Required by HPXML schema
+        'IsSharedAppliance' => one, # See [Dishwasher=Shared]
         'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'RatedAnnualkWh | EnergyFactor' => one,
         'LabelElectricRate' => one,
@@ -697,6 +701,11 @@ class EnergyRatingIndex301Validator
         'LabelAnnualGasCost' => one,
         'LabelUsage' => one,
         'PlaceSettingCapacity' => one,
+      },
+
+      ## [Dishwasher=Shared]
+      '/HPXML/Building/BuildingDetails/Appliances/Dishwasher[IsSharedAppliance="true"]' => {
+        'AttachedToWaterHeatingSystem' => one,
       },
 
       # [Refrigerator]

@@ -1350,12 +1350,36 @@ def create_sample_hpxmls
     # Add ERI version
     hpxml.header.eri_calculation_version = 'latest'
 
-    # Shared clothes washer/dryer? Add ratio extension
-    if !hpxml.clothes_washers.empty? && hpxml.clothes_washers[0].is_shared
-      hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = 5
+    # Handle extra inputs for shared appliances
+    shared_locations = [HPXML::LocationOtherHousingUnit,
+                        HPXML::LocationOtherHeatedSpace,
+                        HPXML::LocationOtherMultifamilyBufferSpace,
+                        HPXML::LocationOtherNonFreezingSpace]
+    shared_water_heaters = hpxml.water_heating_systems.select { |wh| wh.is_shared_system }
+    if not hpxml.clothes_washers.empty?
+      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_washers[0].location)
+        hpxml.clothes_washers[0].is_shared_appliance = true
+        hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = 5
+        hpxml.clothes_washers[0].water_heating_system_idref = shared_water_heaters[0].id
+      else
+        hpxml.clothes_washers[0].is_shared_appliance = false
+      end
     end
-    if !hpxml.clothes_dryers.empty? && hpxml.clothes_dryers[0].is_shared
-      hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = 5
+    if not hpxml.clothes_dryers.empty?
+      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_dryers[0].location)
+        hpxml.clothes_dryers[0].is_shared_appliance = true
+        hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = 5
+      else
+        hpxml.clothes_dryers[0].is_shared_appliance = false
+      end
+    end
+    if not hpxml.dishwashers.empty?
+      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.dishwashers[0].location)
+        hpxml.dishwashers[0].is_shared_appliance = true
+        hpxml.dishwashers[0].water_heating_system_idref = shared_water_heaters[0].id
+      else
+        hpxml.dishwashers[0].is_shared_appliance = false
+      end
     end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
