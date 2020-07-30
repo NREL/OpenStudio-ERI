@@ -680,7 +680,7 @@
           <LabelUsage>6.0</LabelUsage>
           <Capacity>3.2</Capacity>
           <extension>
-            <RatioOfDwellingUnitsToSharedClothesWashers>5</RatioOfDwellingUnitsToSharedClothesWashers>
+            <RatioOfDwellingUnitsToSharedClothesWashers>3</RatioOfDwellingUnitsToSharedClothesWashers>
           </extension>
         </ClothesWasher>
         <ClothesDryer>
@@ -691,7 +691,7 @@
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
           <extension>
-            <RatioOfDwellingUnitsToSharedClothesDryers>5</RatioOfDwellingUnitsToSharedClothesDryers>
+            <RatioOfDwellingUnitsToSharedClothesDryers>3</RatioOfDwellingUnitsToSharedClothesDryers>
           </extension>
         </ClothesDryer>
         <Dishwasher>

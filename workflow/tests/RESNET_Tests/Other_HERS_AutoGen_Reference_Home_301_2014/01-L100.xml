@@ -361,6 +361,7 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>704.0</RatedAnnualkWh>
@@ -372,6 +373,7 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
           <CombinedEnergyFactor>2.32</CombinedEnergyFactor>
@@ -379,6 +381,7 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>467.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

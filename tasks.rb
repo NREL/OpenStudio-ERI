@@ -930,6 +930,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
                                     location: HPXML::LocationLivingSpace,
@@ -940,6 +941,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # Tankless natural gas with EF = 0.82
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeTankless,
                                     location: HPXML::LocationLivingSpace,
@@ -950,6 +952,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.56; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
                                     location: HPXML::LocationLivingSpace,
@@ -962,6 +965,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
                                     location: HPXML::LocationLivingSpace,
@@ -1051,6 +1055,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   hpxml.clothes_washers.clear
   hpxml.clothes_washers.add(id: 'ClothesWasher',
+                            is_shared_appliance: false,
                             location: HPXML::LocationLivingSpace,
                             integrated_modified_energy_factor: default_values[:integrated_modified_energy_factor],
                             rated_annual_kwh: default_values[:rated_annual_kwh],
@@ -1079,6 +1084,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: 'ClothesDryer',
+                             is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              control_type: default_values[:control_type],
@@ -1094,6 +1100,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeElectricity)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: 'ClothesDryer',
+                             is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              control_type: default_values[:control_type],
@@ -1107,6 +1114,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
+                        is_shared_appliance: false,
                         location: HPXML::LocationLivingSpace,
                         place_setting_capacity: default_values[:place_setting_capacity],
                         rated_annual_kwh: default_values[:rated_annual_kwh],
@@ -1359,7 +1367,7 @@ def create_sample_hpxmls
     if not hpxml.clothes_washers.empty?
       if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_washers[0].location)
         hpxml.clothes_washers[0].is_shared_appliance = true
-        hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = 5
+        hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = shared_water_heaters[0].number_of_units_served / 2
         hpxml.clothes_washers[0].water_heating_system_idref = shared_water_heaters[0].id
       else
         hpxml.clothes_washers[0].is_shared_appliance = false
@@ -1368,7 +1376,7 @@ def create_sample_hpxmls
     if not hpxml.clothes_dryers.empty?
       if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_dryers[0].location)
         hpxml.clothes_dryers[0].is_shared_appliance = true
-        hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = 5
+        hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = shared_water_heaters[0].number_of_units_served / 2
       else
         hpxml.clothes_dryers[0].is_shared_appliance = false
       end
