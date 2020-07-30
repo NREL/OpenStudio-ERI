@@ -34,7 +34,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/CreatedDateAndTime' => one, # Required by HPXML schema
         '/HPXML/XMLTransactionHeaderInformation/Transaction' => one, # Required by HPXML schema
-        '/HPXML/SoftwareInfo/extension/ERICalculation[Version="latest" or Version="2019A" or Version="2019" or Version="2014ADEGL" or Version="2014ADEG" or Version="2014ADE" or Version="2014AD" or Version="2014A" or Version="2014"]' => one, # Choose version of 301 standard and addenda (e.g., A, D, E, G)
+        '/HPXML/SoftwareInfo/extension/ERICalculation[Version[text()="latest" or text()="2019A" or text()="2019" or text()="2014ADEGL" or text()="2014ADEG" or text()="2014ADE" or text()="2014AD" or text()="2014A" or text()="2014"]]' => one, # Choose version of 301 standard and addenda (e.g., A, D, E, G)
 
         '/HPXML/Building' => one,
         '/HPXML/Building/BuildingID' => one, # Required by HPXML schema
@@ -111,7 +111,7 @@ class EnergyRatingIndex301Validator
       # [AirInfiltration]
       '/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]]' => {
         'SystemIdentifier' => one, # Required by HPXML schema
-        '[(number(HousePressure)=50 and BuildingAirLeakage/UnitofMeasure!="ACHnatural") or (not(HousePressure) and BuildingAirLeakage/UnitofMeasure="ACHnatural")]' => one,
+        '[(number(HousePressure)=50 and BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM"]) or (not(HousePressure) and BuildingAirLeakage/UnitofMeasure[text()="ACHnatural"])]' => one,
         'BuildingAirLeakage/AirLeakage' => one,
         'InfiltrationVolume' => one,
       },
@@ -148,8 +148,8 @@ class EnergyRatingIndex301Validator
       },
 
       ## [UnventedAttic]
-      "/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[InteriorAdjacentTo='attic - unvented']" => {
-        "../../Attics/Attic[AtticType/Attic[Vented='false']]/WithinInfiltrationVolume" => one,
+      '/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[InteriorAdjacentTo="attic - unvented"]' => {
+        '../../Attics/Attic[AtticType/Attic[Vented="false"]]/WithinInfiltrationVolume' => one,
       },
 
       # [Wall]
@@ -201,8 +201,8 @@ class EnergyRatingIndex301Validator
       },
 
       ## [UnventedCrawlspace]
-      "/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo='crawlspace - unvented']" => {
-        "../../Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]/WithinInfiltrationVolume" => one,
+      '/HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall[InteriorAdjacentTo="crawlspace - unvented"]' => {
+        '../../Foundations/Foundation[FoundationType/Crawlspace[Vented="false"]]/WithinInfiltrationVolume' => one,
       },
 
       ## [UnconditionedBasement]
@@ -378,7 +378,7 @@ class EnergyRatingIndex301Validator
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
         'CoolingCapacity' => one,
-        'CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => zero_or_one,
+        '[not(CompressorType)] | CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'SensibleHeatFraction' => zero_or_one,
       },
@@ -407,7 +407,7 @@ class EnergyRatingIndex301Validator
         'HeatingCapacity' => one,
         'CoolingCapacity' => one,
         'CoolingSensibleHeatFraction' => zero_or_one,
-        'BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]' => zero_or_one, # See [HeatPumpBackup]
+        '[not(BackupSystemFuel)] | BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]' => one, # See [HeatPumpBackup]
         'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatPumps and HeatingSystems
         'FractionCoolLoadServed' => one, # Must sum to <= 1 across all HeatPumps and CoolingSystems
       },
@@ -416,7 +416,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
-        'CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => zero_or_one,
+        '[not(CompressorType)] | CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
         'HeatingCapacity17F' => zero_or_one
@@ -656,7 +656,7 @@ class EnergyRatingIndex301Validator
       },
 
       ## [ClothesWasher=Shared]
-      '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[Location="other housing unit" or Location="other heated space" or Location="other multifamily buffer space" or Location="other non-freezing space"]' => {
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[Location[text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]]' => {
         'extension/RatioOfDwellingUnitsToSharedClothesWashers' => one,
       },
 
@@ -670,7 +670,7 @@ class EnergyRatingIndex301Validator
       },
 
       ## [ClothesDryer=Shared]
-      '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[Location="other housing unit" or Location="other heated space" or Location="other multifamily buffer space" or Location="other non-freezing space"]' => {
+      '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[Location[text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]]' => {
         'extension/RatioOfDwellingUnitsToSharedClothesDryers' => one,
       },
 
@@ -769,11 +769,12 @@ class EnergyRatingIndex301Validator
     if expected_sizes.size > 0
       return if expected_sizes.include?(actual_size)
 
-      errors << "Expected #{expected_sizes} element(s) but found #{actual_size} element(s) for xpath: #{xpath}"
+      expected_sizes_string = expected_sizes.size == 1 ? expected_sizes[0] : expected_sizes.join(' or ')
+      errors << "Expected #{expected_sizes_string} element(s) for xpath: #{xpath}"
     else
       return if actual_size > 0
 
-      errors << "Expected 1 or more element(s) but found 0 elements for xpath: #{xpath}"
+      errors << "Expected 1 or more element(s) for xpath: #{xpath}"
     end
   end
 
