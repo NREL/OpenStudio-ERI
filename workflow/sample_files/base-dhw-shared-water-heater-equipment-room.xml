@@ -670,7 +670,7 @@
         <ClothesWasher>
           <SystemIdentifier id='SharedClothesWasher'/>
           <IsSharedAppliance>true</IsSharedAppliance>
-          <AttachedToWaterHeatingSystem>SharedLaundryWaterHeater</AttachedToWaterHeatingSystem>
+          <AttachedToWaterHeatingSystem idref='SharedLaundryWaterHeater'/>
           <Location>other heated space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -697,7 +697,7 @@
         <Dishwasher>
           <SystemIdentifier id='SharedDishwasher'/>
           <IsSharedAppliance>true</IsSharedAppliance>
-          <AttachedToWaterHeatingSystem>SharedLaundryWaterHeater</AttachedToWaterHeatingSystem>
+          <AttachedToWaterHeatingSystem idref='SharedLaundryWaterHeater'/>
           <Location>other heated space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
