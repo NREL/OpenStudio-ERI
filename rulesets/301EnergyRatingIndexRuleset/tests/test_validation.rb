@@ -228,7 +228,7 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
       elsif assertion.partition(': ').last.include? 'number(HousePressure)=50'
         # handle [(number(HousePressure)=50 and BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM"]) or (not(HousePressure) and BuildingAirLeakage/UnitofMeasure[text()="ACHnatural"])]
         element_name = assertion[/number\(.*?\)/].gsub(/number\(|\)/, '') # get a string inside number()
-        element_names[0] = element_name # replace element_name
+        element_names[0] = element_name # replace element_names[0] with element_name
       end
     end
 
