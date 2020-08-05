@@ -443,7 +443,12 @@ HPXML Water Heating Systems
 ***************************
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
-Inputs including ``WaterHeaterType``, ``IsSharedSystem``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
+Inputs including ``WaterHeaterType``, ``HotWaterDistributionSystem``, ``IsSharedSystem``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
+
+.. warning::
+
+  ``FractionDHWLoadServed`` represents the fraction of the hot water **fixtures** load (i.e., not the total load) served by the water heater. The load from an attached clothes washer and/or dishwasher will be automatically assigned to the attached water heater(s).
+
 The ``Location`` must be one of the following:
 
 ==============================  ==================================  ========================================================  =========================
@@ -487,7 +492,8 @@ In addition, the ``NumberofUnitsServed`` must be specified, where the value is t
 HPXML Hot Water Distribution
 ****************************
 
-A ``Systems/WaterHeating/HotWaterDistribution`` must be provided if any water heating systems are specified.
+Each separate hot water distribution system should be specified as a ``Systems/WaterHeating/HotWaterDistribution``.
+One or more water heaters can be connected to each distribution system.
 Inputs including ``SystemType`` and ``PipeInsulation/PipeRValue`` must be provided.
 
 Standard
@@ -514,7 +520,7 @@ In addition to the hot water distribution systems within the dwelling unit, the 
 
 - `extension/SharedRecirculation/NumberofUnitsServed`: Number of dwelling units served by the shared pump.
 - `extension/SharedRecirculation/PumpPower`: Shared pump power in Watts.
-- `extension/SharedRecirculation/ControlType`: One of "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
+- `extension/SharedRecirculation/ControlType`: One of "manual demand control", "presence sensor demand control", "timer", or "no control".
 
 Drain Water Heat Recovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -530,7 +536,7 @@ HPXML Water Fixtures
 ********************
 
 Water fixtures should be entered as ``Systems/WaterHeating/WaterFixture`` elements.
-Each fixture must have ``WaterFixtureType`` and ``LowFlow`` elements provided.
+Each fixture must have ``WaterFixtureType``, ``LowFlow``, and ``AttachedToHotWaterDistribution`` elements provided.
 Fixtures should be specified as low flow if they are <= 2.0 gpm.
 
 HPXML Solar Thermal
@@ -605,6 +611,8 @@ HPXML Clothes Washer
 
 A single ``Appliances/ClothesWasher`` element may be specified.
 
+The ``AttachedToHotWaterDistribution`` element must be provided.
+
 If no clothes washer is located within the Rated Home, a clothes washer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
 If there are multiple clothes washers, the clothes washer with the highest Label Energy Rating (kWh/yr) shall be used.
 
@@ -612,10 +620,7 @@ The efficiency of the clothes washer can either be entered as an ``IntegratedMod
 Several other inputs from the EnergyGuide label must be provided as well.
 
 ``IsSharedAppliance`` must also be provided.
-If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, additional elements must be provided:
-
-- ``extension/RatioOfDwellingUnitsToSharedClothesWashers``: Ratio of dwelling units to shared clothes washers
-- ``AttachedToWaterHeatingSystem``: Must reference a shared water heating system
+If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, ``extension/RatioOfDwellingUnitsToSharedClothesWashers`` must be provided.
 
 HPXML Clothes Dryer
 *******************
@@ -629,14 +634,14 @@ The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be pro
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
 ``IsSharedAppliance`` must also be provided.
-If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, additional elements must be provided:
-
-- ``extension/RatioOfDwellingUnitsToSharedClothesDryers``: Ratio of dwelling units to shared clothes washers
+If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, ``extension/RatioOfDwellingUnitsToSharedClothesDryers`` must be provided.
 
 HPXML Dishwasher
 ****************
 
 A single ``Appliances/Dishwasher`` element may be specified.
+
+The ``AttachedToHotWaterDistribution`` element must be provided.
 
 If no dishwasher is located within the Rated Home, a dishwasher in the nearest shared kitchen in the building shall be used only if available for daily use by the occupants of the Rated Home.
 If there are multiple dishwashers, the dishwasher with the lowest Energy Factor (highest kWh/yr) shall be used.
@@ -645,9 +650,6 @@ The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` o
 The dishwasher's ``PlaceSettingCapacity`` also must be provided as well as other inputs from the EnergyGuide label.
 
 ``IsSharedAppliance`` must also be provided.
-If set to true, indicating that the appliance is in a shared kitchen that serves multiple units, additional elements must be provided:
-
-- ``AttachedToWaterHeatingSystem``: Must reference a shared water heating system
 
 HPXML Refrigerator
 ******************

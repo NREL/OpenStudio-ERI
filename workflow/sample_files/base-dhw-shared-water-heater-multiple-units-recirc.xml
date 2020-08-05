@@ -620,6 +620,7 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='SharedWaterHeater'/>
+            <HotWaterDistributionSystem idref='SharedHotWaterDistribution'/>
             <FuelType>natural gas</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
@@ -633,7 +634,7 @@
             <HotWaterTemperature>125.0</HotWaterTemperature>
           </WaterHeatingSystem>
           <HotWaterDistribution>
-            <SystemIdentifier id='HotWaterDistribution'/>
+            <SystemIdentifier id='SharedHotWaterDistribution'/>
             <SystemType>
               <Standard>
                 <PipingLength>50.0</PipingLength>
@@ -652,11 +653,13 @@
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
+            <AttachedToHotWaterDistribution idref='SharedHotWaterDistribution'/>
             <WaterFixtureType>shower head</WaterFixtureType>
             <LowFlow>true</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture2'/>
+            <AttachedToHotWaterDistribution idref='SharedHotWaterDistribution'/>
             <WaterFixtureType>faucet</WaterFixtureType>
             <LowFlow>false</LowFlow>
           </WaterFixture>
@@ -666,6 +669,7 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <IsSharedAppliance>false</IsSharedAppliance>
+          <AttachedToHotWaterDistribution idref='SharedHotWaterDistribution'/>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -686,6 +690,7 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
           <IsSharedAppliance>false</IsSharedAppliance>
+          <AttachedToHotWaterDistribution idref='SharedHotWaterDistribution'/>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

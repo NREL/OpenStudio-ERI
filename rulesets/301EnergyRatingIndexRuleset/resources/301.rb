@@ -49,8 +49,8 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_reference(orig_hpxml, new_hpxml)
     set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
-    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
+    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
 
@@ -99,8 +99,8 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_rated(orig_hpxml, new_hpxml)
     set_systems_mechanical_ventilation_rated(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_rated(orig_hpxml, new_hpxml)
-    set_systems_water_heater_rated(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_rated(orig_hpxml, new_hpxml)
+    set_systems_water_heater_rated(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_rated(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_rated(orig_hpxml, new_hpxml)
 
@@ -151,8 +151,8 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_iad(orig_hpxml, new_hpxml)
     set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_iad(orig_hpxml, new_hpxml)
-    set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_iad(orig_hpxml, new_hpxml)
+    set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_iad(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
 
@@ -959,7 +959,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: fraction_operable,
-                            wall_idref: 'WallArea')
+                            wall_idref: new_hpxml.walls[0].id)
     end
   end
 
@@ -1003,7 +1003,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: fraction_operable,
-                            wall_idref: 'WallArea')
+                            wall_idref: new_hpxml.walls[0].id)
     end
   end
 
@@ -1046,7 +1046,7 @@ class EnergyRatingIndex301Ruleset
     # Create new exterior door
     if exterior_area > 0
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: 'WallArea',
+                          wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
                           azimuth: 0,
                           r_value: 1.0 / ufactor)
@@ -1075,7 +1075,7 @@ class EnergyRatingIndex301Ruleset
     # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
     if exterior_area > 0
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: 'WallArea',
+                          wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
                           azimuth: 0,
                           r_value: avg_r_value)
@@ -1372,8 +1372,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
-    sys_id = 'MechanicalVentilation'
-
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
@@ -1384,7 +1382,7 @@ class EnergyRatingIndex301Ruleset
 
     if mech_vent_fans.empty?
       # Airflow only
-      new_hpxml.ventilation_fans.add(id: sys_id,
+      new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                      fan_type: HPXML::MechVentTypeBalanced,
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
@@ -1417,7 +1415,7 @@ class EnergyRatingIndex301Ruleset
       end
 
       # Airflow and fan power
-      new_hpxml.ventilation_fans.add(id: sys_id,
+      new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                      fan_type: HPXML::MechVentTypeBalanced,
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
@@ -1566,6 +1564,7 @@ class EnergyRatingIndex301Ruleset
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
+                                          hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                           is_shared_system: false,
                                           number_of_units_served: 1,
                                           fuel_type: fuel_type,
@@ -1614,6 +1613,7 @@ class EnergyRatingIndex301Ruleset
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
                                           is_shared_system: orig_water_heater.is_shared_system,
+                                          hot_water_distribution_idref: orig_water_heater.hot_water_distribution_idref,
                                           number_of_units_served: orig_water_heater.number_of_units_served,
                                           fuel_type: orig_water_heater.fuel_type,
                                           water_heater_type: orig_water_heater.water_heater_type,
@@ -1647,38 +1647,23 @@ class EnergyRatingIndex301Ruleset
     has_uncond_bsmnt = new_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
     standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
 
-    if orig_hpxml.hot_water_distributions.size == 0
-      sys_id = 'HotWaterDistribution'
-    else
-      sys_id = orig_hpxml.hot_water_distributions[0].id
-    end
-
     # New hot water distribution
-    new_hpxml.hot_water_distributions.add(id: sys_id,
+    new_hpxml.hot_water_distributions.add(id: 'HotWaterDistribution',
                                           system_type: HPXML::DHWDistTypeStandard,
                                           pipe_r_value: 0,
                                           standard_piping_length: standard_piping_length)
 
     # New water fixtures
-    if orig_hpxml.water_fixtures.size == 0
-      # Shower Head
-      new_hpxml.water_fixtures.add(id: 'ShowerHead',
-                                   water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
-                                   low_flow: false)
+    new_hpxml.water_fixtures.add(id: 'ShowerHead',
+                                 hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
+                                 water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
+                                 low_flow: false)
 
-      # Faucet
-      new_hpxml.water_fixtures.add(id: 'Faucet',
-                                   water_fixture_type: HPXML::WaterFixtureTypeFaucet,
-                                   low_flow: false)
-    else
-      orig_hpxml.water_fixtures.each do |orig_water_fixture|
-        next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
-
-        new_hpxml.water_fixtures.add(id: orig_water_fixture.id,
-                                     water_fixture_type: orig_water_fixture.water_fixture_type,
-                                     low_flow: false)
-      end
-    end
+    # Faucet
+    new_hpxml.water_fixtures.add(id: 'Faucet',
+                                 hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
+                                 water_fixture_type: HPXML::WaterFixtureTypeFaucet,
+                                 low_flow: false)
   end
 
   def self.set_systems_water_heating_use_rated(orig_hpxml, new_hpxml)
@@ -1690,28 +1675,30 @@ class EnergyRatingIndex301Ruleset
     end
 
     # New hot water distribution
-    hot_water_distribution = orig_hpxml.hot_water_distributions[0]
-    new_hpxml.hot_water_distributions.add(id: hot_water_distribution.id,
-                                          system_type: hot_water_distribution.system_type,
-                                          pipe_r_value: hot_water_distribution.pipe_r_value,
-                                          standard_piping_length: hot_water_distribution.standard_piping_length,
-                                          recirculation_control_type: hot_water_distribution.recirculation_control_type,
-                                          recirculation_piping_length: hot_water_distribution.recirculation_piping_length,
-                                          recirculation_branch_piping_length: hot_water_distribution.recirculation_branch_piping_length,
-                                          recirculation_pump_power: hot_water_distribution.recirculation_pump_power,
-                                          dwhr_facilities_connected: hot_water_distribution.dwhr_facilities_connected,
-                                          dwhr_equal_flow: hot_water_distribution.dwhr_equal_flow,
-                                          dwhr_efficiency: hot_water_distribution.dwhr_efficiency,
-                                          has_shared_recirculation: hot_water_distribution.has_shared_recirculation,
-                                          shared_recirculation_number_of_units_served: hot_water_distribution.shared_recirculation_number_of_units_served,
-                                          shared_recirculation_pump_power: hot_water_distribution.shared_recirculation_pump_power,
-                                          shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
+    orig_hpxml.hot_water_distributions.each do |hot_water_distribution|
+      new_hpxml.hot_water_distributions.add(id: hot_water_distribution.id,
+                                            system_type: hot_water_distribution.system_type,
+                                            pipe_r_value: hot_water_distribution.pipe_r_value,
+                                            standard_piping_length: hot_water_distribution.standard_piping_length,
+                                            recirculation_control_type: hot_water_distribution.recirculation_control_type,
+                                            recirculation_piping_length: hot_water_distribution.recirculation_piping_length,
+                                            recirculation_branch_piping_length: hot_water_distribution.recirculation_branch_piping_length,
+                                            recirculation_pump_power: hot_water_distribution.recirculation_pump_power,
+                                            dwhr_facilities_connected: hot_water_distribution.dwhr_facilities_connected,
+                                            dwhr_equal_flow: hot_water_distribution.dwhr_equal_flow,
+                                            dwhr_efficiency: hot_water_distribution.dwhr_efficiency,
+                                            has_shared_recirculation: hot_water_distribution.has_shared_recirculation,
+                                            shared_recirculation_number_of_units_served: hot_water_distribution.shared_recirculation_number_of_units_served,
+                                            shared_recirculation_pump_power: hot_water_distribution.shared_recirculation_pump_power,
+                                            shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
+    end
 
     # New water fixtures
     orig_hpxml.water_fixtures.each do |orig_water_fixture|
       next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
 
       new_hpxml.water_fixtures.add(id: orig_water_fixture.id,
+                                   hot_water_distribution_idref: orig_water_fixture.hot_water_distribution_idref,
                                    water_fixture_type: orig_water_fixture.water_fixture_type,
                                    low_flow: orig_water_fixture.low_flow)
     end
@@ -1789,6 +1776,7 @@ class EnergyRatingIndex301Ruleset
     reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: id,
                                   is_shared_appliance: false,
+                                  hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                   location: location,
                                   integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
                                   rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1819,6 +1807,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
                                   is_shared_appliance: clothes_washer.is_shared_appliance,
+                                  hot_water_distribution_idref: clothes_washer.hot_water_distribution_idref,
                                   location: clothes_washer.location,
                                   modified_energy_factor: clothes_washer.modified_energy_factor,
                                   integrated_modified_energy_factor: clothes_washer.integrated_modified_energy_factor,
@@ -1902,6 +1891,7 @@ class EnergyRatingIndex301Ruleset
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: id,
                               is_shared_appliance: false,
+                              hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                               location: location,
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1930,6 +1920,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.dishwashers.add(id: dishwasher.id,
                               is_shared_appliance: dishwasher.is_shared_appliance,
+                              hot_water_distribution_idref: dishwasher.hot_water_distribution_idref,
                               location: dishwasher.location,
                               energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
@@ -2520,6 +2511,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
                                         is_shared_system: false,
+                                        hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                         number_of_units_served: 1,
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,

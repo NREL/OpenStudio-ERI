@@ -1273,6 +1273,10 @@ def create_sample_hpxmls
                   'invalid_files/invalid-runperiod.xml',
                   'invalid_files/unattached-cfis.xml',
                   'invalid_files/unattached-door.xml',
+                  'invalid_files/unattached-hot-water-distribution-clothes-washer.xml',
+                  'invalid_files/unattached-hot-water-distribution-dishwasher.xml',
+                  'invalid_files/unattached-hot-water-distribution-water-heater.xml',
+                  'invalid_files/unattached-hot-water-distribution-water-fixture.xml',
                   'invalid_files/unattached-hvac-distribution.xml',
                   'invalid_files/unattached-skylight.xml',
                   'invalid_files/unattached-solar-thermal-system.xml',
@@ -1368,7 +1372,6 @@ def create_sample_hpxmls
       if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_washers[0].location)
         hpxml.clothes_washers[0].is_shared_appliance = true
         hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = shared_water_heaters[0].number_of_units_served / 2
-        hpxml.clothes_washers[0].water_heating_system_idref = shared_water_heaters[0].id
       else
         hpxml.clothes_washers[0].is_shared_appliance = false
       end
@@ -1384,7 +1387,6 @@ def create_sample_hpxmls
     if not hpxml.dishwashers.empty?
       if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.dishwashers[0].location)
         hpxml.dishwashers[0].is_shared_appliance = true
-        hpxml.dishwashers[0].water_heating_system_idref = shared_water_heaters[0].id
       else
         hpxml.dishwashers[0].is_shared_appliance = false
       end
@@ -1519,6 +1521,9 @@ if ARGV[0].to_sym == :update_measures
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
   ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
 
+  create_test_hpxmls
+  create_sample_hpxmls
+
   # Apply rubocop
   cops = ['Layout',
           'Lint/DeprecatedClassMethods',
@@ -1545,9 +1550,6 @@ if ARGV[0].to_sym == :update_measures
   command = "#{OpenStudio.getOpenStudioCLI} measure -t '#{File.join(File.dirname(__FILE__), 'rulesets')}'"
   puts 'Updating measure.xmls...'
   system(command, [:out, :err] => File::NULL)
-
-  create_test_hpxmls
-  create_sample_hpxmls
 
   puts 'Done.'
 end

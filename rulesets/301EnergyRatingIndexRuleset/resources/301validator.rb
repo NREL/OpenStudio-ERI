@@ -69,7 +69,7 @@ class EnergyRatingIndex301Validator
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation="true"]' => zero_or_more, # See [MechanicalVentilation]
         '/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForSeasonalCoolingLoadReduction="true"]' => zero_or_more, # See [WholeHouseFan]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => zero_or_more, # See [WaterHeatingSystem]
-        '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => zero_or_one, # See [HotWaterDistribution]
+        '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution' => zero_or_more, # See [HotWaterDistribution]
         '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => zero_or_more, # See [WaterFixture]
         '/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem' => zero_or_one, # See [SolarThermalSystem]
         '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem' => zero_or_more, # See [PVSystem]
@@ -514,9 +514,10 @@ class EnergyRatingIndex301Validator
 
       # [WaterHeatingSystem]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem' => {
-        '../HotWaterDistribution' => one, # See [HotWaterDistribution]
+        '../HotWaterDistribution' => one_or_more, # See [HotWaterDistribution]
         '../WaterFixture' => one_or_more, # See [WaterFixture]
         'SystemIdentifier' => one, # Required by HPXML schema
+        'HotWaterDistributionSystem' => one,
         'IsSharedSystem' => one, # See [WaterHeatingSystem=Shared]
         'WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater" or text()="space-heating boiler with storage tank" or text()="space-heating boiler with tankless coil"]' => one, # See [WHType=Tank] or [WHType=Tankless] or [WHType=HeatPump] or [WHType=Indirect] or [WHType=CombiTankless]
         'Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
@@ -609,11 +610,13 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution[extension/SharedRecirculation]' => {
         'extension/SharedRecirculation/NumberofUnitsServed' => one,
         'extension/SharedRecirculation/PumpPower' => zero_or_one,
-        'extension/SharedRecirculation/ControlType[text()="manual demand control" or text()="presence sensor demand control" or text()="temperature" or text()="timer" or text()="no control"]' => one,
+        'extension/SharedRecirculation/ControlType[text()="manual demand control" or text()="presence sensor demand control" or text()="timer" or text()="no control"]' => one,
       },
       # [WaterFixture]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
+        '../HotWaterDistribution' => one_or_more, # See [HotWaterDistribution]
         'SystemIdentifier' => one, # Required by HPXML schema
+        'AttachedToHotWaterDistribution' => one,
         'WaterFixtureType[text()="shower head" or text()="faucet"]' => one, # Required by HPXML schema
         'LowFlow' => one,
       },
@@ -657,7 +660,9 @@ class EnergyRatingIndex301Validator
 
       # [ClothesWasher]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher' => {
+        '../../Systems/WaterHeating/HotWaterDistribution' => one_or_more, # See [HotWaterDistribution]
         'SystemIdentifier' => one, # Required by HPXML schema
+        'AttachedToHotWaterDistribution' => one,
         'IsSharedAppliance' => one, # See [ClothesWasher=Shared]
         'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'ModifiedEnergyFactor | IntegratedModifiedEnergyFactor' => one,
@@ -671,7 +676,6 @@ class EnergyRatingIndex301Validator
 
       ## [ClothesWasher=Shared]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[IsSharedAppliance="true"]' => {
-        'AttachedToWaterHeatingSystem' => one,
         'extension/RatioOfDwellingUnitsToSharedClothesWashers' => one,
       },
 
@@ -692,8 +696,10 @@ class EnergyRatingIndex301Validator
 
       # [Dishwasher]
       '/HPXML/Building/BuildingDetails/Appliances/Dishwasher' => {
+        '../../Systems/WaterHeating/HotWaterDistribution' => one_or_more, # See [HotWaterDistribution]
         'SystemIdentifier' => one, # Required by HPXML schema
-        'IsSharedAppliance' => one, # See [Dishwasher=Shared]
+        'AttachedToHotWaterDistribution' => one,
+        'IsSharedAppliance' => one,
         'Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'RatedAnnualkWh | EnergyFactor' => one,
         'LabelElectricRate' => one,
@@ -701,11 +707,6 @@ class EnergyRatingIndex301Validator
         'LabelAnnualGasCost' => one,
         'LabelUsage' => one,
         'PlaceSettingCapacity' => one,
-      },
-
-      ## [Dishwasher=Shared]
-      '/HPXML/Building/BuildingDetails/Appliances/Dishwasher[IsSharedAppliance="true"]' => {
-        'AttachedToWaterHeatingSystem' => one,
       },
 
       # [Refrigerator]

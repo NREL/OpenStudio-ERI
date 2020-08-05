@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>cce05c4a-4b4e-46f9-b2de-9ec49c3ea7ff</version_id>
-  <version_modified>20200730T031147Z</version_modified>
+  <version_id>e81d18b5-1818-4772-9aea-58afaf44d8bb</version_id>
+  <version_modified>20200805T210519Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -130,12 +130,6 @@
       <checksum>026C7CAE</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>6B4A7D6F</checksum>
-    </file>
-    <file>
       <filename>test_appliances.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -145,13 +139,19 @@
       <filename>test_water_heating.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D008DE41</checksum>
+      <checksum>779F820A</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>4C2CCE44</checksum>
+      <checksum>A291A3E9</checksum>
+    </file>
+    <file>
+      <filename>301validator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8C3C01D1</checksum>
     </file>
   </files>
 </measure>
