@@ -685,7 +685,7 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_shared_multiple_units_recirc
-    hpxml_name = 'base-dhw-shared-water-heater-multiple-units-recirc.xml'
+    hpxml_name = 'base-dhw-shared-water-heater-recirc.xml'
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -714,7 +714,7 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_shared_laundry_room
-    hpxml_name = 'base-dhw-shared-water-heater-shared-laundry-room.xml'
+    hpxml_name = 'base-dhw-shared-laundry-room.xml'
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
