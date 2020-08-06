@@ -486,8 +486,8 @@ For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr)
 
 For water heaters that are connected to a desuperheater, the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
 
-If the water heater is a shared system (i.e., serving multiple dwelling units or a shared laundry/equipment room), it should be described using ``IsSharedSystem='true'``.
-In addition, the ``NumberofUnitsServed`` must be specified, where the value is the number of dwelling units served either indirectly (e.g., via shared laundry/equipment room) or directly.
+If the water heater is a shared system (i.e., serving multiple dwelling units or a shared laundry room), it should be described using ``IsSharedSystem='true'``.
+In addition, the ``NumberofUnitsServed`` must be specified, where the value is the number of dwelling units served either indirectly (e.g., via shared laundry room) or directly.
 
 HPXML Hot Water Distribution
 ****************************
@@ -620,7 +620,10 @@ The efficiency of the clothes washer can either be entered as an ``IntegratedMod
 Several other inputs from the EnergyGuide label must be provided as well.
 
 ``IsSharedAppliance`` must also be provided.
-If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, ``NumberofUnits`` and ``NumberofUnitsServed`` must be provided to calculate the ratio of dwelling units to shared clothes washers.
+If set to true, indicating that the clothes washer is in a shared laundry room that serves multiple dwelling units, the following elements must be provided:
+
+- ``NumberofUnitsServed``: The number of dwelling units served by the shared laundry room.
+- ``NumberofUnits``: The number of clothes washers in the shared laundry room.
 
 HPXML Clothes Dryer
 *******************
@@ -634,7 +637,10 @@ The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be pro
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
 ``IsSharedAppliance`` must also be provided.
-If set to true, indicating that the appliance is in a shared laundry room that serves multiple units, ``NumberofUnits`` and ``NumberofUnitsServed`` must be provided to calculate the ratio of dwelling units to shared clothes dryers.
+If set to true, indicating that the clothes dryer is in a shared laundry room that serves multiple dwelling units, the following elements must be provided:
+
+- ``NumberofUnitsServed``: The number of dwelling units served by the shared laundry room.
+- ``NumberofUnits``: The number of clothes dryers in the shared laundry room.
 
 HPXML Dishwasher
 ****************
