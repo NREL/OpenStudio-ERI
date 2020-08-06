@@ -357,11 +357,48 @@
             <ConditionedFloorAreaServed>1539.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
+        <WaterHeating>
+          <WaterHeatingSystem>
+            <SystemIdentifier id='WaterHeater'/>
+            <HotWaterDistributionSystem idref='HotWaterDstribution'/>
+            <FuelType>electricity</FuelType>
+            <WaterHeaterType>storage water heater</WaterHeaterType>
+            <Location>living space</Location>
+            <IsSharedSystem>false</IsSharedSystem>
+            <TankVolume>40.0</TankVolume>
+            <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
+            <EnergyFactor>0.92</EnergyFactor>
+          </WaterHeatingSystem>
+          <HotWaterDistribution>
+            <SystemIdentifier id='HotWaterDstribution'/>
+            <SystemType>
+              <Standard>
+                <PipingLength>88.46</PipingLength>
+              </Standard>
+            </SystemType>
+            <PipeInsulation>
+              <PipeRValue>0.0</PipeRValue>
+            </PipeInsulation>
+          </HotWaterDistribution>
+          <WaterFixture>
+            <SystemIdentifier id='WaterFixture'/>
+            <AttachedToHotWaterDistribution idref='HotWaterDstribution'/>
+            <WaterFixtureType>shower head</WaterFixtureType>
+            <LowFlow>false</LowFlow>
+          </WaterFixture>
+          <WaterFixture>
+            <SystemIdentifier id='WaterFixture2'/>
+            <AttachedToHotWaterDistribution idref='HotWaterDstribution'/>
+            <WaterFixtureType>faucet</WaterFixtureType>
+            <LowFlow>false</LowFlow>
+          </WaterFixture>
+        </WaterHeating>
       </Systems>
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <IsSharedAppliance>false</IsSharedAppliance>
+          <AttachedToHotWaterDistribution idref='HotWaterDstribution'/>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>0.331</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>704.0</RatedAnnualkWh>
@@ -382,6 +419,7 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
           <IsSharedAppliance>false</IsSharedAppliance>
+          <AttachedToHotWaterDistribution idref='HotWaterDstribution'/>
           <Location>living space</Location>
           <RatedAnnualkWh>467.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

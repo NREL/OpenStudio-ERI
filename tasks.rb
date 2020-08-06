@@ -186,6 +186,9 @@ def create_test_hpxmls
 
       hpxml_path = File.join(tests_dir, derivative)
 
+      FileUtils.mkdir_p(File.dirname(hpxml_path))
+      XMLHelper.write_file(hpxml_doc, hpxml_path)
+
       # Validate file against HPXML schema
       schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
       errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
@@ -198,9 +201,6 @@ def create_test_hpxmls
       if errors.size > 0
         fail "ERRORS: #{errors}"
       end
-
-      FileUtils.mkdir_p(File.dirname(hpxml_path))
-      XMLHelper.write_file(hpxml_doc, hpxml_path)
     rescue Exception => e
       puts "\n#{e}\n#{e.backtrace.join('\n')}"
       puts "\nError: Did not successfully generate #{derivative}."
@@ -930,6 +930,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -941,6 +942,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # Tankless natural gas with EF = 0.82
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeTankless,
@@ -952,6 +954,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.56; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -965,6 +968,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -973,6 +977,18 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.62,
                                     recovery_efficiency: 0.78)
+  elsif hpxml_file.include?('HERS_AutoGen')
+    # 40 gal electric with EF = 0.88
+    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    hot_water_distribution_idref: 'HotWaterDstribution',
+                                    is_shared_system: false,
+                                    fuel_type: HPXML::FuelTypeElectricity,
+                                    water_heater_type: HPXML::WaterHeaterTypeStorage,
+                                    location: HPXML::LocationLivingSpace,
+                                    tank_volume: 40,
+                                    fraction_dhw_load_served: 1,
+                                    energy_factor: 0.92)
   end
 end
 
@@ -1003,6 +1019,12 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
     hpxml.hot_water_distributions[0].dwhr_facilities_connected = HPXML::DWHRFacilitiesConnectedAll
     hpxml.hot_water_distributions[0].dwhr_equal_flow = true
     hpxml.hot_water_distributions[0].dwhr_efficiency = 0.54
+  elsif hpxml_file.include?('HERS_AutoGen')
+    # Standard
+    hpxml.hot_water_distributions.clear
+    hpxml.hot_water_distributions.add(id: 'HotWaterDstribution',
+                                      system_type: HPXML::DHWDistTypeStandard,
+                                      pipe_r_value: 0.0)
   end
 
   has_uncond_bsmnt = false
@@ -1031,9 +1053,11 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
     # Standard
     hpxml.water_fixtures.clear
     hpxml.water_fixtures.add(id: 'WaterFixture',
+                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: false)
     hpxml.water_fixtures.add(id: 'WaterFixture2',
+                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: false)
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-04.xml',
@@ -1041,11 +1065,24 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
     # Low-flow
     hpxml.water_fixtures.clear
     hpxml.water_fixtures.add(id: 'WaterFixture',
+                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: true)
     hpxml.water_fixtures.add(id: 'WaterFixture2',
+                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: true)
+  elsif hpxml_file.include?('HERS_AutoGen')
+    # Standard
+    hpxml.water_fixtures.clear
+    hpxml.water_fixtures.add(id: 'WaterFixture',
+                             hot_water_distribution_idref: 'HotWaterDstribution',
+                             water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
+                             low_flow: false)
+    hpxml.water_fixtures.add(id: 'WaterFixture2',
+                             hot_water_distribution_idref: 'HotWaterDstribution',
+                             water_fixture_type: HPXML::WaterFixtureTypeFaucet,
+                             low_flow: false)
   end
 end
 
@@ -1055,6 +1092,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   hpxml.clothes_washers.clear
   hpxml.clothes_washers.add(id: 'ClothesWasher',
+                            hot_water_distribution_idref: 'HotWaterDstribution',
                             is_shared_appliance: false,
                             location: HPXML::LocationLivingSpace,
                             integrated_modified_energy_factor: default_values[:integrated_modified_energy_factor],
@@ -1114,6 +1152,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
+                        hot_water_distribution_idref: 'HotWaterDstribution',
                         is_shared_appliance: false,
                         location: HPXML::LocationLivingSpace,
                         place_setting_capacity: default_values[:place_setting_capacity],
