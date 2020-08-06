@@ -1410,7 +1410,8 @@ def create_sample_hpxmls
     if not hpxml.clothes_washers.empty?
       if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_washers[0].location)
         hpxml.clothes_washers[0].is_shared_appliance = true
-        hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = shared_water_heaters[0].number_of_units_served / 2
+        hpxml.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
+        hpxml.clothes_washers[0].number_of_units = 2
       else
         hpxml.clothes_washers[0].is_shared_appliance = false
       end
@@ -1418,7 +1419,8 @@ def create_sample_hpxmls
     if not hpxml.clothes_dryers.empty?
       if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_dryers[0].location)
         hpxml.clothes_dryers[0].is_shared_appliance = true
-        hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = shared_water_heaters[0].number_of_units_served / 2
+        hpxml.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
+        hpxml.clothes_dryers[0].number_of_units = 2
       else
         hpxml.clothes_dryers[0].is_shared_appliance = false
       end

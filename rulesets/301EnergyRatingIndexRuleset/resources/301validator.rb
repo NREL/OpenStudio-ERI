@@ -676,7 +676,8 @@ class EnergyRatingIndex301Validator
 
       ## [ClothesWasher=Shared]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[IsSharedAppliance="true"]' => {
-        'extension/RatioOfDwellingUnitsToSharedClothesWashers' => one,
+        'NumberofUnits' => one,
+        'NumberofUnitsServed' => one,
       },
 
       # [ClothesDryer]
@@ -691,7 +692,8 @@ class EnergyRatingIndex301Validator
 
       ## [ClothesDryer=Shared]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[IsSharedAppliance="true"]' => {
-        'extension/RatioOfDwellingUnitsToSharedClothesDryers' => one,
+        'NumberofUnits' => one,
+        'NumberofUnitsServed' => one,
       },
 
       # [Dishwasher]

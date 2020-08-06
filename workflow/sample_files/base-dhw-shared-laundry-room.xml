@@ -684,7 +684,9 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='SharedClothesWasher'/>
+          <NumberofUnits>2</NumberofUnits>
           <IsSharedAppliance>true</IsSharedAppliance>
+          <NumberofUnitsServed>6</NumberofUnitsServed>
           <AttachedToHotWaterDistribution idref='SharedHotWaterDistribution'/>
           <Location>other heated space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
@@ -694,20 +696,16 @@
           <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
           <LabelUsage>6.0</LabelUsage>
           <Capacity>3.2</Capacity>
-          <extension>
-            <RatioOfDwellingUnitsToSharedClothesWashers>3</RatioOfDwellingUnitsToSharedClothesWashers>
-          </extension>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='SharedClothesDryer'/>
+          <NumberofUnits>2</NumberofUnits>
           <IsSharedAppliance>true</IsSharedAppliance>
+          <NumberofUnitsServed>6</NumberofUnitsServed>
           <Location>other heated space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
-          <extension>
-            <RatioOfDwellingUnitsToSharedClothesDryers>3</RatioOfDwellingUnitsToSharedClothesDryers>
-          </extension>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='SharedDishwasher'/>
