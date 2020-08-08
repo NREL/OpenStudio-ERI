@@ -100,15 +100,20 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nec_x_heat] = []
   results[:nmeul_heat] = []
 
-  for s in 0..rated_output[:hpxml_eec_heats].size - 1
-    reul_heat = ref_output[:loadHeating][s]
+  rated_output[:hpxml_heat_sys_ids].each_with_index do |sys_id, rated_idx|
+    ref_idx = ref_output[:hpxml_heat_sys_ids].index(sys_id)
+
+    reul_heat = ref_output[:loadHeating][ref_idx]
 
     coeff_heat_a = nil
     coeff_heat_b = nil
-    if ref_output[:hpxml_heat_fuels][s] == HPXML::FuelTypeElectricity
+    if (ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity) != (rated_output[:hpxml_heat_fuels][rated_idx] == HPXML::FuelTypeElectricity)
+      fail 'Data not in sync.'
+    end
+    if ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity
       coeff_heat_a = 2.2561
       coeff_heat_b = 0.0
-    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? ref_output[:hpxml_heat_fuels][s]
+    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? ref_output[:hpxml_heat_fuels][ref_idx]
       coeff_heat_a = 1.0943
       coeff_heat_b = 0.4030
     end
@@ -116,11 +121,11 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
       fail 'Could not identify EEC coefficients for heating system.'
     end
 
-    eec_x_heat = rated_output[:hpxml_eec_heats][s]
-    eec_r_heat = ref_output[:hpxml_eec_heats][s]
+    eec_x_heat = rated_output[:hpxml_eec_heats][rated_idx]
+    eec_r_heat = ref_output[:hpxml_eec_heats][ref_idx]
 
-    ec_x_heat = rated_output[:elecHeating][s] + rated_output[:elecHeatingFansPumps][s] + rated_output[:gasHeating][s] + rated_output[:oilHeating][s] + rated_output[:propaneHeating][s] + rated_output[:woodcordHeating][s] + rated_output[:woodpelletsHeating][s]
-    ec_r_heat = ref_output[:elecHeating][s] + ref_output[:elecHeatingFansPumps][s] + ref_output[:gasHeating][s] + ref_output[:oilHeating][s] + ref_output[:propaneHeating][s] + ref_output[:woodcordHeating][s] + ref_output[:woodpelletsHeating][s]
+    ec_x_heat = rated_output[:elecHeating][rated_idx] + rated_output[:elecHeatingFansPumps][rated_idx] + rated_output[:gasHeating][rated_idx] + rated_output[:oilHeating][rated_idx] + rated_output[:propaneHeating][rated_idx] + rated_output[:woodcordHeating][rated_idx] + rated_output[:woodpelletsHeating][rated_idx]
+    ec_r_heat = ref_output[:elecHeating][ref_idx] + ref_output[:elecHeatingFansPumps][ref_idx] + ref_output[:gasHeating][ref_idx] + ref_output[:oilHeating][ref_idx] + ref_output[:propaneHeating][ref_idx] + ref_output[:woodcordHeating][ref_idx] + ref_output[:woodpelletsHeating][ref_idx]
 
     dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
@@ -162,17 +167,19 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nmeul_cool] = []
 
   tot_reul_cool = ref_output[:loadCooling].sum(0.0)
-  for s in 0..rated_output[:hpxml_eec_cools].size - 1
-    reul_cool = ref_output[:loadCooling][s]
+  rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, rated_idx|
+    ref_idx = ref_output[:hpxml_cool_sys_ids].index(sys_id)
+
+    reul_cool = ref_output[:loadCooling][ref_idx]
 
     coeff_cool_a = 3.8090
     coeff_cool_b = 0.0
 
-    eec_x_cool = rated_output[:hpxml_eec_cools][s]
-    eec_r_cool = ref_output[:hpxml_eec_cools][s]
+    eec_x_cool = rated_output[:hpxml_eec_cools][rated_idx]
+    eec_r_cool = ref_output[:hpxml_eec_cools][ref_idx]
 
-    ec_x_cool = rated_output[:elecCooling][s] + rated_output[:elecCoolingFansPumps][s]
-    ec_r_cool = ref_output[:elecCooling][s] + ref_output[:elecCoolingFansPumps][s]
+    ec_x_cool = rated_output[:elecCooling][rated_idx] + rated_output[:elecCoolingFansPumps][rated_idx]
+    ec_r_cool = ref_output[:elecCooling][ref_idx] + ref_output[:elecCoolingFansPumps][ref_idx]
 
     dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
 
