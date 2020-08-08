@@ -620,7 +620,6 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeater'/>
-            <HotWaterDistributionSystem idref='HotWaterDistribution'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
@@ -633,7 +632,6 @@
           </WaterHeatingSystem>
           <WaterHeatingSystem>
             <SystemIdentifier id='SharedWaterHeater'/>
-            <HotWaterDistributionSystem idref='SharedHotWaterDistribution'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>other heated space</Location>
@@ -656,26 +654,13 @@
               <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
-          <HotWaterDistribution>
-            <SystemIdentifier id='SharedHotWaterDistribution'/>
-            <SystemType>
-              <Standard>
-                <PipingLength>0.0</PipingLength>
-              </Standard>
-            </SystemType>
-            <PipeInsulation>
-              <PipeRValue>0.0</PipeRValue>
-            </PipeInsulation>
-          </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
-            <AttachedToHotWaterDistribution idref='HotWaterDistribution'/>
             <WaterFixtureType>shower head</WaterFixtureType>
             <LowFlow>true</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture2'/>
-            <AttachedToHotWaterDistribution idref='HotWaterDistribution'/>
             <WaterFixtureType>faucet</WaterFixtureType>
             <LowFlow>false</LowFlow>
           </WaterFixture>
@@ -687,7 +672,7 @@
           <NumberofUnits>2</NumberofUnits>
           <IsSharedAppliance>true</IsSharedAppliance>
           <NumberofUnitsServed>6</NumberofUnitsServed>
-          <AttachedToHotWaterDistribution idref='SharedHotWaterDistribution'/>
+          <AttachedToWaterHeatingSystem idref='SharedWaterHeater'/>
           <Location>other heated space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -710,7 +695,7 @@
         <Dishwasher>
           <SystemIdentifier id='SharedDishwasher'/>
           <IsSharedAppliance>true</IsSharedAppliance>
-          <AttachedToHotWaterDistribution idref='SharedHotWaterDistribution'/>
+          <AttachedToWaterHeatingSystem idref='SharedWaterHeater'/>
           <Location>other heated space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

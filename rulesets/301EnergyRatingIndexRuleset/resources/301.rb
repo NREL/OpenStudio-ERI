@@ -1538,17 +1538,23 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
+    has_multiple_water_heaters = (orig_hpxml.water_heating_systems.size > 1)
+
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
       tank_volume = orig_water_heater.tank_volume
       if [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeTankless].include? orig_water_heater.water_heater_type
         tank_volume = 40.0
       elsif orig_water_heater.is_shared_system
         tank_volume = 40.0
+      elsif has_multiple_water_heaters
+        tank_volume = 40.0
       end
 
       # Set fuel type for combi systems
       fuel_type = orig_water_heater.fuel_type
-      if [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
+      if has_multiple_water_heaters
+        fuel_type = orig_hpxml.predominant_water_heating_fuel()
+      elsif [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
       end
 
@@ -1564,20 +1570,20 @@ class EnergyRatingIndex301Ruleset
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
-                                          hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                           is_shared_system: false,
-                                          number_of_units_served: 1,
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location.gsub('unvented', 'vented'),
                                           performance_adjustment: 1.0,
                                           tank_volume: tank_volume,
-                                          fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
+                                          fraction_dhw_load_served: 1.0,
                                           heating_capacity: heating_capacity,
                                           energy_factor: energy_factor,
                                           recovery_efficiency: recovery_efficiency,
                                           uses_desuperheater: false,
                                           temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
+
+      break if has_multiple_water_heaters # Only add 1 reference water heater
     end
 
     if orig_hpxml.water_heating_systems.size == 0
@@ -1613,7 +1619,6 @@ class EnergyRatingIndex301Ruleset
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
                                           is_shared_system: orig_water_heater.is_shared_system,
-                                          hot_water_distribution_idref: orig_water_heater.hot_water_distribution_idref,
                                           number_of_units_served: orig_water_heater.number_of_units_served,
                                           fuel_type: orig_water_heater.fuel_type,
                                           water_heater_type: orig_water_heater.water_heater_type,
@@ -1655,13 +1660,11 @@ class EnergyRatingIndex301Ruleset
 
     # New water fixtures
     new_hpxml.water_fixtures.add(id: 'ShowerHead',
-                                 hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                  water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                                  low_flow: false)
 
     # Faucet
     new_hpxml.water_fixtures.add(id: 'Faucet',
-                                 hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                  water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                                  low_flow: false)
   end
@@ -1675,30 +1678,28 @@ class EnergyRatingIndex301Ruleset
     end
 
     # New hot water distribution
-    orig_hpxml.hot_water_distributions.each do |hot_water_distribution|
-      new_hpxml.hot_water_distributions.add(id: hot_water_distribution.id,
-                                            system_type: hot_water_distribution.system_type,
-                                            pipe_r_value: hot_water_distribution.pipe_r_value,
-                                            standard_piping_length: hot_water_distribution.standard_piping_length,
-                                            recirculation_control_type: hot_water_distribution.recirculation_control_type,
-                                            recirculation_piping_length: hot_water_distribution.recirculation_piping_length,
-                                            recirculation_branch_piping_length: hot_water_distribution.recirculation_branch_piping_length,
-                                            recirculation_pump_power: hot_water_distribution.recirculation_pump_power,
-                                            dwhr_facilities_connected: hot_water_distribution.dwhr_facilities_connected,
-                                            dwhr_equal_flow: hot_water_distribution.dwhr_equal_flow,
-                                            dwhr_efficiency: hot_water_distribution.dwhr_efficiency,
-                                            has_shared_recirculation: hot_water_distribution.has_shared_recirculation,
-                                            shared_recirculation_number_of_units_served: hot_water_distribution.shared_recirculation_number_of_units_served,
-                                            shared_recirculation_pump_power: hot_water_distribution.shared_recirculation_pump_power,
-                                            shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
-    end
+    hot_water_distribution = orig_hpxml.hot_water_distributions[0]
+    new_hpxml.hot_water_distributions.add(id: hot_water_distribution.id,
+                                          system_type: hot_water_distribution.system_type,
+                                          pipe_r_value: hot_water_distribution.pipe_r_value,
+                                          standard_piping_length: hot_water_distribution.standard_piping_length,
+                                          recirculation_control_type: hot_water_distribution.recirculation_control_type,
+                                          recirculation_piping_length: hot_water_distribution.recirculation_piping_length,
+                                          recirculation_branch_piping_length: hot_water_distribution.recirculation_branch_piping_length,
+                                          recirculation_pump_power: hot_water_distribution.recirculation_pump_power,
+                                          dwhr_facilities_connected: hot_water_distribution.dwhr_facilities_connected,
+                                          dwhr_equal_flow: hot_water_distribution.dwhr_equal_flow,
+                                          dwhr_efficiency: hot_water_distribution.dwhr_efficiency,
+                                          has_shared_recirculation: hot_water_distribution.has_shared_recirculation,
+                                          shared_recirculation_number_of_units_served: hot_water_distribution.shared_recirculation_number_of_units_served,
+                                          shared_recirculation_pump_power: hot_water_distribution.shared_recirculation_pump_power,
+                                          shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
 
     # New water fixtures
     orig_hpxml.water_fixtures.each do |orig_water_fixture|
       next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
 
       new_hpxml.water_fixtures.add(id: orig_water_fixture.id,
-                                   hot_water_distribution_idref: orig_water_fixture.hot_water_distribution_idref,
                                    water_fixture_type: orig_water_fixture.water_fixture_type,
                                    low_flow: orig_water_fixture.low_flow)
     end
@@ -1776,7 +1777,6 @@ class EnergyRatingIndex301Ruleset
     reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: id,
                                   is_shared_appliance: false,
-                                  hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                   location: location,
                                   integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
                                   rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1807,7 +1807,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
                                   is_shared_appliance: clothes_washer.is_shared_appliance,
-                                  hot_water_distribution_idref: clothes_washer.hot_water_distribution_idref,
+                                  water_heating_system_idref: clothes_washer.water_heating_system_idref,
                                   location: clothes_washer.location,
                                   modified_energy_factor: clothes_washer.modified_energy_factor,
                                   integrated_modified_energy_factor: clothes_washer.integrated_modified_energy_factor,
@@ -1891,7 +1891,6 @@ class EnergyRatingIndex301Ruleset
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: id,
                               is_shared_appliance: false,
-                              hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                               location: location,
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1920,7 +1919,7 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.dishwashers.add(id: dishwasher.id,
                               is_shared_appliance: dishwasher.is_shared_appliance,
-                              hot_water_distribution_idref: dishwasher.hot_water_distribution_idref,
+                              water_heating_system_idref: dishwasher.water_heating_system_idref,
                               location: dishwasher.location,
                               energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
@@ -2511,7 +2510,6 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
                                         is_shared_system: false,
-                                        hot_water_distribution_idref: new_hpxml.hot_water_distributions[0].id,
                                         number_of_units_served: 1,
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,

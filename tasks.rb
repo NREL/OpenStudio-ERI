@@ -930,7 +930,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -942,7 +941,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # Tankless natural gas with EF = 0.82
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeTankless,
@@ -954,7 +952,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.56; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -968,7 +965,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -981,7 +977,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
-                                    hot_water_distribution_idref: 'HotWaterDstribution',
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -1053,11 +1048,9 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
     # Standard
     hpxml.water_fixtures.clear
     hpxml.water_fixtures.add(id: 'WaterFixture',
-                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: false)
     hpxml.water_fixtures.add(id: 'WaterFixture2',
-                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: false)
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-04.xml',
@@ -1065,22 +1058,18 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
     # Low-flow
     hpxml.water_fixtures.clear
     hpxml.water_fixtures.add(id: 'WaterFixture',
-                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: true)
     hpxml.water_fixtures.add(id: 'WaterFixture2',
-                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: true)
   elsif hpxml_file.include?('HERS_AutoGen')
     # Standard
     hpxml.water_fixtures.clear
     hpxml.water_fixtures.add(id: 'WaterFixture',
-                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: false)
     hpxml.water_fixtures.add(id: 'WaterFixture2',
-                             hot_water_distribution_idref: 'HotWaterDstribution',
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: false)
   end
@@ -1092,7 +1081,6 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   hpxml.clothes_washers.clear
   hpxml.clothes_washers.add(id: 'ClothesWasher',
-                            hot_water_distribution_idref: 'HotWaterDstribution',
                             is_shared_appliance: false,
                             location: HPXML::LocationLivingSpace,
                             integrated_modified_energy_factor: default_values[:integrated_modified_energy_factor],
@@ -1152,7 +1140,6 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
-                        hot_water_distribution_idref: 'HotWaterDstribution',
                         is_shared_appliance: false,
                         location: HPXML::LocationLivingSpace,
                         place_setting_capacity: default_values[:place_setting_capacity],
@@ -1312,13 +1299,11 @@ def create_sample_hpxmls
                   'invalid_files/invalid-runperiod.xml',
                   'invalid_files/unattached-cfis.xml',
                   'invalid_files/unattached-door.xml',
-                  'invalid_files/unattached-hot-water-distribution-clothes-washer.xml',
-                  'invalid_files/unattached-hot-water-distribution-dishwasher.xml',
-                  'invalid_files/unattached-hot-water-distribution-water-heater.xml',
-                  'invalid_files/unattached-hot-water-distribution-water-fixture.xml',
                   'invalid_files/unattached-hvac-distribution.xml',
                   'invalid_files/unattached-skylight.xml',
                   'invalid_files/unattached-solar-thermal-system.xml',
+                  'invalid_files/unattached-shared-clothes-washer-water-heater.xml',
+                  'invalid_files/unattached-shared-dishwasher-water-heater.xml',
                   'invalid_files/unattached-window.xml',
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
@@ -1373,8 +1358,8 @@ def create_sample_hpxmls
                   'base-misc-loads-large-uncommon.xml',
                   'base-misc-loads-large-uncommon2.xml',
                   'base-misc-loads-none.xml',
-                  'base-misc-loads-usage-multiplier.xml',
                   'base-misc-neighbor-shading.xml',
+                  'base-misc-usage-multiplier.xml',
                   'base-simcontrol-daylight-saving-custom.xml',
                   'base-simcontrol-daylight-saving-disabled.xml',
                   'base-simcontrol-runperiod-1-month.xml',

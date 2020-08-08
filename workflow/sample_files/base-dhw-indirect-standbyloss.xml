@@ -338,7 +338,6 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeater'/>
-            <HotWaterDistributionSystem idref='HotWaterDistribution'/>
             <WaterHeaterType>space-heating boiler with storage tank</WaterHeaterType>
             <Location>living space</Location>
             <IsSharedSystem>false</IsSharedSystem>
@@ -361,13 +360,11 @@
           </HotWaterDistribution>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture'/>
-            <AttachedToHotWaterDistribution idref='HotWaterDistribution'/>
             <WaterFixtureType>shower head</WaterFixtureType>
             <LowFlow>true</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture2'/>
-            <AttachedToHotWaterDistribution idref='HotWaterDistribution'/>
             <WaterFixtureType>faucet</WaterFixtureType>
             <LowFlow>false</LowFlow>
           </WaterFixture>
@@ -377,7 +374,6 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <AttachedToHotWaterDistribution idref='HotWaterDistribution'/>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -398,7 +394,6 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <AttachedToHotWaterDistribution idref='HotWaterDistribution'/>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

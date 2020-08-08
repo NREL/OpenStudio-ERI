@@ -443,11 +443,11 @@ HPXML Water Heating Systems
 ***************************
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
-Inputs including ``WaterHeaterType``, ``HotWaterDistributionSystem``, ``IsSharedSystem``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
+Inputs including ``WaterHeaterType``, ``IsSharedSystem``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
 
 .. warning::
 
-  ``FractionDHWLoadServed`` represents the fraction of the hot water **fixtures** load (i.e., not the total load) served by the water heater. The load from an attached clothes washer and/or dishwasher will be automatically assigned to the attached water heater(s).
+  ``FractionDHWLoadServed`` represents only the fraction of the hot water load associated with the hot water **fixtures**. Additional hot water load from the clothes washer/dishwasher will be automatically assigned to the appropriate water heater(s).
 
 The ``Location`` must be one of the following:
 
@@ -492,9 +492,9 @@ In addition, the ``NumberofUnitsServed`` must be specified, where the value is t
 HPXML Hot Water Distribution
 ****************************
 
-Each separate hot water distribution system should be specified as a ``Systems/WaterHeating/HotWaterDistribution``.
-One or more water heaters can be connected to each distribution system.
+A single ``Systems/WaterHeating/HotWaterDistribution`` must be provided if any water heating systems are specified.
 Inputs including ``SystemType`` and ``PipeInsulation/PipeRValue`` must be provided.
+Note: Any hot water distribution associated with a shared laundry room in attached/multifamily buildings should not be defined.
 
 Standard
 ~~~~~~~~
@@ -536,7 +536,7 @@ HPXML Water Fixtures
 ********************
 
 Water fixtures should be entered as ``Systems/WaterHeating/WaterFixture`` elements.
-Each fixture must have ``WaterFixtureType``, ``LowFlow``, and ``AttachedToHotWaterDistribution`` elements provided.
+Each fixture must have ``WaterFixtureType`` and ``LowFlow`` elements provided.
 Fixtures should be specified as low flow if they are <= 2.0 gpm.
 
 HPXML Solar Thermal
@@ -610,8 +610,7 @@ HPXML Clothes Washer
 ********************
 
 A single ``Appliances/ClothesWasher`` element may be specified.
-
-The ``AttachedToHotWaterDistribution`` element must be provided.
+The ``IsSharedAppliance`` element must be provided.
 
 If no clothes washer is located within the Rated Home, a clothes washer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
 If there are multiple clothes washers, the clothes washer with the highest Label Energy Rating (kWh/yr) shall be used.
@@ -619,9 +618,10 @@ If there are multiple clothes washers, the clothes washer with the highest Label
 The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
-``IsSharedAppliance`` must also be provided.
-If set to true, indicating that the clothes washer is in a shared laundry room that serves multiple dwelling units, the following elements must be provided:
+If the clothes washer is a shared appliance (i.e., in a shared laundry room), it should be described using ``IsSharedAppliance='true'``.
+In addition, the following elements must be provided:
 
+- ``AttachedToWaterHeatingSystem``: Reference a shared water heater.
 - ``NumberofUnitsServed``: The number of dwelling units served by the shared laundry room.
 - ``NumberofUnits``: The number of clothes washers in the shared laundry room.
 
@@ -629,6 +629,7 @@ HPXML Clothes Dryer
 *******************
 
 A single ``Appliances/ClothesDryer`` element may be specified.
+The ``IsSharedAppliance`` element must be provided.
 
 If no clothes dryer is located within the Rated Home, a clothes dryer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
 If there are multiple clothes dryers, the clothes dryer with the lowest Energy Factor or Combined Energy Factor shall be used.
@@ -636,8 +637,8 @@ If there are multiple clothes dryers, the clothes dryer with the lowest Energy F
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
-``IsSharedAppliance`` must also be provided.
-If set to true, indicating that the clothes dryer is in a shared laundry room that serves multiple dwelling units, the following elements must be provided:
+If the clothes dryer is a shared appliance (i.e., in a shared laundry room), it should be described using ``IsSharedAppliance='true'``.
+In addition, the following elements must be provided:
 
 - ``NumberofUnitsServed``: The number of dwelling units served by the shared laundry room.
 - ``NumberofUnits``: The number of clothes dryers in the shared laundry room.
@@ -646,8 +647,7 @@ HPXML Dishwasher
 ****************
 
 A single ``Appliances/Dishwasher`` element may be specified.
-
-The ``AttachedToHotWaterDistribution`` element must be provided.
+The ``IsSharedAppliance`` element must be provided.
 
 If no dishwasher is located within the Rated Home, a dishwasher in the nearest shared kitchen in the building shall be used only if available for daily use by the occupants of the Rated Home.
 If there are multiple dishwashers, the dishwasher with the lowest Energy Factor (highest kWh/yr) shall be used.
@@ -655,7 +655,10 @@ If there are multiple dishwashers, the dishwasher with the lowest Energy Factor 
 The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` or an ``EnergyFactor``.
 The dishwasher's ``PlaceSettingCapacity`` also must be provided as well as other inputs from the EnergyGuide label.
 
-``IsSharedAppliance`` must also be provided.
+If the dishwasher is a shared appliance (i.e., in a shared laundry room), it should be described using ``IsSharedAppliance='true'``.
+In addition, the following elements must be provided:
+
+- ``AttachedToWaterHeatingSystem``: Reference a shared water heater.
 
 HPXML Refrigerator
 ******************
