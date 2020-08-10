@@ -602,7 +602,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_ceiling_fan
-    hpxml_name = 'base-misc-ceiling-fans.xml'
+    hpxml_name = 'base-lighting-ceiling-fans.xml'
 
     # Rated Home, Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIRatedHome,
