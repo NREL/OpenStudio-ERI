@@ -155,109 +155,127 @@ class ERIEnclosureTest < MiniTest::Test
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_roofs(hpxml, 1510, 2.3, 0.7, 0.92)
+    _check_roofs(hpxml, 1510, 2.3, 0.7, 0.92, nil)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_roofs(hpxml, 1510, 2.3, 0.75, 0.9)
+    _check_roofs(hpxml, 1510, 2.3, 0.75, 0.9, nil)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_roofs(hpxml, 1300, 2.3, 0.7, 0.92)
+    _check_roofs(hpxml, 1300, 2.3, 0.7, 0.92, nil)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_roofs(hpxml, 1300, 2.3, 0.75, 0.9)
+    _check_roofs(hpxml, 1300, 2.3, 0.75, 0.9, nil)
 
     hpxml_name = 'base-atticroof-cathedral.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_roofs(hpxml, 1510, 25.8, 0.7, 0.92)
+    _check_roofs(hpxml, 1510, 25.8, 0.7, 0.92, nil)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_roofs(hpxml, 1510, 33.33, 0.75, 0.9)
+    _check_roofs(hpxml, 1510, 33.33, 0.75, 0.9, nil)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_roofs(hpxml, 1300, 25.8, 0.7, 0.92)
+    _check_roofs(hpxml, 1300, 25.8, 0.7, 0.92, nil)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_roofs(hpxml, 1300, 33.33, 0.75, 0.9)
+    _check_roofs(hpxml, 1300, 33.33, 0.75, 0.9, nil)
 
     hpxml_name = 'base-atticroof-conditioned.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_roofs(hpxml, 1510, (25.8 * 1006 + 2.3 * 504) / 1510, 0.7, 0.92)
+    _check_roofs(hpxml, 1510, (25.8 * 1006 + 2.3 * 504) / 1510, 0.7, 0.92, nil)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_roofs(hpxml, 1510, (33.33 * 1006 + 2.3 * 504) / 1510, 0.75, 0.9)
+    _check_roofs(hpxml, 1510, (33.33 * 1006 + 2.3 * 504) / 1510, 0.75, 0.9, nil)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_roofs(hpxml, 1300, (25.8 * 1006 + 2.3 * 504) / 1510, 0.7, 0.92)
+    _check_roofs(hpxml, 1300, (25.8 * 1006 + 2.3 * 504) / 1510, 0.7, 0.92, nil)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_roofs(hpxml, 1300, (33.33 * 1006 + 2.3 * 504) / 1510, 0.75, 0.9)
+    _check_roofs(hpxml, 1300, (33.33 * 1006 + 2.3 * 504) / 1510, 0.75, 0.9, nil)
 
     hpxml_name = 'base-atticroof-unvented-insulated-roof.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_roofs(hpxml, 1510, 25.8, 0.7, 0.92)
+    _check_roofs(hpxml, 1510, 25.8, 0.7, 0.92, nil)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_roofs(hpxml, 1510, 2.3, 0.75, 0.9)
+    _check_roofs(hpxml, 1510, 2.3, 0.75, 0.9, nil)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_roofs(hpxml, 1300, 25.8, 0.7, 0.92)
+    _check_roofs(hpxml, 1300, 25.8, 0.7, 0.92, nil)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_roofs(hpxml, 1300, 2.3, 0.75, 0.9)
+    _check_roofs(hpxml, 1300, 2.3, 0.75, 0.9, nil)
 
     hpxml_name = 'base-atticroof-flat.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_roofs(hpxml, 1350, 25.8, 0.7, 0.92)
+    _check_roofs(hpxml, 1350, 25.8, 0.7, 0.92, nil)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_roofs(hpxml, 1350, 33.33, 0.75, 0.9)
+    _check_roofs(hpxml, 1350, 33.33, 0.75, 0.9, nil)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_roofs(hpxml, 1300, 25.8, 0.7, 0.92)
+    _check_roofs(hpxml, 1300, 25.8, 0.7, 0.92, nil)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_roofs(hpxml, 1300, 33.33, 0.75, 0.9)
+    _check_roofs(hpxml, 1300, 33.33, 0.75, 0.9, nil)
 
     hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_roofs(hpxml, nil, nil, nil, nil)
+    _check_roofs(hpxml, nil, nil, nil, nil, nil)
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_roofs(hpxml, nil, nil, nil, nil)
+    _check_roofs(hpxml, nil, nil, nil, nil, nil)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_roofs(hpxml, nil, nil, nil, nil)
+    _check_roofs(hpxml, nil, nil, nil, nil, nil)
 
     # IAD Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_roofs(hpxml, nil, nil, nil, nil)
+    _check_roofs(hpxml, nil, nil, nil, nil, nil)
+
+    hpxml_name = 'base-atticroof-radiant-barrier.xml'
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_roofs(hpxml, 1510, 2.3, 0.7, 0.92, 2)
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_roofs(hpxml, 1510, 2.3, 0.75, 0.9, nil)
+
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_roofs(hpxml, 1300, 2.3, 0.7, 0.92, 2)
+
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_roofs(hpxml, 1300, 2.3, 0.75, 0.9, nil)
   end
 
   def test_enclosure_walls
@@ -1254,7 +1272,7 @@ class ERIEnclosureTest < MiniTest::Test
     assert_in_epsilon(ach50, air_infiltration_measurement.air_leakage, 0.01)
   end
 
-  def _check_roofs(hpxml, area, rvalue, sabs, emit)
+  def _check_roofs(hpxml, area, rvalue, sabs, emit, radiant_barrier_grade)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
     sabs_x_area_values = [] # Area-weighted
@@ -1264,6 +1282,13 @@ class ERIEnclosureTest < MiniTest::Test
       rvalue_x_area_values << roof.insulation_assembly_r_value * roof.area
       sabs_x_area_values << roof.solar_absorptance * roof.area
       emit_x_area_values << roof.emittance * roof.area
+      if radiant_barrier_grade.nil?
+        assert_equal(false, roof.radiant_barrier)
+        assert_nil(roof.radiant_barrier_grade)
+      else
+        assert_equal(true, roof.radiant_barrier)
+        assert_equal(radiant_barrier_grade, roof.radiant_barrier_grade)
+      end
     end
 
     if area.nil?
