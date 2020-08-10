@@ -102,6 +102,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
   rated_output[:hpxml_heat_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_heat_sys_ids].index(sys_id)
+    fail 'Data not in sync.' if ref_idx < 0
 
     reul_heat = ref_output[:loadHeating][ref_idx]
 
@@ -169,6 +170,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   tot_reul_cool = ref_output[:loadCooling].sum(0.0)
   rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_cool_sys_ids].index(sys_id)
+    fail 'Data not in sync.' if ref_idx < 0
 
     reul_cool = ref_output[:loadCooling][ref_idx]
 
@@ -225,7 +227,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   # Used to accommodate multiple Reference Home water heaters if the Rated Home has multiple
   # water heaters. Now always just 1 Reference Home water heater.
   if ref_output[:loadHotWaterDelivered].size != 1
-    fail 'Unexpected Reference Home results.'
+    fail 'Unexpected Reference Home results; should only be 1 DHW system.'
   end
 
   reul_dhw = ref_output[:loadHotWaterDelivered][0]

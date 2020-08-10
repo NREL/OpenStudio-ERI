@@ -1173,7 +1173,8 @@ class EnergyRatingIndex301Ruleset
                                     heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
-                                    heating_cfm: orig_heating_system.heating_cfm)
+                                    heating_cfm: orig_heating_system.heating_cfm,
+                                    seed_id: orig_heating_system.id)
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1192,7 +1193,8 @@ class EnergyRatingIndex301Ruleset
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
                                     cooling_shr: orig_cooling_system.cooling_shr,
-                                    cooling_cfm: orig_cooling_system.cooling_cfm)
+                                    cooling_cfm: orig_cooling_system.cooling_cfm,
+                                    seed_id: orig_cooling_system.id)
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1220,7 +1222,8 @@ class EnergyRatingIndex301Ruleset
                                cooling_efficiency_seer: orig_heat_pump.cooling_efficiency_seer,
                                cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
                                heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
-                               heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop)
+                               heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
+                               seed_id: orig_heat_pump.id)
     end
     # Add reference heat pump for residual load
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -2371,12 +2374,10 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_heating_gas_furnace(new_hpxml, load_frac, orig_system = nil)
     # 78% AFUE gas furnace
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualHeating' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
@@ -2392,12 +2393,10 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_heating_gas_boiler(new_hpxml, load_frac, orig_system = nil)
     # 80% AFUE gas boiler
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualHeating' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
@@ -2413,12 +2412,10 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_heating_heat_pump(new_hpxml, load_frac, orig_system = nil)
     # 7.7 HSPF air source heat pump
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualHeating' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     # Handle backup
@@ -2461,13 +2458,11 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_cooling_air_conditioner(new_hpxml, load_frac, orig_system = nil)
     # 13 SEER electric air conditioner
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       shr = orig_system.cooling_shr
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualCooling' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
