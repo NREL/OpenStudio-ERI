@@ -1174,7 +1174,7 @@ class EnergyRatingIndex301Ruleset
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
                                     heating_cfm: orig_heating_system.heating_cfm,
-                                    seed_id: orig_heating_system.id)
+                                    seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1194,7 +1194,7 @@ class EnergyRatingIndex301Ruleset
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
                                     cooling_shr: orig_cooling_system.cooling_shr,
                                     cooling_cfm: orig_cooling_system.cooling_cfm,
-                                    seed_id: orig_cooling_system.id)
+                                    seed_id: orig_cooling_system.seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.seed_id)
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1223,7 +1223,7 @@ class EnergyRatingIndex301Ruleset
                                cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
                                heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
                                heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
-                               seed_id: orig_heat_pump.id)
+                               seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)
     end
     # Add reference heat pump for residual load
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding

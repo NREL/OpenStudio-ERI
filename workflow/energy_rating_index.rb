@@ -102,7 +102,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
   rated_output[:hpxml_heat_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_heat_sys_ids].index(sys_id)
-    fail 'Data not in sync.' if ref_idx < 0
+    fail 'Data not in sync.' if ref_idx.nil?
 
     reul_heat = ref_output[:loadHeating][ref_idx]
 
@@ -170,7 +170,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   tot_reul_cool = ref_output[:loadCooling].sum(0.0)
   rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_cool_sys_ids].index(sys_id)
-    fail 'Data not in sync.' if ref_idx < 0
+    fail 'Data not in sync.' if ref_idx.nil?
 
     reul_cool = ref_output[:loadCooling][ref_idx]
 
