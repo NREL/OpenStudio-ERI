@@ -137,7 +137,7 @@ class EnergyRatingIndex301Validator
         'SolarAbsorptance' => one,
         'Emittance' => one,
         'Pitch' => one,
-        'RadiantBarrier' => one,
+        'RadiantBarrier' => one, # See [RadiantBarrier]
         'Insulation/SystemIdentifier' => one, # Required by HPXML schema
         'Insulation/AssemblyEffectiveRValue' => one,
       },
@@ -152,6 +152,10 @@ class EnergyRatingIndex301Validator
         "../../Attics/Attic[AtticType/Attic[Vented='false']]/WithinInfiltrationVolume" => one,
       },
 
+      ## [RadiantBarrier]
+      '/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof[RadiantBarrier="true"]' => {
+        'RadiantBarrierGrade' => one,
+      },
       # [Wall]
       '/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall' => {
         'SystemIdentifier' => one, # Required by HPXML schema
