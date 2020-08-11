@@ -59,7 +59,7 @@ class ERILightingTest < MiniTest::Test
   end
 
   def test_ceiling_fans
-    hpxml_name = 'base-misc-ceiling-fans.xml'
+    hpxml_name = 'base-lighting-ceiling-fans.xml'
 
     medium_cfm = 3000.0
 

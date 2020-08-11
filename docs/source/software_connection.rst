@@ -138,6 +138,7 @@ Pitched or flat roof surfaces that are exposed to ambient conditions should be s
 For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``FrameFloor`` and not a ``Roof``.
 
 Beyond the specification of typical heat transfer properties (insulation R-value, solar absorptance, emittance, etc.), note that roofs can be defined as having a radiant barrier.
+If ``RadiantBarrier`` is provided, ``RadiantBarrierGrade`` must also be provided.
 
 HPXML Rim Joists
 ****************

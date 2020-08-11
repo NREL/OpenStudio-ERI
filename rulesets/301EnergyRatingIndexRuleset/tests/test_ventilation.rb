@@ -911,7 +911,7 @@ class ERIMechVentTest < MiniTest::Test
   end
 
   def test_whole_house_fan
-    hpxml_name = 'base-misc-whole-house-fan.xml'
+    hpxml_name = 'base-mechvent-whole-house-fan.xml'
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

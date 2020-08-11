@@ -483,6 +483,7 @@ class EnergyRatingIndex301Ruleset
                           emittance: orig_roof.emittance,
                           pitch: orig_roof.pitch,
                           radiant_barrier: orig_roof.radiant_barrier,
+                          radiant_barrier_grade: orig_roof.radiant_barrier_grade,
                           insulation_id: orig_roof.insulation_id,
                           insulation_assembly_r_value: orig_roof.insulation_assembly_r_value)
     end
