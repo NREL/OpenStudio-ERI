@@ -1329,6 +1329,7 @@ def create_sample_hpxmls
                   'base-dhw-tankless-electric-outside.xml',
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
+                  'base-enclosure-infil-flue.xml',
                   'base-enclosure-rooftypes.xml',
                   'base-enclosure-walltypes.xml',
                   'base-enclosure-windows-interior-shading.xml',
@@ -1386,7 +1387,12 @@ def create_sample_hpxmls
     # Add ERI version
     hpxml.header.eri_calculation_version = 'latest'
 
-    # Handle extra inputs for shared appliances
+    # Handle extra inputs for ERI
+    hpxml.water_heating_systems.each do |water_heating_system|
+      next unless water_heating_system.is_shared_system.nil?
+
+      water_heating_system.is_shared_system = false
+    end
     shared_locations = [HPXML::LocationOtherHousingUnit,
                         HPXML::LocationOtherHeatedSpace,
                         HPXML::LocationOtherMultifamilyBufferSpace,
