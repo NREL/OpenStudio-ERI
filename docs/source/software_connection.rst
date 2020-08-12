@@ -79,7 +79,7 @@ basement - conditioned          Below-grade conditioned floor area  EnergyPlus c
 basement - unconditioned                                            EnergyPlus calculation                                    Any
 crawlspace - vented                                                 EnergyPlus calculation                                    Any
 crawlspace - unvented                                               EnergyPlus calculation                                    Any
-garage                                                              EnergyPlus calculation                                    Any
+garage                          Single-family (not shared parking)  EnergyPlus calculation                                    Any
 other housing unit              Unrated Conditioned Space           Same as conditioned space                                 Attached/Multifamily only
 other heated space              Unrated Heated Space                Average of conditioned space and outside; minimum of 68F  Attached/Multifamily only
 other multifamily buffer space  Multifamily Buffer Boundary         Average of conditioned space and outside; minimum of 50F  Attached/Multifamily only
@@ -365,7 +365,7 @@ crawlspace - unvented                                               EnergyPlus c
 crawlspace - vented                                                 EnergyPlus calculation                                    Any
 attic - unvented                                                    EnergyPlus calculation                                    Any
 attic - vented                                                      EnergyPlus calculation                                    Any
-garage                                                              EnergyPlus calculation                                    Any
+garage                          Single-family (not shared parking)  EnergyPlus calculation                                    Any
 exterior wall                                                       Average of conditioned space and outside                  Any
 under slab                                                          Ground                                                    Any
 roof deck                                                           Outside                                                   Any
@@ -460,7 +460,7 @@ basement - conditioned          Below-grade conditioned floor area  EnergyPlus c
 basement - unconditioned                                            EnergyPlus calculation                                    Any
 attic - unvented                                                    EnergyPlus calculation                                    Any
 attic - vented                                                      EnergyPlus calculation                                    Any
-garage                                                              EnergyPlus calculation                                    Any
+garage                          Single-family (not shared parking)  EnergyPlus calculation                                    Any
 crawlspace - unvented                                               EnergyPlus calculation                                    Any
 crawlspace - vented                                                 EnergyPlus calculation                                    Any
 other exterior                  Outside                             Outside                                                   Any
@@ -600,7 +600,7 @@ Location                        Description                         Building Typ
 living space                    Above-grade conditioned floor area  Any
 basement - conditioned          Below-grade conditioned floor area  Any
 basement - unconditioned                                            Any
-garage                                                              Any
+garage                          Single-family (not shared parking)  Any
 other housing unit              Unrated Conditioned Space           Attached/Multifamily only
 other heated space              Unrated Heated Space                Attached/Multifamily only
 other multifamily buffer space  Multifamily Buffer Boundary         Attached/Multifamily only
