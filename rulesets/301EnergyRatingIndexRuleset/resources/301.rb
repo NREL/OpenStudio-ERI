@@ -1747,14 +1747,17 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_photovoltaics_rated(orig_hpxml, new_hpxml)
     orig_hpxml.pv_systems.each do |orig_pv_system|
       new_hpxml.pv_systems.add(id: orig_pv_system.id,
+                               is_shared_system: orig_pv_system.is_shared_system,
                                location: orig_pv_system.location,
                                module_type: orig_pv_system.module_type,
                                tracking: orig_pv_system.tracking,
                                array_azimuth: orig_pv_system.array_azimuth,
                                array_tilt: orig_pv_system.array_tilt,
                                max_power_output: orig_pv_system.max_power_output,
+                               building_max_power_output: orig_pv_system.building_max_power_output,
                                inverter_efficiency: orig_pv_system.inverter_efficiency,
-                               system_losses_fraction: orig_pv_system.system_losses_fraction)
+                               system_losses_fraction: orig_pv_system.system_losses_fraction,
+                               number_of_bedrooms_served: orig_pv_system.number_of_bedrooms_served)
     end
   end
 
