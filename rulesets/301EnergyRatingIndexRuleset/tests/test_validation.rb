@@ -99,12 +99,12 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
 
       child_elements.each do |child_element|
         # make sure parent elements of the last child element exist in HPXML
-        child_element_without_predicates = child_element.gsub(/\[.*?\]|\[|\]/, '') # gsub '[...]' or '[' or ']'
+        child_element_without_predicates = child_element.gsub(/\[.*?\]|\[|\]/, '') # remove brackets and text within brackets (e.g. [foo or ...])
         child_element_without_predicates_array = child_element_without_predicates.split('/')[0...-1].reject(&:empty?)
         XMLHelper.create_elements_as_needed(parent_element, child_element_without_predicates_array)
 
         # add child element
-        additional_parent_element = child_element.gsub(/\[text().*?\]/, '').split('/')[0...-1].reject(&:empty?).join('/').chomp('/') # gsub [text()=foo or ...] and select from 0th to the 2nd last element
+        additional_parent_element = child_element.gsub(/\[text().*?\]/, '').split('/')[0...-1].reject(&:empty?).join('/').chomp('/') # remove text that starts with 'text()' within brackets (e.g. [text()=foo or ...]) and select elements from the first to the second last
         mod_parent_element = additional_parent_element.empty? ? parent_element : XMLHelper.get_element(parent_element, additional_parent_element)
         mod_child_name = child_element_without_predicates.split('/')[-1]
         max_number_of_elements_allowed = expected_error_message.gsub(/\[.*?\]|\[|\]/, '').scan(/\d+/).max.to_i # scan numbers outside brackets and then find the maximum
@@ -112,7 +112,7 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
 
         # add a value to child elements as needed
         child_element_with_value = _get_child_element_with_value(target_xpath, max_number_of_elements_allowed)
-        next unless not child_element_with_value.nil?
+        next if child_element_with_value.nil?
 
         child_element_with_value.each do |element_with_value|
           this_child_name = element_with_value[:name]
