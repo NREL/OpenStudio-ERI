@@ -79,7 +79,7 @@ basement - conditioned          Below-grade conditioned floor area  EnergyPlus c
 basement - unconditioned                                            EnergyPlus calculation                                    Any
 crawlspace - vented                                                 EnergyPlus calculation                                    Any
 crawlspace - unvented                                               EnergyPlus calculation                                    Any
-garage                                                              EnergyPlus calculation                                    Any
+garage                          Single-family (not shared parking)  EnergyPlus calculation                                    Any
 other housing unit              Unrated Conditioned Space           Same as conditioned space                                 Attached/Multifamily only
 other heated space              Unrated Heated Space                Average of conditioned space and outside; minimum of 68F  Attached/Multifamily only
 other multifamily buffer space  Multifamily Buffer Boundary         Average of conditioned space and outside; minimum of 50F  Attached/Multifamily only
@@ -138,6 +138,7 @@ Pitched or flat roof surfaces that are exposed to ambient conditions should be s
 For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``FrameFloor`` and not a ``Roof``.
 
 Beyond the specification of typical heat transfer properties (insulation R-value, solar absorptance, emittance, etc.), note that roofs can be defined as having a radiant barrier.
+If ``RadiantBarrier`` is provided, ``RadiantBarrierGrade`` must also be provided.
 
 HPXML Rim Joists
 ****************
@@ -364,7 +365,7 @@ crawlspace - unvented                                               EnergyPlus c
 crawlspace - vented                                                 EnergyPlus calculation                                    Any
 attic - unvented                                                    EnergyPlus calculation                                    Any
 attic - vented                                                      EnergyPlus calculation                                    Any
-garage                                                              EnergyPlus calculation                                    Any
+garage                          Single-family (not shared parking)  EnergyPlus calculation                                    Any
 exterior wall                                                       Average of conditioned space and outside                  Any
 under slab                                                          Ground                                                    Any
 roof deck                                                           Outside                                                   Any
@@ -443,7 +444,12 @@ HPXML Water Heating Systems
 ***************************
 
 Each water heater should be entered as a ``Systems/WaterHeating/WaterHeatingSystem``.
-Inputs including ``WaterHeaterType``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
+Inputs including ``WaterHeaterType``, ``IsSharedSystem``, ``Location``, and ``FractionDHWLoadServed`` must be provided.
+
+.. warning::
+
+  ``FractionDHWLoadServed`` represents only the fraction of the hot water load associated with the hot water **fixtures**. Additional hot water load from the clothes washer/dishwasher will be automatically assigned to the appropriate water heater(s).
+
 The ``Location`` must be one of the following:
 
 ==============================  ==================================  ========================================================  =========================
@@ -454,7 +460,7 @@ basement - conditioned          Below-grade conditioned floor area  EnergyPlus c
 basement - unconditioned                                            EnergyPlus calculation                                    Any
 attic - unvented                                                    EnergyPlus calculation                                    Any
 attic - vented                                                      EnergyPlus calculation                                    Any
-garage                                                              EnergyPlus calculation                                    Any
+garage                          Single-family (not shared parking)  EnergyPlus calculation                                    Any
 crawlspace - unvented                                               EnergyPlus calculation                                    Any
 crawlspace - vented                                                 EnergyPlus calculation                                    Any
 other exterior                  Outside                             Outside                                                   Any
@@ -481,28 +487,41 @@ For combi boiler systems with a storage tank, the storage tank losses (deg-F/hr)
 
 For water heaters that are connected to a desuperheater, the ``RelatedHVACSystem`` must either point to a ``HeatPump`` or a ``CoolingSystem``.
 
+If the water heater is a shared system (i.e., serving multiple dwelling units or a shared laundry room), it should be described using ``IsSharedSystem='true'``.
+In addition, the ``NumberofUnitsServed`` must be specified, where the value is the number of dwelling units served either indirectly (e.g., via shared laundry room) or directly.
+
 HPXML Hot Water Distribution
 ****************************
 
-A ``Systems/WaterHeating/HotWaterDistribution`` must be provided if any water heating systems are specified.
+A single ``Systems/WaterHeating/HotWaterDistribution`` must be provided if any water heating systems are specified.
 Inputs including ``SystemType`` and ``PipeInsulation/PipeRValue`` must be provided.
+Note: Any hot water distribution associated with a shared laundry room in attached/multifamily buildings should not be defined.
 
 Standard
 ~~~~~~~~
 
-For a ``SystemType/Standard`` (non-recirculating) system, the following element is required:
+For a ``SystemType/Standard`` (non-recirculating) system within the dwelling unit, the following element is required:
 
-- ``PipingLength``: Measured length of hot water piping from the hot water heater to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
+- ``PipingLength``: Measured length of hot water piping from the hot water heater (or from a shared recirculation loop serving multiple dwelling units) to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any)
 
 Recirculation
 ~~~~~~~~~~~~~
 
-For a ``SystemType/Recirculation`` system, the following elements are required:
+For a ``SystemType/Recirculation`` system within the dwelling unit, the following elements are required:
 
-- ``ControlType``
+- ``ControlType``: One of "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
 - ``RecirculationPipingLoopLength``: Measured recirculation loop length including both supply and return sides, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements
 - ``BranchPipingLoopLength``: Measured length of the branch hot water piping from the recirculation loop to the farthest hot water fixture from the recirculation loop, measured longitudinally from plans, assuming the branch hot water piping does not run diagonally
-- ``PumpPower``
+- ``PumpPower``: Pump power in Watts.
+
+Shared Recirculation
+~~~~~~~~~~~~~~~~~~~~
+
+In addition to the hot water distribution systems within the dwelling unit, the pump energy use of a shared recirculation system can also be described using the following elements:
+
+- ``extension/SharedRecirculation/NumberofUnitsServed``: Number of dwelling units served by the shared pump.
+- ``extension/SharedRecirculation/PumpPower``: Shared pump power in Watts.
+- ``extension/SharedRecirculation/ControlType``: One of "manual demand control", "presence sensor demand control", "timer", or "no control".
 
 Drain Water Heat Recovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -558,6 +577,7 @@ HPXML Photovoltaics
 Each solar electric (photovoltaic) system should be entered as a ``Systems/Photovoltaics/PVSystem``.
 The following elements, some adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_, are required for each PV system:
 
+- ``IsSharedSystem``: true or false
 - ``Location``: 'ground' or 'roof' mounted
 - ``ModuleType``: 'standard', 'premium', or 'thin film'
 - ``Tracking``: 'fixed' or '1-axis' or '1-axis backtracked' or '2-axis'
@@ -566,6 +586,10 @@ The following elements, some adopted from the `PVWatts model <https://pvwatts.nr
 - ``MaxPowerOutput``
 - ``InverterEfficiency``: Default is 0.96.
 - ``SystemLossesFraction``: Default is 0.14. System losses include soiling, shading, snow, mismatch, wiring, degradation, etc.
+
+If the PV system is a shared system (i.e., serving multiple dwelling units), it should be described using ``IsSharedSystem='true'``.
+In addition, the total output power of the system must be entered as ``MaxPowerOutput[@scope='multiple units']`` and the total number of bedrooms across all dwelling units must be entered as ``extension/NumberofBedroomsServed``.
+The PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms in the building.
 
 HPXML Appliances
 ----------------
@@ -581,7 +605,7 @@ Location                        Description                         Building Typ
 living space                    Above-grade conditioned floor area  Any
 basement - conditioned          Below-grade conditioned floor area  Any
 basement - unconditioned                                            Any
-garage                                                              Any
+garage                          Single-family (not shared parking)  Any
 other housing unit              Unrated Conditioned Space           Attached/Multifamily only
 other heated space              Unrated Heated Space                Attached/Multifamily only
 other multifamily buffer space  Multifamily Buffer Boundary         Attached/Multifamily only
@@ -592,6 +616,7 @@ HPXML Clothes Washer
 ********************
 
 A single ``Appliances/ClothesWasher`` element may be specified.
+The ``IsSharedAppliance`` element must be provided.
 
 If no clothes washer is located within the Rated Home, a clothes washer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
 If there are multiple clothes washers, the clothes washer with the highest Label Energy Rating (kWh/yr) shall be used.
@@ -599,12 +624,18 @@ If there are multiple clothes washers, the clothes washer with the highest Label
 The efficiency of the clothes washer can either be entered as an ``IntegratedModifiedEnergyFactor`` or a ``ModifiedEnergyFactor``.
 Several other inputs from the EnergyGuide label must be provided as well.
 
-If a clothes washer is located in one of the "other ..." locations indicating that it is a shared appliance in an Attached/Multifamily building, the ``extension/RatioOfDwellingUnitsToSharedClothesWashers`` element must be provided.
+If the clothes washer is a shared appliance (i.e., in a shared laundry room), it should be described using ``IsSharedAppliance='true'``.
+In addition, the following elements must be provided:
+
+- ``AttachedToWaterHeatingSystem``: Reference a shared water heater.
+- ``NumberofUnitsServed``: The number of dwelling units served by the shared laundry room.
+- ``NumberofUnits``: The number of clothes washers in the shared laundry room.
 
 HPXML Clothes Dryer
 *******************
 
 A single ``Appliances/ClothesDryer`` element may be specified.
+The ``IsSharedAppliance`` element must be provided.
 
 If no clothes dryer is located within the Rated Home, a clothes dryer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
 If there are multiple clothes dryers, the clothes dryer with the lowest Energy Factor or Combined Energy Factor shall be used.
@@ -612,18 +643,28 @@ If there are multiple clothes dryers, the clothes dryer with the lowest Energy F
 The dryer's ``FuelType`` and ``ControlType`` ("timer" or "moisture") must be provided.
 The efficiency of the clothes dryer can either be entered as a ``CombinedEnergyFactor`` or an ``EnergyFactor``.
 
-If a clothes dryer is located in one of the "other ..." locations indicating that it is a shared appliance in an Attached/Multifamily building, the ``extension/RatioOfDwellingUnitsToSharedClothesDryers`` element must be provided.
+If the clothes dryer is a shared appliance (i.e., in a shared laundry room), it should be described using ``IsSharedAppliance='true'``.
+In addition, the following elements must be provided:
+
+- ``NumberofUnitsServed``: The number of dwelling units served by the shared laundry room.
+- ``NumberofUnits``: The number of clothes dryers in the shared laundry room.
 
 HPXML Dishwasher
 ****************
 
 A single ``Appliances/Dishwasher`` element may be specified.
+The ``IsSharedAppliance`` element must be provided.
 
 If no dishwasher is located within the Rated Home, a dishwasher in the nearest shared kitchen in the building shall be used only if available for daily use by the occupants of the Rated Home.
 If there are multiple dishwashers, the dishwasher with the lowest Energy Factor (highest kWh/yr) shall be used.
 
 The efficiency of the dishwasher can either be entered as a ``RatedAnnualkWh`` or an ``EnergyFactor``.
 The dishwasher's ``PlaceSettingCapacity`` also must be provided as well as other inputs from the EnergyGuide label.
+
+If the dishwasher is a shared appliance (i.e., in a shared laundry room), it should be described using ``IsSharedAppliance='true'``.
+In addition, the following elements must be provided:
+
+- ``AttachedToWaterHeatingSystem``: Reference a shared water heater.
 
 HPXML Refrigerator
 ******************

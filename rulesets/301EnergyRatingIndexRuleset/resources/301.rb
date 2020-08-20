@@ -49,8 +49,8 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_reference(orig_hpxml, new_hpxml)
     set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
-    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
+    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
 
@@ -99,8 +99,8 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_rated(orig_hpxml, new_hpxml)
     set_systems_mechanical_ventilation_rated(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_rated(orig_hpxml, new_hpxml)
-    set_systems_water_heater_rated(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_rated(orig_hpxml, new_hpxml)
+    set_systems_water_heater_rated(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_rated(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_rated(orig_hpxml, new_hpxml)
 
@@ -151,8 +151,8 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_iad(orig_hpxml, new_hpxml)
     set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_iad(orig_hpxml, new_hpxml)
-    set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_iad(orig_hpxml, new_hpxml)
+    set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_iad(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
 
@@ -234,6 +234,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
     new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
     new_hpxml.building_construction.residential_facility_type = @bldg_type
+    new_hpxml.building_construction.has_flue_or_chimney = false
   end
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
@@ -258,6 +259,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
     new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
     new_hpxml.building_construction.residential_facility_type = @bldg_type
+    new_hpxml.building_construction.has_flue_or_chimney = false
   end
 
   def self.set_summary_iad(orig_hpxml, new_hpxml)
@@ -282,6 +284,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.conditioned_floor_area = @cfa
     new_hpxml.building_construction.conditioned_building_volume = @cvolume
     new_hpxml.building_construction.residential_facility_type = @bldg_type
+    new_hpxml.building_construction.has_flue_or_chimney = false
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
@@ -483,6 +486,7 @@ class EnergyRatingIndex301Ruleset
                           emittance: orig_roof.emittance,
                           pitch: orig_roof.pitch,
                           radiant_barrier: orig_roof.radiant_barrier,
+                          radiant_barrier_grade: orig_roof.radiant_barrier_grade,
                           insulation_id: orig_roof.insulation_id,
                           insulation_assembly_r_value: orig_roof.insulation_assembly_r_value)
     end
@@ -959,7 +963,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: fraction_operable,
-                            wall_idref: 'WallArea')
+                            wall_idref: new_hpxml.walls[0].id)
     end
   end
 
@@ -1003,7 +1007,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: fraction_operable,
-                            wall_idref: 'WallArea')
+                            wall_idref: new_hpxml.walls[0].id)
     end
   end
 
@@ -1046,7 +1050,7 @@ class EnergyRatingIndex301Ruleset
     # Create new exterior door
     if exterior_area > 0
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: 'WallArea',
+                          wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
                           azimuth: 0,
                           r_value: 1.0 / ufactor)
@@ -1075,7 +1079,7 @@ class EnergyRatingIndex301Ruleset
     # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
     if exterior_area > 0
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: 'WallArea',
+                          wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
                           azimuth: 0,
                           r_value: avg_r_value)
@@ -1173,7 +1177,8 @@ class EnergyRatingIndex301Ruleset
                                     heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
-                                    heating_cfm: orig_heating_system.heating_cfm)
+                                    heating_cfm: orig_heating_system.heating_cfm,
+                                    seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1192,7 +1197,8 @@ class EnergyRatingIndex301Ruleset
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
                                     cooling_shr: orig_cooling_system.cooling_shr,
-                                    cooling_cfm: orig_cooling_system.cooling_cfm)
+                                    cooling_cfm: orig_cooling_system.cooling_cfm,
+                                    seed_id: orig_cooling_system.seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.seed_id)
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1220,7 +1226,8 @@ class EnergyRatingIndex301Ruleset
                                cooling_efficiency_seer: orig_heat_pump.cooling_efficiency_seer,
                                cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
                                heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
-                               heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop)
+                               heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
+                               seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)
     end
     # Add reference heat pump for residual load
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1372,8 +1379,6 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
-    sys_id = 'MechanicalVentilation'
-
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
@@ -1384,7 +1389,7 @@ class EnergyRatingIndex301Ruleset
 
     if mech_vent_fans.empty?
       # Airflow only
-      new_hpxml.ventilation_fans.add(id: sys_id,
+      new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                      fan_type: HPXML::MechVentTypeBalanced,
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
@@ -1417,7 +1422,7 @@ class EnergyRatingIndex301Ruleset
       end
 
       # Airflow and fan power
-      new_hpxml.ventilation_fans.add(id: sys_id,
+      new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                      fan_type: HPXML::MechVentTypeBalanced,
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
@@ -1540,15 +1545,23 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
+    has_multiple_water_heaters = (orig_hpxml.water_heating_systems.size > 1)
+
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
       tank_volume = orig_water_heater.tank_volume
       if [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeTankless].include? orig_water_heater.water_heater_type
+        tank_volume = 40.0
+      elsif orig_water_heater.is_shared_system
+        tank_volume = 40.0
+      elsif has_multiple_water_heaters
         tank_volume = 40.0
       end
 
       # Set fuel type for combi systems
       fuel_type = orig_water_heater.fuel_type
-      if [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
+      if has_multiple_water_heaters
+        fuel_type = orig_hpxml.predominant_water_heating_fuel()
+      elsif [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
       end
 
@@ -1564,17 +1577,20 @@ class EnergyRatingIndex301Ruleset
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
+                                          is_shared_system: false,
                                           fuel_type: fuel_type,
                                           water_heater_type: HPXML::WaterHeaterTypeStorage,
                                           location: location.gsub('unvented', 'vented'),
                                           performance_adjustment: 1.0,
                                           tank_volume: tank_volume,
-                                          fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
+                                          fraction_dhw_load_served: 1.0,
                                           heating_capacity: heating_capacity,
                                           energy_factor: energy_factor,
                                           recovery_efficiency: recovery_efficiency,
                                           uses_desuperheater: false,
                                           temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
+
+      break if has_multiple_water_heaters # Only add 1 reference water heater
     end
 
     if orig_hpxml.water_heating_systems.size == 0
@@ -1609,6 +1625,8 @@ class EnergyRatingIndex301Ruleset
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
+                                          is_shared_system: orig_water_heater.is_shared_system,
+                                          number_of_units_served: orig_water_heater.number_of_units_served,
                                           fuel_type: orig_water_heater.fuel_type,
                                           water_heater_type: orig_water_heater.water_heater_type,
                                           location: orig_water_heater.location,
@@ -1641,38 +1659,21 @@ class EnergyRatingIndex301Ruleset
     has_uncond_bsmnt = new_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
     standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
 
-    if orig_hpxml.hot_water_distributions.size == 0
-      sys_id = 'HotWaterDistribution'
-    else
-      sys_id = orig_hpxml.hot_water_distributions[0].id
-    end
-
     # New hot water distribution
-    new_hpxml.hot_water_distributions.add(id: sys_id,
+    new_hpxml.hot_water_distributions.add(id: 'HotWaterDistribution',
                                           system_type: HPXML::DHWDistTypeStandard,
                                           pipe_r_value: 0,
                                           standard_piping_length: standard_piping_length)
 
     # New water fixtures
-    if orig_hpxml.water_fixtures.size == 0
-      # Shower Head
-      new_hpxml.water_fixtures.add(id: 'ShowerHead',
-                                   water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
-                                   low_flow: false)
+    new_hpxml.water_fixtures.add(id: 'ShowerHead',
+                                 water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
+                                 low_flow: false)
 
-      # Faucet
-      new_hpxml.water_fixtures.add(id: 'Faucet',
-                                   water_fixture_type: HPXML::WaterFixtureTypeFaucet,
-                                   low_flow: false)
-    else
-      orig_hpxml.water_fixtures.each do |orig_water_fixture|
-        next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
-
-        new_hpxml.water_fixtures.add(id: orig_water_fixture.id,
-                                     water_fixture_type: orig_water_fixture.water_fixture_type,
-                                     low_flow: false)
-      end
-    end
+    # Faucet
+    new_hpxml.water_fixtures.add(id: 'Faucet',
+                                 water_fixture_type: HPXML::WaterFixtureTypeFaucet,
+                                 low_flow: false)
   end
 
   def self.set_systems_water_heating_use_rated(orig_hpxml, new_hpxml)
@@ -1695,7 +1696,11 @@ class EnergyRatingIndex301Ruleset
                                           recirculation_pump_power: hot_water_distribution.recirculation_pump_power,
                                           dwhr_facilities_connected: hot_water_distribution.dwhr_facilities_connected,
                                           dwhr_equal_flow: hot_water_distribution.dwhr_equal_flow,
-                                          dwhr_efficiency: hot_water_distribution.dwhr_efficiency)
+                                          dwhr_efficiency: hot_water_distribution.dwhr_efficiency,
+                                          has_shared_recirculation: hot_water_distribution.has_shared_recirculation,
+                                          shared_recirculation_number_of_units_served: hot_water_distribution.shared_recirculation_number_of_units_served,
+                                          shared_recirculation_pump_power: hot_water_distribution.shared_recirculation_pump_power,
+                                          shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
 
     # New water fixtures
     orig_hpxml.water_fixtures.each do |orig_water_fixture|
@@ -1745,14 +1750,17 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_photovoltaics_rated(orig_hpxml, new_hpxml)
     orig_hpxml.pv_systems.each do |orig_pv_system|
       new_hpxml.pv_systems.add(id: orig_pv_system.id,
+                               is_shared_system: orig_pv_system.is_shared_system,
                                location: orig_pv_system.location,
                                module_type: orig_pv_system.module_type,
                                tracking: orig_pv_system.tracking,
                                array_azimuth: orig_pv_system.array_azimuth,
                                array_tilt: orig_pv_system.array_tilt,
                                max_power_output: orig_pv_system.max_power_output,
+                               building_max_power_output: orig_pv_system.building_max_power_output,
                                inverter_efficiency: orig_pv_system.inverter_efficiency,
-                               system_losses_fraction: orig_pv_system.system_losses_fraction)
+                               system_losses_fraction: orig_pv_system.system_losses_fraction,
+                               number_of_bedrooms_served: orig_pv_system.number_of_bedrooms_served)
     end
   end
 
@@ -1770,7 +1778,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_washers.empty?
       clothes_washer = orig_hpxml.clothes_washers[0]
-      if not (clothes_washer.is_shared && clothes_washer.ratio_of_units_to_clothes_washers > 14)
+      if not (clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.number_of_units) > 14)
         id = clothes_washer.id
         location = clothes_washer.location.gsub('unvented', 'vented')
       end
@@ -1778,6 +1786,7 @@ class EnergyRatingIndex301Ruleset
 
     reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     new_hpxml.clothes_washers.add(id: id,
+                                  is_shared_appliance: false,
                                   location: location,
                                   integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
                                   rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1796,7 +1805,7 @@ class EnergyRatingIndex301Ruleset
 
     clothes_washer = orig_hpxml.clothes_washers[0]
 
-    if clothes_washer.is_shared && clothes_washer.ratio_of_units_to_clothes_washers > 14
+    if clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.number_of_units) > 14
       set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
       return
     end
@@ -1807,6 +1816,8 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
+                                  is_shared_appliance: clothes_washer.is_shared_appliance,
+                                  water_heating_system_idref: clothes_washer.water_heating_system_idref,
                                   location: clothes_washer.location,
                                   modified_energy_factor: clothes_washer.modified_energy_factor,
                                   integrated_modified_energy_factor: clothes_washer.integrated_modified_energy_factor,
@@ -1832,7 +1843,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_dryers.empty?
       clothes_dryer = orig_hpxml.clothes_dryers[0]
-      if not (clothes_dryer.is_shared && clothes_dryer.ratio_of_units_to_clothes_dryers > 14)
+      if not (clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.number_of_units) > 14)
         id = clothes_dryer.id
         location = clothes_dryer.location.gsub('unvented', 'vented')
         fuel_type = clothes_dryer.fuel_type
@@ -1841,6 +1852,7 @@ class EnergyRatingIndex301Ruleset
 
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, fuel_type)
     new_hpxml.clothes_dryers.add(id: id,
+                                 is_shared_appliance: false,
                                  location: location,
                                  fuel_type: fuel_type,
                                  combined_energy_factor: reference_values[:combined_energy_factor],
@@ -1855,12 +1867,13 @@ class EnergyRatingIndex301Ruleset
 
     clothes_dryer = orig_hpxml.clothes_dryers[0]
 
-    if clothes_dryer.is_shared && clothes_dryer.ratio_of_units_to_clothes_dryers > 14
+    if clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.number_of_units) > 14
       set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
       return
     end
 
     new_hpxml.clothes_dryers.add(id: clothes_dryer.id,
+                                 is_shared_appliance: clothes_dryer.is_shared_appliance,
                                  location: clothes_dryer.location,
                                  fuel_type: clothes_dryer.fuel_type,
                                  energy_factor: clothes_dryer.energy_factor,
@@ -1887,6 +1900,7 @@ class EnergyRatingIndex301Ruleset
 
     reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
     new_hpxml.dishwashers.add(id: id,
+                              is_shared_appliance: false,
                               location: location,
                               energy_factor: reference_values[:energy_factor],
                               rated_annual_kwh: reference_values[:rated_annual_kwh],
@@ -1914,6 +1928,8 @@ class EnergyRatingIndex301Ruleset
     end
 
     new_hpxml.dishwashers.add(id: dishwasher.id,
+                              is_shared_appliance: dishwasher.is_shared_appliance,
+                              water_heating_system_idref: dishwasher.water_heating_system_idref,
                               location: dishwasher.location,
                               energy_factor: dishwasher.energy_factor,
                               rated_annual_kwh: dishwasher.rated_annual_kwh,
@@ -2367,12 +2383,10 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_heating_gas_furnace(new_hpxml, load_frac, orig_system = nil)
     # 78% AFUE gas furnace
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualHeating' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
@@ -2388,12 +2402,10 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_heating_gas_boiler(new_hpxml, load_frac, orig_system = nil)
     # 80% AFUE gas boiler
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualHeating' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
@@ -2409,12 +2421,10 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_heating_heat_pump(new_hpxml, load_frac, orig_system = nil)
     # 7.7 HSPF air source heat pump
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualHeating' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     # Handle backup
@@ -2457,13 +2467,11 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_cooling_air_conditioner(new_hpxml, load_frac, orig_system = nil)
     # 13 SEER electric air conditioner
     if not orig_system.nil?
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
-        # Map reference home system back to rated home system
-        seed_id = orig_system.id
-      end
+      seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       shr = orig_system.cooling_shr
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
+    seed_id = 'ResidualCooling' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
@@ -2506,6 +2514,8 @@ class EnergyRatingIndex301Ruleset
     wh_cap = Waterheater.get_default_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
+                                        is_shared_system: false,
+                                        number_of_units_served: 1,
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
                                         location: HPXML::LocationLivingSpace,

@@ -16,3 +16,5 @@ jobs:
       - store_artifacts:
           path: workflow/tests/test_results
           destination: results
+      - store_test_results:
+          path: test/reports

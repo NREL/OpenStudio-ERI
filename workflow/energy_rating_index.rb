@@ -100,15 +100,22 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nec_x_heat] = []
   results[:nmeul_heat] = []
 
-  for s in 0..rated_output[:hpxml_eec_heats].size - 1
-    reul_heat = ref_output[:loadHeating][s]
+  rated_output[:hpxml_heat_sys_ids].each_with_index do |sys_id, rated_idx|
+    ref_idx = ref_output[:hpxml_heat_sys_ids].index(sys_id)
+    fail 'Data not in sync.' if ref_idx.nil?
+
+    reul_heat = ref_output[:loadHeating][ref_idx]
 
     coeff_heat_a = nil
     coeff_heat_b = nil
-    if rated_output[:hpxml_heat_fuels][s] == HPXML::FuelTypeElectricity
+    if (ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity) != (rated_output[:hpxml_heat_fuels][rated_idx] == HPXML::FuelTypeElectricity)
+      fail 'Data not in sync.'
+    end
+
+    if ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity
       coeff_heat_a = 2.2561
       coeff_heat_b = 0.0
-    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? rated_output[:hpxml_heat_fuels][s]
+    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? ref_output[:hpxml_heat_fuels][ref_idx]
       coeff_heat_a = 1.0943
       coeff_heat_b = 0.4030
     end
@@ -116,11 +123,11 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
       fail 'Could not identify EEC coefficients for heating system.'
     end
 
-    eec_x_heat = rated_output[:hpxml_eec_heats][s]
-    eec_r_heat = ref_output[:hpxml_eec_heats][s]
+    eec_x_heat = rated_output[:hpxml_eec_heats][rated_idx]
+    eec_r_heat = ref_output[:hpxml_eec_heats][ref_idx]
 
-    ec_x_heat = rated_output[:elecHeating][s] + rated_output[:elecHeatingFansPumps][s] + rated_output[:gasHeating][s] + rated_output[:oilHeating][s] + rated_output[:propaneHeating][s] + rated_output[:woodcordHeating][s] + rated_output[:woodpelletsHeating][s]
-    ec_r_heat = ref_output[:elecHeating][s] + ref_output[:elecHeatingFansPumps][s] + ref_output[:gasHeating][s] + ref_output[:oilHeating][s] + ref_output[:propaneHeating][s] + ref_output[:woodcordHeating][s] + ref_output[:woodpelletsHeating][s]
+    ec_x_heat = rated_output[:elecHeating][rated_idx] + rated_output[:elecHeatingFansPumps][rated_idx] + rated_output[:gasHeating][rated_idx] + rated_output[:oilHeating][rated_idx] + rated_output[:propaneHeating][rated_idx] + rated_output[:woodcordHeating][rated_idx] + rated_output[:woodpelletsHeating][rated_idx]
+    ec_r_heat = ref_output[:elecHeating][ref_idx] + ref_output[:elecHeatingFansPumps][ref_idx] + ref_output[:gasHeating][ref_idx] + ref_output[:oilHeating][ref_idx] + ref_output[:propaneHeating][ref_idx] + ref_output[:woodcordHeating][ref_idx] + ref_output[:woodpelletsHeating][ref_idx]
 
     dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
@@ -161,18 +168,21 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nec_x_cool] = []
   results[:nmeul_cool] = []
 
-  tot_reul_cool = ref_output[:loadCooling].inject(:+)
-  for s in 0..rated_output[:hpxml_eec_cools].size - 1
-    reul_cool = ref_output[:loadCooling][s]
+  tot_reul_cool = ref_output[:loadCooling].sum(0.0)
+  rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, rated_idx|
+    ref_idx = ref_output[:hpxml_cool_sys_ids].index(sys_id)
+    fail 'Data not in sync.' if ref_idx.nil?
+
+    reul_cool = ref_output[:loadCooling][ref_idx]
 
     coeff_cool_a = 3.8090
     coeff_cool_b = 0.0
 
-    eec_x_cool = rated_output[:hpxml_eec_cools][s]
-    eec_r_cool = ref_output[:hpxml_eec_cools][s]
+    eec_x_cool = rated_output[:hpxml_eec_cools][rated_idx]
+    eec_r_cool = ref_output[:hpxml_eec_cools][ref_idx]
 
-    ec_x_cool = rated_output[:elecCooling][s] + rated_output[:elecCoolingFansPumps][s]
-    ec_r_cool = ref_output[:elecCooling][s] + ref_output[:elecCoolingFansPumps][s]
+    ec_x_cool = rated_output[:elecCooling][rated_idx] + rated_output[:elecCoolingFansPumps][rated_idx]
+    ec_r_cool = ref_output[:elecCooling][ref_idx] + ref_output[:elecCoolingFansPumps][ref_idx]
 
     dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
 
@@ -215,51 +225,55 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:nec_x_dhw] = []
   results[:nmeul_dhw] = []
 
-  for s in 0..rated_output[:hpxml_eec_dhws].size - 1
-    reul_dhw = ref_output[:loadHotWaterDelivered][s]
-
-    coeff_dhw_a = nil
-    coeff_dhw_b = nil
-    if rated_output[:hpxml_dwh_fuels][s] == HPXML::FuelTypeElectricity
-      coeff_dhw_a = 0.9200
-      coeff_dhw_b = 0.0
-    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? rated_output[:hpxml_dwh_fuels][s]
-      coeff_dhw_a = 1.1877
-      coeff_dhw_b = 1.0130
-    end
-    if coeff_dhw_a.nil? || coeff_dhw_b.nil?
-      fail 'Could not identify EEC coefficients for water heating system.'
-    end
-
-    eec_x_dhw = rated_output[:hpxml_eec_dhws][s]
-    eec_r_dhw = ref_output[:hpxml_eec_dhws][s]
-
-    ec_x_dhw = rated_output[:elecHotWater][s] + rated_output[:gasHotWater][s] + rated_output[:oilHotWater][s] + rated_output[:propaneHotWater][s] + rated_output[:woodcordHotWater][s] + rated_output[:woodpelletsHotWater][s] + rated_output[:elecHotWaterRecircPump][s] + rated_output[:elecHotWaterSolarThermalPump][s]
-    ec_r_dhw = ref_output[:elecHotWater][s] + ref_output[:gasHotWater][s] + ref_output[:oilHotWater][s] + ref_output[:propaneHotWater][s] + ref_output[:woodcordHotWater][s] + ref_output[:woodpelletsHotWater][s] + ref_output[:elecHotWaterRecircPump][s] + ref_output[:elecHotWaterSolarThermalPump][s]
-
-    dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
-
-    nec_x_dhw = 0
-    if eec_x_dhw * reul_dhw > 0
-      nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * ec_r_dhw * dse_r_dhw) / (eec_x_dhw * reul_dhw)
-    end
-
-    nmeul_dhw = 0
-    if ec_r_dhw > 0
-      nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
-    end
-
-    results[:reul_dhw] << reul_dhw
-    results[:coeff_dhw_a] << coeff_dhw_a
-    results[:coeff_dhw_b] << coeff_dhw_b
-    results[:eec_x_dhw] << eec_x_dhw
-    results[:eec_r_dhw] << eec_r_dhw
-    results[:ec_x_dhw] << ec_x_dhw
-    results[:ec_r_dhw] << ec_r_dhw
-    results[:dse_r_dhw] << dse_r_dhw
-    results[:nec_x_dhw] << nec_x_dhw
-    results[:nmeul_dhw] << nmeul_dhw
+  # Used to accommodate multiple Reference Home water heaters if the Rated Home has multiple
+  # water heaters. Now always just 1 Reference Home water heater.
+  if ref_output[:loadHotWaterDelivered].size != 1
+    fail 'Unexpected Reference Home results; should only be 1 DHW system.'
   end
+
+  reul_dhw = ref_output[:loadHotWaterDelivered][0]
+
+  coeff_dhw_a = nil
+  coeff_dhw_b = nil
+  if ref_output[:hpxml_dwh_fuels][0] == HPXML::FuelTypeElectricity
+    coeff_dhw_a = 0.9200
+    coeff_dhw_b = 0.0
+  elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? ref_output[:hpxml_dwh_fuels][0]
+    coeff_dhw_a = 1.1877
+    coeff_dhw_b = 1.0130
+  end
+  if coeff_dhw_a.nil? || coeff_dhw_b.nil?
+    fail 'Could not identify EEC coefficients for water heating system.'
+  end
+
+  eec_x_dhw = rated_output[:hpxml_eec_dhws].sum(0.0)
+  eec_r_dhw = ref_output[:hpxml_eec_dhws][0]
+
+  ec_x_dhw = rated_output[:elecHotWater].sum(0.0) + rated_output[:gasHotWater].sum(0.0) + rated_output[:oilHotWater].sum(0.0) + rated_output[:propaneHotWater].sum(0.0) + rated_output[:woodcordHotWater].sum(0.0) + rated_output[:woodpelletsHotWater].sum(0.0) + rated_output[:elecHotWaterRecircPump].sum(0.0) + rated_output[:elecHotWaterSolarThermalPump].sum(0.0)
+  ec_r_dhw = ref_output[:elecHotWater][0] + ref_output[:gasHotWater][0] + ref_output[:oilHotWater][0] + ref_output[:propaneHotWater][0] + ref_output[:woodcordHotWater][0] + ref_output[:woodpelletsHotWater][0] + ref_output[:elecHotWaterRecircPump][0] + ref_output[:elecHotWaterSolarThermalPump][0]
+
+  dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
+
+  nec_x_dhw = 0
+  if eec_x_dhw * reul_dhw > 0
+    nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * ec_r_dhw * dse_r_dhw) / (eec_x_dhw * reul_dhw)
+  end
+
+  nmeul_dhw = 0
+  if ec_r_dhw > 0
+    nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
+  end
+
+  results[:reul_dhw] << reul_dhw
+  results[:coeff_dhw_a] << coeff_dhw_a
+  results[:coeff_dhw_b] << coeff_dhw_b
+  results[:eec_x_dhw] << eec_x_dhw
+  results[:eec_r_dhw] << eec_r_dhw
+  results[:ec_x_dhw] << ec_x_dhw
+  results[:ec_r_dhw] << ec_r_dhw
+  results[:dse_r_dhw] << dse_r_dhw
+  results[:nec_x_dhw] << nec_x_dhw
+  results[:nmeul_dhw] << nmeul_dhw
 
   # ===== #
   # Other #
@@ -301,13 +315,13 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   # ERI #
   # === #
 
-  results[:trl] = results[:reul_heat].inject(0, :+) +
-                  results[:reul_cool].inject(0, :+) +
-                  results[:reul_dhw].inject(0, :+) +
+  results[:trl] = results[:reul_heat].sum(0.0) +
+                  results[:reul_cool].sum(0.0) +
+                  results[:reul_dhw].sum(0.0) +
                   results[:reul_la]
-  results[:tnml] = results[:nmeul_heat].inject(0, :+) +
-                   results[:nmeul_cool].inject(0, :+) +
-                   results[:nmeul_dhw].inject(0, :+) +
+  results[:tnml] = results[:nmeul_heat].sum(0.0) +
+                   results[:nmeul_cool].sum(0.0) +
+                   results[:nmeul_dhw].sum(0.0) +
                    results[:eul_la]
 
   if not results_iad.nil?

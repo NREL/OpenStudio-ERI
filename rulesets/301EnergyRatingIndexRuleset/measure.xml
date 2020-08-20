@@ -100,28 +100,28 @@
       <checksum>2F4E9E33</checksum>
     </file>
     <file>
+      <filename>test_enclosure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>EDDF17AD</checksum>
+    </file>
+    <file>
       <filename>test_lighting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>8C0C8813</checksum>
-    </file>
-    <file>
-      <filename>test_water_heating.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>F642187A</checksum>
+      <checksum>FCBF2113</checksum>
     </file>
     <file>
       <filename>test_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>BAAC4FE5</checksum>
+      <checksum>260F391A</checksum>
     </file>
     <file>
-      <filename>test_enclosure.rb</filename>
+      <filename>test_ventilation.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>9B12C217</checksum>
+      <checksum>026C7CAE</checksum>
     </file>
     <file>
       <filename>test_appliances.rb</filename>
@@ -142,13 +142,13 @@
       <checksum>0FA2E17B</checksum>
     </file>
     <file>
-      <filename>301validator.rb</filename>
+      <filename>test_appliances.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>A67E4260</checksum>
     </file>
     <file>
-      <filename>301.rb</filename>
+      <filename>301validator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>6B821649</checksum>

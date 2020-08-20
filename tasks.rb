@@ -186,6 +186,9 @@ def create_test_hpxmls
 
       hpxml_path = File.join(tests_dir, derivative)
 
+      FileUtils.mkdir_p(File.dirname(hpxml_path))
+      XMLHelper.write_file(hpxml_doc, hpxml_path)
+
       # Validate file against HPXML schema
       schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
       errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
@@ -198,9 +201,6 @@ def create_test_hpxmls
       if errors.size > 0
         fail "ERRORS: #{errors}"
       end
-
-      FileUtils.mkdir_p(File.dirname(hpxml_path))
-      XMLHelper.write_file(hpxml_doc, hpxml_path)
     rescue Exception => e
       puts "\n#{e}\n#{e.backtrace.join('\n')}"
       puts "\nError: Did not successfully generate #{derivative}."
@@ -931,6 +931,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
                                     location: HPXML::LocationLivingSpace,
@@ -941,6 +942,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # Tankless natural gas with EF = 0.82
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeTankless,
                                     location: HPXML::LocationLivingSpace,
@@ -951,6 +953,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.56; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
                                     location: HPXML::LocationLivingSpace,
@@ -963,6 +966,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
                                     location: HPXML::LocationLivingSpace,
@@ -970,6 +974,17 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.62,
                                     recovery_efficiency: 0.78)
+  elsif hpxml_file.include?('HERS_AutoGen')
+    # 40 gal electric with EF = 0.88
+    hpxml.water_heating_systems.clear
+    hpxml.water_heating_systems.add(id: 'WaterHeater',
+                                    is_shared_system: false,
+                                    fuel_type: HPXML::FuelTypeElectricity,
+                                    water_heater_type: HPXML::WaterHeaterTypeStorage,
+                                    location: HPXML::LocationLivingSpace,
+                                    tank_volume: 40,
+                                    fraction_dhw_load_served: 1,
+                                    energy_factor: 0.92)
   end
 end
 
@@ -1000,6 +1015,12 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
     hpxml.hot_water_distributions[0].dwhr_facilities_connected = HPXML::DWHRFacilitiesConnectedAll
     hpxml.hot_water_distributions[0].dwhr_equal_flow = true
     hpxml.hot_water_distributions[0].dwhr_efficiency = 0.54
+  elsif hpxml_file.include?('HERS_AutoGen')
+    # Standard
+    hpxml.hot_water_distributions.clear
+    hpxml.hot_water_distributions.add(id: 'HotWaterDstribution',
+                                      system_type: HPXML::DHWDistTypeStandard,
+                                      pipe_r_value: 0.0)
   end
 
   has_uncond_bsmnt = false
@@ -1043,6 +1064,15 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
     hpxml.water_fixtures.add(id: 'WaterFixture2',
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: true)
+  elsif hpxml_file.include?('HERS_AutoGen')
+    # Standard
+    hpxml.water_fixtures.clear
+    hpxml.water_fixtures.add(id: 'WaterFixture',
+                             water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
+                             low_flow: false)
+    hpxml.water_fixtures.add(id: 'WaterFixture2',
+                             water_fixture_type: HPXML::WaterFixtureTypeFaucet,
+                             low_flow: false)
   end
 end
 
@@ -1052,6 +1082,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   hpxml.clothes_washers.clear
   hpxml.clothes_washers.add(id: 'ClothesWasher',
+                            is_shared_appliance: false,
                             location: HPXML::LocationLivingSpace,
                             integrated_modified_energy_factor: default_values[:integrated_modified_energy_factor],
                             rated_annual_kwh: default_values[:rated_annual_kwh],
@@ -1080,6 +1111,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: 'ClothesDryer',
+                             is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              control_type: default_values[:control_type],
@@ -1095,6 +1127,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeElectricity)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: 'ClothesDryer',
+                             is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              control_type: default_values[:control_type],
@@ -1108,6 +1141,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   default_values = HotWaterAndAppliances.get_dishwasher_default_values()
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
+                        is_shared_appliance: false,
                         location: HPXML::LocationLivingSpace,
                         place_setting_capacity: default_values[:place_setting_capacity],
                         rated_annual_kwh: default_values[:rated_annual_kwh],
@@ -1269,6 +1303,8 @@ def create_sample_hpxmls
                   'invalid_files/unattached-hvac-distribution.xml',
                   'invalid_files/unattached-skylight.xml',
                   'invalid_files/unattached-solar-thermal-system.xml',
+                  'invalid_files/unattached-shared-clothes-washer-water-heater.xml',
+                  'invalid_files/unattached-shared-dishwasher-water-heater.xml',
                   'invalid_files/unattached-window.xml',
                   'invalid_files/water-heater-location.xml',
                   'invalid_files/water-heater-location-other.xml',
@@ -1294,6 +1330,7 @@ def create_sample_hpxmls
                   'base-dhw-tankless-electric-outside.xml',
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
+                  'base-enclosure-infil-flue.xml',
                   'base-enclosure-rooftypes.xml',
                   'base-enclosure-walltypes.xml',
                   'base-enclosure-windows-interior-shading.xml',
@@ -1311,6 +1348,8 @@ def create_sample_hpxmls
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ductless.xml',
                   'base-hvac-undersized.xml',
+                  'base-lighting-detailed.xml',
+                  'base-lighting-none.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
                   'base-mechvent-cfis-dse.xml',
@@ -1318,9 +1357,9 @@ def create_sample_hpxmls
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
                   'base-misc-defaults2.xml',
-                  'base-misc-large-uncommon-loads.xml',
-                  'base-misc-large-uncommon-loads2.xml',
-                  'base-misc-lighting-detailed.xml',
+                  'base-misc-loads-large-uncommon.xml',
+                  'base-misc-loads-large-uncommon2.xml',
+                  'base-misc-loads-none.xml',
                   'base-misc-neighbor-shading.xml',
                   'base-misc-usage-multiplier.xml',
                   'base-simcontrol-daylight-saving-custom.xml',
@@ -1349,12 +1388,41 @@ def create_sample_hpxmls
     # Add ERI version
     hpxml.header.eri_calculation_version = 'latest'
 
-    # Shared clothes washer/dryer? Add ratio extension
-    if !hpxml.clothes_washers.empty? && hpxml.clothes_washers[0].is_shared
-      hpxml.clothes_washers[0].ratio_of_units_to_clothes_washers = 5
+    # Handle extra inputs for ERI
+    hpxml.water_heating_systems.each do |water_heating_system|
+      next unless water_heating_system.is_shared_system.nil?
+
+      water_heating_system.is_shared_system = false
     end
-    if !hpxml.clothes_dryers.empty? && hpxml.clothes_dryers[0].is_shared
-      hpxml.clothes_dryers[0].ratio_of_units_to_clothes_dryers = 5
+    shared_locations = [HPXML::LocationOtherHousingUnit,
+                        HPXML::LocationOtherHeatedSpace,
+                        HPXML::LocationOtherMultifamilyBufferSpace,
+                        HPXML::LocationOtherNonFreezingSpace]
+    shared_water_heaters = hpxml.water_heating_systems.select { |wh| wh.is_shared_system }
+    if not hpxml.clothes_washers.empty?
+      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_washers[0].location)
+        hpxml.clothes_washers[0].is_shared_appliance = true
+        hpxml.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
+        hpxml.clothes_washers[0].number_of_units = 2
+      else
+        hpxml.clothes_washers[0].is_shared_appliance = false
+      end
+    end
+    if not hpxml.clothes_dryers.empty?
+      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_dryers[0].location)
+        hpxml.clothes_dryers[0].is_shared_appliance = true
+        hpxml.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
+        hpxml.clothes_dryers[0].number_of_units = 2
+      else
+        hpxml.clothes_dryers[0].is_shared_appliance = false
+      end
+    end
+    if not hpxml.dishwashers.empty?
+      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.dishwashers[0].location)
+        hpxml.dishwashers[0].is_shared_appliance = true
+      else
+        hpxml.dishwashers[0].is_shared_appliance = false
+      end
     end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
@@ -1486,6 +1554,9 @@ if ARGV[0].to_sym == :update_measures
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
   ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
 
+  create_test_hpxmls
+  create_sample_hpxmls
+
   # Apply rubocop
   cops = ['Layout',
           'Lint/DeprecatedClassMethods',
@@ -1512,9 +1583,6 @@ if ARGV[0].to_sym == :update_measures
   command = "#{OpenStudio.getOpenStudioCLI} measure -t '#{File.join(File.dirname(__FILE__), 'rulesets')}'"
   puts 'Updating measure.xmls...'
   system(command, [:out, :err] => File::NULL)
-
-  create_test_hpxmls
-  create_sample_hpxmls
 
   puts 'Done.'
 end
