@@ -625,6 +625,7 @@ class EnergyRatingIndex301Validator
 
       ## [WaterHeatingSystem=Shared]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem[IsSharedSystem="true"]' => {
+        '../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         'NumberofUnitsServed' => one,
       },
 
@@ -758,6 +759,7 @@ class EnergyRatingIndex301Validator
 
       ## [PVSystem=Shared]
       '/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem[IsSharedSystem="true"]' => {
+        '../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         'extension/NumberofBedroomsServed' => one,
       },
 
@@ -778,6 +780,7 @@ class EnergyRatingIndex301Validator
 
       ## [ClothesWasher=Shared]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesWasher[IsSharedAppliance="true"]' => {
+        '../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         '../../Systems/WaterHeating/WaterHeatingSystem[IsSharedSystem="true" and number(FractionDHWLoadServed)=0]' => one_or_more,
         'AttachedToWaterHeatingSystem' => one,
         'NumberofUnits' => one,
@@ -796,6 +799,7 @@ class EnergyRatingIndex301Validator
 
       ## [ClothesDryer=Shared]
       '/HPXML/Building/BuildingDetails/Appliances/ClothesDryer[IsSharedAppliance="true"]' => {
+        '../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         'NumberofUnits' => one,
         'NumberofUnitsServed' => one,
       },
@@ -816,6 +820,7 @@ class EnergyRatingIndex301Validator
 
       ## [Dishwasher=Shared]
       '/HPXML/Building/BuildingDetails/Appliances/Dishwasher[IsSharedAppliance="true"]' => {
+        '../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         '../../Systems/WaterHeating/WaterHeatingSystem[IsSharedSystem="true" and number(FractionDHWLoadServed)=0]' => one_or_more,
         'AttachedToWaterHeatingSystem' => one,
       },

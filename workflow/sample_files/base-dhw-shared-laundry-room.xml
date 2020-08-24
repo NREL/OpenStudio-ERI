@@ -684,7 +684,9 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='SharedClothesDryer'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
+          <NumberofUnits>2</NumberofUnits>
+          <IsSharedAppliance>true</IsSharedAppliance>
+          <NumberofUnitsServed>6</NumberofUnitsServed>
           <Location>other heated space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
