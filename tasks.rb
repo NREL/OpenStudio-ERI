@@ -1393,14 +1393,9 @@ def create_sample_hpxmls
 
       water_heating_system.is_shared_system = false
     end
-    shared_locations = [HPXML::LocationOtherHousingUnit,
-                        HPXML::LocationOtherHeatedSpace,
-                        HPXML::LocationOtherMultifamilyBufferSpace,
-                        HPXML::LocationOtherNonFreezingSpace]
     shared_water_heaters = hpxml.water_heating_systems.select { |wh| wh.is_shared_system }
     if not hpxml.clothes_washers.empty?
-      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_washers[0].location)
-        hpxml.clothes_washers[0].is_shared_appliance = true
+      if hpxml.clothes_washers[0].is_shared_appliance
         hpxml.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
         hpxml.clothes_washers[0].number_of_units = 2
       else
@@ -1408,8 +1403,7 @@ def create_sample_hpxmls
       end
     end
     if not hpxml.clothes_dryers.empty?
-      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_dryers[0].location)
-        hpxml.clothes_dryers[0].is_shared_appliance = true
+      if hpxml.clothes_dryers[0].is_shared_appliance
         hpxml.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
         hpxml.clothes_dryers[0].number_of_units = 2
       else
@@ -1417,9 +1411,7 @@ def create_sample_hpxmls
       end
     end
     if not hpxml.dishwashers.empty?
-      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.dishwashers[0].location)
-        hpxml.dishwashers[0].is_shared_appliance = true
-      else
+      if not hpxml.dishwashers[0].is_shared_appliance
         hpxml.dishwashers[0].is_shared_appliance = false
       end
     end
