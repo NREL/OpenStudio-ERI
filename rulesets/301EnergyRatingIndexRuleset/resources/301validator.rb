@@ -353,8 +353,9 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler and IsSharedSystem="true"]' => {
         '../../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         '../../HVACDistribution[DistributionSystemType/HydronicDistribution[HydronicDistributionType[text()="radiator" or text()="baseboard" or text()="radiant floor" or text()="radiant ceiling"]] | DistributionSystemType/HydronicAndAirDistribution[HydronicAndAirDistributionType[text()="fan coil" or text()="water loop heat pump"]]]' => one, # See [HVACDistribution]
-        '../../HVACDistribution/extension/SharedLoopWatts' => one,
         'NumberofUnitsServed' => one,
+        'extension/SharedLoopWatts' => one,
+        'extension/FanCoilWatts' => one,
       },
 
       ## [HeatingType=Stove]
@@ -427,22 +428,23 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="chiller"]' => {
         '../../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         '../../HVACDistribution[DistributionSystemType/HydronicDistribution[HydronicDistributionType[text()="radiator" or text()="baseboard" or text()="radiant floor" or text()="radiant ceiling"]] | DistributionSystemType/HydronicAndAirDistribution[HydronicAndAirDistributionType[text()="fan coil" or text()="water loop heat pump"]]]' => one, # See [HVACDistribution]
-        '../../HVACDistribution/extension/SharedLoopWatts' => one,
         'DistributionSystem' => one,
         'IsSharedSystem[text()="true"]' => one,
         'NumberofUnitsServed' => one,
         'CoolingCapacity' => one,
         'AnnualCoolingEfficiency[Units="kW/ton"]/Value' => one,
+        'extension/SharedLoopWatts' => one,
+        'extension/FanCoilWatts' => one,
       },
 
       ## [CoolingType=SharedCoolingTower]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem[CoolingSystemType="cooling tower"]' => {
         '../../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
         '../../HVACDistribution[DistributionSystemType/HydronicAndAirDistribution[HydronicAndAirDistributionType[text()="water loop heat pump"]]]' => one, # See [HVACDistribution]
-        '../../HVACDistribution/extension/SharedLoopWatts' => one,
         'DistributionSystem' => one,
         'IsSharedSystem[text()="true"]' => one,
         'NumberofUnitsServed' => one,
+        'extension/SharedLoopWatts' => one,
       },
 
       # [HeatPump]
@@ -485,6 +487,7 @@ class EnergyRatingIndex301Validator
       ## [HeatPumpType=GSHP]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air"]' => {
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
+        'IsSharedSystem' => one, # See [GSHPType=SharedLoop]
         'DistributionSystem' => one,
         'HeatingCapacity' => one,
         'CoolingCapacity' => one,
@@ -493,6 +496,13 @@ class EnergyRatingIndex301Validator
         'AnnualHeatingEfficiency[Units="COP"]/Value' => one,
         'FractionHeatLoadServed' => one,
         'FractionCoolLoadServed' => one,
+      },
+
+      ## [GSHPType=SharedLoop]
+      '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="ground-to-air" and IsSharedSystem="true"]' => {
+        '../../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]' => one,
+        'NumberofUnitsServed' => one,
+        'extension/SharedLoopWatts' => one,
       },
 
       ## [HeatPumpType=WLHP]
@@ -549,18 +559,13 @@ class EnergyRatingIndex301Validator
 
       ## [HVACDistType=HydronicAndAir]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicAndAirDistribution' => {
-        'HydronicAndAirDistributionType[text()="fan coil" or text()="water loop heat pump"]' => one, # See [HydronicAndAirType=FanCoil] or [HydronicAndAirType=WLHP]
+        'HydronicAndAirDistributionType[text()="fan coil" or text()="water loop heat pump"]' => one, # See [HydronicAndAirType=WLHP]
         '../../ConditionedFloorAreaServed' => one,
         'DuctLeakageMeasurement[DuctType="supply"]/DuctLeakage[(Units="CFM25" or Units="Percent") and TotalOrToOutside="to outside"]/Value' => zero_or_one,
         'DuctLeakageMeasurement[DuctType="return"]/DuctLeakage[(Units="CFM25" or Units="Percent") and TotalOrToOutside="to outside"]/Value' => zero_or_one,
         'Ducts[DuctType="supply"]' => zero_or_more, # See [HydronicAndAirDuct]
         'Ducts[DuctType="return"]' => zero_or_more, # See [HydronicAndAirDuct]
         'NumberofReturnRegisters' => zero_or_one,
-      },
-
-      ## [HydronicAndAirType=FanCoil]
-      '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicAndAirDistribution[HydronicAndAirDistributionType[text()="fan coil"]]' => {
-        'extension/FanCoilWatts' => one,
       },
 
       ## [HydronicAndAirType=WLHP]
@@ -571,6 +576,7 @@ class EnergyRatingIndex301Validator
       ## [HydronicAndAirDuct]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/HydronicAndAirDistribution/Ducts[DuctType="supply" or DuctType="return"]' => {
         'DuctInsulationRValue' => one,
+        'DuctLocation[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="exterior wall" or text()="under slab" or text()="roof deck" or text()="outside" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]' => one,
         'DuctSurfaceArea' => one,
       },
 

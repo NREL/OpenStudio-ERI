@@ -1182,6 +1182,8 @@ class EnergyRatingIndex301Ruleset
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
                                     heating_cfm: orig_heating_system.heating_cfm,
+                                    shared_loop_watts: orig_heating_system.shared_loop_watts,
+                                    fan_coil_watts: orig_heating_system.fan_coil_watts,
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
     # Add reference heating system for residual load
@@ -1205,6 +1207,8 @@ class EnergyRatingIndex301Ruleset
                                     cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
                                     cooling_shr: orig_cooling_system.cooling_shr,
                                     cooling_cfm: orig_cooling_system.cooling_cfm,
+                                    shared_loop_watts: orig_cooling_system.shared_loop_watts,
+                                    fan_coil_watts: orig_cooling_system.fan_coil_watts,
                                     seed_id: orig_cooling_system.seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.seed_id)
     end
     # Add reference cooling system for residual load
@@ -1215,6 +1219,8 @@ class EnergyRatingIndex301Ruleset
     # Retain heat pump(s)
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       new_hpxml.heat_pumps.add(id: orig_heat_pump.id,
+                               is_shared_system: orig_heat_pump.is_shared_system,
+                               number_of_units_served: orig_heat_pump.number_of_units_served,
                                distribution_system_idref: orig_heat_pump.distribution_system_idref,
                                heat_pump_type: orig_heat_pump.heat_pump_type,
                                heat_pump_fuel: orig_heat_pump.heat_pump_fuel,
@@ -1234,6 +1240,7 @@ class EnergyRatingIndex301Ruleset
                                cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
                                heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
                                heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
+                               shared_loop_watts: orig_heat_pump.shared_loop_watts,
                                seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)
     end
     # Add reference heat pump for residual load
@@ -1305,8 +1312,6 @@ class EnergyRatingIndex301Ruleset
       if [HPXML::HVACDistributionTypeHydronic, HPXML::HVACDistributionTypeHydronicAndAir].include? orig_hvac_distribution.distribution_system_type
         new_hvac_distribution.hydronic_type = orig_hvac_distribution.hydronic_type
         new_hvac_distribution.hydronic_and_air_type = orig_hvac_distribution.hydronic_and_air_type
-        new_hvac_distribution.shared_loop_watts = orig_hvac_distribution.shared_loop_watts
-        new_hvac_distribution.fan_coil_watts = orig_hvac_distribution.fan_coil_watts
       end
 
       next unless [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include? orig_hvac_distribution.distribution_system_type
