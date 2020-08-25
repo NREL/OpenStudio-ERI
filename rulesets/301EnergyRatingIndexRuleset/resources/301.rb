@@ -1109,7 +1109,7 @@ class EnergyRatingIndex301Ruleset
           # Also add heat pump:
           hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_heating_system.wlhp_heating_efficiency_cop)
           orig_heat_pump = HPXML::HeatPump.new(orig_hpxml)
-          orig_heat_pump.id = "#{orig_heating_system.id}WLHP"
+          orig_heat_pump.id = "#{orig_heating_system.id}_WLHP"
           add_reference_heating_heat_pump(new_hpxml, hp_fraction_heat_load_served, orig_heat_pump)
         end
         add_reference_heating_gas_boiler(new_hpxml, fraction_heat_load_served, orig_heating_system)
