@@ -1095,14 +1095,6 @@ class EnergyRatingIndex301Ruleset
     sum_frac_cool_load = orig_hpxml.total_fraction_cool_load_served
     sum_frac_heat_load = orig_hpxml.total_fraction_heat_load_served
 
-    # Determine fraction heat load served for WLHP
-    orig_hpxml.heat_pumps.each do |orig_heat_pump|
-      next unless orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
-
-      attached_boiler = orig_hpxml.heating_systems.select { |htg| htg.distribution_system_idref == orig_heat_pump.distribution_system_idref }[0]
-      orig_heat_pump.fraction_heat_load_served = attached_boiler.fraction_heat_load_served
-    end
-
     # Heating
     orig_hpxml.heating_systems.each do |orig_heating_system|
       next unless orig_heating_system.fraction_heat_load_served > 0
@@ -1112,9 +1104,13 @@ class EnergyRatingIndex301Ruleset
         fraction_heat_load_served = orig_heating_system.fraction_heat_load_served
         if orig_heating_system.distribution_system.hydronic_and_air_type.to_s == HPXML::HydronicAndAirTypeWaterLoopHeatPump
           # 301-2019 Section 4.4.7.2.1
-          orig_wlhp = orig_hpxml.heat_pumps.select { |hp| hp.distribution_system_idref == orig_heating_system.distribution_system_idref }[0]
-          fraction_heat_load_served *= (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
+          fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_heating_system.wlhp_heating_efficiency_cop)
           orig_heating_system.distribution_system_idref = nil
+          # Also add heat pump:
+          hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_heating_system.wlhp_heating_efficiency_cop)
+          orig_heat_pump = HPXML::HeatPump.new(orig_hpxml)
+          orig_heat_pump.id = "#{orig_heating_system.id}WLHP"
+          add_reference_heating_heat_pump(new_hpxml, hp_fraction_heat_load_served, orig_heat_pump)
         end
         add_reference_heating_gas_boiler(new_hpxml, fraction_heat_load_served, orig_heating_system)
       else
@@ -1149,14 +1145,9 @@ class EnergyRatingIndex301Ruleset
       add_reference_heating_heat_pump(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
-      fraction_heat_load_served = orig_heat_pump.fraction_heat_load_served
-      next unless fraction_heat_load_served > 0
+      next unless orig_heat_pump.fraction_heat_load_served > 0
 
-      if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
-        # 301-2019 Section 4.4.7.2.1
-        fraction_heat_load_served *= (1.0 / orig_heat_pump.heating_efficiency_cop)
-      end
-      add_reference_heating_heat_pump(new_hpxml, fraction_heat_load_served, orig_heat_pump)
+      add_reference_heating_heat_pump(new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
     end
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_heat_pump(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
@@ -1203,6 +1194,7 @@ class EnergyRatingIndex301Ruleset
                                     heating_cfm: orig_heating_system.heating_cfm,
                                     shared_loop_watts: orig_heating_system.shared_loop_watts,
                                     fan_coil_watts: orig_heating_system.fan_coil_watts,
+                                    wlhp_heating_efficiency_cop: orig_heating_system.wlhp_heating_efficiency_cop,
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
     # Add reference heating system for residual load
@@ -1228,6 +1220,8 @@ class EnergyRatingIndex301Ruleset
                                     cooling_cfm: orig_cooling_system.cooling_cfm,
                                     shared_loop_watts: orig_cooling_system.shared_loop_watts,
                                     fan_coil_watts: orig_cooling_system.fan_coil_watts,
+                                    wlhp_cooling_capacity: orig_cooling_system.wlhp_cooling_capacity,
+                                    wlhp_cooling_efficiency_eer: orig_cooling_system.wlhp_cooling_efficiency_eer,
                                     seed_id: orig_cooling_system.seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.seed_id)
     end
     # Add reference cooling system for residual load
