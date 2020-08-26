@@ -309,6 +309,7 @@
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem'/>
               <DistributionSystem idref='HVACDistribution'/>
+              <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>

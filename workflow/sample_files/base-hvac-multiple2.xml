@@ -338,6 +338,7 @@
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem3'/>
               <DistributionSystem idref='HVACDistribution3'/>
+              <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
@@ -419,6 +420,7 @@
             <HeatPump>
               <SystemIdentifier id='HeatPump2'/>
               <DistributionSystem idref='HVACDistribution5'/>
+              <IsSharedSystem>false</IsSharedSystem>
               <HeatPumpType>ground-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>4800.0</HeatingCapacity>
@@ -547,7 +549,9 @@
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution3'/>
             <DistributionSystemType>
-              <HydronicDistribution/>
+              <HydronicDistribution>
+                <HydronicDistributionType>baseboard</HydronicDistributionType>
+              </HydronicDistribution>
             </DistributionSystemType>
           </HVACDistribution>
           <HVACDistribution>

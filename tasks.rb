@@ -1391,6 +1391,18 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = 'latest'
 
     # Handle extra inputs for ERI
+    hpxml.heating_systems.each do |heating_system|
+      next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
+      next unless heating_system.is_shared_system.nil?
+
+      heating_system.is_shared_system = false
+    end
+    hpxml.heat_pumps.each do |heat_pump|
+      next unless heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+      next unless heat_pump.is_shared_system.nil?
+
+      heat_pump.is_shared_system = false
+    end
     hpxml.water_heating_systems.each do |water_heating_system|
       next unless water_heating_system.is_shared_system.nil?
 
