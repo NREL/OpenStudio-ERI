@@ -57,11 +57,13 @@ class EnergyRatingIndexTest < Minitest::Test
     # Cross-simulation tests
 
     # Verify that REUL Hot Water is identical across water heater types
-    _test_reul(all_results, 'base-dhw', 'REUL Hot Water (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-dhw', nil, 'REUL Hot Water (MBtu)')
 
     # Verify that REUL Heating/Cooling are identical across HVAC types
-    _test_reul(all_results, 'base-hvac', 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base-hvac', 'REUL Cooling (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Heating (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Cooling (MBtu)')
+    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Heating (MBtu)')
+    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Cooling (MBtu)')
   end
 
   def test_sample_files_301_2014
@@ -107,11 +109,13 @@ class EnergyRatingIndexTest < Minitest::Test
     # Cross-simulation tests
 
     # Verify that REUL Hot Water is identical across water heater types
-    _test_reul(all_results, 'base-dhw', 'REUL Hot Water (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-dhw', nil, 'REUL Hot Water (MBtu)')
 
     # Verify that REUL Heating/Cooling are identical across HVAC types
-    _test_reul(all_results, 'base-hvac', 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base-hvac', 'REUL Cooling (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Heating (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Cooling (MBtu)')
+    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Heating (MBtu)')
+    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Cooling (MBtu)')
   end
 
   def test_sample_files_invalid
@@ -786,13 +790,17 @@ class EnergyRatingIndexTest < Minitest::Test
     return sql_path, csv_path, results[:sim_time]
   end
 
-  def _test_reul(all_results, files_include, result_name)
-    base_results = all_results['base.xml']
+  def _test_reul(all_results, base_xml, files_include, files_exclude, result_name)
+    base_results = all_results[base_xml]
     return if base_results.nil?
 
+    puts "Checking for consistent #{result_name} compared to #{base_xml}..."
     base_reul = base_results[result_name]
     all_results.each do |compare_xml, compare_results|
       next unless compare_xml.include? files_include
+      if not files_exclude.nil?
+        next if compare_xml.include? files_exclude
+      end
 
       if compare_results[result_name].to_s.include? ','
         compare_reul = compare_results[result_name].split(',').map(&:to_f).inject(0, :+) # sum values
