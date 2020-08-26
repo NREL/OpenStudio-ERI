@@ -259,47 +259,81 @@ HPXML Heating Systems
 *********************
 
 Each heating system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/HeatingSystem``.
-Inputs including ``HeatingSystemType``, ``HeatingCapacity``, and ``FractionHeatLoadServed`` must be provided.
+Inputs including ``HeatingSystemType``, and ``FractionHeatLoadServed`` must be provided.
 
-Depending on the type of heating system specified, additional elements are required:
+Depending on the type of heating system specified, additional elements are used:
 
-==================  ===========================  =================  =======================
-HeatingSystemType   DistributionSystem           HeatingSystemFuel  AnnualHeatingEfficiency
-==================  ===========================  =================  =======================
-ElectricResistance                               electricity        Percent
-Furnace             AirDistribution or DSE       <any>              AFUE
-WallFurnace                                      <any>              AFUE
-FloorFurnace                                     <any>              AFUE
-Boiler              HydronicDistribution or DSE  <any>              AFUE
-Stove                                            <any>              Percent
-PortableHeater                                   <any>              Percent
-Fireplace                                        <any>              Percent
-==================  ===========================  =================  =======================
+==================  ==============  ==================================================  =================  =======================  ===============
+HeatingSystemType   IsSharedSystem  DistributionSystem                                  HeatingSystemFuel  AnnualHeatingEfficiency  HeatingCapacity
+==================  ==============  ==================================================  =================  =======================  ===============
+ElectricResistance                                                                      electricity        Percent                  (required)
+Furnace                             AirDistribution or DSE                              <any>              AFUE                     (required)
+WallFurnace                                                                             <any>              AFUE                     (required)
+FloorFurnace                                                                            <any>              AFUE                     (required)
+Boiler              false           HydronicDistribution or DSE                         <any>              AFUE                     (required)
+Boiler              true            HydronicDistribution or HydronicAndAirDistribution  <any>              AFUE
+Stove                                                                                   <any>              Percent                  (required)
+PortableHeater                                                                          <any>              Percent                  (required)
+Fireplace                                                                               <any>              Percent                  (required)
+==================  ==============  ==================================================  =================  =======================  ===============
 
-If a non-electric heating system is specified, the ``ElectricAuxiliaryEnergy`` element may be provided if available. 
+For shared boilers (i.e., serving multiple dwelling units), additional elements are required:
+
+- ``NumberofUnitsServed``: Number of units served by the shared system
+- ``extension/SharedLoopWatts``: Shared pump power [W]
+- ``extension/FanCoilWatts``: In-unit fan coil power [W]
+
+For shared boilers connected to a water loop heat pump, additional elements are required:
+
+- ``extension/WaterLoopHeatPump/AnnualHeatingEfficiency[Units="COP"]/Value``: WLHP heating efficiency
+
+For non-shared systems, the ``ElectricAuxiliaryEnergy`` element may be provided if available.
 
 HPXML Cooling Systems
 *********************
 
 Each cooling system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/CoolingSystem``.
 Inputs including ``CoolingSystemType`` and ``FractionCoolLoadServed`` must be provided.
-``CoolingCapacity`` must also be provided for all systems other than evaporative coolers.
 
-Depending on the type of cooling system specified, additional elements are required/available:
+Depending on the type of cooling system specified, additional elements are used:
 
-=======================  =================================  =================  =======================  ====================
-CoolingSystemType        DistributionSystem                 CoolingSystemFuel  AnnualCoolingEfficiency  SensibleHeatFraction
-=======================  =================================  =================  =======================  ====================
-central air conditioner  AirDistribution or DSE             electricity        SEER                     (optional)
-room air conditioner                                        electricity        EER                      (optional)
-evaporative cooler       AirDistribution or DSE (optional)  electricity
-=======================  =================================  =================  =======================  ====================
+=======================  ==============  ==================================================  =================  =======================  ====================  ===============
+CoolingSystemType        IsSharedSystem  DistributionSystem                                  CoolingSystemFuel  AnnualCoolingEfficiency  SensibleHeatFraction  CoolingCapacity
+=======================  ==============  ==================================================  =================  =======================  ====================  ===============
+central air conditioner                  AirDistribution or DSE                              electricity        SEER                     (optional)            (required)
+room air conditioner                                                                         electricity        EER                      (optional)            (required)
+evaporative cooler                       AirDistribution or DSE (optional)                   electricity
+chiller                  true            HydronicDistribution or HydronicAndAirDistribution  electricity        kW/ton                                         (required)
+cooling tower            true            HydronicAndAirDistribution                          electricity
+=======================  ==============  ==================================================  =================  =======================  ====================  ===============
 
 Central air conditioners can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
 
 - "single stage": SEER <= 15
 - "two stage": 15 < SEER <= 21
 - "variable speed": SEER > 21
+
+For shared chillers (i.e., serving multiple dwelling units), additional elements are required:
+
+- ``NumberofUnitsServed``: Number of units served by the shared system
+- ``AnnualCoolingEfficiency[Units="kW/ton"]/Value``: Chiller efficiency
+- ``extension/SharedLoopWatts``: Total of the pumping and fan power serving the system [W]
+
+For shared chillers connected to a fan coil, additional elements are required:
+
+- ``extension/FanCoilWatts``: Total of the in-unit cooling equipment power serving the unit [W]
+
+For shared chillers connected to a water loop heat pump, additional elements are required:
+
+- ``extension/WaterLoopHeatPump/CoolingCapacity``: WLHP cooling capacity [Btu/hr]
+- ``extension/WaterLoopHeatPump/AnnualCoolingEfficiency[Units="EER"]/Value``: WLHP cooling efficiency
+
+For shared cooling towers (which must always be connected to a water loop heat pump), additional elements are required:
+
+- ``NumberofUnitsServed``: Number of units served by the shared system
+- ``extension/SharedLoopWatts``: Total of the pumping and fan power serving the system [W]
+- ``extension/WaterLoopHeatPump/CoolingCapacity``: WLHP cooling capacity [Btu/hr]
+- ``extension/WaterLoopHeatPump/AnnualCoolingEfficiency[Units="EER"]/Value``: WLHP cooling efficiency
 
 HPXML Heat Pumps
 ****************
@@ -308,15 +342,16 @@ Each heat pump should be entered as a ``Systems/HVAC/HVACPlant/HeatPump``.
 Inputs including ``HeatPumpType``, ``CoolingCapacity``, ``HeatingCapacity``, ``FractionHeatLoadServed``, and ``FractionCoolLoadServed`` must be provided.
 Note that heat pumps are allowed to provide only heating (``FractionCoolLoadServed`` = 0) or cooling (``FractionHeatLoadServed`` = 0) if appropriate.
 
-Depending on the type of heat pump specified, additional elements are required/available:
+Depending on the type of heat pump specified, additional elements are used:
 
-=============  =================================  ============  =======================  =======================  ===========================  ==================
-HeatPumpType   DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency  CoolingSensibleHeatFraction  HeatingCapacity17F
-=============  =================================  ============  =======================  =======================  ===========================  ==================
-air-to-air     AirDistribution or DSE             electricity   SEER                     HSPF                     (optional)                   (optional)
-mini-split     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                     (optional)                   (optional)
-ground-to-air  AirDistribution or DSE             electricity   EER                      COP                      (optional)
-=============  =================================  ============  =======================  =======================  ===========================  ==================
+=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================
+HeatPumpType   IsSharedSystem  DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency  CoolingSensibleHeatFraction  HeatingCapacity17F
+=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================
+air-to-air                     AirDistribution or DSE             electricity   SEER                     HSPF                     (optional)                   (optional)
+mini-split                     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                     (optional)                   (optional)
+ground-to-air  false           AirDistribution or DSE             electricity   EER                      COP                      (optional)
+ground-to-air  true            AirDistribution or DSE             electricity   EER                      COP                      (optional)
+=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================
 
 Air-to-air heat pumps can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
 
@@ -328,6 +363,11 @@ If the heat pump has backup heating, it can be specified with ``BackupSystemFuel
 If the heat pump has a switchover temperature (e.g., dual-fuel heat pump) where the heat pump stops operating and the backup heating system starts running, it can be specified with ``BackupHeatingSwitchoverTemperature``.
 If the ``BackupHeatingSwitchoverTemperature`` is not provided, the backup heating system will operate as needed when the heat pump has insufficient capacity.
 
+For multiple ground source heat pumps on a shared hydronic circulation loop (``IsSharedSystem="true"``), additional elements are required:
+
+- ``NumberofUnitsServed``: Number of units served by the shared system
+- ``extension/SharedLoopWatts``: Shared pump power [W]
+
 HPXML HVAC Control
 ******************
 
@@ -338,7 +378,7 @@ HPXML HVAC Distribution
 ***********************
 
 Each separate HVAC distribution system should be specified as a ``Systems/HVAC/HVACDistribution``.
-The three types of HVAC distribution systems allowed are ``AirDistribution``, ``HydronicDistribution``, and ``DSE``.
+The four types of HVAC distribution systems allowed are ``AirDistribution``, ``HydronicDistribution``, ``HydronicAndAirDistribution``, and ``DSE``.
 There should be at most one heating system and one cooling system attached to a distribution system.
 See the sections on Heating Systems, Cooling Systems, and Heat Pumps for information on which ``DistributionSystemType`` is allowed for which HVAC system.
 Also note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
@@ -393,7 +433,18 @@ AirDistribution systems must also have duct leakage testing provided in one of t
 Hydronic Distribution
 ~~~~~~~~~~~~~~~~~~~~~
 
-``HydronicDistribution`` systems do not require any additional inputs.
+``HydronicDistribution`` systems are defined by:
+
+- ``HydronicDistributionType``: "radiator" or "baseboard" or "radiant floor" or "radiant ceiling"
+
+Hydronic And Air Distribution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``HydronicAndAirDistribution`` systems are defined by:
+
+- ``HydronicAndAirDistributionType``: "fan coil" or "water loop heat pump"
+
+as well as all of the elements described above for an ``AirDistribution`` system.
 
 Distribution System Efficiency
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -475,10 +526,10 @@ Depending on the type of water heater specified, additional elements are require
 ========================================  ===================================  ===========  ==========  ===============  ========================  =================  =========================================  ==============================
 WaterHeaterType                           UniformEnergyFactor or EnergyFactor  FuelType     TankVolume  HeatingCapacity  RecoveryEfficiency        UsesDesuperheater  WaterHeaterInsulation/Jacket/JacketRValue  RelatedHVACSystem
 ========================================  ===================================  ===========  ==========  ===============  ========================  =================  =========================================  ==============================
-storage water heater                      required                             <any>        required    <optional>       required if non-electric  <optional>         <optional>                                 required if uses desuperheater
-instantaneous water heater                required                             <any>                                                               <optional>                                                    required if uses desuperheater
-heat pump water heater                    required                             electricity  required                                               <optional>         <optional>                                 required if uses desuperheater
-space-heating boiler with storage tank                                                      required                                                                  <optional>                                 required         
+storage water heater                      required                             <any>        required    (optional)       required if non-electric  (optional)         (optional)                                 required if uses desuperheater
+instantaneous water heater                required                             <any>                                                               (optional)                                                    required if uses desuperheater
+heat pump water heater                    required                             electricity  required                                               (optional)         (optional)                                 required if uses desuperheater
+space-heating boiler with storage tank                                                      required                                                                  (optional)                                 required         
 space-heating boiler with tankless coil                                                                                                                                                                          required
 ========================================  ===================================  ===========  ==========  ===============  ========================  =================  =========================================  ==============================
 
@@ -588,8 +639,8 @@ The following elements, some adopted from the `PVWatts model <https://pvwatts.nr
 - ``SystemLossesFraction``: Default is 0.14. System losses include soiling, shading, snow, mismatch, wiring, degradation, etc.
 
 If the PV system is a shared system (i.e., serving multiple dwelling units), it should be described using ``IsSharedSystem='true'``.
-In addition, the total output power of the system must be entered as ``MaxPowerOutput[@scope='multiple units']`` and the total number of bedrooms across all dwelling units must be entered as ``extension/NumberofBedroomsServed``.
-The PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms in the building.
+In addition, the total number of bedrooms across all dwelling units served by the system must be entered as ``extension/NumberofBedroomsServed``.
+PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms in the building.
 
 HPXML Appliances
 ----------------

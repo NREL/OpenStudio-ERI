@@ -299,7 +299,6 @@ class EnergyRatingIndex301Validator
         '../../HVACControl' => one, # See [HVACControl]
         'HeatingSystemType[ElectricResistance | Furnace | WallFurnace | FloorFurnace | Boiler | Stove | PortableHeater | FixedHeater | Fireplace]' => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=FloorFurnace] or [HeatingType=Boiler] or [HeatingType=Stove] or [HeatingType=PortableHeater] or [HeatingType=FixedHeater] or [HeatingType=Fireplace]
         'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatingSystems and HeatPumps
-        'ElectricAuxiliaryEnergy' => zero_or_one, # If not provided, uses 301 defaults for fuel furnace/boiler and zero otherwise
       },
 
       ## [HeatingType=Resistance]
@@ -308,6 +307,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="electricity"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [HeatingType=Furnace]
@@ -317,6 +317,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [HeatingType=WallFurnace]
@@ -325,6 +326,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [HeatingType=FloorFurnace]
@@ -333,6 +335,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="AFUE"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [HeatingType=Boiler]
@@ -347,6 +350,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler and IsSharedSystem="false"]' => {
         '../../HVACDistribution[DistributionSystemType/HydronicDistribution[HydronicDistributionType[text()="radiator" or text()="baseboard" or text()="radiant floor" or text()="radiant ceiling"]] | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'HeatingCapacity' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [BoilerType=Shared]
@@ -373,6 +377,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [HeatingType=PortableHeater]
@@ -381,6 +386,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [HeatingType=FixedHeater]
@@ -389,6 +395,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       ## [HeatingType=Fireplace]
@@ -397,6 +404,7 @@ class EnergyRatingIndex301Validator
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
         'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
+        'ElectricAuxiliaryEnergy' => zero_or_one,
       },
 
       # [CoolingSystem]
