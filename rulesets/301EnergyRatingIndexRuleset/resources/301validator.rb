@@ -371,7 +371,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Stove]' => {
         'DistributionSystem' => zero,
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
-        'HeatingCapacity' => zero_or_one,
+        'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
@@ -379,7 +379,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/PortableHeater]' => {
         'DistributionSystem' => zero,
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
-        'HeatingCapacity' => zero_or_one,
+        'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
@@ -387,7 +387,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/FixedHeater]' => {
         'DistributionSystem' => zero,
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
-        'HeatingCapacity' => zero_or_one,
+        'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
@@ -395,7 +395,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Fireplace]' => {
         'DistributionSystem' => zero,
         'HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]' => one,
-        'HeatingCapacity' => zero_or_one,
+        'HeatingCapacity' => one,
         'AnnualHeatingEfficiency[Units="Percent"]/Value' => one,
       },
 
@@ -486,19 +486,19 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
-        'HeatingCapacity17F' => zero_or_one,
         'CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => zero_or_one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
+        'HeatingCapacity17F' => zero_or_one,
       },
 
       ## [HeatPumpType=MSHP]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="mini-split"]' => {
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => zero_or_more, # See [HVACDistribution]
         'DistributionSystem' => zero_or_one,
-        'HeatingCapacity17F' => zero_or_one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
+        'HeatingCapacity17F' => zero_or_one,
       },
 
       ## [HeatPumpType=GSHP]
