@@ -56,6 +56,8 @@ The following building features/technologies are available for modeling:
     - Central Air Conditioners
     - Room Air Conditioners
     - Evaporative Coolers
+    - Chillers
+    - Cooling Towers
     
   - Heat Pumps
   
@@ -63,6 +65,7 @@ The following building features/technologies are available for modeling:
     - Mini Split Heat Pumps
     - Ground Source Heat Pumps
     - Dual-Fuel Heat Pumps
+    - Water Loop Heat Pumps
     
   - Thermostat Type
   - Ducts

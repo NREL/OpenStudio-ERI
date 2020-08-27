@@ -338,6 +338,7 @@
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem3'/>
               <DistributionSystem idref='HVACDistribution3'/>
+              <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
@@ -352,6 +353,7 @@
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem4'/>
               <DistributionSystem idref='HVACDistribution4'/>
+              <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
                 <Boiler/>
               </HeatingSystemType>
@@ -461,6 +463,7 @@
             <HeatPump>
               <SystemIdentifier id='HeatPump2'/>
               <DistributionSystem idref='HVACDistribution6'/>
+              <IsSharedSystem>false</IsSharedSystem>
               <HeatPumpType>ground-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>4800.0</HeatingCapacity>
@@ -561,7 +564,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>450.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>675.0</ConditionedFloorAreaServed>
           </HVACDistribution>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution2'/>
@@ -609,18 +612,22 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>450.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>675.0</ConditionedFloorAreaServed>
           </HVACDistribution>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution3'/>
             <DistributionSystemType>
-              <HydronicDistribution/>
+              <HydronicDistribution>
+                <HydronicDistributionType>baseboard</HydronicDistributionType>
+              </HydronicDistribution>
             </DistributionSystemType>
           </HVACDistribution>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution4'/>
             <DistributionSystemType>
-              <HydronicDistribution/>
+              <HydronicDistribution>
+                <HydronicDistributionType>baseboard</HydronicDistributionType>
+              </HydronicDistribution>
             </DistributionSystemType>
           </HVACDistribution>
           <HVACDistribution>
@@ -669,7 +676,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>450.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>675.0</ConditionedFloorAreaServed>
           </HVACDistribution>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution6'/>
@@ -717,7 +724,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>450.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>675.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <WaterHeating>

@@ -1092,8 +1092,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Cooling systems
 
     has_fuel = orig_hpxml.has_fuel_access()
-    sum_frac_cool_load = (orig_hpxml.cooling_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_cool_load_served }.inject(0, :+)
-    sum_frac_heat_load = (orig_hpxml.heating_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_heat_load_served }.inject(0, :+)
+    sum_frac_cool_load = orig_hpxml.total_fraction_cool_load_served
+    sum_frac_heat_load = orig_hpxml.total_fraction_heat_load_served
 
     # Heating
     orig_hpxml.heating_systems.each do |orig_heating_system|
@@ -1101,7 +1101,18 @@ class EnergyRatingIndex301Ruleset
       next unless orig_heating_system.heating_system_fuel != HPXML::FuelTypeElectricity
 
       if orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler
-        add_reference_heating_gas_boiler(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
+        fraction_heat_load_served = orig_heating_system.fraction_heat_load_served
+        if orig_heating_system.distribution_system.hydronic_and_air_type.to_s == HPXML::HydronicAndAirTypeWaterLoopHeatPump
+          # 301-2019 Section 4.4.7.2.1
+          fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_heating_system.wlhp_heating_efficiency_cop)
+          orig_heating_system.distribution_system_idref = nil
+          # Also add heat pump:
+          hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_heating_system.wlhp_heating_efficiency_cop)
+          orig_heat_pump = HPXML::HeatPump.new(orig_hpxml)
+          orig_heat_pump.id = "#{orig_heating_system.id}_WLHP"
+          add_reference_heating_heat_pump(new_hpxml, hp_fraction_heat_load_served, orig_heat_pump)
+        end
+        add_reference_heating_gas_boiler(new_hpxml, fraction_heat_load_served, orig_heating_system)
       else
         add_reference_heating_gas_furnace(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
       end
@@ -1117,6 +1128,7 @@ class EnergyRatingIndex301Ruleset
       add_reference_cooling_air_conditioner(new_hpxml, orig_cooling_system.fraction_cool_load_served, orig_cooling_system)
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
+      next if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
       next unless orig_heat_pump.fraction_cool_load_served > 0
 
       add_reference_cooling_air_conditioner(new_hpxml, orig_heat_pump.fraction_cool_load_served, orig_heat_pump)
@@ -1163,12 +1175,14 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Cooling systems
 
     has_fuel = orig_hpxml.has_fuel_access()
-    sum_frac_cool_load = (orig_hpxml.cooling_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_cool_load_served }.inject(0, :+)
-    sum_frac_heat_load = (orig_hpxml.heating_systems + orig_hpxml.heat_pumps).map { |hvac| hvac.fraction_heat_load_served }.inject(0, :+)
+    sum_frac_cool_load = orig_hpxml.total_fraction_cool_load_served
+    sum_frac_heat_load = orig_hpxml.total_fraction_heat_load_served
 
     # Retain heating system(s)
     orig_hpxml.heating_systems.each do |orig_heating_system|
       new_hpxml.heating_systems.add(id: orig_heating_system.id,
+                                    is_shared_system: orig_heating_system.is_shared_system,
+                                    number_of_units_served: orig_heating_system.number_of_units_served,
                                     distribution_system_idref: orig_heating_system.distribution_system_idref,
                                     heating_system_type: orig_heating_system.heating_system_type,
                                     heating_system_fuel: orig_heating_system.heating_system_fuel,
@@ -1178,6 +1192,9 @@ class EnergyRatingIndex301Ruleset
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
                                     heating_cfm: orig_heating_system.heating_cfm,
+                                    shared_loop_watts: orig_heating_system.shared_loop_watts,
+                                    fan_coil_watts: orig_heating_system.fan_coil_watts,
+                                    wlhp_heating_efficiency_cop: orig_heating_system.wlhp_heating_efficiency_cop,
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
     # Add reference heating system for residual load
@@ -1188,6 +1205,8 @@ class EnergyRatingIndex301Ruleset
     # Retain cooling system(s)
     orig_hpxml.cooling_systems.each do |orig_cooling_system|
       new_hpxml.cooling_systems.add(id: orig_cooling_system.id,
+                                    is_shared_system: orig_cooling_system.is_shared_system,
+                                    number_of_units_served: orig_cooling_system.number_of_units_served,
                                     distribution_system_idref: orig_cooling_system.distribution_system_idref,
                                     cooling_system_type: orig_cooling_system.cooling_system_type,
                                     cooling_system_fuel: orig_cooling_system.cooling_system_fuel,
@@ -1196,8 +1215,13 @@ class EnergyRatingIndex301Ruleset
                                     fraction_cool_load_served: orig_cooling_system.fraction_cool_load_served,
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
+                                    cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
                                     cooling_shr: orig_cooling_system.cooling_shr,
                                     cooling_cfm: orig_cooling_system.cooling_cfm,
+                                    shared_loop_watts: orig_cooling_system.shared_loop_watts,
+                                    fan_coil_watts: orig_cooling_system.fan_coil_watts,
+                                    wlhp_cooling_capacity: orig_cooling_system.wlhp_cooling_capacity,
+                                    wlhp_cooling_efficiency_eer: orig_cooling_system.wlhp_cooling_efficiency_eer,
                                     seed_id: orig_cooling_system.seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.seed_id)
     end
     # Add reference cooling system for residual load
@@ -1208,6 +1232,8 @@ class EnergyRatingIndex301Ruleset
     # Retain heat pump(s)
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       new_hpxml.heat_pumps.add(id: orig_heat_pump.id,
+                               is_shared_system: orig_heat_pump.is_shared_system,
+                               number_of_units_served: orig_heat_pump.number_of_units_served,
                                distribution_system_idref: orig_heat_pump.distribution_system_idref,
                                heat_pump_type: orig_heat_pump.heat_pump_type,
                                heat_pump_fuel: orig_heat_pump.heat_pump_fuel,
@@ -1227,6 +1253,7 @@ class EnergyRatingIndex301Ruleset
                                cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
                                heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
                                heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
+                               shared_loop_watts: orig_heat_pump.shared_loop_watts,
                                seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)
     end
     # Add reference heat pump for residual load
@@ -1270,7 +1297,7 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
       # Leakage exemption?
       zero_leakage = false
-      if orig_hvac_distribution.duct_leakage_testing_exemption
+      if [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include?(orig_hvac_distribution.distribution_system_type) && orig_hvac_distribution.duct_leakage_testing_exemption
         if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014AD')
           fail "ERI Version #{@eri_version} does not support duct leakage testing exemption."
         elsif Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014ADEGL')
@@ -1287,13 +1314,22 @@ class EnergyRatingIndex301Ruleset
       end
 
       new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
-                                       distribution_system_type: orig_hvac_distribution.distribution_system_type,
-                                       annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
-                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse,
-                                       conditioned_floor_area_served: orig_hvac_distribution.conditioned_floor_area_served)
-      next unless orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
-
+                                       distribution_system_type: orig_hvac_distribution.distribution_system_type)
       new_hvac_distribution = new_hpxml.hvac_distributions[-1]
+
+      if orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeDSE
+        new_hvac_distribution.annual_heating_dse = orig_hvac_distribution.annual_heating_dse
+        new_hvac_distribution.annual_cooling_dse = orig_hvac_distribution.annual_cooling_dse
+      end
+
+      if [HPXML::HVACDistributionTypeHydronic, HPXML::HVACDistributionTypeHydronicAndAir].include? orig_hvac_distribution.distribution_system_type
+        new_hvac_distribution.hydronic_type = orig_hvac_distribution.hydronic_type
+        new_hvac_distribution.hydronic_and_air_type = orig_hvac_distribution.hydronic_and_air_type
+      end
+
+      next unless [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include? orig_hvac_distribution.distribution_system_type
+
+      new_hvac_distribution.conditioned_floor_area_served = orig_hvac_distribution.conditioned_floor_area_served
 
       if zero_leakage
         # Zero leakage
@@ -1306,6 +1342,7 @@ class EnergyRatingIndex301Ruleset
                                                             duct_leakage_value: 0.0,
                                                             duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
       else
+        # Duct leakage
         orig_hvac_distribution.duct_leakage_measurements.each do |orig_leakage_measurement|
           if orig_leakage_measurement.duct_leakage_total_or_to_outside == HPXML::DuctLeakageTotal
             # Total duct leakage
@@ -1349,6 +1386,7 @@ class EnergyRatingIndex301Ruleset
           end
         end
 
+        # Ducts
         orig_hvac_distribution.ducts.each do |orig_duct|
           new_hvac_distribution.ducts.add(duct_type: orig_duct.duct_type,
                                           duct_insulation_r_value: orig_duct.duct_insulation_r_value,
@@ -1757,7 +1795,6 @@ class EnergyRatingIndex301Ruleset
                                array_azimuth: orig_pv_system.array_azimuth,
                                array_tilt: orig_pv_system.array_tilt,
                                max_power_output: orig_pv_system.max_power_output,
-                               building_max_power_output: orig_pv_system.building_max_power_output,
                                inverter_efficiency: orig_pv_system.inverter_efficiency,
                                system_losses_fraction: orig_pv_system.system_losses_fraction,
                                number_of_bedrooms_served: orig_pv_system.number_of_bedrooms_served)
@@ -2407,6 +2444,7 @@ class EnergyRatingIndex301Ruleset
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
+                                  is_shared_system: false,
                                   distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeBoiler,
                                   heating_system_fuel: HPXML::FuelTypeNaturalGas,
