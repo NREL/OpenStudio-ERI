@@ -25,6 +25,7 @@ class EnergyRatingIndex301Validator
     zero_or_more = nil
     one = [1]
     one_or_more = []
+    nine = [9]
 
     requirements = {
 
@@ -298,7 +299,7 @@ class EnergyRatingIndex301Validator
         'SystemIdentifier' => one, # Required by HPXML schema
         '../../HVACControl' => one, # See [HVACControl]
         'HeatingSystemType[ElectricResistance | Furnace | WallFurnace | FloorFurnace | Boiler | Stove | PortableHeater | FixedHeater | Fireplace]' => one, # See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=FloorFurnace] or [HeatingType=Boiler] or [HeatingType=Stove] or [HeatingType=PortableHeater] or [HeatingType=FixedHeater] or [HeatingType=Fireplace]
-        'FractionHeatLoadServed' => one, # Must sum to <= 1 across all HeatingSystems and HeatPumps
+        'FractionHeatLoadServed' => one,
       },
 
       ## [HeatingType=Resistance]
@@ -421,7 +422,7 @@ class EnergyRatingIndex301Validator
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
         'CoolingCapacity' => one,
-        'CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => zero_or_one,
+        '[not(CompressorType)] | CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'SensibleHeatFraction' => zero_or_one,
       },
@@ -485,7 +486,7 @@ class EnergyRatingIndex301Validator
         'HeatingCapacity' => one,
         'CoolingCapacity' => one,
         'CoolingSensibleHeatFraction' => zero_or_one,
-        'BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]' => zero_or_one, # See [HeatPumpBackup]
+        '[not(BackupSystemFuel)] | BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]' => one, # See [HeatPumpBackup]
         'FractionHeatLoadServed' => one,
         'FractionCoolLoadServed' => one,
       },
@@ -494,7 +495,7 @@ class EnergyRatingIndex301Validator
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"]' => {
         '../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]' => one_or_more, # See [HVACDistribution]
         'DistributionSystem' => one,
-        'CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => zero_or_one,
+        '[not(CompressorType)] | CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]' => one,
         'AnnualCoolingEfficiency[Units="SEER"]/Value' => one,
         'AnnualHeatingEfficiency[Units="HSPF"]/Value' => one,
         'HeatingCapacity17F' => zero_or_one,
@@ -529,7 +530,7 @@ class EnergyRatingIndex301Validator
       ## [HeatPumpBackup]
       '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[BackupSystemFuel]' => {
         'BackupAnnualHeatingEfficiency[Units="Percent" or Units="AFUE"]/Value' => one,
-        'BackupHeatingCapacity' => one, # Use -1 for autosizing
+        'BackupHeatingCapacity' => one,
         'BackupHeatingSwitchoverTemperature' => zero_or_one, # Use if dual-fuel heat pump
       },
 
@@ -714,6 +715,7 @@ class EnergyRatingIndex301Validator
         'extension/SharedRecirculation/PumpPower' => zero_or_one,
         'extension/SharedRecirculation/ControlType[text()="manual demand control" or text()="presence sensor demand control" or text()="timer" or text()="no control"]' => one,
       },
+
       # [WaterFixture]
       '/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterFixture' => {
         '../HotWaterDistribution' => one, # See [HotWaterDistribution]
@@ -853,15 +855,7 @@ class EnergyRatingIndex301Validator
 
       # [Lighting]
       '/HPXML/Building/BuildingDetails/Lighting' => {
-        'LightingGroup[LightingType/CompactFluorescent and Location="interior"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/CompactFluorescent and Location="exterior"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/CompactFluorescent and Location="garage"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/FluorescentTube and Location="interior"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/FluorescentTube and Location="exterior"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/FluorescentTube and Location="garage"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/LightEmittingDiode and Location="interior"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/LightEmittingDiode and Location="exterior"]' => one, # See [LightingGroup]
-        'LightingGroup[LightingType/LightEmittingDiode and Location="garage"]' => one, # See [LightingGroup]
+        'LightingGroup[LightingType[LightEmittingDiode | CompactFluorescent | FluorescentTube] and Location[text()="interior" or text()="exterior" or text()="garage"]]' => nine, # See [LightingGroup]
       },
 
       ## [LightingGroup]
