@@ -263,7 +263,7 @@ class HPXMLtoOpenStudioDefaultsTest < MiniTest::Test
     _test_default_skylight_values(hpxml_default, [1.0] * n_skylights, [1.0] * n_skylights)
   end
 
-  def test_hvac
+  def test_air_conditioners
     # Test inputs not overridden by defaults
     hpxml_name = 'base.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
@@ -271,14 +271,44 @@ class HPXMLtoOpenStudioDefaultsTest < MiniTest::Test
     hpxml.cooling_systems[0].compressor_type = HPXML::HVACCompressorTypeVariableSpeed
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_default = _test_measure()
-    _test_default_cooling_system_values(hpxml_default, 0.88, HPXML::HVACCompressorTypeVariableSpeed)
-    _test_default_heating_system_values(hpxml_default)
+    _test_default_air_conditioner_values(hpxml_default, 0.88, HPXML::HVACCompressorTypeVariableSpeed)
 
     # Test defaults
-    hpxml = apply_hpxml_defaults('base-misc-defaults.xml')
+    hpxml = apply_hpxml_defaults('base.xml')
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_default = _test_measure()
-    _test_default_cooling_system_values(hpxml_default, 0.73, HPXML::HVACCompressorTypeSingleStage)
+    _test_default_air_conditioner_values(hpxml_default, 0.73, HPXML::HVACCompressorTypeSingleStage)
+  end
+
+  def test_boilers
+    # Test inputs not overridden by defaults (in-unit boiler)
+    hpxml_name = 'base-hvac-boiler-gas-only.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.heating_systems[0].electric_auxiliary_energy = 99.9
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_default = _test_measure()
+    _test_default_boiler_values(hpxml_default, 99.9)
+
+    # Test defaults w/ in-unit boiler
+    hpxml.heating_systems[0].electric_auxiliary_energy = nil
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_default = _test_measure()
+    _test_default_boiler_values(hpxml_default, 170.0)
+
+    # Test inputs not overridden by defaults (shared boiler)
+    hpxml_name = 'base-hvac-shared-boiler-only-baseboard.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.heating_systems[0].shared_loop_watts = nil
+    hpxml.heating_systems[0].electric_auxiliary_energy = 99.9
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_default = _test_measure()
+    _test_default_boiler_values(hpxml_default, 99.9)
+
+    # Test defaults w/ shared boiler
+    hpxml.heating_systems[0].electric_auxiliary_energy = nil
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_default = _test_measure()
+    _test_default_boiler_values(hpxml_default, 220.0)
   end
 
   def test_hvac_distribution
@@ -355,8 +385,8 @@ class HPXMLtoOpenStudioDefaultsTest < MiniTest::Test
     hpxml_default = _test_measure()
     expected_supply_locations = ['basement - conditioned', 'basement - conditioned'] * hpxml_default.hvac_distributions.size
     expected_return_locations = ['basement - conditioned', 'basement - conditioned'] * hpxml_default.hvac_distributions.size
-    expected_supply_areas = [60.75, 60.75] * hpxml_default.hvac_distributions.size
-    expected_return_areas = [22.5, 22.5] * hpxml_default.hvac_distributions.size
+    expected_supply_areas = [91.125, 91.125] * hpxml_default.hvac_distributions.size
+    expected_return_areas = [33.75, 33.75] * hpxml_default.hvac_distributions.size
     expected_n_return_registers = hpxml_default.building_construction.number_of_conditioned_floors
     _test_default_duct_values(hpxml_default, expected_supply_locations, expected_return_locations, expected_supply_areas, expected_return_areas, expected_n_return_registers)
 
@@ -367,8 +397,8 @@ class HPXMLtoOpenStudioDefaultsTest < MiniTest::Test
     hpxml_default = _test_measure()
     expected_supply_locations = ['basement - conditioned', 'basement - conditioned', 'living space', 'living space'] * hpxml_default.hvac_distributions.size
     expected_return_locations = ['basement - conditioned', 'basement - conditioned', 'living space', 'living space'] * hpxml_default.hvac_distributions.size
-    expected_supply_areas = [45.56, 45.56, 15.19, 15.19] * hpxml_default.hvac_distributions.size
-    expected_return_areas = [16.88, 16.88, 5.63, 5.63] * hpxml_default.hvac_distributions.size
+    expected_supply_areas = [68.34, 68.34, 22.78, 22.78] * hpxml_default.hvac_distributions.size
+    expected_return_areas = [25.31, 25.31, 8.44, 8.44] * hpxml_default.hvac_distributions.size
     expected_n_return_registers = hpxml_default.building_construction.number_of_conditioned_floors
     _test_default_duct_values(hpxml_default, expected_supply_locations, expected_return_locations, expected_supply_areas, expected_return_areas, expected_n_return_registers)
   end
@@ -968,23 +998,22 @@ class HPXMLtoOpenStudioDefaultsTest < MiniTest::Test
     assert_equal(num_occupants, hpxml.building_occupancy.number_of_residents)
   end
 
-  def _test_default_cooling_system_values(hpxml, shr, compressor_type)
+  def _test_default_air_conditioner_values(hpxml, shr, compressor_type)
     cooling_system = hpxml.cooling_systems[0]
     assert_equal(shr, cooling_system.cooling_shr)
     assert_equal(compressor_type, cooling_system.compressor_type)
   end
 
-  def _test_default_heating_system_values(hpxml)
-  end
-
-  def _test_default_heat_pump_values(hpxml)
+  def _test_default_boiler_values(hpxml, eae)
+    heating_system = hpxml.heating_systems[0]
+    assert_equal(eae, heating_system.electric_auxiliary_energy)
   end
 
   def _test_default_duct_values(hpxml, supply_locations, return_locations, supply_areas, return_areas, n_return_registers)
     supply_duct_idx = 0
     return_duct_idx = 0
     hpxml.hvac_distributions.each do |hvac_distribution|
-      next unless hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
+      next unless [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include? hvac_distribution.distribution_system_type
 
       assert_equal(n_return_registers, hvac_distribution.number_of_return_registers)
       hvac_distribution.ducts.each do |duct|
