@@ -1180,6 +1180,9 @@ class EnergyRatingIndex301Ruleset
 
     # Retain heating system(s)
     orig_hpxml.heating_systems.each do |orig_heating_system|
+      if (orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler) && orig_heating_system.electric_auxiliary_energy.nil?
+        orig_heating_system.electric_auxiliary_energy = HVAC.get_default_eae(orig_heating_system, nil)
+      end
       new_hpxml.heating_systems.add(id: orig_heating_system.id,
                                     is_shared_system: orig_heating_system.is_shared_system,
                                     number_of_units_served: orig_heating_system.number_of_units_served,
@@ -1254,6 +1257,7 @@ class EnergyRatingIndex301Ruleset
                                heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
                                heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
                                shared_loop_watts: orig_heat_pump.shared_loop_watts,
+                               pump_watts_per_ton: orig_heat_pump.pump_watts_per_ton,
                                seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)
     end
     # Add reference heat pump for residual load
@@ -2452,6 +2456,7 @@ class EnergyRatingIndex301Ruleset
                                   heating_efficiency_afue: 0.80,
                                   fraction_heat_load_served: load_frac,
                                   seed_id: seed_id)
+    new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_eae(new_hpxml.heating_systems[-1], nil)
   end
 
   def self.add_reference_heating_heat_pump(new_hpxml, load_frac, orig_system = nil)
