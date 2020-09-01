@@ -277,17 +277,18 @@ PortableHeater                                                                  
 Fireplace                                                                               <any>              Percent                  (required)
 ==================  ==============  ==================================================  =================  =======================  ===============
 
-For shared boilers (i.e., serving multiple dwelling units), additional elements are required:
+For all systems, the ``ElectricAuxiliaryEnergy`` element may be provided if available.
+For shared boilers (i.e., serving multiple dwelling units), the electric auxiliary energy can alternatively be calculated using the following inputs:
 
-- ``NumberofUnitsServed``: Number of units served by the shared system
 - ``extension/SharedLoopWatts``: Shared pump power [W]
+- ``NumberofUnitsServed``: Number of units served by the shared system
 - ``extension/FanCoilWatts``: In-unit fan coil power [W]
 
-For shared boilers connected to a water loop heat pump, additional elements are required:
+If electric auxiliary energy is not provided (nor calculated for shared boilers), it is defaulted per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_.
 
-- ``extension/WaterLoopHeatPump/AnnualHeatingEfficiency[Units="COP"]/Value``: WLHP heating efficiency
+For shared boilers connected to a water loop heat pump, an additional element is required:
 
-For non-shared systems, the ``ElectricAuxiliaryEnergy`` element may be provided if available.
+- ``extension/WaterLoopHeatPump/AnnualHeatingEfficiency[Units="COP"]/Value``: WLHP rated heating efficiency
 
 HPXML Cooling Systems
 *********************
@@ -326,14 +327,14 @@ For shared chillers connected to a fan coil, additional elements are required:
 For shared chillers connected to a water loop heat pump, additional elements are required:
 
 - ``extension/WaterLoopHeatPump/CoolingCapacity``: WLHP cooling capacity [Btu/hr]
-- ``extension/WaterLoopHeatPump/AnnualCoolingEfficiency[Units="EER"]/Value``: WLHP cooling efficiency
+- ``extension/WaterLoopHeatPump/AnnualCoolingEfficiency[Units="EER"]/Value``: WLHP rated cooling efficiency
 
 For shared cooling towers (which must always be connected to a water loop heat pump), additional elements are required:
 
 - ``NumberofUnitsServed``: Number of units served by the shared system
 - ``extension/SharedLoopWatts``: Total of the pumping and fan power serving the system [W]
 - ``extension/WaterLoopHeatPump/CoolingCapacity``: WLHP cooling capacity [Btu/hr]
-- ``extension/WaterLoopHeatPump/AnnualCoolingEfficiency[Units="EER"]/Value``: WLHP cooling efficiency
+- ``extension/WaterLoopHeatPump/AnnualCoolingEfficiency[Units="EER"]/Value``: WLHP rated cooling efficiency
 
 HPXML Heat Pumps
 ****************
@@ -352,6 +353,10 @@ mini-split                     AirDistribution or DSE (optional)  electricity   
 ground-to-air  false           AirDistribution or DSE             electricity   EER                      COP                      (optional)
 ground-to-air  true            AirDistribution or DSE             electricity   EER                      COP                      (optional)
 =============  ==============  =================================  ============  =======================  =======================  ===========================  ==================
+
+Ground-to-air heat pumps also have an additional input:
+
+- ``extension/PumpPowerWattsPerTon``: Ground loop circulator pump power during operation of the heat pump in Watts/ton of cooling capacity.
 
 Air-to-air heat pumps can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
 
