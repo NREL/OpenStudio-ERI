@@ -1181,7 +1181,9 @@ class EnergyRatingIndex301Ruleset
     # Retain heating system(s)
     orig_hpxml.heating_systems.each do |orig_heating_system|
       if (orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler) && orig_heating_system.electric_auxiliary_energy.nil?
+        # Convert to EAE
         orig_heating_system.electric_auxiliary_energy = HVAC.get_default_eae(orig_heating_system, nil)
+        orig_heating_system.shared_loop_watts = nil
       end
       new_hpxml.heating_systems.add(id: orig_heating_system.id,
                                     is_shared_system: orig_heating_system.is_shared_system,
