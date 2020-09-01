@@ -1180,10 +1180,8 @@ class EnergyRatingIndex301Ruleset
 
     # Retain heating system(s)
     orig_hpxml.heating_systems.each do |orig_heating_system|
-      if (orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler) && orig_heating_system.electric_auxiliary_energy.nil?
-        # Convert to EAE
-        orig_heating_system.electric_auxiliary_energy = HVAC.get_default_eae(orig_heating_system, nil)
-        orig_heating_system.shared_loop_watts = nil
+      if (orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler)
+        orig_heating_system.electric_auxiliary_energy = HVAC.get_electric_auxiliary_energy(orig_heating_system)
       end
       new_hpxml.heating_systems.add(id: orig_heating_system.id,
                                     is_shared_system: orig_heating_system.is_shared_system,
@@ -1197,8 +1195,6 @@ class EnergyRatingIndex301Ruleset
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
                                     heating_cfm: orig_heating_system.heating_cfm,
-                                    shared_loop_watts: orig_heating_system.shared_loop_watts,
-                                    fan_coil_watts: orig_heating_system.fan_coil_watts,
                                     wlhp_heating_efficiency_cop: orig_heating_system.wlhp_heating_efficiency_cop,
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
@@ -2458,7 +2454,7 @@ class EnergyRatingIndex301Ruleset
                                   heating_efficiency_afue: 0.80,
                                   fraction_heat_load_served: load_frac,
                                   seed_id: seed_id)
-    new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_eae(new_hpxml.heating_systems[-1], nil)
+    new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_electric_auxiliary_energy(new_hpxml.heating_systems[-1])
   end
 
   def self.add_reference_heating_heat_pump(new_hpxml, load_frac, orig_system = nil)
