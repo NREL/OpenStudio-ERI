@@ -97,7 +97,7 @@ class ERIPVTest < MiniTest::Test
       assert_equal(tracking, pv_system.tracking)
       assert_equal(azimuth, pv_system.array_azimuth)
       assert_equal(tilt, pv_system.array_tilt)
-      assert_equal(power, pv_system.max_power_output.to_f + pv_system.building_max_power_output.to_f)
+      assert_equal(power, pv_system.max_power_output.to_f)
       assert_equal(inv_eff, pv_system.inverter_efficiency)
       assert_equal(losses, pv_system.system_losses_fraction)
       if nbeds_served.nil?

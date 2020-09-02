@@ -1273,6 +1273,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
                   'invalid_files/invalid-daylight-saving.xml',
                   'invalid_files/invalid-distribution-cfa-served.xml',
+                  'invalid_files/invalid-facility-type.xml',
                   'invalid_files/invalid-neighbor-shading-azimuth.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
@@ -1330,6 +1331,8 @@ def create_sample_hpxmls
                   'base-dhw-tankless-electric-outside.xml',
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
+                  'base-enclosure-infil-ach-house-pressure.xml',
+                  'base-enclosure-infil-cfm-house-pressure.xml',
                   'base-enclosure-infil-flue.xml',
                   'base-enclosure-rooftypes.xml',
                   'base-enclosure-walltypes.xml',
@@ -1389,19 +1392,26 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = 'latest'
 
     # Handle extra inputs for ERI
+    hpxml.heating_systems.each do |heating_system|
+      next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
+      next unless heating_system.is_shared_system.nil?
+
+      heating_system.is_shared_system = false
+    end
+    hpxml.heat_pumps.each do |heat_pump|
+      next unless heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+      next unless heat_pump.is_shared_system.nil?
+
+      heat_pump.is_shared_system = false
+    end
     hpxml.water_heating_systems.each do |water_heating_system|
       next unless water_heating_system.is_shared_system.nil?
 
       water_heating_system.is_shared_system = false
     end
-    shared_locations = [HPXML::LocationOtherHousingUnit,
-                        HPXML::LocationOtherHeatedSpace,
-                        HPXML::LocationOtherMultifamilyBufferSpace,
-                        HPXML::LocationOtherNonFreezingSpace]
     shared_water_heaters = hpxml.water_heating_systems.select { |wh| wh.is_shared_system }
     if not hpxml.clothes_washers.empty?
-      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_washers[0].location)
-        hpxml.clothes_washers[0].is_shared_appliance = true
+      if hpxml.clothes_washers[0].is_shared_appliance
         hpxml.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
         hpxml.clothes_washers[0].number_of_units = 2
       else
@@ -1409,8 +1419,7 @@ def create_sample_hpxmls
       end
     end
     if not hpxml.clothes_dryers.empty?
-      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.clothes_dryers[0].location)
-        hpxml.clothes_dryers[0].is_shared_appliance = true
+      if hpxml.clothes_dryers[0].is_shared_appliance
         hpxml.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
         hpxml.clothes_dryers[0].number_of_units = 2
       else
@@ -1418,9 +1427,7 @@ def create_sample_hpxmls
       end
     end
     if not hpxml.dishwashers.empty?
-      if shared_water_heaters.size == 1 && shared_locations.include?(hpxml.dishwashers[0].location)
-        hpxml.dishwashers[0].is_shared_appliance = true
-      else
+      if not hpxml.dishwashers[0].is_shared_appliance
         hpxml.dishwashers[0].is_shared_appliance = false
       end
     end

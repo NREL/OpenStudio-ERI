@@ -112,12 +112,6 @@
       <checksum>FCBF2113</checksum>
     </file>
     <file>
-      <filename>test_hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>260F391A</checksum>
-    </file>
-    <file>
       <filename>test_ventilation.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>

@@ -16,7 +16,6 @@ class EnergyRatingIndex301Validator
         else
           parent_xpath = rule_context.gsub('h:', '')
         end
-
         next if hpxml_doc.xpath(parent_xpath).empty? # Skip if parent element doesn't exist
 
         XMLHelper.get_elements(rule, 'sch:assert').each do |assert_element|
