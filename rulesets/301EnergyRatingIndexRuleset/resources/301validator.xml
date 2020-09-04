@@ -79,7 +79,7 @@
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:ClimateandRiskZones/h:WeatherStation'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:Name) = 1'>Expected 1 element(s) for xpath: Name</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:WMO) = 1 + count(h:extension/h:EPWFilePath) = 1'>Expected 1 element(s) for xpath: WMO | extension/EPWFilePath</sch:assert> <!-- Reference weather/data.csv for the list of acceptable WMO station numbers -->
+      <sch:assert test='count(h:WMO) + count(h:extension/h:EPWFilePath) = 1'>Expected 1 element(s) for xpath: WMO | extension/EPWFilePath</sch:assert> <!-- Reference weather/data.csv for the list of acceptable WMO station numbers -->
     </sch:rule>
 
     <!-- [AirInfiltration] -->
