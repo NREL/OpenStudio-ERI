@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>236adefb-bd92-4790-8b2f-79f2c9a87637</version_id>
-  <version_modified>20200901T150504Z</version_modified>
+  <version_id>57007ada-9772-4edc-a0ac-163c709f3f4b</version_id>
+  <version_modified>20200904T170419Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -106,12 +106,6 @@
       <checksum>2F4E9E33</checksum>
     </file>
     <file>
-      <filename>test_enclosure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>EDDF17AD</checksum>
-    </file>
-    <file>
       <filename>test_lighting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -158,6 +152,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>58B69F72</checksum>
+    </file>
+    <file>
+      <filename>test_enclosure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>1023DABB</checksum>
     </file>
   </files>
 </measure>

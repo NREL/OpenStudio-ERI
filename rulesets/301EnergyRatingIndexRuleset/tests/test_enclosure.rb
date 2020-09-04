@@ -315,29 +315,27 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
 
-    hpxml_names = ['base-enclosure-other-housing-unit.xml',
-                   'base-enclosure-other-heated-space.xml']
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
-    hpxml_names.each do |hpxml_name|
-      # Rated Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_walls(hpxml, 1200, (23.0 * 420 + 4.0 * 780) / 1200, 0.7, 0.92)
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_walls(hpxml, 1200, (23.0 * 420 + 4.0 * 780) / 1200, 0.7, 0.92)
 
-      # Reference Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_walls(hpxml, 1200, (16.67 * 420 + 4.0 * 780) / 1200, 0.75, 0.9)
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_walls(hpxml, 1200, (16.67 * 420 + 4.0 * 780) / 1200, 0.75, 0.9)
 
-      # IAD Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_walls(hpxml, 2355.52, 23.0, 0.7, 0.92)
 
-      # IAD Reference Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
-    end
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_walls(hpxml, 2355.52, 16.67, 0.75, 0.9)
 
     hpxml_names = ['base-enclosure-other-multifamily-buffer-space.xml',
-                   'base-enclosure-other-non-freezing-space.xml']
+                   'base-enclosure-other-non-freezing-space.xml',
+                   'base-enclosure-other-heated-space.xml']
 
     hpxml_names.each do |hpxml_name|
       # Rated Home
@@ -600,29 +598,27 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_floors(hpxml, 2400, (33.33 * 1200 + 30.3 * 1200) / 2400)
 
-    hpxml_names = ['base-enclosure-other-housing-unit.xml',
-                   'base-enclosure-other-heated-space.xml']
+    hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
-    hpxml_names.each do |hpxml_name|
-      # Rated Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_floors(hpxml, 2700, 2.1)
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_floors(hpxml, 2700, 2.1)
 
-      # Reference Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_floors(hpxml, 2700, 2.1)
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_floors(hpxml, 2700, 2.1)
 
-      # IAD Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_floors(hpxml, 2400, (2.1 * 1200 + 30.3 * 1200) / 2400)
+    # IAD Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_floors(hpxml, 2400, (2.1 * 1200 + 30.3 * 1200) / 2400)
 
-      # IAD Reference Home
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_floors(hpxml, 2400, (2.1 * 1200 + 30.3 * 1200) / 2400)
-    end
+    # IAD Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_floors(hpxml, 2400, (2.1 * 1200 + 30.3 * 1200) / 2400)
 
     hpxml_names = ['base-enclosure-other-multifamily-buffer-space.xml',
-                   'base-enclosure-other-non-freezing-space.xml']
+                   'base-enclosure-other-non-freezing-space.xml',
+                   'base-enclosure-other-heated-space.xml']
 
     hpxml_names.each do |hpxml_name|
       # Rated Home
