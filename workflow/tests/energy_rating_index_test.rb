@@ -799,6 +799,7 @@ class EnergyRatingIndexTest < Minitest::Test
     base_reul = base_results[result_name]
     all_results.each do |compare_xml, compare_results|
       next unless compare_xml.include? files_include
+
       if not files_exclude.nil?
         next if compare_xml.include? files_exclude
       end

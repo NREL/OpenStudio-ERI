@@ -65,6 +65,7 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
             expected_error_msgs_by_element_deletion[target_xpath] = expected_error_message
 
             next if assertion.start_with?('Expected 1 or more') # no need for element addition test
+
             expected_error_msgs_by_element_addition[target_xpath] = expected_error_message
           end
         else
@@ -117,13 +118,13 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
           additional_parent_element_name = '../..'
         end
         mod_parent_element = additional_parent_element_name.empty? ? parent_element : XMLHelper.get_element(parent_element, additional_parent_element_name)
-        
+
         # scan numbers outside brackets and then find the maximum number of elements allowed
-        max_number_of_elements_allowed = expected_error_message.gsub(/\[.*?\]|\[|\]/, '').scan(/\d+/).max.to_i 
-        
+        max_number_of_elements_allowed = expected_error_message.gsub(/\[.*?\]|\[|\]/, '').scan(/\d+/).max.to_i
+
         # If child_element does not exist, add child_element by the maximum allowed number. If child_element exists, copy the child_element by the maximum allowed number.
         if XMLHelper.get_element(parent_element, child_element_name).nil?
-          if child_element_name.split('/')[-1].include?  'text()='
+          if child_element_name.split('/')[-1].include? 'text()='
             mod_child_element_value = child_element_name.split('text()=')[1].gsub(/\[|\]/, '').gsub('" or ', '"').gsub!(/\A"|"\Z/, '') # pull 'baz' from foo/bar[text()=baz or text()=fum or ...]; FIXME: Is there another way to handle this?
           else
             mod_child_element_value = nil
@@ -203,7 +204,7 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
     end
 
     # If found_children is false, then find an hpxml_doc that has the parent element and return the hpxml_doc
-    # FIXME: Don't want to loop through @hpxml_docs.values twice. Need to change it. 
+    # FIXME: Don't want to loop through @hpxml_docs.values twice. Need to change it.
     @hpxml_docs.values.each do |hpxml_doc|
       parent_element = target_xpath[0] == '' ? hpxml_doc : XMLHelper.get_element(hpxml_doc, target_xpath[0])
       next if parent_element.nil?
@@ -214,7 +215,7 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
       elsif target_xpath[0] == '/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem[HeatingSystemType/Boiler and IsSharedSystem="true" and //HydronicAndAirDistributionType[text()="fan coil"]]'
         return _deep_copy_object(@hpxml_docs['base-hvac-shared-boiler-chiller-fan-coil.xml'])
       end
-      
+
       mod_parent_element_name = target_xpath[0].split('/')[0...-1].reject(&:empty?).join('/').gsub(/\[|\]/, '/').chomp('/')
       mod_parent_element = XMLHelper.get_element(hpxml_doc, mod_parent_element_name)
       mod_child_element_name = target_xpath[0].split('/')[-1].gsub(/\[|\]/, '')
