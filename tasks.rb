@@ -1359,11 +1359,11 @@ def create_sample_hpxmls
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
-                  'base-misc-defaults2.xml',
                   'base-misc-loads-large-uncommon.xml',
                   'base-misc-loads-large-uncommon2.xml',
                   'base-misc-loads-none.xml',
                   'base-misc-neighbor-shading.xml',
+                  'base-misc-shelter-coefficient.xml',
                   'base-misc-usage-multiplier.xml',
                   'base-simcontrol-daylight-saving-custom.xml',
                   'base-simcontrol-daylight-saving-disabled.xml',
@@ -1390,6 +1390,8 @@ def create_sample_hpxmls
 
     # Add ERI version
     hpxml.header.eri_calculation_version = 'latest'
+
+    hpxml.building_construction.number_of_bathrooms = nil
 
     # Handle extra inputs for ERI
     hpxml.heating_systems.each do |heating_system|

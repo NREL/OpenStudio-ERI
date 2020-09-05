@@ -1,23 +1,24 @@
 # frozen_string_literal: true
 
-require_relative '../../../workflow/tests/minitest_helper'
+require_relative '../resources/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
-require_relative '../measure.rb'
 require 'fileutils'
+require_relative '../measure.rb'
+require_relative '../resources/util.rb'
 begin
   require 'schematron-nokogiri'
 rescue
   fail 'Could not load schematron-nokogiri gem. Try running with "bundle exec ruby ...".'
 end
 
-class ERI301ValidationTest < MiniTest::Test
+class HPXMLtoOpenStudioValidationTest < MiniTest::Test
   def before_setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
 
     # load the Schematron xml
-    @stron_path = File.join(@root_path, 'rulesets', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
+    @stron_path = File.join(@root_path, 'HPXMLtoOpenStudio', 'resources', 'EPvalidator.xml')
     # make a Schematron object
     @stron_doc = SchematronNokogiri::Schema.new Nokogiri::XML File.open(@stron_path)
 
@@ -166,7 +167,7 @@ class ERI301ValidationTest < MiniTest::Test
 
   def _test_schema_validation(hpxml_doc, xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
+    schemas_dir = File.absolute_path(File.join(@root_path, 'HPXMLtoOpenStudio', 'resources'))
     errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
     if errors.size > 0
       puts "#{xml}: #{errors}"
