@@ -803,19 +803,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     hpxml.hvac_distributions.clear
     hpxml.hvac_distributions.add(id: 'HVACDistribution',
                                  distribution_system_type: HPXML::HVACDistributionTypeAir)
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add(id: 'HVACDistribution',
-                                 distribution_system_type: HPXML::HVACDistributionTypeDSE,
-                                 annual_cooling_dse: 1)
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add(id: 'HVACDistribution',
-                                 distribution_system_type: HPXML::HVACDistributionTypeDSE,
-                                 annual_heating_dse: 1)
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
-         'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
-         'RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
+         'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
     hpxml.hvac_distributions.add(id: 'HVACDistribution',
                                  distribution_system_type: HPXML::HVACDistributionTypeDSE,
