@@ -6,10 +6,9 @@ require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require_relative '../measure.rb'
-require_relative '../resources/util.rb'
 begin
   require 'schematron-nokogiri'
-rescue
+rescue LoadError
   fail 'Could not load schematron-nokogiri gem. Try running with "bundle exec ruby ...".'
 end
 
@@ -97,21 +96,9 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
       hpxml_doc, parent_element = _get_hpxml_doc_and_parent_element(key)
       child_element_name = key[1]
 
-      # make sure parent elements of the last child element exist in HPXML
-      child_element_without_predicates = child_element_name.gsub(/\[.*?\]|\[|\]/, '') # remove brackets and text within brackets (e.g. [foo or ...])
-      child_element_without_predicates_array = child_element_without_predicates.split('/')[0...-1].reject(&:empty?)
-      XMLHelper.create_elements_as_needed(parent_element, child_element_without_predicates_array)
-
       # modify parent element and child_element_name
       additional_parent_element_name = child_element_name.gsub(/\[text().*?\]/, '').split('/')[0...-1].reject(&:empty?).join('/').chomp('/') # remove text that starts with 'text()' within brackets (e.g. [text()=foo or ...]) and select elements from the first to the second last
       _balance_brackets(additional_parent_element_name)
-
-      # Exceptions
-      if additional_parent_element_name.include? 'HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement'
-        additional_parent_element_name = 'HPXML/Building/BuildingDetails/Enclosure/AirInfiltration'
-      elsif additional_parent_element_name.include? '../../HVACDistribution[DistributionSystemType'
-        additional_parent_element_name = '../..'
-      end
       mod_parent_element = additional_parent_element_name.empty? ? parent_element : XMLHelper.get_element(parent_element, additional_parent_element_name)
 
       if not expected_error_msg.nil?
@@ -134,16 +121,14 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
   private
 
   def _test_schematron_validation(stron_doc, hpxml, expected_error_msg = nil)
-    # load the xml document you wish to validate
+    # Validate via schematron-nokogiri gem
     xml_doc = Nokogiri::XML hpxml
-    # validate it
     results = stron_doc.validate xml_doc
-    # assertions
+    results_msgs = results.map { |i| i[:message].gsub(': ', [': ', i[:context_path].gsub('h:', '').concat(': ').gsub('/*: ', '')].join('')) }
+    idx_of_msg = results_msgs.index { |m| m == expected_error_msg }
     if expected_error_msg.nil?
-      assert_empty(results)
+      assert_nil(idx_of_msg)
     else
-      results_msgs = results.map { |i| i[:message].gsub(': ', [': ', i[:context_path].gsub('h:', '').concat(': ').gsub('/*: ', '')].join('')) }
-      idx_of_msg = results_msgs.index { |m| m == expected_error_msg }
       if idx_of_msg.nil?
         puts "Did not find expected error message '#{expected_error_msg}' in #{results_msgs}."
       end
@@ -152,12 +137,12 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
   end
 
   def _test_ruby_validation(hpxml_doc, expected_error_msg = nil)
-    # Validate input HPXML against EnergyPlus Use Case
+    # Validate via validator.rb
     results = Validator.run_validator(hpxml_doc, @stron_path)
+    idx_of_msg = results.index { |i| i == expected_error_msg }
     if expected_error_msg.nil?
-      assert_empty(results)
+      assert_nil(idx_of_msg)
     else
-      idx_of_msg = results.index { |i| i == expected_error_msg }
       if idx_of_msg.nil?
         puts "Did not find expected error message '#{expected_error_msg}' in #{results}."
       end
