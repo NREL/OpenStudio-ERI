@@ -1,13 +1,44 @@
 Software Connection
 ===================
 
-ERI Use Case for HPXML
-----------------------
+Introduction
+------------
+
+OpenStudio-ERI requires a building description in an `HPXML file <https://hpxml.nrel.gov/>`_ format.
+HPXML is an open data standard for collecting and transferring home energy data.
+Using HPXML files reduces the complexity and effort for software developers to leverage the EnergyPlus simulation engine.
+
+HPXML Inputs
+------------
 
 HPXML is an flexible and extensible format, where nearly all elements in the schema are optional and custom elements can be included.
-Because of this, an ERI Use Case for HPXML has been developed that specifies the HPXML elements or enumeration choices required to run the workflow.
+Because of this, a stricter set of requirements for the HPXML file have been developed for purposes of running an Energy Rating Index calculation.
 
-Software developers should use the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/rulesets/301EnergyRatingIndexRuleset/resources/301validator.rb>`_ (defined as a set of conditional XPath expressions) as well as the `HPXML schema <https://github.com/NREL/OpenStudio-ERI/tree/master/measures/HPXMLtoOpenStudio/hpxml_schemas>`_ to construct valid HPXML files for ERI calculations.
+HPXML files submitted to OpenStudio-ERI should undergo a two step validation process:
+
+1. Validation against the HPXML Schema
+
+  The HPXML XSD Schema can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/HPXML.xsd``.
+  It should be used by the software developer to validate their HPXML file prior to running the workflow.
+  XSD Schemas are used to validate what elements/attributes/enumerations are available, data types for elements/attributes, the number/order of children elements, etc.
+  
+  OpenStudio-ERI **does not** validate the HPXML file against the XSD Schema and assumes the file submitted is valid.
+
+2. Validation using `Schematron <http://schematron.com/>`_
+
+  The Schematron document for the ERI use case can be found at ``rulesets/301EnergyRatingIndexRuleset/resources/301validator.xml``.
+  Schematron is a rule-based validation language, expressed in XML using XPath expressions, for validating the presence or absence of inputs in XML files. 
+  As opposed to an XSD Schema, a Schematron document validates constraints and requirements based on conditionals and other logical statements.
+  For example, if an element is specified with a particular value, the applicable enumerations of another element may change.
+  
+  OpenStudio-ERI **automatically validates** the HPXML file against the Schematron document and reports any validation errors, but software developers may find it beneficial to also integrate Schematron validation into their software.
+ 
+.. important::
+
+  Usage of both validation approaches (XSD and Schematron) is recommended for developers actively working on creating HPXML files for Energy Rating Index calculations:
+  
+  - Validation against XSD for general correctness and usage of HPXML
+  - Validation against Schematron for understanding XML document requirements specific to running ERI calculations
 
 HPXML Software Info
 -------------------
