@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sch:schema xmlns:sch='http://purl.oclc.org/dsdl/schematron'>
-  <sch:title>HPXML Schematron Validator</sch:title>
+  <sch:title>HPXML Schematron Validator: Energy Rating Index</sch:title>
   <sch:ns uri='http://hpxmlonline.com/2019/10' prefix='h'/>
-  <sch:pattern>
-    <sch:title>Energy Rating Index</sch:title>
+  <sch:pattern name='[Root]'>
     <sch:rule context='/*'> <!-- using context='/' throws an error, Nokogiri::XML::XPath::SyntaxError: ERROR: Invalid expression: // -->
       <sch:assert test='count(h:XMLTransactionHeaderInformation/h:XMLType) = 1'>Expected 1 element(s) for xpath: /HPXML/XMLTransactionHeaderInformation/XMLType</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:XMLTransactionHeaderInformation/h:XMLGeneratedBy) = 1'>Expected 1 element(s) for xpath: /HPXML/XMLTransactionHeaderInformation/XMLGeneratedBy</sch:assert> <!-- Required by HPXML schema -->
@@ -50,8 +49,9 @@
       <sch:assert test='count(h:Building/h:BuildingDetails/h:Lighting) = 1'>Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/Lighting</sch:assert> <!-- See [Lighting] -->
       <sch:assert test='count(h:Building/h:BuildingDetails/h:Lighting/h:CeilingFan) &gt;= 0'>Expected 0 or more element(s) for xpath: /HPXML/Building/BuildingDetails/Lighting/CeilingFan</sch:assert> <!-- See [CeilingFan] -->
     </sch:rule>
+  </sch:pattern>
 
-    <!-- [BuildingConstruction] -->
+  <sch:pattern name='[BuildingConstruction]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction'>
       <sch:assert test='count(h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached" or text()="apartment unit" or text()="manufactured home"]) = 1'>Expected 1 element(s) for xpath: ResidentialFacilityType[text()="single-family detached" or text()="single-family attached" or text()="apartment unit" or text()="manufactured home"]</sch:assert>
       <sch:assert test='count(h:NumberofConditionedFloors) = 1'>Expected 1 element(s) for xpath: NumberofConditionedFloors</sch:assert>
@@ -60,49 +60,56 @@
       <sch:assert test='count(h:ConditionedFloorArea) = 1'>Expected 1 element(s) for xpath: ConditionedFloorArea</sch:assert>
       <sch:assert test='count(h:ConditionedBuildingVolume) = 1'>Expected 1 element(s) for xpath: ConditionedBuildingVolume</sch:assert>
     </sch:rule>
+  </sch:pattern>
 
-    <!-- [ClimateZone] -->
+  <sch:pattern name='[ClimateZone]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:ClimateandRiskZones/h:ClimateZoneIECC'>
       <sch:assert test='count(h:Year) = 1'>Expected 1 element(s) for xpath: Year</sch:assert>
       <sch:assert test='count(h:ClimateZone[text()="1A" or text()="1B" or text()="1C" or text()="2A" or text()="2B" or text()="2C" or text()="3A" or text()="3B" or text()="3C" or text()="4A" or text()="4B" or text()="4C" or text()="5A" or text()="5B" or text()="5C" or text()="6A" or text()="6B" or text()="6C" or text()="7" or text()="8"]) = 1'>Expected 1 element(s) for xpath: ClimateZone[text()="1A" or text()="1B" or text()="1C" or text()="2A" or text()="2B" or text()="2C" or text()="3A" or text()="3B" or text()="3C" or text()="4A" or text()="4B" or text()="4C" or text()="5A" or text()="5B" or text()="5C" or text()="6A" or text()="6B" or text()="6C" or text()="7" or text()="8"]</sch:assert>
     </sch:rule>
+  </sch:pattern>
 
-    <!-- [WeatherStation] -->
+  <sch:pattern name='[WeatherStation]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:ClimateandRiskZones/h:WeatherStation'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:Name) = 1'>Expected 1 element(s) for xpath: Name</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:WMO) + count(h:extension/h:EPWFilePath) = 1'>Expected 1 element(s) for xpath: WMO | extension/EPWFilePath</sch:assert> <!-- Reference weather/data.csv for the list of acceptable WMO station numbers -->
     </sch:rule>
+  </sch:pattern>
 
-    <!-- [AirInfiltrationUnit=ACHorCFM] -->
+  <sch:pattern name='[AirInfiltrationUnit=ACHorCFM]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:UnitofMeasure[text()="ACH" or text()="CFM"]]'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:HousePressure[number(text())=50]) = 1'>Expected 1 element(s) for xpath: HousePressure[number(text())=50]</sch:assert>
       <sch:assert test='count(h:BuildingAirLeakage/h:AirLeakage) = 1'>Expected 1 element(s) for xpath: BuildingAirLeakage/AirLeakage</sch:assert>
       <sch:assert test='count(h:InfiltrationVolume) &lt;= 1'>Expected 0 or 1 element(s) for xpath: InfiltrationVolume</sch:assert>
     </sch:rule>
+  </sch:pattern>
 
-    <!-- [AirInfiltrationUnit=ACHnatural] -->
+  <sch:pattern name='[AirInfiltrationUnit=ACHnatural]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:UnitofMeasure[text()="ACHnatural"]]'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:HousePressure) = 0'>Expected 0 element(s) for xpath: HousePressure</sch:assert>
       <sch:assert test='count(h:BuildingAirLeakage/h:AirLeakage) = 1'>Expected 1 element(s) for xpath: BuildingAirLeakage/AirLeakage</sch:assert>
       <sch:assert test='count(h:InfiltrationVolume) &lt;= 1'>Expected 0 or 1 element(s) for xpath: InfiltrationVolume</sch:assert>
     </sch:rule>
+  </sch:pattern>
 
-    <!-- [Attic] -->
+  <sch:pattern name='[Attic]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Attics/h:Attic'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:AtticType) = 1'>Expected 1 element(s) for xpath: AtticType</sch:assert> <!-- Required by HPXML schema -->
     </sch:rule>
-    
-    <!-- [Foundation] -->
+  </sch:pattern>
+
+  <sch:pattern name='[Foundation]'>    
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:FoundationType) = 1'>Expected 1 element(s) for xpath: FoundationType</sch:assert> <!-- Required by HPXML schema -->
     </sch:rule>
-    
-    <!-- [Roof] -->
+  </sch:pattern>
+
+  <sch:pattern name='[Roof]'>    
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Roofs/h:Roof'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:InteriorAdjacentTo[text()="attic - vented" or text()="attic - unvented" or text()="living space" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="attic - vented" or text()="attic - unvented" or text()="living space" or text()="garage"]</sch:assert> <!-- See [VentedAttic] or [UnventedAttic] -->
@@ -114,292 +121,6 @@
       <sch:assert test='count(h:RadiantBarrier) = 1'>Expected 1 element(s) for xpath: RadiantBarrier</sch:assert> <!-- See [RadiantBarrier] -->
       <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
-    </sch:rule>
-
-    <!-- [Wall] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Walls/h:Wall'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
-      <sch:assert test='count(h:WallType[h:WoodStud | h:DoubleWoodStud | h:ConcreteMasonryUnit | h:StructurallyInsulatedPanel | h:InsulatedConcreteForms | h:SteelFrame | h:SolidConcrete | h:StructuralBrick | h:StrawBale | h:Stone | h:LogWall | h:Adobe]) = 1'>Expected 1 element(s) for xpath: WallType[WoodStud | DoubleWoodStud | ConcreteMasonryUnit | StructurallyInsulatedPanel | InsulatedConcreteForms | SteelFrame | SolidConcrete | StructuralBrick | StrawBale | Stone | LogWall | Adobe]</sch:assert>
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Azimuth) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Azimuth</sch:assert>
-      <sch:assert test='count(h:SolarAbsorptance) = 1'>Expected 1 element(s) for xpath: SolarAbsorptance</sch:assert>
-      <sch:assert test='count(h:Emittance) = 1'>Expected 1 element(s) for xpath: Emittance</sch:assert>
-      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
-    </sch:rule>
-
-    <!-- [RimJoist] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:RimJoists/h:RimJoist'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Azimuth) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Azimuth</sch:assert>
-      <sch:assert test='count(h:SolarAbsorptance) = 1'>Expected 1 element(s) for xpath: SolarAbsorptance</sch:assert>
-      <sch:assert test='count(h:Emittance) = 1'>Expected 1 element(s) for xpath: Emittance</sch:assert>
-      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
-    </sch:rule>
-
-    <!-- [FoundationWall] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FoundationWalls/h:FoundationWall'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:ExteriorAdjacentTo[text()="ground" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="ground" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:InteriorAdjacentTo[text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert> <!-- See [VentedCrawlspace]  or [UnventedCrawlspace] or [UnconditionedBasement] -->
-      <sch:assert test='count(h:Height) = 1'>Expected 1 element(s) for xpath: Height</sch:assert>
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Azimuth) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Azimuth</sch:assert>
-      <sch:assert test='count(h:Thickness) = 1'>Expected 1 element(s) for xpath: Thickness</sch:assert>
-      <sch:assert test='count(h:DepthBelowGrade) = 1'>Expected 1 element(s) for xpath: DepthBelowGrade</sch:assert>
-      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <!-- Insulation: either specify interior and exterior layers OR assembly R-value: -->
-      <sch:assert test='count(h:Insulation/h:Layer[h:InstallationType="continuous - interior"]) + count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/Layer[InstallationType="continuous - interior"] | Insulation/AssemblyEffectiveRValue</sch:assert> <!-- See [FoundationWallInsLayer] -->
-      <sch:assert test='count(h:Insulation/h:Layer[h:InstallationType="continuous - exterior"]) + count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/Layer[InstallationType="continuous - exterior"] | Insulation/AssemblyEffectiveRValue</sch:assert> <!-- See [FoundationWallInsLayer] -->
-    </sch:rule>
-
-    <!-- [FrameFloor] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FrameFloors/h:FrameFloor'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert> <!-- See [FrameFloorAdjacentToOther] -->
-      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
-    </sch:rule>
-
-    <!-- [Slab] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Slabs/h:Slab'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Thickness) = 1'>Expected 1 element(s) for xpath: Thickness</sch:assert> <!-- Use zero for dirt floor -->
-      <sch:assert test='count(h:ExposedPerimeter) = 1'>Expected 1 element(s) for xpath: ExposedPerimeter</sch:assert>
-      <sch:assert test='count(h:PerimeterInsulationDepth) = 1'>Expected 1 element(s) for xpath: PerimeterInsulationDepth</sch:assert>
-      <sch:assert test='count(h:UnderSlabInsulationWidth) + count(h:UnderSlabInsulationSpansEntireSlab[text()="true"]) = 1'>Expected 1 element(s) for xpath: UnderSlabInsulationWidth | UnderSlabInsulationSpansEntireSlab[text()="true"]</sch:assert>
-      <sch:assert test='count(h:DepthBelowGrade) + count(h:InteriorAdjacentTo[text()!="living space" and text()!="garage"]) &gt;= 1'>Expected 1 or more element(s) for xpath: DepthBelowGrade | InteriorAdjacentTo[text()!="living space" and text()!="garage"]</sch:assert> <!-- DepthBelowGrade only required when InteriorAdjacentTo is 'living space' or 'garage' -->
-      <sch:assert test='count(h:PerimeterInsulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: PerimeterInsulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:PerimeterInsulation/h:Layer[h:InstallationType="continuous"]/h:NominalRValue) = 1'>Expected 1 element(s) for xpath: PerimeterInsulation/Layer[InstallationType="continuous"]/NominalRValue</sch:assert>
-      <sch:assert test='count(h:UnderSlabInsulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: UnderSlabInsulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:UnderSlabInsulation/h:Layer[h:InstallationType="continuous"]/h:NominalRValue) = 1'>Expected 1 element(s) for xpath: UnderSlabInsulation/Layer[InstallationType="continuous"]/NominalRValue</sch:assert>
-      <sch:assert test='count(h:extension/h:CarpetFraction) = 1'>Expected 1 element(s) for xpath: extension/CarpetFraction</sch:assert> <!-- 0 - 1 -->
-      <sch:assert test='count(h:extension/h:CarpetRValue) = 1'>Expected 1 element(s) for xpath: extension/CarpetRValue</sch:assert>
-    </sch:rule>
-
-    <!-- [Window] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Windows/h:Window'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Azimuth) = 1'>Expected 1 element(s) for xpath: Azimuth</sch:assert>
-      <sch:assert test='count(h:UFactor) = 1'>Expected 1 element(s) for xpath: UFactor</sch:assert>
-      <sch:assert test='count(h:SHGC) = 1'>Expected 1 element(s) for xpath: SHGC</sch:assert>
-      <sch:assert test='count(h:Overhangs) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Overhangs</sch:assert> <!-- See [WindowOverhang] -->
-      <sch:assert test='count(h:FractionOperable) = 1'>Expected 1 element(s) for xpath: FractionOperable</sch:assert>
-      <sch:assert test='count(h:AttachedToWall) = 1'>Expected 1 element(s) for xpath: AttachedToWall</sch:assert>
-    </sch:rule>
-
-    <!-- [Skylight] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Skylights/h:Skylight'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Azimuth) = 1'>Expected 1 element(s) for xpath: Azimuth</sch:assert>
-      <sch:assert test='count(h:UFactor) = 1'>Expected 1 element(s) for xpath: UFactor</sch:assert>
-      <sch:assert test='count(h:SHGC) = 1'>Expected 1 element(s) for xpath: SHGC</sch:assert>
-      <sch:assert test='count(h:AttachedToRoof) = 1'>Expected 1 element(s) for xpath: AttachedToRoof</sch:assert>
-    </sch:rule>
-
-    <!-- [Door] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Doors/h:Door'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:AttachedToWall) = 1'>Expected 1 element(s) for xpath: AttachedToWall</sch:assert>
-      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
-      <sch:assert test='count(h:Azimuth) = 1'>Expected 1 element(s) for xpath: Azimuth</sch:assert>
-      <sch:assert test='count(h:RValue) = 1'>Expected 1 element(s) for xpath: RValue</sch:assert>
-    </sch:rule>
-
-    <!-- [HeatingSystem] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatingSystem'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(../../h:HVACControl) = 1'>Expected 1 element(s) for xpath: ../../HVACControl</sch:assert> <!-- See [HVACControl] -->
-      <sch:assert test='count(h:HeatingSystemType[h:ElectricResistance | h:Furnace | h:WallFurnace | h:FloorFurnace | h:Boiler | h:Stove | h:PortableHeater | h:FixedHeater | h:Fireplace]) = 1'>Expected 1 element(s) for xpath: HeatingSystemType[ElectricResistance | Furnace | WallFurnace | FloorFurnace | Boiler | Stove | PortableHeater | FixedHeater | Fireplace]</sch:assert> <!-- See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=FloorFurnace] or [HeatingType=Boiler] or [HeatingType=Stove] or [HeatingType=PortableHeater] or [HeatingType=FixedHeater] or [HeatingType=Fireplace] -->
-      <sch:assert test='count(h:FractionHeatLoadServed) = 1'>Expected 1 element(s) for xpath: FractionHeatLoadServed</sch:assert>
-    </sch:rule>
-
-    <!-- [CoolingSystem] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:CoolingSystem'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(../../h:HVACControl) = 1'>Expected 1 element(s) for xpath: ../../HVACControl</sch:assert> <!-- See [HVACControl] -->
-      <sch:assert test='count(h:CoolingSystemType[text()="central air conditioner" or text()="room air conditioner" or text()="evaporative cooler" or text()="chiller" or text()="cooling tower"]) = 1'>Expected 1 element(s) for xpath: CoolingSystemType[text()="central air conditioner" or text()="room air conditioner" or text()="evaporative cooler" or text()="chiller" or text()="cooling tower"]</sch:assert> <!-- See [CoolingType=CentralAC] or [CoolingType=RoomAC] or [CoolingType=EvapCooler] or [CoolingType=SharedChiller] or [CoolingType=SharedCoolingTowerWLHP] -->
-      <sch:assert test='count(h:CoolingSystemFuel[text()="electricity"]) = 1'>Expected 1 element(s) for xpath: CoolingSystemFuel[text()="electricity"]</sch:assert>
-      <sch:assert test='count(h:FractionCoolLoadServed) = 1'>Expected 1 element(s) for xpath: FractionCoolLoadServed</sch:assert>
-    </sch:rule>
-
-    <!-- [HeatPump] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(../../h:HVACControl) = 1'>Expected 1 element(s) for xpath: ../../HVACControl</sch:assert> <!-- See [HVACControl] -->
-      <sch:assert test='count(h:HeatPumpType[text()="air-to-air" or text()="mini-split" or text()="ground-to-air"]) = 1'>Expected 1 element(s) for xpath: HeatPumpType[text()="air-to-air" or text()="mini-split" or text()="ground-to-air"]</sch:assert> <!-- See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP] -->
-      <sch:assert test='count(h:HeatPumpFuel[text()="electricity"]) = 1'>Expected 1 element(s) for xpath: HeatPumpFuel[text()="electricity"]</sch:assert>
-      <sch:assert test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
-      <sch:assert test='count(h:CoolingCapacity) = 1'>Expected 1 element(s) for xpath: CoolingCapacity</sch:assert>
-      <sch:assert test='count(h:CoolingSensibleHeatFraction) &lt;= 1'>Expected 0 or 1 element(s) for xpath: CoolingSensibleHeatFraction</sch:assert>
-      <sch:assert test='not(h:BackupSystemFuel) or count(h:BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: [not(BackupSystemFuel)] | BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]</sch:assert> <!-- See [HeatPumpBackup] -->
-      <sch:assert test='count(h:FractionHeatLoadServed) = 1'>Expected 1 element(s) for xpath: FractionHeatLoadServed</sch:assert> <!-- Must sum to <= 1 across all HeatPumps and HeatingSystems -->
-      <sch:assert test='count(h:FractionCoolLoadServed) = 1'>Expected 1 element(s) for xpath: FractionCoolLoadServed</sch:assert> <!-- Must sum to <= 1 across all HeatPumps and CoolingSystems -->
-    </sch:rule>
-
-    <!-- [HVACControl] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACControl'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:ControlType[text()="manual thermostat" or text()="programmable thermostat"]) = 1'>Expected 1 element(s) for xpath: ControlType[text()="manual thermostat" or text()="programmable thermostat"]</sch:assert>
-    </sch:rule>
-
-    <!-- [HVACDistribution] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACDistribution'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:DistributionSystemType[h:AirDistribution | h:HydronicDistribution | h:HydronicAndAirDistribution | h:Other[text()="DSE"]]) = 1'>Expected 1 element(s) for xpath: DistributionSystemType[AirDistribution | HydronicDistribution | HydronicAndAirDistribution | Other[text()="DSE"]]</sch:assert> <!-- See [HVACDistType=Air] or [HVACDistType=Hydronic] or [HVACDistType=HydronicAndAir] or [HVACDistType=DSE] -->
-    </sch:rule>
-
-    <!-- [MechanicalVentilation] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true"]'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:FanType[text()="energy recovery ventilator" or text()="heat recovery ventilator" or text()="exhaust only" or text()="supply only" or text()="balanced" or text()="central fan integrated supply"]) = 1'>Expected 1 element(s) for xpath: FanType[text()="energy recovery ventilator" or text()="heat recovery ventilator" or text()="exhaust only" or text()="supply only" or text()="balanced" or text()="central fan integrated supply"]</sch:assert> <!-- See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS] -->
-      <sch:assert test='count(h:TestedFlowRate) &lt;= 1'>Expected 0 or 1 element(s) for xpath: TestedFlowRate</sch:assert>
-      <sch:assert test='count(h:HoursInOperation) = 1'>Expected 1 element(s) for xpath: HoursInOperation</sch:assert>
-      <sch:assert test='count(h:FanPower) &lt;= 1'>Expected 0 or 1 element(s) for xpath: FanPower</sch:assert>
-    </sch:rule>
-
-    <!-- [WaterHeatingSystem] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:WaterHeatingSystem'>
-      <sch:assert test='count(../h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
-      <sch:assert test='count(../h:WaterFixture) &gt;= 1'>Expected 1 or more element(s) for xpath: ../WaterFixture</sch:assert> <!-- See [WaterFixture] -->
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:IsSharedSystem) = 1'>Expected 1 element(s) for xpath: IsSharedSystem</sch:assert> <!-- See [WaterHeatingSystem=Shared] -->
-      <sch:assert test='count(h:WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater" or text()="space-heating boiler with storage tank" or text()="space-heating boiler with tankless coil"]) = 1'>Expected 1 element(s) for xpath: WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater" or text()="space-heating boiler with storage tank" or text()="space-heating boiler with tankless coil"]</sch:assert> <!-- See [WHType=Tank] or [WHType=Tankless] or [WHType=HeatPump] or [WHType=Indirect] or [WHType=CombiTankless] -->
-      <sch:assert test='count(h:Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:FractionDHWLoadServed) = 1'>Expected 1 element(s) for xpath: FractionDHWLoadServed</sch:assert>
-      <sch:assert test='count(h:UsesDesuperheater) &lt;= 1'>Expected 0 or 1 element(s) for xpath: UsesDesuperheater</sch:assert> <!-- See [Desuperheater] -->
-    </sch:rule>
-
-    <!-- [HotWaterDistribution] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:HotWaterDistribution'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:SystemType/h:Standard) + count(h:SystemType/h:Recirculation) = 1'>Expected 1 element(s) for xpath: SystemType/Standard | SystemType/Recirculation</sch:assert> <!-- See [HWDistType=Standard] or [HWDistType=Recirculation] -->
-      <sch:assert test='count(h:PipeInsulation/h:PipeRValue) = 1'>Expected 1 element(s) for xpath: PipeInsulation/PipeRValue</sch:assert>
-      <sch:assert test='count(h:DrainWaterHeatRecovery) &lt;= 1'>Expected 0 or 1 element(s) for xpath: DrainWaterHeatRecovery</sch:assert> <!-- See [DrainWaterHeatRecovery] -->
-      <sch:assert test='count(h:extension/h:SharedRecirculation) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/SharedRecirculation</sch:assert> <!-- See [SharedRecirculation] --> 
-    </sch:rule>
-
-    <!-- [WaterFixture] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:WaterFixture'>
-      <sch:assert test='count(../h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:WaterFixtureType[text()="shower head" or text()="faucet"]) = 1'>Expected 1 element(s) for xpath: WaterFixtureType[text()="shower head" or text()="faucet"]</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:LowFlow) = 1'>Expected 1 element(s) for xpath: LowFlow</sch:assert>
-    </sch:rule>
-
-    <!-- [SolarThermalSystem] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:SolarThermal/h:SolarThermalSystem'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:SystemType[text()="hot water"]) = 1'>Expected 1 element(s) for xpath: SystemType[text()="hot water"]</sch:assert>
-      <sch:assert test='count(h:CollectorArea) + count(h:SolarFraction) = 1'>Expected 1 element(s) for xpath: CollectorArea | SolarFraction</sch:assert> <!-- See [SolarThermal=Detailed] or [SolarThermal=Simple] -->
-    </sch:rule>
-
-    <!-- [PVSystem] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:Photovoltaics/h:PVSystem'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:IsSharedSystem) = 1'>Expected 1 element(s) for xpath: IsSharedSystem</sch:assert> <!-- See [PVSystem=Individual] or [PVSystem=Shared] -->
-      <sch:assert test='count(h:Location[text()="ground" or text()="roof"]) = 1'>Expected 1 element(s) for xpath: Location[text()="ground" or text()="roof"]</sch:assert>
-      <sch:assert test='count(h:ModuleType[text()="standard" or text()="premium" or text()="thin film"]) = 1'>Expected 1 element(s) for xpath: ModuleType[text()="standard" or text()="premium" or text()="thin film"]</sch:assert>
-      <sch:assert test='count(h:Tracking[text()="fixed" or text()="1-axis" or text()="1-axis backtracked" or text()="2-axis"]) = 1'>Expected 1 element(s) for xpath: Tracking[text()="fixed" or text()="1-axis" or text()="1-axis backtracked" or text()="2-axis"]</sch:assert>
-      <sch:assert test='count(h:ArrayAzimuth) = 1'>Expected 1 element(s) for xpath: ArrayAzimuth</sch:assert>
-      <sch:assert test='count(h:ArrayTilt) = 1'>Expected 1 element(s) for xpath: ArrayTilt</sch:assert>
-      <sch:assert test='count(h:MaxPowerOutput) = 1'>Expected 1 element(s) for xpath: MaxPowerOutput</sch:assert>
-      <sch:assert test='count(h:InverterEfficiency) = 1'>Expected 1 element(s) for xpath: InverterEfficiency</sch:assert> <!-- PVWatts default is 0.96 -->
-      <sch:assert test='count(h:SystemLossesFraction) = 1'>Expected 1 element(s) for xpath: SystemLossesFraction</sch:assert> <!-- PVWatts default is 0.14 -->
-    </sch:rule>
-
-    <!-- [ClothesWasher] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:ClothesWasher'>
-      <sch:assert test='count(../../h:Systems/h:WaterHeating/h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../../Systems/WaterHeating/HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:IsSharedAppliance) = 1'>Expected 1 element(s) for xpath: IsSharedAppliance</sch:assert> <!-- See [ClothesWasher=Shared] -->
-      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:ModifiedEnergyFactor) + count(h:IntegratedModifiedEnergyFactor) = 1'>Expected 1 element(s) for xpath: ModifiedEnergyFactor | IntegratedModifiedEnergyFactor</sch:assert>
-      <sch:assert test='count(h:RatedAnnualkWh) = 1'>Expected 1 element(s) for xpath: RatedAnnualkWh</sch:assert>
-      <sch:assert test='count(h:LabelElectricRate) = 1'>Expected 1 element(s) for xpath: LabelElectricRate</sch:assert>
-      <sch:assert test='count(h:LabelGasRate) = 1'>Expected 1 element(s) for xpath: LabelGasRate</sch:assert>
-      <sch:assert test='count(h:LabelAnnualGasCost) = 1'>Expected 1 element(s) for xpath: LabelAnnualGasCost</sch:assert>
-      <sch:assert test='count(h:LabelUsage) = 1'>Expected 1 element(s) for xpath: LabelUsage</sch:assert>
-      <sch:assert test='count(h:Capacity) = 1'>Expected 1 element(s) for xpath: Capacity</sch:assert>
-    </sch:rule>
-
-    <!-- [ClothesDryer] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:ClothesDryer'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:IsSharedAppliance) = 1'>Expected 1 element(s) for xpath: IsSharedAppliance</sch:assert> <!-- See [ClothesDryer=Shared] -->
-      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
-      <sch:assert test='count(h:EnergyFactor) + count(h:CombinedEnergyFactor) = 1'>Expected 1 element(s) for xpath: EnergyFactor | CombinedEnergyFactor</sch:assert>
-      <sch:assert test='count(h:ControlType[text()="timer" or text()="moisture"]) = 1'>Expected 1 element(s) for xpath: ControlType[text()="timer" or text()="moisture"]</sch:assert>
-    </sch:rule>
-
-    <!-- [Dishwasher] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Dishwasher'>
-      <sch:assert test='count(../../h:Systems/h:WaterHeating/h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../../Systems/WaterHeating/HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:IsSharedAppliance) = 1'>Expected 1 element(s) for xpath: IsSharedAppliance</sch:assert> <!-- See [Dishwasher=Shared] -->
-      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:RatedAnnualkWh) + count(h:EnergyFactor) = 1'>Expected 1 element(s) for xpath: RatedAnnualkWh | EnergyFactor</sch:assert>
-      <sch:assert test='count(h:LabelElectricRate) = 1'>Expected 1 element(s) for xpath: LabelElectricRate</sch:assert>
-      <sch:assert test='count(h:LabelGasRate) = 1'>Expected 1 element(s) for xpath: LabelGasRate</sch:assert>
-      <sch:assert test='count(h:LabelAnnualGasCost) = 1'>Expected 1 element(s) for xpath: LabelAnnualGasCost</sch:assert>
-      <sch:assert test='count(h:LabelUsage) = 1'>Expected 1 element(s) for xpath: LabelUsage</sch:assert>
-      <sch:assert test='count(h:PlaceSettingCapacity) = 1'>Expected 1 element(s) for xpath: PlaceSettingCapacity</sch:assert>
-    </sch:rule>
-
-    <!-- [Refrigerator] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Refrigerator'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:RatedAnnualkWh) = 1'>Expected 1 element(s) for xpath: RatedAnnualkWh</sch:assert>
-    </sch:rule>
-
-    <!-- [CookingRange] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:CookingRange'>
-      <sch:assert test='count(../h:Oven) = 1'>Expected 1 element(s) for xpath: ../Oven</sch:assert> <!-- See [Oven] -->
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
-      <sch:assert test='count(h:FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
-      <sch:assert test='count(h:IsInduction) = 1'>Expected 1 element(s) for xpath: IsInduction</sch:assert>
-    </sch:rule>
-
-    <!-- [Oven] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Oven'>
-      <sch:assert test='count(../h:CookingRange) = 1'>Expected 1 element(s) for xpath: ../CookingRange</sch:assert> <!-- See [CookingRange] -->
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:IsConvection) = 1'>Expected 1 element(s) for xpath: IsConvection</sch:assert>
-    </sch:rule>
-    
-    <!-- [Lighting] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting'>
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
-    </sch:rule>
-
-    <!-- [CeilingFan] -->
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting/h:CeilingFan'>
-      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
-      <sch:assert test='count(h:Airflow[h:FanSpeed="medium"]/h:Efficiency) = 1'>Expected 1 element(s) for xpath: Airflow[FanSpeed="medium"]/Efficiency</sch:assert>
-      <sch:assert test='count(h:Quantity) = 1'>Expected 1 element(s) for xpath: Quantity</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -418,6 +139,52 @@
   <sch:pattern name='[RadiantBarrier]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Roofs/h:Roof[h:RadiantBarrier="true"]'>
       <sch:assert test='count(h:RadiantBarrierGrade) = 1'>Expected 1 element(s) for xpath: RadiantBarrierGrade</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Wall]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Walls/h:Wall'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
+      <sch:assert test='count(h:WallType[h:WoodStud | h:DoubleWoodStud | h:ConcreteMasonryUnit | h:StructurallyInsulatedPanel | h:InsulatedConcreteForms | h:SteelFrame | h:SolidConcrete | h:StructuralBrick | h:StrawBale | h:Stone | h:LogWall | h:Adobe]) = 1'>Expected 1 element(s) for xpath: WallType[WoodStud | DoubleWoodStud | ConcreteMasonryUnit | StructurallyInsulatedPanel | InsulatedConcreteForms | SteelFrame | SolidConcrete | StructuralBrick | StrawBale | Stone | LogWall | Adobe]</sch:assert>
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Azimuth) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Azimuth</sch:assert>
+      <sch:assert test='count(h:SolarAbsorptance) = 1'>Expected 1 element(s) for xpath: SolarAbsorptance</sch:assert>
+      <sch:assert test='count(h:Emittance) = 1'>Expected 1 element(s) for xpath: Emittance</sch:assert>
+      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[RimJoist]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:RimJoists/h:RimJoist'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Azimuth) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Azimuth</sch:assert>
+      <sch:assert test='count(h:SolarAbsorptance) = 1'>Expected 1 element(s) for xpath: SolarAbsorptance</sch:assert>
+      <sch:assert test='count(h:Emittance) = 1'>Expected 1 element(s) for xpath: Emittance</sch:assert>
+      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[FoundationWall]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FoundationWalls/h:FoundationWall'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:ExteriorAdjacentTo[text()="ground" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="ground" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:InteriorAdjacentTo[text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert> <!-- See [VentedCrawlspace]  or [UnventedCrawlspace] or [UnconditionedBasement] -->
+      <sch:assert test='count(h:Height) = 1'>Expected 1 element(s) for xpath: Height</sch:assert>
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Azimuth) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Azimuth</sch:assert>
+      <sch:assert test='count(h:Thickness) = 1'>Expected 1 element(s) for xpath: Thickness</sch:assert>
+      <sch:assert test='count(h:DepthBelowGrade) = 1'>Expected 1 element(s) for xpath: DepthBelowGrade</sch:assert>
+      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <!-- Insulation: either specify interior and exterior layers OR assembly R-value: -->
+      <sch:assert test='count(h:Insulation/h:Layer[h:InstallationType="continuous - interior"]) + count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/Layer[InstallationType="continuous - interior"] | Insulation/AssemblyEffectiveRValue</sch:assert> <!-- See [FoundationWallInsLayer] -->
+      <sch:assert test='count(h:Insulation/h:Layer[h:InstallationType="continuous - exterior"]) + count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/Layer[InstallationType="continuous - exterior"] | Insulation/AssemblyEffectiveRValue</sch:assert> <!-- See [FoundationWallInsLayer] -->
     </sch:rule>
   </sch:pattern>
 
@@ -448,9 +215,52 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[FrameFloor]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FrameFloors/h:FrameFloor'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: ExteriorAdjacentTo[text()="outside" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert> <!-- See [FrameFloorAdjacentToOther] -->
+      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="attic - vented" or text()="attic - unvented" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Insulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: Insulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[FrameFloorAdjacentToOther]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FrameFloors/h:FrameFloor[h:ExteriorAdjacentTo[text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]]'>
       <sch:assert test='count(h:extension/h:OtherSpaceAboveOrBelow[text()="above" or text()="below"]) = 1'>Expected 1 element(s) for xpath: extension/OtherSpaceAboveOrBelow[text()="above" or text()="below"]</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Slab]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Slabs/h:Slab'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:InteriorAdjacentTo[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]) = 1'>Expected 1 element(s) for xpath: InteriorAdjacentTo[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="garage"]</sch:assert>
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Thickness) = 1'>Expected 1 element(s) for xpath: Thickness</sch:assert> <!-- Use zero for dirt floor -->
+      <sch:assert test='count(h:ExposedPerimeter) = 1'>Expected 1 element(s) for xpath: ExposedPerimeter</sch:assert>
+      <sch:assert test='count(h:PerimeterInsulationDepth) = 1'>Expected 1 element(s) for xpath: PerimeterInsulationDepth</sch:assert>
+      <sch:assert test='count(h:UnderSlabInsulationWidth) + count(h:UnderSlabInsulationSpansEntireSlab[text()="true"]) = 1'>Expected 1 element(s) for xpath: UnderSlabInsulationWidth | UnderSlabInsulationSpansEntireSlab[text()="true"]</sch:assert>
+      <sch:assert test='count(h:DepthBelowGrade) + count(h:InteriorAdjacentTo[text()!="living space" and text()!="garage"]) &gt;= 1'>Expected 1 or more element(s) for xpath: DepthBelowGrade | InteriorAdjacentTo[text()!="living space" and text()!="garage"]</sch:assert> <!-- DepthBelowGrade only required when InteriorAdjacentTo is 'living space' or 'garage' -->
+      <sch:assert test='count(h:PerimeterInsulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: PerimeterInsulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:PerimeterInsulation/h:Layer[h:InstallationType="continuous"]/h:NominalRValue) = 1'>Expected 1 element(s) for xpath: PerimeterInsulation/Layer[InstallationType="continuous"]/NominalRValue</sch:assert>
+      <sch:assert test='count(h:UnderSlabInsulation/h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: UnderSlabInsulation/SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:UnderSlabInsulation/h:Layer[h:InstallationType="continuous"]/h:NominalRValue) = 1'>Expected 1 element(s) for xpath: UnderSlabInsulation/Layer[InstallationType="continuous"]/NominalRValue</sch:assert>
+      <sch:assert test='count(h:extension/h:CarpetFraction) = 1'>Expected 1 element(s) for xpath: extension/CarpetFraction</sch:assert> <!-- 0 - 1 -->
+      <sch:assert test='count(h:extension/h:CarpetRValue) = 1'>Expected 1 element(s) for xpath: extension/CarpetRValue</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Window]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Windows/h:Window'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Azimuth) = 1'>Expected 1 element(s) for xpath: Azimuth</sch:assert>
+      <sch:assert test='count(h:UFactor) = 1'>Expected 1 element(s) for xpath: UFactor</sch:assert>
+      <sch:assert test='count(h:SHGC) = 1'>Expected 1 element(s) for xpath: SHGC</sch:assert>
+      <sch:assert test='count(h:Overhangs) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Overhangs</sch:assert> <!-- See [WindowOverhang] -->
+      <sch:assert test='count(h:FractionOperable) = 1'>Expected 1 element(s) for xpath: FractionOperable</sch:assert>
+      <sch:assert test='count(h:AttachedToWall) = 1'>Expected 1 element(s) for xpath: AttachedToWall</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -459,6 +269,36 @@
       <sch:assert test='count(h:Depth) = 1'>Expected 1 element(s) for xpath: Depth</sch:assert>
       <sch:assert test='count(h:DistanceToTopOfWindow) = 1'>Expected 1 element(s) for xpath: DistanceToTopOfWindow</sch:assert>
       <sch:assert test='count(h:DistanceToBottomOfWindow) = 1'>Expected 1 element(s) for xpath: DistanceToBottomOfWindow</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Skylight]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Skylights/h:Skylight'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Azimuth) = 1'>Expected 1 element(s) for xpath: Azimuth</sch:assert>
+      <sch:assert test='count(h:UFactor) = 1'>Expected 1 element(s) for xpath: UFactor</sch:assert>
+      <sch:assert test='count(h:SHGC) = 1'>Expected 1 element(s) for xpath: SHGC</sch:assert>
+      <sch:assert test='count(h:AttachedToRoof) = 1'>Expected 1 element(s) for xpath: AttachedToRoof</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Door]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Doors/h:Door'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:AttachedToWall) = 1'>Expected 1 element(s) for xpath: AttachedToWall</sch:assert>
+      <sch:assert test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert test='count(h:Azimuth) = 1'>Expected 1 element(s) for xpath: Azimuth</sch:assert>
+      <sch:assert test='count(h:RValue) = 1'>Expected 1 element(s) for xpath: RValue</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[HeatingSystem]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatingSystem'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(../../h:HVACControl) = 1'>Expected 1 element(s) for xpath: ../../HVACControl</sch:assert> <!-- See [HVACControl] -->
+      <sch:assert test='count(h:HeatingSystemType[h:ElectricResistance | h:Furnace | h:WallFurnace | h:FloorFurnace | h:Boiler | h:Stove | h:PortableHeater | h:FixedHeater | h:Fireplace]) = 1'>Expected 1 element(s) for xpath: HeatingSystemType[ElectricResistance | Furnace | WallFurnace | FloorFurnace | Boiler | Stove | PortableHeater | FixedHeater | Fireplace]</sch:assert> <!-- See [HeatingType=Resistance] or [HeatingType=Furnace] or [HeatingType=WallFurnace] or [HeatingType=FloorFurnace] or [HeatingType=Boiler] or [HeatingType=Stove] or [HeatingType=PortableHeater] or [HeatingType=FixedHeater] or [HeatingType=Fireplace] -->
+      <sch:assert test='count(h:FractionHeatLoadServed) = 1'>Expected 1 element(s) for xpath: FractionHeatLoadServed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -580,6 +420,16 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[CoolingSystem]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:CoolingSystem'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(../../h:HVACControl) = 1'>Expected 1 element(s) for xpath: ../../HVACControl</sch:assert> <!-- See [HVACControl] -->
+      <sch:assert test='count(h:CoolingSystemType[text()="central air conditioner" or text()="room air conditioner" or text()="evaporative cooler" or text()="chiller" or text()="cooling tower"]) = 1'>Expected 1 element(s) for xpath: CoolingSystemType[text()="central air conditioner" or text()="room air conditioner" or text()="evaporative cooler" or text()="chiller" or text()="cooling tower"]</sch:assert> <!-- See [CoolingType=CentralAC] or [CoolingType=RoomAC] or [CoolingType=EvapCooler] or [CoolingType=SharedChiller] or [CoolingType=SharedCoolingTowerWLHP] -->
+      <sch:assert test='count(h:CoolingSystemFuel[text()="electricity"]) = 1'>Expected 1 element(s) for xpath: CoolingSystemFuel[text()="electricity"]</sch:assert>
+      <sch:assert test='count(h:FractionCoolLoadServed) = 1'>Expected 1 element(s) for xpath: FractionCoolLoadServed</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[CoolingType=CentralAC]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:CoolingSystem[h:CoolingSystemType="central air conditioner"]'>
       <sch:assert test='count(../../h:HVACDistribution[h:DistributionSystemType/h:AirDistribution | h:DistributionSystemType[h:Other="DSE"]]) &gt;= 1'>Expected 1 or more element(s) for xpath: ../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]</sch:assert> <!-- See [HVACDistribution] -->
@@ -647,6 +497,21 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[HeatPump]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(../../h:HVACControl) = 1'>Expected 1 element(s) for xpath: ../../HVACControl</sch:assert> <!-- See [HVACControl] -->
+      <sch:assert test='count(h:HeatPumpType[text()="air-to-air" or text()="mini-split" or text()="ground-to-air"]) = 1'>Expected 1 element(s) for xpath: HeatPumpType[text()="air-to-air" or text()="mini-split" or text()="ground-to-air"]</sch:assert> <!-- See [HeatPumpType=ASHP] or [HeatPumpType=MSHP] or [HeatPumpType=GSHP] -->
+      <sch:assert test='count(h:HeatPumpFuel[text()="electricity"]) = 1'>Expected 1 element(s) for xpath: HeatPumpFuel[text()="electricity"]</sch:assert>
+      <sch:assert test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
+      <sch:assert test='count(h:CoolingCapacity) = 1'>Expected 1 element(s) for xpath: CoolingCapacity</sch:assert>
+      <sch:assert test='count(h:CoolingSensibleHeatFraction) &lt;= 1'>Expected 0 or 1 element(s) for xpath: CoolingSensibleHeatFraction</sch:assert>
+      <sch:assert test='not(h:BackupSystemFuel) or count(h:BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: [not(BackupSystemFuel)] | BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]</sch:assert> <!-- See [HeatPumpBackup] -->
+      <sch:assert test='count(h:FractionHeatLoadServed) = 1'>Expected 1 element(s) for xpath: FractionHeatLoadServed</sch:assert> <!-- Must sum to <= 1 across all HeatPumps and HeatingSystems -->
+      <sch:assert test='count(h:FractionCoolLoadServed) = 1'>Expected 1 element(s) for xpath: FractionCoolLoadServed</sch:assert> <!-- Must sum to <= 1 across all HeatPumps and CoolingSystems -->
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[HeatPumpType=ASHP]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump[h:HeatPumpType="air-to-air"]'>
       <sch:assert test='count(../../h:HVACDistribution[h:DistributionSystemType/h:AirDistribution | h:DistributionSystemType[h:Other="DSE"]]) &gt;= 1'>Expected 1 or more element(s) for xpath: ../../HVACDistribution[DistributionSystemType/AirDistribution | DistributionSystemType[Other="DSE"]]</sch:assert> <!-- See [HVACDistribution] -->
@@ -696,6 +561,20 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[HVACControl]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACControl'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:ControlType[text()="manual thermostat" or text()="programmable thermostat"]) = 1'>Expected 1 element(s) for xpath: ControlType[text()="manual thermostat" or text()="programmable thermostat"]</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[HVACDistribution]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACDistribution'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:DistributionSystemType[h:AirDistribution | h:HydronicDistribution | h:HydronicAndAirDistribution | h:Other[text()="DSE"]]) = 1'>Expected 1 element(s) for xpath: DistributionSystemType[AirDistribution | HydronicDistribution | HydronicAndAirDistribution | Other[text()="DSE"]]</sch:assert> <!-- See [HVACDistType=Air] or [HVACDistType=Hydronic] or [HVACDistType=HydronicAndAir] or [HVACDistType=DSE] -->
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[HVACDistType=Air]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACDistribution/h:DistributionSystemType/h:AirDistribution'>
       <sch:assert test='count(../../h:ConditionedFloorAreaServed) = 1'>Expected 1 element(s) for xpath: ../../ConditionedFloorAreaServed</sch:assert>
@@ -739,6 +618,16 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[MechanicalVentilation]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true"]'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:FanType[text()="energy recovery ventilator" or text()="heat recovery ventilator" or text()="exhaust only" or text()="supply only" or text()="balanced" or text()="central fan integrated supply"]) = 1'>Expected 1 element(s) for xpath: FanType[text()="energy recovery ventilator" or text()="heat recovery ventilator" or text()="exhaust only" or text()="supply only" or text()="balanced" or text()="central fan integrated supply"]</sch:assert> <!-- See [MechVentType=HRV] or [MechVentType=ERV] or [MechVentType=CFIS] -->
+      <sch:assert test='count(h:TestedFlowRate) &lt;= 1'>Expected 0 or 1 element(s) for xpath: TestedFlowRate</sch:assert>
+      <sch:assert test='count(h:HoursInOperation) = 1'>Expected 1 element(s) for xpath: HoursInOperation</sch:assert>
+      <sch:assert test='count(h:FanPower) &lt;= 1'>Expected 0 or 1 element(s) for xpath: FanPower</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[MechVentType=HRV]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true" and h:FanType="heat recovery ventilator"]'>
       <sch:assert test='count(h:SensibleRecoveryEfficiency) + count(h:AdjustedSensibleRecoveryEfficiency) = 1'>Expected 1 element(s) for xpath: SensibleRecoveryEfficiency | AdjustedSensibleRecoveryEfficiency</sch:assert>
@@ -763,6 +652,19 @@
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:RatedFlowRate) = 1'>Expected 1 element(s) for xpath: RatedFlowRate</sch:assert>
       <sch:assert test='count(h:FanPower) = 1'>Expected 1 element(s) for xpath: FanPower</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[WaterHeatingSystem]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:WaterHeatingSystem'>
+      <sch:assert test='count(../h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
+      <sch:assert test='count(../h:WaterFixture) &gt;= 1'>Expected 1 or more element(s) for xpath: ../WaterFixture</sch:assert> <!-- See [WaterFixture] -->
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:IsSharedSystem) = 1'>Expected 1 element(s) for xpath: IsSharedSystem</sch:assert> <!-- See [WaterHeatingSystem=Shared] -->
+      <sch:assert test='count(h:WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater" or text()="space-heating boiler with storage tank" or text()="space-heating boiler with tankless coil"]) = 1'>Expected 1 element(s) for xpath: WaterHeaterType[text()="storage water heater" or text()="instantaneous water heater" or text()="heat pump water heater" or text()="space-heating boiler with storage tank" or text()="space-heating boiler with tankless coil"]</sch:assert> <!-- See [WHType=Tank] or [WHType=Tankless] or [WHType=HeatPump] or [WHType=Indirect] or [WHType=CombiTankless] -->
+      <sch:assert test='count(h:Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="other exterior" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:FractionDHWLoadServed) = 1'>Expected 1 element(s) for xpath: FractionDHWLoadServed</sch:assert>
+      <sch:assert test='count(h:UsesDesuperheater) &lt;= 1'>Expected 0 or 1 element(s) for xpath: UsesDesuperheater</sch:assert> <!-- See [Desuperheater] -->
     </sch:rule>
   </sch:pattern>
 
@@ -827,6 +729,16 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[HotWaterDistribution]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:HotWaterDistribution'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:SystemType/h:Standard) + count(h:SystemType/h:Recirculation) = 1'>Expected 1 element(s) for xpath: SystemType/Standard | SystemType/Recirculation</sch:assert> <!-- See [HWDistType=Standard] or [HWDistType=Recirculation] -->
+      <sch:assert test='count(h:PipeInsulation/h:PipeRValue) = 1'>Expected 1 element(s) for xpath: PipeInsulation/PipeRValue</sch:assert>
+      <sch:assert test='count(h:DrainWaterHeatRecovery) &lt;= 1'>Expected 0 or 1 element(s) for xpath: DrainWaterHeatRecovery</sch:assert> <!-- See [DrainWaterHeatRecovery] -->
+      <sch:assert test='count(h:extension/h:SharedRecirculation) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/SharedRecirculation</sch:assert> <!-- See [SharedRecirculation] --> 
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[HWDistType=Standard]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:HotWaterDistribution/h:SystemType/h:Standard'>
       <sch:assert test='count(h:PipingLength) = 1'>Expected 1 element(s) for xpath: PipingLength</sch:assert>
@@ -858,6 +770,23 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[WaterFixture]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:WaterFixture'>
+      <sch:assert test='count(../h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:WaterFixtureType[text()="shower head" or text()="faucet"]) = 1'>Expected 1 element(s) for xpath: WaterFixtureType[text()="shower head" or text()="faucet"]</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:LowFlow) = 1'>Expected 1 element(s) for xpath: LowFlow</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[SolarThermalSystem]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:SolarThermal/h:SolarThermalSystem'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:SystemType[text()="hot water"]) = 1'>Expected 1 element(s) for xpath: SystemType[text()="hot water"]</sch:assert>
+      <sch:assert test='count(h:CollectorArea) + count(h:SolarFraction) = 1'>Expected 1 element(s) for xpath: CollectorArea | SolarFraction</sch:assert> <!-- See [SolarThermal=Detailed] or [SolarThermal=Simple] -->
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[SolarThermal=Detailed]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:SolarThermal/h:SolarThermalSystem[h:CollectorArea]'>
       <sch:assert test='count(h:CollectorLoopType[text()="liquid indirect" or text()="liquid direct" or text()="passive thermosyphon"]) = 1'>Expected 1 element(s) for xpath: CollectorLoopType[text()="liquid indirect" or text()="liquid direct" or text()="passive thermosyphon"]</sch:assert>
@@ -876,11 +805,42 @@
       <sch:assert test='count(h:ConnectedTo) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ConnectedTo</sch:assert> <!-- WaterHeatingSystem (any type) -->
     </sch:rule>
   </sch:pattern>
-  
+
+  <sch:pattern name='[PVSystem]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:Photovoltaics/h:PVSystem'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:IsSharedSystem) = 1'>Expected 1 element(s) for xpath: IsSharedSystem</sch:assert> <!-- See [PVSystem=Individual] or [PVSystem=Shared] -->
+      <sch:assert test='count(h:Location[text()="ground" or text()="roof"]) = 1'>Expected 1 element(s) for xpath: Location[text()="ground" or text()="roof"]</sch:assert>
+      <sch:assert test='count(h:ModuleType[text()="standard" or text()="premium" or text()="thin film"]) = 1'>Expected 1 element(s) for xpath: ModuleType[text()="standard" or text()="premium" or text()="thin film"]</sch:assert>
+      <sch:assert test='count(h:Tracking[text()="fixed" or text()="1-axis" or text()="1-axis backtracked" or text()="2-axis"]) = 1'>Expected 1 element(s) for xpath: Tracking[text()="fixed" or text()="1-axis" or text()="1-axis backtracked" or text()="2-axis"]</sch:assert>
+      <sch:assert test='count(h:ArrayAzimuth) = 1'>Expected 1 element(s) for xpath: ArrayAzimuth</sch:assert>
+      <sch:assert test='count(h:ArrayTilt) = 1'>Expected 1 element(s) for xpath: ArrayTilt</sch:assert>
+      <sch:assert test='count(h:MaxPowerOutput) = 1'>Expected 1 element(s) for xpath: MaxPowerOutput</sch:assert>
+      <sch:assert test='count(h:InverterEfficiency) = 1'>Expected 1 element(s) for xpath: InverterEfficiency</sch:assert> <!-- PVWatts default is 0.96 -->
+      <sch:assert test='count(h:SystemLossesFraction) = 1'>Expected 1 element(s) for xpath: SystemLossesFraction</sch:assert> <!-- PVWatts default is 0.14 -->
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[PVSystem=Shared]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:Photovoltaics/h:PVSystem[h:IsSharedSystem="true"]'>
       <sch:assert test='count(../../../h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
       <sch:assert test='count(h:extension/h:NumberofBedroomsServed) = 1'>Expected 1 element(s) for xpath: extension/NumberofBedroomsServed</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[ClothesWasher]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:ClothesWasher'>
+      <sch:assert test='count(../../h:Systems/h:WaterHeating/h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../../Systems/WaterHeating/HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:IsSharedAppliance) = 1'>Expected 1 element(s) for xpath: IsSharedAppliance</sch:assert> <!-- See [ClothesWasher=Shared] -->
+      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:ModifiedEnergyFactor) + count(h:IntegratedModifiedEnergyFactor) = 1'>Expected 1 element(s) for xpath: ModifiedEnergyFactor | IntegratedModifiedEnergyFactor</sch:assert>
+      <sch:assert test='count(h:RatedAnnualkWh) = 1'>Expected 1 element(s) for xpath: RatedAnnualkWh</sch:assert>
+      <sch:assert test='count(h:LabelElectricRate) = 1'>Expected 1 element(s) for xpath: LabelElectricRate</sch:assert>
+      <sch:assert test='count(h:LabelGasRate) = 1'>Expected 1 element(s) for xpath: LabelGasRate</sch:assert>
+      <sch:assert test='count(h:LabelAnnualGasCost) = 1'>Expected 1 element(s) for xpath: LabelAnnualGasCost</sch:assert>
+      <sch:assert test='count(h:LabelUsage) = 1'>Expected 1 element(s) for xpath: LabelUsage</sch:assert>
+      <sch:assert test='count(h:Capacity) = 1'>Expected 1 element(s) for xpath: Capacity</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -894,6 +854,17 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[ClothesDryer]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:ClothesDryer'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:IsSharedAppliance) = 1'>Expected 1 element(s) for xpath: IsSharedAppliance</sch:assert> <!-- See [ClothesDryer=Shared] -->
+      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
+      <sch:assert test='count(h:EnergyFactor) + count(h:CombinedEnergyFactor) = 1'>Expected 1 element(s) for xpath: EnergyFactor | CombinedEnergyFactor</sch:assert>
+      <sch:assert test='count(h:ControlType[text()="timer" or text()="moisture"]) = 1'>Expected 1 element(s) for xpath: ControlType[text()="timer" or text()="moisture"]</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[ClothesDryer=Shared]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:ClothesDryer[h:IsSharedAppliance="true"]'>
       <sch:assert test='count(../../h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
@@ -901,7 +872,22 @@
       <sch:assert test='count(h:NumberofUnitsServed) = 1'>Expected 1 element(s) for xpath: NumberofUnitsServed</sch:assert>
     </sch:rule>
   </sch:pattern>
-  
+
+  <sch:pattern name='[Dishwasher]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Dishwasher'>
+      <sch:assert test='count(../../h:Systems/h:WaterHeating/h:HotWaterDistribution) = 1'>Expected 1 element(s) for xpath: ../../Systems/WaterHeating/HotWaterDistribution</sch:assert> <!-- See [HotWaterDistribution] -->
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:IsSharedAppliance) = 1'>Expected 1 element(s) for xpath: IsSharedAppliance</sch:assert> <!-- See [Dishwasher=Shared] -->
+      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:RatedAnnualkWh) + count(h:EnergyFactor) = 1'>Expected 1 element(s) for xpath: RatedAnnualkWh | EnergyFactor</sch:assert>
+      <sch:assert test='count(h:LabelElectricRate) = 1'>Expected 1 element(s) for xpath: LabelElectricRate</sch:assert>
+      <sch:assert test='count(h:LabelGasRate) = 1'>Expected 1 element(s) for xpath: LabelGasRate</sch:assert>
+      <sch:assert test='count(h:LabelAnnualGasCost) = 1'>Expected 1 element(s) for xpath: LabelAnnualGasCost</sch:assert>
+      <sch:assert test='count(h:LabelUsage) = 1'>Expected 1 element(s) for xpath: LabelUsage</sch:assert>
+      <sch:assert test='count(h:PlaceSettingCapacity) = 1'>Expected 1 element(s) for xpath: PlaceSettingCapacity</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[Dishwasher=Shared]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Dishwasher[h:IsSharedAppliance="true"]'>
       <sch:assert test='count(../../h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
@@ -910,10 +896,58 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern name='[Refrigerator]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Refrigerator'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:RatedAnnualkWh) = 1'>Expected 1 element(s) for xpath: RatedAnnualkWh</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[CookingRange]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:CookingRange'>
+      <sch:assert test='count(../h:Oven) = 1'>Expected 1 element(s) for xpath: ../Oven</sch:assert> <!-- See [Oven] -->
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
+      <sch:assert test='count(h:FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
+      <sch:assert test='count(h:IsInduction) = 1'>Expected 1 element(s) for xpath: IsInduction</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Oven]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Oven'>
+      <sch:assert test='count(../h:CookingRange) = 1'>Expected 1 element(s) for xpath: ../CookingRange</sch:assert> <!-- See [CookingRange] -->
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:IsConvection) = 1'>Expected 1 element(s) for xpath: IsConvection</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Lighting]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting'>
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern name='[LightingGroup]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting/h:LightingGroup[h:LightingType[h:LightEmittingDiode | h:CompactFluorescent | h:FluorescentTube] and h:Location[text()="interior" or text()="exterior" or text()="garage"]]'>
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
       <sch:assert test='count(h:FractionofUnitsInLocation) = 1'>Expected 1 element(s) for xpath: FractionofUnitsInLocation</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[CeilingFan]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting/h:CeilingFan'>
+      <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert> <!-- Required by HPXML schema -->
+      <sch:assert test='count(h:Airflow[h:FanSpeed="medium"]/h:Efficiency) = 1'>Expected 1 element(s) for xpath: Airflow[FanSpeed="medium"]/Efficiency</sch:assert>
+      <sch:assert test='count(h:Quantity) = 1'>Expected 1 element(s) for xpath: Quantity</sch:assert>
     </sch:rule>
   </sch:pattern>
 </sch:schema>
