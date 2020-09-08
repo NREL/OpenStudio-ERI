@@ -1310,8 +1310,6 @@ def create_sample_hpxmls
                   'base-dhw-indirect-outside.xml',
                   'base-dhw-indirect-with-solar-fraction.xml',
                   'base-dhw-jacket-electric.xml',
-                  'base-dhw-jacket-hpwh.xml',
-                  'base-dhw-jacket-indirect.xml',
                   'base-dhw-tank-coal.xml',
                   'base-dhw-tank-gas-outside.xml',
                   'base-dhw-tank-heat-pump-outside.xml',

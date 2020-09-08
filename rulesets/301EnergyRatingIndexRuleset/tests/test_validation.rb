@@ -4,11 +4,11 @@ require_relative '../../../workflow/tests/minitest_helper'
 require 'openstudio'
 require 'openstudio/ruleset/ShowRunnerOutput'
 require 'minitest/autorun'
-require_relative '../measure.rb'
 require 'fileutils'
+require_relative '../measure.rb'
 begin
   require 'schematron-nokogiri'
-rescue
+rescue LoadError
   fail 'Could not load schematron-nokogiri gem. Try running with "bundle exec ruby ...".'
 end
 
@@ -23,7 +23,7 @@ class ERI301ValidationTest < MiniTest::Test
 
     # Load all HPXMLs
     hpxml_file_dirs = [File.absolute_path(File.join(@root_path, 'workflow', 'sample_files')),
-                       File.absolute_path(File.join(@root_path, 'workflow', 'tests', 'ASHRAE_Standard_140'))]
+                       File.absolute_path(File.join(@root_path, 'workflow', 'tests', 'RESNET_Tests', '4.1_Standard_140'))]
     @hpxml_docs = {}
     hpxml_file_dirs.each do |hpxml_file_dir|
       Dir["#{hpxml_file_dir}/*.xml"].sort.each do |xml|
@@ -133,16 +133,14 @@ class ERI301ValidationTest < MiniTest::Test
   private
 
   def _test_schematron_validation(stron_doc, hpxml, expected_error_msg = nil)
-    # load the xml document you wish to validate
+    # Validate via schematron-nokogiri gem
     xml_doc = Nokogiri::XML hpxml
-    # validate it
     results = stron_doc.validate xml_doc
-    # assertions
+    results_msgs = results.map { |i| i[:message].gsub(': ', [': ', i[:context_path].gsub('h:', '').concat(': ').gsub('/*: ', '')].join('')) }
+    idx_of_msg = results_msgs.index { |m| m == expected_error_msg }
     if expected_error_msg.nil?
-      assert_empty(results)
+      assert_nil(idx_of_msg)
     else
-      results_msgs = results.map { |i| i[:message].gsub(': ', [': ', i[:context_path].gsub('h:', '').concat(': ').gsub('/*: ', '')].join('')) }
-      idx_of_msg = results_msgs.index { |m| m == expected_error_msg }
       if idx_of_msg.nil?
         puts "Did not find expected error message '#{expected_error_msg}' in #{results_msgs}."
       end
@@ -151,12 +149,12 @@ class ERI301ValidationTest < MiniTest::Test
   end
 
   def _test_ruby_validation(hpxml_doc, expected_error_msg = nil)
-    # Validate input HPXML against EnergyPlus Use Case
+    # Validate via validator.rb
     results = Validator.run_validator(hpxml_doc, @stron_path)
+    idx_of_msg = results.index { |i| i == expected_error_msg }
     if expected_error_msg.nil?
-      assert_empty(results)
+      assert_nil(idx_of_msg)
     else
-      idx_of_msg = results.index { |i| i == expected_error_msg }
       if idx_of_msg.nil?
         puts "Did not find expected error message '#{expected_error_msg}' in #{results}."
       end
