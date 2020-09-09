@@ -111,6 +111,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     if (ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity) != (rated_output[:hpxml_heat_fuels][rated_idx] == HPXML::FuelTypeElectricity)
       fail 'Data not in sync.'
     end
+
     if ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity
       coeff_heat_a = 2.2561
       coeff_heat_b = 0.0

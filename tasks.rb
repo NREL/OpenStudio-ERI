@@ -254,6 +254,7 @@ end
 
 def set_hpxml_site(hpxml_file, hpxml)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
+
   hpxml.site.fuels = [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas]
 end
 
@@ -802,19 +803,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     hpxml.hvac_distributions.clear
     hpxml.hvac_distributions.add(id: 'HVACDistribution',
                                  distribution_system_type: HPXML::HVACDistributionTypeAir)
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add(id: 'HVACDistribution',
-                                 distribution_system_type: HPXML::HVACDistributionTypeDSE,
-                                 annual_cooling_dse: 1)
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
-    hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add(id: 'HVACDistribution',
-                                 distribution_system_type: HPXML::HVACDistributionTypeDSE,
-                                 annual_heating_dse: 1)
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml',
-         'RESNET_Tests/4.4_HVAC/HVAC2d.xml',
-         'RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
+         'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
     hpxml.hvac_distributions.add(id: 'HVACDistribution',
                                  distribution_system_type: HPXML::HVACDistributionTypeDSE,
@@ -1320,8 +1310,6 @@ def create_sample_hpxmls
                   'base-dhw-indirect-outside.xml',
                   'base-dhw-indirect-with-solar-fraction.xml',
                   'base-dhw-jacket-electric.xml',
-                  'base-dhw-jacket-hpwh.xml',
-                  'base-dhw-jacket-indirect.xml',
                   'base-dhw-tank-coal.xml',
                   'base-dhw-tank-gas-outside.xml',
                   'base-dhw-tank-heat-pump-outside.xml',
@@ -1358,11 +1346,11 @@ def create_sample_hpxmls
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
                   'base-mechvent-exhaust-rated-flow-rate.xml',
                   'base-misc-defaults.xml',
-                  'base-misc-defaults2.xml',
                   'base-misc-loads-large-uncommon.xml',
                   'base-misc-loads-large-uncommon2.xml',
                   'base-misc-loads-none.xml',
                   'base-misc-neighbor-shading.xml',
+                  'base-misc-shelter-coefficient.xml',
                   'base-misc-usage-multiplier.xml',
                   'base-simcontrol-daylight-saving-custom.xml',
                   'base-simcontrol-daylight-saving-disabled.xml',
@@ -1389,6 +1377,8 @@ def create_sample_hpxmls
 
     # Add ERI version
     hpxml.header.eri_calculation_version = 'latest'
+
+    hpxml.building_construction.number_of_bathrooms = nil
 
     # Handle extra inputs for ERI
     hpxml.heating_systems.each do |heating_system|

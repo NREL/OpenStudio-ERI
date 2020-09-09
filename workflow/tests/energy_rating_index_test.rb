@@ -77,6 +77,7 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       next if xml.include? 'base-version'
+
       # Create derivative file
 
       hpxml = HPXML.new(hpxml_path: xml)
@@ -123,8 +124,8 @@ class EnergyRatingIndexTest < Minitest::Test
     expected_error_msgs = { 'invalid-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
                             'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
-                            'missing-elements.xml' => ['Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
-                                                       'Expected [1] element(s) but found 0 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],
+                            'missing-elements.xml' => ['Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
+                                                       'Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],
                             'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
                                                             'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
                             'hvac-ducts-leakage-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
@@ -798,6 +799,7 @@ class EnergyRatingIndexTest < Minitest::Test
     base_reul = base_results[result_name]
     all_results.each do |compare_xml, compare_results|
       next unless compare_xml.include? files_include
+
       if not files_exclude.nil?
         next if compare_xml.include? files_exclude
       end
@@ -2000,6 +2002,7 @@ class EnergyRatingIndexTest < Minitest::Test
     rated_gpd = 0
     CSV.foreach(results_csv) do |row|
       next if row.nil? || row[0].nil?
+
       if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
       elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
@@ -2214,6 +2217,7 @@ class EnergyRatingIndexTest < Minitest::Test
     ref_hpxml = HPXML.new(hpxml_path: ref_xml)
     ref_hpxml.ventilation_fans.each do |ventilation_fan|
       next unless ventilation_fan.used_for_whole_building_ventilation
+
       if (ventilation_fan.fan_type == HPXML::MechVentTypeSupply) || (ventilation_fan.fan_type == HPXML::MechVentTypeExhaust)
         ventilation_fan.fan_power = 0.35 * ventilation_fan.tested_flow_rate
       elsif ventilation_fan.fan_type == HPXML::MechVentTypeBalanced

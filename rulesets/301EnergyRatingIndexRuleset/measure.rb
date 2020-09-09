@@ -14,11 +14,11 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/validator'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative 'resources/301'
-require_relative 'resources/301validator'
 
 # start the measure
 class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
@@ -163,7 +163,8 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     end
 
     # Validate input HPXML against ERI Use Case
-    errors = EnergyRatingIndex301Validator.run_validator(@orig_hpxml.doc)
+    stron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
+    errors = Validator.run_validator(@orig_hpxml.doc, stron_path)
     errors.each do |error|
       runner.registerError("#{hpxml_path}: #{error}")
       is_valid = false

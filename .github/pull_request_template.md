@@ -8,7 +8,7 @@ Not all may apply:
 
 - [ ] OS-HPXML git subtree has been pulled
 - [ ] 301 ruleset and unit tests have been updated
-- [ ] 301validator.rb has been updated (reference EPvalidator.rb)
+- [ ] 301validator.xml has been updated (reference EPvalidator.xml)
 - [ ] Workflow tests have been updated
 - [ ] Documentation has been updated
 - [ ] `openstudio tasks.rb update_measures` has been run

@@ -597,6 +597,7 @@
                   <DuctLocation>other multifamily buffer space</DuctLocation>
                   <DuctSurfaceArea>20.0</DuctSurfaceArea>
                 </Ducts>
+                <NumberofReturnRegisters>3</NumberofReturnRegisters>
               </HydronicAndAirDistribution>
             </DistributionSystemType>
             <ConditionedFloorAreaServed>2700.0</ConditionedFloorAreaServed>
