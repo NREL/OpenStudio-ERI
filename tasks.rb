@@ -1337,7 +1337,7 @@ def create_sample_hpxmls
                   'base-hvac-ideal-air.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ductless.xml',
-                  'base-hvac-undersized.xml',
+                  'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',
                   'base-lighting-none.xml',
                   'base-location-epw-filepath-AMY-2012.xml',
