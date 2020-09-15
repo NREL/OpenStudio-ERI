@@ -1299,7 +1299,7 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
       # Leakage exemption?
       zero_leakage = false
-      if [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include?(orig_hvac_distribution.distribution_system_type) && orig_hvac_distribution.duct_leakage_testing_exemption
+      if [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include?(orig_hvac_distribution.distribution_system_type) && orig_hvac_distribution.duct_leakage_to_outside_testing_exemption
         if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014AD')
           fail "ERI Version #{@eri_version} does not support duct leakage testing exemption."
         elsif Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014ADEGL')
