@@ -91,7 +91,13 @@ In the ``in.xml`` file, the window would have additional elements like so:
 HPXML Software Info
 -------------------
 
-EnergyPlus simulation controls can be entered in ``/HPXML/SoftwareInfo/extension/SimulationControl``.
+High-level simulation inputs are entered in HPXML's ``/HPXML/SoftwareInfo``.
+Current inputs include simulation controls and HVAC sizing controls.
+
+HPXML Simulation Control
+************************
+
+EnergyPlus simulation controls can be entered in ``extension/SimulationControl``.
 
 The simulation timestep can be optionally provided as ``Timestep``, where the value is in minutes and must be a divisor of 60.
 If not provided, the default value of 60 (i.e., 1 hour) is used.
@@ -104,6 +110,21 @@ Whether to apply daylight saving time can be optionally denoted with ``DaylightS
 If either ``DaylightSaving`` or ``DaylightSaving/Enabled`` is not provided, ``DaylightSaving/Enabled`` will default to true.
 If daylight saving is enabled, the daylight saving period can be optionally specified with ``DaylightSaving/BeginMonth``, ``DaylightSaving/BeginDayOfMonth``, ``DaylightSaving/EndMonth``, and ``DaylightSaving/EndDayOfMonth``.
 If not specified, dates will be defined according to the EPW weather file header; if not available there, default values of March 12 and November 5 will be used.
+
+HPXML HVAC Sizing Control
+*************************
+
+HVAC equipment sizing controls can be entered in ``extension/HVACSizingControl``.
+
+An optional ``AllowIncreasedFixedCapacities`` element can be provided to describe how HVAC equipment with fixed capacities are handled.
+If false, the user-specified fixed capacity will be used.
+If true, the maximum of the user-specified fixed capacity and the heating/cooling design load will be used to reduce potential for unmet loads.
+If not provided, the default value of false is used.
+
+An optional ``UseMaxLoadForHeatPumps`` element can be provided to describe how autosized heat pumps are handled.
+If true, heat pumps are sized based on the maximum of heating and cooling design loads.
+If false, heat pumps are sized per ACCA Manual J/S based on cooling design loads with some oversizing allowances for heating design loads.
+If not provided, the default value of true is used.
 
 HPXML Building Details
 ----------------------
@@ -1229,9 +1250,9 @@ This section describes elements specified in HPXML's ``MiscLoads``.
 HPXML Plug Loads
 ****************
 
-Misc electric plug loads can be provided by entering ``PlugLoad`` elements; if not provided, plug loads will not be modeled.
+Misc electric plug loads can be provided by entering ``PlugLoad`` elements.
 Currently only plug loads specified with ``PlugLoadType='other'``, ``PlugLoadType='TV other'``, ``PlugLoadType='electric vehicle charging'``, or ``PlugLoadType='well pump'`` are recognized.
-It is generally recommended to at least include the 'other' (miscellaneous) and 'TV other' plug load types for the typical home.
+The 'other' and 'TV other' plug loads are required to represent the typical home; the other less common plug loads will only be modeled if provided.
 
 The annual energy consumption (``Load[Units='kWh/year']/Value``), ``Location``, ``extension/FracSensible``, and ``extension/FracLatent`` elements are optional.
 If not provided, they will be defaulted as follows.
@@ -1261,8 +1282,9 @@ If not provided, values from Figures 23 & 24 of the `Building America House Simu
 HPXML Fuel Loads
 ****************
 
-Misc fuel loads can be provided by entering ``FuelLoad`` elements; if not provided, fuel loads will not be modeled.
+Misc fuel loads can be provided by entering ``FuelLoad`` elements.
 Currently only fuel loads specified with ``FuelLoadType='grill'``, ``FuelLoadType='lighting'``, or ``FuelLoadType='fireplace'`` are recognized.
+These less common fuel loads will only be modeled if provided.
 
 The annual energy consumption (``Load[Units='therm/year']/Value``), ``Location``, ``extension/FracSensible``, and ``extension/FracLatent`` elements are also optional.
 If not provided, they will be defaulted as follows.
