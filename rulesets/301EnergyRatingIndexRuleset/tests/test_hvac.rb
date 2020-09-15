@@ -904,7 +904,13 @@ class ERIHVACtest < MiniTest::Test
     # assert that it ran correctly
     assert_equal('Success', result.value.valueName)
 
-    return measure.new_hpxml
+    new_hpxml = measure.new_hpxml
+
+    # Check that HVAC sizing correctly specified
+    assert_equal(true, new_hpxml.header.use_max_load_for_heat_pumps)
+    assert_equal(true, new_hpxml.header.allow_increased_fixed_capacities)
+
+    return new_hpxml
   end
 
   def _check_heating_system(hpxml, *systems)
