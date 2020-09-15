@@ -455,16 +455,16 @@ other non-freezing space        Non-Freezing Space                  Floats with 
 AirDistribution systems must also have duct leakage testing provided in one of three ways:
 
 #. Optional supply/return leakage to the outside: ``DuctLeakageMeasurement[DuctType="supply" or DuctType="return"]/DuctLeakage[Units="CFM25"][TotalOrToOutside="to outside"]/Value``
-#. Total leakage: ``extension/DuctLeakageTestingExemption="true"`` (Version 2014ADEGL or newer)
-#. Leakage testing exemption: ``DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value`` (Version 2014AD or newer)
+#. Total leakage: ``DuctLeakageMeasurement/DuctLeakage[Units="CFM25"][TotalOrToOutside="total"]/Value`` (Version 2014AD or newer)
+#. Leakage testing exemption: ``extension/DuctLeakageToOutsideTestingExemption="true"`` (Version 2014ADEGL or newer)
 
 .. note::
 
-  When the leakage testing exemption is used with Addendum L or newer, it effectively overrides the Addendum D specification such that the leakage testing exemption reflects solely the Addendum L specification.
+  When the leakage to outside testing exemption is used with Addendum L or newer, it effectively overrides the Addendum D specification such that the leakage to outside testing exemption reflects solely the Addendum L specification.
 
 .. warning::
 
-  Total leakage and leakage testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC© 301 have been appropriately met.
+  Total leakage and leakage to outside testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
 
 Hydronic Distribution
 ~~~~~~~~~~~~~~~~~~~~~

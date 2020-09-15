@@ -800,7 +800,7 @@ class ERIHVACtest < MiniTest::Test
   def test_duct_leakage_exemption
     # Addendum L
     # Create derivative file for testing
-    hpxml_name = 'base-hvac-ducts-leakage-exemption.xml'
+    hpxml_name = 'base-hvac-ducts-leakage-to-outside-exemption.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.header.eri_calculation_version = '2014ADEGL'
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -828,7 +828,7 @@ class ERIHVACtest < MiniTest::Test
 
     # Addendum D
     # Create derivative file for testing
-    hpxml_name = 'base-hvac-ducts-leakage-exemption.xml'
+    hpxml_name = 'base-hvac-ducts-leakage-to-outside-exemption.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.header.eri_calculation_version = '2014AD'
     hpxml_name = File.basename(@tmp_hpxml_path)
