@@ -188,6 +188,8 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.eri_design = @calc_type
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
+    new_hpxml.header.allow_increased_fixed_capacities = true
+    new_hpxml.header.use_max_load_for_heat_pumps = true
 
     return new_hpxml
   end
