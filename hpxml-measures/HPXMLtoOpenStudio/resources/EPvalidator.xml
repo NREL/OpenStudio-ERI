@@ -7,6 +7,7 @@
     <sch:rule context='/h:HPXML'>
       <sch:assert test='count(h:XMLTransactionHeaderInformation) = 1'>Expected 1 element(s) for xpath: XMLTransactionHeaderInformation</sch:assert> <!-- See [XMLTransaction] -->
       <sch:assert test='count(h:SoftwareInfo/h:extension/h:SimulationControl) &lt;= 1'>Expected 0 or 1 element(s) for xpath: SoftwareInfo/extension/SimulationControl</sch:assert> <!-- See [SimulationControl] -->
+      <sch:assert test='count(h:SoftwareInfo/h:extension/h:HVACSizingControl) &lt;= 1'>Expected 0 or 1 element(s) for xpath: SoftwareInfo/extension/HVACSizingControl</sch:assert> <!-- See [HVACSizingControl] -->
       <sch:assert test='count(h:Building) = 1'>Expected 1 element(s) for xpath: Building</sch:assert>
       <sch:assert test='count(h:Building/h:BuildingID) = 1'>Expected 1 element(s) for xpath: Building/BuildingID</sch:assert>
       <sch:assert test='count(h:Building/h:ProjectStatus/h:EventType) = 1'>Expected 1 element(s) for xpath: Building/ProjectStatus/EventType</sch:assert>
@@ -29,6 +30,13 @@
       <sch:assert test='(count(h:BeginMonth) = 0 and count(h:BeginDayOfMonth) = 0) or (count(h:BeginMonth) = 1 and count(h:BeginDayOfMonth) = 1)'>Expected 0 or 2 element(s) for xpath: BeginMonth | BeginDayOfMonth</sch:assert> <!-- integer -->
       <sch:assert test='(count(h:EndMonth) = 0 and count(h:EndDayOfMonth) = 0) or (count(h:EndMonth) = 1 and count(h:EndDayOfMonth) = 1)'>Expected 0 or 2 element(s) for xpath: EndMonth | EndDayOfMonth</sch:assert> <!-- integer -->
       <sch:assert test='count(h:DaylightSaving) &lt;= 1'>Expected 0 or 1 element(s) for xpath: DaylightSaving</sch:assert> <!-- See [DaylightSaving] -->
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[HVACSizingControl]'>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:HVACSizingControl'>
+      <sch:assert test='count(h:AllowIncreasedFixedCapacities) &lt;= 1'>Expected 0 or 1 element(s) for xpath: AllowIncreasedFixedCapacities</sch:assert> <!-- boolean -->
+      <sch:assert test='count(h:UseMaxLoadForHeatPumps) &lt;= 1'>Expected 0 or 1 element(s) for xpath: UseMaxLoadForHeatPumps</sch:assert> <!-- boolean -->
     </sch:rule>
   </sch:pattern>
 
@@ -82,8 +90,8 @@
       <sch:assert test='count(h:Lighting/h:CeilingFan) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Lighting/CeilingFan</sch:assert> <!-- See [CeilingFan] -->
       <sch:assert test='count(h:Pools/h:Pool) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Pools/Pool</sch:assert> <!-- See [Pool] -->
       <sch:assert test='count(h:HotTubs/h:HotTub) &lt;= 1'>Expected 0 or 1 element(s) for xpath: HotTubs/HotTub</sch:assert> <!-- See [HotTub] -->
-      <sch:assert test='count(h:MiscLoads/h:PlugLoad[h:PlugLoadType[text()="other"]]) &lt;= 1'>Expected 0 or 1 element(s) for xpath: MiscLoads/PlugLoad[PlugLoadType[text()="other"]]</sch:assert> <!-- See [PlugLoad] -->
-      <sch:assert test='count(h:MiscLoads/h:PlugLoad[h:PlugLoadType[text()="TV other"]]) &lt;= 1'>Expected 0 or 1 element(s) for xpath: MiscLoads/PlugLoad[PlugLoadType[text()="TV other"]]</sch:assert> <!-- See [PlugLoad] -->
+      <sch:assert test='count(h:MiscLoads/h:PlugLoad[h:PlugLoadType[text()="other"]]) = 1'>Expected 1 element(s) for xpath: MiscLoads/PlugLoad[PlugLoadType[text()="other"]]</sch:assert> <!-- See [PlugLoad] -->
+      <sch:assert test='count(h:MiscLoads/h:PlugLoad[h:PlugLoadType[text()="TV other"]]) = 1'>Expected 1 element(s) for xpath: MiscLoads/PlugLoad[PlugLoadType[text()="TV other"]]</sch:assert> <!-- See [PlugLoad] -->
       <sch:assert test='count(h:MiscLoads/h:PlugLoad[h:PlugLoadType[text()="electric vehicle charging"]]) &lt;= 1'>Expected 0 or 1 element(s) for xpath: MiscLoads/PlugLoad[PlugLoadType[text()="electric vehicle charging"]]</sch:assert> <!-- See [PlugLoad] -->
       <sch:assert test='count(h:MiscLoads/h:PlugLoad[h:PlugLoadType[text()="well pump"]]) &lt;= 1'>Expected 0 or 1 element(s) for xpath: MiscLoads/PlugLoad[PlugLoadType[text()="well pump"]]</sch:assert> <!-- See [PlugLoad] -->
       <sch:assert test='count(h:MiscLoads/h:FuelLoad[h:FuelLoadType[text()="grill"]]) &lt;= 1'>Expected 0 or 1 element(s) for xpath: MiscLoads/FuelLoad[FuelLoadType[text()="grill"]]</sch:assert> <!-- See [FuelLoad] -->
