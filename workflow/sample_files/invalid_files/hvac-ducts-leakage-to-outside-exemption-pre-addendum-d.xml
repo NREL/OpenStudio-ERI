@@ -358,7 +358,7 @@
                   <DuctSurfaceArea>50.0</DuctSurfaceArea>
                 </Ducts>
                 <extension>
-                  <DuctLeakageTestingExemption>true</DuctLeakageTestingExemption>
+                  <DuctLeakageToOutsideTestingExemption>true</DuctLeakageToOutsideTestingExemption>
                 </extension>
               </AirDistribution>
             </DistributionSystemType>

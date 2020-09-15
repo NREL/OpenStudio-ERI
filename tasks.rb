@@ -1429,13 +1429,13 @@ def create_sample_hpxmls
   # Duct leakage exemption
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
   hpxml.hvac_distributions[0].duct_leakage_measurements.clear
-  hpxml.hvac_distributions[0].duct_leakage_testing_exemption = true
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+  hpxml.hvac_distributions[0].duct_leakage_to_outside_testing_exemption = true
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
 
   # ... and invalid test file (pre-Addendum L)
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-exemption.xml')
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
   hpxml.header.eri_calculation_version = '2014A'
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-exemption-pre-addendum-d.xml')
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml')
 
   # Duct leakage total
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
