@@ -1256,7 +1256,7 @@ class Airflow
     vent_mech_fans.each do |vent_mech|
       hrv_erv_effectiveness_map[vent_mech] = {}
 
-      vent_mech_cfm = vent_mech.average_oa_flow_rate
+      vent_mech_cfm = vent_mech.average_oa_unit_flow_rate
       if (vent_mech_cfm > 0)
         # Must assume an operating condition (HVI seems to use CSA 439)
         t_sup_in = 0.0
@@ -1344,7 +1344,6 @@ class Airflow
 
   def self.apply_cfis(infil_program, vent_mech_fans, cfis_fan_actuator)
     infil_program.addLine('Set QWHV_cfis_oa = 0.0')
-    infil_program.addLine('Set QWHV_cfis_tot = 0.0')
 
     vent_mech_fans.each do |vent_mech|
       infil_program.addLine("Set fan_rtf_hvac = #{@fan_rtf_sensor[@cfis_airloop[vent_mech.id]].name}")
@@ -1357,11 +1356,6 @@ class Airflow
       cfis_open_time = [vent_mech.hours_in_operation / 24.0 * 60.0, 59.999].min # Minimum open time in minutes
       infil_program.addLine("Set CFIS_t_min_hr_open = #{cfis_open_time}") # minutes per hour the CFIS damper is open
       infil_program.addLine("Set CFIS_Q_duct_oa = #{UnitConversions.convert(vent_mech.oa_flow_rate, 'cfm', 'm^3/s')}")
-      if vent_mech.is_shared_system
-        infil_program.addLine("Set CFIS_Q_duct_tot = #{UnitConversions.convert(vent_mech.in_unit_flow_rate, 'cfm', 'm^3/s')}")
-      else
-        infil_program.addLine('Set CFIS_Q_duct_tot = CFIS_Q_duct_oa')
-      end
       infil_program.addLine('Set cfis_f_damper_open = 0') # fraction of the timestep the CFIS damper is open
       infil_program.addLine("Set #{@cfis_f_damper_extra_open_var[vent_mech.id].name} = 0") # additional runtime fraction to meet min/hr
 
@@ -1394,7 +1388,6 @@ class Airflow
       # Fan power is metered under fan cooling and heating meters
       infil_program.addLine('  EndIf')
       infil_program.addLine('  Set QWHV_cfis_oa = QWHV_cfis_oa + cfis_f_damper_open * CFIS_Q_duct_oa')
-      infil_program.addLine('  Set QWHV_cfis_tot = QWHV_cfis_tot + cfis_f_damper_open * CFIS_Q_duct_tot')
       infil_program.addLine('EndIf')
     end
   end
@@ -1462,7 +1455,7 @@ class Airflow
     infil_program.addLine("Set QWHV_bal_erv_hrv = #{UnitConversions.convert(bal_cfm_tot + erv_hrv_cfm_tot, 'cfm', 'm^3/s').round(4)}")
 
     infil_program.addLine('Set Qexhaust = Qrange + Qbath + QWHV_exh + QWHV_bal_erv_hrv')
-    infil_program.addLine('Set Qsupply = QWHV_sup + QWHV_bal_erv_hrv + QWHV_cfis_tot')
+    infil_program.addLine('Set Qsupply = QWHV_sup + QWHV_bal_erv_hrv + QWHV_cfis_oa')
     infil_program.addLine('Set Qfan = (@Max Qexhaust Qsupply)')
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       # Follow ASHRAE 62.2-2016, Normative Appendix C equations for time-varying total airflow
@@ -1500,8 +1493,8 @@ class Airflow
       # E+ ERV model is using standard density for MFR calculation, caused discrepancy with other system types.
       # Therefore ERV is modeled within EMS infiltration program
       vent_mech_erv_hrv_tot.each do |vent_fan|
-        infil_program.addLine("Set Effectiveness_Sens = Effectiveness_Sens + #{UnitConversions.convert(vent_fan.average_oa_flow_rate, 'cfm', 'm^3/s').round(4)} / #{q_var} * #{hrv_erv_effectiveness_map[vent_fan][:vent_mech_sens_eff]}")
-        infil_program.addLine("Set Effectiveness_Lat = Effectiveness_Lat + #{UnitConversions.convert(vent_fan.average_oa_flow_rate, 'cfm', 'm^3/s').round(4)} / #{q_var} * #{hrv_erv_effectiveness_map[vent_fan][:vent_mech_lat_eff]}")
+        infil_program.addLine("Set Effectiveness_Sens = Effectiveness_Sens + #{UnitConversions.convert(vent_fan.average_oa_unit_flow_rate, 'cfm', 'm^3/s').round(4)} / #{q_var} * #{hrv_erv_effectiveness_map[vent_fan][:vent_mech_sens_eff]}")
+        infil_program.addLine("Set Effectiveness_Lat = Effectiveness_Lat + #{UnitConversions.convert(vent_fan.average_oa_unit_flow_rate, 'cfm', 'm^3/s').round(4)} / #{q_var} * #{hrv_erv_effectiveness_map[vent_fan][:vent_mech_lat_eff]}")
       end
       infil_program.addLine('Set ERVCpMin = (@Min OASupCp ZoneCp)')
       infil_program.addLine('Set ERVSupOutTemp = OASupInTemp + ERVCpMin/OASupCp * Effectiveness_Sens * (ZoneTemp - OASupInTemp)')
@@ -1536,7 +1529,7 @@ class Airflow
     vent_mech_preheat.each_with_index do |f_preheat, i|
       infil_program.addLine('If OASupInTemp < ZoneTemp')
       htg_energy_actuator = create_other_equipment_object_and_actuator(model: model, name: "shared mech vent preheating energy #{i}", space: @living_space, frac_lat: 0.0, frac_lost: 1.0, hpxml_fuel_type: f_preheat.preheating_fuel, end_use: Constants.ObjectNameMechanicalVentilationPreconditioning)
-      infil_program.addLine("  Set Qpreheat = #{UnitConversions.convert(f_preheat.average_oa_flow_rate, 'cfm', 'm^3/s').round(4)}")
+      infil_program.addLine("  Set Qpreheat = #{UnitConversions.convert(f_preheat.average_oa_unit_flow_rate, 'cfm', 'm^3/s').round(4)}")
       if [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f_preheat.fan_type
         vent_mech_erv_hrv_tot = [f_preheat]
       else
@@ -1552,7 +1545,7 @@ class Airflow
     vent_mech_precool.each_with_index do |f_precool, i|
       infil_program.addLine('If OASupInTemp > ZoneTemp')
       clg_energy_actuator = create_other_equipment_object_and_actuator(model: model, name: "shared mech vent precooling energy #{i}", space: @living_space, frac_lat: 0.0, frac_lost: 1.0, hpxml_fuel_type: f_precool.precooling_fuel, end_use: Constants.ObjectNameMechanicalVentilationPreconditioning)
-      infil_program.addLine("  Set Qprecool = #{UnitConversions.convert(f_precool.average_oa_flow_rate, 'cfm', 'm^3/s').round(4)}")
+      infil_program.addLine("  Set Qprecool = #{UnitConversions.convert(f_precool.average_oa_unit_flow_rate, 'cfm', 'm^3/s').round(4)}")
       if [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f_precool.fan_type
         vent_mech_erv_hrv_tot = [f_precool]
       else
@@ -1597,16 +1590,16 @@ class Airflow
     cfis_fan_actuator = add_ee_for_vent_fan_power(model, Constants.ObjectNameMechanicalVentilationHouseFanCFIS, 0.0, true)
 
     # Average in-unit cfms (include recirculation from in unit cfms for shared systems)
-    sup_cfm_tot = vent_mech_sup_tot.map { |vent_mech| vent_mech.average_unit_flow_rate }.sum(0.0)
-    exh_cfm_tot = vent_mech_exh_tot.map { |vent_mech| vent_mech.average_unit_flow_rate }.sum(0.0)
-    bal_cfm_tot = vent_mech_bal_tot.map { |vent_mech| vent_mech.average_unit_flow_rate }.sum(0.0)
-    erv_hrv_cfm_tot = vent_mech_erv_hrv_tot.map { |vent_mech| vent_mech.average_unit_flow_rate }.sum(0.0)
-    cfis_cfm_tot = vent_mech_cfis_tot.map { |vent_mech| vent_mech.average_unit_flow_rate }.sum(0.0)
+    sup_cfm_tot = vent_mech_sup_tot.map { |vent_mech| vent_mech.average_total_unit_flow_rate }.sum(0.0)
+    exh_cfm_tot = vent_mech_exh_tot.map { |vent_mech| vent_mech.average_total_unit_flow_rate }.sum(0.0)
+    bal_cfm_tot = vent_mech_bal_tot.map { |vent_mech| vent_mech.average_total_unit_flow_rate }.sum(0.0)
+    erv_hrv_cfm_tot = vent_mech_erv_hrv_tot.map { |vent_mech| vent_mech.average_total_unit_flow_rate }.sum(0.0)
+    cfis_cfm_tot = vent_mech_cfis_tot.map { |vent_mech| vent_mech.average_total_unit_flow_rate }.sum(0.0)
 
     # Average preconditioned oa air cfms (only oa, recirculation will be addressed below for all shared systems)
-    oa_cfm_preheat = vent_mech_preheat.map { |vent_mech| vent_mech.average_oa_flow_rate }.sum(0.0)
-    oa_cfm_precool = vent_mech_precool.map { |vent_mech| vent_mech.average_oa_flow_rate }.sum(0.0)
-    recirc_cfm_shared = vent_mech_shared.map { |vent_mech| vent_mech.average_unit_flow_rate - vent_mech.average_oa_flow_rate }.sum(0.0)
+    oa_cfm_preheat = vent_mech_preheat.map { |vent_mech| vent_mech.average_oa_unit_flow_rate }.sum(0.0)
+    oa_cfm_precool = vent_mech_precool.map { |vent_mech| vent_mech.average_oa_unit_flow_rate }.sum(0.0)
+    recirc_cfm_shared = vent_mech_shared.map { |vent_mech| vent_mech.average_total_unit_flow_rate - vent_mech.average_oa_unit_flow_rate }.sum(0.0)
 
     # HVAC Sizing data
     tot_sup_cfm = sup_cfm_tot + bal_cfm_tot + erv_hrv_cfm_tot + cfis_cfm_tot
@@ -1622,8 +1615,8 @@ class Airflow
     weighted_vent_mech_apparent_sens_eff = 0.0
     vent_mech_erv_hrv_unprecond = vent_mech_erv_hrv_tot.select { |vent_mech| vent_mech.preheating_efficiency_cop.nil? && vent_mech.precooling_efficiency_cop.nil? }
     vent_mech_erv_hrv_unprecond.each do |vent_mech|
-      weighted_vent_mech_lat_eff += vent_mech.average_oa_flow_rate / tot_bal_cfm * hrv_erv_effectiveness_map[vent_mech][:vent_mech_lat_eff]
-      weighted_vent_mech_apparent_sens_eff += vent_mech.average_oa_flow_rate / tot_bal_cfm * hrv_erv_effectiveness_map[vent_mech][:vent_mech_apparent_sens_eff]
+      weighted_vent_mech_lat_eff += vent_mech.average_oa_unit_flow_rate / tot_bal_cfm * hrv_erv_effectiveness_map[vent_mech][:vent_mech_lat_eff]
+      weighted_vent_mech_apparent_sens_eff += vent_mech.average_oa_unit_flow_rate / tot_bal_cfm * hrv_erv_effectiveness_map[vent_mech][:vent_mech_apparent_sens_eff]
     end
     # Store info for HVAC Sizing measure
     model.getBuilding.additionalProperties.setFeature(Constants.SizingInfoMechVentLatentEffectiveness, weighted_vent_mech_lat_eff)
@@ -1665,7 +1658,7 @@ class Airflow
     infil_program.addLine('Set Qload = Qfan')
     vent_fans_mech.each do |f|
       # Subtract recirculation air flow rate from Qfan, only come from supply side as exhaust is not allowed to have recirculation
-      infil_program.addLine("Set Qload = Qload - #{UnitConversions.convert(f.average_unit_flow_rate - f.average_oa_flow_rate, 'cfm', 'm^3/s').round(4)}")
+      infil_program.addLine("Set Qload = Qload - #{UnitConversions.convert(f.average_total_unit_flow_rate - f.average_oa_unit_flow_rate, 'cfm', 'm^3/s').round(4)}")
     end
     calculate_fan_loads(model, infil_program, vent_mech_erv_hrv_tot, hrv_erv_effectiveness_map, fan_sens_load_actuator, fan_lat_load_actuator, 'Qload')
 

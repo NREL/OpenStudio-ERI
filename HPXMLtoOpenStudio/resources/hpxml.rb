@@ -3283,10 +3283,14 @@ class HPXML < Object
     def unit_flow_rate_ratio
       return 1.0 unless @is_shared_system
       if not @tested_flow_rate.nil?
-        return @in_unit_flow_rate / @tested_flow_rate
+        ratio = @in_unit_flow_rate / @tested_flow_rate
       elsif not @rated_flow_rate.nil?
-        return @in_unit_flow_rate / @rated_flow_rate
+        ratio = @in_unit_flow_rate / @rated_flow_rate
       end
+      if ratio > 1.0
+        fail "The in-unit flow rate of shared fan: #{@id} is greater than system flow rate."
+      end
+      return ratio
     end
 
     def unit_fan_power
@@ -3298,13 +3302,13 @@ class HPXML < Object
       end
     end
 
-    def average_oa_flow_rate
+    def average_oa_unit_flow_rate
       if (not oa_flow_rate.nil?) && (not @hours_in_operation.nil?)
         return oa_flow_rate * (@hours_in_operation / 24.0)
       end
     end
 
-    def average_unit_flow_rate
+    def average_total_unit_flow_rate
       if @is_shared_system && (not @hours_in_operation.nil?)
         return @in_unit_flow_rate * (@hours_in_operation / 24.0)
       elsif not @hours_in_operation.nil?
@@ -3350,6 +3354,7 @@ class HPXML < Object
       errors = []
       begin; distribution_system; rescue StandardError => e; errors << e.message; end
       begin; oa_flow_rate; rescue StandardError => e; errors << e.message; end
+      begin; unit_flow_rate_ratio; rescue StandardError => e; errors << e.message; end
       return errors
     end
 

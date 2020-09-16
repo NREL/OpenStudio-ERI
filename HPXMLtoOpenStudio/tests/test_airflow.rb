@@ -171,7 +171,7 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
 
     # Get HPXML values
     vent_fan = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }[0]
-    vent_fan_cfm = vent_fan.average_unit_flow_rate
+    vent_fan_cfm = vent_fan.average_total_unit_flow_rate
     vent_fan_power = vent_fan.fan_power
 
     # Check infiltration/ventilation program
@@ -196,7 +196,7 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
 
     # Get HPXML values
     vent_fan = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }[0]
-    vent_fan_cfm = vent_fan.average_unit_flow_rate
+    vent_fan_cfm = vent_fan.average_total_unit_flow_rate
     vent_fan_power = vent_fan.fan_power
 
     # Check infiltration/ventilation program
@@ -221,7 +221,7 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
 
     # Get HPXML values
     vent_fan = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }[0]
-    vent_fan_cfm = vent_fan.average_unit_flow_rate
+    vent_fan_cfm = vent_fan.average_total_unit_flow_rate
     vent_fan_power = vent_fan.fan_power
 
     # Check infiltration/ventilation program
@@ -246,7 +246,7 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
 
     # Get HPXML values
     vent_fan = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }[0]
-    vent_fan_cfm = vent_fan.average_unit_flow_rate
+    vent_fan_cfm = vent_fan.average_total_unit_flow_rate
     vent_fan_power = vent_fan.fan_power
 
     # Check infiltration/ventilation program
@@ -273,7 +273,7 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
 
     # Get HPXML values
     vent_fan = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }[0]
-    vent_fan_cfm = vent_fan.average_unit_flow_rate
+    vent_fan_cfm = vent_fan.average_total_unit_flow_rate
     vent_fan_power = vent_fan.fan_power
 
     # Check infiltration/ventilation program
@@ -367,16 +367,16 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
 
     # Get HPXML values
     vent_fan_sup = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && (f.fan_type == HPXML::MechVentTypeSupply) }
-    vent_fan_cfm_sup = vent_fan_sup.map { |f| f.average_unit_flow_rate }.sum(0.0)
+    vent_fan_cfm_sup = vent_fan_sup.map { |f| f.average_total_unit_flow_rate }.sum(0.0)
     vent_fan_power_sup = vent_fan_sup.map { |f| f.average_fan_power }.sum(0.0)
     vent_fan_exh = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && (f.fan_type == HPXML::MechVentTypeExhaust) }
-    vent_fan_cfm_exh = vent_fan_exh.map { |f| f.average_unit_flow_rate }.sum(0.0)
+    vent_fan_cfm_exh = vent_fan_exh.map { |f| f.average_total_unit_flow_rate }.sum(0.0)
     vent_fan_power_exh = vent_fan_exh.map { |f| f.average_fan_power }.sum(0.0)
     vent_fan_bal = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && (f.fan_type == HPXML::MechVentTypeBalanced) }
-    vent_fan_cfm_bal = vent_fan_bal.map { |f| f.average_unit_flow_rate }.sum(0.0)
+    vent_fan_cfm_bal = vent_fan_bal.map { |f| f.average_total_unit_flow_rate }.sum(0.0)
     vent_fan_power_bal = vent_fan_bal.map { |f| f.average_fan_power }.sum(0.0)
     vent_fan_ervhrv = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include?(f.fan_type) }
-    vent_fan_cfm_ervhrv = vent_fan_ervhrv.map { |f| f.average_unit_flow_rate }.sum(0.0)
+    vent_fan_cfm_ervhrv = vent_fan_ervhrv.map { |f| f.average_total_unit_flow_rate }.sum(0.0)
     vent_fan_power_ervhrv = vent_fan_ervhrv.map { |f| f.average_fan_power }.sum(0.0)
     vent_fan_cfis = hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && (f.fan_type == HPXML::MechVentTypeCFIS) }
     vent_fan_cfm_cfis = vent_fan_cfis.map { |f| f.oa_flow_rate }.sum(0.0)
@@ -424,35 +424,30 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
     model, hpxml = _test_measure(args_hash)
 
     # Get HPXML values
-    vent_fans_precond = hpxml.ventilation_fans.select { |f| (not f.unit_preheating_capacity.nil?) || (not f.unit_precooling_capacity.nil?) }
-    vent_fans_nonprecond = hpxml.ventilation_fans.select { |f| f.unit_preheating_capacity.nil? && f.unit_precooling_capacity.nil? }
+    vent_fans_preheat = hpxml.ventilation_fans.select { |f| (not f.preheating_fuel.nil?) }
+    vent_fans_precool = hpxml.ventilation_fans.select { |f| (not f.precooling_fuel.nil?) }
     vent_fans_tot_pow_noncfis = hpxml.ventilation_fans.select { |f| f.fan_type != HPXML::MechVentTypeCFIS }.map { |f| f.average_fan_power }.sum(0.0)
-    # preconditioning capacities
-    vent_fans_clg_cap_precond = vent_fans_precond.map { |f| f.unit_precooling_capacity }.sum(0.0)
-    vent_fans_htg_cap_precond = vent_fans_precond.map { |f| f.unit_preheating_capacity }.sum(0.0)
-    # preconditioned mech vent cfms
-    vent_fans_cfm_oa_precond_sup = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeSupply }.map { |f| f.average_oa_flow_rate }.sum(0.0)
-    vent_fans_cfm_tot_precond_sup = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeSupply }.map { |f| f.average_unit_flow_rate }.sum(0.0)
-    vent_fans_cfm_oa_precond_bal = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeBalanced }.map { |f| f.average_oa_flow_rate }.sum(0.0)
-    vent_fans_cfm_tot_precond_bal = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeBalanced }.map { |f| f.average_unit_flow_rate }.sum(0.0)
-    vent_fans_cfm_oa_precond_ervhrv = vent_fans_precond.select { |f| [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f.fan_type }.map { |f| f.average_oa_flow_rate }.sum(0.0)
-    vent_fans_cfm_tot_precond_ervhrv = vent_fans_precond.select { |f| [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f.fan_type }.map { |f| f.average_unit_flow_rate }.sum(0.0)
-    # The preconditioned CFIS
-    vent_fans_precond_cfm_oa_cfis = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeCFIS }.map { |f| f.oa_flow_rate }.sum(0.0)
-    vent_fans_precond_cfm_tot_cfis = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeCFIS }.map { |f| f.in_unit_flow_rate }.sum(0.0)
-    vent_fans_precond_pow_cfis = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeCFIS }.map { |f| f.unit_fan_power }.sum(0.0)
-    vent_fans_precond_mins_cfis = vent_fans_precond.select { |f| f.fan_type == HPXML::MechVentTypeCFIS }.map { |f| f.hours_in_operation / 24.0 * 60.0 }.sum(0.0)
-    # The unpreconditioned CFIS
-    vent_fans_nonprecond_cfm_oa_cfis = vent_fans_nonprecond.map { |f| f.oa_flow_rate }.sum(0.0)
-    vent_fans_nonprecond_cfm_tot_cfis = vent_fans_nonprecond.map { |f| f.in_unit_flow_rate }.sum(0.0)
-    vent_fans_nonprecond_pow_cfis = vent_fans_nonprecond.map { |f| f.unit_fan_power }.sum(0.0)
-    vent_fans_nonprecond_mins_cfis = vent_fans_nonprecond.map { |f| f.hours_in_operation / 24.0 * 60.0 }.sum(0.0)
+    # total cfms
+    vent_fans_cfm_tot_sup = hpxml.ventilation_fans.select { |f| f.fan_type == HPXML::MechVentTypeSupply }.map { |f| f.average_total_unit_flow_rate }.sum(0.0)
+    vent_fans_cfm_tot_exh = hpxml.ventilation_fans.select { |f| f.fan_type == HPXML::MechVentTypeExhaust }.map { |f| f.average_total_unit_flow_rate }.sum(0.0)
+    vent_fans_cfm_tot_ervhrvbal = hpxml.ventilation_fans.select { |f| [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV, HPXML::MechVentTypeBalanced].include? f.fan_type }.map { |f| f.average_total_unit_flow_rate }.sum(0.0)
+    # preconditioned mech vent oa cfms
+    vent_fans_cfm_oa_preheat_sup = vent_fans_preheat.select { |f| f.fan_type == HPXML::MechVentTypeSupply }.map { |f| f.average_oa_unit_flow_rate }.sum(0.0)
+    vent_fans_cfm_oa_precool_sup = vent_fans_precool.select { |f| f.fan_type == HPXML::MechVentTypeSupply }.map { |f| f.average_oa_unit_flow_rate }.sum(0.0)
+    vent_fans_cfm_oa_preheat_bal = vent_fans_preheat.select { |f| f.fan_type == HPXML::MechVentTypeBalanced }.map { |f| f.average_oa_unit_flow_rate }.sum(0.0)
+    vent_fans_cfm_oa_precool_bal = vent_fans_precool.select { |f| f.fan_type == HPXML::MechVentTypeBalanced }.map { |f| f.average_oa_unit_flow_rate }.sum(0.0)
+    vent_fans_cfm_oa_preheat_ervhrv = vent_fans_preheat.select { |f| [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f.fan_type }.map { |f| f.average_oa_unit_flow_rate }.sum(0.0)
+    vent_fans_cfm_oa_precool_ervhrv = vent_fans_precool.select { |f| [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f.fan_type }.map { |f| f.average_oa_unit_flow_rate }.sum(0.0)
+    # CFIS
+    vent_fans_cfm_oa_cfis = hpxml.ventilation_fans.select { |f| f.fan_type == HPXML::MechVentTypeCFIS }.map { |f| f.oa_flow_rate }.sum(0.0)
+    vent_fans_pow_cfis = hpxml.ventilation_fans.select { |f| f.fan_type == HPXML::MechVentTypeCFIS }.map { |f| f.unit_fan_power }.sum(0.0)
+    vent_fans_mins_cfis = hpxml.ventilation_fans.select { |f| f.fan_type == HPXML::MechVentTypeCFIS }.map { |f| f.hours_in_operation / 24.0 * 60.0 }.sum(0.0)
 
     # Load and energy eed
     assert_equal(1, get_oed_for_ventilation(model, "#{Constants.ObjectNameMechanicalVentilationHouseFan} sensible load").size)
     assert_equal(1, get_oed_for_ventilation(model, "#{Constants.ObjectNameMechanicalVentilationHouseFan} latent load").size)
-    assert_equal(vent_fans_precond.size, get_oed_for_ventilation(model, 'shared mech vent precooling energy').size)
-    assert_equal(vent_fans_precond.size, get_oed_for_ventilation(model, 'shared mech vent preheating energy').size)
+    assert_equal(vent_fans_precool.size, get_oed_for_ventilation(model, 'shared mech vent precooling energy').size)
+    assert_equal(vent_fans_preheat.size, get_oed_for_ventilation(model, 'shared mech vent preheating energy').size)
 
     # Fan power implementation
     assert_equal(1, get_eed_for_ventilation(model, Constants.ObjectNameMechanicalVentilationHouseFan).size)
@@ -460,20 +455,14 @@ class HPXMLtoOpenStudioAirflowTest < MiniTest::Test
 
     # Check preconditioning program
     program_values = get_ems_values(model.getEnergyManagementSystemPrograms, "#{Constants.ObjectNameInfiltration} program")
-    assert_in_epsilon(vent_fans_cfm_oa_precond_ervhrv, UnitConversions.convert(program_values['Q_oa'].sum, 'm^3/s', 'cfm'), 0.01)
-    assert_in_epsilon(vent_fans_cfm_tot_precond_ervhrv, UnitConversions.convert(program_values['Q_tot'].sum, 'm^3/s', 'cfm'), 0.01)
-    assert_in_epsilon((vent_fans_cfm_oa_precond_sup + vent_fans_cfm_oa_precond_bal), UnitConversions.convert(program_values['Q_precond_oa'].sum, 'm^3/s', 'cfm'), 0.01)
-    assert_in_epsilon((vent_fans_cfm_tot_precond_sup + vent_fans_cfm_tot_precond_bal), UnitConversions.convert(program_values['Q_precond_tot'].sum, 'm^3/s', 'cfm'), 0.01)
-    assert_in_epsilon(vent_fans_clg_cap_precond, UnitConversions.convert(program_values['PreCoolingCap'].sum, 'W', 'Btu/hr'), 0.01)
-    assert_in_epsilon(vent_fans_htg_cap_precond, UnitConversions.convert(program_values['PreHeatingCap'].sum, 'W', 'Btu/hr'), 0.01)
-    assert_in_epsilon(vent_fans_precond_pow_cfis + vent_fans_nonprecond_pow_cfis, program_values['CFIS_fan_w'].sum, 0.01)
-    assert_in_epsilon(vent_fans_precond_mins_cfis + vent_fans_nonprecond_mins_cfis, program_values['CFIS_t_min_hr_open'].sum, 0.01)
-    assert_in_epsilon(vent_fans_precond_cfm_oa_cfis + vent_fans_nonprecond_cfm_oa_cfis, UnitConversions.convert(program_values['CFIS_Q_duct_oa'].sum, 'm^3/s', 'cfm'), 0.01)
-    assert_in_epsilon(vent_fans_precond_cfm_tot_cfis + vent_fans_nonprecond_cfm_tot_cfis, UnitConversions.convert(program_values['CFIS_Q_duct_tot'].sum, 'm^3/s', 'cfm'), 0.01)
-    program_values = get_ems_values(model.getEnergyManagementSystemPrograms, "#{Constants.ObjectNameInfiltration} program")
-    assert_in_epsilon(vent_fans_cfm_tot_precond_ervhrv + vent_fans_cfm_tot_precond_bal, UnitConversions.convert(program_values['QWHV_bal_erv_hrv'].sum, 'm^3/s', 'cfm'), 0.01)
-    assert_in_epsilon(vent_fans_cfm_tot_precond_sup, UnitConversions.convert(program_values['QWHV_sup'].sum, 'm^3/s', 'cfm'), 0.01)
-    assert_in_epsilon(0, UnitConversions.convert(program_values['QWHV_exh'].sum, 'm^3/s', 'cfm'), 0.01)
+    assert_in_epsilon((vent_fans_cfm_oa_preheat_sup + vent_fans_cfm_oa_preheat_bal + vent_fans_cfm_oa_preheat_ervhrv), UnitConversions.convert(program_values['Qpreheat'].sum, 'm^3/s', 'cfm'), 0.01)
+    assert_in_epsilon((vent_fans_cfm_oa_precool_sup + vent_fans_cfm_oa_precool_bal + vent_fans_cfm_oa_precool_ervhrv), UnitConversions.convert(program_values['Qprecool'].sum, 'm^3/s', 'cfm'), 0.01)
+    assert_in_epsilon(vent_fans_pow_cfis, program_values['CFIS_fan_w'].sum, 0.01)
+    assert_in_epsilon(vent_fans_mins_cfis, program_values['CFIS_t_min_hr_open'].sum, 0.01)
+    assert_in_epsilon(vent_fans_cfm_oa_cfis, UnitConversions.convert(program_values['CFIS_Q_duct_oa'].sum, 'm^3/s', 'cfm'), 0.01)
+    assert_in_epsilon(vent_fans_cfm_tot_ervhrvbal, UnitConversions.convert(program_values['QWHV_bal_erv_hrv'].sum, 'm^3/s', 'cfm'), 0.01)
+    assert_in_epsilon(vent_fans_cfm_tot_sup, UnitConversions.convert(program_values['QWHV_sup'].sum, 'm^3/s', 'cfm'), 0.01)
+    assert_in_epsilon(vent_fans_cfm_tot_exh, UnitConversions.convert(program_values['QWHV_exh'].sum, 'm^3/s', 'cfm'), 0.01)
     assert_in_epsilon(0, UnitConversions.convert(program_values['Qrange'].sum, 'm^3/s', 'cfm'), 0.01)
     assert_in_epsilon(0, UnitConversions.convert(program_values['Qbath'].sum, 'm^3/s', 'cfm'), 0.01)
   end
