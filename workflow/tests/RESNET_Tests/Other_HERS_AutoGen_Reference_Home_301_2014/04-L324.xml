@@ -548,6 +548,7 @@
               <TestedFlowRate>56.2</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <IsSharedSystem>false</IsSharedSystem>
               <TotalRecoveryEfficiency>0.4</TotalRecoveryEfficiency>
               <SensibleRecoveryEfficiency>0.6</SensibleRecoveryEfficiency>
               <FanPower>14.7</FanPower>

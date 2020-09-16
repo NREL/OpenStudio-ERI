@@ -21,7 +21,7 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
   The HPXML XSD Schema can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/HPXML.xsd``.
   It should be used by the software developer to validate their HPXML file prior to running the workflow.
   XSD Schemas are used to validate what elements/attributes/enumerations are available, data types for elements/attributes, the number/order of children elements, etc.
-  
+
   OpenStudio-ERI **does not** validate the HPXML file against the XSD Schema and assumes the file submitted is valid.
 
 2. Validation using `Schematron <http://schematron.com/>`_
@@ -32,11 +32,11 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
   For example, if an element is specified with a particular value, the applicable enumerations of another element may change.
   
   OpenStudio-ERI **automatically validates** the HPXML file against the Schematron document and reports any validation errors, but software developers may find it beneficial to also integrate Schematron validation into their software.
- 
+
 .. important::
 
   Usage of both validation approaches (XSD and Schematron) is recommended for developers actively working on creating HPXML files for Energy Rating Index calculations:
-  
+
   - Validation against XSD for general correctness and usage of HPXML
   - Validation against Schematron for understanding XML document requirements specific to running ERI calculations
 

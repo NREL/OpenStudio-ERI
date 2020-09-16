@@ -679,13 +679,15 @@ class ERIMechVentTest < MiniTest::Test
                                tested_flow_rate: 50,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation2',
                                fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: 50,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
@@ -716,13 +718,15 @@ class ERIMechVentTest < MiniTest::Test
                                tested_flow_rate: 50,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation2',
                                fan_type: HPXML::MechVentTypeSupply,
                                tested_flow_rate: nil,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
@@ -745,13 +749,15 @@ class ERIMechVentTest < MiniTest::Test
                                tested_flow_rate: 50,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation2',
                                fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: nil,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
@@ -774,13 +780,15 @@ class ERIMechVentTest < MiniTest::Test
                                tested_flow_rate: 50,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation2',
                                fan_type: HPXML::MechVentTypeBalanced,
                                tested_flow_rate: 25,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
@@ -803,37 +811,43 @@ class ERIMechVentTest < MiniTest::Test
                                tested_flow_rate: 45,
                                hours_in_operation: 8,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation2',
                                fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: 50,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation3',
                                fan_type: HPXML::MechVentTypeBalanced,
                                tested_flow_rate: 20,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation4',
                                fan_type: HPXML::MechVentTypeSupply,
                                tested_flow_rate: nil,
                                hours_in_operation: 8,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation5',
                                fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: nil,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation6',
                                fan_type: HPXML::MechVentTypeBalanced,
                                tested_flow_rate: nil,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
@@ -861,37 +875,43 @@ class ERIMechVentTest < MiniTest::Test
                                tested_flow_rate: 45,
                                hours_in_operation: 8,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation2',
                                fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: 200,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation3',
                                fan_type: HPXML::MechVentTypeBalanced,
                                tested_flow_rate: 20,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation4',
                                fan_type: HPXML::MechVentTypeSupply,
                                tested_flow_rate: nil,
                                hours_in_operation: 8,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation5',
                                fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: nil,
                                hours_in_operation: 12,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation6',
                                fan_type: HPXML::MechVentTypeBalanced,
                                tested_flow_rate: nil,
                                hours_in_operation: 24,
                                fan_power: 25,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems

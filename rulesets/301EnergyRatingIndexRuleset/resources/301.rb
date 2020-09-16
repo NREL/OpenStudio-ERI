@@ -1436,11 +1436,12 @@ class EnergyRatingIndex301Ruleset
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
                                      fan_power: 0.0,
-                                     used_for_whole_building_ventilation: true)
+                                     used_for_whole_building_ventilation: true,
+                                     is_shared_system: false)
     else
 
       # Calculate weighted-average fan W/cfm
-      target_cfms = calc_rated_home_mech_vent_target_cfms(orig_hpxml, mech_vent_fans)
+      target_cfms = calc_rated_home_ventilation_target_oa_cfms(orig_hpxml, mech_vent_fans)
       sum_fan_w = 0.0
       sum_fan_cfm = 0.0
       mech_vent_fans.each do |orig_ventilation_fan|
@@ -1469,7 +1470,8 @@ class EnergyRatingIndex301Ruleset
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
                                      fan_power: fan_power_w,
-                                     used_for_whole_building_ventilation: true)
+                                     used_for_whole_building_ventilation: true,
+                                     is_shared_system: false)
     end
   end
 
@@ -1478,54 +1480,65 @@ class EnergyRatingIndex301Ruleset
 
     # Determine target average airflow rates for each mechanical ventilation
     # system to meet the minimum Qfan requirement
-    target_cfms = calc_rated_home_mech_vent_target_cfms(orig_hpxml, mech_vent_fans)
+    target_cfms = calc_rated_home_ventilation_target_oa_cfms(orig_hpxml, mech_vent_fans)
 
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     mech_vent_fans.each do |orig_ventilation_fan|
-      tested_flow_rate = orig_ventilation_fan.tested_flow_rate
-      fan_power = orig_ventilation_fan.fan_power
+      oa_unit_flow_rate = orig_ventilation_fan.oa_unit_flow_rate
+      total_unit_flow_rate = orig_ventilation_fan.total_unit_flow_rate
+      unit_fan_power = orig_ventilation_fan.unit_fan_power
       hours_in_operation = orig_ventilation_fan.hours_in_operation
 
-      if tested_flow_rate.nil?
+      if oa_unit_flow_rate.nil?
         # Calculate airflow rate based on increased infiltration rate
-        tested_flow_rate = target_cfms[orig_ventilation_fan.id]
+        oa_unit_flow_rate = target_cfms[orig_ventilation_fan.id]
         hours_in_operation = 24
-        if fan_power.nil?
-          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_ventilation_fan.fan_type)
+        if unit_fan_power.nil?
+          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_ventilation_fan)
           if orig_ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
             # For CFIS systems, the cfm used to determine fan watts shall be the larger of
             # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
             htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_ventilation_fan.distribution_system)
             q_fan = [400.0 * clg_cap / 12000.0, 240.0 * htg_cap / 12000.0].max
-            fan_power = fan_w_per_cfm * q_fan
-          else
-            fan_power = fan_w_per_cfm * tested_flow_rate
+            fan_w_per_cfm *= q_fan / oa_unit_flow_rate # Adjust fan_w_per_cfm so as to give correct fan_power below
           end
+        else
+          total_unit_flow_rate = oa_unit_flow_rate / (1 - orig_ventilation_fan.fraction_recirculation.to_f)
+          fan_w_per_cfm = unit_fan_power / total_unit_flow_rate
         end
-        if tested_flow_rate <= 0
+        if oa_unit_flow_rate <= 0
           # Where a Rated Home has mechanical ventilation but the flowrate has not been measured ...
           # and where Qfan ≤ 0 (cfm) ... Rated Home fan energy shall be zero.
           # https://www.resnet.us/wp-content/uploads/IR-301-2019-001-FanEnergyUnmeasuredMechVentilation_final.pdf
-          fan_power = 0
+          fan_w_per_cfm = 0
         end
       else
-        if fan_power.nil?
-          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_ventilation_fan.fan_type)
+        if unit_fan_power.nil?
+          fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_ventilation_fan)
         else
-          fan_w_per_cfm = fan_power / tested_flow_rate
+          fan_w_per_cfm = unit_fan_power / total_unit_flow_rate
         end
-        q_fan = tested_flow_rate * hours_in_operation / 24.0
+        q_fan = oa_unit_flow_rate * hours_in_operation / 24.0
         if q_fan < target_cfms[orig_ventilation_fan.id]
           # First try increasing operation to meet minimum
           hours_in_operation = [target_cfms[orig_ventilation_fan.id] / q_fan * hours_in_operation, 24.0].min
-          q_fan = tested_flow_rate * hours_in_operation / 24.0
+          q_fan = oa_unit_flow_rate * hours_in_operation / 24.0
         end
         if q_fan < target_cfms[orig_ventilation_fan.id]
           # Finally resort to increasing airflow rate
-          tested_flow_rate *= target_cfms[orig_ventilation_fan.id] / q_fan
-          q_fan = tested_flow_rate * hours_in_operation / 24.0
+          oa_unit_flow_rate *= target_cfms[orig_ventilation_fan.id] / q_fan
+          q_fan = oa_unit_flow_rate * hours_in_operation / 24.0
         end
+      end
+
+      if not orig_ventilation_fan.is_shared_system
+        in_unit_flow_rate = nil
+        tested_flow_rate = oa_unit_flow_rate
         fan_power = fan_w_per_cfm * tested_flow_rate
+      else
+        in_unit_flow_rate = oa_unit_flow_rate / (1 - orig_ventilation_fan.fraction_recirculation) # Total flow rate serving this unit
+        tested_flow_rate = in_unit_flow_rate / orig_ventilation_fan.unit_flow_rate_ratio # Total flow rate serving all units
+        fan_power = fan_w_per_cfm * tested_flow_rate # Total fan power serving all units
       end
 
       new_hpxml.ventilation_fans.add(id: orig_ventilation_fan.id,
@@ -1538,7 +1551,14 @@ class EnergyRatingIndex301Ruleset
                                      sensible_recovery_efficiency_adjusted: orig_ventilation_fan.sensible_recovery_efficiency_adjusted,
                                      fan_power: fan_power,
                                      distribution_system_idref: orig_ventilation_fan.distribution_system_idref,
-                                     used_for_whole_building_ventilation: orig_ventilation_fan.used_for_whole_building_ventilation)
+                                     used_for_whole_building_ventilation: orig_ventilation_fan.used_for_whole_building_ventilation,
+                                     is_shared_system: orig_ventilation_fan.is_shared_system,
+                                     in_unit_flow_rate: in_unit_flow_rate,
+                                     fraction_recirculation: orig_ventilation_fan.fraction_recirculation,
+                                     preheating_fuel: orig_ventilation_fan.preheating_fuel,
+                                     preheating_efficiency_cop: orig_ventilation_fan.preheating_efficiency_cop,
+                                     precooling_fuel: orig_ventilation_fan.precooling_fuel,
+                                     precooling_efficiency_cop: orig_ventilation_fan.precooling_efficiency_cop)
     end
   end
 
@@ -1562,7 +1582,8 @@ class EnergyRatingIndex301Ruleset
                                    tested_flow_rate: q_fan,
                                    hours_in_operation: 24,
                                    fan_power: fan_power_w,
-                                   used_for_whole_building_ventilation: true)
+                                   used_for_whole_building_ventilation: true,
+                                   is_shared_system: false)
   end
 
   def self.set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
@@ -2192,7 +2213,7 @@ class EnergyRatingIndex301Ruleset
     return ef.round(2), re
   end
 
-  def self.calc_rated_home_mech_vent_target_cfms(orig_hpxml, mech_vent_fans)
+  def self.calc_rated_home_ventilation_target_oa_cfms(orig_hpxml, mech_vent_fans)
     # Calculates the target average airflow rate for each mechanical
     # ventilation system based on their measured value (if available)
     # and the minimum continuous ventilation rate Qfan.
@@ -2234,34 +2255,34 @@ class EnergyRatingIndex301Ruleset
 
     # 1. First attribute any additional airflow needed to unmeasured systems
     target_cfms = {}
-    unmeasured_balanced_fans = balanced_fans.select { |f| f.average_flow_rate.nil? }
+    unmeasured_balanced_fans = balanced_fans.select { |f| f.average_oa_unit_flow_rate.nil? }
     unmeasured_balanced_fans.each do |orig_ventilation_fan|
       target_cfms[orig_ventilation_fan.id] = cfm_addtl_balanced / unmeasured_balanced_fans.size
     end
     cfm_addtl_balanced -= unmeasured_balanced_fans.map { |f| target_cfms[f.id] }.sum(0.0)
-    unmeasured_supply_fans = supply_fans.select { |f| f.average_flow_rate.nil? }
+    unmeasured_supply_fans = supply_fans.select { |f| f.average_oa_unit_flow_rate.nil? }
     unmeasured_supply_fans.each do |orig_ventilation_fan|
       target_cfms[orig_ventilation_fan.id] = cfm_addtl_supply / unmeasured_supply_fans.size
     end
     cfm_addtl_supply -= unmeasured_supply_fans.map { |f| target_cfms[f.id] }.sum(0.0)
-    unmeasured_exhaust_fans = exhaust_fans.select { |f| f.average_flow_rate.nil? }
+    unmeasured_exhaust_fans = exhaust_fans.select { |f| f.average_oa_unit_flow_rate.nil? }
     unmeasured_exhaust_fans.each do |orig_ventilation_fan|
       target_cfms[orig_ventilation_fan.id] = cfm_addtl_exhaust / unmeasured_exhaust_fans.size
     end
     cfm_addtl_exhaust -= unmeasured_exhaust_fans.map { |f| target_cfms[f.id] }.sum(0.0)
 
     # 2. If additional airflow remains (i.e., no unmeasured system to attribute it to), bump up measured systems
-    measured_balanced_fans = balanced_fans.select { |f| !f.average_flow_rate.nil? }
+    measured_balanced_fans = balanced_fans.select { |f| !f.average_oa_unit_flow_rate.nil? }
     measured_balanced_fans.each do |orig_ventilation_fan|
-      target_cfms[orig_ventilation_fan.id] = orig_ventilation_fan.average_flow_rate + cfm_addtl_balanced / measured_balanced_fans.size
+      target_cfms[orig_ventilation_fan.id] = orig_ventilation_fan.average_oa_unit_flow_rate + cfm_addtl_balanced / measured_balanced_fans.size
     end
-    measured_supply_fans = supply_fans.select { |f| !f.average_flow_rate.nil? }
+    measured_supply_fans = supply_fans.select { |f| !f.average_oa_unit_flow_rate.nil? }
     measured_supply_fans.each do |orig_ventilation_fan|
-      target_cfms[orig_ventilation_fan.id] = orig_ventilation_fan.average_flow_rate + cfm_addtl_supply / measured_supply_fans.size
+      target_cfms[orig_ventilation_fan.id] = orig_ventilation_fan.average_oa_unit_flow_rate + cfm_addtl_supply / measured_supply_fans.size
     end
-    measured_exhaust_fans = exhaust_fans.select { |f| !f.average_flow_rate.nil? }
+    measured_exhaust_fans = exhaust_fans.select { |f| !f.average_oa_unit_flow_rate.nil? }
     measured_exhaust_fans.each do |orig_ventilation_fan|
-      target_cfms[orig_ventilation_fan.id] = orig_ventilation_fan.average_flow_rate + cfm_addtl_exhaust / measured_exhaust_fans.size
+      target_cfms[orig_ventilation_fan.id] = orig_ventilation_fan.average_oa_unit_flow_rate + cfm_addtl_exhaust / measured_exhaust_fans.size
     end
 
     return target_cfms
@@ -2327,20 +2348,20 @@ class EnergyRatingIndex301Ruleset
     cfm_exhaust = 0.0
     ventilation_fans.each do |vent_fan|
       next unless vent_fan.used_for_whole_building_ventilation
-      next if vent_fan.average_flow_rate.nil?
+      next if vent_fan.average_oa_unit_flow_rate.nil?
 
       if vent_fan.includes_supply_air?
-        cfm_supply += vent_fan.average_flow_rate
+        cfm_supply += vent_fan.average_oa_unit_flow_rate
       end
       if vent_fan.includes_exhaust_air?
-        cfm_exhaust += vent_fan.average_flow_rate
+        cfm_exhaust += vent_fan.average_oa_unit_flow_rate
       end
     end
     return cfm_supply, cfm_exhaust
   end
 
   def self.calc_mech_vent_frac_imbalanced(ventilation_fans)
-    unmeasured_types = ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.average_flow_rate.nil? }
+    unmeasured_types = ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.average_oa_unit_flow_rate.nil? }
     if not unmeasured_types.empty? # Some mech vent systems are not measured
       if unmeasured_types.size == unmeasured_types.select { |f| [HPXML::MechVentTypeBalanced, HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? f.fan_type }.size
         return 0.0 # All types are balanced, assume balanced

@@ -891,7 +891,8 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                tested_flow_rate: 56.2,
                                hours_in_operation: 24,
                                fan_power: 14.7,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
     hpxml.ventilation_fans.clear
@@ -900,7 +901,8 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                tested_flow_rate: 56.2,
                                hours_in_operation: 24,
                                fan_power: 14.7,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% energy recovery system
     hpxml.ventilation_fans.clear
@@ -911,7 +913,8 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                sensible_recovery_efficiency: 0.6,
                                total_recovery_efficiency: 0.4, # Unspecified
                                fan_power: 14.7,
-                               used_for_whole_building_ventilation: true)
+                               used_for_whole_building_ventilation: true,
+                               is_shared_system: false)
   end
 end
 
@@ -1419,6 +1422,12 @@ def create_sample_hpxmls
       if not hpxml.dishwashers[0].is_shared_appliance
         hpxml.dishwashers[0].is_shared_appliance = false
       end
+    end
+    hpxml.ventilation_fans.each do |ventilation_fan|
+      next unless ventilation_fan.used_for_whole_building_ventilation
+      next unless ventilation_fan.is_shared_system.nil?
+
+      ventilation_fan.is_shared_system = false
     end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
