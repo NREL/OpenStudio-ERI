@@ -93,7 +93,8 @@ class ERIEnclosureTest < MiniTest::Test
                                tested_flow_rate: 110.0,
                                hours_in_operation: 24.0,
                                used_for_whole_building_ventilation: true,
-                               fan_power: 30.0)
+                               fan_power: 30.0,
+                               is_shared_system: false)
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -124,7 +125,8 @@ class ERIEnclosureTest < MiniTest::Test
                                tested_flow_rate: 110.0,
                                hours_in_operation: 24.0,
                                used_for_whole_building_ventilation: true,
-                               fan_power: 30.0)
+                               fan_power: 30.0,
+                               is_shared_system: false)
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)

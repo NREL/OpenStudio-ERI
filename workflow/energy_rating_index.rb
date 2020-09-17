@@ -432,8 +432,16 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   worksheet_out << ['nMEUL Heating', results[:nmeul_heat].map { |x| x.round(4) }.join(',')]
   worksheet_out << ['nMEUL Cooling', results[:nmeul_cool].map { |x| x.round(4) }.join(',')]
   worksheet_out << ['nMEUL Hot Water', results[:nmeul_dhw].map { |x| x.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Vent Preheat', results[:nmeul_vent_preheat].map { |x| x.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Vent Precool', results[:nmeul_vent_precool].map { |x| x.round(4) }.join(',')]
+  if results[:nmeul_vent_preheat].empty?
+    worksheet_out << ['nMEUL Vent Preheat', 0.0]
+  else
+    worksheet_out << ['nMEUL Vent Preheat', results[:nmeul_vent_preheat].map { |x| x.round(4) }.join(',')]
+  end
+  if results[:nmeul_vent_precool].empty?
+    worksheet_out << ['nMEUL Vent Precool', 0.0]
+  else
+    worksheet_out << ['nMEUL Vent Precool', results[:nmeul_vent_precool].map { |x| x.round(4) }.join(',')]
+  end
   if not results_iad.nil?
     worksheet_out << ['IAF CFA', results[:iaf_cfa].round(4)]
     worksheet_out << ['IAF NBR', results[:iaf_nbr].round(4)]
