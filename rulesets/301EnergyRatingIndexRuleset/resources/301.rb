@@ -1566,8 +1566,10 @@ class EnergyRatingIndex301Ruleset
                                      fraction_recirculation: orig_ventilation_fan.fraction_recirculation,
                                      preheating_fuel: orig_ventilation_fan.preheating_fuel,
                                      preheating_efficiency_cop: orig_ventilation_fan.preheating_efficiency_cop,
+                                     preheating_fraction_load_served: orig_ventilation_fan.preheating_fraction_load_served,
                                      precooling_fuel: orig_ventilation_fan.precooling_fuel,
-                                     precooling_efficiency_cop: orig_ventilation_fan.precooling_efficiency_cop)
+                                     precooling_efficiency_cop: orig_ventilation_fan.precooling_efficiency_cop,
+                                     precooling_fraction_load_served: orig_ventilation_fan.precooling_fraction_load_served)
     end
   end
 
