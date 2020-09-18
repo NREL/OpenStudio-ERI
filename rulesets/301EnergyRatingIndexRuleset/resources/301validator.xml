@@ -634,9 +634,14 @@
       <sch:assert test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert>
       <sch:assert test='count(h:IsSharedSystem) = 1'>Expected 1 element(s) for xpath: IsSharedSystem</sch:assert> <!-- See [MechanicalVentilationType=Shared] -->
       <sch:assert test='count(h:FanType[text()="energy recovery ventilator" or text()="heat recovery ventilator" or text()="exhaust only" or text()="supply only" or text()="balanced" or text()="central fan integrated supply"]) = 1'>Expected 1 element(s) for xpath: FanType[text()="energy recovery ventilator" or text()="heat recovery ventilator" or text()="exhaust only" or text()="supply only" or text()="balanced" or text()="central fan integrated supply"]</sch:assert> <!-- See [MechanicalVentilationType=HRV] or [MechanicalVentilationType=ERV] or [MechanicalVentilationType=CFIS] -->
-      <sch:assert test='count(h:TestedFlowRate) + count(h:extension/h:FlowRateNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: TestedFlowRate | extension/FlowRateNotTested[text()="true"]</sch:assert>
       <sch:assert test='count(h:HoursInOperation) = 1'>Expected 1 element(s) for xpath: HoursInOperation</sch:assert>
       <sch:assert test='count(h:FanPower) + count(h:extension/h:FanPowerDefaulted[text()="true"]) = 1'>Expected 1 element(s) for xpath: FanPower | extension/FanPowerDefaulted[text()="true"]</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[MechanicalVentilationType=InUnit]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true" and h:IsSharedSystem="false"]'>
+      <sch:assert test='count(h:TestedFlowRate) + count(h:extension/h:FlowRateNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: TestedFlowRate | extension/FlowRateNotTested[text()="true"]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -656,11 +661,13 @@
   <sch:pattern name='[MechanicalVentilationType=CFIS]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true" and h:FanType="central fan integrated supply"]'>
       <sch:assert test='count(h:AttachedToHVACDistributionSystem) = 1'>Expected 1 element(s) for xpath: AttachedToHVACDistributionSystem</sch:assert>
+      <sch:assert test='count(h:IsSharedSystem[text()="true"]) = 0'>Expected 0 element(s) for xpath: IsSharedSystem[text()="true"]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern name='[MechanicalVentilationType=Shared]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true" and h:IsSharedSystem="true"]'>
+      <sch:assert test='count(h:RatedFlowRate) = 1'>Expected 1 element(s) for xpath: RatedFlowRate</sch:assert>
       <sch:assert test='count(h:FractionRecirculation) = 1'>Expected 1 element(s) for xpath: FractionRecirculation</sch:assert>
       <sch:assert test='count(h:extension/h:InUnitFlowRate) + count(h:extension/h:FlowRateNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: extension/InUnitFlowRate | extension/FlowRateNotTested[text()="true"]</sch:assert>
       <sch:assert test='count(h:extension/h:PreHeating) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/PreHeating</sch:assert> <!-- See [MechanicalVentilationType=SharedWithPreHeating] -->

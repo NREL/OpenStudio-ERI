@@ -496,12 +496,7 @@ Whole Home Ventilation
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Mechanical ventilation systems that provide whole home ventilation may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
-Inputs including ``FanType`` and ``HoursInOperation`` must be provided.
-
-The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, ``extension/FlowRateNotTested[text()="true"]`` should be entered.
-For a CFIS system, the flow rate should equal the amount of outdoor air provided to the distribution system.
-
-The fan power for the highest airflow setting should be entered as ``FanPower``; if unknown, ``extension/FanPowerDefaulted[text()="true"]`` should be entered.
+Inputs including ``FanType``, ``HoursInOperation``, and ``IsSharedSystem`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -518,13 +513,17 @@ central fan integrated supply (CFIS)                                            
 
 Note that ``AdjustedSensibleRecoveryEfficiency`` and ``AdjustedTotalRecoveryEfficiency`` can be provided instead of ``SensibleRecoveryEfficiency`` and ``TotalRecoveryEfficiency``.
 
-The ventilation system may be optionally described as a shared system (i.e., serving multiple dwelling units) using ``IsSharedSystem``.
-If not provided, it is assumed to be false.
-If provided and true, note that ``TestedFlowRate`` (or ``RatedFlowRate``) and ``FanPower`` should reflect the entire shared ventilation system.
-In addition, additional elements are available:
+If the ventilation system is not shared, the following inputs are available:
 
-- ``extension/InUnitFlowRate``: The flow rate to the dwelling unit. Only required if the flow rate has been measured.
+- ``TestedFlowRate``: The measured airflow rate. If unmeasured, provide ``extension/FlowRateNotTested[text()="true"]`` instead. For a CFIS system, the flow rate should equal the amount of outdoor air provided to the distribution system.
+- ``FanPower``: The fan power for the highest airflow setting. If unknown, provide ``extension/FanPowerDefaulted[text()="true"]`` instead.
+
+If the ventilation system is shared (i.e., serving multiple dwelling units), the following inputs are available:
+
+- ``RatedFlowRate``: The rated airflow rate of the entire system.
+- ``FanPower``: The fan power for the entire system at highest airflow setting. If unknown, provide ``extension/FanPowerDefaulted[text()="true"]`` instead.
 - ``FractionRecirculation``: Fraction of the total supply air that is recirculated, with the remainder assumed to be outdoor air. The value must be 0 for exhaust only systems.
+- ``extension/InUnitFlowRate``: The flow rate delivered to the dwelling unit. If unmeasured, provide ``extension/FlowRateNotTested[text()="true"]`` instead.
 - ``extension/PreHeating``: Optional. Element to specify if the supply air is preconditioned by heating equipment. It is not allowed for exhaust only systems. If provided, there are additional child elements required:
 
   - ``Fuel``: Fuel type of the preconditioning heating equipment.
