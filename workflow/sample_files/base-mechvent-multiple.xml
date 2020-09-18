@@ -486,7 +486,7 @@
             <VentilationFan>
               <SystemIdentifier id='Exhaust'/>
               <FanType>exhaust only</FanType>
-              <RatedFlowRate>25.0</RatedFlowRate>
+              <TestedFlowRate>25.0</TestedFlowRate>
               <HoursInOperation>14.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
@@ -555,7 +555,7 @@
             <VentilationFan>
               <SystemIdentifier id='Exhaust_2'/>
               <FanType>exhaust only</FanType>
-              <RatedFlowRate>25.0</RatedFlowRate>
+              <TestedFlowRate>25.0</TestedFlowRate>
               <HoursInOperation>13.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>

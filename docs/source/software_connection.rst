@@ -499,10 +499,10 @@ Whole Building Ventilation
 Mechanical ventilation systems that provide whole building ventilation may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
 Inputs including ``FanType`` and ``HoursInOperation`` must be provided.
 
-The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, it should not be provided and the airflow rate will be defaulted.
+The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, ``extension/FlowRateNotTested[text()="true"]`` should be entered.
 For a CFIS system, the flow rate should equal the amount of outdoor air provided to the distribution system.
 
-Likewise the fan power for the highest airflow setting should be entered as ``FanPower``; if unknown, it should not be provided and the fan power will be defaulted.
+The fan power for the highest airflow setting should be entered as ``FanPower``; if unknown, ``extension/FanPowerDefaulted[text()="true"]`` should be entered.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
