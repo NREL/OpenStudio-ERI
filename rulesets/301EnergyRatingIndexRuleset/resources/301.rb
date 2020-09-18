@@ -384,18 +384,6 @@ class EnergyRatingIndex301Ruleset
                                 vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
       break
     end
-
-    # Preserve unconditioned basement thermal boundary location.
-    # TODO: Seems inconsistent with 301 language, but done for consistency with other software tools.
-    @uncond_bsmnt_thermal_bndry = nil
-    orig_hpxml.foundations.each do |orig_foundation|
-      next unless orig_foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
-
-      new_hpxml.foundations.add(id: orig_foundation.id,
-                                foundation_type: orig_foundation.foundation_type,
-                                unconditioned_basement_thermal_boundary: orig_foundation.unconditioned_basement_thermal_boundary)
-      @uncond_bsmnt_thermal_bndry = orig_foundation.unconditioned_basement_thermal_boundary
-    end
   end
 
   def self.set_enclosure_foundations_rated(orig_hpxml, new_hpxml)
@@ -412,17 +400,6 @@ class EnergyRatingIndex301Ruleset
                                 foundation_type: orig_foundation.foundation_type,
                                 vented_crawlspace_sla: vented_crawl_sla)
     end
-
-    # Preserve unconditioned basement thermal boundary location.
-    @uncond_bsmnt_thermal_bndry = nil
-    orig_hpxml.foundations.each do |foundation|
-      next unless foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
-
-      new_hpxml.foundations.add(id: foundation.id,
-                                foundation_type: foundation.foundation_type,
-                                unconditioned_basement_thermal_boundary: foundation.unconditioned_basement_thermal_boundary)
-      @uncond_bsmnt_thermal_bndry = foundation.unconditioned_basement_thermal_boundary
-    end
   end
 
   def self.set_enclosure_foundations_iad(orig_hpxml, new_hpxml)
@@ -430,8 +407,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.foundations.add(id: 'VentedCrawlspace',
                               foundation_type: HPXML::FoundationTypeCrawlspaceVented,
                               vented_crawlspace_sla: Airflow.get_default_vented_crawl_sla())
-
-    @uncond_bsmnt_thermal_bndry = nil
   end
 
   def self.set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
@@ -658,27 +633,14 @@ class EnergyRatingIndex301Ruleset
     wall_rvalue = get_reference_basement_wall_rvalue()
 
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
-      # Insulated for, e.g., conditioned basement walls adjacent to ground or
-      # walls of unconditioned basements whose thermal boundary location is the wall.
-      # Uninsulated for, e.g., crawlspace walls adjacent to ground.
-      is_insulated = false
+      # Insulated for, e.g., conditioned basement walls adjacent to ground.
+      # Uninsulated for, e.g., crawlspace/unconditioned basement walls adjacent to ground.
       if orig_foundation_wall.is_thermal_boundary
-        is_insulated = true
-      elsif [orig_foundation_wall.interior_adjacent_to, orig_foundation_wall.exterior_adjacent_to].include? HPXML::LocationBasementUnconditioned
-        if @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryWall
-          is_insulated = true
-        end
-      end
-
-      if is_insulated
-        insulation_exterior_r_value = wall_rvalue
+        insulation_interior_r_value = wall_rvalue
+        insulation_interior_distance_to_bottom = orig_foundation_wall.height
       else
-        insulation_exterior_r_value = 0
-      end
-      if insulation_exterior_r_value > 0
-        insulation_exterior_distance_to_bottom = orig_foundation_wall.height
-      else
-        insulation_exterior_distance_to_bottom = 0
+        insulation_interior_r_value = 0
+        insulation_interior_distance_to_bottom = 0
       end
       new_hpxml.foundation_walls.add(id: orig_foundation_wall.id,
                                      exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
@@ -689,12 +651,12 @@ class EnergyRatingIndex301Ruleset
                                      thickness: orig_foundation_wall.thickness,
                                      depth_below_grade: orig_foundation_wall.depth_below_grade,
                                      insulation_id: orig_foundation_wall.insulation_id,
-                                     insulation_interior_r_value: 0,
+                                     insulation_interior_r_value: insulation_interior_r_value,
                                      insulation_interior_distance_to_top: 0,
-                                     insulation_interior_distance_to_bottom: 0,
-                                     insulation_exterior_r_value: insulation_exterior_r_value,
+                                     insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
+                                     insulation_exterior_r_value: 0,
                                      insulation_exterior_distance_to_top: 0,
-                                     insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom)
+                                     insulation_exterior_distance_to_bottom: 0)
     end
   end
 
@@ -799,21 +761,9 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_floor
 
-      # Insulated for, e.g., floors between living space and crawlspace or
-      # floors of unconditioned basements whose thermal boundary location is the floor.
+      # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
       # Uninsulated for, e.g., floors between living space and conditioned basement.
-      is_insulated = false
       if orig_frame_floor.is_thermal_boundary
-        if [orig_frame_floor.interior_adjacent_to, orig_frame_floor.exterior_adjacent_to].include? HPXML::LocationBasementUnconditioned
-          if @uncond_bsmnt_thermal_bndry == HPXML::FoundationThermalBoundaryFloor
-            is_insulated = true
-          end
-        else
-          is_insulated = true
-        end
-      end
-
-      if is_insulated
         insulation_assembly_r_value = 1.0 / floor_ufactor
       else
         insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated

@@ -90,7 +90,6 @@
                 <Conditioned>false</Conditioned>
               </Basement>
             </FoundationType>
-            <ThermalBoundary>foundation wall</ThermalBoundary>
             <WithinInfiltrationVolume>false</WithinInfiltrationVolume>
           </Foundation>
         </Foundations>
