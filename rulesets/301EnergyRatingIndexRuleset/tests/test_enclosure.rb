@@ -63,6 +63,7 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     vent_fan = hpxml.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
     vent_fan.tested_flow_rate = nil
+    vent_fan.flow_rate_not_tested = true
     vent_fan.hours_in_operation = 1
     vent_fan.fan_power = 1.0
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -148,8 +149,8 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml, 6.67)
 
-    # FIXME: Add 301-2014 tests
-    # FIXME: Add tests for new 301-2019 space types HPXML file
+    # TODO: Add 301-2014 tests
+    # TODO: Add tests for new 301-2019 space types HPXML file
   end
 
   def test_enclosure_roofs
@@ -469,24 +470,6 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_foundation_walls(hpxml, 277.12, 0, 0, 0, 2, 0)
 
-    hpxml_name = 'base-foundation-unconditioned-basement-wall-insulation.xml'
-
-    # Rated Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml, 1200, 8.9, 0, 4, 8, 7)
-
-    # Reference Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml, 1200, 10.0, 0, 8, 8, 7)
-
-    # IAD Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml, 277.12, 0, 0, 0, 2, 0)
-
-    # IAD Reference Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml, 277.12, 0, 0, 0, 2, 0)
-
     hpxml_names = ['base-foundation-unvented-crawlspace.xml',
                    'base-foundation-vented-crawlspace.xml']
 
@@ -573,24 +556,6 @@ class ERIEnclosureTest < MiniTest::Test
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_floors(hpxml, 2700, (33.33 * 1350 + 30.3 * 1350) / 2700)
-
-    # IAD Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_floors(hpxml, 2400, (39.3 * 1200 + 30.3 * 1200) / 2400)
-
-    # IAD Reference Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_floors(hpxml, 2400, (33.33 * 1200 + 30.3 * 1200) / 2400)
-
-    hpxml_name = 'base-foundation-unconditioned-basement-wall-insulation.xml'
-
-    # Rated Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_floors(hpxml, 2700, (39.3 * 1350 + 2.1 * 1350) / 2700)
-
-    # Reference Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_floors(hpxml, 2700, (33.33 * 1350 + 2.1 * 1350) / 2700)
 
     # IAD Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)

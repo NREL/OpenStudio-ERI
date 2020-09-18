@@ -153,7 +153,6 @@ HPXML Foundations
 
 If the building has an unconditioned basement, an ``Enclosure/Foundations/Foundation/FoundationType/Basement[Conditioned='false']`` element must be defined.
 It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
-In addition, the ``ThermalBoundary`` element must be specified as either "foundation wall" or "frame floor".
 
 If the building has an unvented crawlspace, an ``Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='false']`` element must be defined.
 It must have the ``WithinInfiltrationVolume`` element specified in accordance with ANSI/RESNET/ICC Standard 380.
