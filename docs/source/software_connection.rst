@@ -491,12 +491,12 @@ HPXML Mechanical Ventilation
 ****************************
 
 This section describes elements specified in HPXML's ``Systems/MechanicalVentilation``.
-``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` elements can be used to specify whole dwelling unit ventilation systems and/or cooling load reduction.
+``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` elements can be used to specify whole home ventilation systems and/or cooling load reduction.
 
-Whole Dwelling Unit Ventilation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Whole Home Ventilation
+~~~~~~~~~~~~~~~~~~~~~~
 
-Mechanical ventilation systems that provide whole building ventilation may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
+Mechanical ventilation systems that provide whole home ventilation may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
 Inputs including ``FanType`` and ``HoursInOperation`` must be provided.
 
 The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, ``extension/FlowRateNotTested[text()="true"]`` should be entered.
