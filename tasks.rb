@@ -793,10 +793,7 @@ def set_hpxml_foundations(hpxml_file, hpxml)
     hpxml.foundations.clear
     hpxml.foundations.add(id: 'UnconditionedBasement',
                           foundation_type: HPXML::FoundationTypeBasementUnconditioned,
-                          unconditioned_basement_thermal_boundary: HPXML::FoundationThermalBoundaryFloor,
                           within_infiltration_volume: false)
-  elsif ['base-foundation-unconditioned-basement-wall-insulation.xml'].include? hpxml_file
-    hpxml.foundations[0].unconditioned_basement_thermal_boundary = HPXML::FoundationThermalBoundaryWall
   elsif ['base-foundation-multiple.xml'].include? hpxml_file
     hpxml.foundations.add(id: 'UnventedCrawlspace',
                           foundation_type: HPXML::FoundationTypeCrawlspaceUnvented,
@@ -3595,17 +3592,17 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
     hpxml.ventilation_fans.add(id: 'SharedSupplyFan',
                                fan_type: HPXML::MechVentTypeSupply,
                                is_shared_system: true,
-                               in_unit_flow_rate: 110,
-                               rated_flow_rate: 1000,
+                               in_unit_flow_rate: 80,
+                               rated_flow_rate: 800,
                                hours_in_operation: 24,
-                               fan_power: 300,
+                               fan_power: 240,
                                used_for_whole_building_ventilation: true,
                                fraction_recirculation: 0.5)
     hpxml.ventilation_fans.add(id: 'ExhaustFan',
                                fan_type: HPXML::MechVentTypeExhaust,
-                               tested_flow_rate: 100,
+                               tested_flow_rate: 72,
                                hours_in_operation: 24,
-                               fan_power: 30,
+                               fan_power: 26,
                                used_for_whole_building_ventilation: true)
   elsif ['base-mechvent-shared-preconditioning.xml'].include? hpxml_file
     hpxml.ventilation_fans[0].preheating_fuel = HPXML::FuelTypeNaturalGas
@@ -3689,7 +3686,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                fraction_recirculation: 0.0)
     hpxml.ventilation_fans.add(id: 'Exhaust',
                                fan_type: HPXML::MechVentTypeExhaust,
-                               rated_flow_rate: 50,
+                               tested_flow_rate: 50,
                                hours_in_operation: 14,
                                fan_power: 10,
                                used_for_whole_building_ventilation: true)
@@ -3713,7 +3710,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                used_for_whole_building_ventilation: true)
     hpxml.ventilation_fans.add(id: 'Exhaust',
                                fan_type: HPXML::MechVentTypeExhaust,
-                               rated_flow_rate: 50,
+                               tested_flow_rate: 50,
                                hours_in_operation: 14,
                                fan_power: 10,
                                used_for_whole_building_ventilation: true)
