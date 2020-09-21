@@ -82,8 +82,68 @@ def retrieve_eri_outputs(design_name, resultsdir, debug)
   return output_data
 end
 
+def _get_heating_coefficients(fuel)
+  if [HPXML::FuelTypeElectricity].include? fuel
+    return 2.2561, 0.0
+  elsif [HPXML::FuelTypeNaturalGas,
+         HPXML::FuelTypeOil,
+         HPXML::FuelTypePropane,
+         HPXML::FuelTypeWoodCord,
+         HPXML::FuelTypeWoodPellets].include? fuel
+    return 1.0943, 0.4030
+  end
+  fail 'Could not identify EEC coefficients for heating system.'
+end
+
+def _get_cooling_coefficients()
+  return 3.8090, 0.0
+end
+
+def _get_dhw_coefficients(fuel)
+  if [HPXML::FuelTypeElectricity].include? fuel
+    return 0.9200, 0.0
+  elsif [HPXML::FuelTypeNaturalGas,
+         HPXML::FuelTypeOil,
+         HPXML::FuelTypePropane,
+         HPXML::FuelTypeWoodCord,
+         HPXML::FuelTypeWoodPellets].include? fuel
+    return 1.1877, 1.0130
+  end
+  fail 'Could not identify EEC coefficients for water heating system.'
+end
+
 def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results = {}
+
+  # =========================== #
+  # Ventilation Preconditioning #
+  # =========================== #
+
+  # Calculate independent nMEUL for ventilation preconditioning
+
+  reul_precond = 1.0 # Arbitrary; doesn't affect results
+
+  results[:nmeul_vent_preheat] = []
+  rated_output[:hpxml_vent_preheat_sys_ids].each_with_index do |sys_id, rated_idx|
+    ec_x_preheat = rated_output[:elecMechVentPreheating][rated_idx] + rated_output[:gasMechVentPreheating][rated_idx] + rated_output[:oilMechVentPreheating][rated_idx] + rated_output[:propaneMechVentPreheating][rated_idx] + rated_output[:woodcordMechVentPreheating][rated_idx] + rated_output[:woodpelletsMechVentPreheating][rated_idx]
+    coeff_preheat_a, coeff_preheat_b = _get_heating_coefficients(rated_output[:hpxml_vent_preheat_fuels][rated_idx])
+    eec_x_preheat = rated_output[:hpxml_eec_vent_preheats][rated_idx]
+    dse_r_preheat = 0.80 # DSE of Reference Home for space heating
+    ec_r_preheat = reul_precond / eec_x_preheat / dse_r_preheat
+    nEC_x_preheat = (coeff_preheat_a * eec_x_preheat - coeff_preheat_b) * (ec_x_preheat * ec_r_preheat * dse_r_preheat) / (eec_x_preheat * reul_precond)
+    results[:nmeul_vent_preheat] << reul_precond * (nEC_x_preheat / ec_r_preheat)
+  end
+
+  results[:nmeul_vent_precool] = []
+  rated_output[:hpxml_vent_precool_sys_ids].each_with_index do |sys_id, rated_idx|
+    ec_x_precool = rated_output[:elecMechVentPrecooling][rated_idx]
+    coeff_precool_a, coeff_precool_b = _get_cooling_coefficients()
+    eec_x_precool = rated_output[:hpxml_eec_vent_precools][rated_idx]
+    dse_r_precool = 0.80 # DSE of Reference Home for space cooling
+    ec_r_precool = reul_precond / eec_x_precool / dse_r_precool
+    nEC_x_precool = (coeff_precool_a * eec_x_precool - coeff_precool_b) * (ec_x_precool * ec_r_precool * dse_r_precool) / (eec_x_precool * reul_precond)
+    results[:nmeul_vent_precool] << reul_precond * (nEC_x_precool / ec_r_precool)
+  end
 
   # ======= #
   # Heating #
@@ -106,22 +166,11 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
     reul_heat = ref_output[:loadHeating][ref_idx]
 
-    coeff_heat_a = nil
-    coeff_heat_b = nil
     if (ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity) != (rated_output[:hpxml_heat_fuels][rated_idx] == HPXML::FuelTypeElectricity)
       fail 'Data not in sync.'
     end
 
-    if ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity
-      coeff_heat_a = 2.2561
-      coeff_heat_b = 0.0
-    elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? ref_output[:hpxml_heat_fuels][ref_idx]
-      coeff_heat_a = 1.0943
-      coeff_heat_b = 0.4030
-    end
-    if coeff_heat_a.nil? || coeff_heat_b.nil?
-      fail 'Could not identify EEC coefficients for heating system.'
-    end
+    coeff_heat_a, coeff_heat_b = _get_heating_coefficients(ref_output[:hpxml_heat_fuels][ref_idx])
 
     eec_x_heat = rated_output[:hpxml_eec_heats][rated_idx]
     eec_r_heat = ref_output[:hpxml_eec_heats][ref_idx]
@@ -175,8 +224,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
     reul_cool = ref_output[:loadCooling][ref_idx]
 
-    coeff_cool_a = 3.8090
-    coeff_cool_b = 0.0
+    coeff_cool_a, coeff_cool_b = _get_cooling_coefficients()
 
     eec_x_cool = rated_output[:hpxml_eec_cools][rated_idx]
     eec_r_cool = ref_output[:hpxml_eec_cools][ref_idx]
@@ -233,18 +281,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
   reul_dhw = ref_output[:loadHotWaterDelivered][0]
 
-  coeff_dhw_a = nil
-  coeff_dhw_b = nil
-  if ref_output[:hpxml_dwh_fuels][0] == HPXML::FuelTypeElectricity
-    coeff_dhw_a = 0.9200
-    coeff_dhw_b = 0.0
-  elsif [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? ref_output[:hpxml_dwh_fuels][0]
-    coeff_dhw_a = 1.1877
-    coeff_dhw_b = 1.0130
-  end
-  if coeff_dhw_a.nil? || coeff_dhw_b.nil?
-    fail 'Could not identify EEC coefficients for water heating system.'
-  end
+  coeff_dhw_a, coeff_dhw_b = _get_dhw_coefficients(ref_output[:hpxml_dwh_fuels][0])
 
   eec_x_dhw = rated_output[:hpxml_eec_dhws].sum(0.0)
   eec_r_dhw = ref_output[:hpxml_eec_dhws][0]
@@ -322,6 +359,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:tnml] = results[:nmeul_heat].sum(0.0) +
                    results[:nmeul_cool].sum(0.0) +
                    results[:nmeul_dhw].sum(0.0) +
+                   results[:nmeul_vent_preheat].sum(0.0) +
+                   results[:nmeul_vent_precool].sum(0.0) +
                    results[:eul_la]
 
   if not results_iad.nil?
@@ -393,6 +432,16 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   worksheet_out << ['nMEUL Heating', results[:nmeul_heat].map { |x| x.round(4) }.join(',')]
   worksheet_out << ['nMEUL Cooling', results[:nmeul_cool].map { |x| x.round(4) }.join(',')]
   worksheet_out << ['nMEUL Hot Water', results[:nmeul_dhw].map { |x| x.round(4) }.join(',')]
+  if results[:nmeul_vent_preheat].empty?
+    worksheet_out << ['nMEUL Vent Preheat', 0.0]
+  else
+    worksheet_out << ['nMEUL Vent Preheat', results[:nmeul_vent_preheat].map { |x| x.round(4) }.join(',')]
+  end
+  if results[:nmeul_vent_precool].empty?
+    worksheet_out << ['nMEUL Vent Precool', 0.0]
+  else
+    worksheet_out << ['nMEUL Vent Precool', results[:nmeul_vent_precool].map { |x| x.round(4) }.join(',')]
+  end
   if not results_iad.nil?
     worksheet_out << ['IAF CFA', results[:iaf_cfa].round(4)]
     worksheet_out << ['IAF NBR', results[:iaf_nbr].round(4)]

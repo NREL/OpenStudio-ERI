@@ -477,6 +477,14 @@ class HPXMLDefaults
   end
 
   def self.apply_ventilation_fans(hpxml)
+    # Default mech vent systems
+    hpxml.ventilation_fans.each do |vent_fan|
+      next unless vent_fan.used_for_whole_building_ventilation
+      next unless vent_fan.is_shared_system.nil?
+
+      vent_fan.is_shared_system = false
+    end
+
     # Default kitchen fan
     hpxml.ventilation_fans.each do |vent_fan|
       next unless (vent_fan.used_for_local_ventilation && (vent_fan.fan_location == HPXML::LocationKitchen))
@@ -1003,6 +1011,9 @@ class HPXMLDefaults
 
   def self.apply_pv_systems(hpxml)
     hpxml.pv_systems.each do |pv_system|
+      if pv_system.is_shared_system.nil?
+        pv_system.is_shared_system = false
+      end
       if pv_system.inverter_efficiency.nil?
         pv_system.inverter_efficiency = PV.get_default_inv_eff()
       end

@@ -75,6 +75,8 @@ Current end use/fuel type combinations are:
    Electricity: Lighting Garage (MBtu)
    Electricity: Lighting Exterior (MBtu)
    Electricity: Mech Vent (MBtu)
+   Electricity: Mech Vent Preheating (MBtu)         Shared ventilation preconditioning system.
+   Electricity: Mech Vent Precooling (MBtu)         Shared ventilation preconditioning system.
    Electricity: Whole House Fan (MBtu)
    Electricity: Refrigerator (MBtu)
    Electricity: Dehumidifier (MBtu)                 Currently unused for ERI.
@@ -90,22 +92,27 @@ Current end use/fuel type combinations are:
    Natural Gas: Hot Water (MBtu)
    Natural Gas: Clothes Dryer (MBtu)
    Natural Gas: Range/Oven (MBtu)
+   Natural Gas: Mech Vent Preheating (MBtu)         Shared ventilation preconditioning system.
    Fuel Oil: Heating (MBtu)
    Fuel Oil: Hot Water (MBtu)
    Fuel Oil: Clothes Dryer (MBtu)
    Fuel Oil: Range/Oven (MBtu)
+   Fuel Oil: Mech Vent Preheating (MBtu)            Shared ventilation preconditioning system.
    Propane: Heating (MBtu)
    Propane: Hot Water (MBtu)
    Propane: Clothes Dryer (MBtu)
    Propane: Range/Oven (MBtu)
+   Propane: Mech Vent Preheating (MBtu)             Shared ventilation preconditioning system.
    Wood Cord: Heating (MBtu)
    Wood Cord: Hot Water (MBtu)
    Wood Cord: Clothes Dryer (MBtu)
    Wood Cord: Range/Oven (MBtu)
+   Wood Cord: Mech Vent Preheating (MBtu)           Shared ventilation preconditioning system.
    Wood Pellets: Heating (MBtu)
    Wood Pellets: Hot Water (MBtu)
    Wood Pellets: Clothes Dryer (MBtu)
    Wood Pellets: Range/Oven (MBtu)
+   Wood Pellets: Mech Vent Preheating (MBtu)        Shared ventilation preconditioning system.
    ================================================ =========================
 
 Annual Building Loads

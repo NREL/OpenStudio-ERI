@@ -97,6 +97,7 @@ The following building features/technologies are available for modeling:
   - Energy Recovery Ventilator
   - Heat Recovery Ventilator
   - Central Fan Integrated Supply
+  - Shared Systems w/ Recirculation and/or Preconditioning
   
 - Whole House Fan
 - Photovoltaics

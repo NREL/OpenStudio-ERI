@@ -21,7 +21,7 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
   The HPXML XSD Schema can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/HPXML.xsd``.
   It should be used by the software developer to validate their HPXML file prior to running the workflow.
   XSD Schemas are used to validate what elements/attributes/enumerations are available, data types for elements/attributes, the number/order of children elements, etc.
-  
+
   OpenStudio-ERI **does not** validate the HPXML file against the XSD Schema and assumes the file submitted is valid.
 
 2. Validation using `Schematron <http://schematron.com/>`_
@@ -32,11 +32,11 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
   For example, if an element is specified with a particular value, the applicable enumerations of another element may change.
   
   OpenStudio-ERI **automatically validates** the HPXML file against the Schematron document and reports any validation errors, but software developers may find it beneficial to also integrate Schematron validation into their software.
- 
+
 .. important::
 
   Usage of both validation approaches (XSD and Schematron) is recommended for developers actively working on creating HPXML files for Energy Rating Index calculations:
-  
+
   - Validation against XSD for general correctness and usage of HPXML
   - Validation against Schematron for understanding XML document requirements specific to running ERI calculations
 
@@ -490,18 +490,13 @@ HPXML Mechanical Ventilation
 ****************************
 
 This section describes elements specified in HPXML's ``Systems/MechanicalVentilation``.
-``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` elements can be used to specify whole building ventilation systems and/or cooling load reduction.
+``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` elements can be used to specify whole home ventilation systems and/or cooling load reduction.
 
-Whole Building Ventilation
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Whole Home Ventilation
+~~~~~~~~~~~~~~~~~~~~~~
 
-Mechanical ventilation systems that provide whole building ventilation may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
-Inputs including ``FanType`` and ``HoursInOperation`` must be provided.
-
-The measured airflow rate should be entered as ``TestedFlowRate``; if unmeasured, it should not be provided and the airflow rate will be defaulted.
-For a CFIS system, the flow rate should equal the amount of outdoor air provided to the distribution system.
-
-Likewise the fan power for the highest airflow setting should be entered as ``FanPower``; if unknown, it should not be provided and the fan power will be defaulted.
+Mechanical ventilation systems that provide whole home ventilation may each be specified as a ``Systems/MechanicalVentilation/VentilationFans/VentilationFan`` with ``UsedForWholeBuildingVentilation='true'``.
+Inputs including ``FanType``, ``HoursInOperation``, and ``IsSharedSystem`` must be provided.
 
 Depending on the type of mechanical ventilation specified, additional elements are required:
 
@@ -517,6 +512,29 @@ central fan integrated supply (CFIS)                                            
 ====================================  ==========================  =======================  ================================
 
 Note that ``AdjustedSensibleRecoveryEfficiency`` and ``AdjustedTotalRecoveryEfficiency`` can be provided instead of ``SensibleRecoveryEfficiency`` and ``TotalRecoveryEfficiency``.
+
+If the ventilation system is not shared, the following inputs are available:
+
+- ``TestedFlowRate``: The measured airflow rate. If unmeasured, provide ``extension/FlowRateNotTested[text()="true"]`` instead. For a CFIS system, the flow rate should equal the amount of outdoor air provided to the distribution system.
+- ``FanPower``: The fan power for the highest airflow setting. If unknown, provide ``extension/FanPowerDefaulted[text()="true"]`` instead.
+
+If the ventilation system is shared (i.e., serving multiple dwelling units), the following inputs are available:
+
+- ``RatedFlowRate``: The rated airflow rate of the entire system.
+- ``FanPower``: The fan power for the entire system at highest airflow setting. If unknown, provide ``extension/FanPowerDefaulted[text()="true"]`` instead.
+- ``FractionRecirculation``: Fraction of the total supply air that is recirculated, with the remainder assumed to be outdoor air. The value must be 0 for exhaust only systems.
+- ``extension/InUnitFlowRate``: The flow rate delivered to the dwelling unit. If unmeasured, provide ``extension/FlowRateNotTested[text()="true"]`` instead.
+- ``extension/PreHeating``: Optional. Element to specify if the supply air is preconditioned by heating equipment. It is not allowed for exhaust only systems. If provided, there are additional child elements required:
+
+  - ``Fuel``: Fuel type of the preconditioning heating equipment.
+  - ``AnnualHeatingEfficiency[Units="COP"]/Value``: Efficiency of the preconditioning heating equipment.
+  - ``FractionVentilationHeatLoadServed``: Fraction of heating load introduced by the shared ventilation system that is met by the preconditioning heating equipment.
+
+- ``extension/PreCooling``: Optional. Element to specify if the supply air is preconditioned by cooling equipment. It is not allowed for exhaust only systems. If provided, there are additional child elements required:
+
+  - ``Fuel``: Fuel type of the preconditioning cooling equipment.
+  - ``AnnualCoolingEfficiency[Units="COP"]/Value``: Efficiency of the preconditioning cooling equipment.
+  - ``FractionVentilationCoolLoadServed``: Fraction of cooling load introduced by the shared ventilation system that is met by the preconditioning cooling equipment.
 
 Cooling Load Reduction
 ~~~~~~~~~~~~~~~~~~~~~~

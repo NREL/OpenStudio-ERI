@@ -63,6 +63,7 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     vent_fan = hpxml.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
     vent_fan.tested_flow_rate = nil
+    vent_fan.flow_rate_not_tested = true
     vent_fan.hours_in_operation = 1
     vent_fan.fan_power = 1.0
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -93,7 +94,8 @@ class ERIEnclosureTest < MiniTest::Test
                                tested_flow_rate: 110.0,
                                hours_in_operation: 24.0,
                                used_for_whole_building_ventilation: true,
-                               fan_power: 30.0)
+                               fan_power: 30.0,
+                               is_shared_system: false)
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -124,7 +126,8 @@ class ERIEnclosureTest < MiniTest::Test
                                tested_flow_rate: 110.0,
                                hours_in_operation: 24.0,
                                used_for_whole_building_ventilation: true,
-                               fan_power: 30.0)
+                               fan_power: 30.0,
+                               is_shared_system: false)
 
     # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -146,8 +149,8 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_infiltration(hpxml, 6.67)
 
-    # FIXME: Add 301-2014 tests
-    # FIXME: Add tests for new 301-2019 space types HPXML file
+    # TODO: Add 301-2014 tests
+    # TODO: Add tests for new 301-2019 space types HPXML file
   end
 
   def test_enclosure_roofs
