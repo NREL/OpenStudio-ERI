@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.06.05 10:53
+Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.09.21 15:37
 ! <Version>, Version ID
  Version, 9.3
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -18,7 +18,7 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.06.05 10:53
 ! <Site:GroundTemperature:Shallow>,Jan{C},Feb{C},Mar{C},Apr{C},May{C},Jun{C},Jul{C},Aug{C},Sep{C},Oct{C},Nov{C},Dec{C}
  Site:GroundTemperature:Shallow,   6.71,   4.94,   4.80,   5.64,   9.01,  12.37,  15.28,  17.13,  17.28,  15.78,  12.95,   9.69
 ! <Site:GroundTemperature:Deep>,Jan{C},Feb{C},Mar{C},Apr{C},May{C},Jun{C},Jul{C},Aug{C},Sep{C},Oct{C},Nov{C},Dec{C}
- Site:GroundTemperature:Deep,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00,  16.00
+ Site:GroundTemperature:Deep,  10.88,  10.88,  10.88,  10.88,  10.88,  10.88,  10.88,  10.88,  10.88,  10.88,  10.88,  10.88
 ! <Site:GroundReflectance>,Jan{dimensionless},Feb{dimensionless},Mar{dimensionless},Apr{dimensionless},May{dimensionless},Jun{dimensionless},Jul{dimensionless},Aug{dimensionless},Sep{dimensionless},Oct{dimensionless},Nov{dimensionless},Dec{dimensionless}
  Site:GroundReflectance,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20,  0.20
 ! <Site:GroundReflectance:SnowModifier>, Normal, Daylighting {dimensionless}
@@ -67,13 +67,13 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
 ! <Zone Summary>, Number of Zones, Number of Zone Surfaces, Number of SubSurfaces
  Zone Summary,3,44,6
 ! <Zone Information>,Zone Name,North Axis {deg},Origin X-Coordinate {m},Origin Y-Coordinate {m},Origin Z-Coordinate {m},Centroid X-Coordinate {m},Centroid Y-Coordinate {m},Centroid Z-Coordinate {m},Type,Zone Multiplier,Zone List Multiplier,Minimum X {m},Maximum X {m},Minimum Y {m},Maximum Y {m},Minimum Z {m},Maximum Z {m},Ceiling Height {m},Volume {m3},Zone Inside Convection Algorithm {Simple-Detailed-CeilingDiffuser-TrombeWall},Zone Outside Convection Algorithm {Simple-Detailed-Tarp-MoWitt-DOE-2-BLAST}, Floor Area {m2},Exterior Gross Wall Area {m2},Exterior Net Wall Area {m2},Exterior Window Area {m2}, Number of Surfaces, Number of SubSurfaces, Number of Shading SubSurfaces,  Part of Total Building Area
- Zone Information, ATTIC - UNVENTED,0.0,0.00,0.00,0.00,-6.66,-3.35E-007,3.90,1,1,1,-42.04,42.04,-42.04,42.04,0.30,8.04,2.65,117.05,TARP,DOE-2,125.42,26.94,26.94,0.00,9,0,0,Yes
+ Zone Information, ATTIC - UNVENTED,0.0,0.00,0.00,0.00,-6.66,-3.35E-007,3.90,1,1,1,-42.04,42.04,-42.04,42.04,0.30,8.04,2.65,104.69,TARP,DOE-2,125.42,26.94,26.94,0.00,9,0,0,Yes
  Zone Information, CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,0.0,0.00,0.00,0.00,0.50,0.50,0.50,1,1,1,0.00,1.00,0.00,1.00,0.00,1.00,1.00,1.00,TARP,DOE-2,1.00,0.00,0.00,0.00,6,0,0,Yes
- Zone Information, LIVING SPACE,0.0,0.00,0.00,0.00,0.74,6.37,0.28,1,1,1,-42.04,42.04,-42.04,42.04,-2.13,2.74,2.44,611.64,TARP,DOE-2,250.84,122.27,81.39,33.45,19,6,0,Yes
+ Zone Information, LIVING SPACE,0.0,0.00,0.00,0.00,0.74,6.37,0.28,1,1,1,-42.04,42.04,-42.04,42.04,-2.13,2.74,2.44,611.64,TARP,DOE-2,250.84,122.31,81.43,33.45,19,6,0,Yes
 ! <Zone Internal Gains Nominal>,Zone Name, Floor Area {m2},# Occupants,Area per Occupant {m2/person},Occupant per Area {person/m2},Interior Lighting {W/m2},Electric Load {W/m2},Gas Load {W/m2},Other Load {W/m2},Hot Water Eq {W/m2},Steam Equipment {W/m2},Sum Loads per Area {W/m2},Outdoor Controlled Baseboard Heat
  Zone Internal Gains Nominal, ATTIC - UNVENTED,125.42,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
  Zone Internal Gains Nominal, CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,1.00,0.0,N/A,0.000,0.000,0.000,0.000,0.000,0.000,0.000,0.000,No
- Zone Internal Gains Nominal, LIVING SPACE,250.84,3.0,83.613,1.196E-002,1.586,121.296,0.000,0.331,0.000,0.000,123.213,No
+ Zone Internal Gains Nominal, LIVING SPACE,250.84,3.0,83.613,1.196E-002,1.586,121.184,0.000,0.331,0.000,0.000,123.101,No
 ! <People Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Number of People {},People/Floor Area {person/m2},Floor Area per person {m2/person},Fraction Radiant,Fraction Convected,Sensible Fraction Calculation,Activity level,ASHRAE 55 Warnings,Carbon Dioxide Generation Rate,Nominal Minimum Number of People,Nominal Maximum Number of People
  People Internal Gains Nominal, OCCUPANTS,OCCUPANTS SCHEDULE,LIVING SPACE,250.84,3.0,3.0,1.196E-002,83.613,0.314,0.686,0.563,SCHEDULE RULESET 1,No,0.0000,0,3
 ! <Lights Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Lighting Level {W},Lights/Floor Area {W/m2},Lights per person {W/person},Fraction Return Air,Fraction Radiant,Fraction Short Wave,Fraction Convected,Fraction Replaceable,End-Use Category,Nominal Minimum Lighting Level {W},Nominal Maximum Lighting Level {W}
@@ -84,11 +84,10 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  ElectricEquipment Internal Gains Nominal, COOKING RANGE,COOKING RANGE,LIVING SPACE,250.84,3.0,201.331,0.803,67.110,8.000E-002,0.432,0.200,0.288,cooking range,0.000,201.331
  ElectricEquipment Internal Gains Nominal, DISHWASHER,DISHWASHER SCHEDULE,LIVING SPACE,250.84,3.0,9828.329,39.182,3276.110,0.300,0.180,0.400,0.120,dishwasher,0.000,555.253
  ElectricEquipment Internal Gains Nominal, FRIDGE,FRIDGE,LIVING SPACE,250.84,3.0,97.483,0.389,32.494,0.000,0.600,0.000,0.400,fridge,0.000,97.483
- ElectricEquipment Internal Gains Nominal, MECH VENT BATH FAN,MECH VENT BATH FAN SCHEDULE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent,0.000,0.000
  ElectricEquipment Internal Gains Nominal, MECH VENT HOUSE FAN,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent,0.000,0.000
- ElectricEquipment Internal Gains Nominal, MECH VENT RANGE FAN,MECH VENT RANGE FAN SCHEDULE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,mech vent,0.000,0.000
- ElectricEquipment Internal Gains Nominal, MISC PLUG LOADS,MISC PLUG LOADS SCHEDULE,LIVING SPACE,250.84,3.0,600.117,2.392,200.039,4.500E-002,0.513,0.100,0.342,misc plug loads,0.000,600.117
- ElectricEquipment Internal Gains Nominal, MISC TV,MISC PLUG LOADS SCHEDULE,LIVING SPACE,250.84,3.0,151.434,0.604,50.478,0.000,0.600,0.000,0.400,misc tv,0.000,151.434
+ ElectricEquipment Internal Gains Nominal, MECH VENT HOUSE FAN CFIS,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,mech vent,0.000,0.000
+ ElectricEquipment Internal Gains Nominal, MISC PLUG LOADS,MISC PLUG LOADS SCHEDULE,LIVING SPACE,250.84,3.0,448.871,1.789,149.624,4.500E-002,0.513,0.100,0.342,misc plug loads,0.000,448.871
+ ElectricEquipment Internal Gains Nominal, MISC TV,MISC TV SCHEDULE,LIVING SPACE,250.84,3.0,274.705,1.095,91.568,0.000,0.600,0.000,0.400,misc tv,0.000,274.705
  ElectricEquipment Internal Gains Nominal, WHOLE HOUSE FAN,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,1.000,0.000,whole house fan,0.000,0.000
 ! <OtherEquipment Internal Gains Nominal>,Name,Schedule Name,Zone Name,Zone Floor Area {m2},# Zone Occupants,Equipment Level {W},Equipment/Floor Area {W/m2},Equipment per person {W/person},Fraction Latent,Fraction Radiant,Fraction Lost,Fraction Convected,Nominal Minimum Equipment Level {W},Nominal Maximum Equipment Level {W}
  OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_0_RETCONDTODZ EQUIP,ALWAYS ON DISCRETE,ATTIC - UNVENTED,125.42,0.0,0.000,0.000,N/A,0.000,0.000,0.000,1.000,0.000,0.000
@@ -101,22 +100,23 @@ Surface Heat Transfer Algorithm, KivaFoundation - TwoDimensionalFiniteDifference
  OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_0_SUPCONDTOLV EQUIP,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
  OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_0_SUPLATLKTOLV EQUIP,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,1.000,0.000,0.000,0.000,0.000,0.000
  OtherEquipment Internal Gains Nominal, CENTRAL_AC_AND_FURNACE_AIRLOOP_0_SUPSENSLKTOLV EQUIP,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, MECH VENT HOUSE FAN LATENT LOAD EQUIP,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,1.000,0.000,0.000,0.000,0.000,0.000
+ OtherEquipment Internal Gains Nominal, MECH VENT HOUSE FAN SENSIBLE LOAD EQUIP,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,0.000,0.000,1.000,0.000,0.000
  OtherEquipment Internal Gains Nominal, WATER HEATER EC ADJUSTMENT,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,1.000E-002,3.987E-005,3.333E-003,0.000,0.000,1.000,0.000,1.000E-002,1.000E-002
  OtherEquipment Internal Gains Nominal, WATER LATENT,DHW FIXTURES SCHEDULE,LIVING SPACE,250.84,3.0,5740.214,22.884,1913.405,1.000,0.000,0.000,0.000,0.000,641.762
  OtherEquipment Internal Gains Nominal, WATER SENSIBLE,DHW FIXTURES SCHEDULE,LIVING SPACE,250.84,3.0,-5657.223,-22.553,-1885.741,0.000,0.600,0.000,0.400,0.000,-632.484
 ! <Solar View Factor Check Values>,Zone/Enclosure Name,Original Check Value,Calculated Fixed Check Value,Final Check Value,Number of Iterations,Fixed RowSum Convergence,Used RowSum Convergence
 Solar View Factor Check Values,ATTIC - UNVENTED,1.776357E-015,9.006297E-004,9.006297E-004,46,9.006297E-004,9.006297E-004
 Solar View Factor Check Values,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,2.664535E-015,2.664535E-015,2.664535E-015,1,2.664535E-015,0.000000
-Solar View Factor Check Values,LIVING SPACE,0.342541,7.485425E-004,7.485425E-004,13,29.000000,7.485425E-004
+Solar View Factor Check Values,LIVING SPACE,0.343716,7.491158E-004,7.491158E-004,13,29.000000,7.491158E-004
 ! <Shadowing/Sun Position Calculations Annual Simulations>, Shading Calculation Method, Shading Calculation Update Frequency Method, Shading Calculation Update Frequency {days}, Maximum Figures in Shadow Overlap Calculations {}, Polygon Clipping Algorithm, Pixel Counting Resolution, Sky Diffuse Modeling Algorithm, Output External Shading Calculation Results, Disable Self-Shading Within Shading Zone Groups, Disable Self-Shading From Shading Zone Groups to Other Zones
 Shadowing/Sun Position Calculations Annual Simulations,PolygonClipping,Periodic,20,200,SutherlandHodgman,512,SimpleSkyDiffuseModeling,No,No,No
 ! <Surface View Factor Check Values>,Zone/Enclosure Name,Original Check Value,Calculated Fixed Check Value,Final Check Value,Number of Iterations,Fixed RowSum Convergence,Used RowSum Convergence
 Surface View Factor Check Values,ATTIC - UNVENTED,1.776357E-015,9.006297E-004,9.006297E-004,46,9.006297E-004,9.006297E-004
 Surface View Factor Check Values,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,2.664535E-015,2.664535E-015,2.664535E-015,1,2.664535E-015,0.000000
-Surface View Factor Check Values,LIVING SPACE,0.342541,7.485425E-004,7.485425E-004,13,29.000000,7.485425E-004
+Surface View Factor Check Values,LIVING SPACE,0.343716,7.491158E-004,7.491158E-004,13,29.000000,7.491158E-004
 ! <ZoneInfiltration Airflow Stats Nominal>,Name,Schedule Name,Zone Name, Zone Floor Area {m2}, # Zone Occupants,Design Volume Flow Rate {m3/s},Volume Flow Rate/Floor Area {m3/s-m2},Volume Flow Rate/Exterior Surface Area {m3/s-m2},ACH - Air Changes per Hour,Equation A - Constant Term Coefficient {},Equation B - Temperature Term Coefficient {1/C},Equation C - Velocity Term Coefficient {s/m}, Equation D - Velocity Squared Term Coefficient {s2/m2}
  ZoneInfiltration Airflow Stats Nominal, INFIL FLOW,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
- ZoneInfiltration Airflow Stats Nominal, MECH VENT FLOW,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
  ZoneInfiltration Airflow Stats Nominal, NATURAL VENT FLOW,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
  ZoneInfiltration Airflow Stats Nominal, WHOLE HOUSE FAN FLOW,ALWAYS ON DISCRETE,LIVING SPACE,250.84,3.0,0.000,0.000,0.000,0.000,1.000,0.000,0.000,0.000
 ! <Mixing Airflow Stats Nominal>,Name,Schedule Name,Zone Name, Zone Floor Area {m2}, # Zone Occupants,Design Volume Flow Rate {m3/s},Volume Flow Rate/Floor Area {m3/s-m2},Volume Flow Rate/person Area {m3/s-person},ACH - Air Changes per Hour,From/Source Zone,Delta Temperature {C}
@@ -155,14 +155,14 @@ Water Heater Information,WaterHeater:Mixed,WATER HEATER,0.1362,5500.0,4.116,0.97
 ! <Environment:Daylight Saving>, Daylight Saving Indicator, Source, Start Date, End Date
 ! <Environment:WarmupDays>, NumberofWarmupDays
 Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01/2007,12/31/2007,Monday,365,Use RunPeriod Specified Day,No,No,No,Yes,Yes,Clark and Allen
-Environment:Daylight Saving,No,RunPeriod Object
+Environment:Daylight Saving,Yes,InputFile,03/12,11/05
 Environment:WarmupDays,  4
 ! <Tabular Report>,Style,Unit Conversion
 Tabular Report,HTML,None
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,ATTIC - UNVENTED,RunPeriod: RUN PERIOD 1,1.8751926081,1.3860136343,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
- Warmup Convergence Information,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,RunPeriod: RUN PERIOD 1,8.8990706375E-002,9.0531721015E-002,Pass,Pass,0.3236788310,0.4987400120,Pass,Pass
- Warmup Convergence Information,LIVING SPACE,RunPeriod: RUN PERIOD 1,1.8427680761E-003,8.7283582696E-003,Pass,Pass,0.3576429165,0.5616490175,Pass,Pass
+ Warmup Convergence Information,ATTIC - UNVENTED,RunPeriod: RUN PERIOD 1,2.0016079975,1.5690199340,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,CENTRAL AC AND FURNACE AIRLOOP RET AIR ZONE,RunPeriod: RUN PERIOD 1,9.0404557513E-002,9.9471932235E-002,Pass,Pass,0.5429062540,0.9508098224,Pass,Pass
+ Warmup Convergence Information,LIVING SPACE,RunPeriod: RUN PERIOD 1,1.1537721491E-003,5.4542987354E-003,Pass,Pass,0.5925723818,1.0434236833,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data

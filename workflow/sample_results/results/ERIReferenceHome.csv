@@ -1,15 +1,16 @@
-Electricity: Total (MBtu),43.21
-Electricity: Net (MBtu),43.21
-Natural Gas: Total (MBtu),38.28
+Electricity: Total (MBtu),43.57
+Electricity: Net (MBtu),43.57
+Natural Gas: Total (MBtu),39.36
 Fuel Oil: Total (MBtu),0.0
 Propane: Total (MBtu),0.0
 Wood Cord: Total (MBtu),0.0
 Wood Pellets: Total (MBtu),0.0
+Coal: Total (MBtu),0.0
 
 Electricity: Heating (MBtu),0.0
-Electricity: Heating Fans/Pumps (MBtu),0.76
-Electricity: Cooling (MBtu),3.08
-Electricity: Cooling Fans/Pumps (MBtu),0.48
+Electricity: Heating Fans/Pumps (MBtu),0.77
+Electricity: Cooling (MBtu),3.37
+Electricity: Cooling Fans/Pumps (MBtu),0.54
 Electricity: Hot Water (MBtu),11.49
 Electricity: Hot Water Recirc Pump (MBtu),0.0
 Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
@@ -17,6 +18,8 @@ Electricity: Lighting Interior (MBtu),8.92
 Electricity: Lighting Garage (MBtu),0.0
 Electricity: Lighting Exterior (MBtu),0.8
 Electricity: Mech Vent (MBtu),0.0
+Electricity: Mech Vent Preheating (MBtu),0.0
+Electricity: Mech Vent Precooling (MBtu),0.0
 Electricity: Whole House Fan (MBtu),0.0
 Electricity: Refrigerator (MBtu),2.36
 Electricity: Dehumidifier (MBtu),0
@@ -28,79 +31,89 @@ Electricity: Ceiling Fan (MBtu),0.0
 Electricity: Television (MBtu),2.11
 Electricity: Plug Loads (MBtu),8.37
 Electricity: PV (MBtu),0.0
-Natural Gas: Heating (MBtu),38.28
+Natural Gas: Heating (MBtu),39.36
 Natural Gas: Hot Water (MBtu),0.0
 Natural Gas: Clothes Dryer (MBtu),0.0
 Natural Gas: Range/Oven (MBtu),0.0
+Natural Gas: Mech Vent Preheating (MBtu),0.0
 Fuel Oil: Heating (MBtu),0.0
 Fuel Oil: Hot Water (MBtu),0.0
 Fuel Oil: Clothes Dryer (MBtu),0.0
 Fuel Oil: Range/Oven (MBtu),0.0
+Fuel Oil: Mech Vent Preheating (MBtu),0.0
 Propane: Heating (MBtu),0.0
 Propane: Hot Water (MBtu),0.0
 Propane: Clothes Dryer (MBtu),0.0
 Propane: Range/Oven (MBtu),0.0
+Propane: Mech Vent Preheating (MBtu),0.0
 Wood Cord: Heating (MBtu),0.0
 Wood Cord: Hot Water (MBtu),0.0
 Wood Cord: Clothes Dryer (MBtu),0.0
 Wood Cord: Range/Oven (MBtu),0.0
+Wood Cord: Mech Vent Preheating (MBtu),0.0
 Wood Pellets: Heating (MBtu),0.0
 Wood Pellets: Hot Water (MBtu),0.0
 Wood Pellets: Clothes Dryer (MBtu),0.0
 Wood Pellets: Range/Oven (MBtu),0.0
+Wood Pellets: Mech Vent Preheating (MBtu),0.0
+Coal: Heating (MBtu),0.0
+Coal: Hot Water (MBtu),0.0
+Coal: Clothes Dryer (MBtu),0.0
+Coal: Range/Oven (MBtu),0.0
+Coal: Mech Vent Preheating (MBtu),0.0
 
-Load: Heating (MBtu),24.47
-Load: Cooling (MBtu),7.03
+Load: Heating (MBtu),25.16
+Load: Cooling (MBtu),8.07
 Load: Hot Water: Delivered (MBtu),10.46
 Load: Hot Water: Tank Losses (MBtu),1.02
 Load: Hot Water: Desuperheater (MBtu),0.0
 Load: Hot Water: Solar Thermal (MBtu),0.0
 
 Unmet Load: Heating (MBtu),0.0
-Unmet Load: Cooling (MBtu),0.01
+Unmet Load: Cooling (MBtu),0.03
 
-Peak Electricity: Winter Total (W),7524.67
-Peak Electricity: Summer Total (W),7050.64
+Peak Electricity: Winter Total (W),7411.72
+Peak Electricity: Summer Total (W),6944.0
 
-Peak Load: Heating (kBtu),22.0
-Peak Load: Cooling (kBtu),15.36
+Peak Load: Heating (kBtu),22.6
+Peak Load: Cooling (kBtu),16.93
 
 Component Load: Heating: Roofs (MBtu),0.0
-Component Load: Heating: Ceilings (MBtu),5.21
-Component Load: Heating: Walls (MBtu),5.13
-Component Load: Heating: Rim Joists (MBtu),0.72
-Component Load: Heating: Foundation Walls (MBtu),2.96
-Component Load: Heating: Doors (MBtu),1.71
-Component Load: Heating: Windows (MBtu),3.62
+Component Load: Heating: Ceilings (MBtu),4.9
+Component Load: Heating: Walls (MBtu),5.18
+Component Load: Heating: Rim Joists (MBtu),0.73
+Component Load: Heating: Foundation Walls (MBtu),3.36
+Component Load: Heating: Doors (MBtu),1.72
+Component Load: Heating: Windows (MBtu),3.72
 Component Load: Heating: Skylights (MBtu),0.0
 Component Load: Heating: Floors (MBtu),0.0
-Component Load: Heating: Slabs (MBtu),3.33
-Component Load: Heating: Internal Mass (MBtu),-0.27
-Component Load: Heating: Infiltration (MBtu),13.21
+Component Load: Heating: Slabs (MBtu),3.59
+Component Load: Heating: Internal Mass (MBtu),-0.33
+Component Load: Heating: Infiltration (MBtu),13.31
 Component Load: Heating: Natural Ventilation (MBtu),0.0
-Component Load: Heating: Mechanical Ventilation (MBtu),3.68
+Component Load: Heating: Mechanical Ventilation (MBtu),3.71
 Component Load: Heating: Whole House Fan (MBtu),0.0
 Component Load: Heating: Ducts (MBtu),0.0
-Component Load: Heating: Internal Gains (MBtu),-14.84
+Component Load: Heating: Internal Gains (MBtu),-14.78
 Component Load: Cooling: Roofs (MBtu),0.0
-Component Load: Cooling: Ceilings (MBtu),-0.87
-Component Load: Cooling: Walls (MBtu),-0.11
+Component Load: Cooling: Ceilings (MBtu),-0.13
+Component Load: Cooling: Walls (MBtu),-0.1
 Component Load: Cooling: Rim Joists (MBtu),0.05
-Component Load: Cooling: Foundation Walls (MBtu),2.46
-Component Load: Cooling: Doors (MBtu),-0.33
-Component Load: Cooling: Windows (MBtu),8.38
+Component Load: Cooling: Foundation Walls (MBtu),2.96
+Component Load: Cooling: Doors (MBtu),-0.32
+Component Load: Cooling: Windows (MBtu),8.36
 Component Load: Cooling: Skylights (MBtu),0.0
 Component Load: Cooling: Floors (MBtu),0.0
-Component Load: Cooling: Slabs (MBtu),-5.13
-Component Load: Cooling: Internal Mass (MBtu),-0.23
-Component Load: Cooling: Infiltration (MBtu),-2.18
-Component Load: Cooling: Natural Ventilation (MBtu),-5.7
-Component Load: Cooling: Mechanical Ventilation (MBtu),-0.87
+Component Load: Cooling: Slabs (MBtu),-5.46
+Component Load: Cooling: Internal Mass (MBtu),-0.29
+Component Load: Cooling: Infiltration (MBtu),-2.13
+Component Load: Cooling: Natural Ventilation (MBtu),-5.63
+Component Load: Cooling: Mechanical Ventilation (MBtu),-0.85
 Component Load: Cooling: Whole House Fan (MBtu),0.0
 Component Load: Cooling: Ducts (MBtu),0.0
-Component Load: Cooling: Internal Gains (MBtu),11.59
+Component Load: Cooling: Internal Gains (MBtu),11.65
 
-Hot Water: Clothes Washer (gal),1608.84
+Hot Water: Clothes Washer (gal),1608.82
 Hot Water: Dishwasher (gal),1575.38
-Hot Water: Fixtures (gal),11675.93
-Hot Water: Distribution Waste (gal),4114.76
+Hot Water: Fixtures (gal),11677.51
+Hot Water: Distribution Waste (gal),4115.32

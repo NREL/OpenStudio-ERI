@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.06.05 10:53
+Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.09.21 15:37
 ! This file shows details about the branches, nodes, and other
 ! elements of the flow connections.
 ! This file is intended for use in "debugging" potential problems
@@ -180,7 +180,7 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.06.05 10:53
 ! <Zone Equipment Component>,<Component Count>,<Component Type>,<Component Name>,<Zone Name>,<Heating Priority>,<Cooling Priority>
  Zone Equipment List,3,LIVING SPACE EQUIPMENT LIST,LIVING SPACE,2
    Zone Equipment Component,1,ZONEHVAC:AIRDISTRIBUTIONUNIT,ADU CENTRAL AC AND FURNACE TERMINAL,LIVING SPACE,1,1
-   Zone Equipment Component,2,ZONEHVAC:IDEALLOADSAIRSYSTEM,IDEAL,LIVING SPACE,2,2
+   Zone Equipment Component,2,ZONEHVAC:IDEALLOADSAIRSYSTEM,IDEAL RESIDUAL,LIVING SPACE,2,2
 ! ===============================================================
 ! <#AirLoopHVACs>,<Number of AirLoopHVACs>
  #AirLoopHVACs,1
@@ -274,8 +274,8 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.06.05 10:53
  Non-Parent Node Connection,NODE 10,AIRLOOPHVAC:ZONESPLITTER,CENTRAL AC AND FURNACE ZONE SPLITTER,Outlet,1
  Non-Parent Node Connection,NODE 10,AIRTERMINAL:SINGLEDUCT:CONSTANTVOLUME:NOREHEAT,CENTRAL AC AND FURNACE TERMINAL,Inlet,1
  Non-Parent Node Connection,NODE 8,AIRTERMINAL:SINGLEDUCT:CONSTANTVOLUME:NOREHEAT,CENTRAL AC AND FURNACE TERMINAL,Outlet,1
- Non-Parent Node Connection,NODE 12,ZONEHVAC:IDEALLOADSAIRSYSTEM,IDEAL,Outlet,1
- Non-Parent Node Connection,NODE 11,ZONEHVAC:IDEALLOADSAIRSYSTEM,IDEAL,Inlet,1
+ Non-Parent Node Connection,NODE 12,ZONEHVAC:IDEALLOADSAIRSYSTEM,IDEAL RESIDUAL,Outlet,1
+ Non-Parent Node Connection,NODE 11,ZONEHVAC:IDEALLOADSAIRSYSTEM,IDEAL RESIDUAL,Inlet,1
  Non-Parent Node Connection,NODE 7,AIRLOOPHVAC:ZONEMIXER,CENTRAL AC AND FURNACE ZONE MIXER,Outlet,1
  Non-Parent Node Connection,NODE 9,AIRLOOPHVAC:ZONEMIXER,CENTRAL AC AND FURNACE ZONE MIXER,Inlet,1
  Non-Parent Node Connection,NODE 4,FAN:ONOFF,CENTRAL AC AND FURNACE SUPPLY FAN,Inlet,1

@@ -52,7 +52,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=fridge:InteriorEquipment:Electricity [J]
 
- Meters for 218,MECH VENT BATH FAN:Electric Equipment Electric Energy [J]
+ Meters for 218,MECH VENT HOUSE FAN:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING SPACE [J]
@@ -60,7 +60,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=mech vent:InteriorEquipment:Electricity [J]
 
- Meters for 233,MECH VENT HOUSE FAN:Electric Equipment Electric Energy [J]
+ Meters for 233,MECH VENT HOUSE FAN CFIS:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING SPACE [J]
@@ -68,15 +68,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=mech vent:InteriorEquipment:Electricity [J]
 
- Meters for 236,MECH VENT RANGE FAN:Electric Equipment Electric Energy [J]
-  OnMeter=Electricity:Facility [J]
-  OnMeter=Electricity:Building [J]
-  OnMeter=Electricity:Zone:LIVING SPACE [J]
-  OnMeter=InteriorEquipment:Electricity [J]
-  OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
-  OnMeter=mech vent:InteriorEquipment:Electricity [J]
-
- Meters for 239,MISC PLUG LOADS:Electric Equipment Electric Energy [J]
+ Meters for 236,MISC PLUG LOADS:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING SPACE [J]
@@ -84,7 +76,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=misc plug loads:InteriorEquipment:Electricity [J]
 
- Meters for 254,MISC TV:Electric Equipment Electric Energy [J]
+ Meters for 251,MISC TV:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING SPACE [J]
@@ -92,7 +84,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=misc tv:InteriorEquipment:Electricity [J]
 
- Meters for 269,WHOLE HOUSE FAN:Electric Equipment Electric Energy [J]
+ Meters for 266,WHOLE HOUSE FAN:Electric Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING SPACE [J]
@@ -100,7 +92,7 @@
   OnMeter=InteriorEquipment:Electricity:Zone:LIVING SPACE [J]
   OnMeter=whole house fan:InteriorEquipment:Electricity [J]
 
- Meters for 296,WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy [J]
+ Meters for 297,WATER HEATER EC ADJUSTMENT:Other Equipment Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Building [J]
   OnMeter=Electricity:Zone:LIVING SPACE [J]
@@ -156,13 +148,13 @@
   OnMeter=Cooling:EnergyTransfer:Zone:LIVING SPACE [J]
   OnMeter=General:Cooling:EnergyTransfer [J]
 
- Meters for 723,IDEAL:Zone Ideal Loads Supply Air Total Heating Energy [J]
+ Meters for 723,IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Heating Energy [J]
   OnMeter=DistrictHeating:Facility [J]
   OnMeter=DistrictHeating:HVAC [J]
   OnMeter=Heating:DistrictHeating [J]
   OnMeter=General:Heating:DistrictHeating [J]
 
- Meters for 772,IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy [J]
+ Meters for 772,IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Cooling Energy [J]
   OnMeter=DistrictCooling:Facility [J]
   OnMeter=DistrictCooling:HVAC [J]
   OnMeter=Cooling:DistrictCooling [J]
@@ -214,159 +206,159 @@
   OnMeter=Heating:Electricity [J]
   OnMeter=General:Heating:Electricity [J]
 
- Meters for 1003,Whole Building:Facility Total Purchased Electric Energy [J]
+ Meters for 1004,Whole Building:Facility Total Purchased Electric Energy [J]
   OnMeter=ElectricityPurchased:Facility [J]
   OnMeter=ElectricityPurchased:Plant [J]
   OnMeter=Cogeneration:ElectricityPurchased [J]
   OnMeter=General:Cogeneration:ElectricityPurchased [J]
 
- Meters for 1052,Whole Building:Facility Total Surplus Electric Energy [J]
+ Meters for 1053,Whole Building:Facility Total Surplus Electric Energy [J]
   OnMeter=ElectricitySurplusSold:Facility [J]
   OnMeter=ElectricitySurplusSold:Plant [J]
   OnMeter=Cogeneration:ElectricitySurplusSold [J]
   OnMeter=General:Cogeneration:ElectricitySurplusSold [J]
 
- Meters for 1101,Whole Building:Facility Net Purchased Electric Energy [J]
+ Meters for 1102,Whole Building:Facility Net Purchased Electric Energy [J]
   OnMeter=ElectricityNet:Facility [J]
   OnMeter=ElectricityNet:Plant [J]
   OnMeter=Cogeneration:ElectricityNet [J]
   OnMeter=General:Cogeneration:ElectricityNet [J]
 
- Meters for 1150,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
+ Meters for 1151,PUMP VARIABLE SPEED 1:Pump Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Pumps:Electricity [J]
   OnMeter=General:Pumps:Electricity [J]
 
- Meters for 1189,CLOTHES WASHER:Water Use Equipment Total Volume [m3]
-  OnMeter=Water:Facility [m3]
-  OnMeter=Water:Plant [m3]
-  OnMeter=WaterSystems:Water [m3]
-  OnMeter=clothes washer:WaterSystems:Water [m3]
-
- Meters for 1238,CLOTHES WASHER:Water Use Equipment Mains Water Volume [m3]
-  OnMeter=MainsWater:Facility [m3]
-  OnMeter=MainsWater:Plant [m3]
-  OnMeter=WaterSystems:MainsWater [m3]
-  OnMeter=clothes washer:WaterSystems:MainsWater [m3]
-
- Meters for 1287,CLOTHES WASHER:Water Use Equipment Heating Energy [J]
-  OnMeter=EnergyTransfer:Facility [J]
-  OnMeter=EnergyTransfer:Plant [J]
-  OnMeter=WaterSystems:EnergyTransfer [J]
-  OnMeter=clothes washer:WaterSystems:EnergyTransfer [J]
-
- Meters for 1326,DISHWASHER:Water Use Equipment Total Volume [m3]
-  OnMeter=Water:Facility [m3]
-  OnMeter=Water:Plant [m3]
-  OnMeter=WaterSystems:Water [m3]
-  OnMeter=dishwasher:WaterSystems:Water [m3]
-
- Meters for 1339,DISHWASHER:Water Use Equipment Mains Water Volume [m3]
-  OnMeter=MainsWater:Facility [m3]
-  OnMeter=MainsWater:Plant [m3]
-  OnMeter=WaterSystems:MainsWater [m3]
-  OnMeter=dishwasher:WaterSystems:MainsWater [m3]
-
- Meters for 1352,DISHWASHER:Water Use Equipment Heating Energy [J]
-  OnMeter=EnergyTransfer:Facility [J]
-  OnMeter=EnergyTransfer:Plant [J]
-  OnMeter=WaterSystems:EnergyTransfer [J]
-  OnMeter=dishwasher:WaterSystems:EnergyTransfer [J]
-
- Meters for 1367,DHW FIXTURES:Water Use Equipment Total Volume [m3]
+ Meters for 1190,DHW FIXTURES:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=dhw fixtures:WaterSystems:Water [m3]
 
- Meters for 1380,DHW FIXTURES:Water Use Equipment Mains Water Volume [m3]
+ Meters for 1239,DHW FIXTURES:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=dhw fixtures:WaterSystems:MainsWater [m3]
 
- Meters for 1393,DHW FIXTURES:Water Use Equipment Heating Energy [J]
+ Meters for 1288,DHW FIXTURES:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=dhw fixtures:WaterSystems:EnergyTransfer [J]
 
- Meters for 1408,DHW DISTRIBUTION WASTE:Water Use Equipment Total Volume [m3]
+ Meters for 1327,DHW DISTRIBUTION WASTE:Water Use Equipment Total Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=dhw distribution waste:WaterSystems:Water [m3]
 
- Meters for 1421,DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume [m3]
+ Meters for 1340,DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=dhw distribution waste:WaterSystems:MainsWater [m3]
 
- Meters for 1434,DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy [J]
+ Meters for 1353,DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy [J]
   OnMeter=EnergyTransfer:Facility [J]
   OnMeter=EnergyTransfer:Plant [J]
   OnMeter=WaterSystems:EnergyTransfer [J]
   OnMeter=dhw distribution waste:WaterSystems:EnergyTransfer [J]
 
- Meters for 1447,WATER USE CONNECTIONS 1:Water Use Connections Plant Hot Water Energy [J]
+ Meters for 1368,CLOTHES WASHER:Water Use Equipment Total Volume [m3]
+  OnMeter=Water:Facility [m3]
+  OnMeter=Water:Plant [m3]
+  OnMeter=WaterSystems:Water [m3]
+  OnMeter=clothes washer:WaterSystems:Water [m3]
+
+ Meters for 1381,CLOTHES WASHER:Water Use Equipment Mains Water Volume [m3]
+  OnMeter=MainsWater:Facility [m3]
+  OnMeter=MainsWater:Plant [m3]
+  OnMeter=WaterSystems:MainsWater [m3]
+  OnMeter=clothes washer:WaterSystems:MainsWater [m3]
+
+ Meters for 1394,CLOTHES WASHER:Water Use Equipment Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Plant [J]
+  OnMeter=WaterSystems:EnergyTransfer [J]
+  OnMeter=clothes washer:WaterSystems:EnergyTransfer [J]
+
+ Meters for 1409,DISHWASHER:Water Use Equipment Total Volume [m3]
+  OnMeter=Water:Facility [m3]
+  OnMeter=Water:Plant [m3]
+  OnMeter=WaterSystems:Water [m3]
+  OnMeter=dishwasher:WaterSystems:Water [m3]
+
+ Meters for 1422,DISHWASHER:Water Use Equipment Mains Water Volume [m3]
+  OnMeter=MainsWater:Facility [m3]
+  OnMeter=MainsWater:Plant [m3]
+  OnMeter=WaterSystems:MainsWater [m3]
+  OnMeter=dishwasher:WaterSystems:MainsWater [m3]
+
+ Meters for 1435,DISHWASHER:Water Use Equipment Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Plant [J]
+  OnMeter=WaterSystems:EnergyTransfer [J]
+  OnMeter=dishwasher:WaterSystems:EnergyTransfer [J]
+
+ Meters for 1448,WATER USE CONNECTIONS 1:Water Use Connections Plant Hot Water Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
   OnMeter=General:WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 1499,WATER HEATER:Water Heater Source Side Heat Transfer Energy [J]
+ Meters for 1500,WATER HEATER:Water Heater Source Side Heat Transfer Energy [J]
   OnMeter=PlantLoopHeatingDemand:Facility [J]
   OnMeter=PlantLoopHeatingDemand:Plant [J]
   OnMeter=WaterSystems:PlantLoopHeatingDemand [J]
   OnMeter=General:WaterSystems:PlantLoopHeatingDemand [J]
 
- Meters for 1502,WATER HEATER:Water Heater Electric Energy [J]
+ Meters for 1503,WATER HEATER:Water Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 1529,WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy [J]
+ Meters for 1530,WATER HEATER:Water Heater Off Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 1532,WATER HEATER:Water Heater On Cycle Parasitic Electric Energy [J]
+ Meters for 1533,WATER HEATER:Water Heater On Cycle Parasitic Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=WaterSystems:Electricity [J]
   OnMeter=General:WaterSystems:Electricity [J]
 
- Meters for 1534,WATER HEATER:Water Heater Water Volume [m3]
+ Meters for 1535,WATER HEATER:Water Heater Water Volume [m3]
   OnMeter=Water:Facility [m3]
   OnMeter=Water:Plant [m3]
   OnMeter=WaterSystems:Water [m3]
   OnMeter=General:WaterSystems:Water [m3]
 
- Meters for 1547,WATER HEATER:Water Heater Mains Water Volume [m3]
+ Meters for 1548,WATER HEATER:Water Heater Mains Water Volume [m3]
   OnMeter=MainsWater:Facility [m3]
   OnMeter=MainsWater:Plant [m3]
   OnMeter=WaterSystems:MainsWater [m3]
   OnMeter=General:WaterSystems:MainsWater [m3]
 
- Meters for 1560,CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Crankcase Heater Electric Energy [J]
+ Meters for 1561,CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Crankcase Heater Electric Energy [J]
   OnMeter=Electricity:Facility [J]
   OnMeter=Electricity:Plant [J]
   OnMeter=Cooling:Electricity [J]
   OnMeter=General:Cooling:Electricity [J]
 
- Meters for 1575,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+ Meters for 1573,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1600,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1598,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
- Meters for 1601,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+ Meters for 1599,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
   OnMeter=Carbon Equivalent:Facility [kg]
   OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
 
@@ -378,9 +370,8 @@
   COOKING RANGE:Electric Equipment Electric Energy
   DISHWASHER:Electric Equipment Electric Energy
   FRIDGE:Electric Equipment Electric Energy
-  MECH VENT BATH FAN:Electric Equipment Electric Energy
   MECH VENT HOUSE FAN:Electric Equipment Electric Energy
-  MECH VENT RANGE FAN:Electric Equipment Electric Energy
+  MECH VENT HOUSE FAN CFIS:Electric Equipment Electric Energy
   MISC PLUG LOADS:Electric Equipment Electric Energy
   MISC TV:Electric Equipment Electric Energy
   WHOLE HOUSE FAN:Electric Equipment Electric Energy
@@ -408,9 +399,8 @@
   COOKING RANGE:Electric Equipment Electric Energy
   DISHWASHER:Electric Equipment Electric Energy
   FRIDGE:Electric Equipment Electric Energy
-  MECH VENT BATH FAN:Electric Equipment Electric Energy
   MECH VENT HOUSE FAN:Electric Equipment Electric Energy
-  MECH VENT RANGE FAN:Electric Equipment Electric Energy
+  MECH VENT HOUSE FAN CFIS:Electric Equipment Electric Energy
   MISC PLUG LOADS:Electric Equipment Electric Energy
   MISC TV:Electric Equipment Electric Energy
   WHOLE HOUSE FAN:Electric Equipment Electric Energy
@@ -423,9 +413,8 @@
   COOKING RANGE:Electric Equipment Electric Energy
   DISHWASHER:Electric Equipment Electric Energy
   FRIDGE:Electric Equipment Electric Energy
-  MECH VENT BATH FAN:Electric Equipment Electric Energy
   MECH VENT HOUSE FAN:Electric Equipment Electric Energy
-  MECH VENT RANGE FAN:Electric Equipment Electric Energy
+  MECH VENT HOUSE FAN CFIS:Electric Equipment Electric Energy
   MISC PLUG LOADS:Electric Equipment Electric Energy
   MISC TV:Electric Equipment Electric Energy
   WHOLE HOUSE FAN:Electric Equipment Electric Energy
@@ -446,9 +435,8 @@
   COOKING RANGE:Electric Equipment Electric Energy
   DISHWASHER:Electric Equipment Electric Energy
   FRIDGE:Electric Equipment Electric Energy
-  MECH VENT BATH FAN:Electric Equipment Electric Energy
   MECH VENT HOUSE FAN:Electric Equipment Electric Energy
-  MECH VENT RANGE FAN:Electric Equipment Electric Energy
+  MECH VENT HOUSE FAN CFIS:Electric Equipment Electric Energy
   MISC PLUG LOADS:Electric Equipment Electric Energy
   MISC TV:Electric Equipment Electric Energy
   WHOLE HOUSE FAN:Electric Equipment Electric Energy
@@ -460,9 +448,8 @@
   COOKING RANGE:Electric Equipment Electric Energy
   DISHWASHER:Electric Equipment Electric Energy
   FRIDGE:Electric Equipment Electric Energy
-  MECH VENT BATH FAN:Electric Equipment Electric Energy
   MECH VENT HOUSE FAN:Electric Equipment Electric Energy
-  MECH VENT RANGE FAN:Electric Equipment Electric Energy
+  MECH VENT HOUSE FAN CFIS:Electric Equipment Electric Energy
   MISC PLUG LOADS:Electric Equipment Electric Energy
   MISC TV:Electric Equipment Electric Energy
   WHOLE HOUSE FAN:Electric Equipment Electric Energy
@@ -484,9 +471,8 @@
   FRIDGE:Electric Equipment Electric Energy
 
  For Meter=mech vent:InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
-  MECH VENT BATH FAN:Electric Equipment Electric Energy
   MECH VENT HOUSE FAN:Electric Equipment Electric Energy
-  MECH VENT RANGE FAN:Electric Equipment Electric Energy
+  MECH VENT HOUSE FAN CFIS:Electric Equipment Electric Energy
 
  For Meter=misc plug loads:InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
   MISC PLUG LOADS:Electric Equipment Electric Energy
@@ -509,10 +495,10 @@
   LIVING SPACE:Zone Air System Sensible Cooling Energy
   CENTRAL AC AND FURNACE HTG COIL:Heating Coil Heating Energy
   CENTRAL AC AND FURNACE CLG COIL:Cooling Coil Total Cooling Energy
-  CLOTHES WASHER:Water Use Equipment Heating Energy
-  DISHWASHER:Water Use Equipment Heating Energy
   DHW FIXTURES:Water Use Equipment Heating Energy
   DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy
+  CLOTHES WASHER:Water Use Equipment Heating Energy
+  DISHWASHER:Water Use Equipment Heating Energy
 
  For Meter=EnergyTransfer:Building [J], ResourceType=EnergyTransfer, Group=Building, contents are:
   ATTIC - UNVENTED:Zone Air System Sensible Heating Energy
@@ -573,28 +559,28 @@
   LIVING SPACE:Zone Air System Sensible Cooling Energy
 
  For Meter=DistrictHeating:Facility [J], ResourceType=DistrictHeating, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Heating Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Heating Energy
 
  For Meter=DistrictHeating:HVAC [J], ResourceType=DistrictHeating, Group=HVAC, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Heating Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Heating Energy
 
  For Meter=Heating:DistrictHeating [J], ResourceType=DistrictHeating, EndUse=Heating, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Heating Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Heating Energy
 
  For Meter=General:Heating:DistrictHeating [J], ResourceType=DistrictHeating, EndUse=Heating, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Heating Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Heating Energy
 
  For Meter=DistrictCooling:Facility [J], ResourceType=DistrictCooling, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Cooling Energy
 
  For Meter=DistrictCooling:HVAC [J], ResourceType=DistrictCooling, Group=HVAC, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Cooling Energy
 
  For Meter=Cooling:DistrictCooling [J], ResourceType=DistrictCooling, EndUse=Cooling, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Cooling Energy
 
  For Meter=General:Cooling:DistrictCooling [J], ResourceType=DistrictCooling, EndUse=Cooling, contents are:
-  IDEAL:Zone Ideal Loads Supply Air Total Cooling Energy
+  IDEAL RESIDUAL:Zone Ideal Loads Supply Air Total Cooling Energy
 
  For Meter=Electricity:HVAC [J], ResourceType=Electricity, Group=HVAC, contents are:
   CENTRAL AC AND FURNACE SUPPLY FAN:Fan Electric Energy
@@ -700,82 +686,64 @@
   PUMP VARIABLE SPEED 1:Pump Electric Energy
 
  For Meter=Water:Facility [m3], ResourceType=Water, contents are:
-  CLOTHES WASHER:Water Use Equipment Total Volume
-  DISHWASHER:Water Use Equipment Total Volume
   DHW FIXTURES:Water Use Equipment Total Volume
   DHW DISTRIBUTION WASTE:Water Use Equipment Total Volume
+  CLOTHES WASHER:Water Use Equipment Total Volume
+  DISHWASHER:Water Use Equipment Total Volume
   WATER HEATER:Water Heater Water Volume
 
  For Meter=Water:Plant [m3], ResourceType=Water, Group=Plant, contents are:
-  CLOTHES WASHER:Water Use Equipment Total Volume
-  DISHWASHER:Water Use Equipment Total Volume
   DHW FIXTURES:Water Use Equipment Total Volume
   DHW DISTRIBUTION WASTE:Water Use Equipment Total Volume
+  CLOTHES WASHER:Water Use Equipment Total Volume
+  DISHWASHER:Water Use Equipment Total Volume
   WATER HEATER:Water Heater Water Volume
 
  For Meter=WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
-  CLOTHES WASHER:Water Use Equipment Total Volume
-  DISHWASHER:Water Use Equipment Total Volume
   DHW FIXTURES:Water Use Equipment Total Volume
   DHW DISTRIBUTION WASTE:Water Use Equipment Total Volume
-  WATER HEATER:Water Heater Water Volume
-
- For Meter=clothes washer:WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
   CLOTHES WASHER:Water Use Equipment Total Volume
-
- For Meter=MainsWater:Facility [m3], ResourceType=MainsWater, contents are:
-  CLOTHES WASHER:Water Use Equipment Mains Water Volume
-  DISHWASHER:Water Use Equipment Mains Water Volume
-  DHW FIXTURES:Water Use Equipment Mains Water Volume
-  DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume
-  WATER HEATER:Water Heater Mains Water Volume
-
- For Meter=MainsWater:Plant [m3], ResourceType=MainsWater, Group=Plant, contents are:
-  CLOTHES WASHER:Water Use Equipment Mains Water Volume
-  DISHWASHER:Water Use Equipment Mains Water Volume
-  DHW FIXTURES:Water Use Equipment Mains Water Volume
-  DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume
-  WATER HEATER:Water Heater Mains Water Volume
-
- For Meter=WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
-  CLOTHES WASHER:Water Use Equipment Mains Water Volume
-  DISHWASHER:Water Use Equipment Mains Water Volume
-  DHW FIXTURES:Water Use Equipment Mains Water Volume
-  DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume
-  WATER HEATER:Water Heater Mains Water Volume
-
- For Meter=clothes washer:WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
-  CLOTHES WASHER:Water Use Equipment Mains Water Volume
-
- For Meter=EnergyTransfer:Plant [J], ResourceType=EnergyTransfer, Group=Plant, contents are:
-  CLOTHES WASHER:Water Use Equipment Heating Energy
-  DISHWASHER:Water Use Equipment Heating Energy
-  DHW FIXTURES:Water Use Equipment Heating Energy
-  DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy
-
- For Meter=WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
-  CLOTHES WASHER:Water Use Equipment Heating Energy
-  DISHWASHER:Water Use Equipment Heating Energy
-  DHW FIXTURES:Water Use Equipment Heating Energy
-  DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy
-
- For Meter=clothes washer:WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
-  CLOTHES WASHER:Water Use Equipment Heating Energy
-
- For Meter=dishwasher:WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
   DISHWASHER:Water Use Equipment Total Volume
-
- For Meter=dishwasher:WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
-  DISHWASHER:Water Use Equipment Mains Water Volume
-
- For Meter=dishwasher:WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
-  DISHWASHER:Water Use Equipment Heating Energy
+  WATER HEATER:Water Heater Water Volume
 
  For Meter=dhw fixtures:WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
   DHW FIXTURES:Water Use Equipment Total Volume
 
+ For Meter=MainsWater:Facility [m3], ResourceType=MainsWater, contents are:
+  DHW FIXTURES:Water Use Equipment Mains Water Volume
+  DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume
+  CLOTHES WASHER:Water Use Equipment Mains Water Volume
+  DISHWASHER:Water Use Equipment Mains Water Volume
+  WATER HEATER:Water Heater Mains Water Volume
+
+ For Meter=MainsWater:Plant [m3], ResourceType=MainsWater, Group=Plant, contents are:
+  DHW FIXTURES:Water Use Equipment Mains Water Volume
+  DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume
+  CLOTHES WASHER:Water Use Equipment Mains Water Volume
+  DISHWASHER:Water Use Equipment Mains Water Volume
+  WATER HEATER:Water Heater Mains Water Volume
+
+ For Meter=WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
+  DHW FIXTURES:Water Use Equipment Mains Water Volume
+  DHW DISTRIBUTION WASTE:Water Use Equipment Mains Water Volume
+  CLOTHES WASHER:Water Use Equipment Mains Water Volume
+  DISHWASHER:Water Use Equipment Mains Water Volume
+  WATER HEATER:Water Heater Mains Water Volume
+
  For Meter=dhw fixtures:WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
   DHW FIXTURES:Water Use Equipment Mains Water Volume
+
+ For Meter=EnergyTransfer:Plant [J], ResourceType=EnergyTransfer, Group=Plant, contents are:
+  DHW FIXTURES:Water Use Equipment Heating Energy
+  DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy
+  CLOTHES WASHER:Water Use Equipment Heating Energy
+  DISHWASHER:Water Use Equipment Heating Energy
+
+ For Meter=WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
+  DHW FIXTURES:Water Use Equipment Heating Energy
+  DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy
+  CLOTHES WASHER:Water Use Equipment Heating Energy
+  DISHWASHER:Water Use Equipment Heating Energy
 
  For Meter=dhw fixtures:WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
   DHW FIXTURES:Water Use Equipment Heating Energy
@@ -788,6 +756,24 @@
 
  For Meter=dhw distribution waste:WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
   DHW DISTRIBUTION WASTE:Water Use Equipment Heating Energy
+
+ For Meter=clothes washer:WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
+  CLOTHES WASHER:Water Use Equipment Total Volume
+
+ For Meter=clothes washer:WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
+  CLOTHES WASHER:Water Use Equipment Mains Water Volume
+
+ For Meter=clothes washer:WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
+  CLOTHES WASHER:Water Use Equipment Heating Energy
+
+ For Meter=dishwasher:WaterSystems:Water [m3], ResourceType=Water, EndUse=WaterSystems, contents are:
+  DISHWASHER:Water Use Equipment Total Volume
+
+ For Meter=dishwasher:WaterSystems:MainsWater [m3], ResourceType=MainsWater, EndUse=WaterSystems, contents are:
+  DISHWASHER:Water Use Equipment Mains Water Volume
+
+ For Meter=dishwasher:WaterSystems:EnergyTransfer [J], ResourceType=EnergyTransfer, EndUse=WaterSystems, contents are:
+  DISHWASHER:Water Use Equipment Heating Energy
 
  For Meter=PlantLoopHeatingDemand:Facility [J], ResourceType=PlantLoopHeatingDemand, contents are:
   WATER USE CONNECTIONS 1:Water Use Connections Plant Hot Water Energy
