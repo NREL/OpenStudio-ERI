@@ -109,6 +109,7 @@ The following building features/technologies are available for modeling:
   - Refrigerator
   - Cooking Range/Oven
   
+- Dehumidifiers
 - Lighting
 - Ceiling Fans
 

@@ -79,7 +79,7 @@ Current end use/fuel type combinations are:
    Electricity: Mech Vent Precooling (MBtu)         Shared ventilation preconditioning system.
    Electricity: Whole House Fan (MBtu)
    Electricity: Refrigerator (MBtu)
-   Electricity: Dehumidifier (MBtu)                 Currently unused for ERI.
+   Electricity: Dehumidifier (MBtu)
    Electricity: Dishwasher (MBtu)
    Electricity: Clothes Washer (MBtu)
    Electricity: Clothes Dryer (MBtu)

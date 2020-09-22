@@ -334,7 +334,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
                       rated_output[:oilClothesDryer] + rated_output[:oilRangeOven] +
                       rated_output[:propaneClothesDryer] + rated_output[:propaneRangeOven] +
                       rated_output[:woodcordClothesDryer] + rated_output[:woodcordRangeOven] +
-                      rated_output[:woodpelletsClothesDryer] + rated_output[:woodpelletsRangeOven])
+                      rated_output[:woodpelletsClothesDryer] + rated_output[:woodpelletsRangeOven] +
+                      rated_output[:elecDehumidifier])
 
   results[:reul_la] = (ref_output[:elecLightingInterior] + ref_output[:elecLightingExterior] +
                        ref_output[:elecLightingGarage] + ref_output[:elecRefrigerator] +
@@ -346,7 +347,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
                        ref_output[:oilClothesDryer] + ref_output[:oilRangeOven] +
                        ref_output[:propaneClothesDryer] + ref_output[:propaneRangeOven] +
                        ref_output[:woodcordClothesDryer] + ref_output[:woodcordRangeOven] +
-                       ref_output[:woodpelletsClothesDryer] + ref_output[:woodpelletsRangeOven])
+                       ref_output[:woodpelletsClothesDryer] + ref_output[:woodpelletsRangeOven] +
+                       ref_output[:elecDehumidifier])
 
   # === #
   # ERI #
