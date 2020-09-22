@@ -44,12 +44,12 @@ HPXML Software Info
 -------------------
 
 The version of the ERI calculation to be run is specified inside the HPXML file itself at ``/HPXML/SoftwareInfo/extension/ERICalculation/Version``. 
-For example, a value of "2014AE" tells the workflow to use ANSI/RESNET/ICC© 301-2014 with both Addendum A (Amendment on Domestic Hot Water Systems) and Addendum E (House Size Index Adjustment Factors) included.
+For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
 A value of "latest" can be used to always point to the latest version available.
 
 .. note:: 
 
-  Valid choices for ERI version can be looked up in the `ERI Use Case <https://github.com/NREL/OpenStudio-ERI/blob/master/rulesets/301EnergyRatingIndexRuleset/resources/301validator.rb>`_.
+  Valid choices for ERI version can be looked up in the Schematron document (``rulesets/301EnergyRatingIndexRuleset/resources/301validator.xml``).
 
 HPXML Building Details
 ----------------------
@@ -792,6 +792,10 @@ HPXML Dehumidifier
 A single ``Appliance/Dehumidifier`` element may be specified.
 The ``Capacity`` (pints/day) and ``FractionDehumidificationLoadServed`` (0-1) must be provided.
 The efficiency of the dehumidifier can either be entered as an ``IntegratedEnergyFactor`` or ``EnergyFactor``.
+
+.. note::
+
+  Dehumidifiers only affect ERI scores if Version 2019AB or newer is used, as dehumidifiers were incorporated into the ERI calculation in 301-2019 Addendum B.
 
 HPXML Lighting
 --------------
