@@ -472,6 +472,8 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   worksheet_out << ['Ref L&A dWash', ref_output[:elecDishwasher].round(2)]
   worksheet_out << ['Ref L&A cWash', ref_output[:elecClothesWasher].round(2)]
   worksheet_out << ['Ref L&A mechV', ref_output[:elecMechVent].round(2)]
+  worksheet_out << ['Ref L&A ceilFan', ref_output[:elecCeilingFan].round(2)]
+  worksheet_out << ['Ref L&A dehumid', ref_output[:elecDehumidifier].round(2)]
   worksheet_out << ['Ref L&A total', results[:reul_la].round(2)]
   CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
 end
