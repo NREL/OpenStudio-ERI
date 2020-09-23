@@ -732,12 +732,6 @@ class EnergyRatingIndexTest < Minitest::Test
       end
     end
 
-    # Clean up
-    ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
-      in_epw = File.join(rundir, design, 'in.epw')
-      File.delete(in_epw) if File.exist? in_epw
-    end
-
     return hpxmls, csvs, runtime
   end
 
@@ -783,10 +777,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
     csv_path = File.join(rundir, 'results_annual.csv')
     assert(File.exist?(csv_path))
-
-    # Clean up
-    in_epw = File.join(rundir, 'in.epw')
-    File.delete(in_epw) if File.exist? in_epw
 
     return sql_path, csv_path, results[:sim_time]
   end
