@@ -59,6 +59,7 @@ class EnergyRatingIndex301Ruleset
     set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
+    set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
     set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
 
     # Lighting
@@ -109,6 +110,7 @@ class EnergyRatingIndex301Ruleset
     set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
     set_appliances_dishwasher_rated(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_rated(orig_hpxml, new_hpxml)
+    set_appliances_dehumidifier_rated(orig_hpxml, new_hpxml)
     set_appliances_cooking_range_oven_rated(orig_hpxml, new_hpxml)
 
     # Lighting
@@ -161,6 +163,7 @@ class EnergyRatingIndex301Ruleset
     set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)
     set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
+    set_appliances_dehumidifier_iad(orig_hpxml, new_hpxml)
     set_appliances_cooking_range_oven_iad(orig_hpxml, new_hpxml)
 
     # Lighting
@@ -2003,6 +2006,46 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     new_hpxml.refrigerators[0].location = HPXML::LocationLivingSpace
+  end
+
+  def self.set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
+    return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
+    return if orig_hpxml.dehumidifiers.size == 0
+
+    dehumidifier = orig_hpxml.dehumidifiers[0]
+    if dehumidifier.capacity <= 25.0
+      ief = 0.79
+    elsif dehumidifier.capacity <= 35.0
+      ief = 0.95
+    elsif dehumidifier.capacity <= 54.0
+      ief = 1.04
+    elsif dehumidifier.capacity < 75.0
+      ief = 1.20
+    else
+      ief = 1.82
+    end
+    new_hpxml.dehumidifiers.add(id: 'Dehumidifier',
+                                capacity: dehumidifier.capacity,
+                                integrated_energy_factor: ief,
+                                rh_setpoint: 0.60,
+                                fraction_served: dehumidifier.fraction_served)
+  end
+
+  def self.set_appliances_dehumidifier_rated(orig_hpxml, new_hpxml)
+    return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
+    return if orig_hpxml.dehumidifiers.size == 0
+
+    dehumidifier = orig_hpxml.dehumidifiers[0]
+    new_hpxml.dehumidifiers.add(id: 'Dehumidifier',
+                                capacity: dehumidifier.capacity,
+                                energy_factor: dehumidifier.energy_factor,
+                                integrated_energy_factor: dehumidifier.integrated_energy_factor,
+                                rh_setpoint: 0.60,
+                                fraction_served: dehumidifier.fraction_served)
+  end
+
+  def self.set_appliances_dehumidifier_iad(orig_hpxml, new_hpxml)
+    # nop
   end
 
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)

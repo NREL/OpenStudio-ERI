@@ -185,6 +185,40 @@ class ERIApplianceTest < MiniTest::Test
     end
   end
 
+  def test_appliances_dehumidifier
+    hpxml_name = 'base-appliances-dehumidifier-50percent.xml'
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_dehumidifier(hpxml, [40.0, nil, 1.04, 0.6, 0.5])
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_dehumidifier(hpxml, [40.0, 1.8, nil, 0.6, 0.5])
+
+    # IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_dehumidifier(hpxml)
+    end
+
+    # Test w/ 301-2019 pre-Addendum B
+    # No credit/penalty for dehumidifiers
+    hpxml_name = _change_eri_version(hpxml_name, '2019A')
+
+    # Reference Home, Rated Home, IAD, IAD Reference
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIRatedHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_dehumidifier(hpxml)
+    end
+  end
+
   def test_shared_clothes_washers_dryers
     hpxml_name = 'base-dhw-shared-laundry-room.xml'
     [14, 15].each do |ratio_of_units_to_appliance|
@@ -488,6 +522,26 @@ class ERIApplianceTest < MiniTest::Test
       assert_in_epsilon(expected_annual_therm, cook_annual_therm, 0.02)
       assert_in_epsilon(expected_sens_btu, cook_frac_sens * btu, 0.01)
       assert_in_epsilon(expected_lat_btu, cook_frac_lat * btu, 0.01)
+    end
+  end
+
+  def _check_dehumidifier(hpxml, *dehumidifiers)
+    assert_equal(dehumidifiers.size, hpxml.dehumidifiers.size)
+    hpxml.dehumidifiers.each_with_index do |dehumidifier, idx|
+      capacity, ef, ief, rh_setpoint, frac_served = dehumidifiers[idx]
+      assert_equal(capacity, dehumidifier.capacity)
+      if ef.nil?
+        assert_nil(dehumidifier.energy_factor)
+      else
+        assert_equal(ef, dehumidifier.energy_factor)
+      end
+      if ief.nil?
+        assert_nil(dehumidifier.integrated_energy_factor)
+      else
+        assert_equal(ief, dehumidifier.integrated_energy_factor)
+      end
+      assert_equal(rh_setpoint, dehumidifier.rh_setpoint)
+      assert_equal(frac_served, dehumidifier.fraction_served)
     end
   end
 end

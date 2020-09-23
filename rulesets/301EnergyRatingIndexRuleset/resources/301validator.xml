@@ -6,7 +6,7 @@
   <sch:pattern name='[Root]'>
     <sch:rule context='/h:HPXML'>
       <sch:assert role='ERROR' test='count(h:XMLTransactionHeaderInformation) = 1'>Expected 1 element(s) for xpath: XMLTransactionHeaderInformation</sch:assert> <!-- See [XMLTransactionHeaderInformation] -->
-      <sch:assert role='ERROR' test='count(h:SoftwareInfo/h:extension/h:ERICalculation[h:Version[text()="latest" or text()="2019A" or text()="2019" or text()="2014ADEGL" or text()="2014ADEG" or text()="2014ADE" or text()="2014AD" or text()="2014A" or text()="2014"]]) = 1'>Expected 1 element(s) for xpath: SoftwareInfo/extension/ERICalculation[Version[text()="latest" or text()="2019A" or text()="2019" or text()="2014ADEGL" or text()="2014ADEG" or text()="2014ADE" or text()="2014AD" or text()="2014A" or text()="2014"]]</sch:assert> <!-- Choose version of 301 standard and addenda (e.g., A, D, E, G) -->
+      <sch:assert role='ERROR' test='count(h:SoftwareInfo/h:extension/h:ERICalculation[h:Version[text()="latest" or text()="2019AB" or text()="2019A" or text()="2019" or text()="2014ADEGL" or text()="2014ADEG" or text()="2014ADE" or text()="2014AD" or text()="2014A" or text()="2014"]]) = 1'>Expected 1 element(s) for xpath: SoftwareInfo/extension/ERICalculation[Version[text()="latest" or text()="2019A" or text()="2019" or text()="2014ADEGL" or text()="2014ADEG" or text()="2014ADE" or text()="2014AD" or text()="2014A" or text()="2014"]]</sch:assert> <!-- Choose version of 301 standard and addenda (e.g., A, D, E, G) -->
       <sch:assert role='ERROR' test='count(h:Building) = 1'>Expected 1 element(s) for xpath: Building</sch:assert>
       <sch:assert role='ERROR' test='count(h:Building/h:BuildingID) = 1'>Expected 1 element(s) for xpath: Building/BuildingID</sch:assert>
       <sch:assert role='ERROR' test='count(h:Building/h:ProjectStatus/h:EventType) = 1'>Expected 1 element(s) for xpath: Building/ProjectStatus/EventType</sch:assert>
@@ -57,6 +57,7 @@
       <sch:assert role='ERROR' test='count(h:Appliances/h:ClothesDryer) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Appliances/ClothesDryer</sch:assert> <!-- See [ClothesDryer] -->
       <sch:assert role='ERROR' test='count(h:Appliances/h:Dishwasher) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Appliances/Dishwasher</sch:assert> <!-- See [Dishwasher] -->
       <sch:assert role='ERROR' test='count(h:Appliances/h:Refrigerator) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Appliances/Refrigerator</sch:assert> <!-- See [Refrigerator] -->
+      <sch:assert role='ERROR' test='count(h:Appliances/h:Dehumidifier) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Appliances/Dehumidifier</sch:assert> <!-- See [Dehumidifier] -->
       <sch:assert role='ERROR' test='count(h:Appliances/h:CookingRange) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Appliances/CookingRange</sch:assert> <!-- See [CookingRange] -->
       <sch:assert role='ERROR' test='count(h:Appliances/h:Oven) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Appliances/Oven</sch:assert> <!-- See [Oven] -->
       <sch:assert role='ERROR' test='count(h:Lighting) = 1'>Expected 1 element(s) for xpath: Lighting</sch:assert> <!-- See [Lighting] -->
@@ -946,6 +947,15 @@
       <sch:assert role='ERROR' test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert>
       <sch:assert role='ERROR' test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:RatedAnnualkWh) = 1'>Expected 1 element(s) for xpath: RatedAnnualkWh</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[Dehumidifier]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:Dehumidifier'>
+      <sch:assert role='ERROR' test='count(h:SystemIdentifier) = 1'>Expected 1 element(s) for xpath: SystemIdentifier</sch:assert>
+      <sch:assert role='ERROR' test='count(h:Capacity) = 1'>Expected 1 element(s) for xpath: Capacity</sch:assert> <!-- pints/day -->
+      <sch:assert role='ERROR' test='count(h:EnergyFactor) + count(h:IntegratedEnergyFactor) = 1'>Expected 1 element(s) for xpath: EnergyFactor | IntegratedEnergyFactor</sch:assert> <!-- liters/kWh -->
+      <sch:assert role='ERROR' test='count(h:FractionDehumidificationLoadServed) = 1'>Expected 1 element(s) for xpath: FractionDehumidificationLoadServed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
