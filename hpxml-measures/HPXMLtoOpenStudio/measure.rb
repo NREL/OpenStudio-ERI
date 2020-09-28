@@ -1009,6 +1009,7 @@ class OSModel
       if has_radiant_barrier
         radiant_barrier_grade = roof.radiant_barrier_grade
       end
+      # FUTURE: Create Constructions.get_air_film(surface) method; use in measure.rb and hpxml_translator_test.rb
       inside_film = Material.AirFilmRoof(Geometry.get_roof_pitch([surfaces[0]]))
       outside_film = Material.AirFilmOutside
       mat_roofing = Material.RoofMaterial(roof.roof_type, emitt, solar_abs)
@@ -1697,11 +1698,11 @@ class OSModel
 
   def self.add_interior_shading_schedule(runner, model, weather)
     heating_season, cooling_season = HVAC.get_default_heating_and_cooling_seasons(weather)
-    @clg_season_sch = MonthWeekdayWeekendSchedule.new(model, 'cooling season schedule', Array.new(24, 1), Array.new(24, 1), cooling_season, 1.0, 1.0, true, true, Constants.ScheduleTypeLimitsFraction)
+    @clg_season_sch = MonthWeekdayWeekendSchedule.new(model, 'cooling season schedule', Array.new(24, 1), Array.new(24, 1), cooling_season, Constants.ScheduleTypeLimitsFraction)
 
     # Create heating season as opposite of cooling season (i.e., with overlap months)
     non_cooling_season = cooling_season.map { |m| (m - 1).abs }
-    @htg_season_sch = MonthWeekdayWeekendSchedule.new(model, 'heating season schedule', Array.new(24, 1), Array.new(24, 1), non_cooling_season, 1.0, 1.0, true, true, Constants.ScheduleTypeLimitsFraction)
+    @htg_season_sch = MonthWeekdayWeekendSchedule.new(model, 'heating season schedule', Array.new(24, 1), Array.new(24, 1), non_cooling_season, Constants.ScheduleTypeLimitsFraction)
 
     @clg_ssn_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Schedule Value')
     @clg_ssn_sensor.setName('cool_season')
@@ -1794,7 +1795,9 @@ class OSModel
         surfaces << surface
 
         # Apply construction
-        Constructions.apply_door(runner, model, [sub_surface], 'Window', window.ufactor)
+        inside_film = Material.AirFilmVertical
+        outside_film = Material.AirFilmVertical
+        Constructions.apply_door(runner, model, [sub_surface], 'Window', window.ufactor, inside_film, outside_film)
       end
     end
 
@@ -1873,7 +1876,13 @@ class OSModel
 
       # Apply construction
       ufactor = 1.0 / door.r_value
-      Constructions.apply_door(runner, model, [sub_surface], 'Door', ufactor)
+      inside_film = Material.AirFilmVertical
+      if door.wall.is_exterior
+        outside_film = Material.AirFilmOutside
+      else
+        outside_film = Material.AirFilmVertical
+      end
+      Constructions.apply_door(runner, model, [sub_surface], 'Door', ufactor, inside_film, outside_film)
     end
 
     apply_adiabatic_construction(runner, model, surfaces, 'wall')
@@ -2416,7 +2425,7 @@ class OSModel
     shelter_coef = @hpxml.site.shelter_coefficient
     @infil_volume = air_infils.select { |i| !i.infiltration_volume.nil? }[0].infiltration_volume
     infil_height = @hpxml.inferred_infiltration_height(@infil_volume)
-    Airflow.apply(model, runner, weather, spaces, air_infils, @hpxml.ventilation_fans,
+    Airflow.apply(model, runner, weather, spaces, air_infils, @hpxml.ventilation_fans, @hpxml.clothes_dryers, @nbeds,
                   duct_systems, @infil_volume, infil_height, open_window_area,
                   @clg_ssn_sensor, @min_neighbor_distance, vented_attic, vented_crawl,
                   site_type, shelter_coef, @hpxml.building_construction.has_flue_or_chimney, @hvac_map, @eri_version,
@@ -2715,6 +2724,7 @@ class OSModel
     natvent_flow_actuators = []
     mechvent_flow_actuators = []
     whf_flow_actuators = []
+    cd_flow_actuators = []
 
     model.getEnergyManagementSystemActuators.each do |actuator|
       next unless (actuator.actuatedComponentType == 'Zone Infiltration') && (actuator.actuatedComponentControlType == 'Air Exchange Flow Rate')
@@ -2725,15 +2735,18 @@ class OSModel
         natvent_flow_actuators << actuator
       elsif actuator.name.to_s.start_with? Constants.ObjectNameWholeHouseFan.gsub(' ', '_')
         whf_flow_actuators << actuator
+      elsif actuator.name.to_s.start_with? Constants.ObjectNameClothesDryerExhaust.gsub(' ', '_')
+        cd_flow_actuators << actuator
       end
     end
-    if (infil_flow_actuators.size != 1) || (natvent_flow_actuators.size != 1) || (whf_flow_actuators.size != 1)
+    if (infil_flow_actuators.size != 1) || (natvent_flow_actuators.size != 1) || (whf_flow_actuators.size != 1) || (cd_flow_actuators.size != 1)
       fail 'Could not find actuator for component loads.'
     end
 
     infil_flow_actuator = infil_flow_actuators[0]
     natvent_flow_actuator = natvent_flow_actuators[0]
     whf_flow_actuator = whf_flow_actuators[0]
+    cd_flow_actuator = cd_flow_actuators[0]
 
     # EMS Sensors: Ducts
 
@@ -2911,7 +2924,7 @@ class OSModel
       intgains_dhw_sensors[dhw_sensor] = [offcycle_loss, oncycle_loss, dhw_rtf_sensor]
     end
 
-    nonsurf_names = ['intgains', 'infil', 'mechvent', 'natvent', 'whf', 'ducts']
+    nonsurf_names = ['intgains', 'infil', 'mechvent', 'natvent', 'whf', 'ducts', 'cd']
 
     # EMS program
     program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
@@ -2951,16 +2964,18 @@ class OSModel
     end
 
     # EMS program: Infiltration, Natural Ventilation, Mechanical Ventilation, Ducts
-    program.addLine("Set hr_airflow_rate = #{infil_flow_actuator.name} + #{natvent_flow_actuator.name} + #{whf_flow_actuator.name}")
+    program.addLine("Set hr_airflow_rate = #{infil_flow_actuator.name} + #{natvent_flow_actuator.name} + #{whf_flow_actuator.name} + #{cd_flow_actuator.name}")
     program.addLine('If hr_airflow_rate > 0')
     program.addLine("  Set hr_infil = (#{air_loss_sensor.name} - #{air_gain_sensor.name}) * #{infil_flow_actuator.name} / hr_airflow_rate") # Airflow heat attributed to infiltration
     program.addLine("  Set hr_natvent = (#{air_loss_sensor.name} - #{air_gain_sensor.name}) * #{natvent_flow_actuator.name} / hr_airflow_rate") # Airflow heat attributed to natural ventilation
     program.addLine("  Set hr_whf = (#{air_loss_sensor.name} - #{air_gain_sensor.name}) * #{whf_flow_actuator.name} / hr_airflow_rate") # Airflow heat attributed to whole house fan
+    program.addLine("  Set hr_cd = ((#{air_loss_sensor.name} - #{air_gain_sensor.name}) * #{cd_flow_actuator.name} / hr_airflow_rate)") # Airflow heat attributed to clothes dryer exhaust
     program.addLine('Else')
     program.addLine('  Set hr_infil = 0')
     program.addLine('  Set hr_natvent = 0')
     program.addLine('  Set hr_whf = 0')
     program.addLine('  Set hr_mechvent = 0')
+    program.addLine('  Set hr_cd = 0')
     program.addLine('EndIf')
     program.addLine('Set hr_mechvent = 0')
     mechvent_sensors.each do |sensor|
@@ -3483,8 +3498,7 @@ class OSModel
       # Create E+ other side coefficient object
       otherside_object = OpenStudio::Model::SurfacePropertyOtherSideCoefficients.new(model)
       otherside_object.setName(exterior_adjacent_to)
-      # Refer to: https://www.sciencedirect.com/science/article/pii/B9780123972705000066 6.1.2 Part: Wall and roof transfer functions
-      otherside_object.setCombinedConvectiveRadiativeFilmCoefficient(8.3)
+      otherside_object.setCombinedConvectiveRadiativeFilmCoefficient(UnitConversions.convert(1.0 / Material.AirFilmVertical.rvalue, 'Btu/(hr*ft^2*F)', 'W/(m^2*K)'))
       # Schedule of space temperature, can be shared with water heater/ducts
       sch = get_space_temperature_schedule(model, exterior_adjacent_to, spaces)
       otherside_object.setConstantTemperatureSchedule(sch)
