@@ -1765,7 +1765,7 @@ class OSModel
         # Apply construction
         cool_shade_mult = window.interior_shading_factor_summer
         heat_shade_mult = window.interior_shading_factor_winter
-        Constructions.apply_window(runner, model, [sub_surface], 'WindowConstruction',
+        Constructions.apply_window(runner, model, sub_surface, 'WindowConstruction',
                                    weather, @htg_season_sch, @clg_season_sch, window.ufactor, window.shgc,
                                    heat_shade_mult, cool_shade_mult)
       else
@@ -1838,7 +1838,7 @@ class OSModel
       shgc = skylight.shgc
       cool_shade_mult = skylight.interior_shading_factor_summer
       heat_shade_mult = skylight.interior_shading_factor_winter
-      Constructions.apply_skylight(runner, model, [sub_surface], 'SkylightConstruction',
+      Constructions.apply_skylight(runner, model, sub_surface, 'SkylightConstruction',
                                    weather, @htg_season_sch, @clg_season_sch, ufactor, shgc,
                                    heat_shade_mult, cool_shade_mult)
     end
@@ -3062,7 +3062,7 @@ class OSModel
     ocf.setOutputMTR(false)
     ocf.setOutputRDD(false)
     ocf.setOutputSHD(false)
-    # ocf.setOutputTabular(false) # Cannot disable because it also affects what is populated in the SQL
+    ocf.setOutputTabular(false)
   end
 
   def self.add_ems_debug_output(runner, model)
@@ -3558,7 +3558,7 @@ class OSModel
       sensor_gnd.setName('ground_temp')
     end
 
-    actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(sch, 'Schedule:Constant', 'Schedule Value')
+    actuator = OpenStudio::Model::EnergyManagementSystemActuator.new(sch, *EPlus::EMSActuatorScheduleConstantValue)
     actuator.setName("#{location.gsub(' ', '_').gsub('-', '_')}_temp_sch")
 
     # EMS to actuate schedule
