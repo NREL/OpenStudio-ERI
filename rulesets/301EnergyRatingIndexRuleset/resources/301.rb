@@ -1885,7 +1885,8 @@ class EnergyRatingIndex301Ruleset
                                  fuel_type: fuel_type,
                                  combined_energy_factor: reference_values[:combined_energy_factor],
                                  control_type: reference_values[:control_type],
-                                 is_vented: true)
+                                 is_vented: true,
+                                 vented_flow_rate: 0.0)
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
@@ -1908,7 +1909,8 @@ class EnergyRatingIndex301Ruleset
                                  energy_factor: clothes_dryer.energy_factor,
                                  combined_energy_factor: clothes_dryer.combined_energy_factor,
                                  control_type: clothes_dryer.control_type,
-                                 is_vented: true)
+                                 is_vented: true,
+                                 vented_flow_rate: 0.0)
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)

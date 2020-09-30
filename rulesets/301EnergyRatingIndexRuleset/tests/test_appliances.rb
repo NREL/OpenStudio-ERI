@@ -429,6 +429,7 @@ class ERIApplianceTest < MiniTest::Test
     end
     assert_equal(control, clothes_dryer.control_type)
     assert_equal(true, clothes_dryer.is_vented)
+    assert_equal(0.0, clothes_dryer.vented_flow_rate)
 
     # Energy & Internal Gains
     nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
