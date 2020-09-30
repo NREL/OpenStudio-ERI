@@ -1270,7 +1270,6 @@ def create_sample_hpxmls
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-timestep.xml',
                   'invalid_files/invalid-window-height.xml',
-                  'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/lighting-fractions.xml',
                   'invalid_files/missing-duct-location.xml',
                   'invalid_files/multifamily-reference-appliance.xml',
