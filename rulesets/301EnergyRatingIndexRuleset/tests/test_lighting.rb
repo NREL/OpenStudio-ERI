@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../../../workflow/tests/minitest_helper'
-require 'openstudio/ruleset/ShowRunnerOutput'
+require 'openstudio'
+require 'openstudio/measure/ShowRunnerOutput'
 require 'minitest/autorun'
 require_relative '../measure.rb'
 require 'fileutils'

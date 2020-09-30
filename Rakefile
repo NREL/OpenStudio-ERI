@@ -7,16 +7,9 @@ require 'rake'
 require 'rake/testtask'
 require 'ci/reporter/rake/minitest'
 
-desc 'Run validation test (requires schematron-nokogiri)'
-Rake::TestTask.new('test_validation') do |t|
-  t.test_files = Dir['rulesets/*/tests/test_validation.rb']
-  t.warning = false
-  t.verbose = true
-end
-
-desc 'Run all tests (excluding validation test)'
+desc 'Run all tests'
 Rake::TestTask.new('test_all') do |t|
-  t.test_files = Dir['rulesets/*/tests/*.rb'] - Dir['rulesets/*/tests/test_validation.rb'] + Dir['workflow/tests/*.rb']
+  t.test_files = Dir['rulesets/*/tests/*.rb'] + Dir['workflow/tests/*.rb']
   t.warning = false
   t.verbose = true
 end
