@@ -94,52 +94,30 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    begin
-      # Weather file
-      weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-      epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-      if not epw_path.nil?
-        if not File.exist? epw_path
-          epw_path = File.join(weather_dir, epw_path)
-        end
-        if not File.exist?(epw_path)
-          fail "'#{epw_path}' could not be found."
-        end
-      else
-        weather_wmo = @orig_hpxml.climate_and_risk_zones.weather_station_wmo
-        epw_path = nil
-        cache_path = nil
-        CSV.foreach(File.join(weather_dir, 'data.csv'), headers: true) do |row|
-          next if row['wmo'] != weather_wmo
-
-          epw_path = File.join(weather_dir, row['filename'])
-          if not File.exist?(epw_path)
-            runner.registerError("'#{epw_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --download-weather")
-            return false
-          end
-          break
-        end
-        if epw_path.nil?
-          runner.registerError("Weather station WMO '#{weather_wmo}' could not be found in weather/data.csv.")
-          return false
-        end
-      end
-      cache_path = epw_path.gsub('.epw', '-cache.csv')
-      if not File.exist?(cache_path)
-        runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
-        return false
-      end
-
-      # Obtain weather object
-      weather = WeatherProcess.new(nil, nil, cache_path)
-
-      # Apply 301 ruleset on HPXML object
-      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather)
-    rescue Exception => e
-      # Report exception
-      runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
+    # Weather file
+    epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
+    if not File.exist? epw_path
+      test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
+      epw_path = test_epw_path if File.exist? test_epw_path
+    end
+    if not File.exist? epw_path
+      test_epw_path = File.join(File.dirname(__FILE__), '..', '..', 'weather', epw_path)
+      epw_path = test_epw_path if File.exist? test_epw_path
+    end
+    if not File.exist?(epw_path)
+      fail "'#{epw_path}' could not be found."
+    end
+    cache_path = epw_path.gsub('.epw', '-cache.csv')
+    if not File.exist?(cache_path)
+      runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
       return false
     end
+
+    # Obtain weather object
+    weather = WeatherProcess.new(nil, nil, cache_path)
+
+    # Apply 301 ruleset on HPXML object
+    @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather)
 
     # Write new HPXML file
     if hpxml_output_path.is_initialized

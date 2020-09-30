@@ -293,28 +293,28 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
     hpxml.climate_and_risk_zones.iecc_zone = '4A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '724060'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
     hpxml.climate_and_risk_zones.iecc_zone = '3A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '722590'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
     hpxml.climate_and_risk_zones.iecc_zone = '1A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '722020'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Miami.Intl.AP.722020_TMY3.epw'
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
     hpxml.climate_and_risk_zones.iecc_zone = '7'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '727450'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MN_Duluth.Intl.AP.727450_TMY3.epw'
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
-    if hpxml.climate_and_risk_zones.weather_station_wmo == '724660'
+    if hpxml.climate_and_risk_zones.weather_station_epw_filepath == 'USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw'
       hpxml.climate_and_risk_zones.iecc_zone = '5B'
     end
   end
@@ -1262,6 +1262,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
+                  'invalid_files/invalid-calendar-year.xml',
                   'invalid_files/invalid-daylight-saving.xml',
                   'invalid_files/invalid-distribution-cfa-served.xml',
                   'invalid_files/invalid-facility-type.xml',
@@ -1340,7 +1341,7 @@ def create_sample_hpxmls
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',
                   'base-lighting-none.xml',
-                  'base-location-epw-filepath-AMY-2012.xml',
+                  'base-location-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
                   'base-mechvent-cfis-dse.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
@@ -1352,6 +1353,7 @@ def create_sample_hpxmls
                   'base-misc-neighbor-shading.xml',
                   'base-misc-shelter-coefficient.xml',
                   'base-misc-usage-multiplier.xml',
+                  'base-simcontrol-calendar-year-custom.xml',
                   'base-simcontrol-daylight-saving-custom.xml',
                   'base-simcontrol-daylight-saving-disabled.xml',
                   'base-simcontrol-runperiod-1-month.xml',
@@ -1633,7 +1635,7 @@ if ARGV[0].to_sym == :create_release_zips
   end
 
   # Check if we need to download weather files for the full release zip
-  num_epws_expected = File.readlines(File.join('weather', 'data.csv')).size - 1
+  num_epws_expected = 1011
   num_epws_local = 0
   files.each do |f|
     Dir[f].each do |file|

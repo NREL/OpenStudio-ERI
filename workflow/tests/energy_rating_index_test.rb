@@ -121,8 +121,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_sample_files_invalid
     test_name = 'invalid_files'
-    expected_error_msgs = { 'invalid-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
-                            'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
+    expected_error_msgs = { 'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
                             'missing-elements.xml' => ['Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
                                                        'Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],
@@ -142,9 +141,6 @@ class EnergyRatingIndexTest < Minitest::Test
     weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
     cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
     FileUtils.mv(cache_csv, "#{cache_csv}.bak")
-
-    data_csv = File.join(weather_dir, 'data.csv')
-    FileUtils.cp(data_csv, "#{data_csv}.bak")
 
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
@@ -745,11 +741,6 @@ class EnergyRatingIndexTest < Minitest::Test
     # Add HPXML translator measure to workflow
     measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
-    if File.exist? File.absolute_path(File.join(File.dirname(xml), 'weather'))
-      args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), 'weather'))
-    else
-      args['weather_dir'] = 'weather'
-    end
     args['output_dir'] = File.absolute_path(rundir)
     args['hpxml_path'] = xml
     update_args_hash(measures, measure_subdir, args)
