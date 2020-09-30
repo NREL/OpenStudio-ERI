@@ -428,6 +428,7 @@ class ERIApplianceTest < MiniTest::Test
       assert_in_epsilon(ef, clothes_dryer.energy_factor, 0.01)
     end
     assert_equal(control, clothes_dryer.control_type)
+    assert_equal(true, clothes_dryer.is_vented)
 
     # Energy & Internal Gains
     nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
