@@ -936,7 +936,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_ashrae_140_results(htg_loads, clg_loads)
-    # Interim acceptance criteria as of 7/10/2020
+    # Pub 002-2020 (June 2020)
 
     # Annual Heating Loads
     assert_operator(htg_loads['L100AC'], :<=, 79.48)
@@ -1339,6 +1339,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Internal gains
     if version == '2019A'
+      # Pub 002-2020 (June 2020)
       if test_num == 1
         assert_in_epsilon(55115, results['Sensible Internal gains (Btu/day)'], epsilon)
         assert_in_epsilon(13666, results['Latent Internal gains (Btu/day)'], epsilon)
@@ -1385,23 +1386,24 @@ class EnergyRatingIndexTest < Minitest::Test
     # Mechanical ventilation
     mv_epsilon = 0.001 # 0.1%
     mv_kwh_yr = nil
-    if test_num == 1
-      mv_kwh_yr = 0.0
-    elsif test_num == 2
-      if version == '2014'
+    if version == '2014'
+      if test_num == 1
+        mv_kwh_yr = 0.0
+      elsif test_num == 2
         mv_kwh_yr = 77.9
-      else
-        mv_kwh_yr = 222.1
-      end
-    elsif test_num == 3
-      if version == '2014'
+      elsif test_num == 3
         mv_kwh_yr = 140.4
       else
-        mv_kwh_yr = 287.8
+        mv_kwh_yr = 379.1
       end
     else
-      if version == '2014'
-        mv_kwh_yr = 379.1
+      # Pub 002-2020 (June 2020)
+      if test_num == 1
+        mv_kwh_yr = 0.0
+      elsif test_num == 2
+        mv_kwh_yr = 222.1
+      elsif test_num == 3
+        mv_kwh_yr = 287.8
       else
         mv_kwh_yr = 762.8
       end
@@ -1994,54 +1996,56 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _check_hot_water(test_num, curr_val, base_val = nil, mn_val = nil)
+    # Pub 002-2020 (June 2020)
+
     # Table 4.6.2(1): Acceptance Criteria for Hot Water Tests
     if test_num == 1
-      min_max_abs = [19.11, 19.73]
+      min_max_abs = [19.34, 19.88]
     elsif test_num == 2
-      min_max_abs = [25.54, 26.36]
-      min_max_base_delta_percent = [-34.01, -32.49]
+      min_max_abs = [25.76, 26.55]
+      min_max_base_delta_percent = [-33.92, -32.59]
     elsif test_num == 3
-      min_max_abs = [17.03, 17.50]
-      min_max_base_delta_percent = [10.74, 11.57]
+      min_max_abs = [17.27, 17.65]
+      min_max_base_delta_percent = [10.60, 11.49]
     elsif test_num == 4
-      min_max_abs = [24.75, 25.52]
-      min_max_base_delta_percent = [3.06, 3.22]
+      min_max_abs = [24.94, 25.71]
+      min_max_base_delta_percent = [3.13, 3.22]
     elsif test_num == 5
-      min_max_abs = [55.43, 57.15]
-      min_max_base_delta_percent = [-118.52, -115.63]
+      min_max_abs = [55.93, 57.58]
+      min_max_base_delta_percent = [-118.39, -115.70]
     elsif test_num == 6
-      min_max_abs = [22.39, 23.09]
-      min_max_base_delta_percent = [12.17, 12.51]
+      min_max_abs = [22.61, 23.28]
+      min_max_base_delta_percent = [12.08, 12.46]
     elsif test_num == 7
-      min_max_abs = [20.29, 20.94]
-      min_max_base_delta_percent = [20.15, 20.78]
+      min_max_abs = [20.51, 21.09]
+      min_max_base_delta_percent = [20.14, 20.78]
     elsif test_num == 8
-      min_max_abs = [10.59, 11.03]
-      min_max_mn_delta_percent = [43.35, 45.00]
+      min_max_abs = [10.87, 11.12]
+      min_max_mn_delta_percent = [43.21, 44.60]
     elsif test_num == 9
-      min_max_abs = [13.17, 13.68]
-      min_max_base_delta_percent = [-24.54, -23.47]
-      min_max_mn_delta_percent = [47.26, 48.93]
+      min_max_abs = [13.47, 13.79]
+      min_max_base_delta_percent = [-24.44, -23.47]
+      min_max_mn_delta_percent = [47.18, 48.56]
     elsif test_num == 10
-      min_max_abs = [8.81, 9.13]
-      min_max_base_delta_percent = [16.65, 18.12]
-      min_max_mn_delta_percent = [47.38, 48.74]
+      min_max_abs = [8.94, 9.20]
+      min_max_base_delta_percent = [16.99, 18.01]
+      min_max_mn_delta_percent = [47.28, 48.70]
     elsif test_num == 11
-      min_max_abs = [12.87, 13.36]
-      min_max_base_delta_percent = [2.20, 2.38]
-      min_max_mn_delta_percent = [46.81, 48.48]
+      min_max_abs = [13.15, 13.46]
+      min_max_base_delta_percent = [2.30, 2.37]
+      min_max_mn_delta_percent = [46.73, 48.12]
     elsif test_num == 12
-      min_max_abs = [30.19, 31.31]
-      min_max_base_delta_percent = [-130.88, -127.52]
-      min_max_mn_delta_percent = [44.41, 45.99]
+      min_max_abs = [30.84, 31.55]
+      min_max_base_delta_percent = [-130.29, -127.53]
+      min_max_mn_delta_percent = [44.35, 45.67]
     elsif test_num == 13
-      min_max_abs = [11.90, 12.38]
-      min_max_base_delta_percent = [9.38, 9.74]
-      min_max_mn_delta_percent = [45.60, 47.33]
+      min_max_abs = [12.19, 12.48]
+      min_max_base_delta_percent = [9.30, 9.57]
+      min_max_mn_delta_percent = [45.51, 46.85]
     elsif test_num == 14
-      min_max_abs = [11.68, 12.14]
-      min_max_base_delta_percent = [11.00, 11.40]
-      min_max_mn_delta_percent = [41.32, 42.86]
+      min_max_abs = [11.95, 12.23]
+      min_max_base_delta_percent = [11.12, 11.39]
+      min_max_mn_delta_percent = [41.23, 42.42]
     else
       fail 'Unexpected test.'
     end
