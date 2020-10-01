@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>6a50cd03-6a25-4ced-99ad-449a149f37ad</version_id>
-  <version_modified>20200930T230945Z</version_modified>
+  <version_id>79da0939-1c65-498c-986e-0bea90728b99</version_id>
+  <version_modified>20201001T010619Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -89,12 +89,6 @@
       <checksum>D6A6F048</checksum>
     </file>
     <file>
-      <filename>301validator.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>07B9F0C4</checksum>
-    </file>
-    <file>
       <filename>test_misc.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -164,6 +158,12 @@
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
       <checksum>8431B9FD</checksum>
+    </file>
+    <file>
+      <filename>301validator.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>ADC760F6</checksum>
     </file>
   </files>
 </measure>

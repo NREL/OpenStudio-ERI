@@ -150,8 +150,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Restore original and cleanup
     FileUtils.mv("#{cache_csv}.bak", cache_csv)
-    File.delete(data_csv)
-    FileUtils.mv("#{data_csv}.bak", data_csv)
   end
 
   def test_resnet_ashrae_140
