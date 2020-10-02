@@ -331,7 +331,8 @@
       <sch:assert role='ERROR' test='count(h:HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="AFUE"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ElectricAuxiliaryEnergy) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ElectricAuxiliaryEnergy</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -341,7 +342,8 @@
       <sch:assert role='ERROR' test='count(h:HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="AFUE"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ElectricAuxiliaryEnergy) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ElectricAuxiliaryEnergy</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -351,7 +353,8 @@
       <sch:assert role='ERROR' test='count(h:HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="AFUE"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ElectricAuxiliaryEnergy) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ElectricAuxiliaryEnergy</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -399,7 +402,7 @@
       <sch:assert role='ERROR' test='count(h:HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="Percent"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ElectricAuxiliaryEnergy) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ElectricAuxiliaryEnergy</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/FanPowerWattsPerCFM</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -409,7 +412,7 @@
       <sch:assert role='ERROR' test='count(h:HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="Percent"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ElectricAuxiliaryEnergy) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ElectricAuxiliaryEnergy</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/FanPowerWattsPerCFM</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -419,7 +422,7 @@
       <sch:assert role='ERROR' test='count(h:HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="Percent"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ElectricAuxiliaryEnergy) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ElectricAuxiliaryEnergy</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/FanPowerWattsPerCFM</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -429,7 +432,7 @@
       <sch:assert role='ERROR' test='count(h:HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: HeatingSystemFuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="Percent"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ElectricAuxiliaryEnergy) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ElectricAuxiliaryEnergy</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/FanPowerWattsPerCFM</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -451,6 +454,9 @@
       <sch:assert role='ERROR' test='not(h:CompressorType) or count(h:CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]) = 1'>Expected 1 element(s) for xpath: [not(CompressorType)] | CompressorType[text()="single stage" or text()="two stage" or text()="variable speed"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[h:Units="SEER"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="SEER"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:SensibleHeatFraction) &lt;= 1'>Expected 0 or 1 element(s) for xpath: SensibleHeatFraction</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25]) + count(h:extension/ChargeNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25] | extension/ChargeNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -460,6 +466,9 @@
       <sch:assert role='ERROR' test='count(h:CoolingCapacity) = 1'>Expected 1 element(s) for xpath: CoolingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[h:Units="EER"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="EER"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:SensibleHeatFraction) &lt;= 1'>Expected 0 or 1 element(s) for xpath: SensibleHeatFraction</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25]) + count(h:extension/ChargeNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25] | extension/ChargeNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -533,6 +542,9 @@
       <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[h:Units="SEER"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="SEER"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="HSPF"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="HSPF"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity17F) &lt;= 1'>Expected 0 or 1 element(s) for xpath: HeatingCapacity17F</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25]) + count(h:extension/ChargeNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25] | extension/ChargeNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -543,6 +555,9 @@
       <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[h:Units="SEER"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="SEER"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="HSPF"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="HSPF"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity17F) &lt;= 1'>Expected 0 or 1 element(s) for xpath: HeatingCapacity17F</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25]) + count(h:extension/ChargeNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25] | extension/ChargeNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -555,6 +570,9 @@
       <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[h:Units="EER"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="EER"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="COP"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="COP"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:PumpPowerWattsPerTon) = 1'>Expected 1 element(s) for xpath: extension/PumpPowerWattsPerTon</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:AirflowCFMPerTon) + count(h:extension/AirflowNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/AirflowCFMPerTon | extension/AirflowNotAssessed</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25]) + count(h:extension/ChargeNotAssessed) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25] | extension/ChargeNotAssessed</sch:assert>
     </sch:rule>
   </sch:pattern>
 
