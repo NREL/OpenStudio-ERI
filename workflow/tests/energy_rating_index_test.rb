@@ -782,7 +782,9 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(htg_loads['L170AC'], :<=, 74.24)
     assert_operator(htg_loads['L170AC'], :>=, 58.11)
     assert_operator(htg_loads['L200AC'], :<=, 136.02)
-    # assert_operator(htg_loads['L200AC'], :>=, 122.47) # FIXME
+    # FIXME: Switch from interim to proposed acceptance criteria
+    assert_operator(htg_loads['L200AC'], :>=, 106.41)
+    # assert_operator(htg_loads['L200AC'], :>=, 122.47)
     assert_operator(htg_loads['L202AC'], :<=, 145.02)
     assert_operator(htg_loads['L202AC'], :>=, 127.59)
     assert_operator(htg_loads['L302XC'], :<=, 66.77)
