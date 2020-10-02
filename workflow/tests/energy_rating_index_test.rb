@@ -337,7 +337,7 @@ class EnergyRatingIndexTest < Minitest::Test
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
         if xml.include?('HVAC2a') || xml.include?('HVAC2b')
-          hvac_energy[test_name] = results[0] / 10.0 + results[1] / 293.0
+          hvac_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
         else
           hvac_energy[test_name] = results[0] + results[1]
         end
@@ -380,14 +380,14 @@ class EnergyRatingIndexTest < Minitest::Test
 
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
-        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.0
+        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
       end
       all_results.each_with_index do |(xml, results), i|
         next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
 
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
-        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.0
+        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
       end
     end
     puts "Wrote results to #{test_results_csv}."
