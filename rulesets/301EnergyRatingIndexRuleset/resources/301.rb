@@ -1158,7 +1158,6 @@ class EnergyRatingIndex301Ruleset
                                     heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
-                                    heating_cfm: orig_heating_system.heating_cfm,
                                     wlhp_heating_efficiency_cop: orig_heating_system.wlhp_heating_efficiency_cop,
                                     fan_watts_per_cfm: fan_watts_per_cfm,
                                     airflow_cfm_per_ton: airflow_cfm_per_ton,
@@ -1172,7 +1171,7 @@ class EnergyRatingIndex301Ruleset
 
     # Retain cooling system(s)
     orig_hpxml.cooling_systems.each do |orig_cooling_system|
-      if [HPXML::HVACTypeCentralAirConditioner, HPXML::HVACTypeRoomAirConditioner].include? orig_cooling_system.cooling_system_type
+      if [HPXML::HVACTypeCentralAirConditioner].include? orig_cooling_system.cooling_system_type
         if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
           fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
           fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
@@ -1197,7 +1196,6 @@ class EnergyRatingIndex301Ruleset
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
                                     cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
                                     cooling_shr: orig_cooling_system.cooling_shr,
-                                    cooling_cfm: orig_cooling_system.cooling_cfm,
                                     shared_loop_watts: orig_cooling_system.shared_loop_watts,
                                     fan_coil_watts: orig_cooling_system.fan_coil_watts,
                                     wlhp_cooling_capacity: orig_cooling_system.wlhp_cooling_capacity,
@@ -1223,8 +1221,10 @@ class EnergyRatingIndex301Ruleset
           airflow_cfm_per_ton = orig_heat_pump.airflow_cfm_per_ton
           airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_cfm_per_ton.nil?
 
-          charge_defect_ratio = orig_heat_pump.charge_defect_ratio
-          charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
+          if orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir
+            charge_defect_ratio = orig_heat_pump.charge_defect_ratio
+            charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
+          end
         end
       end
       new_hpxml.heat_pumps.add(id: orig_heat_pump.id,
@@ -1415,14 +1415,14 @@ class EnergyRatingIndex301Ruleset
 
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
       # Change HVAC installation quality values
-      hpxml.heating_systems.each do |heating_system|
-        heating_system.fan_watts_per_cfm = 0.45 unless heating_system.fan_watts_per_cfm.nil?
-        heating_system.airflow_defect_ratio = 0.0 unless heating_system.airflow_defect_ratio.nil?
+      new_hpxml.heating_systems.each do |new_heating_system|
+        new_heating_system.fan_watts_per_cfm = 0.45 unless new_heating_system.fan_watts_per_cfm.nil?
+        new_heating_system.airflow_defect_ratio = 0.0 unless new_heating_system.airflow_defect_ratio.nil?
       end
-      (hpxml.cooling_systems + hpxml.heat_pumps).each do |cooling_system|
-        cooling_system.fan_watts_per_cfm = 0.45 unless cooling_system.fan_watts_per_cfm.nil?
-        cooling_system.airflow_defect_ratio = 0.0 unless cooling_system.airflow_defect_ratio.nil?
-        cooling_system.charge_defect_ratio = 0.0 unless cooling_system.charge_defect_ratio.nil?
+      (new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |new_cooling_system|
+        new_cooling_system.fan_watts_per_cfm = 0.45 unless new_cooling_system.fan_watts_per_cfm.nil?
+        new_cooling_system.airflow_defect_ratio = 0.0 unless new_cooling_system.airflow_defect_ratio.nil?
+        new_cooling_system.charge_defect_ratio = 0.0 unless new_cooling_system.charge_defect_ratio.nil?
       end
     end
   end

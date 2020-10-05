@@ -41,7 +41,6 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
   args = {}
   args['hpxml_path'] = output_hpxml
-  args['weather_dir'] = File.absolute_path(File.join(basedir, '..', 'weather'))
   args['output_dir'] = File.absolute_path(designdir)
   args['debug'] = debug
   update_args_hash(measures, measure_subdir, args)

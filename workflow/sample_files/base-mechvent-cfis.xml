@@ -56,7 +56,9 @@
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Denver, CO</Name>
-          <WMO>725650</WMO>
+          <extension>
+            <EPWFilePath>USA_CO_Denver.Intl.AP.725650_TMY3.epw</EPWFilePath>
+          </extension>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
@@ -319,6 +321,10 @@
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <extension>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowNotTested>true</AirflowNotTested>
+              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
@@ -333,6 +339,11 @@
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
+              <extension>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowNotTested>true</AirflowNotTested>
+              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
@@ -448,6 +459,10 @@
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
+          <extension>
+            <IsVented>true</IsVented>
+            <VentedFlowRate>150.0</VentedFlowRate>
+          </extension>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>

@@ -672,11 +672,6 @@ class EnergyRatingIndexTest < Minitest::Test
     # Add HPXML translator measure to workflow
     measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
-    if File.exist? File.absolute_path(File.join(File.dirname(xml), 'weather'))
-      args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), 'weather'))
-    else
-      args['weather_dir'] = 'weather'
-    end
     args['output_dir'] = File.absolute_path(rundir)
     args['hpxml_path'] = xml
     update_args_hash(measures, measure_subdir, args)

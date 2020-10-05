@@ -44,6 +44,9 @@
           <SystemIdentifier id='WeatherStation'/>
           <Name>Baltimore, MD</Name>
           <WMO>724060</WMO>
+          <extension>
+            <EPWFilePath>USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw</EPWFilePath>
+          </extension>
         </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>

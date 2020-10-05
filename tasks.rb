@@ -1257,6 +1257,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
+                  'invalid_files/invalid-calendar-year.xml',
                   'invalid_files/invalid-daylight-saving.xml',
                   'invalid_files/invalid-distribution-cfa-served.xml',
                   'invalid_files/invalid-facility-type.xml',
@@ -1334,7 +1335,7 @@ def create_sample_hpxmls
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',
                   'base-lighting-none.xml',
-                  'base-location-epw-filepath-AMY-2012.xml',
+                  'base-location-AMY-2012.xml',
                   'base-mechvent-bath-kitchen-fans.xml',
                   'base-mechvent-cfis-dse.xml',
                   'base-mechvent-cfis-evap-cooler-only-ducted.xml',
@@ -1346,6 +1347,7 @@ def create_sample_hpxmls
                   'base-misc-neighbor-shading.xml',
                   'base-misc-shelter-coefficient.xml',
                   'base-misc-usage-multiplier.xml',
+                  'base-simcontrol-calendar-year-custom.xml',
                   'base-simcontrol-daylight-saving-custom.xml',
                   'base-simcontrol-daylight-saving-disabled.xml',
                   'base-simcontrol-runperiod-1-month.xml',
@@ -1359,6 +1361,7 @@ def create_sample_hpxmls
   end
 
   # Update HPXMLs as needed
+  puts 'Updating HPXML inputs for ERI...'
   hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
@@ -1420,11 +1423,53 @@ def create_sample_hpxmls
 
       ventilation_fan.is_shared_system = false
     end
+    hpxml.heating_systems.each do |heating_system|
+      next unless [HPXML::HVACTypeFurnace,
+                   HPXML::HVACTypeWallFurnace,
+                   HPXML::HVACTypeFloorFurnace].include? heating_system.heating_system_type
+
+      if heating_system.fan_watts_per_cfm.nil?
+        heating_system.fan_power_not_tested = true
+      end
+      if heating_system.airflow_cfm_per_ton.nil?
+        heating_system.airflow_not_tested = true
+      end
+    end
+    hpxml.cooling_systems.each do |cooling_system|
+      next unless [HPXML::HVACTypeCentralAirConditioner].include? cooling_system.cooling_system_type
+
+      if cooling_system.fan_watts_per_cfm.nil?
+        cooling_system.fan_power_not_tested = true
+      end
+      if cooling_system.airflow_cfm_per_ton.nil?
+        cooling_system.airflow_not_tested = true
+      end
+      if cooling_system.charge_defect_ratio.nil?
+        cooling_system.charge_not_tested = true
+      end
+    end
+    hpxml.heat_pumps.each do |heat_pump|
+      next unless [HPXML::HVACTypeHeatPumpAirToAir,
+                   HPXML::HVACTypeHeatPumpGroundToAir,
+                   HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
+
+      if heat_pump.fan_watts_per_cfm.nil?
+        heat_pump.fan_power_not_tested = true
+      end
+      if heat_pump.airflow_cfm_per_ton.nil?
+        heat_pump.airflow_not_tested = true
+      end
+      next unless heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir
+      if heat_pump.charge_defect_ratio.nil?
+        heat_pump.charge_not_tested = true
+      end
+    end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
   end
 
   # Create additional files
+  puts 'Creating additional HPXML files for ERI...'
 
   # Duct leakage exemption
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
