@@ -1,6 +1,7 @@
 OpenStudio-ERI
 ==============
 
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/NREL/OpenStudio-ERI?include_prereleases)](https://github.com/NREL/OpenStudio-ERI/releases)
 [![CircleCI](https://circleci.com/gh/NREL/OpenStudio-ERI.svg?style=shield)](https://circleci.com/gh/NREL/OpenStudio-ERI)
 [![Documentation Status](https://readthedocs.org/projects/openstudio-eri/badge/?version=latest)](https://openstudio-eri.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/NREL/OpenStudio-ERI/branch/master/graph/badge.svg)](https://codecov.io/gh/NREL/OpenStudio-ERI)
