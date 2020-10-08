@@ -2,7 +2,7 @@
 
 require_relative 'minitest_helper'
 require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
+require 'openstudio/measure/ShowRunnerOutput'
 require 'minitest/autorun'
 require 'fileutils'
 require 'csv'
@@ -121,15 +121,16 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_sample_files_invalid
     test_name = 'invalid_files'
-    expected_error_msgs = { 'invalid-wmo.xml' => ["Weather station WMO '999999' could not be found in weather/data.csv."],
-                            'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
+    expected_error_msgs = { 'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
                             'missing-elements.xml' => ['Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
                                                        'Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],
                             'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
                                                             'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
                             'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
-                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
+                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'],
+                            'num-bedrooms-exceeds-limit.xml' => ['Number of bedrooms (40) exceeds limit of (CFA-120)/70=36.9.'],
+                            'enclosure-floor-area-exceeds-cfa.xml' => ['Sum of floor/slab area adjacent to conditioned space (1350.0) is greater than conditioned floor area (540.0).'] }
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
@@ -143,9 +144,6 @@ class EnergyRatingIndexTest < Minitest::Test
     cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
     FileUtils.mv(cache_csv, "#{cache_csv}.bak")
 
-    data_csv = File.join(weather_dir, 'data.csv')
-    FileUtils.cp(data_csv, "#{data_csv}.bak")
-
     cli_path = OpenStudio.getOpenStudioCLI
     command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
     system(command)
@@ -154,8 +152,6 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Restore original and cleanup
     FileUtils.mv("#{cache_csv}.bak", cache_csv)
-    File.delete(data_csv)
-    FileUtils.mv("#{data_csv}.bak", data_csv)
   end
 
   def test_resnet_ashrae_140
@@ -343,7 +339,7 @@ class EnergyRatingIndexTest < Minitest::Test
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
         if xml.include?('HVAC2a') || xml.include?('HVAC2b')
-          hvac_energy[test_name] = results[0] / 10.0 + results[1] / 293.0
+          hvac_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
         else
           hvac_energy[test_name] = results[0] + results[1]
         end
@@ -386,14 +382,14 @@ class EnergyRatingIndexTest < Minitest::Test
 
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
-        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.0
+        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
       end
       all_results.each_with_index do |(xml, results), i|
         next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
 
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
-        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.0
+        dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
       end
     end
     puts "Wrote results to #{test_results_csv}."
@@ -672,11 +668,6 @@ class EnergyRatingIndexTest < Minitest::Test
     # Add HPXML translator measure to workflow
     measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
-    if File.exist? File.absolute_path(File.join(File.dirname(xml), 'weather'))
-      args['weather_dir'] = File.absolute_path(File.join(File.dirname(xml), 'weather'))
-    else
-      args['weather_dir'] = 'weather'
-    end
     args['output_dir'] = File.absolute_path(rundir)
     args['hpxml_path'] = xml
     update_args_hash(measures, measure_subdir, args)
@@ -793,7 +784,9 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(htg_loads['L170AC'], :<=, 74.24)
     assert_operator(htg_loads['L170AC'], :>=, 58.11)
     assert_operator(htg_loads['L200AC'], :<=, 136.02)
-    # assert_operator(htg_loads['L200AC'], :>=, 122.47) # FIXME
+    # FIXME: Switch from interim to proposed acceptance criteria
+    assert_operator(htg_loads['L200AC'], :>=, 106.41)
+    # assert_operator(htg_loads['L200AC'], :>=, 122.47)
     assert_operator(htg_loads['L202AC'], :<=, 145.02)
     assert_operator(htg_loads['L202AC'], :>=, 127.59)
     assert_operator(htg_loads['L302XC'], :<=, 66.77)
@@ -810,7 +803,7 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(htg_loads['L110AC'] - htg_loads['L100AC'], :>=, 17.43)
     assert_operator(htg_loads['L120AC'] - htg_loads['L100AC'], :<=, -9.47)
     assert_operator(htg_loads['L120AC'] - htg_loads['L100AC'], :>=, -15.98)
-    # assert_operator(htg_loads['L130AC'] - htg_loads['L100AC'], :<=, -5.88) # FIXME
+    assert_operator(htg_loads['L130AC'] - htg_loads['L100AC'], :<=, -5.88)
     assert_operator(htg_loads['L130AC'] - htg_loads['L100AC'], :>=, -12.98)
     assert_operator(htg_loads['L140AC'] - htg_loads['L100AC'], :<=, 0.37)
     assert_operator(htg_loads['L140AC'] - htg_loads['L100AC'], :>=, -12.41)
@@ -865,7 +858,7 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(clg_loads['L120AL'] - clg_loads['L100AL'], :<=, -0.20)
     assert_operator(clg_loads['L120AL'] - clg_loads['L100AL'], :>=, -8.27)
     assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :<=, -9.69)
-    # assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :>=, -18.59) # FIXME
+    assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :>=, -18.59)
     assert_operator(clg_loads['L140AL'] - clg_loads['L100AL'], :<=, -20.29)
     assert_operator(clg_loads['L140AL'] - clg_loads['L100AL'], :>=, -30.77)
     assert_operator(clg_loads['L150AL'] - clg_loads['L100AL'], :<=, 15.92)
@@ -1798,80 +1791,80 @@ class EnergyRatingIndexTest < Minitest::Test
     # Pub 002-2020 (June 2020)
 
     # Duluth MN cases
-    assert_operator(energy['L100AD-HW-01'], :>, 19.12)
-    assert_operator(energy['L100AD-HW-01'], :<, 20.12)
-    assert_operator(energy['L100AD-HW-02'], :>, 25.64)
-    assert_operator(energy['L100AD-HW-02'], :<, 26.64)
-    assert_operator(energy['L100AD-HW-03'], :>, 16.95)
-    assert_operator(energy['L100AD-HW-03'], :<, 17.95)
-    assert_operator(energy['L100AD-HW-04'], :>, 24.81)
-    assert_operator(energy['L100AD-HW-04'], :<, 25.81)
+    assert_operator(energy['L100AD-HW-01'], :>, 19.34)
+    assert_operator(energy['L100AD-HW-01'], :<, 19.88)
+    assert_operator(energy['L100AD-HW-02'], :>, 25.76)
+    assert_operator(energy['L100AD-HW-02'], :<, 26.55)
+    assert_operator(energy['L100AD-HW-03'], :>, 17.20)
+    assert_operator(energy['L100AD-HW-03'], :<, 17.70)
+    assert_operator(energy['L100AD-HW-04'], :>, 24.94)
+    assert_operator(energy['L100AD-HW-04'], :<, 25.71)
     assert_operator(energy['L100AD-HW-05'], :>, 55.93)
     assert_operator(energy['L100AD-HW-05'], :<, 57.58)
-    assert_operator(energy['L100AD-HW-06'], :>, 22.43)
-    assert_operator(energy['L100AD-HW-06'], :<, 23.43)
-    assert_operator(energy['L100AD-HW-07'], :>, 20.30)
-    assert_operator(energy['L100AD-HW-07'], :<, 21.30)
+    assert_operator(energy['L100AD-HW-06'], :>, 22.61)
+    assert_operator(energy['L100AD-HW-06'], :<, 23.28)
+    assert_operator(energy['L100AD-HW-07'], :>, 20.51)
+    assert_operator(energy['L100AD-HW-07'], :<, 21.09)
 
     # Miami FL cases
-    assert_operator(energy['L100AM-HW-01'], :>, 10.49)
-    assert_operator(energy['L100AM-HW-01'], :<, 11.49)
-    assert_operator(energy['L100AM-HW-02'], :>, 13.12)
-    assert_operator(energy['L100AM-HW-02'], :<, 14.12)
-    assert_operator(energy['L100AM-HW-03'], :>, 8.58)
-    assert_operator(energy['L100AM-HW-03'], :<, 9.58)
-    assert_operator(energy['L100AM-HW-04'], :>, 12.81)
-    assert_operator(energy['L100AM-HW-04'], :<, 13.81)
-    assert_operator(energy['L100AM-HW-05'], :>, 30.69)
-    assert_operator(energy['L100AM-HW-05'], :<, 31.69)
-    assert_operator(energy['L100AM-HW-06'], :>, 11.84)
-    assert_operator(energy['L100AM-HW-06'], :<, 12.84)
-    assert_operator(energy['L100AM-HW-07'], :>, 11.59)
-    assert_operator(energy['L100AM-HW-07'], :<, 12.59)
+    assert_operator(energy['L100AM-HW-01'], :>, 10.74)
+    assert_operator(energy['L100AM-HW-01'], :<, 11.24)
+    assert_operator(energy['L100AM-HW-02'], :>, 13.37)
+    assert_operator(energy['L100AM-HW-02'], :<, 13.87)
+    assert_operator(energy['L100AM-HW-03'], :>, 8.83)
+    assert_operator(energy['L100AM-HW-03'], :<, 9.33)
+    assert_operator(energy['L100AM-HW-04'], :>, 13.06)
+    assert_operator(energy['L100AM-HW-04'], :<, 13.56)
+    assert_operator(energy['L100AM-HW-05'], :>, 30.84)
+    assert_operator(energy['L100AM-HW-05'], :<, 31.55)
+    assert_operator(energy['L100AM-HW-06'], :>, 12.09)
+    assert_operator(energy['L100AM-HW-06'], :<, 12.59)
+    assert_operator(energy['L100AM-HW-07'], :>, 11.84)
+    assert_operator(energy['L100AM-HW-07'], :<, 12.34)
 
     # MN Delta cases
-    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-02'], :>, -7.02)
-    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-02'], :<, -6.02)
-    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-03'], :>, 1.67)
-    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-03'], :<, 2.67)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-04'], :>, 0.33)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-04'], :<, 1.33)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-05'], :>, -31.10)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-05'], :<, -30.10)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-06'], :>, 2.70)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-06'], :<, 3.70)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-07'], :>, 4.84)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-07'], :<, 5.84)
+    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-02'], :>, -6.77)
+    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-02'], :<, -6.27)
+    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-03'], :>, 1.92)
+    assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-03'], :<, 2.42)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-04'], :>, 0.58)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-04'], :<, 1.08)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-05'], :>, -31.03)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-05'], :<, -30.17)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-06'], :>, 2.95)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-06'], :<, 3.45)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-07'], :>, 5.09)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-07'], :<, 5.59)
 
     # FL Delta cases
-    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-02'], :>, -3.13)
-    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-02'], :<, -2.13)
-    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-03'], :>, -1.42)
-    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-03'], :<, 2.42)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-04'], :>, -0.18)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-04'], :<, 0.82)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-05'], :>, -18.07)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-05'], :<, -17.07)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-06'], :>, 0.79)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-06'], :<, 1.79)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-07'], :>, 1.03)
-    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-07'], :<, 2.03)
+    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-02'], :>, -2.88)
+    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-02'], :<, -2.38)
+    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-03'], :>, 1.67)
+    assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-03'], :<, 2.17)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-04'], :>, 0.07)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-04'], :<, 0.57)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-05'], :>, -17.82)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-05'], :<, -17.32)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-06'], :>, 1.04)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-06'], :<, 1.54)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-07'], :>, 1.28)
+    assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-07'], :<, 1.78)
 
     # MN-FL Delta cases
-    assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :>, 8.12)
-    assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :<, 9.12)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AM-HW-02'], :>, 12.01)
-    assert_operator(energy['L100AD-HW-02'] - energy['L100AM-HW-02'], :<, 13.01)
-    assert_operator(energy['L100AD-HW-03'] - energy['L100AM-HW-03'], :>, 7.88)
-    assert_operator(energy['L100AD-HW-03'] - energy['L100AM-HW-03'], :<, 8.88)
-    assert_operator(energy['L100AD-HW-04'] - energy['L100AM-HW-04'], :>, 11.50)
-    assert_operator(energy['L100AD-HW-04'] - energy['L100AM-HW-04'], :<, 12.50)
+    assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :>, 8.37)
+    assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :<, 8.87)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AM-HW-02'], :>, 12.26)
+    assert_operator(energy['L100AD-HW-02'] - energy['L100AM-HW-02'], :<, 12.77)
+    assert_operator(energy['L100AD-HW-03'] - energy['L100AM-HW-03'], :>, 8.13)
+    assert_operator(energy['L100AD-HW-03'] - energy['L100AM-HW-03'], :<, 8.63)
+    assert_operator(energy['L100AD-HW-04'] - energy['L100AM-HW-04'], :>, 11.75)
+    assert_operator(energy['L100AD-HW-04'] - energy['L100AM-HW-04'], :<, 12.25)
     assert_operator(energy['L100AD-HW-05'] - energy['L100AM-HW-05'], :>, 25.05)
-    assert_operator(energy['L100AD-HW-05'] - energy['L100AM-HW-05'], :<, 26.05)
-    assert_operator(energy['L100AD-HW-06'] - energy['L100AM-HW-06'], :>, 10.10)
-    assert_operator(energy['L100AD-HW-06'] - energy['L100AM-HW-06'], :<, 11.10)
-    assert_operator(energy['L100AD-HW-07'] - energy['L100AM-HW-07'], :>, 8.21)
-    assert_operator(energy['L100AD-HW-07'] - energy['L100AM-HW-07'], :<, 9.21)
+    assert_operator(energy['L100AD-HW-05'] - energy['L100AM-HW-05'], :<, 26.04)
+    assert_operator(energy['L100AD-HW-06'] - energy['L100AM-HW-06'], :>, 10.35)
+    assert_operator(energy['L100AD-HW-06'] - energy['L100AM-HW-06'], :<, 10.85)
+    assert_operator(energy['L100AD-HW-07'] - energy['L100AM-HW-07'], :>, 8.46)
+    assert_operator(energy['L100AD-HW-07'] - energy['L100AM-HW-07'], :<, 8.96)
   end
 
   def _check_hot_water_301_2019_pre_addendum_a(energy)

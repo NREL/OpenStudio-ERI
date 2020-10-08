@@ -73,17 +73,8 @@ This section describes elements specified in HPXML's ``ClimateandRiskZones``.
 
 The ``ClimateandRiskZones/ClimateZoneIECC`` element specifies the IECC climate zone(s) for years required by the ERI 301 Standard.
 
-The ``ClimateandRiskZones/WeatherStation`` element specifies the EnergyPlus weather file (EPW) to be used in the simulation. 
-The weather file can be entered in one of two ways:
-
-#. Using ``WeatherStation/WMO``, which must be one of the acceptable TMY3 WMO station numbers found in the ``weather/data.csv`` file.
-   The full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
-#. Using ``WeatherStation/extension/EPWFilePath``.
-
-In addition to using the TMY3 weather files that are provided, custom weather files can be used if they are in EPW file format.
-To use custom weather files, first ensure that all weather files have a unique WMO station number (as provided in the first header line of the EPW file).
-Then place them in the ``weather`` directory and call ``openstudio energy_rating_index.rb --cache-weather``.
-After processing is complete, each EPW file will have a corresponding \*.csv cache file and the WMO station numbers of these weather files will be available in the `weather/data.csv`` file.
+The ``ClimateandRiskZones/WeatherStation/extension/EPWFilePath`` element specifies the path to the EnergyPlus weather file (EPW) to be used by the simulation.
+The full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
 
 .. note:: 
 
