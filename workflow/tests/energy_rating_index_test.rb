@@ -128,7 +128,9 @@ class EnergyRatingIndexTest < Minitest::Test
                             'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
                                                             'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
                             'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
-                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
+                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'],
+                            'num-bedrooms-exceeds-limit.xml' => ['Number of bedrooms (40) exceeds limit of (CFA-120)/70=36.9.'],
+                            'enclosure-floor-area-exceeds-cfa.xml' => ['Sum of floor/slab area adjacent to conditioned space (1350.0) is greater than conditioned floor area (540.0).'] }
 
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
