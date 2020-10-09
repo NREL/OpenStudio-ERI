@@ -2143,21 +2143,35 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
-    return if orig_hpxml.ceiling_fans.size == 0
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
+      # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
+      # is less than Nbr + 1.
+      return
+    elsif n_fans < 1
+      # In 301-2014, no ceiling fans in Reference Home if no ceiling fans.
+      return
+    end
 
     medium_cfm = 3000.0
-
     new_hpxml.ceiling_fans.add(id: 'CeilingFans',
                                efficiency: medium_cfm / HVAC.get_default_ceiling_fan_power(),
                                quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
   end
 
   def self.set_ceiling_fans_rated(orig_hpxml, new_hpxml)
-    return if orig_hpxml.ceiling_fans.size == 0
-
-    medium_cfm = 3000.0
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
+      # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
+      # is less than Nbr + 1.
+      return
+    elsif n_fans < 1
+      # In 301-2014, no ceiling fans in Reference Home if no ceiling fans.
+      return
+    end
 
     # Calculate average ceiling fan wattage
+    medium_cfm = 3000.0
     sum_w = 0.0
     num_cfs = 0
     orig_hpxml.ceiling_fans.each do |orig_ceiling_fan|

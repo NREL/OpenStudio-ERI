@@ -59,63 +59,99 @@ class ERILightingTest < MiniTest::Test
   end
 
   def test_ceiling_fans
+    # Test w/ 301-2019
     hpxml_name = 'base-lighting-ceiling-fans.xml'
-
-    medium_cfm = 3000.0
-
-    # Reference Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
-
-    # Rated Home
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    avg_fan_w = 30.0
-    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
-
-    # IAD
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
-
-    # IAD Reference
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml, medium_cfm / avg_fan_w, 4)
-  end
-
-  def test_ceiling_fans_nbeds_5
-    hpxml_name = 'base-enclosure-beds-5.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.ceiling_fans.add(id: 'CeilingFans',
-                           efficiency: 100,
-                           quantity: 2)
-
-    # Save new file
+    hpxml.ceiling_fans[0].quantity = 4
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    medium_cfm = 3000.0
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_ceiling_fans(hpxml, 3000.0 / 30.0, 4)
+
+    # IAD
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+
+    # IAD Reference
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+
+    # Test w/ 301-2019 and Nfans < Nbr + 1
+    hpxml_name = 'base-lighting-ceiling-fans.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.ceiling_fans[0].quantity = 3
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_ceiling_fans(hpxml) # No ceiling fans
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_ceiling_fans(hpxml) # No ceiling fans
+
+    # IAD
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_ceiling_fans(hpxml) # No ceiling fans
+
+    # IAD Reference
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_ceiling_fans(hpxml) # No ceiling fans
+
+    # Test w/ 301-2014 and Nfans < Nbr + 1
+    hpxml_name = 'base-lighting-ceiling-fans.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.header.eri_calculation_version = '2014'
+    hpxml.ceiling_fans[0].quantity = 3
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    # Reference Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+
+    # Rated Home
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_ceiling_fans(hpxml, 3000.0 / 30.0, 4)
+
+    # IAD
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+
+    # IAD Reference
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+
+    # Test w/ 5 bedrooms
+    hpxml_name = 'base-lighting-ceiling-fans.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.ceiling_fans[0].quantity = 6
+    hpxml.building_construction.number_of_bedrooms = 5
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 6)
+    _check_ceiling_fans(hpxml_doc, 3000.0 / 42.6, 6)
 
     # Rated Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    avg_fan_w = 30.0
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 6)
+    _check_ceiling_fans(hpxml_doc, 3000.0 / 30.0, 6)
 
     # IAD
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+    _check_ceiling_fans(hpxml_doc, 3000.0 / 42.6, 4)
 
     # IAD Reference
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    avg_fan_w = 42.6
-    _check_ceiling_fans(hpxml_doc, medium_cfm / avg_fan_w, 4)
+    _check_ceiling_fans(hpxml_doc, 3000.0 / 42.6, 4)
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -185,18 +221,22 @@ class ERILightingTest < MiniTest::Test
     end
   end
 
-  def _check_ceiling_fans(hpxml, cfm_per_w, quantity)
-    assert_equal(1, hpxml.ceiling_fans.size)
-    ceiling_fan = hpxml.ceiling_fans[0]
-    if cfm_per_w.nil?
-      assert_nil(ceiling_fan.efficiency)
+  def _check_ceiling_fans(hpxml, cfm_per_w = nil, quantity = nil)
+    if cfm_per_w.nil? && quantity.nil?
+      assert_equal(0, hpxml.ceiling_fans.size)
     else
-      assert_equal(cfm_per_w, ceiling_fan.efficiency)
-    end
-    if quantity.nil?
-      assert_nil(ceiling_fan.quantity)
-    else
-      assert_equal(quantity, ceiling_fan.quantity)
+      assert_equal(1, hpxml.ceiling_fans.size)
+      ceiling_fan = hpxml.ceiling_fans[0]
+      if cfm_per_w.nil?
+        assert_nil(ceiling_fan.efficiency)
+      else
+        assert_equal(cfm_per_w, ceiling_fan.efficiency)
+      end
+      if quantity.nil?
+        assert_nil(ceiling_fan.quantity)
+      else
+        assert_equal(quantity, ceiling_fan.quantity)
+      end
     end
   end
 end
