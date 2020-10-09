@@ -62,7 +62,6 @@ class ERILightingTest < MiniTest::Test
     # Test w/ 301-2019
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.ceiling_fans[0].quantity = 4
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
@@ -129,11 +128,11 @@ class ERILightingTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
 
-    # Test w/ 5 bedrooms
+    # Test w/ different Nbr
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.ceiling_fans[0].quantity = 6
     hpxml.building_construction.number_of_bedrooms = 5
+    hpxml.ceiling_fans[0].quantity = 6
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
