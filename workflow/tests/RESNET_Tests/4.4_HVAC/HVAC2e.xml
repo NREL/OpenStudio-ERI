@@ -313,6 +313,10 @@
                 <Value>1.0</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <extension>
+                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
+                <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
+              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
@@ -325,6 +329,11 @@
                 <Units>SEER</Units>
                 <Value>10.0</Value>
               </AnnualCoolingEfficiency>
+              <extension>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
+                <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
+              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>

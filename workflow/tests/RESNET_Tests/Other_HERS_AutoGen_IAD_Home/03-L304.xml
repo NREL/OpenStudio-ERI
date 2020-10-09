@@ -334,6 +334,11 @@
                 <Units>SEER</Units>
                 <Value>15.0</Value>
               </AnnualCoolingEfficiency>
+              <extension>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowNotTested>true</AirflowNotTested>
+              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
