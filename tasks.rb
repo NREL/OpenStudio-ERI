@@ -1260,6 +1260,7 @@ def create_sample_hpxmls
                   'invalid_files/invalid-daylight-saving.xml',
                   'invalid_files/invalid-distribution-cfa-served.xml',
                   'invalid_files/invalid-facility-type.xml',
+                  'invalid_files/invalid-input-parameters.xml',
                   'invalid_files/invalid-neighbor-shading-azimuth.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',

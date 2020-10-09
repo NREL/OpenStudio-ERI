@@ -1137,7 +1137,7 @@ class EnergyRatingIndex301Ruleset
       if [HPXML::HVACTypeBoiler].include? orig_heating_system.heating_system_type
         orig_heating_system.electric_auxiliary_energy = HVAC.get_electric_auxiliary_energy(orig_heating_system)
       end
-      if [HPXML::HVACTypeFurnace, HPXML::HVACTypeWallFurnace, HPXML::HVACTypeFloorFurnace].include? orig_heating_system.heating_system_type
+      if [HPXML::HVACTypeFurnace].include? orig_heating_system.heating_system_type
         if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
           fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
           fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
@@ -1159,6 +1159,7 @@ class EnergyRatingIndex301Ruleset
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
                                     wlhp_heating_efficiency_cop: orig_heating_system.wlhp_heating_efficiency_cop,
                                     fan_watts_per_cfm: fan_watts_per_cfm,
+                                    fan_watts: orig_heating_system.fan_watts,
                                     airflow_cfm_per_ton: airflow_cfm_per_ton,
                                     airflow_defect_ratio: airflow_defect_ratio,
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)

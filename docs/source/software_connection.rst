@@ -23,6 +23,7 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
   XSD Schemas are used to validate what elements/attributes/enumerations are available, data types for elements/attributes, the number/order of children elements, etc.
 
   OpenStudio-ERI **does not** validate the HPXML file against the XSD Schema and assumes the file submitted is valid.
+  However, OpenStudio-ERI does automatically check for valid data types (e.g., integer vs string), enumeration choices, and numeric values within min/max.
 
 2. Validation using `Schematron <http://schematron.com/>`_
 
