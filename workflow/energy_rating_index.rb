@@ -520,27 +520,6 @@ def cache_weather
     File.open(epw.gsub('.epw', '-cache.csv'), 'wb') do |file|
       weather.dump_to_csv(file)
     end
-
-    # Also add file to data.csv
-    weather_data = []
-    weather_data << epw_file.wmoNumber            # wmo
-    weather_data << epw_file.city                 # station_name
-    weather_data << epw_file.stateProvinceRegion  # state
-    weather_data << epw_file.latitude             # latitude
-    weather_data << epw_file.longitude            # longitude
-    weather_data << epw_file.timeZone.to_i        # timezone
-    weather_data << epw_file.elevation.to_i       # elevation
-    weather_data << '???'                         # class
-    weather_data << File.basename(epw)            # filename
-    # Write entire file again (rather than just appending new data) to prevent
-    # inconsistent line endings.
-    csv_data = CSV.read(File.join(weather_dir, 'data.csv'))
-    csv_data << weather_data
-    CSV.open(File.join(weather_dir, 'data.csv'), 'w') do |csv|
-      csv_data.each do |data|
-        csv << data
-      end
-    end
   end
   puts 'Completed.'
   exit!

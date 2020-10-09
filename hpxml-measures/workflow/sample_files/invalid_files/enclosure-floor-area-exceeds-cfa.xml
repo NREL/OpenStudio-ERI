@@ -8,9 +8,6 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <ERICalculation>
-        <Version>latest</Version>
-      </ERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -44,7 +41,8 @@
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <ConditionedFloorArea>2700.0</ConditionedFloorArea>
+          <NumberofBathrooms>2</NumberofBathrooms>
+          <ConditionedFloorArea>540.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
@@ -321,10 +319,6 @@
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <extension>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
-              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
@@ -339,11 +333,6 @@
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
-              <extension>
-                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
@@ -386,7 +375,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>2700.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>540.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <WaterHeating>
@@ -395,7 +384,6 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
-            <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
@@ -428,7 +416,6 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -440,7 +427,6 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
@@ -452,7 +438,6 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
@@ -558,7 +543,7 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>2457.0</Value>
+            <Value>491.40000000000003</Value>
           </Load>
           <extension>
             <FracSensible>0.855</FracSensible>

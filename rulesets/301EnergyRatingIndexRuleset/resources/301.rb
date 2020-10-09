@@ -297,7 +297,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
-    new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
     @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
   end
@@ -1940,7 +1939,9 @@ class EnergyRatingIndex301Ruleset
                                  location: location,
                                  fuel_type: fuel_type,
                                  combined_energy_factor: reference_values[:combined_energy_factor],
-                                 control_type: reference_values[:control_type])
+                                 control_type: reference_values[:control_type],
+                                 is_vented: true,
+                                 vented_flow_rate: 0.0)
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_hpxml, new_hpxml)
@@ -1962,7 +1963,9 @@ class EnergyRatingIndex301Ruleset
                                  fuel_type: clothes_dryer.fuel_type,
                                  energy_factor: clothes_dryer.energy_factor,
                                  combined_energy_factor: clothes_dryer.combined_energy_factor,
-                                 control_type: clothes_dryer.control_type)
+                                 control_type: clothes_dryer.control_type,
+                                 is_vented: true,
+                                 vented_flow_rate: 0.0)
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)

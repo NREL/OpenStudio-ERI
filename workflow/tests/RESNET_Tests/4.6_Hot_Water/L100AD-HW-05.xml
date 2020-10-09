@@ -43,9 +43,8 @@
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Duluth, MN</Name>
-          <WMO>727450</WMO>
           <extension>
-            <EPWFilePath>USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_MN_Duluth.Intl.AP.727450_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>

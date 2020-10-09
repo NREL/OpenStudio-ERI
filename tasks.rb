@@ -293,28 +293,28 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
     hpxml.climate_and_risk_zones.iecc_zone = '4A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '724060'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
     hpxml.climate_and_risk_zones.iecc_zone = '3A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '722590'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
     hpxml.climate_and_risk_zones.iecc_zone = '1A'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '722020'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Miami.Intl.AP.722020_TMY3.epw'
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
     hpxml.climate_and_risk_zones.iecc_zone = '7'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
-    hpxml.climate_and_risk_zones.weather_station_wmo = '727450'
+    hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MN_Duluth.Intl.AP.727450_TMY3.epw'
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
-    if hpxml.climate_and_risk_zones.weather_station_wmo == '724660'
+    if hpxml.climate_and_risk_zones.weather_station_epw_filepath == 'USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw'
       hpxml.climate_and_risk_zones.iecc_zone = '5B'
     end
   end
@@ -1234,7 +1234,6 @@ def create_sample_hpxmls
                   'invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
-                  'invalid_files/coal-for-non-boiler-heating.xml',
                   'invalid_files/cooking-range-location.xml',
                   'invalid_files/dishwasher-location.xml',
                   'invalid_files/duct-location.xml',
@@ -1266,7 +1265,6 @@ def create_sample_hpxmls
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
                   'invalid_files/invalid-timestep.xml',
                   'invalid_files/invalid-window-height.xml',
-                  'invalid_files/invalid-window-interior-shading.xml',
                   'invalid_files/lighting-fractions.xml',
                   'invalid_files/missing-duct-location.xml',
                   'invalid_files/multifamily-reference-appliance.xml',
@@ -1313,6 +1311,7 @@ def create_sample_hpxmls
                   'base-dhw-tankless-electric-outside.xml',
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
+                  'base-enclosure-common-surfaces.xml',
                   'base-enclosure-infil-ach-house-pressure.xml',
                   'base-enclosure-infil-cfm-house-pressure.xml',
                   'base-enclosure-infil-flue.xml',
@@ -1328,6 +1327,7 @@ def create_sample_hpxmls
                   'base-hvac-dual-fuel-mini-split-heat-pump-ducted.xml',
                   'base-hvac-ducts-leakage-percent.xml',
                   'base-hvac-flowrate.xml',
+                  'base-hvac-furnace-coal-only.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
@@ -1672,7 +1672,7 @@ if ARGV[0].to_sym == :create_release_zips
   end
 
   # Check if we need to download weather files for the full release zip
-  num_epws_expected = File.readlines(File.join('weather', 'data.csv')).size - 1
+  num_epws_expected = 1011
   num_epws_local = 0
   files.each do |f|
     Dir[f].each do |file|

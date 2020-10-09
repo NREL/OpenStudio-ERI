@@ -37,13 +37,13 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingOccupancy>
-          <NumberofResidents>3.0</NumberofResidents>
+          <NumberofResidents>40.0</NumberofResidents>
         </BuildingOccupancy>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
-          <NumberofBedrooms>3</NumberofBedrooms>
+          <NumberofBedrooms>40</NumberofBedrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
         </BuildingConstruction>
@@ -341,7 +341,7 @@
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
                 <ChargeNotTested>true</ChargeNotTested>
-                <FanPowerWattsPerCFM>0.365</FanPowerWattsPerCFM>
+                <FanPowerNotTested>true</FanPowerNotTested>
                 <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </CoolingSystem>
@@ -570,7 +570,7 @@
           <PlugLoadType>TV other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>620.0</Value>
+            <Value>3173.0</Value>
           </Load>
         </PlugLoad>
       </MiscLoads>
