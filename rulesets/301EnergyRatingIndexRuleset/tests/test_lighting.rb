@@ -223,6 +223,7 @@ class ERILightingTest < MiniTest::Test
   def _check_ceiling_fans(hpxml, cfm_per_w = nil, quantity = nil)
     if cfm_per_w.nil? && quantity.nil?
       assert_equal(0, hpxml.ceiling_fans.size)
+      assert_nil(hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
     else
       assert_equal(1, hpxml.ceiling_fans.size)
       ceiling_fan = hpxml.ceiling_fans[0]
@@ -236,6 +237,7 @@ class ERILightingTest < MiniTest::Test
       else
         assert_equal(quantity, ceiling_fan.quantity)
       end
+      assert_equal(0.5, hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
     end
   end
 end
