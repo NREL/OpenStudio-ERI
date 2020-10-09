@@ -320,7 +320,7 @@
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <extension>
-                <HeatingFlowRate>1920.0</HeatingFlowRate>
+                <AirflowCFMPerTon>400.0</AirflowCFMPerTon>
               </extension>
             </HeatingSystem>
             <CoolingSystem>
@@ -337,7 +337,7 @@
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
-                <CoolingFlowRate>1440.0</CoolingFlowRate>
+                <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
               </extension>
             </CoolingSystem>
           </HVACPlant>
