@@ -418,8 +418,6 @@
               <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
               <extension>
                 <FanPowerWatts>0.0</FanPowerWatts>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </HeatingSystem>
             <CoolingSystem>

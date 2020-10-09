@@ -1327,10 +1327,24 @@ def create_sample_hpxmls
                   'base-hvac-dual-fuel-air-to-air-heat-pump-var-speed.xml',
                   'base-hvac-dual-fuel-mini-split-heat-pump-ducted.xml',
                   'base-hvac-ducts-leakage-percent.xml',
-                  'base-hvac-flowrate.xml',
                   'base-hvac-furnace-coal-only.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
+                  'base-hvac-install-qual-airflow-defect.xml',
+                  'base-hvac-install-qual-airflow-rate.xml',
+                  'base-hvac-install-qual-all-air-to-air-heat-pump-1-speed2.xml',
+                  'base-hvac-install-qual-all-air-to-air-heat-pump-2-speed2.xml',
+                  'base-hvac-install-qual-all-air-to-air-heat-pump-var-speed2.xml',
+                  'base-hvac-install-qual-all-furnace-gas-central-ac-2-speed2.xml',
+                  'base-hvac-install-qual-all-furnace-gas-central-ac-var-speed2.xml',
+                  'base-hvac-install-qual-all-furnace-gas-only2.xml',
+                  'base-hvac-install-qual-all-ground-to-air-heat-pump2.xml',
+                  'base-hvac-install-qual-all-mini-split-air-conditioner-only-ducted2.xml',
+                  'base-hvac-install-qual-all-mini-split-heat-pump-ducted2.xml',
+                  'base-hvac-install-qual-blower-efficiency.xml',
+                  'base-hvac-install-qual-both.xml',
+                  'base-hvac-install-qual-charge-defect.xml',
+                  'base-hvac-install-qual-none.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ductless.xml',
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
@@ -1425,9 +1439,7 @@ def create_sample_hpxmls
       ventilation_fan.is_shared_system = false
     end
     hpxml.heating_systems.each do |heating_system|
-      next unless [HPXML::HVACTypeFurnace,
-                   HPXML::HVACTypeWallFurnace,
-                   HPXML::HVACTypeFloorFurnace].include? heating_system.heating_system_type
+      next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
 
       if heating_system.fan_watts_per_cfm.nil?
         heating_system.fan_power_not_tested = true
@@ -1460,8 +1472,7 @@ def create_sample_hpxmls
       if heat_pump.airflow_cfm_per_ton.nil?
         heat_pump.airflow_not_tested = true
       end
-      next unless heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir
-      if heat_pump.charge_defect_ratio.nil?
+      if heat_pump.charge_defect_ratio.nil? && (heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir)
         heat_pump.charge_not_tested = true
       end
     end

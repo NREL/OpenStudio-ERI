@@ -322,8 +322,6 @@
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <extension>
                 <FanPowerWatts>0.0</FanPowerWatts>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </HeatingSystem>
           </HVACPlant>

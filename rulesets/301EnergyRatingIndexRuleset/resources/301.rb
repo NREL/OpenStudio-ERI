@@ -1135,7 +1135,7 @@ class EnergyRatingIndex301Ruleset
     # Retain heating system(s)
     orig_hpxml.heating_systems.each do |orig_heating_system|
       if [HPXML::HVACTypeBoiler].include? orig_heating_system.heating_system_type
-        orig_heating_system.electric_auxiliary_energy = HVAC.get_electric_auxiliary_energy(orig_heating_system)
+        orig_heating_system.electric_auxiliary_energy = HVAC.get_default_boiler_eae(orig_heating_system)
       end
       if [HPXML::HVACTypeFurnace].include? orig_heating_system.heating_system_type
         if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
@@ -2558,7 +2558,7 @@ class EnergyRatingIndex301Ruleset
                                   heating_efficiency_afue: 0.80,
                                   fraction_heat_load_served: load_frac,
                                   seed_id: seed_id)
-    new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_electric_auxiliary_energy(new_hpxml.heating_systems[-1])
+    new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_boiler_eae(new_hpxml.heating_systems[-1])
   end
 
   def self.add_reference_heating_heat_pump(new_hpxml, load_frac, orig_system = nil)

@@ -30,7 +30,7 @@ class EnergyRatingIndexTest < Minitest::Test
     File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    files = 'base*.xml'
+    files = 'base*hvac*.xml'
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
