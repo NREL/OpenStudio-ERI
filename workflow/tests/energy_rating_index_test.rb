@@ -30,7 +30,7 @@ class EnergyRatingIndexTest < Minitest::Test
     File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    files = 'base*hvac*.xml'
+    files = 'base*.xml'
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
@@ -123,8 +123,8 @@ class EnergyRatingIndexTest < Minitest::Test
     test_name = 'invalid_files'
     expected_error_msgs = { 'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
-                            'missing-elements.xml' => ['Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
-                                                       'Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],
+                            'missing-elements.xml' => ['Expected 1 element(s) for xpath: NumberofConditionedFloors [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]',
+                                                       'Expected 1 element(s) for xpath: ConditionedFloorArea [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
                             'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
                                                             'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
                             'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
@@ -485,8 +485,29 @@ class EnergyRatingIndexTest < Minitest::Test
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num)
 
-      # Re-simulate reference HPXML file
-      _override_mech_vent_fan_power(out_xml)
+      # Update HPXML:
+      # 1. Override mech vent fan power
+      # 2. Handle HVAC installation quality inputs
+      new_hpxml = HPXML.new(hpxml_path: out_xml)
+      new_hpxml.ventilation_fans.each do |vent_fan|
+        next unless vent_fan.used_for_whole_building_ventilation
+
+        if (vent_fan.fan_type == HPXML::MechVentTypeSupply) || (vent_fan.fan_type == HPXML::MechVentTypeExhaust)
+          vent_fan.fan_power = 0.35 * vent_fan.tested_flow_rate
+        elsif vent_fan.fan_type == HPXML::MechVentTypeBalanced
+          vent_fan.fan_power = 0.70 * vent_fan.tested_flow_rate
+        elsif (vent_fan.fan_type == HPXML::MechVentTypeERV) || (vent_fan.fan_type == HPXML::MechVentTypeHRV)
+          vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
+        elsif vent_fan.fan_type == HPXML::MechVentTypeCFIS
+          vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
+        end
+      end
+      (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac_system|
+        hvac_system.airflow_not_tested = true
+        hvac_system.airflow_defect_ratio = nil
+      end
+      XMLHelper.write_file(new_hpxml.to_oga, out_xml)
+
       hpxmls, csvs, runtime = _run_workflow(out_xml, test_name)
       worksheet_results = _get_csv_results(csvs[:eri_worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
@@ -1613,13 +1634,13 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _get_mech_vent(hpxml)
     mv_kwh = mv_cfm = 0.0
-    hpxml.ventilation_fans.each do |ventilation_fan|
-      next unless ventilation_fan.used_for_whole_building_ventilation
+    hpxml.ventilation_fans.each do |vent_fan|
+      next unless vent_fan.used_for_whole_building_ventilation
 
-      hours = ventilation_fan.hours_in_operation
-      fan_w = ventilation_fan.fan_power
+      hours = vent_fan.hours_in_operation
+      fan_w = vent_fan.fan_power
       mv_kwh += fan_w * 8.76 * hours / 24.0
-      mv_cfm += ventilation_fan.tested_flow_rate
+      mv_cfm += vent_fan.tested_flow_rate
     end
     return mv_kwh, mv_cfm
   end
@@ -1975,24 +1996,6 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :<, 9.4)
     assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :>, 28.9)
     assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :<, 45.1)
-  end
-
-  def _override_mech_vent_fan_power(ref_xml)
-    ref_hpxml = HPXML.new(hpxml_path: ref_xml)
-    ref_hpxml.ventilation_fans.each do |ventilation_fan|
-      next unless ventilation_fan.used_for_whole_building_ventilation
-
-      if (ventilation_fan.fan_type == HPXML::MechVentTypeSupply) || (ventilation_fan.fan_type == HPXML::MechVentTypeExhaust)
-        ventilation_fan.fan_power = 0.35 * ventilation_fan.tested_flow_rate
-      elsif ventilation_fan.fan_type == HPXML::MechVentTypeBalanced
-        ventilation_fan.fan_power = 0.70 * ventilation_fan.tested_flow_rate
-      elsif (ventilation_fan.fan_type == HPXML::MechVentTypeERV) || (ventilation_fan.fan_type == HPXML::MechVentTypeHRV)
-        ventilation_fan.fan_power = 1.00 * ventilation_fan.tested_flow_rate
-      elsif ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
-        ventilation_fan.fan_power = 0.50 * ventilation_fan.tested_flow_rate
-      end
-    end
-    XMLHelper.write_file(ref_hpxml.to_oga, ref_xml)
   end
 
   def _rm_path(path)

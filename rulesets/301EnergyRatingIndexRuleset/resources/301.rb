@@ -2528,6 +2528,11 @@ class EnergyRatingIndex301Ruleset
     seed_id = 'ResidualHeating' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
+    airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
+    airflow_not_tested = true if airflow_defect_ratio.nil?
+    fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
+    fan_power_not_tested = true if fan_watts_per_cfm.nil?
+
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeFurnace,
@@ -2535,8 +2540,10 @@ class EnergyRatingIndex301Ruleset
                                   heating_capacity: -1, # Use Manual J auto-sizing
                                   heating_efficiency_afue: 0.78,
                                   fraction_heat_load_served: load_frac,
-                                  airflow_defect_ratio: get_reference_hvac_airflow_defect_ratio(),
-                                  fan_watts_per_cfm: get_reference_hvac_fan_watts_per_cfm(),
+                                  airflow_defect_ratio: airflow_defect_ratio,
+                                  airflow_not_tested: airflow_not_tested,
+                                  fan_watts_per_cfm: fan_watts_per_cfm,
+                                  fan_power_not_tested: fan_power_not_tested,
                                   seed_id: seed_id)
   end
 
@@ -2588,6 +2595,13 @@ class EnergyRatingIndex301Ruleset
       backup_capacity = -1
     end
 
+    airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
+    airflow_not_tested = true if airflow_defect_ratio.nil?
+    fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
+    fan_power_not_tested = true if fan_watts_per_cfm.nil?
+    charge_defect_ratio = get_reference_hvac_charge_defect_ratio()
+    charge_not_tested = true if charge_defect_ratio.nil?
+
     new_hpxml.heat_pumps.add(id: "HeatPump#{new_hpxml.heat_pumps.size + 1}",
                              distribution_system_idref: dist_id,
                              heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
@@ -2604,9 +2618,12 @@ class EnergyRatingIndex301Ruleset
                              fraction_cool_load_served: 0.0,
                              cooling_efficiency_seer: 13.0, # Arbitrary, not used
                              heating_efficiency_hspf: 7.7,
-                             airflow_defect_ratio: get_reference_hvac_airflow_defect_ratio(),
-                             fan_watts_per_cfm: get_reference_hvac_fan_watts_per_cfm(),
-                             charge_defect_ratio: get_reference_hvac_charge_defect_ratio(),
+                             airflow_defect_ratio: airflow_defect_ratio,
+                             airflow_not_tested: airflow_not_tested,
+                             fan_watts_per_cfm: fan_watts_per_cfm,
+                             fan_power_not_tested: fan_power_not_tested,
+                             charge_defect_ratio: charge_defect_ratio,
+                             charge_not_tested: charge_not_tested,
                              seed_id: seed_id)
   end
 
@@ -2620,6 +2637,13 @@ class EnergyRatingIndex301Ruleset
     seed_id = 'ResidualCooling' if seed_id.nil?
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
+    airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
+    airflow_not_tested = true if airflow_defect_ratio.nil?
+    fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
+    fan_power_not_tested = true if fan_watts_per_cfm.nil?
+    charge_defect_ratio = get_reference_hvac_charge_defect_ratio()
+    charge_not_tested = true if charge_defect_ratio.nil?
+
     new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
                                   distribution_system_idref: dist_id,
                                   cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
@@ -2629,9 +2653,12 @@ class EnergyRatingIndex301Ruleset
                                   fraction_cool_load_served: load_frac,
                                   cooling_efficiency_seer: 13.0,
                                   cooling_shr: shr,
-                                  airflow_defect_ratio: get_reference_hvac_airflow_defect_ratio(),
-                                  fan_watts_per_cfm: get_reference_hvac_fan_watts_per_cfm(),
-                                  charge_defect_ratio: get_reference_hvac_charge_defect_ratio(),
+                                  airflow_defect_ratio: airflow_defect_ratio,
+                                  airflow_not_tested: airflow_not_tested,
+                                  fan_watts_per_cfm: fan_watts_per_cfm,
+                                  fan_power_not_tested: fan_power_not_tested,
+                                  charge_defect_ratio: charge_defect_ratio,
+                                  charge_not_tested: charge_not_tested,
                                   seed_id: seed_id)
   end
 
