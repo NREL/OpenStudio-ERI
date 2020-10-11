@@ -1109,16 +1109,10 @@ class EnergyRatingIndex301Ruleset
 
     # Table 303.4.1(1) - Thermostat
     control_type = HPXML::HVACControlTypeManual
-    if orig_hpxml.ceiling_fans.size > 0
-      clg_ceiling_fan_offset = 0.5 # deg-F
-    else
-      clg_ceiling_fan_offset = nil
-    end
     new_hpxml.hvac_controls.add(id: 'HVACControl',
                                 control_type: control_type,
                                 heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
-                                cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0],
-                                ceiling_fan_cooling_setpoint_temp_offset: clg_ceiling_fan_offset)
+                                cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
 
     # Distribution system
     add_reference_distribution_system(new_hpxml)
@@ -1263,11 +1257,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Table 303.4.1(1) - Thermostat
-    if orig_hpxml.ceiling_fans.size > 0
-      clg_ceiling_fan_offset = 0.5 # deg-F
-    else
-      clg_ceiling_fan_offset = nil
-    end
     if orig_hpxml.hvac_controls.size > 0
       hvac_control = orig_hpxml.hvac_controls[0]
       control_type = hvac_control.control_type
@@ -1282,16 +1271,14 @@ class EnergyRatingIndex301Ruleset
                                   cooling_setpoint_temp: clg_sp,
                                   cooling_setup_temp: clg_setup_sp,
                                   cooling_setup_hours_per_week: clg_setup_hrs_per_week,
-                                  cooling_setup_start_hour: clg_setup_start_hr,
-                                  ceiling_fan_cooling_setpoint_temp_offset: clg_ceiling_fan_offset)
+                                  cooling_setup_start_hour: clg_setup_start_hr)
 
     else
       control_type = HPXML::HVACControlTypeManual
       new_hpxml.hvac_controls.add(id: 'HVACControl',
                                   control_type: control_type,
                                   heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
-                                  cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0],
-                                  ceiling_fan_cooling_setpoint_temp_offset: clg_ceiling_fan_offset)
+                                  cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
     end
 
     # Table 4.2.2(1) - Thermal distribution systems
@@ -2200,21 +2187,36 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
-    return if orig_hpxml.ceiling_fans.size == 0
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
+      # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
+      # is less than Nbr + 1.
+      return
+    elsif n_fans < 1
+      # In 301-2014, no ceiling fans in Reference Home if no ceiling fans.
+      return
+    end
 
     medium_cfm = 3000.0
-
     new_hpxml.ceiling_fans.add(id: 'CeilingFans',
                                efficiency: medium_cfm / HVAC.get_default_ceiling_fan_power(),
                                quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+    new_hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
   def self.set_ceiling_fans_rated(orig_hpxml, new_hpxml)
-    return if orig_hpxml.ceiling_fans.size == 0
-
-    medium_cfm = 3000.0
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
+      # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
+      # is less than Nbr + 1.
+      return
+    elsif n_fans < 1
+      # In 301-2014, no ceiling fans in Reference Home if no ceiling fans.
+      return
+    end
 
     # Calculate average ceiling fan wattage
+    medium_cfm = 3000.0
     sum_w = 0.0
     num_cfs = 0
     orig_hpxml.ceiling_fans.each do |orig_ceiling_fan|
@@ -2231,6 +2233,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.ceiling_fans.add(id: 'CeilingFans',
                                efficiency: medium_cfm / avg_w,
                                quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+    new_hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
   def self.set_ceiling_fans_iad(orig_hpxml, new_hpxml)

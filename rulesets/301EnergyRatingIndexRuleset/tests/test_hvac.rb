@@ -745,20 +745,6 @@ class ERIHVACtest < MiniTest::Test
     _check_thermostat(hpxml, HPXML::HVACControlTypeProgrammable, 68, 78, 66, 7 * 7, 23, 80, 6 * 7, 9)
   end
 
-  def test_ceiling_fan
-    hpxml_name = 'base-lighting-ceiling-fans.xml'
-
-    # Rated Home, Reference Home, IAD, IAD Reference
-    calc_types = [Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78, nil, nil, nil, nil, nil, nil, 0.5)
-    end
-  end
-
   def test_custom_setpoints
     hpxml_name = 'base-hvac-setpoints.xml'
 
@@ -1040,7 +1026,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def _check_thermostat(hpxml, control_type, htg_sp, clg_sp, htg_setback = nil, htg_setback_hrs = nil, htg_setback_start_hr = nil,
-                        clg_setup = nil, clg_setup_hrs = nil, clg_setup_start_hr = nil, ceiling_fan_offset = nil)
+                        clg_setup = nil, clg_setup_hrs = nil, clg_setup_start_hr = nil)
     assert_equal(1, hpxml.hvac_controls.size)
     hvac_control = hpxml.hvac_controls[0]
     assert_equal(control_type, hvac_control.control_type)
@@ -1077,12 +1063,6 @@ class ERIHVACtest < MiniTest::Test
       assert_nil(hvac_control.cooling_setup_start_hour)
     else
       assert_equal(clg_setup_start_hr, hvac_control.cooling_setup_start_hour)
-    end
-
-    if ceiling_fan_offset.nil?
-      assert_nil(hvac_control.ceiling_fan_cooling_setpoint_temp_offset)
-    else
-      assert_equal(ceiling_fan_offset, hvac_control.ceiling_fan_cooling_setpoint_temp_offset)
     end
   end
 
