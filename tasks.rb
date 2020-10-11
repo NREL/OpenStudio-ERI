@@ -571,8 +571,6 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               electric_auxiliary_energy: 1040,
                               fan_watts_per_cfm: 0.5,
                               airflow_cfm_per_ton: 360.0)
-  elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
-    hpxml.heating_systems[0].fan_watts_per_cfm = 0.375
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 90%; 0.000375 kW/cfm
     hpxml.heating_systems.clear
@@ -696,7 +694,6 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     # Change to SEER = 13
     hpxml.cooling_systems[0].cooling_efficiency_seer = 13
-    hpxml.cooling_systems[0].fan_watts_per_cfm = 0.375
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     hpxml.cooling_systems[0].fan_watts_per_cfm = 0.375
   elsif ['RESNET_Tests/4.5_DSE/HVAC3e.xml',

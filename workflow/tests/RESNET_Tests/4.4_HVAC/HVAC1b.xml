@@ -315,7 +315,7 @@
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <ElectricAuxiliaryEnergy>1040.0</ElectricAuxiliaryEnergy>
               <extension>
-                <FanPowerWattsPerCFM>0.375</FanPowerWattsPerCFM>
+                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
                 <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
               </extension>
             </HeatingSystem>
@@ -332,7 +332,7 @@
               </AnnualCoolingEfficiency>
               <extension>
                 <ChargeNotTested>true</ChargeNotTested>
-                <FanPowerWattsPerCFM>0.375</FanPowerWattsPerCFM>
+                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
                 <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
               </extension>
             </CoolingSystem>
