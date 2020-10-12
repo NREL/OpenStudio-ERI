@@ -1130,7 +1130,7 @@ end
 def set_hpxml_dishwasher(hpxml_file, hpxml)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
 
-  default_values = HotWaterAndAppliances.get_dishwasher_default_values()
+  default_values = HotWaterAndAppliances.get_dishwasher_default_values(get_eri_version(hpxml))
   hpxml.dishwashers.clear
   hpxml.dishwashers.add(id: 'Dishwasher',
                         is_shared_appliance: false,
