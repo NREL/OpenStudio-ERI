@@ -1911,7 +1911,7 @@ class EnergyRatingIndex301Ruleset
       location = dishwasher.location.gsub('unvented', 'vented')
     end
 
-    reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
+    reference_values = HotWaterAndAppliances.get_dishwasher_default_values(@eri_version)
     new_hpxml.dishwashers.add(id: id,
                               is_shared_appliance: false,
                               location: location,
