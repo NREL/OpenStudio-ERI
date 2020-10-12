@@ -8,15 +8,11 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
+      <ERICalculation>
+        <Version>latest</Version>
+      </ERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
-        <DaylightSaving>
-          <Enabled>true</Enabled>
-          <BeginMonth>3</BeginMonth>
-          <BeginDayOfMonth>10</BeginDayOfMonth>
-          <EndMonth>4</EndMonth>
-          <EndDayOfMonth>31</EndDayOfMonth>
-        </DaylightSaving>
       </SimulationControl>
     </extension>
   </SoftwareInfo>
@@ -48,7 +44,6 @@
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
         </BuildingConstruction>
@@ -326,6 +321,10 @@
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <extension>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowCFMPerTon>400.0</AirflowCFMPerTon>
+              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
@@ -340,6 +339,11 @@
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
+              <extension>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
+              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
@@ -391,6 +395,7 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
+            <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
@@ -423,6 +428,7 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -434,6 +440,7 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
@@ -445,6 +452,7 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
