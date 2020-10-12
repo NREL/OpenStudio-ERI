@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>d24d1879-dec7-43f5-b8bf-eb19b4fb48d4</version_id>
-  <version_modified>20201011T195104Z</version_modified>
+  <version_id>4debd588-3cdd-4a9e-adac-2284dc82fb42</version_id>
+  <version_modified>20201012T183738Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -119,22 +119,10 @@
       <checksum>786534C4</checksum>
     </file>
     <file>
-      <filename>test_appliances.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>76792260</checksum>
-    </file>
-    <file>
-      <filename>test_lighting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>69AB1734</checksum>
-    </file>
-    <file>
       <filename>test_validation.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>C7904E9F</checksum>
+      <checksum>9AFA7721</checksum>
     </file>
     <file>
       <version>
@@ -145,25 +133,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>4292E9D2</checksum>
+      <checksum>6D824A43</checksum>
     </file>
     <file>
       <filename>301validator.xml</filename>
       <filetype>xml</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7117FAD1</checksum>
+      <checksum>ADC760F6</checksum>
     </file>
     <file>
       <filename>test_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>9977BA01</checksum>
+      <checksum>4740FDF9</checksum>
+    </file>
+    <file>
+      <filename>test_lighting.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>69AB1734</checksum>
     </file>
     <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>2CA7C54C</checksum>
+      <checksum>498AB23D</checksum>
+    </file>
+    <file>
+      <filename>test_appliances.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>48F70178</checksum>
     </file>
   </files>
 </measure>

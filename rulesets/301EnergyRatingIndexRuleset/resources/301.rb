@@ -1881,11 +1881,6 @@ class EnergyRatingIndex301Ruleset
       return
     end
 
-    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
-      # This fields are required but not used
-      clothes_washer.label_usage = 999
-    end
-
     new_hpxml.clothes_washers.add(id: clothes_washer.id,
                                   is_shared_appliance: clothes_washer.is_shared_appliance,
                                   water_heating_system_idref: clothes_washer.water_heating_system_idref,
@@ -1973,7 +1968,7 @@ class EnergyRatingIndex301Ruleset
       location = dishwasher.location.gsub('unvented', 'vented')
     end
 
-    reference_values = HotWaterAndAppliances.get_dishwasher_default_values()
+    reference_values = HotWaterAndAppliances.get_dishwasher_default_values(@eri_version)
     new_hpxml.dishwashers.add(id: id,
                               is_shared_appliance: false,
                               location: location,
@@ -1993,14 +1988,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     dishwasher = orig_hpxml.dishwashers[0]
-
-    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019A')
-      # These fields are required but not used
-      dishwasher.label_electric_rate = 999
-      dishwasher.label_gas_rate = 999
-      dishwasher.label_annual_gas_cost = 999
-      dishwasher.label_usage = 999
-    end
 
     new_hpxml.dishwashers.add(id: dishwasher.id,
                               is_shared_appliance: dishwasher.is_shared_appliance,
