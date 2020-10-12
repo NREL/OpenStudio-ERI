@@ -568,7 +568,6 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.78,
                               fraction_heat_load_served: 1,
-                              electric_auxiliary_energy: 1040,
                               fan_watts_per_cfm: 0.5,
                               airflow_cfm_per_ton: 360.0)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
@@ -581,7 +580,6 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.9,
                               fraction_heat_load_served: 1,
-                              electric_auxiliary_energy: 780,
                               fan_watts_per_cfm: 0.375,
                               airflow_cfm_per_ton: 360.0)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
