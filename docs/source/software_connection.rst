@@ -413,6 +413,7 @@ Air Distribution
 ~~~~~~~~~~~~~~~~
 
 ``AirDistribution`` systems are defined by:
+
 - ``ConditionedFloorAreaServed``
 - Optional supply ducts (``Ducts[DuctType='supply']``)
 - Optional return ducts (``Ducts[DuctType='return']``)
