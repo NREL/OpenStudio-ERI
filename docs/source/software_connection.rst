@@ -455,6 +455,7 @@ AirDistribution systems must also have duct leakage testing provided in one of t
 .. warning::
 
   Total leakage and leakage to outside testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
+  OpenStudio-ERI does not assess the validity of the duct test exemption claim.
 
 Hydronic Distribution
 ~~~~~~~~~~~~~~~~~~~~~
@@ -786,7 +787,7 @@ The efficiency of the dehumidifier can either be entered as an ``IntegratedEnerg
 
 .. note::
 
-  Dehumidifiers only affect ERI scores if Version 2019AB or newer is used, as dehumidifiers were incorporated into the ERI calculation in 301-2019 Addendum B.
+  Dehumidifiers only affect ERI scores if Version 2019AB or newer is used, as dehumidifiers were incorporated into the ERI calculation as of 301-2019 Addendum B.
 
 HPXML Lighting
 --------------
