@@ -21,41 +21,27 @@ class ERILightingTest < MiniTest::Test
   def test_lighting
     hpxml_name = 'base.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
-
-    # Rated Home
+    _check_lighting(hpxml, f_int_cfl: 0.1)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml, 0.4, 0.4, 0.4, 0.1, 0.1, 0.1, 0.25, 0.25, 0.25)
-
-    # IAD
+    _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml, 0.75, 0.75, 0, 0, 0, 0, 0, 0, 0)
-
-    # IAD Reference
+    _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
+    _check_lighting(hpxml, f_int_cfl: 0.1)
   end
 
   def test_lighting_pre_addendum_g
     hpxml_name = 'base-version-2014ADE.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
-
-    # Rated Home
+    _check_lighting(hpxml, f_int_cfl: 0.1)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml, 0.4, 0.4, 0.4, 0.1, 0.1, 0.1, 0.25, 0.25, 0.25)
-
-    # IAD
+    _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml, 0.75, 0.75, 0, 0, 0, 0, 0, 0, 0)
-
-    # IAD Reference
+    _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
+    _check_lighting(hpxml, f_int_cfl: 0.1)
   end
 
   def test_ceiling_fans
@@ -65,21 +51,14 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
-
-    # Rated Home
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml, 3000.0 / 30.0, 4)
-
-    # IAD
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
-
-    # IAD Reference
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
 
     # Test w/ 301-2019 and Nfans < Nbr + 1
     hpxml_name = 'base-lighting-ceiling-fans.xml'
@@ -88,21 +67,14 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml) # No ceiling fans
-
-    # Rated Home
+    _check_ceiling_fans(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml) # No ceiling fans
-
-    # IAD
+    _check_ceiling_fans(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml) # No ceiling fans
-
-    # IAD Reference
+    _check_ceiling_fans(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml) # No ceiling fans
+    _check_ceiling_fans(hpxml)
 
     # Test w/ 301-2014 and Nfans < Nbr + 1
     hpxml_name = 'base-lighting-ceiling-fans.xml'
@@ -112,21 +84,14 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
-
-    # Rated Home
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml, 3000.0 / 30.0, 4)
-
-    # IAD
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
-
-    # IAD Reference
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml, 3000.0 / 42.6, 4)
+    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
 
     # Test w/ different Nbr
     hpxml_name = 'base-lighting-ceiling-fans.xml'
@@ -136,21 +101,14 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml_doc, 3000.0 / 42.6, 6)
-
-    # Rated Home
+    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 42.6, quantity: 6)
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml_doc, 3000.0 / 30.0, 6)
-
-    # IAD
+    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 30.0, quantity: 6)
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml_doc, 3000.0 / 42.6, 4)
-
-    # IAD Reference
+    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 42.6, quantity: 4)
     hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml_doc, 3000.0 / 42.6, 4)
+    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 42.6, quantity: 4)
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -192,7 +150,8 @@ class ERILightingTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _check_lighting(hpxml, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
+  def _check_lighting(hpxml, f_int_cfl: 0, f_ext_cfl: 0, f_grg_cfl: 0, f_int_lfl: 0,
+                      f_ext_lfl: 0, f_grg_lfl: 0, f_int_led: 0, f_ext_led: 0, f_grg_led: 0)
     assert_equal(9, hpxml.lighting_groups.size)
     hpxml.lighting_groups.each do |lg|
       assert([HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? lg.lighting_type)
@@ -220,7 +179,7 @@ class ERILightingTest < MiniTest::Test
     end
   end
 
-  def _check_ceiling_fans(hpxml, cfm_per_w = nil, quantity = nil)
+  def _check_ceiling_fans(hpxml, cfm_per_w: nil, quantity: nil)
     if cfm_per_w.nil? && quantity.nil?
       assert_equal(0, hpxml.ceiling_fans.size)
       assert_nil(hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)

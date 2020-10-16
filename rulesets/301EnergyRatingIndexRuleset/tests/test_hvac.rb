@@ -29,17 +29,16 @@ class ERIHVACtest < MiniTest::Test
   def test_none
     hpxml_name = 'base-hvac-none.xml'
 
-    # Reference Home, Rated Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
   end
 
@@ -50,502 +49,422 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home, Rated Home IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
   end
 
   def test_boiler_elec
     hpxml_name = 'base-hvac-boiler-elec-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeElectricity, nil, 1.0, nil, 170])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 1.0, eae: 170 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_boiler_gas
     hpxml_name = 'base-hvac-boiler-gas-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, 0.80, 1.0, _dse(calc_type), 170])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, dse: _dse(calc_type), eae: 170 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, nil, 1.0, nil, 200])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, eae: 200 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_furnace_elec
     hpxml_name = 'base-hvac-furnace-elec-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeElectricity, nil, 1.0, nil])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeElectricity, eff: 1.0 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_furnace_gas
     hpxml_name = 'base-hvac-furnace-gas-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 1.0, nil])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_stove_oil
     hpxml_name = 'base-hvac-stove-oil-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeStove, HPXML::FuelTypeOil, nil, 1.0, nil])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeStove, fuel: HPXML::FuelTypeOil, eff: 0.8 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_wall_furnace_elec
     hpxml_name = 'base-hvac-wall-furnace-elec-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeWallFurnace, HPXML::FuelTypeElectricity, nil, 1.0, nil])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeWallFurnace, fuel: HPXML::FuelTypeElectricity, eff: 1.0 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_elec_resistance
     hpxml_name = 'base-hvac-elec-resistance-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeElectricResistance, HPXML::FuelTypeElectricity, nil, 1.0, nil])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeElectricResistance, fuel: HPXML::FuelTypeElectricity, eff: 1.0 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_air_source_heat_pump
     hpxml_name = 'base-hvac-air-to-air-heat-pump-1-speed.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 1.0, 1.0, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 }])
     _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_mini_split_heat_pump_ducted
     hpxml_name = 'base-hvac-mini-split-heat-pump-ducted.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpMiniSplit, HPXML::FuelTypeElectricity, nil, nil, nil, 1.0, 1.0, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpMiniSplit, fuel: HPXML::FuelTypeElectricity, hspf: 10, seer: 19, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 }])
     _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_mini_split_heat_pump_ductless
     hpxml_name = 'base-hvac-mini-split-heat-pump-ductless.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpMiniSplit, HPXML::FuelTypeElectricity, nil, nil, nil, 1.0, 1.0, nil, 0.73, nil, nil, nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpMiniSplit, fuel: HPXML::FuelTypeElectricity, hspf: 10, seer: 19, shr: 0.73 }])
     _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_ground_source_heat_pump
     hpxml_name = 'base-hvac-ground-to-air-heat-pump.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpGroundToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 1.0, 1.0, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil, 30])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 30 }])
     _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_dual_fuel_heat_pump_gas
     hpxml_name = 'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeNaturalGas, 0.78, 25.0])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: 0.78, backup_temp: 25.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 1.0, 1.0, nil, 0.73, HPXML::FuelTypeNaturalGas, 0.95, 25.0])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, shr: 0.73, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: 0.95, backup_temp: 25.0 }])
     _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_dual_fuel_heat_pump_electric
     hpxml_name = 'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml'
 
-    # Reference Home, IAD
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, nil, nil, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # IAD Reference
-    calc_type = Constants.CalcTypeERIIndexAdjustmentReferenceHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: 0.8, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8, shr: 0.73 }])
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 1.0, 1.0, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, 25.0])
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, backup_temp: 25.0 }])
     _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_central_air_conditioner
     hpxml_name = 'base-hvac-central-ac-only-1-speed.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, 0.73])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, shr: 0.73 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_room_air_conditioner
     hpxml_name = 'base-hvac-room-ac-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.65])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.65 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeRoomAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, 0.65])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeRoomAirConditioner, fuel: HPXML::FuelTypeElectricity, eer: 8.5, shr: 0.65 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_evaporative_cooler
     hpxml_name = 'base-hvac-evap-cooler-only.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeEvaporativeCooler, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, nil])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeEvaporativeCooler, fuel: HPXML::FuelTypeElectricity }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_furnace_gas_and_central_air_conditioner
     hpxml_name = 'base.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, 0.73])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 1.0, nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, shr: 0.73 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_furnace_gas_room_air_conditioner
     hpxml_name = 'base-hvac-furnace-gas-room-ac.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.65])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.65 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeRoomAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, 0.65])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 1.0, nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeRoomAirConditioner, fuel: HPXML::FuelTypeElectricity, eer: 8.5, shr: 0.65 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_multiple_hvac
     hpxml_name = 'base-hvac-multiple.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.65],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.2, _dse(calc_type), 0.73])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)],
-                            [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, 0.8, 0.1, _dse(calc_type), 170],
-                            [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)],
-                            [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.1, _dse(calc_type)])
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil],
-                       [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 0.1, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.2, dse: _dse(calc_type), shr: 0.73 },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.2, dse: _dse(calc_type), shr: 0.65 },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.2, dse: _dse(calc_type), shr: 0.73 },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.2, dse: _dse(calc_type), shr: 0.73 },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.2, dse: _dse(calc_type), shr: 0.73 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 0.1, dse: _dse(calc_type) },
+                                    { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.8, frac_load: 0.1, dse: _dse(calc_type), eae: 170 },
+                                    { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 0.1, dse: _dse(calc_type) },
+                                    { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 0.1, dse: _dse(calc_type) }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 0.1, frac_load_cool: 0.0, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 0.1, frac_load_cool: 0.0, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 0.1, frac_load_cool: 0.0, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 0.1, frac_load_cool: 0.0, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 0.1, frac_load_cool: 0.0, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 0.1, frac_load_cool: 0.0, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 }])
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 0.2, nil, 0.73],
-                          [HPXML::HVACTypeRoomAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 0.2, nil, 0.65])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeElectricity, nil, 0.1, nil],
-                          [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 0.1, nil],
-                          [HPXML::HVACTypeBoiler, HPXML::FuelTypeElectricity, nil, 0.1, nil, 170],
-                          [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, nil, 0.1, nil, 200],
-                          [HPXML::HVACTypeElectricResistance, HPXML::FuelTypeElectricity, nil, 0.1, nil],
-                          [HPXML::HVACTypeStove, HPXML::FuelTypeOil, nil, 0.1, nil],
-                          [HPXML::HVACTypeWallFurnace, HPXML::FuelTypePropane, nil, 0.1, nil])
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 0.1, 0.2, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil],
-                     [HPXML::HVACTypeHeatPumpGroundToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 0.1, 0.2, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil, 30],
-                     [HPXML::HVACTypeHeatPumpMiniSplit, HPXML::FuelTypeElectricity, nil, nil, nil, 0.1, 0.2, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil])
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.2, shr: 0.73 },
+                                  { systype: HPXML::HVACTypeRoomAirConditioner, fuel: HPXML::FuelTypeElectricity, eer: 8.5, frac_load: 0.2, shr: 0.65 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 0.1 },
+                                  { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 0.1 },
+                                  { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 0.1, eae: 170 },
+                                  { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 0.1, eae: 200 },
+                                  { systype: HPXML::HVACTypeElectricResistance, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 0.1 },
+                                  { systype: HPXML::HVACTypeStove, fuel: HPXML::FuelTypeOil, eff: 0.8, frac_load: 0.1 },
+                                  { systype: HPXML::HVACTypeWallFurnace, fuel: HPXML::FuelTypePropane, eff: 0.8, frac_load: 0.1 }])
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 0.1, frac_load_cool: 0.2, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 },
+                             { systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, frac_load_heat: 0.1, frac_load_cool: 0.2, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 30 },
+                             { systype: HPXML::HVACTypeHeatPumpMiniSplit, fuel: HPXML::FuelTypeElectricity, hspf: 10, seer: 19, frac_load_heat: 0.1, frac_load_cool: 0.2, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 }])
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_partial_hvac
@@ -554,233 +473,195 @@ class ERIHVACtest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.heating_systems[0].fraction_heat_load_served = 0.2
     hpxml.cooling_systems[0].fraction_cool_load_served = 0.3
-
-    # Save new file
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.3, _dse(calc_type), 0.73],
-                            [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.7, _dse(calc_type), nil])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.2, _dse(calc_type)],
-                            [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.8, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.3, dse: _dse(calc_type), shr: 0.73 },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.7, dse: _dse(calc_type) }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 0.2, dse: _dse(calc_type) },
+                                    { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 0.8, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 0.3, nil, 0.73],
-                          [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 0.7, _dse(calc_type), nil])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 0.2, nil],
-                          [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 0.8, _dse(calc_type)])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.3, shr: 0.73 },
+                                  { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.7, dse: 0.8 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 0.2 },
+                                  { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 0.8, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_shared_boiler_baseboard
     hpxml_name = 'base-hvac-shared-boiler-only-baseboard.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, 0.80, 1.0, _dse(calc_type), 170, 1])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, dse: _dse(calc_type), eae: 170 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, nil, 1.0, nil, 208, 6])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, eae: 208, num_units_served: 6 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_shared_boiler_water_loop_heat_pump
     hpxml_name = 'base-hvac-shared-boiler-only-water-loop-heat-pump.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, 0.80, 1 - 1 / 4.4, _dse(calc_type), 170, 1])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1 / 4.4, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, frac_load: 1 - 1 / 4.4, dse: _dse(calc_type), eae: 170 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1 / 4.4, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heating_system(hpxml, [HPXML::HVACTypeBoiler, HPXML::FuelTypeNaturalGas, nil, 1.0, nil, 208, 6])
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, eae: 208, num_units_served: 6 }])
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_shared_chiller_baseboard
     hpxml_name = 'base-hvac-shared-chiller-only-baseboard.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type), nil, 1])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeChiller, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, nil, 6])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, num_units_served: 6 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_shared_chiller_water_loop_heat_pump
     hpxml_name = 'base-hvac-shared-chiller-only-water-loop-heat-pump.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type), nil, 1])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeChiller, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, nil, 6])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, wlhp_eer: 12.8, num_units_served: 6 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_shared_cooling_tower_water_loop_heat_pump
     hpxml_name = 'base-hvac-shared-cooling-tower-only-water-loop-heat-pump.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), nil])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type), nil, 1])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type) }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCoolingTower, HPXML::FuelTypeElectricity, nil, nil, 1.0, nil, nil, 6])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCoolingTower, fuel: HPXML::FuelTypeElectricity, wlhp_eer: 12.8, num_units_served: 6 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_shared_ground_loop_gound_ground_source_heat_pump
     hpxml_name = 'base-hvac-shared-ground-loop-ground-to-air-heat-pump.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpAirToAir, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 7.7, nil, 1.0, 0.0, _dse(calc_type), nil, HPXML::FuelTypeElectricity, 1.0, nil])
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, dse: _dse(calc_type), backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
       _check_heating_system(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_heat_pump(hpxml, [HPXML::HVACTypeHeatPumpGroundToAir, HPXML::FuelTypeElectricity, nil, nil, nil, 1.0, 1.0, nil, 0.73, HPXML::FuelTypeElectricity, 1.0, nil, 30, 6])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 30, num_units_served: 6 }])
     _check_cooling_system(hpxml)
     _check_heating_system(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_programmable_thermostat
     hpxml_name = 'base-hvac-programmable-thermostat.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeProgrammable, 68, 78, 66, 7 * 7, 23, 80, 6 * 7, 9)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable, htg_sp: 68, clg_sp: 78, htg_setback: 66, htg_setback_hrs: 49, htg_setback_start_hr: 23, clg_setup: 80, clg_setup_hrs: 42, clg_setup_start_hr: 9)
   end
 
   def test_custom_setpoints
     hpxml_name = 'base-hvac-setpoints.xml'
 
-    # Rated Home, Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
   end
 
   def test_dse
     hpxml_name = 'base-hvac-dse.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 1.0, 0.7, 0.73])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 1.0, 0.8])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.7, shr: 0.73 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, dse: 0.8 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
   def test_duct_leakage_exemption
@@ -792,25 +673,21 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, HPXML::HVACCompressorTypeSingleStage, 13, 1.0, _dse(calc_type), 0.73])
-      _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, 0.78, 1.0, _dse(calc_type)])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
       _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
-
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_cooling_system(hpxml, [HPXML::HVACTypeCentralAirConditioner, HPXML::FuelTypeElectricity, nil, nil, 1.0, 0.88, 0.73])
-    _check_heating_system(hpxml, [HPXML::HVACTypeFurnace, HPXML::FuelTypeNaturalGas, nil, 1.0, 0.88])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: 0.88, shr: 0.73 }])
+    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, dse: 0.88 }])
     _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, HPXML::HVACControlTypeManual, 68, 78)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
 
     # Addendum D
     # Create derivative file for testing
@@ -820,10 +697,8 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_duct_leakage(hpxml, HPXML::DuctLeakageToOutside, 0.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 0.0)
   end
 
   def test_duct_leakage_total
@@ -835,10 +710,8 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_duct_leakage(hpxml, HPXML::DuctLeakageToOutside, 75.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 75.0)
 
     # Addendum L - Apartments
     # Create derivative file for testing
@@ -848,10 +721,8 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Rated Home
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    _check_duct_leakage(hpxml, HPXML::DuctLeakageToOutside, 128.2)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 128.2)
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -899,138 +770,179 @@ class ERIHVACtest < MiniTest::Test
     return new_hpxml
   end
 
-  def _check_heating_system(hpxml, *systems)
-    assert_equal(systems.size, hpxml.heating_systems.size)
+  def _check_heating_system(hpxml, all_expected_values = [])
+    assert_equal(all_expected_values.size, hpxml.heating_systems.size)
     hpxml.heating_systems.each_with_index do |heating_system, idx|
-      systype, fueltype, afue, frac_load, dse, eae, num_units_served = systems[idx]
-      if num_units_served.to_f > 1
+      expected_values = all_expected_values[idx]
+      if expected_values[:num_units_served].to_f > 1
         assert_equal(true, heating_system.is_shared_system)
-        assert_equal(num_units_served, heating_system.number_of_units_served)
+        assert_equal(expected_values[:num_units_served], heating_system.number_of_units_served)
       else
         assert(heating_system.is_shared_system.nil? || (not heating_system.is_shared_system))
         assert(heating_system.number_of_units_served.to_f <= 1)
       end
-      assert_equal(systype, heating_system.heating_system_type)
-      assert_equal(fueltype, heating_system.heating_system_fuel)
-      if not afue.nil?
-        assert_equal(afue, heating_system.heating_efficiency_afue)
+      assert_equal(expected_values[:systype], heating_system.heating_system_type)
+      assert_equal(expected_values[:fuel], heating_system.heating_system_fuel)
+      if not expected_values[:eff].nil?
+        assert_equal(expected_values[:eff], heating_system.heating_efficiency_afue.to_f + heating_system.heating_efficiency_percent.to_f)
+      else
+        assert_nil(heating_system.heating_efficiency_afue)
+        assert_nil(heating_system.heating_efficiency_percent)
       end
+      frac_load = expected_values[:frac_load].nil? ? 1.0 : expected_values[:frac_load]
       assert_equal(frac_load, heating_system.fraction_heat_load_served)
-      if eae.nil?
+      if expected_values[:eae].nil?
         assert_nil(heating_system.electric_auxiliary_energy)
       else
-        assert_in_epsilon(eae, heating_system.electric_auxiliary_energy, 0.01)
+        assert_in_epsilon(expected_values[:eae], heating_system.electric_auxiliary_energy, 0.01)
       end
       dist_system = heating_system.distribution_system
-      if dse.nil?
+      if expected_values[:dse].nil?
         assert(dist_system.nil? || dist_system.annual_heating_dse.nil?)
       else
-        assert_equal(dse, dist_system.annual_heating_dse)
+        assert_equal(expected_values[:dse], dist_system.annual_heating_dse)
       end
     end
   end
 
-  def _check_heat_pump(hpxml, *systems)
-    assert_equal(systems.size, hpxml.heat_pumps.size)
+  def _check_heat_pump(hpxml, all_expected_values = [])
+    assert_equal(all_expected_values.size, hpxml.heat_pumps.size)
     hpxml.heat_pumps.each_with_index do |heat_pump, idx|
-      systype, fueltype, comptype, hspf, seer, frac_load_heat, frac_load_cool, dse, shr, backup_fuel, backup_eff, backup_temp, pump_w_per_ton, num_units_served = systems[idx]
-      if num_units_served.to_f > 1
+      expected_values = all_expected_values[idx]
+      if expected_values[:num_units_served].to_f > 1
         assert_equal(true, heat_pump.is_shared_system)
-        assert_equal(num_units_served, heat_pump.number_of_units_served)
+        assert_equal(expected_values[:num_units_served], heat_pump.number_of_units_served)
       else
         assert(heat_pump.is_shared_system.nil? || (not heat_pump.is_shared_system))
         assert(heat_pump.number_of_units_served.to_f <= 1)
       end
-      assert_equal(systype, heat_pump.heat_pump_type)
-      assert_equal(fueltype, heat_pump.heat_pump_fuel)
-      if not comptype.nil?
-        assert_equal(comptype, heat_pump.compressor_type)
+      assert_equal(expected_values[:systype], heat_pump.heat_pump_type)
+      assert_equal(expected_values[:fuel], heat_pump.heat_pump_fuel)
+      if not expected_values[:comptype].nil?
+        assert_equal(expected_values[:comptype], heat_pump.compressor_type)
+      else
+        assert_nil(heat_pump.compressor_type)
       end
-      if not hspf.nil?
-        assert_equal(hspf, heat_pump.heating_efficiency_hspf)
+      if not expected_values[:hspf].nil?
+        assert_equal(expected_values[:hspf], heat_pump.heating_efficiency_hspf)
+      else
+        assert_nil(heat_pump.heating_efficiency_hspf)
       end
-      if not seer.nil?
-        assert_equal(seer, heat_pump.cooling_efficiency_seer)
+      if not expected_values[:cop].nil?
+        assert_equal(expected_values[:cop], heat_pump.heating_efficiency_cop)
+      else
+        assert_nil(heat_pump.heating_efficiency_cop)
       end
+      if not expected_values[:seer].nil?
+        assert_equal(expected_values[:seer], heat_pump.cooling_efficiency_seer)
+      else
+        assert_nil(heat_pump.cooling_efficiency_seer)
+      end
+      if not expected_values[:eer].nil?
+        assert_equal(expected_values[:eer], heat_pump.cooling_efficiency_eer)
+      else
+        assert_nil(heat_pump.cooling_efficiency_eer)
+      end
+      frac_load_heat = expected_values[:frac_load_heat].nil? ? 1.0 : expected_values[:frac_load_heat]
       assert_equal(frac_load_heat, heat_pump.fraction_heat_load_served)
+      frac_load_cool = expected_values[:frac_load_cool].nil? ? 1.0 : expected_values[:frac_load_cool]
       assert_equal(frac_load_cool, heat_pump.fraction_cool_load_served)
       dist_system = heat_pump.distribution_system
-      if dse.nil?
+      if expected_values[:dse].nil?
         assert(dist_system.nil? || dist_system.annual_heating_dse.nil?)
         assert(dist_system.nil? || dist_system.annual_cooling_dse.nil?)
       else
-        assert_equal(dse, dist_system.annual_heating_dse)
-        assert_equal(dse, dist_system.annual_cooling_dse)
+        assert_equal(expected_values[:dse], dist_system.annual_heating_dse)
+        assert_equal(expected_values[:dse], dist_system.annual_cooling_dse)
       end
-      if shr.nil?
+      if expected_values[:shr].nil?
         assert_nil(heat_pump.cooling_shr)
       else
-        assert_equal(shr, heat_pump.cooling_shr)
+        assert_equal(expected_values[:shr], heat_pump.cooling_shr)
       end
-      if backup_fuel.nil?
+      if expected_values[:backup_fuel].nil?
         assert_nil(heat_pump.backup_heating_fuel)
       else
-        assert_equal(backup_fuel, heat_pump.backup_heating_fuel)
+        assert_equal(expected_values[:backup_fuel], heat_pump.backup_heating_fuel)
       end
-      if backup_eff.nil?
+      if expected_values[:backup_eff].nil?
         assert_nil(heat_pump.backup_heating_efficiency_percent)
         assert_nil(heat_pump.backup_heating_efficiency_afue)
       else
-        assert_equal(backup_eff, heat_pump.backup_heating_efficiency_percent.to_f + heat_pump.backup_heating_efficiency_afue.to_f)
+        assert_equal(expected_values[:backup_eff], heat_pump.backup_heating_efficiency_percent.to_f + heat_pump.backup_heating_efficiency_afue.to_f)
       end
-      if backup_temp.nil?
+      if expected_values[:backup_temp].nil?
         assert_nil(heat_pump.backup_heating_switchover_temp)
       else
-        assert_equal(backup_temp, heat_pump.backup_heating_switchover_temp)
+        assert_equal(expected_values[:backup_temp], heat_pump.backup_heating_switchover_temp)
       end
-      if pump_w_per_ton.nil?
+      if expected_values[:pump_w_per_ton].nil?
         assert_nil(heat_pump.pump_watts_per_ton)
       else
-        assert_equal(pump_w_per_ton, heat_pump.pump_watts_per_ton)
+        assert_equal(expected_values[:pump_w_per_ton], heat_pump.pump_watts_per_ton)
       end
     end
   end
 
-  def _check_cooling_system(hpxml, *systems)
-    assert_equal(systems.size, hpxml.cooling_systems.size)
+  def _check_cooling_system(hpxml, all_expected_values = [])
+    assert_equal(all_expected_values.size, hpxml.cooling_systems.size)
     hpxml.cooling_systems.each_with_index do |cooling_system, idx|
-      systype, fueltype, comptype, seer, frac_load, dse, shr, num_units_served = systems[idx]
-      if num_units_served.to_f > 1
+      expected_values = all_expected_values[idx]
+      if expected_values[:num_units_served].to_f > 1
         assert_equal(true, cooling_system.is_shared_system)
-        assert_equal(num_units_served, cooling_system.number_of_units_served)
+        assert_equal(expected_values[:num_units_served], cooling_system.number_of_units_served)
       else
         assert(cooling_system.is_shared_system.nil? || (not cooling_system.is_shared_system))
         assert(cooling_system.number_of_units_served.to_f <= 1)
       end
-      assert_equal(systype, cooling_system.cooling_system_type)
-      assert_equal(fueltype, cooling_system.cooling_system_fuel)
-      if not comptype.nil?
-        assert_equal(comptype, cooling_system.compressor_type)
+      assert_equal(expected_values[:systype], cooling_system.cooling_system_type)
+      assert_equal(expected_values[:fuel], cooling_system.cooling_system_fuel)
+      if not expected_values[:comptype].nil?
+        assert_equal(expected_values[:comptype], cooling_system.compressor_type)
+      else
+        assert_nil(cooling_system.compressor_type)
       end
-      if not seer.nil?
-        assert_equal(seer, cooling_system.cooling_efficiency_seer)
+      if not expected_values[:seer].nil?
+        assert_equal(expected_values[:seer], cooling_system.cooling_efficiency_seer)
+      else
+        assert_nil(cooling_system.cooling_efficiency_seer)
       end
+      if not expected_values[:eer].nil?
+        assert_equal(expected_values[:eer], cooling_system.cooling_efficiency_eer)
+      else
+        assert_nil(cooling_system.cooling_efficiency_eer)
+      end
+      if not expected_values[:kw_per_ton].nil?
+        assert_equal(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton)
+      else
+        assert_nil(cooling_system.cooling_efficiency_kw_per_ton)
+      end
+      if not expected_values[:wlhp_eer].nil?
+        assert_equal(expected_values[:wlhp_eer], cooling_system.wlhp_cooling_efficiency_eer)
+      else
+        assert_nil(cooling_system.wlhp_cooling_efficiency_eer)
+      end
+      frac_load = expected_values[:frac_load].nil? ? 1.0 : expected_values[:frac_load]
       assert_equal(frac_load, cooling_system.fraction_cool_load_served)
       dist_system = cooling_system.distribution_system
-      if dse.nil?
+      if expected_values[:dse].nil?
         assert(dist_system.nil? || dist_system.annual_cooling_dse.nil?)
       else
-        assert_equal(dse, dist_system.annual_cooling_dse)
+        assert_equal(expected_values[:dse], dist_system.annual_cooling_dse)
       end
-      if shr.nil?
+      if expected_values[:shr].nil?
         assert_nil(cooling_system.cooling_shr)
       else
-        assert_equal(shr, cooling_system.cooling_shr)
+        assert_equal(expected_values[:shr], cooling_system.cooling_shr)
       end
     end
   end
 
-  def _check_thermostat(hpxml, control_type, htg_sp, clg_sp, htg_setback = nil, htg_setback_hrs = nil, htg_setback_start_hr = nil,
-                        clg_setup = nil, clg_setup_hrs = nil, clg_setup_start_hr = nil)
+  def _check_thermostat(hpxml, control_type:, htg_sp:, clg_sp:, htg_setback: nil, htg_setback_hrs: nil, htg_setback_start_hr: nil,
+                        clg_setup: nil, clg_setup_hrs: nil, clg_setup_start_hr: nil)
     assert_equal(1, hpxml.hvac_controls.size)
     hvac_control = hpxml.hvac_controls[0]
     assert_equal(control_type, hvac_control.control_type)
-
     assert_equal(htg_sp, hvac_control.heating_setpoint_temp)
     if htg_setback.nil?
       assert_nil(hvac_control.heating_setback_temp)
@@ -1066,16 +978,16 @@ class ERIHVACtest < MiniTest::Test
     end
   end
 
-  def _check_duct_leakage(hpxml, total_or_to_outside, sum)
+  def _check_duct_leakage(hpxml, total_or_outside:, leakage_sum:)
     actual_sum = nil
     hpxml.hvac_distributions.each do |hvac_distribution|
       hvac_distribution.duct_leakage_measurements.each do |duct_leakage|
         actual_sum = 0.0 if actual_sum.nil?
         actual_sum += duct_leakage.duct_leakage_value
         assert_equal(HPXML::UnitsCFM25, duct_leakage.duct_leakage_units)
-        assert_equal(total_or_to_outside, duct_leakage.duct_leakage_total_or_to_outside)
+        assert_equal(total_or_outside, duct_leakage.duct_leakage_total_or_to_outside)
       end
     end
-    assert_in_epsilon(sum, actual_sum, 0.01)
+    assert_in_epsilon(leakage_sum, actual_sum, 0.01)
   end
 end
