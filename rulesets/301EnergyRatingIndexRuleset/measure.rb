@@ -134,10 +134,13 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     # Validate input HPXML against schematron docs
     stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml'),
                    File.join(File.dirname(__FILE__), 'resources', '301validator.xml')]
-    errors = Validator.run_validators(@orig_hpxml.doc, stron_paths)
+    errors, warnings = Validator.run_validators(@orig_hpxml.doc, stron_paths)
     errors.each do |error|
       runner.registerError("#{hpxml_path}: #{error}")
       is_valid = false
+    end
+    warnings.each do |warning|
+      runner.registerWarning("#{warning}")
     end
 
     # Check for additional errors

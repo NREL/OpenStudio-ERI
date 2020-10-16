@@ -1314,6 +1314,7 @@ def create_sample_hpxmls
                   'invalid_files/invalid-neighbor-shading-azimuth.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
                   'invalid_files/invalid-relatedhvac-dhw-indirect.xml',
+                  'invalid_files/invalid-schema-version.xml',
                   'invalid_files/invalid-timestep.xml',
                   'invalid_files/invalid-window-height.xml',
                   'invalid_files/lighting-fractions.xml',
@@ -1652,6 +1653,7 @@ if ARGV[0].to_sym == :update_measures
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/version'
 
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
