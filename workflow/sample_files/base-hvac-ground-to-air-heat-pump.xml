@@ -334,7 +334,7 @@
                 <Value>3.6</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
+                <FanPowerNotTested>true</FanPowerNotTested>
                 <AirflowNotTested>true</AirflowNotTested>
                 <PumpPowerWattsPerTon>30.0</PumpPowerWattsPerTon>
               </extension>

@@ -1385,6 +1385,7 @@ def create_sample_hpxmls
                   'base-hvac-install-qual-all-air-to-air-heat-pump-1-speed2.xml',
                   'base-hvac-install-qual-all-air-to-air-heat-pump-2-speed2.xml',
                   'base-hvac-install-qual-all-air-to-air-heat-pump-var-speed2.xml',
+                  'base-hvac-install-qual-all-furnace-gas-central-ac-1-speed2.xml',
                   'base-hvac-install-qual-all-furnace-gas-central-ac-2-speed2.xml',
                   'base-hvac-install-qual-all-furnace-gas-central-ac-var-speed2.xml',
                   'base-hvac-install-qual-all-furnace-gas-only2.xml',
