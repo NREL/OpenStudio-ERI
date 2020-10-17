@@ -322,8 +322,8 @@
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <extension>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
+                <FanPowerWattsPerCFM>0.365</FanPowerWattsPerCFM>
+                <AirflowCFMPerTon>400.0</AirflowCFMPerTon>
               </extension>
             </HeatingSystem>
             <CoolingSystem>

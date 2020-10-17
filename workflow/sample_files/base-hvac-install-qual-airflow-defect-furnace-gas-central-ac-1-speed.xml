@@ -323,6 +323,7 @@
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <extension>
                 <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </HeatingSystem>
