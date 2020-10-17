@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>0221daab-058b-4c62-8304-9b5c6e957010</version_id>
-  <version_modified>20201016T212910Z</version_modified>
+  <version_id>5a129760-97ac-4bf4-a249-7d0c9eec6962</version_id>
+  <version_modified>20201017T000641Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -89,12 +89,6 @@
       <checksum>D6A6F048</checksum>
     </file>
     <file>
-      <filename>test_validation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C7904E9F</checksum>
-    </file>
-    <file>
       <filename>301.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -110,12 +104,6 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>20064DAF</checksum>
-    </file>
-    <file>
-      <filename>301validator.xml</filename>
-      <filetype>xml</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>CA2E4E63</checksum>
     </file>
     <file>
       <filename>test_misc.rb</filename>
@@ -160,10 +148,22 @@
       <checksum>E5C61655</checksum>
     </file>
     <file>
+      <filename>test_validation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>66A0FD64</checksum>
+    </file>
+    <file>
+      <filename>301validator.xml</filename>
+      <filetype>xml</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>3198F2ED</checksum>
+    </file>
+    <file>
       <filename>test_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>48E9DC93</checksum>
+      <checksum>B480EC35</checksum>
     </file>
   </files>
 </measure>

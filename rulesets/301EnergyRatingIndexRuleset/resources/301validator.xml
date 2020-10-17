@@ -523,7 +523,8 @@
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: HeatingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:CoolingCapacity) = 1'>Expected 1 element(s) for xpath: CoolingCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:CoolingSensibleHeatFraction) &lt;= 1'>Expected 0 or 1 element(s) for xpath: CoolingSensibleHeatFraction</sch:assert>
-      <sch:assert role='ERROR' test='not(h:BackupSystemFuel) or count(h:BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: [not(BackupSystemFuel)] | BackupSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]</sch:assert> <!-- See [HeatPumpBackup] -->
+      <sch:assert role='ERROR' test='count(h:BackupSystemFuel) &lt;= 1'>Expected 0 or 1 element(s) for xpath: BackupSystemFuel</sch:assert> <!-- See [HeatPumpBackup] -->
+      <sch:assert role='ERROR' test='not(h:BackupSystemFuel) or contains("_electricity_ _natural gas_ _fuel oil_ _propane_ _wood_ _wood pellets_", concat("_", h:BackupSystemFuel, "_"))'>Expected BackupSystemFuel to be 'electricity' or 'natural gas' or 'fuel oil' 'propane' or 'wood' or 'wood pellets'</sch:assert>
       <sch:assert role='ERROR' test='count(h:FractionHeatLoadServed) = 1'>Expected 1 element(s) for xpath: FractionHeatLoadServed</sch:assert> <!-- Must sum to <= 1 across all HeatPumps and HeatingSystems -->
       <sch:assert role='ERROR' test='count(h:FractionCoolLoadServed) = 1'>Expected 1 element(s) for xpath: FractionCoolLoadServed</sch:assert> <!-- Must sum to <= 1 across all HeatPumps and CoolingSystems -->
     </sch:rule>
