@@ -25,7 +25,7 @@ class ERI301ValidationTest < MiniTest::Test
       end
     end
 
-    # Build up expected error messages hashes by parsing EPvalidator.xml
+    # Build up expected error messages hashes by parsing 301validator.xml
     @expected_assertions_by_addition = {}
     @expected_assertions_by_deletion = {}
     @expected_assertions_by_alteration = {}

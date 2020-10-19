@@ -615,11 +615,14 @@ For a ``SystemType/Recirculation`` system within the dwelling unit, the followin
 Shared Recirculation
 ~~~~~~~~~~~~~~~~~~~~
 
-In addition to the hot water distribution systems within the dwelling unit, the pump energy use of a shared recirculation system can also be described using the following elements:
+In addition to the hot water distribution systems within the dwelling unit, the pump energy use of a shared recirculation system in an Attached/Multifamily building can also be described using the following elements:
 
 - ``extension/SharedRecirculation/NumberofUnitsServed``: Number of dwelling units served by the shared pump.
 - ``extension/SharedRecirculation/PumpPower``: Shared pump power in Watts.
 - ``extension/SharedRecirculation/ControlType``: One of "manual demand control", "presence sensor demand control", "timer", or "no control".
+
+Note that when defining a shared recirculation system, the hot water distribution system type within the dwelling unit must be standard (``SystemType/Standard``).
+This is because a stacked recirculation system (i.e., shared recirculation loop plus an additional recirculation system within the dwelling unit) is more likely to indicate input errors than reflect an actual real-world scenario.
 
 Drain Water Heat Recovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~
