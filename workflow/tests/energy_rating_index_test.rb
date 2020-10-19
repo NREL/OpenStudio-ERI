@@ -123,8 +123,8 @@ class EnergyRatingIndexTest < Minitest::Test
     test_name = 'invalid_files'
     expected_error_msgs = { 'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
-                            'missing-elements.xml' => ['Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: NumberofConditionedFloors',
-                                                       'Expected 1 element(s) for xpath: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction: ConditionedFloorArea'],
+                            'missing-elements.xml' => ['Expected 1 element(s) for xpath: NumberofConditionedFloors [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]',
+                                                       'Expected 1 element(s) for xpath: ConditionedFloorArea [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
                             'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
                                                             'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
                             'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
@@ -784,9 +784,7 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator(htg_loads['L170AC'], :<=, 74.24)
     assert_operator(htg_loads['L170AC'], :>=, 58.11)
     assert_operator(htg_loads['L200AC'], :<=, 136.02)
-    # FIXME: Switch from interim to proposed acceptance criteria
-    assert_operator(htg_loads['L200AC'], :>=, 106.41)
-    # assert_operator(htg_loads['L200AC'], :>=, 122.47)
+    assert_operator(htg_loads['L200AC'], :>=, 122.47)
     assert_operator(htg_loads['L202AC'], :<=, 145.02)
     assert_operator(htg_loads['L202AC'], :>=, 127.59)
     assert_operator(htg_loads['L302XC'], :<=, 66.77)
