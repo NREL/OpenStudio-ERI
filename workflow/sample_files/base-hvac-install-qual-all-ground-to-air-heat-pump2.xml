@@ -331,6 +331,8 @@
                 <Value>3.6</Value>
               </AnnualHeatingEfficiency>
               <extension>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <FanPowerWattsPerCFM>0.365</FanPowerWattsPerCFM>
                 <PumpPowerWattsPerTon>30.0</PumpPowerWattsPerTon>
               </extension>
             </HeatPump>
@@ -389,8 +391,6 @@
             <HeatingCapacity>18767.0</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
             <HotWaterTemperature>125.0</HotWaterTemperature>
-            <UsesDesuperheater>true</UsesDesuperheater>
-            <RelatedHVACSystem idref='HeatPump'/>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution'/>

@@ -306,34 +306,40 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <HeatPump>
-              <SystemIdentifier id='HeatPump'/>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem'/>
               <DistributionSystem idref='HVACDistribution'/>
-              <HeatPumpType>ground-to-air</HeatPumpType>
-              <HeatPumpFuel>electricity</HeatPumpFuel>
-              <HeatingCapacity>42000.0</HeatingCapacity>
-              <CoolingCapacity>48000.0</CoolingCapacity>
-              <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
-              <BackupSystemFuel>electricity</BackupSystemFuel>
-              <BackupAnnualHeatingEfficiency>
-                <Units>Percent</Units>
-                <Value>1.0</Value>
-              </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>34121.0</BackupHeatingCapacity>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>64000.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.92</Value>
+              </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <extension>
+                <AirflowCFMPerTon>400.0</AirflowCFMPerTon>
+              </extension>
+            </HeatingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='CoolingSystem'/>
+              <DistributionSystem idref='HVACDistribution'/>
+              <CoolingSystemType>central air conditioner</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>48000.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>16.6</Value>
+                <Units>SEER</Units>
+                <Value>13.0</Value>
               </AnnualCoolingEfficiency>
-              <AnnualHeatingEfficiency>
-                <Units>COP</Units>
-                <Value>3.6</Value>
-              </AnnualHeatingEfficiency>
+              <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
-                <PumpPowerWattsPerTon>30.0</PumpPowerWattsPerTon>
+                <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
               </extension>
-            </HeatPump>
+            </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
@@ -389,8 +395,6 @@
             <HeatingCapacity>18767.0</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
             <HotWaterTemperature>125.0</HotWaterTemperature>
-            <UsesDesuperheater>true</UsesDesuperheater>
-            <RelatedHVACSystem idref='HeatPump'/>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution'/>

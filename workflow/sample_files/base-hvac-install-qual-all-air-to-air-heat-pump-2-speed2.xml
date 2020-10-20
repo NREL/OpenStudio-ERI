@@ -309,10 +309,12 @@
             <HeatPump>
               <SystemIdentifier id='HeatPump'/>
               <DistributionSystem idref='HVACDistribution'/>
-              <HeatPumpType>ground-to-air</HeatPumpType>
+              <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>42000.0</HeatingCapacity>
+              <HeatingCapacity17F>24780.0</HeatingCapacity17F>
               <CoolingCapacity>48000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -323,15 +325,17 @@
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>16.6</Value>
+                <Units>SEER</Units>
+                <Value>18.0</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
-                <Units>COP</Units>
-                <Value>3.6</Value>
+                <Units>HSPF</Units>
+                <Value>9.3</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <PumpPowerWattsPerTon>30.0</PumpPowerWattsPerTon>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
+                <FanPowerWattsPerCFM>0.365</FanPowerWattsPerCFM>
               </extension>
             </HeatPump>
           </HVACPlant>
@@ -389,8 +393,6 @@
             <HeatingCapacity>18767.0</HeatingCapacity>
             <EnergyFactor>0.95</EnergyFactor>
             <HotWaterTemperature>125.0</HotWaterTemperature>
-            <UsesDesuperheater>true</UsesDesuperheater>
-            <RelatedHVACSystem idref='HeatPump'/>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution'/>
