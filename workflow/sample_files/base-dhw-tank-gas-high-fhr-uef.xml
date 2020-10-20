@@ -383,14 +383,16 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeater'/>
-            <FuelType>electricity</FuelType>
+            <FuelType>natural gas</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
             <IsSharedSystem>false</IsSharedSystem>
-            <TankVolume>40.0</TankVolume>
+            <TankVolume>75.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <UniformEnergyFactor>0.93</UniformEnergyFactor>
+            <HeatingCapacity>76000.0</HeatingCapacity>
+            <UniformEnergyFactor>0.69</UniformEnergyFactor>
+            <FirstHourRating>116.0</FirstHourRating>
+            <RecoveryEfficiency>0.79</RecoveryEfficiency>
             <HotWaterTemperature>125.0</HotWaterTemperature>
           </WaterHeatingSystem>
           <HotWaterDistribution>
