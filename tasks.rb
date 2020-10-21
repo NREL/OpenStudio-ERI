@@ -559,8 +559,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.78,
-                              fraction_heat_load_served: 1,
-                              electric_auxiliary_energy: 1040)
+                              fraction_heat_load_served: 1)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 90%; 0.000375 kW/cfm
     hpxml.heating_systems.clear
@@ -570,8 +569,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.9,
-                              fraction_heat_load_served: 1,
-                              electric_auxiliary_energy: 780)
+                              fraction_heat_load_served: 1)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
     # Electric Furnace; 56.1 kBtu/h; COP =1.0
     hpxml.heating_systems.clear
@@ -593,19 +591,16 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: 46600,
                               heating_efficiency_afue: 0.78,
                               fraction_heat_load_served: 1)
-    hpxml.heating_systems[0].heating_cfm = hpxml.heating_systems[0].heating_capacity * 360.0 / 12000.0
+
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to 56.0 kBtu/h
     hpxml.heating_systems[0].heating_capacity = 56000
-    hpxml.heating_systems[0].heating_cfm = hpxml.heating_systems[0].heating_capacity * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3c.xml'].include? hpxml_file
     # Change to 49.0 kBtu/h
     hpxml.heating_systems[0].heating_capacity = 49000
-    hpxml.heating_systems[0].heating_cfm = hpxml.heating_systems[0].heating_capacity * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml'].include? hpxml_file
     # Change to 61.0 kBtu/h
     hpxml.heating_systems[0].heating_capacity = 61000
-    hpxml.heating_systems[0].heating_cfm = hpxml.heating_systems[0].heating_capacity * 360.0 / 12000.0
   elsif hpxml_file.include? 'Hot_Water'
     # Natural gas furnace with AFUE = 78%
     hpxml.heating_systems.clear
@@ -679,19 +674,16 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_capacity: 38400,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 10)
-    hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
+
   elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
     # Change to 49.9 kBtu/h
     hpxml.cooling_systems[0].cooling_capacity = 49900
-    hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3g.xml'].include? hpxml_file
     # Change to 42.2 kBtu/h
     hpxml.cooling_systems[0].cooling_capacity = 42200
-    hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
   elsif ['RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
     # Change to 55.0 kBtu/h
     hpxml.cooling_systems[0].cooling_capacity = 55000
-    hpxml.cooling_systems[0].cooling_cfm = hpxml.cooling_systems[0].cooling_capacity * 360.0 / 12000.0
   elsif hpxml_file.include? 'Hot_Water'
     # Central air conditioner with SEER = 13.0
     hpxml.cooling_systems.clear
@@ -1340,7 +1332,6 @@ def create_sample_hpxmls
                   'base-hvac-dual-fuel-air-to-air-heat-pump-var-speed.xml',
                   'base-hvac-dual-fuel-mini-split-heat-pump-ducted.xml',
                   'base-hvac-ducts-leakage-percent.xml',
-                  'base-hvac-flowrate.xml',
                   'base-hvac-furnace-coal-only.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
@@ -1375,6 +1366,7 @@ def create_sample_hpxmls
   end
 
   # Update HPXMLs as needed
+  puts 'Updating HPXML inputs for ERI...'
   hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
@@ -1441,6 +1433,7 @@ def create_sample_hpxmls
   end
 
   # Create additional files
+  puts 'Creating additional HPXML files for ERI...'
 
   # Duct leakage exemption
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')

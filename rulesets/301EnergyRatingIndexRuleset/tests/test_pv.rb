@@ -16,7 +16,6 @@ class ERIPVTest < MiniTest::Test
   def test_pv
     hpxml_name = 'base-pv.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -24,17 +23,14 @@ class ERIPVTest < MiniTest::Test
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_pv(hpxml)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_pv(hpxml, [false, HPXML::LocationRoof, HPXML::PVModuleTypeStandard, HPXML::PVTrackingTypeFixed, 180, 20, 4000, 0.96, 0.14],
-              [false, HPXML::LocationRoof, HPXML::PVModuleTypePremium, HPXML::PVTrackingTypeFixed, 90, 20, 1500, 0.96, 0.14])
+    _check_pv(hpxml, [{ location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 180, tilt: 20, power: 4000, inv_eff: 0.96, losses: 0.14, is_shared: false },
+                      { location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypePremium, tracking: HPXML::PVTrackingTypeFixed, azimuth: 90, tilt: 20, power: 1500, inv_eff: 0.96, losses: 0.14, is_shared: false }])
   end
 
   def test_pv_shared
     hpxml_name = 'base-pv-shared.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -42,10 +38,8 @@ class ERIPVTest < MiniTest::Test
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_pv(hpxml)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_pv(hpxml, [true, HPXML::LocationGround, HPXML::PVModuleTypeStandard, HPXML::PVTrackingTypeFixed, 225, 30, 30000, 0.96, 0.14, 20])
+    _check_pv(hpxml, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 20 }])
   end
 
   def _test_measure(hpxml_name, calc_type)
@@ -87,23 +81,23 @@ class ERIPVTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _check_pv(hpxml, *pvsystems)
-    assert_equal(pvsystems.size, hpxml.pv_systems.size)
+  def _check_pv(hpxml, all_expected_values = [])
+    assert_equal(all_expected_values.size, hpxml.pv_systems.size)
     hpxml.pv_systems.each_with_index do |pv_system, idx|
-      is_shared, location, moduletype, tracking, azimuth, tilt, power, inv_eff, losses, nbeds_served = pvsystems[idx]
-      assert_equal(is_shared, pv_system.is_shared_system)
-      assert_equal(location, pv_system.location)
-      assert_equal(moduletype, pv_system.module_type)
-      assert_equal(tracking, pv_system.tracking)
-      assert_equal(azimuth, pv_system.array_azimuth)
-      assert_equal(tilt, pv_system.array_tilt)
-      assert_equal(power, pv_system.max_power_output.to_f)
-      assert_equal(inv_eff, pv_system.inverter_efficiency)
-      assert_equal(losses, pv_system.system_losses_fraction)
-      if nbeds_served.nil?
+      expected_values = all_expected_values[idx]
+      assert_equal(expected_values[:is_shared], pv_system.is_shared_system)
+      assert_equal(expected_values[:location], pv_system.location)
+      assert_equal(expected_values[:moduletype], pv_system.module_type)
+      assert_equal(expected_values[:tracking], pv_system.tracking)
+      assert_equal(expected_values[:azimuth], pv_system.array_azimuth)
+      assert_equal(expected_values[:tilt], pv_system.array_tilt)
+      assert_equal(expected_values[:power], pv_system.max_power_output.to_f)
+      assert_equal(expected_values[:inv_eff], pv_system.inverter_efficiency)
+      assert_equal(expected_values[:losses], pv_system.system_losses_fraction)
+      if expected_values[:nbeds_served].nil?
         assert_nil(pv_system.number_of_bedrooms_served)
       else
-        assert_equal(nbeds_served, pv_system.number_of_bedrooms_served)
+        assert_equal(expected_values[:nbeds_served], pv_system.number_of_bedrooms_served)
       end
     end
   end
