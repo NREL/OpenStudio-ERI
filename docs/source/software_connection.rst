@@ -300,6 +300,8 @@ FixedHeater                                                                     
 Fireplace                                                                               <any>              Percent                  (required)       (optional)
 ==================  ==============  ==================================================  =================  =======================  ===============  =======================  =============================
 
+For a furnace connected to an air conditioner, the fan power may only be provided for one of the two systems.
+
 For boilers, the ``ElectricAuxiliaryEnergy`` element may be provided if available.
 For shared boilers (i.e., serving multiple dwelling units), the electric auxiliary energy can alternatively be calculated using the following inputs:
 
@@ -330,6 +332,8 @@ evaporative cooler                       AirDistribution or DSE (optional)      
 chiller                  true            HydronicDistribution or HydronicAndAirDistribution  electricity        kW/ton                                         (required)
 cooling tower            true            HydronicAndAirDistribution                          electricity
 =======================  ==============  ==================================================  =================  =======================  ====================  ===============  =============================
+
+For an air conditioner connect to a furnace, the fan power may only be provided for one of the two systems.
 
 Central air conditioners can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
 
