@@ -391,7 +391,7 @@
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
             <UniformEnergyFactor>3.75</UniformEnergyFactor>
-            <FirstHourRating>60.0</FirstHourRating>
+            <FirstHourRating>50.0</FirstHourRating>
             <HotWaterTemperature>125.0</HotWaterTemperature>
           </WaterHeatingSystem>
           <HotWaterDistribution>

@@ -437,18 +437,18 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tank_heat_pump_uef
-    hpxml_name = 'base-dhw-tank-heat-pump-uef.xml'
+    hpxml_name = 'base-dhw-tank-heat-pump-uef-medium-fhr.xml'
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 1.0, 125.0, HPXML::LocationLivingSpace, 40, 0.92, 1])
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 1.0, 125.0, HPXML::LocationLivingSpace, 50, 0.9, 1])
     _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 93.5, nil, nil, nil, nil)
     _check_water_fixtures(hpxml, false, false)
     _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
 
     # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeHeatPump, HPXML::FuelTypeElectricity, 1.0, 125.0, HPXML::LocationLivingSpace, 40, nil, 1, nil, nil, 3.75, 60.0])
+    _check_water_heater(hpxml, [HPXML::WaterHeaterTypeHeatPump, HPXML::FuelTypeElectricity, 1.0, 125.0, HPXML::LocationLivingSpace, 50, nil, 1, nil, nil, 3.75, 60.0])
     _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 50, nil, nil, nil, nil)
     _check_water_fixtures(hpxml, true, false)
     _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
@@ -458,7 +458,7 @@ class ERIWaterHeatingTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 1.0, 125.0, HPXML::LocationLivingSpace, 40, 0.92, 1])
+      _check_water_heater(hpxml, [HPXML::WaterHeaterTypeStorage, HPXML::FuelTypeElectricity, 1.0, 125.0, HPXML::LocationLivingSpace, 50, 0.9, 1])
       _check_hot_water_distribution(hpxml, HPXML::DHWDistTypeStandard, 0.0, 89.28, nil, nil, nil, nil)
       _check_water_fixtures(hpxml, false, false)
       _check_drain_water_heat_recovery(hpxml, nil, nil, nil)
