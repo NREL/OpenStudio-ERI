@@ -2564,17 +2564,12 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_distribution_system(new_hpxml)
     (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
       next if hvac.distribution_system_idref.nil?
-
-      found_dist = false
-      new_hpxml.hvac_distributions.each do |hvac_distribution|
-        next unless hvac_distribution.id == hvac.distribution_system_idref
-
-        found_dist = true
-      end
-      next if found_dist
+      next if new_hpxml.hvac_distributions.select { |d| d.id == hvac.distribution_system_idref }.size > 0
 
       # Add new DSE distribution if distribution doesn't already exist
-      new_hpxml.hvac_distributions.add(id: hvac.distribution_system_idref,
+      dist_id = get_new_distribution_id(new_hpxml)
+      hvac.distribution_system_idref = dist_id
+      new_hpxml.hvac_distributions.add(id: dist_id,
                                        distribution_system_type: HPXML::HVACDistributionTypeDSE,
                                        annual_heating_dse: 0.8,
                                        annual_cooling_dse: 0.8)
