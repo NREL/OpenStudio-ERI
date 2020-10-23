@@ -1253,6 +1253,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-distribution-return-duct-leakage-missing.xml',
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
+                  'invalid_files/hvac-inconsistent-fan-powers.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
                   'invalid_files/invalid-calendar-year.xml',
                   'invalid_files/invalid-datatype-boolean.xml',
