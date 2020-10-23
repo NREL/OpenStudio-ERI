@@ -1581,7 +1581,7 @@ class EnergyRatingIndex301Ruleset
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
       end
 
-      energy_factor, recovery_efficiency = get_water_heater_ef_and_re(fuel_type, tank_volume)
+      energy_factor, recovery_efficiency = get_reference_water_heater_ef_and_re(fuel_type, tank_volume)
 
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
 
@@ -1618,13 +1618,6 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
-      energy_factor = orig_water_heater.energy_factor
-      if energy_factor.nil?
-        if not [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
-          energy_factor = Waterheater.calc_ef_from_uef(orig_water_heater)
-        end
-      end
-
       heating_capacity = orig_water_heater.heating_capacity
       if (orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeStorage) && heating_capacity.nil?
         heating_capacity = Waterheater.get_default_heating_capacity(orig_water_heater.fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
@@ -1650,7 +1643,9 @@ class EnergyRatingIndex301Ruleset
                                           tank_volume: orig_water_heater.tank_volume,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           heating_capacity: heating_capacity,
-                                          energy_factor: energy_factor,
+                                          energy_factor: orig_water_heater.energy_factor,
+                                          uniform_energy_factor: orig_water_heater.uniform_energy_factor,
+                                          first_hour_rating: orig_water_heater.first_hour_rating,
                                           recovery_efficiency: orig_water_heater.recovery_efficiency,
                                           uses_desuperheater: uses_desuperheater,
                                           jacket_r_value: orig_water_heater.jacket_r_value,
@@ -2200,19 +2195,6 @@ class EnergyRatingIndex301Ruleset
 
   private
 
-  def self.get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    # # Table 4.2.2(1) - Service water heating systems
-    ef = nil
-    re = nil
-    if wh_fuel_type == HPXML::FuelTypeElectricity
-      ef = 0.97 - (0.00132 * wh_tank_vol)
-    else
-      ef = 0.67 - (0.0019 * wh_tank_vol)
-      re = 0.78
-    end
-    return ef.round(2), re
-  end
-
   def self.calc_rated_home_q_fans_by_system(orig_hpxml, mech_vent_fans)
     # Calculates the target average airflow rate for each mechanical
     # ventilation system based on their measured value (if available)
@@ -2580,7 +2562,7 @@ class EnergyRatingIndex301Ruleset
     wh_fuel_type = orig_hpxml.predominant_heating_fuel()
     wh_tank_vol = 40.0
 
-    wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    wh_ef, wh_re = get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
     wh_cap = Waterheater.get_default_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
@@ -2619,6 +2601,19 @@ class EnergyRatingIndex301Ruleset
 
       return air_infiltration_measurement.infiltration_volume
     end
+  end
+
+  def self.get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    # # Table 4.2.2(1) - Service water heating systems
+    ef = nil
+    re = nil
+    if wh_fuel_type == HPXML::FuelTypeElectricity
+      ef = 0.97 - (0.00132 * wh_tank_vol)
+    else
+      ef = 0.67 - (0.0019 * wh_tank_vol)
+      re = 0.78
+    end
+    return ef.round(2), re
   end
 
   def self.get_reference_floor_ufactor()
