@@ -8,9 +8,6 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <ERICalculation>
-        <Version>latest</Version>
-      </ERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -44,6 +41,7 @@
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
+          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
         </BuildingConstruction>
@@ -383,13 +381,10 @@
         <WaterHeating>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeater'/>
-            <FuelType>electricity</FuelType>
-            <WaterHeaterType>storage water heater</WaterHeaterType>
+            <FuelType>natural gas</FuelType>
+            <WaterHeaterType>instantaneous water heater</WaterHeaterType>
             <Location>living space</Location>
-            <IsSharedSystem>false</IsSharedSystem>
-            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
             <UniformEnergyFactor>0.93</UniformEnergyFactor>
             <HotWaterTemperature>125.0</HotWaterTemperature>
           </WaterHeatingSystem>
@@ -419,7 +414,6 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -431,7 +425,6 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
@@ -443,7 +436,6 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
