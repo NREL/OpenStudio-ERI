@@ -281,25 +281,28 @@ HPXML Heating Systems
 *********************
 
 Each heating system (other than heat pumps) should be entered as a ``Systems/HVAC/HVACPlant/HeatingSystem``.
-Inputs including ``HeatingSystemType``, and ``FractionHeatLoadServed`` must be provided.
+Inputs including ``HeatingSystemType`` and ``FractionHeatLoadServed`` must be provided.
 
 Depending on the type of heating system specified, additional elements are used:
 
-==================  ==============  ==================================================  =================  =======================  ===============
-HeatingSystemType   IsSharedSystem  DistributionSystem                                  HeatingSystemFuel  AnnualHeatingEfficiency  HeatingCapacity
-==================  ==============  ==================================================  =================  =======================  ===============
+==================  ==============  ==================================================  =================  =======================  ===============  =======================  =============================
+HeatingSystemType   IsSharedSystem  DistributionSystem                                  HeatingSystemFuel  AnnualHeatingEfficiency  HeatingCapacity  extension/FanPowerWatts  extension/FanPowerWattsPerCFM
+==================  ==============  ==================================================  =================  =======================  ===============  =======================  =============================
 ElectricResistance                                                                      electricity        Percent                  (required)
-Furnace                             AirDistribution or DSE                              <any>              AFUE                     (required)
-WallFurnace                                                                             <any>              AFUE                     (required)
-FloorFurnace                                                                            <any>              AFUE                     (required)
+Furnace                             AirDistribution or DSE                              <any>              AFUE                     (required)                                (optional)
+WallFurnace                                                                             <any>              AFUE                     (required)       (optional)
+FloorFurnace                                                                            <any>              AFUE                     (required)       (optional)
 Boiler              false           HydronicDistribution or DSE                         <any>              AFUE                     (required)
 Boiler              true            HydronicDistribution or HydronicAndAirDistribution  <any>              AFUE
-Stove                                                                                   <any>              Percent                  (required)
-PortableHeater                                                                          <any>              Percent                  (required)
-Fireplace                                                                               <any>              Percent                  (required)
-==================  ==============  ==================================================  =================  =======================  ===============
+Stove                                                                                   <any>              Percent                  (required)       (optional)
+PortableHeater                                                                          <any>              Percent                  (required)       (optional)
+FixedHeater                                                                             <any>              Percent                  (required)       (optional)
+Fireplace                                                                               <any>              Percent                  (required)       (optional)
+==================  ==============  ==================================================  =================  =======================  ===============  =======================  =============================
 
-For all systems, the ``ElectricAuxiliaryEnergy`` element may be provided if available.
+For a furnace connected to an air conditioner, if fan powers are provided for both systems, they must be equal.
+
+For boilers, the ``ElectricAuxiliaryEnergy`` element may be provided if available.
 For shared boilers (i.e., serving multiple dwelling units), the electric auxiliary energy can alternatively be calculated using the following inputs:
 
 - ``extension/SharedLoopWatts``: Shared pump power [W]
@@ -320,15 +323,17 @@ Inputs including ``CoolingSystemType`` and ``FractionCoolLoadServed`` must be pr
 
 Depending on the type of cooling system specified, additional elements are used:
 
-=======================  ==============  ==================================================  =================  =======================  ====================  ===============
-CoolingSystemType        IsSharedSystem  DistributionSystem                                  CoolingSystemFuel  AnnualCoolingEfficiency  SensibleHeatFraction  CoolingCapacity
-=======================  ==============  ==================================================  =================  =======================  ====================  ===============
-central air conditioner                  AirDistribution or DSE                              electricity        SEER                     (optional)            (required)
+=======================  ==============  ==================================================  =================  =======================  ====================  ===============  =============================
+CoolingSystemType        IsSharedSystem  DistributionSystem                                  CoolingSystemFuel  AnnualCoolingEfficiency  SensibleHeatFraction  CoolingCapacity  extension/FanPowerWattsPerCFM
+=======================  ==============  ==================================================  =================  =======================  ====================  ===============  =============================
+central air conditioner                  AirDistribution or DSE                              electricity        SEER                     (optional)            (required)       (optional)
 room air conditioner                                                                         electricity        EER                      (optional)            (required)
-evaporative cooler                       AirDistribution or DSE (optional)                   electricity
+evaporative cooler                       AirDistribution or DSE (optional)                   electricity                                                                        (optional)
 chiller                  true            HydronicDistribution or HydronicAndAirDistribution  electricity        kW/ton                                         (required)
 cooling tower            true            HydronicAndAirDistribution                          electricity
-=======================  ==============  ==================================================  =================  =======================  ====================  ===============
+=======================  ==============  ==================================================  =================  =======================  ====================  ===============  =============================
+
+For an air conditioner connected to a furnace, if fan powers are provided for both systems they must be equal.
 
 Central air conditioners can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
 
@@ -367,18 +372,14 @@ Note that heat pumps are allowed to provide only heating (``FractionCoolLoadServ
 
 Depending on the type of heat pump specified, additional elements are used:
 
-=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================
-HeatPumpType   IsSharedSystem  DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency  CoolingSensibleHeatFraction  HeatingCapacity17F
-=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================
-air-to-air                     AirDistribution or DSE             electricity   SEER                     HSPF                     (optional)                   (optional)
-mini-split                     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                     (optional)                   (optional)
-ground-to-air  false           AirDistribution or DSE             electricity   EER                      COP                      (optional)
-ground-to-air  true            AirDistribution or DSE             electricity   EER                      COP                      (optional)
-=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================
-
-Ground-to-air heat pumps also have an additional input:
-
-- ``extension/PumpPowerWattsPerTon``: Ground loop circulator pump power during operation of the heat pump in Watts/ton of cooling capacity.
+=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================  =============================  ==============================
+HeatPumpType   IsSharedSystem  DistributionSystem                 HeatPumpFuel  AnnualCoolingEfficiency  AnnualHeatingEfficiency  CoolingSensibleHeatFraction  HeatingCapacity17F  extension/FanPowerWattsPerCFM  extension/PumpPowerWattsPerTon
+=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================  =============================  ==============================
+air-to-air                     AirDistribution or DSE             electricity   SEER                     HSPF                     (optional)                   (optional)          (optional)
+mini-split                     AirDistribution or DSE (optional)  electricity   SEER                     HSPF                     (optional)                   (optional)          (optional)
+ground-to-air  false           AirDistribution or DSE             electricity   EER                      COP                      (optional)                                       (optional)                     (optional)
+ground-to-air  true            AirDistribution or DSE             electricity   EER                      COP                      (optional)                                       (optional)                     (optional)
+=============  ==============  =================================  ============  =======================  =======================  ===========================  ==================  =============================  ==============================
 
 Air-to-air heat pumps can also have the ``CompressorType`` specified; if not provided, it is assumed as follows:
 
@@ -388,7 +389,7 @@ Air-to-air heat pumps can also have the ``CompressorType`` specified; if not pro
 
 If the heat pump has backup heating, it can be specified with ``BackupSystemFuel``, ``BackupAnnualHeatingEfficiency``, and ``BackupHeatingCapacity``.
 If the heat pump has a switchover temperature (e.g., dual-fuel heat pump) where the heat pump stops operating and the backup heating system starts running, it can be specified with ``BackupHeatingSwitchoverTemperature``.
-If the ``BackupHeatingSwitchoverTemperature`` is not provided, the backup heating system will operate as needed when the heat pump has insufficient capacity.
+If ``BackupHeatingSwitchoverTemperature`` is not provided, the backup heating system will operate as needed when the heat pump has insufficient capacity.
 
 For multiple ground source heat pumps on a shared hydronic circulation loop (``IsSharedSystem="true"``), additional elements are required:
 

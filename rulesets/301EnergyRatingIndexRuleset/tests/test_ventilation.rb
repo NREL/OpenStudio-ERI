@@ -21,78 +21,50 @@ class ERIMechVentTest < MiniTest::Test
   def test_mech_vent_none
     hpxml_name = 'base.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 0.0]) # Should have airflow but not fan energy
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml)
-
-    # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 0.0]) # Should have airflow but not fan energy
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml)
-
-    # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_attached_or_multifamily
     hpxml_name = 'base-enclosure-other-housing-unit.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 66.3, 24, 0.0]) # Should have airflow but not fan energy
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 66.3, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml)
-
-    # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 70.6, 24, 49.4])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 70.6, hours: 24, power: 49.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 32.1, 24, 55.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 32.1, hours: 24, power: 55.0 }])
 
     # Test w/ 301-2014
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 70.5, 24, 0.0]) # Should have airflow but not fan energy
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 70.5, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml)
-
-    # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 102.0, 24, 71.4])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 102.0, hours: 24, power: 71.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 102.0, 24, 71.4])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 102.0, hours: 24, power: 71.4 }])
 
     # FIXME: Add tests for new 301-2019 space types HPXML file
   end
@@ -100,39 +72,25 @@ class ERIMechVentTest < MiniTest::Test
   def test_mech_vent_exhaust
     hpxml_name = 'base-mechvent-exhaust.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 34.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 110.0, 24, 30.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 110.0, hours: 24, power: 30.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 110.0, 24, 30.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 110.0, hours: 24, power: 30.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_exhaust_below_ashrae_622
@@ -149,39 +107,25 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 34.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 199.1, 12, 54.3]) # Increased fan power
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 199.1, hours: 12, power: 54.3 }]) # Increased fan power
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 150.7, 12, 41.1]) # Increased fan power
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 150.7, hours: 12, power: 41.1 }]) # Increased fan power
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_exhaust_defaulted_fan_power
@@ -196,39 +140,25 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 34.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 199.1, 12, 69.7])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 199.1, hours: 12, power: 69.7 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 150.7, 12, 52.8])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 150.7, hours: 12, power: 52.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_exhaust_unmeasured_airflow_rate
@@ -242,39 +172,25 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 0.1])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 15.0, 24, 30.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 30.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 75.4, 24, 30.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 75.4, hours: 24, power: 30.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_exhaust_unmeasured_airflow_rate_and_defaulted_fan_power
@@ -290,305 +206,193 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 0.1])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 15.0, 24, 5.25])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 5.25 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 75.4, 24, 26.4])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 75.4, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_supply
     hpxml_name = 'base-mechvent-supply.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 34.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 110.0, 24, 30.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 110.0, hours: 24, power: 30.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 110.0, 24, 30.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 110.0, hours: 24, power: 30.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_balanced
     hpxml_name = 'base-mechvent-balanced.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 52.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 52.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 110.0, 24, 60.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 110.0, hours: 24, power: 60.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 52.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 52.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 110.0, 24, 60.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 110.0, hours: 24, power: 60.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_erv
     hpxml_name = 'base-mechvent-erv.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeERV, 110.0, 24, 60.0, 0.72, 0.48])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72, tre: 0.48 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeERV, 110.0, 24, 60.0, 0.72, 0.48])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72, tre: 0.48 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_erv_adjusted
     hpxml_name = 'base-mechvent-erv-atre-asre.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeERV, 110.0, 24, 60.0, nil, nil, 0.79, 0.526])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79, atre: 0.526 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeERV, 110.0, 24, 60.0, nil, nil, 0.79, 0.526])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79, atre: 0.526 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_hrv
     hpxml_name = 'base-mechvent-hrv.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeHRV, 110.0, 24, 60.0, 0.72])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeHRV, 110.0, 24, 60.0, 0.72])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_hrv_adjusted
     hpxml_name = 'base-mechvent-hrv-asre.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeHRV, 110.0, 24, 60.0, nil, nil, 0.79, nil])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 75.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeHRV, 110.0, 24, 60.0, nil, nil, 0.79, nil])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_cfis
     hpxml_name = 'base-mechvent-cfis.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 34.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeCFIS, 330.0, 8, 300.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, power: 300.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
 
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeCFIS, 330.0, 8, 300.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, power: 300.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_cfis_unmeasured_airflow_rate_and_defaulted_fan_power
@@ -604,42 +408,28 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 26.8, 24, 0.1])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeCFIS, 15.0, 24, 800.0])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 15.0, hours: 24, power: 800.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_cfm50_infiltration
     # Create derivative file for testing
     hpxml_name = _change_eri_version('base-enclosure-infil-cfm50.xml', '2014')
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 0.0]) # Should have airflow but not fan energy
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml)
-
-    # IAD
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_multiple
@@ -665,22 +455,15 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 75.4, 12, 37.7],
-                     [HPXML::MechVentTypeExhaust, 75.4, 24, 37.7])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 75.4, hours: 12, power: 37.7 },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 75.4, hours: 24, power: 37.7 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 34.0, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 34.0, hours: 24, power: 42.0 }])
 
     # 2. Exhaust (measured) + Supply (unmeasured)
     # Create derivative file for testing
@@ -705,14 +488,11 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 75.4, 24, 37.7],
-                     [HPXML::MechVentTypeSupply, 15.0, 24, 25.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 75.4, hours: 24, power: 37.7 },
+                             { fantype: HPXML::MechVentTypeSupply, flowrate: 15.0, hours: 24, power: 25.0 }])
 
     # 3. Exhaust (measured) + Exhaust (unmeasured)
     # Create derivative file for testing
@@ -737,14 +517,11 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 26.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 50.0, 24, 25.0],
-                     [HPXML::MechVentTypeExhaust, 25.4, 24, 25.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 50.0, hours: 24, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 25.4, hours: 24, power: 25.0 }])
 
     # 4. Exhaust (measured) + Balanced (measured)
     # Create derivative file for testing
@@ -768,14 +545,11 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 39.6])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 39.6 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeExhaust, 75.4, 12, 37.7],
-                     [HPXML::MechVentTypeBalanced, 37.7, 24, 37.7])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 75.4, hours: 12, power: 37.7 },
+                             { fantype: HPXML::MechVentTypeBalanced, flowrate: 37.7, hours: 24, power: 37.7 }])
 
     # 5. Supply (measured) + Exhaust (measured) + Balanced (measured) + Supply (unmeasured) + Exhaust (unmeasured) + Balanced (unmeasured)
     # Create derivative file for testing
@@ -830,18 +604,15 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 36.5])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 36.5 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 45.0, 8, 25.0],
-                     [HPXML::MechVentTypeExhaust, 50.0, 12, 25.0],
-                     [HPXML::MechVentTypeBalanced, 20.0, 24, 25.0],
-                     [HPXML::MechVentTypeSupply, 15.0, 24, 25.0],
-                     [HPXML::MechVentTypeExhaust, 15.0, 24, 25.0],
-                     [HPXML::MechVentTypeBalanced, 23.6, 24, 25.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 45.0, hours: 8, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 50.0, hours: 12, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeBalanced, flowrate: 20.0, hours: 24, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeSupply, flowrate: 15.0, hours: 24, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeBalanced, flowrate: 23.6, hours: 24, power: 25.0 }])
 
     # 6. Supply (measured) + Exhaust (measured) + Balanced (measured) + Supply (unmeasured) + Exhaust (unmeasured) + Balanced (unmeasured)
     #    where total flow rate > minimum requirement
@@ -897,39 +668,29 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 37.0, 24, 31.5])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 31.5 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 45.0, 8, 25.0],
-                     [HPXML::MechVentTypeExhaust, 200.0, 12, 25.0],
-                     [HPXML::MechVentTypeBalanced, 20.0, 24, 25.0],
-                     [HPXML::MechVentTypeSupply, 15.0, 24, 25.0],
-                     [HPXML::MechVentTypeExhaust, 15.0, 24, 25.0],
-                     [HPXML::MechVentTypeBalanced, 15.0, 24, 25.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 45.0, hours: 8, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 200.0, hours: 12, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeBalanced, flowrate: 20.0, hours: 24, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeSupply, flowrate: 15.0, hours: 24, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 25.0 },
+                             { fantype: HPXML::MechVentTypeBalanced, flowrate: 15.0, hours: 24, power: 25.0 }])
   end
 
   def test_mech_vent_shared
     hpxml_name = 'base-mechvent-shared-preconditioning.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 56.3, 24, 33.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 33.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 1060.7, 24, 318.2, nil, nil, nil, nil, 106.1, 0.5, true, true],
-                     [HPXML::MechVentTypeExhaust, 95.5, 24, 34.5])
-
-    # IAD
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 1060.7, hours: 24, power: 318.2, in_unit_flowrate: 106.1, frac_recirc: 0.5, has_preheat: true, has_precool: true },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 95.5, hours: 24, power: 34.5 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 60.0, 24, 42.0])
-
-    # IAD Reference
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 8.5, 24, 42.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
   end
 
   def test_mech_vent_shared_defaulted_fan_power
@@ -942,14 +703,11 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 56.3, 24, 33.4])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 33.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 1060.7, 24, 1060.7, nil, nil, nil, nil, 106.1, 0.5, true, true],
-                     [HPXML::MechVentTypeExhaust, 95.5, 24, 34.5])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 1060.7, hours: 24, power: 1060.7, in_unit_flowrate: 106.1, frac_recirc: 0.5, has_preheat: true, has_precool: true },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 95.5, hours: 24, power: 34.5 }])
   end
 
   def test_mech_vent_shared_unmeasured_airflow_rate
@@ -962,14 +720,11 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 56.3, 24, 12.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 12.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 800.0, 24, 240.0, nil, nil, nil, nil, 30.0, 0.5, true, true],
-                     [HPXML::MechVentTypeExhaust, 72.0, 24, 26.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 800.0, hours: 24, power: 240.0, in_unit_flowrate: 30.0, frac_recirc: 0.5, has_preheat: true, has_precool: true },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 72.0, hours: 24, power: 26.0 }])
   end
 
   def test_mech_vent_shared_unmeasured_airflow_rate_and_defaulted_fan_power
@@ -984,32 +739,22 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeBalanced, 56.3, 24, 12.8])
-
-    # Rated Home
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 12.8 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [HPXML::MechVentTypeSupply, 800.0, 24, 800.0, nil, nil, nil, nil, 30.0, 0.5, true, true],
-                     [HPXML::MechVentTypeExhaust, 72.0, 24, 26.0])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 800.0, hours: 24, power: 800.0, in_unit_flowrate: 30.0, frac_recirc: 0.5, has_preheat: true, has_precool: true },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 72.0, hours: 24, power: 26.0 }])
   end
 
   def test_whole_house_fan
     hpxml_name = 'base-mechvent-whole-house-fan.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_whf(hpxml)
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_whf(hpxml, 4500, 300)
-
-    # IAD
+    _check_whf(hpxml, flowrate: 4500, power: 300)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_whf(hpxml)
-
-    # IAD Reference
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_whf(hpxml)
   end
@@ -1053,66 +798,63 @@ class ERIMechVentTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _check_mech_vent(hpxml, *systems)
+  def _check_mech_vent(hpxml, all_expected_values = [])
     num_mech_vent = 0
     hpxml.ventilation_fans.each_with_index do |ventilation_fan, idx|
       next unless ventilation_fan.used_for_whole_building_ventilation
 
-      fantype, flowrate, hours, power, sre, tre, asre, atre, in_unit_flowrate, frac_recirc, has_preheat, has_precool = systems[idx]
-
+      expected_values = all_expected_values[idx]
       num_mech_vent += 1
-      if not in_unit_flowrate.nil?
-        assert_equal(true, ventilation_fan.is_shared_system)
-      end
-      assert_equal(fantype, ventilation_fan.fan_type)
-      assert_in_delta(flowrate, ventilation_fan.rated_flow_rate.to_f + ventilation_fan.tested_flow_rate.to_f, 0.1)
-      assert_in_delta(hours, ventilation_fan.hours_in_operation, 0.1)
-      assert_in_delta(power, ventilation_fan.fan_power, 0.1)
-      if sre.nil?
+      assert_equal(expected_values[:fantype], ventilation_fan.fan_type)
+      assert_in_delta(expected_values[:flowrate], ventilation_fan.rated_flow_rate.to_f + ventilation_fan.tested_flow_rate.to_f, 0.1)
+      assert_in_delta(expected_values[:hours], ventilation_fan.hours_in_operation, 0.1)
+      assert_in_delta(expected_values[:power], ventilation_fan.fan_power, 0.1)
+      if expected_values[:sre].nil?
         assert_nil(ventilation_fan.sensible_recovery_efficiency)
       else
-        assert_equal(sre, ventilation_fan.sensible_recovery_efficiency)
+        assert_equal(expected_values[:sre], ventilation_fan.sensible_recovery_efficiency)
       end
-      if tre.nil?
+      if expected_values[:tre].nil?
         assert_nil(ventilation_fan.total_recovery_efficiency)
       else
-        assert_equal(tre, ventilation_fan.total_recovery_efficiency)
+        assert_equal(expected_values[:tre], ventilation_fan.total_recovery_efficiency)
       end
-      if asre.nil?
+      if expected_values[:asre].nil?
         assert_nil(ventilation_fan.sensible_recovery_efficiency_adjusted)
       else
-        assert_equal(asre, ventilation_fan.sensible_recovery_efficiency_adjusted)
+        assert_equal(expected_values[:asre], ventilation_fan.sensible_recovery_efficiency_adjusted)
       end
-      if atre.nil?
+      if expected_values[:atre].nil?
         assert_nil(ventilation_fan.total_recovery_efficiency_adjusted)
       else
-        assert_equal(atre, ventilation_fan.total_recovery_efficiency_adjusted)
+        assert_equal(expected_values[:atre], ventilation_fan.total_recovery_efficiency_adjusted)
       end
-      if in_unit_flowrate.nil?
+      if expected_values[:in_unit_flowrate].nil?
         assert_nil(ventilation_fan.in_unit_flow_rate)
       else
-        assert_in_delta(in_unit_flowrate, ventilation_fan.in_unit_flow_rate, 0.1)
+        assert_equal(true, ventilation_fan.is_shared_system)
+        assert_in_delta(expected_values[:in_unit_flowrate], ventilation_fan.in_unit_flow_rate, 0.1)
       end
-      if frac_recirc.nil?
+      if expected_values[:frac_recirc].nil?
         assert_nil(ventilation_fan.fraction_recirculation)
       else
-        assert_equal(frac_recirc, ventilation_fan.fraction_recirculation)
+        assert_equal(expected_values[:frac_recirc], ventilation_fan.fraction_recirculation)
       end
-      if has_preheat.nil? || (not has_preheat)
+      if expected_values[:has_preheat].nil? || (not expected_values[:has_preheat])
         assert_nil(ventilation_fan.preheating_fuel)
       else
         refute_nil(ventilation_fan.preheating_fuel)
       end
-      if has_precool.nil? || (not has_precool)
+      if expected_values[:has_precool].nil? || (not expected_values[:has_precool])
         assert_nil(ventilation_fan.precooling_fuel)
       else
         refute_nil(ventilation_fan.precooling_fuel)
       end
     end
-    assert_equal(systems.size, num_mech_vent)
+    assert_equal(all_expected_values.size, num_mech_vent)
   end
 
-  def _check_whf(hpxml, flowrate = nil, power = nil)
+  def _check_whf(hpxml, flowrate: nil, power: nil)
     num_whf = 0
     hpxml.ventilation_fans.each do |ventilation_fan|
       next unless ventilation_fan.used_for_seasonal_cooling_load_reduction

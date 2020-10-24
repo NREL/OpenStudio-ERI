@@ -21,7 +21,6 @@ class ERIApplianceTest < MiniTest::Test
   def test_appliances_electric
     hpxml_name = 'base.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -33,8 +32,6 @@ class ERIApplianceTest < MiniTest::Test
       _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
     _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
@@ -45,7 +42,6 @@ class ERIApplianceTest < MiniTest::Test
     # Test w/ 301-2019 pre-Addendum A
     hpxml_name = _change_eri_version(hpxml_name, '2019')
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -57,8 +53,6 @@ class ERIApplianceTest < MiniTest::Test
       _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     # Same results as previous test, no need to re-check
   end
@@ -66,7 +60,6 @@ class ERIApplianceTest < MiniTest::Test
   def test_appliances_modified
     hpxml_name = 'base-appliances-modified.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -78,8 +71,6 @@ class ERIApplianceTest < MiniTest::Test
       _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
     _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeMoisture, location: HPXML::LocationLivingSpace)
@@ -90,7 +81,6 @@ class ERIApplianceTest < MiniTest::Test
     # Test w/ 301-2019 pre-Addendum A
     hpxml_name = _change_eri_version(hpxml_name, '2019')
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -102,8 +92,6 @@ class ERIApplianceTest < MiniTest::Test
       _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     # Same results as previous test, no need to re-check
   end
@@ -111,7 +99,6 @@ class ERIApplianceTest < MiniTest::Test
   def test_appliances_gas
     hpxml_name = 'base-appliances-gas.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -120,8 +107,6 @@ class ERIApplianceTest < MiniTest::Test
       _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, control: HPXML::ClothesDryerControlTypeMoisture, location: HPXML::LocationLivingSpace)
     _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -129,7 +114,6 @@ class ERIApplianceTest < MiniTest::Test
     # Test w/ 301-2019 pre-Addendum A
     hpxml_name = _change_eri_version(hpxml_name, '2019')
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -138,8 +122,6 @@ class ERIApplianceTest < MiniTest::Test
       _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 2.32, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-
-    # Rated Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     # Same results as previous test, no need to re-check
   end
@@ -147,7 +129,6 @@ class ERIApplianceTest < MiniTest::Test
   def test_appliances_basement
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -170,7 +151,6 @@ class ERIApplianceTest < MiniTest::Test
   def test_appliances_none
     hpxml_name = 'base-appliances-none.xml'
 
-    # Reference Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -188,27 +168,19 @@ class ERIApplianceTest < MiniTest::Test
   def test_appliances_dehumidifier
     hpxml_name = 'base-appliances-dehumidifier-50percent.xml'
 
-    # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_dehumidifier(hpxml, [40.0, nil, 1.04, 0.6, 0.5])
-
-    # Rated Home
+    _check_dehumidifier(hpxml, [{ capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_dehumidifier(hpxml, [40.0, 1.8, nil, 0.6, 0.5])
-
-    # IAD, IAD Reference
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_dehumidifier(hpxml)
-    end
+    _check_dehumidifier(hpxml, [{ capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5 }])
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_dehumidifier(hpxml)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_dehumidifier(hpxml)
 
     # Test w/ 301-2019 pre-Addendum B
     # No credit/penalty for dehumidifiers
     hpxml_name = _change_eri_version(hpxml_name, '2019A')
 
-    # Reference Home, Rated Home, IAD, IAD Reference
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -228,7 +200,6 @@ class ERIApplianceTest < MiniTest::Test
       hpxml_name = File.basename(@tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-      # Reference Home, IAD, IAD Reference
       calc_types = [Constants.CalcTypeERIReferenceHome,
                     Constants.CalcTypeERIRatedHome,
                     Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -527,23 +498,23 @@ class ERIApplianceTest < MiniTest::Test
     end
   end
 
-  def _check_dehumidifier(hpxml, *dehumidifiers)
-    assert_equal(dehumidifiers.size, hpxml.dehumidifiers.size)
+  def _check_dehumidifier(hpxml, all_expected_values = [])
+    assert_equal(all_expected_values.size, hpxml.dehumidifiers.size)
     hpxml.dehumidifiers.each_with_index do |dehumidifier, idx|
-      capacity, ef, ief, rh_setpoint, frac_served = dehumidifiers[idx]
-      assert_equal(capacity, dehumidifier.capacity)
-      if ef.nil?
+      expected_values = all_expected_values[idx]
+      assert_equal(expected_values[:capacity], dehumidifier.capacity)
+      if expected_values[:ef].nil?
         assert_nil(dehumidifier.energy_factor)
       else
-        assert_equal(ef, dehumidifier.energy_factor)
+        assert_equal(expected_values[:ef], dehumidifier.energy_factor)
       end
-      if ief.nil?
+      if expected_values[:ief].nil?
         assert_nil(dehumidifier.integrated_energy_factor)
       else
-        assert_equal(ief, dehumidifier.integrated_energy_factor)
+        assert_equal(expected_values[:ief], dehumidifier.integrated_energy_factor)
       end
-      assert_equal(rh_setpoint, dehumidifier.rh_setpoint)
-      assert_equal(frac_served, dehumidifier.fraction_served)
+      assert_equal(expected_values[:rh_setpoint], dehumidifier.rh_setpoint)
+      assert_equal(expected_values[:frac_load], dehumidifier.fraction_served)
     end
   end
 end
