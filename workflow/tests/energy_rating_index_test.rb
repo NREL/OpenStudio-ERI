@@ -445,7 +445,7 @@ class EnergyRatingIndexTest < Minitest::Test
       unzip_file.extractAllFiles(OpenStudio::toPath(top_dir))
       command = 'openstudio OpenStudio-ERI/workflow/energy_rating_index.rb -x OpenStudio-ERI/workflow/sample_files/base.xml'
       system(command)
-      assert(File.exist? 'OpenStudio-ERI/workflow/results/ERI_results.csv')
+      assert(File.exist? 'OpenStudio-ERI/workflow/results/ERI_Results.csv')
       File.delete(zip)
       rm_path('OpenStudio-ERI')
     end
