@@ -432,6 +432,25 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(success)
   end
 
+  def test_release_zips
+    # Check release zips successfully created
+    top_dir = File.join(File.dirname(__FILE__), '..', '..')
+    command = "openstudio #{File.join(top_dir, 'tasks.rb')} create_release_zips"
+    system(command)
+    assert_equal(2, Dir["#{top_dir}/*.zip"].size)
+
+    # Check successful running of ERI calculation from release zips
+    Dir["#{top_dir}/OpenStudio-ERI*.zip"].each do |zip|
+      unzip_file = OpenStudio::UnzipFile.new(zip)
+      unzip_file.extractAllFiles(OpenStudio::toPath(top_dir))
+      command = 'openstudio OpenStudio-ERI/workflow/energy_rating_index.rb -x OpenStudio-ERI/workflow/sample_files/base.xml'
+      system(command)
+      assert(File.exist? 'OpenStudio-ERI/workflow/results/ERI_results.csv')
+      File.delete(zip)
+      rm_path('OpenStudio-ERI')
+    end
+  end
+
   private
 
   def _test_resnet_hot_water(test_name, dir_name)
