@@ -8,8 +8,8 @@ Setup
 
 To get started:
 
-#. Either download `OpenStudio 3.0.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.0.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
-#. Download the `OpenStudio-ERI v0.11.0 Beta <https://github.com/NREL/OpenStudio-ERI/releases/tag/v0.11.0-beta>`_ release.
+#. Either download `OpenStudio 3.1.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.1.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
+#. Download the `latest release <https://github.com/NREL/OpenStudio-ERI/releases>`_ release.
 #. To obtain all available weather files, run: ``openstudio workflow/energy_rating_index.rb --download-weather``
 
 .. note:: 
