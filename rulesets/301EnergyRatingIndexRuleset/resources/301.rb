@@ -1422,23 +1422,28 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     mech_vent_fans.each do |orig_vent_fan|
+      hours_in_operation = orig_vent_fan.hours_in_operation
+
       # Calculate daily-average outdoor airflow rate for fan
       if not orig_vent_fan.flow_rate_not_tested
         # Airflow measured; set to max of provided value and min Qfan requirement
         average_oa_unit_flow_rate = [orig_vent_fan.average_oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
+        if average_oa_unit_flow_rate > orig_vent_fan.average_oa_unit_flow_rate
+          # Increase hours in operation to try to meet requirement
+          hours_in_operation = [average_oa_unit_flow_rate / orig_vent_fan.average_oa_unit_flow_rate * hours_in_operation, 24.0].min
+        end
       else
         # Airflow not measured; set to min Qfan requirement
         average_oa_unit_flow_rate = q_fans[orig_vent_fan.id]
-        orig_vent_fan.hours_in_operation = 24
       end
 
       # Convert to actual fan flow rate(s)
       if not orig_vent_fan.is_shared_system
         # In-unit system
-        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / orig_vent_fan.hours_in_operation)
+        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation)
       else
         # Shared system
-        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / orig_vent_fan.hours_in_operation) / (1 - orig_vent_fan.fraction_recirculation)
+        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation) / (1 - orig_vent_fan.fraction_recirculation)
         if orig_vent_fan.flow_rate_not_tested
           system_flow_rate = orig_vent_fan.rated_flow_rate
         else
@@ -1481,7 +1486,7 @@ class EnergyRatingIndex301Ruleset
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
                                        tested_flow_rate: total_unit_flow_rate,
-                                       hours_in_operation: orig_vent_fan.hours_in_operation,
+                                       hours_in_operation: hours_in_operation,
                                        total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
                                        total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
                                        sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
@@ -1494,7 +1499,7 @@ class EnergyRatingIndex301Ruleset
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
                                        rated_flow_rate: system_flow_rate,
-                                       hours_in_operation: orig_vent_fan.hours_in_operation,
+                                       hours_in_operation: hours_in_operation,
                                        total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
                                        total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
                                        sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
