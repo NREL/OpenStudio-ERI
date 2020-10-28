@@ -144,8 +144,7 @@ class EnergyRatingIndexTest < Minitest::Test
     cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
     FileUtils.mv(cache_csv, "#{cache_csv}.bak")
 
-    cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
     system(command)
 
     assert(File.exist?(cache_csv))
@@ -426,8 +425,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
-    cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" #{File.absolute_path(__FILE__)} --name=foo"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.absolute_path(__FILE__)} --name=foo"
     success = system(command)
     assert(success)
   end
@@ -435,7 +433,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_release_zips
     # Check release zips successfully created
     top_dir = File.join(File.dirname(__FILE__), '..', '..')
-    command = "openstudio #{File.join(top_dir, 'tasks.rb')} create_release_zips"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.join(top_dir, 'tasks.rb')} create_release_zips"
     system(command)
     assert_equal(2, Dir["#{top_dir}/*.zip"].size)
 
@@ -443,7 +441,7 @@ class EnergyRatingIndexTest < Minitest::Test
     Dir["#{top_dir}/OpenStudio-ERI*.zip"].each do |zip|
       unzip_file = OpenStudio::UnzipFile.new(zip)
       unzip_file.extractAllFiles(OpenStudio::toPath(top_dir))
-      command = 'openstudio OpenStudio-ERI/workflow/energy_rating_index.rb -x OpenStudio-ERI/workflow/sample_files/base.xml'
+      command = "\"#{OpenStudio.getOpenStudioCLI}\" OpenStudio-ERI/workflow/energy_rating_index.rb -x OpenStudio-ERI/workflow/sample_files/base.xml"
       system(command)
       assert(File.exist? 'OpenStudio-ERI/workflow/results/ERI_Results.csv')
       File.delete(zip)
@@ -615,8 +613,7 @@ class EnergyRatingIndexTest < Minitest::Test
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
     # Run energy_rating_index workflow
-    cli_path = OpenStudio.getOpenStudioCLI
-    command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
