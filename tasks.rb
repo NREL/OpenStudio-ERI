@@ -1637,7 +1637,7 @@ if ARGV[0].to_sym == :create_release_zips
               'test_resnet_dse' => File.join(results_dir, 'RESNET_Test_4.5_DSE.csv'),
               'test_resnet_hot_water' => File.join(results_dir, 'RESNET_Test_4.6_Hot_Water.csv') }
     tests.each do |test_name, results_csv|
-      command = "openstudio workflow/tests/energy_rating_index_test.rb --name=#{test_name} > log.txt"
+      command = "\"#{OpenStudio.getOpenStudioCLI}\" workflow/tests/energy_rating_index_test.rb --name=#{test_name} > log.txt"
       system(command)
       if not File.exist? results_csv
         puts "#{results_csv} not generated. Aborting..."
