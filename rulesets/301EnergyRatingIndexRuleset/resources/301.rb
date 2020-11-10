@@ -1987,7 +1987,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
-    return # FIXME: Temporary
     return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
     return if orig_hpxml.dehumidifiers.size == 0
 
@@ -2011,7 +2010,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_appliances_dehumidifier_rated(orig_hpxml, new_hpxml)
-    return # FIXME: Temporary
     return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
     return if orig_hpxml.dehumidifiers.size == 0
 
