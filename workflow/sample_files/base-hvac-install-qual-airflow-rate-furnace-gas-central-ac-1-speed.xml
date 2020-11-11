@@ -324,6 +324,7 @@
               <extension>
                 <FanPowerWattsPerCFM>0.45</FanPowerWattsPerCFM>
                 <AirflowCFMPerTon>400.0</AirflowCFMPerTon>
+                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </HeatingSystem>
             <CoolingSystem>
@@ -343,6 +344,7 @@
                 <ChargeNotTested>true</ChargeNotTested>
                 <FanPowerWattsPerCFM>0.55</FanPowerWattsPerCFM>
                 <AirflowCFMPerTon>360.0</AirflowCFMPerTon>
+                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </CoolingSystem>
           </HVACPlant>

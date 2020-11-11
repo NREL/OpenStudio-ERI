@@ -1136,8 +1136,8 @@ class EnergyRatingIndex301Ruleset
           fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
           fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
 
-          airflow_cfm_per_ton = orig_heating_system.airflow_cfm_per_ton
-          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_cfm_per_ton.nil?
+          airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
+          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
         end
       end
       new_hpxml.heating_systems.add(id: orig_heating_system.id,
@@ -1154,7 +1154,6 @@ class EnergyRatingIndex301Ruleset
                                     wlhp_heating_efficiency_cop: orig_heating_system.wlhp_heating_efficiency_cop,
                                     fan_watts_per_cfm: fan_watts_per_cfm,
                                     fan_watts: orig_heating_system.fan_watts,
-                                    airflow_cfm_per_ton: airflow_cfm_per_ton,
                                     airflow_defect_ratio: airflow_defect_ratio,
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
@@ -1170,8 +1169,8 @@ class EnergyRatingIndex301Ruleset
           fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
           fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
 
-          airflow_cfm_per_ton = orig_cooling_system.airflow_cfm_per_ton
-          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_cfm_per_ton.nil?
+          airflow_defect_ratio = orig_cooling_system.airflow_defect_ratio
+          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
 
           charge_defect_ratio = orig_cooling_system.charge_defect_ratio
           charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
@@ -1195,7 +1194,6 @@ class EnergyRatingIndex301Ruleset
                                     wlhp_cooling_capacity: orig_cooling_system.wlhp_cooling_capacity,
                                     wlhp_cooling_efficiency_eer: orig_cooling_system.wlhp_cooling_efficiency_eer,
                                     fan_watts_per_cfm: fan_watts_per_cfm,
-                                    airflow_cfm_per_ton: airflow_cfm_per_ton,
                                     airflow_defect_ratio: airflow_defect_ratio,
                                     charge_defect_ratio: charge_defect_ratio,
                                     seed_id: orig_cooling_system.seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.seed_id)
@@ -1212,8 +1210,8 @@ class EnergyRatingIndex301Ruleset
           fan_watts_per_cfm = orig_heat_pump.fan_watts_per_cfm
           fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
 
-          airflow_cfm_per_ton = orig_heat_pump.airflow_cfm_per_ton
-          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_cfm_per_ton.nil?
+          airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
+          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
 
           if orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir
             charge_defect_ratio = orig_heat_pump.charge_defect_ratio
@@ -1246,7 +1244,6 @@ class EnergyRatingIndex301Ruleset
                                shared_loop_watts: orig_heat_pump.shared_loop_watts,
                                pump_watts_per_ton: orig_heat_pump.pump_watts_per_ton,
                                fan_watts_per_cfm: fan_watts_per_cfm,
-                               airflow_cfm_per_ton: airflow_cfm_per_ton,
                                airflow_defect_ratio: airflow_defect_ratio,
                                charge_defect_ratio: charge_defect_ratio,
                                seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)

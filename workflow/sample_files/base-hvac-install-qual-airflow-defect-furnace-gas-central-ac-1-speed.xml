@@ -324,7 +324,6 @@
               <extension>
                 <FanPowerNotTested>true</FanPowerNotTested>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
-                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </HeatingSystem>
             <CoolingSystem>
@@ -344,7 +343,6 @@
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <ChargeNotTested>true</ChargeNotTested>
                 <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </CoolingSystem>
           </HVACPlant>

@@ -1497,7 +1497,7 @@ def create_sample_hpxmls
       if heating_system.fan_watts_per_cfm.nil?
         heating_system.fan_power_not_tested = true
       end
-      if heating_system.airflow_cfm_per_ton.nil?
+      if heating_system.airflow_defect_ratio.nil?
         heating_system.airflow_not_tested = true
       end
     end
@@ -1507,7 +1507,7 @@ def create_sample_hpxmls
       if cooling_system.fan_watts_per_cfm.nil?
         cooling_system.fan_power_not_tested = true
       end
-      if cooling_system.airflow_cfm_per_ton.nil?
+      if cooling_system.airflow_defect_ratio.nil?
         cooling_system.airflow_not_tested = true
       end
       if cooling_system.charge_defect_ratio.nil?
@@ -1522,7 +1522,7 @@ def create_sample_hpxmls
       if heat_pump.fan_watts_per_cfm.nil?
         heat_pump.fan_power_not_tested = true
       end
-      if heat_pump.airflow_cfm_per_ton.nil?
+      if heat_pump.airflow_defect_ratio.nil?
         heat_pump.airflow_not_tested = true
       end
       if heat_pump.charge_defect_ratio.nil? && (heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir)

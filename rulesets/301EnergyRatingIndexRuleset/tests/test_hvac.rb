@@ -163,7 +163,7 @@ class ERIHVACtest < MiniTest::Test
         end
         calc_type = Constants.CalcTypeERIRatedHome
         if hpxml_name.include?('install-qual') && eri_version == 'latest'
-          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_cfm_per_ton: 400.0 }
+          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_defect_ratio: -0.25 }
         else
           hvac_install_qual_values = {}
         end
@@ -268,7 +268,7 @@ class ERIHVACtest < MiniTest::Test
         calc_type = Constants.CalcTypeERIRatedHome
         hpxml = _test_measure(hpxml_name, calc_type)
         if hpxml_name.include?('install-qual') && eri_version == 'latest'
-          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_cfm_per_ton: 375.0, charge_defect_ratio: -0.25 }
+          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_defect_ratio: -0.25, charge_defect_ratio: -0.25 }
         else
           hvac_install_qual_values = {}
         end
@@ -299,7 +299,7 @@ class ERIHVACtest < MiniTest::Test
         end
         calc_type = Constants.CalcTypeERIRatedHome
         if hpxml_name.include?('install-qual') && eri_version == 'latest'
-          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_cfm_per_ton: 375.0, charge_defect_ratio: -0.25 }
+          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_defect_ratio: -0.25, charge_defect_ratio: -0.25 }
         else
           hvac_install_qual_values = {}
         end
@@ -355,7 +355,7 @@ class ERIHVACtest < MiniTest::Test
         end
         calc_type = Constants.CalcTypeERIRatedHome
         if hpxml_name.include?('install-qual') && eri_version == 'latest'
-          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_cfm_per_ton: 375.0 }
+          hvac_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_defect_ratio: -0.25 }
         else
           hvac_install_qual_values = {}
         end
@@ -512,8 +512,8 @@ class ERIHVACtest < MiniTest::Test
         end
         calc_type = Constants.CalcTypeERIRatedHome
         if hpxml_name.include?('install-qual') && eri_version == 'latest'
-          heat_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_cfm_per_ton: 400.0 }
-          cool_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_cfm_per_ton: 360.0, charge_defect_ratio: -0.25 }
+          heat_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_defect_ratio: -0.25 }
+          cool_install_qual_values = { fan_watts_per_cfm: 0.365, airflow_defect_ratio: -0.25, charge_defect_ratio: -0.25 }
         else
           heat_install_qual_values = {}
           cool_install_qual_values = {}
@@ -959,7 +959,7 @@ class ERIHVACtest < MiniTest::Test
           expected_values[:fan_watts_per_cfm] = 0.58 # W/cfm
         end
       end
-      if expected_values[:airflow_cfm_per_ton].nil?
+      if expected_values[:airflow_defect_ratio].nil?
         if calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
           expected_values[:airflow_defect_ratio] = 0.0
         else
