@@ -1478,23 +1478,28 @@ class EnergyRatingIndex301Ruleset
 
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     mech_vent_fans.each do |orig_vent_fan|
+      hours_in_operation = orig_vent_fan.hours_in_operation
+
       # Calculate daily-average outdoor airflow rate for fan
       if not orig_vent_fan.flow_rate_not_tested
         # Airflow measured; set to max of provided value and min Qfan requirement
         average_oa_unit_flow_rate = [orig_vent_fan.average_oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
+        if average_oa_unit_flow_rate > orig_vent_fan.average_oa_unit_flow_rate
+          # Increase hours in operation to try to meet requirement
+          hours_in_operation = [average_oa_unit_flow_rate / orig_vent_fan.average_oa_unit_flow_rate * hours_in_operation, 24.0].min
+        end
       else
         # Airflow not measured; set to min Qfan requirement
         average_oa_unit_flow_rate = q_fans[orig_vent_fan.id]
-        orig_vent_fan.hours_in_operation = 24
       end
 
       # Convert to actual fan flow rate(s)
       if not orig_vent_fan.is_shared_system
         # In-unit system
-        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / orig_vent_fan.hours_in_operation)
+        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation)
       else
         # Shared system
-        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / orig_vent_fan.hours_in_operation) / (1 - orig_vent_fan.fraction_recirculation)
+        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation) / (1 - orig_vent_fan.fraction_recirculation)
         if orig_vent_fan.flow_rate_not_tested
           system_flow_rate = orig_vent_fan.rated_flow_rate
         else
@@ -1537,7 +1542,7 @@ class EnergyRatingIndex301Ruleset
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
                                        tested_flow_rate: total_unit_flow_rate,
-                                       hours_in_operation: orig_vent_fan.hours_in_operation,
+                                       hours_in_operation: hours_in_operation,
                                        total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
                                        total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
                                        sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
@@ -1550,7 +1555,7 @@ class EnergyRatingIndex301Ruleset
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
                                        rated_flow_rate: system_flow_rate,
-                                       hours_in_operation: orig_vent_fan.hours_in_operation,
+                                       hours_in_operation: hours_in_operation,
                                        total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
                                        total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
                                        sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
@@ -1637,7 +1642,7 @@ class EnergyRatingIndex301Ruleset
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
       end
 
-      energy_factor, recovery_efficiency = get_water_heater_ef_and_re(fuel_type, tank_volume)
+      energy_factor, recovery_efficiency = get_reference_water_heater_ef_and_re(fuel_type, tank_volume)
 
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
 
@@ -1674,13 +1679,6 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
-      energy_factor = orig_water_heater.energy_factor
-      if energy_factor.nil?
-        if not [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
-          energy_factor = Waterheater.calc_ef_from_uef(orig_water_heater)
-        end
-      end
-
       heating_capacity = orig_water_heater.heating_capacity
       if (orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeStorage) && heating_capacity.nil?
         heating_capacity = Waterheater.get_default_heating_capacity(orig_water_heater.fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
@@ -1706,7 +1704,9 @@ class EnergyRatingIndex301Ruleset
                                           tank_volume: orig_water_heater.tank_volume,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           heating_capacity: heating_capacity,
-                                          energy_factor: energy_factor,
+                                          energy_factor: orig_water_heater.energy_factor,
+                                          uniform_energy_factor: orig_water_heater.uniform_energy_factor,
+                                          first_hour_rating: orig_water_heater.first_hour_rating,
                                           recovery_efficiency: orig_water_heater.recovery_efficiency,
                                           uses_desuperheater: uses_desuperheater,
                                           jacket_r_value: orig_water_heater.jacket_r_value,
@@ -2256,19 +2256,6 @@ class EnergyRatingIndex301Ruleset
 
   private
 
-  def self.get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    # # Table 4.2.2(1) - Service water heating systems
-    ef = nil
-    re = nil
-    if wh_fuel_type == HPXML::FuelTypeElectricity
-      ef = 0.97 - (0.00132 * wh_tank_vol)
-    else
-      ef = 0.67 - (0.0019 * wh_tank_vol)
-      re = 0.78
-    end
-    return ef.round(2), re
-  end
-
   def self.calc_rated_home_q_fans_by_system(orig_hpxml, mech_vent_fans)
     # Calculates the target average airflow rate for each mechanical
     # ventilation system based on their measured value (if available)
@@ -2655,17 +2642,12 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_distribution_system(new_hpxml)
     (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
       next if hvac.distribution_system_idref.nil?
-
-      found_dist = false
-      new_hpxml.hvac_distributions.each do |hvac_distribution|
-        next unless hvac_distribution.id == hvac.distribution_system_idref
-
-        found_dist = true
-      end
-      next if found_dist
+      next if new_hpxml.hvac_distributions.select { |d| d.id == hvac.distribution_system_idref }.size > 0
 
       # Add new DSE distribution if distribution doesn't already exist
-      new_hpxml.hvac_distributions.add(id: hvac.distribution_system_idref,
+      dist_id = get_new_distribution_id(new_hpxml)
+      hvac.distribution_system_idref = dist_id
+      new_hpxml.hvac_distributions.add(id: dist_id,
                                        distribution_system_type: HPXML::HVACDistributionTypeDSE,
                                        annual_heating_dse: 0.8,
                                        annual_cooling_dse: 0.8)
@@ -2676,7 +2658,7 @@ class EnergyRatingIndex301Ruleset
     wh_fuel_type = orig_hpxml.predominant_heating_fuel()
     wh_tank_vol = 40.0
 
-    wh_ef, wh_re = get_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    wh_ef, wh_re = get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
     wh_cap = Waterheater.get_default_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
@@ -2715,6 +2697,19 @@ class EnergyRatingIndex301Ruleset
 
       return air_infiltration_measurement.infiltration_volume
     end
+  end
+
+  def self.get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    # # Table 4.2.2(1) - Service water heating systems
+    ef = nil
+    re = nil
+    if wh_fuel_type == HPXML::FuelTypeElectricity
+      ef = 0.97 - (0.00132 * wh_tank_vol)
+    else
+      ef = 0.67 - (0.0019 * wh_tank_vol)
+      re = 0.78
+    end
+    return ef.round(2), re
   end
 
   def self.get_reference_floor_ufactor()

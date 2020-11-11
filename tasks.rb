@@ -1299,6 +1299,7 @@ def create_sample_hpxmls
                   'invalid_files/hvac-distribution-return-duct-leakage-missing.xml',
                   'invalid_files/hvac-dse-multiple-attached-cooling.xml',
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
+                  'invalid_files/hvac-inconsistent-fan-powers.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
                   'invalid_files/invalid-calendar-year.xml',
                   'invalid_files/invalid-datatype-boolean.xml',
@@ -1693,17 +1694,21 @@ if ARGV[0].to_sym == :update_measures
 end
 
 if ARGV[0].to_sym == :create_release_zips
-  # Generate documentation
-  puts 'Generating documentation...'
-  command = 'sphinx-build -b singlehtml docs/source documentation'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/version'
+
+  release_map = { File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_HPXML_Version}-minimal.zip") => false,
+                  File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_HPXML_Version}-full.zip") => true }
+
+  release_map.keys.each do |zip_path|
+    File.delete(zip_path) if File.exist? zip_path
+  end
+
+  # Only include files under git version control
+  command = 'git ls-files'
   begin
-    `#{command}`
-    if not File.exist? File.join(File.dirname(__FILE__), 'documentation', 'index.html')
-      puts 'Documentation was not successfully generated. Aborting...'
-      exit!
-    end
+    git_files = `#{command}`
   rescue
-    puts "Command failed: '#{command}'. Perhaps sphinx needs to be installed?"
+    puts "Command failed: '#{command}'. Perhaps git needs to be installed?"
     exit!
   end
 
@@ -1716,47 +1721,74 @@ if ARGV[0].to_sym == :create_release_zips
            'weather/*.*',
            'workflow/*.*',
            'workflow/sample_files/*.*',
+           'workflow/tests/*.rb',
+           'workflow/tests/RESNET_Tests/4.*/*.xml',
            'documentation/index.html',
            'documentation/_static/**/*.*']
 
-  # Only include files under git version control
-  command = 'git ls-files'
-  begin
-    git_files = `#{command}`
-  rescue
-    puts "Command failed: '#{command}'. Perhaps git needs to be installed?"
-    exit!
-  end
-
-  release_map = { File.join(File.dirname(__FILE__), 'release-minimal.zip') => false,
-                  File.join(File.dirname(__FILE__), 'release-full.zip') => true }
-
-  release_map.keys.each do |zip_path|
-    File.delete(zip_path) if File.exist? zip_path
-  end
-
-  # Check if we need to download weather files for the full release zip
-  num_epws_expected = 1011
-  num_epws_local = 0
-  files.each do |f|
-    Dir[f].each do |file|
-      next unless file.end_with? '.epw'
-
-      num_epws_local += 1
+  if not ENV['CI']
+    # Run RESNET tests
+    puts 'Running RESNET tests (this will take a few minutes)...'
+    results_dir = File.join('workflow', 'tests', 'test_results')
+    tests = { 'test_resnet_ashrae_140' => File.join(results_dir, 'RESNET_Test_4.1_Standard_140.csv'),
+              'test_resnet_hers_reference_home_auto_generation' => File.join(results_dir, 'RESNET_Test_4.2_HERS_AutoGen_Reference_Home.csv'),
+              'test_resnet_hers_method' => File.join(results_dir, 'RESNET_Test_4.3_HERS_Method.csv'),
+              'test_resnet_hvac' => File.join(results_dir, 'RESNET_Test_4.4_HVAC.csv'),
+              'test_resnet_dse' => File.join(results_dir, 'RESNET_Test_4.5_DSE.csv'),
+              'test_resnet_hot_water' => File.join(results_dir, 'RESNET_Test_4.6_Hot_Water.csv') }
+    tests.each do |test_name, results_csv|
+      command = "\"#{OpenStudio.getOpenStudioCLI}\" workflow/tests/energy_rating_index_test.rb --name=#{test_name} > log.txt"
+      system(command)
+      if not File.exist? results_csv
+        puts "#{results_csv} not generated. Aborting..."
+        exit!
+      end
+      File.delete('log.txt')
     end
-  end
 
-  # Make sure we have the full set of weather files
-  if num_epws_local < num_epws_expected
-    puts 'Fetching all weather files...'
-    command = "#{OpenStudio.getOpenStudioCLI} workflow/energy_rating_index.rb --download-weather"
-    log = `#{command}`
+    # Generate documentation
+    puts 'Generating documentation...'
+    command = 'sphinx-build -b singlehtml docs/source documentation'
+    begin
+      `#{command}`
+      if not File.exist? File.join(File.dirname(__FILE__), 'documentation', 'index.html')
+        puts 'Documentation was not successfully generated. Aborting...'
+        exit!
+      end
+    rescue
+      puts "Command failed: '#{command}'. Perhaps sphinx needs to be installed?"
+      exit!
+    end
+    FileUtils.rm_r(File.join(File.dirname(__FILE__), 'documentation', '_static', 'fonts'))
+
+    # Check if we need to download weather files for the full release zip
+    num_epws_expected = 1011
+    num_epws_local = 0
+    files.each do |f|
+      Dir[f].each do |file|
+        next unless file.end_with? '.epw'
+
+        num_epws_local += 1
+      end
+    end
+
+    # Make sure we have the full set of weather files
+    if num_epws_local < num_epws_expected
+      puts 'Fetching all weather files...'
+      command = "#{OpenStudio.getOpenStudioCLI} workflow/energy_rating_index.rb --download-weather"
+      log = `#{command}`
+    end
   end
 
   # Create zip files
   release_map.each do |zip_path, include_all_epws|
     puts "Creating #{zip_path}..."
     zip = OpenStudio::ZipFile.new(zip_path, false)
+    if not ENV['CI']
+      tests.values.each do |results_csv|
+        zip.addFile(results_csv, File.join('OpenStudio-ERI', results_csv))
+      end
+    end
     files.each do |f|
       Dir[f].each do |file|
         if file.start_with? 'documentation'
@@ -1778,7 +1810,9 @@ if ARGV[0].to_sym == :create_release_zips
   end
 
   # Cleanup
-  FileUtils.rm_r(File.join(File.dirname(__FILE__), 'documentation'))
+  if not ENV['CI']
+    FileUtils.rm_r(File.join(File.dirname(__FILE__), 'documentation'))
+  end
 
   puts 'Done.'
 end
