@@ -328,7 +328,7 @@ CoolingSystemType        IsSharedSystem  DistributionSystem                     
 =======================  ==============  ==================================================  =================  =======================  ====================  ===============  =============================
 central air conditioner                  AirDistribution or DSE                              electricity        SEER                     (optional)            (required)       (optional)
 room air conditioner                                                                         electricity        EER                      (optional)            (required)
-evaporative cooler                       AirDistribution or DSE (optional)                   electricity                                                                        (optional)
+evaporative cooler                       AirDistribution or DSE (optional)                   electricity                                                                        
 chiller                  true            HydronicDistribution or HydronicAndAirDistribution  electricity        kW/ton                                         (required)
 cooling tower            true            HydronicAndAirDistribution                          electricity
 =======================  ==============  ==================================================  =================  =======================  ====================  ===============  =============================
