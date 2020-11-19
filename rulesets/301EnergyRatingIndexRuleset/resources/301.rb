@@ -1389,25 +1389,15 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Heating systems
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Cooling systems
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Thermostat
+
+    # Note: 301-2019 Addendum B says Grade I, but is being changed to grade III
+    # so that IAD and IAD Reference are the same.
     set_systems_hvac_reference(orig_hpxml, new_hpxml)
 
     # Change DSE to 1.0
     new_hpxml.hvac_distributions.each do |new_hvac_distribution|
       new_hvac_distribution.annual_heating_dse = 1.0
       new_hvac_distribution.annual_cooling_dse = 1.0
-    end
-
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-      # Change HVAC installation quality values
-      new_hpxml.heating_systems.each do |new_heating_system|
-        new_heating_system.fan_watts_per_cfm = 0.45 unless new_heating_system.fan_watts_per_cfm.nil?
-        new_heating_system.airflow_defect_ratio = 0.0 unless new_heating_system.airflow_defect_ratio.nil?
-      end
-      (new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |new_cooling_system|
-        new_cooling_system.fan_watts_per_cfm = 0.45 unless new_cooling_system.fan_watts_per_cfm.nil?
-        new_cooling_system.airflow_defect_ratio = 0.0 unless new_cooling_system.airflow_defect_ratio.nil?
-        new_cooling_system.charge_defect_ratio = 0.0 unless new_cooling_system.charge_defect_ratio.nil?
-      end
     end
   end
 
