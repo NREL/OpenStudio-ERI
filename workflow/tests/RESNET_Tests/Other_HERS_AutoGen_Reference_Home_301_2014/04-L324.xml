@@ -26,6 +26,7 @@
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
         </Site>
+        <BuildingOccupancy/>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>2</NumberofConditionedFloors>
@@ -409,14 +410,12 @@
             <PerimeterInsulation>
               <SystemIdentifier id='SlabPerimeterInsulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
                 <NominalRValue>0.0</NominalRValue>
               </Layer>
             </PerimeterInsulation>
             <UnderSlabInsulation>
               <SystemIdentifier id='SlabUnderSlabInsulation'/>
               <Layer>
-                <InstallationType>continuous</InstallationType>
                 <NominalRValue>0.0</NominalRValue>
               </Layer>
             </UnderSlabInsulation>

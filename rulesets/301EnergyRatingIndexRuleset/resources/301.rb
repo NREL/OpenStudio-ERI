@@ -2003,6 +2003,7 @@ class EnergyRatingIndex301Ruleset
       ief = 1.82
     end
     new_hpxml.dehumidifiers.add(id: 'Dehumidifier',
+                                type: dehumidifier.type,
                                 capacity: dehumidifier.capacity,
                                 integrated_energy_factor: ief,
                                 rh_setpoint: 0.60,
@@ -2015,6 +2016,7 @@ class EnergyRatingIndex301Ruleset
 
     dehumidifier = orig_hpxml.dehumidifiers[0]
     new_hpxml.dehumidifiers.add(id: 'Dehumidifier',
+                                type: dehumidifier.type,
                                 capacity: dehumidifier.capacity,
                                 energy_factor: dehumidifier.energy_factor,
                                 integrated_energy_factor: dehumidifier.integrated_energy_factor,

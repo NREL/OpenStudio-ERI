@@ -26,6 +26,7 @@
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
         </Site>
+        <BuildingOccupancy/>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
