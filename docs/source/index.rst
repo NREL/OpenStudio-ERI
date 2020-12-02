@@ -13,8 +13,8 @@ OpenStudio-ERI documentation
    intro
    capabilities
    getting_started
-   software_connection
-   outputs
+   workflow_inputs
+   workflow_outputs
    testing_framework
    packaging
 

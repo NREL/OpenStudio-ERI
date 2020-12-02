@@ -1,7 +1,7 @@
 .. _outputs:
 
-Outputs
-=======
+Workflow Outputs
+================
 
 Upon completion of the ERI calculation, summary output files and simulation files are available.
 See the `sample_results <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results>`_ directory for examples of these outputs.
