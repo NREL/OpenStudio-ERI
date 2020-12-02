@@ -1228,8 +1228,7 @@ def create_sample_hpxmls
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/sample_files/invalid_files/*.xml'), 'workflow/sample_files/invalid_files')
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/appliances-location-unconditioned-space.xml',
-                  'invalid_files/cfis-with-hydronic-distribution.xml',
+  exclude_list = ['invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
                   'invalid_files/cooking-range-location.xml',
@@ -1255,7 +1254,6 @@ def create_sample_hpxmls
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/hvac-inconsistent-fan-powers.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
-                  'invalid_files/invalid-calendar-year.xml',
                   'invalid_files/invalid-datatype-boolean.xml',
                   'invalid_files/invalid-datatype-boolean2.xml',
                   'invalid_files/invalid-datatype-float.xml',
@@ -1338,6 +1336,7 @@ def create_sample_hpxmls
                   'base-hvac-ideal-air.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ductless.xml',
+                  'base-hvac-programmable-thermostat-detailed.xml',
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',
                   'base-lighting-none.xml',

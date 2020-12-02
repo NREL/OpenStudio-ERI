@@ -532,7 +532,7 @@ def get_versions(hpxml_path)
 
   # Check for versions
   ['ERICalculation'].each do |program|
-    version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version')
+    version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
     next if version.nil?
 
     versions[program] = version
