@@ -192,7 +192,7 @@ class ERIApplianceTest < MiniTest::Test
   end
 
   def test_shared_clothes_washers_dryers
-    hpxml_name = 'base-dhw-shared-laundry-room.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-laundry-room.xml'
     [14, 15].each do |ratio_of_units_to_appliance|
       hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
       hpxml.clothes_washers[0].number_of_units_served = ratio_of_units_to_appliance * hpxml.clothes_washers[0].number_of_units

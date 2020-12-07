@@ -44,8 +44,8 @@
           <NumberofConditionedFloors>1</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <ConditionedFloorArea>1350.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>10800.0</ConditionedBuildingVolume>
+          <ConditionedFloorArea>900.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>7200.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -70,17 +70,9 @@
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>10800.0</InfiltrationVolume>
+            <InfiltrationVolume>7200.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
-        <Foundations>
-          <Foundation>
-            <SystemIdentifier id='AmbientFoundation'/>
-            <FoundationType>
-              <Ambient/>
-            </FoundationType>
-          </Foundation>
-        </Foundations>
         <Walls>
           <Wall>
             <SystemIdentifier id='Wall'/>
@@ -89,7 +81,7 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>420.0</Area>
+            <Area>686.0</Area>
             <Siding>wood siding</Siding>
             <SolarAbsorptance>0.7</SolarAbsorptance>
             <Emittance>0.92</Emittance>
@@ -99,53 +91,53 @@
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='WallOtherHousingUnit'/>
+            <SystemIdentifier id='WallOther'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>780.0</Area>
+            <Area>294.0</Area>
             <SolarAbsorptance>0.7</SolarAbsorptance>
             <Emittance>0.92</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallOtherHousingUnitInsulation'/>
+              <SystemIdentifier id='WallOtherInsulation'/>
               <AssemblyEffectiveRValue>4.0</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
         </Walls>
         <FrameFloors>
           <FrameFloor>
-            <SystemIdentifier id='FloorBelowOtherHousingUnit'/>
+            <SystemIdentifier id='FloorAdiabatic'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>1350.0</Area>
+            <Area>900.0</Area>
             <Insulation>
-              <SystemIdentifier id='FloorBelowOtherHousingUnitInsulation'/>
-              <AssemblyEffectiveRValue>2.1</AssemblyEffectiveRValue>
-            </Insulation>
-            <extension>
-              <OtherSpaceAboveOrBelow>above</OtherSpaceAboveOrBelow>
-            </extension>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FloorAboveOtherHousingUnit'/>
-            <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>1350.0</Area>
-            <Insulation>
-              <SystemIdentifier id='FloorAboveOtherHousingUnitInsulation'/>
+              <SystemIdentifier id='FloorAdiabaticInsulation'/>
               <AssemblyEffectiveRValue>2.1</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <OtherSpaceAboveOrBelow>below</OtherSpaceAboveOrBelow>
             </extension>
           </FrameFloor>
+          <FrameFloor>
+            <SystemIdentifier id='CeilingAdiabatic'/>
+            <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>900.0</Area>
+            <Insulation>
+              <SystemIdentifier id='CeilingAdiabaticInsulation'/>
+              <AssemblyEffectiveRValue>2.1</AssemblyEffectiveRValue>
+            </Insulation>
+            <extension>
+              <OtherSpaceAboveOrBelow>above</OtherSpaceAboveOrBelow>
+            </extension>
+          </FrameFloor>
         </FrameFloors>
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>
-            <Area>37.8</Area>
+            <Area>12.25</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -159,7 +151,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth'/>
-            <Area>37.8</Area>
+            <Area>12.25</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -172,22 +164,8 @@
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
-            <SystemIdentifier id='WindowEast'/>
-            <Area>25.2</Area>
-            <Azimuth>90</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
-            <InteriorShading>
-              <SystemIdentifier id='WindowEastInteriorShading'/>
-              <SummerShadingCoefficient>0.7</SummerShadingCoefficient>
-              <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
-            </InteriorShading>
-            <FractionOperable>0.67</FractionOperable>
-            <AttachedToWall idref='Wall'/>
-          </Window>
-          <Window>
             <SystemIdentifier id='WindowWest'/>
-            <Area>25.2</Area>
+            <Area>18.549999999999997</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -202,16 +180,9 @@
         </Windows>
         <Doors>
           <Door>
-            <SystemIdentifier id='DoorNorth'/>
+            <SystemIdentifier id='Door'/>
             <AttachedToWall idref='Wall'/>
-            <Area>40.0</Area>
-            <Azimuth>0</Azimuth>
-            <RValue>4.4</RValue>
-          </Door>
-          <Door>
-            <SystemIdentifier id='DoorSouth'/>
-            <AttachedToWall idref='Wall'/>
-            <Area>40.0</Area>
+            <Area>20.0</Area>
             <Azimuth>180</Azimuth>
             <RValue>4.4</RValue>
           </Door>
@@ -263,7 +234,7 @@
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>75.0</Value>
+                    <Value>0.0</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -271,13 +242,13 @@
                   <DuctType>return</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>25.0</Value>
+                    <Value>0.0</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
                   <DuctType>supply</DuctType>
-                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>other housing unit</DuctLocation>
                   <DuctSurfaceArea>150.0</DuctSurfaceArea>
                 </Ducts>
@@ -289,7 +260,7 @@
                 </Ducts>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>1350.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>900.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <WaterHeating>
@@ -461,7 +432,7 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>1228.5</Value>
+            <Value>819.0</Value>
           </Load>
           <extension>
             <FracSensible>0.855</FracSensible>
