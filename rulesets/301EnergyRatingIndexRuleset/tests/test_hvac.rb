@@ -499,7 +499,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_boiler_baseboard
-    hpxml_name = 'base-hvac-shared-boiler-only-baseboard.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml'
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -519,7 +519,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_boiler_water_loop_heat_pump
-    hpxml_name = 'base-hvac-shared-boiler-only-water-loop-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml'
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -539,7 +539,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_chiller_baseboard
-    hpxml_name = 'base-hvac-shared-chiller-only-baseboard.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-baseboard.xml'
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -559,7 +559,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_chiller_water_loop_heat_pump
-    hpxml_name = 'base-hvac-shared-chiller-only-water-loop-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-water-loop-heat-pump.xml'
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -579,7 +579,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_cooling_tower_water_loop_heat_pump
-    hpxml_name = 'base-hvac-shared-cooling-tower-only-water-loop-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml'
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -599,7 +599,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_ground_loop_gound_ground_source_heat_pump
-    hpxml_name = 'base-hvac-shared-ground-loop-ground-to-air-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml'
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
