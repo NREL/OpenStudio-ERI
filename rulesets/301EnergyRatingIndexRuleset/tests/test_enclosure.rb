@@ -219,9 +219,9 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml, area: 1200, rvalue: (23.0 * 420 + 4.0 * 780) / 1200, sabs: 0.7, emit: 0.92)
+    _check_walls(hpxml, area: 980, rvalue: (23.0 * 686 + 4.0 * 294) / 980, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml, area: 1200, rvalue: (16.67 * 420 + 4.0 * 780) / 1200, sabs: 0.75, emit: 0.9)
+    _check_walls(hpxml, area: 980, rvalue: (16.67 * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -233,9 +233,9 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_walls(hpxml, area: 1200, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      _check_walls(hpxml, area: 980, rvalue: 23.0, sabs: 0.7, emit: 0.92)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_walls(hpxml, area: 1200, rvalue: 16.67, sabs: 0.75, emit: 0.9)
+      _check_walls(hpxml, area: 980, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
       _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -375,9 +375,9 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_floors(hpxml, area: 2700, rvalue: 2.1)
+    _check_floors(hpxml, area: 1800, rvalue: 2.1)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_floors(hpxml, area: 2700, rvalue: 2.1)
+    _check_floors(hpxml, area: 1800, rvalue: 2.1)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -389,9 +389,9 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_floors(hpxml, area: 2700, rvalue: 18.7)
+      _check_floors(hpxml, area: 1800, rvalue: 18.7)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_floors(hpxml, area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700)
+      _check_floors(hpxml, area: 1800, rvalue: (33.33 * 900 + 30.3 * 900) / 1800)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
       _check_floors(hpxml, area: 2400, rvalue: (18.7 * 1200 + 30.3 * 1200) / 2400)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -1151,7 +1151,7 @@ class ERIEnclosureTest < MiniTest::Test
       azimuth_area_values[door.azimuth] << door.area
       azimuth_rvalue_x_area_values[door.azimuth] << door.r_value * door.area
     end
-    
+
     assert_equal(values_by_azimuth.keys.size, azimuth_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_rvalue_x_area_values.size)
 

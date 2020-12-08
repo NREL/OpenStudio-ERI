@@ -32,7 +32,7 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tank_elec_uef
-    hpxml_name = 'base-dhw-tank-elec-low-fhr-uef.xml'
+    hpxml_name = 'base-dhw-tank-elec-uef.xml'
 
     # Reference Home
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
@@ -197,7 +197,7 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tank_gas_uef
-    hpxml_name = 'base-dhw-tank-gas-med-fhr-uef.xml'
+    hpxml_name = 'base-dhw-tank-gas-uef.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.61, n_units_served: 1 }])
@@ -242,7 +242,7 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tank_heat_pump_uef
-    hpxml_name = 'base-dhw-tank-heat-pump-uef-medium-fhr.xml'
+    hpxml_name = 'base-dhw-tank-heat-pump-uef.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.9, n_units_served: 1 }])
@@ -416,13 +416,13 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_shared_multiple_units_recirc
-    hpxml_name = 'base-dhw-shared-water-heater-recirc.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-water-heater-recirc.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.59, n_units_served: 1 }])
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
+    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 70.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.59, n_units_served: 6 }])
+    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 120, ef: 0.59, n_units_served: 6 }])
     _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 50, shared_recirc_power: 220, shared_recirc_num_units_served: 6, shared_recirc_control_type: HPXML::DHWRecirControlTypeTimer)
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
@@ -434,11 +434,11 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_shared_laundry_room
-    hpxml_name = 'base-dhw-shared-laundry-room.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-laundry-room.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
+    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 70.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.95, n_units_served: 1 },
                                 { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationOtherHeatedSpace, tank_vol: 40, ef: 0.95, n_units_served: 6, frac_load: 0 }])
