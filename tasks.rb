@@ -1425,6 +1425,16 @@ def create_sample_hpxmls
 
       ventilation_fan.is_shared_system = false
     end
+    hpxml.pv_systems.each do |pv_system|
+      next unless pv_system.is_shared_system.nil?
+
+      pv_system.is_shared_system = false
+    end
+    hpxml.generators.each do |generator|
+      next unless generator.is_shared_system.nil?
+
+      generator.is_shared_system = false
+    end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
   end

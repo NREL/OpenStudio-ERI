@@ -53,6 +53,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
+    set_systems_generators_reference(orig_hpxml, new_hpxml)
 
     # Appliances
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
@@ -104,6 +105,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_water_heater_rated(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_rated(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_rated(orig_hpxml, new_hpxml)
+    set_systems_generators_rated(orig_hpxml, new_hpxml)
 
     # Appliances
     set_appliances_clothes_washer_rated(orig_hpxml, new_hpxml)
@@ -157,6 +159,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_iad(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
+    set_systems_generators_iad(orig_hpxml, new_hpxml)
 
     # Appliances
     set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
@@ -1780,6 +1783,27 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
+    # 4.3.1 Index Adjustment Design (IAD)
+    # Renewable Energy Systems that offset the energy consumption requirements of the Rated Home shall not be included in the IAD.
+    # nop
+  end
+
+  def self.set_systems_generators_reference(orig_hpxml, new_hpxml)
+    # nop
+  end
+
+  def self.set_systems_generators_rated(orig_hpxml, new_hpxml)
+    orig_hpxml.generators.each do |orig_generator|
+      new_hpxml.generators.add(id: orig_generator.id,
+                               is_shared_system: orig_generator.is_shared_system,
+                               fuel_type: orig_generator.fuel_type,
+                               annual_consumption_kbtu: orig_generator.annual_consumption_kbtu,
+                               annual_output_kwh: orig_generator.annual_output_kwh,
+                               number_of_bedrooms_served: orig_generator.number_of_bedrooms_served)
+    end
+  end
+
+  def self.set_systems_generators_iad(orig_hpxml, new_hpxml)
     # 4.3.1 Index Adjustment Design (IAD)
     # Renewable Energy Systems that offset the energy consumption requirements of the Rated Home shall not be included in the IAD.
     # nop

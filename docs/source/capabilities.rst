@@ -101,6 +101,7 @@ The following building features/technologies are available for modeling:
   
 - Whole House Fan
 - Photovoltaics
+- Generators
 - Appliances
 
   - Clothes Washer
