@@ -952,11 +952,13 @@ class ERIHVACtest < MiniTest::Test
         HPXML::HVACTypeHeatPumpAirToAir,
         HPXML::HVACTypeHeatPumpMiniSplit,
         HPXML::HVACTypeHeatPumpGroundToAir].include? hvac_type
-      if expected_values[:fan_watts_per_cfm].nil?
-        expected_values[:fan_watts_per_cfm] = 0.58 # W/cfm
-      end
-      if expected_values[:airflow_defect_ratio].nil?
-        expected_values[:airflow_defect_ratio] = -0.25
+      if not hvac.distribution_system_idref.nil?
+        if expected_values[:fan_watts_per_cfm].nil?
+          expected_values[:fan_watts_per_cfm] = 0.58 # W/cfm
+        end
+        if expected_values[:airflow_defect_ratio].nil?
+          expected_values[:airflow_defect_ratio] = -0.25
+        end
       end
     end
 

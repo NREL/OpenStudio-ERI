@@ -1134,13 +1134,15 @@ class EnergyRatingIndex301Ruleset
       if [HPXML::HVACTypeBoiler].include? orig_heating_system.heating_system_type
         orig_heating_system.electric_auxiliary_energy = HVAC.get_default_boiler_eae(orig_heating_system)
       end
-      if [HPXML::HVACTypeFurnace].include? orig_heating_system.heating_system_type
-        if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-          fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
-          fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+        if [HPXML::HVACTypeFurnace].include? orig_heating_system.heating_system_type
+          if not orig_heating_system.distribution_system_idref.nil?
+            fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
+            fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
 
-          airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
-          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
+            airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
+            airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
+          end
         end
       end
       new_hpxml.heating_systems.add(id: orig_heating_system.id,
@@ -1167,13 +1169,15 @@ class EnergyRatingIndex301Ruleset
 
     # Retain cooling system(s)
     orig_hpxml.cooling_systems.each do |orig_cooling_system|
-      if [HPXML::HVACTypeCentralAirConditioner].include? orig_cooling_system.cooling_system_type
-        if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-          fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
-          fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+        if [HPXML::HVACTypeCentralAirConditioner].include? orig_cooling_system.cooling_system_type
+          if not orig_cooling_system.distribution_system_idref.nil?
+            fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
+            fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
 
-          airflow_defect_ratio = orig_cooling_system.airflow_defect_ratio
-          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
+            airflow_defect_ratio = orig_cooling_system.airflow_defect_ratio
+            airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
+          end
 
           charge_defect_ratio = orig_cooling_system.charge_defect_ratio
           charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
@@ -1208,13 +1212,15 @@ class EnergyRatingIndex301Ruleset
 
     # Retain heat pump(s)
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
-      if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpGroundToAir, HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
-        if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-          fan_watts_per_cfm = orig_heat_pump.fan_watts_per_cfm
-          fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+        if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpGroundToAir, HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
+          if not orig_heat_pump.distribution_system_idref.nil?
+            fan_watts_per_cfm = orig_heat_pump.fan_watts_per_cfm
+            fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
 
-          airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
-          airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
+            airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
+            airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
+          end
 
           if orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir
             charge_defect_ratio = orig_heat_pump.charge_defect_ratio

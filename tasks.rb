@@ -1370,6 +1370,7 @@ def create_sample_hpxmls
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-install-qual-airflow-defect-furnace-gas-central-ac-1-speed.xml',
+                  'base-hvac-install-qual-all-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-install-qual-blower-efficiency-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-charge-defect-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-none-furnace-gas-central-ac-1-speed.xml',

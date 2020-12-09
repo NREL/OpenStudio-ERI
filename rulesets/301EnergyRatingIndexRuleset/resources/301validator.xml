@@ -548,13 +548,18 @@
   <sch:pattern name='[HeatPumpType=MiniSplit]'>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump[h:HeatPumpType="mini-split"]'>
       <sch:assert role='ERROR' test='count(../../h:HVACDistribution/h:DistributionSystemType/h:AirDistribution) + count(../../h:HVACDistribution/h:DistributionSystemType/h:Other[text()="DSE"]) &gt;= 0'>Expected 0 or more element(s) for xpath: ../../HVACDistribution/DistributionSystemType/AirDistribution | ../../HVACDistribution/DistributionSystemType/Other[text()="DSE"]</sch:assert> <!-- See [HVACDistribution] -->
-      <sch:assert role='ERROR' test='count(h:DistributionSystem) &lt;= 1'>Expected 0 or 1 element(s) for xpath: DistributionSystem</sch:assert>
+      <sch:assert role='ERROR' test='count(h:DistributionSystem) &lt;= 1'>Expected 0 or 1 element(s) for xpath: DistributionSystem</sch:assert> <!-- See [HeatPumpType=DuctedMiniSplit] -->
       <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[h:Units="SEER"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="SEER"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="HSPF"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="HSPF"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity17F) &lt;= 1'>Expected 0 or 1 element(s) for xpath: HeatingCapacity17F</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25 or number(text()) = 0.25]) + count(h:extension/ChargeNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25 or number(text()) = 0.25] | extension/ChargeNotTested[text()="true"]</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern name='[HeatPumpType=DuctedMiniSplit]'>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump[h:HeatPumpType="mini-split" and h:DistributionSystem]'>
       <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/FanPowerNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: extension/FanPowerWattsPerCFM | extension/FanPowerNotTested[text()="true"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:AirflowDefectRatio) + count(h:extension/AirflowNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: extension/AirflowDefectRatio | extension/AirflowNotTested[text()="true"]</sch:assert>
-      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25 or number(text()) = 0.25]) + count(h:extension/ChargeNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio[number(text()) = 0 or number(text()) = -0.25 or number(text()) = 0.25] | extension/ChargeNotTested[text()="true"]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
