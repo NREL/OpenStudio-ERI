@@ -317,9 +317,8 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   # ===== #
 
   # Total Energy Use
-  # Fossil fuel site energy uses should be converted to equivalent electric energy
-  # use in accordance with Equation 4.1-3.
-  # FIXME: Should generator fuel consumption be included here?
+  # Fossil fuel site energy uses should be converted to equivalent electric energy use
+  # in accordance with Equation 4.1-3. Note: Generator fuel consumption is included here.
   results[:teu] = rated_output[:fuelElectricity] + 0.4 * (rated_output[:fuelNaturalGas] + rated_output[:fuelFuelOil] + rated_output[:fuelPropane] + rated_output[:fuelWoodCord] + rated_output[:fuelWoodPellets])
 
   # On-Site Power Production
