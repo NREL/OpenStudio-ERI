@@ -568,8 +568,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.78,
                               fraction_heat_load_served: 1,
-                              fan_watts_per_cfm: 0.5,
-                              airflow_cfm_per_ton: 360.0)
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 90%; 0.000375 kW/cfm
     hpxml.heating_systems.clear
@@ -580,8 +579,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.9,
                               fraction_heat_load_served: 1,
-                              fan_watts_per_cfm: 0.5,
-                              airflow_cfm_per_ton: 360.0)
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
     # Electric Furnace; 56.1 kBtu/h; COP =1.0
     hpxml.heating_systems.clear
@@ -592,8 +590,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: 56100,
                               heating_efficiency_afue: 1,
                               fraction_heat_load_served: 1,
-                              fan_watts_per_cfm: 0.5,
-                              airflow_cfm_per_ton: 360.0)
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
          'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Gas Furnace; 46.6 kBtu/h
@@ -605,8 +602,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: 46600,
                               heating_efficiency_afue: 0.78,
                               fraction_heat_load_served: 1,
-                              fan_watts_per_cfm: 0.5,
-                              airflow_cfm_per_ton: 360.0)
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to 56.0 kBtu/h
     hpxml.heating_systems[0].heating_capacity = 56000
@@ -687,7 +683,6 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 10,
                               fan_watts_per_cfm: 0.5,
-                              airflow_cfm_per_ton: 360.0,
                               charge_not_tested: true)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     # Change to SEER = 13
@@ -704,7 +699,6 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 10,
                               fan_watts_per_cfm: 0.5,
-                              airflow_cfm_per_ton: 360.0,
                               charge_not_tested: true)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
     # Change to 49.9 kBtu/h
@@ -794,7 +788,6 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          heating_efficiency_hspf: 6.8,
                          cooling_efficiency_seer: 10,
                          fan_watts_per_cfm: 0.5,
-                         airflow_cfm_per_ton: 360.0,
                          charge_not_tested: true)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 9.85
@@ -813,7 +806,6 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          heating_efficiency_hspf: 9.85,
                          cooling_efficiency_seer: 13,
                          fan_watts_per_cfm: 0.5,
-                         airflow_cfm_per_ton: 360.0,
                          charge_not_tested: true)
   end
 end
@@ -1274,8 +1266,7 @@ def create_sample_hpxmls
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/sample_files/invalid_files/*.xml'), 'workflow/sample_files/invalid_files')
 
   # Remove files we're not interested in
-  exclude_list = ['invalid_files/appliances-location-unconditioned-space.xml',
-                  'invalid_files/cfis-with-hydronic-distribution.xml',
+  exclude_list = ['invalid_files/cfis-with-hydronic-distribution.xml',
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
                   'invalid_files/cooking-range-location.xml',
@@ -1301,16 +1292,13 @@ def create_sample_hpxmls
                   'invalid_files/hvac-dse-multiple-attached-heating.xml',
                   'invalid_files/hvac-inconsistent-fan-powers.xml',
                   'invalid_files/hvac-invalid-distribution-system-type.xml',
-                  'invalid_files/invalid-calendar-year.xml',
                   'invalid_files/invalid-datatype-boolean.xml',
-                  'invalid_files/invalid-datatype-boolean2.xml',
                   'invalid_files/invalid-datatype-float.xml',
-                  'invalid_files/invalid-datatype-float2.xml',
                   'invalid_files/invalid-datatype-integer.xml',
-                  'invalid_files/invalid-datatype-integer2.xml',
                   'invalid_files/invalid-daylight-saving.xml',
                   'invalid_files/invalid-distribution-cfa-served.xml',
-                  'invalid_files/invalid-facility-type.xml',
+                  'invalid_files/invalid-facility-type-equipment.xml',
+                  'invalid_files/invalid-facility-type-surfaces.xml',
                   'invalid_files/invalid-input-parameters.xml',
                   'invalid_files/invalid-neighbor-shading-azimuth.xml',
                   'invalid_files/invalid-relatedhvac-desuperheater.xml',
@@ -1364,7 +1352,6 @@ def create_sample_hpxmls
                   'base-dhw-tankless-electric-outside.xml',
                   'base-dhw-tankless-gas-with-solar.xml',
                   'base-dhw-tankless-gas-with-solar-fraction.xml',
-                  'base-enclosure-common-surfaces.xml',
                   'base-enclosure-infil-ach-house-pressure.xml',
                   'base-enclosure-infil-cfm-house-pressure.xml',
                   'base-enclosure-infil-flue.xml',
@@ -1383,22 +1370,12 @@ def create_sample_hpxmls
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-install-qual-airflow-defect-furnace-gas-central-ac-1-speed.xml',
-                  'base-hvac-install-qual-all-air-to-air-heat-pump-1-speed2.xml',
-                  'base-hvac-install-qual-all-air-to-air-heat-pump-2-speed2.xml',
-                  'base-hvac-install-qual-all-air-to-air-heat-pump-var-speed2.xml',
-                  'base-hvac-install-qual-all-furnace-gas-central-ac-1-speed2.xml',
-                  'base-hvac-install-qual-all-furnace-gas-central-ac-2-speed2.xml',
-                  'base-hvac-install-qual-all-furnace-gas-central-ac-var-speed2.xml',
-                  'base-hvac-install-qual-all-furnace-gas-only2.xml',
-                  'base-hvac-install-qual-all-ground-to-air-heat-pump2.xml',
-                  'base-hvac-install-qual-all-mini-split-air-conditioner-only-ducted.xml',
-                  'base-hvac-install-qual-all-mini-split-air-conditioner-only-ducted2.xml',
-                  'base-hvac-install-qual-all-mini-split-heat-pump-ducted2.xml',
                   'base-hvac-install-qual-blower-efficiency-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-charge-defect-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-none-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ductless.xml',
+                  'base-hvac-programmable-thermostat-detailed.xml',
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',
                   'base-lighting-none.xml',
@@ -1527,6 +1504,16 @@ def create_sample_hpxmls
       if heat_pump.charge_defect_ratio.nil? && (heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir)
         heat_pump.charge_not_tested = true
       end
+    end
+    hpxml.pv_systems.each do |pv_system|
+      next unless pv_system.is_shared_system.nil?
+
+      pv_system.is_shared_system = false
+    end
+    hpxml.generators.each do |generator|
+      next unless generator.is_shared_system.nil?
+
+      generator.is_shared_system = false
     end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)

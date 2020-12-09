@@ -631,7 +631,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_boiler_baseboard
-    hpxml_name = 'base-hvac-shared-boiler-only-baseboard.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml'
 
     _eri_versions.each do |eri_version|
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
@@ -655,7 +655,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_boiler_water_loop_heat_pump
-    hpxml_name = 'base-hvac-shared-boiler-only-water-loop-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
@@ -679,7 +679,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_chiller_baseboard
-    hpxml_name = 'base-hvac-shared-chiller-only-baseboard.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-baseboard.xml'
 
     _eri_versions.each do |eri_version|
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
@@ -703,7 +703,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_chiller_water_loop_heat_pump
-    hpxml_name = 'base-hvac-shared-chiller-only-water-loop-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-water-loop-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
@@ -727,7 +727,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_cooling_tower_water_loop_heat_pump
-    hpxml_name = 'base-hvac-shared-cooling-tower-only-water-loop-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
@@ -751,7 +751,7 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_shared_ground_loop_gound_ground_source_heat_pump
-    hpxml_name = 'base-hvac-shared-ground-loop-ground-to-air-heat-pump.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'

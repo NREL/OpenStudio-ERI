@@ -43,10 +43,10 @@ class ERIMechVentTest < MiniTest::Test
   end
 
   def test_mech_vent_attached_or_multifamily
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 66.3, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -58,7 +58,7 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 70.5, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 57.0, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -680,22 +680,22 @@ class ERIMechVentTest < MiniTest::Test
   end
 
   def test_mech_vent_shared
-    hpxml_name = 'base-mechvent-shared-preconditioning.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-mechvent-preconditioning.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 33.4 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 19.7 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 1060.7, hours: 24, power: 318.2, in_unit_flowrate: 106.1, frac_recirc: 0.5, has_preheat: true, has_precool: true },
-                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 95.5, hours: 24, power: 34.5 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 800.0, hours: 24, power: 240.0, in_unit_flowrate: 80.0, frac_recirc: 0.5, has_preheat: true, has_precool: true },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 72.0, hours: 24, power: 26.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 70.6, hours: 24, power: 49.4 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 8.5, hours: 24, power: 42.0 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 32.1, hours: 24, power: 54.9 }])
   end
 
   def test_mech_vent_shared_defaulted_fan_power
     # Create derivative file for testing
-    hpxml_name = 'base-mechvent-shared-preconditioning.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-mechvent-preconditioning.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     vent_fan = hpxml.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }[0]
     vent_fan.fan_power = nil
@@ -704,15 +704,15 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 33.4 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 19.7 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 1060.7, hours: 24, power: 1060.7, in_unit_flowrate: 106.1, frac_recirc: 0.5, has_preheat: true, has_precool: true },
-                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 95.5, hours: 24, power: 34.5 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 800.0, hours: 24, power: 800.0, in_unit_flowrate: 80.0, frac_recirc: 0.5, has_preheat: true, has_precool: true },
+                             { fantype: HPXML::MechVentTypeExhaust, flowrate: 72.0, hours: 24, power: 26.0 }])
   end
 
   def test_mech_vent_shared_unmeasured_airflow_rate
     # Create derivative file for testing
-    hpxml_name = 'base-mechvent-shared-preconditioning.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-mechvent-preconditioning.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     vent_fan = hpxml.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }[0]
     vent_fan.in_unit_flow_rate = nil
@@ -721,7 +721,7 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 12.8 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 17.9 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 800.0, hours: 24, power: 240.0, in_unit_flowrate: 30.0, frac_recirc: 0.5, has_preheat: true, has_precool: true },
                              { fantype: HPXML::MechVentTypeExhaust, flowrate: 72.0, hours: 24, power: 26.0 }])
@@ -729,7 +729,7 @@ class ERIMechVentTest < MiniTest::Test
 
   def test_mech_vent_shared_unmeasured_airflow_rate_and_defaulted_fan_power
     # Create derivative file for testing
-    hpxml_name = 'base-mechvent-shared-preconditioning.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-mechvent-preconditioning.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     vent_fan = hpxml.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }[0]
     vent_fan.fan_power = nil
@@ -740,7 +740,7 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 56.3, hours: 24, power: 12.8 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 17.9 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 800.0, hours: 24, power: 800.0, in_unit_flowrate: 30.0, frac_recirc: 0.5, has_preheat: true, has_precool: true },
                              { fantype: HPXML::MechVentTypeExhaust, flowrate: 72.0, hours: 24, power: 26.0 }])

@@ -169,9 +169,9 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-appliances-dehumidifier-50percent.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_dehumidifier(hpxml, [{ capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5 }])
+    _check_dehumidifier(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_dehumidifier(hpxml, [{ capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5 }])
+    _check_dehumidifier(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_dehumidifier(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -192,7 +192,7 @@ class ERIApplianceTest < MiniTest::Test
   end
 
   def test_shared_clothes_washers_dryers
-    hpxml_name = 'base-dhw-shared-laundry-room.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-laundry-room.xml'
     [14, 15].each do |ratio_of_units_to_appliance|
       hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
       hpxml.clothes_washers[0].number_of_units_served = ratio_of_units_to_appliance * hpxml.clothes_washers[0].number_of_units
@@ -502,6 +502,7 @@ class ERIApplianceTest < MiniTest::Test
     assert_equal(all_expected_values.size, hpxml.dehumidifiers.size)
     hpxml.dehumidifiers.each_with_index do |dehumidifier, idx|
       expected_values = all_expected_values[idx]
+      assert_equal(expected_values[:type], dehumidifier.type)
       assert_equal(expected_values[:capacity], dehumidifier.capacity)
       if expected_values[:ef].nil?
         assert_nil(dehumidifier.energy_factor)

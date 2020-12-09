@@ -29,7 +29,7 @@ class ERIPVTest < MiniTest::Test
   end
 
   def test_pv_shared
-    hpxml_name = 'base-pv-shared.xml'
+    hpxml_name = 'base-bldgtype-multifamily-shared-pv.xml'
 
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -39,7 +39,7 @@ class ERIPVTest < MiniTest::Test
       _check_pv(hpxml)
     end
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_pv(hpxml, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 20 }])
+    _check_pv(hpxml, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 18 }])
   end
 
   def _test_measure(hpxml_name, calc_type)

@@ -66,7 +66,7 @@ class ERIEnclosureTest < MiniTest::Test
 
     # Test attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
     # Create derivative file for testing
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_name = 'base-bldgtype-multifamily.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                fan_type: HPXML::MechVentTypeSupply,
@@ -79,7 +79,7 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, ach50: 0.32)
+    _check_infiltration(hpxml, ach50: 0.74)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_infiltration(hpxml, ach50: 7.09)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -89,7 +89,7 @@ class ERIEnclosureTest < MiniTest::Test
 
     # Test attached dwelling where Aext < 0.5 and exhaust mech vent
     # Create derivative file for testing
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_name = 'base-bldgtype-multifamily.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                fan_type: HPXML::MechVentTypeExhaust,
@@ -170,7 +170,7 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_roofs(hpxml, area: 1300, rvalue: 33.33, sabs: 0.75, emit: 0.9)
 
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_roofs(hpxml)
@@ -216,26 +216,26 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
 
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml, area: 1200, rvalue: (23.0 * 420 + 4.0 * 780) / 1200, sabs: 0.7, emit: 0.92)
+    _check_walls(hpxml, area: 980, rvalue: (23.0 * 686 + 4.0 * 294) / 980, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml, area: 1200, rvalue: (16.67 * 420 + 4.0 * 780) / 1200, sabs: 0.75, emit: 0.9)
+    _check_walls(hpxml, area: 980, rvalue: (16.67 * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
 
-    hpxml_names = ['base-enclosure-other-multifamily-buffer-space.xml',
-                   'base-enclosure-other-non-freezing-space.xml',
-                   'base-enclosure-other-heated-space.xml']
+    hpxml_names = ['base-bldgtype-multifamily-adjacent-to-multifamily-buffer-space.xml',
+                   'base-bldgtype-multifamily-adjacent-to-non-freezing-space.xml',
+                   'base-bldgtype-multifamily-adjacent-to-other-heated-space.xml']
 
     hpxml_names.each do |hpxml_name|
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_walls(hpxml, area: 1200, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      _check_walls(hpxml, area: 980, rvalue: 23.0, sabs: 0.7, emit: 0.92)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_walls(hpxml, area: 1200, rvalue: 16.67, sabs: 0.75, emit: 0.9)
+      _check_walls(hpxml, area: 980, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
       _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -372,26 +372,26 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
 
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_floors(hpxml, area: 2700, rvalue: 2.1)
+    _check_floors(hpxml, area: 1800, rvalue: 2.1)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_floors(hpxml, area: 2700, rvalue: 2.1)
+    _check_floors(hpxml, area: 1800, rvalue: 2.1)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
 
-    hpxml_names = ['base-enclosure-other-multifamily-buffer-space.xml',
-                   'base-enclosure-other-non-freezing-space.xml',
-                   'base-enclosure-other-heated-space.xml']
+    hpxml_names = ['base-bldgtype-multifamily-adjacent-to-multifamily-buffer-space.xml',
+                   'base-bldgtype-multifamily-adjacent-to-non-freezing-space.xml',
+                   'base-bldgtype-multifamily-adjacent-to-other-heated-space.xml']
 
     hpxml_names.each do |hpxml_name|
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_floors(hpxml, area: 2700, rvalue: 18.7)
+      _check_floors(hpxml, area: 1800, rvalue: 18.7)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_floors(hpxml, area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700)
+      _check_floors(hpxml, area: 1800, rvalue: (33.33 * 900 + 30.3 * 900) / 1800)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
       _check_floors(hpxml, area: 2400, rvalue: (18.7 * 1200 + 30.3 * 1200) / 2400)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -555,20 +555,19 @@ class ERIEnclosureTest < MiniTest::Test
                                                90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
                                                270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
 
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_windows(hpxml, frac_operable: 0.67,
-                          values_by_azimuth: { 0 => { area: 37.8, ufactor: 0.33, shgc: 0.45 },
-                                               180 => { area: 37.8, ufactor: 0.33, shgc: 0.45 },
-                                               90 => { area: 25.2, ufactor: 0.33, shgc: 0.45 },
-                                               270 => { area: 25.2, ufactor: 0.33, shgc: 0.45 } })
+                          values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                               180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                               270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_windows(hpxml, frac_operable: 0.67,
-                          values_by_azimuth: { 0 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               180 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               90 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               270 => { area: 43.4, ufactor: 0.35, shgc: 0.40 } })
+                          values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_windows(hpxml, frac_operable: 0.67,
                           values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
@@ -593,16 +592,15 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_windows(hpxml, frac_operable: 0.0,
-                          values_by_azimuth: { 0 => { area: 37.8, ufactor: 0.33, shgc: 0.45 },
-                                               180 => { area: 37.8, ufactor: 0.33, shgc: 0.45 },
-                                               90 => { area: 25.2, ufactor: 0.33, shgc: 0.45 },
-                                               270 => { area: 25.2, ufactor: 0.33, shgc: 0.45 } })
+                          values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                               180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                               270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_windows(hpxml, frac_operable: 0.0,
-                          values_by_azimuth: { 0 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               180 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               90 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               270 => { area: 43.4, ufactor: 0.35, shgc: 0.40 } })
+                          values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_windows(hpxml, frac_operable: 0.67,
                           values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
@@ -621,16 +619,15 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_windows(hpxml, frac_operable: 0.0,
-                          values_by_azimuth: { 0 => { area: 37.8, ufactor: 0.33, shgc: 0.45 },
-                                               180 => { area: 37.8, ufactor: 0.33, shgc: 0.45 },
-                                               90 => { area: 25.2, ufactor: 0.33, shgc: 0.45 },
-                                               270 => { area: 25.2, ufactor: 0.33, shgc: 0.45 } })
+                          values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                               180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                               270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_windows(hpxml, frac_operable: 0.67,
-                          values_by_azimuth: { 0 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               180 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               90 => { area: 43.4, ufactor: 0.35, shgc: 0.40 },
-                                               270 => { area: 43.4, ufactor: 0.35, shgc: 0.40 } })
+                          values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                               270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_windows(hpxml, frac_operable: 0.67,
                           values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
@@ -728,12 +725,11 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } })
 
-    # Test MF unit w/ exterior doors
-    hpxml_name = 'base-enclosure-other-housing-unit.xml'
+    # Test MF unit w/ exterior door
+    hpxml_name = 'base-bldgtype-multifamily.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 4.4 },
-                                             180 => { area: 40, rvalue: 4.4 } })
+    _check_doors(hpxml, values_by_azimuth: { 180 => { area: 20, rvalue: 4.4 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -741,10 +737,10 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
 
-    # Test MF unit w/ interior doors
+    # Test MF unit w/ interior door
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.doors.each do |door|
-      door.wall_idref = 'WallOtherHousingUnit'
+      door.wall_idref = 'WallOther'
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)

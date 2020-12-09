@@ -316,8 +316,15 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   # Other #
   # ===== #
 
+  # Total Energy Use
+  # Fossil fuel site energy uses should be converted to equivalent electric energy use
+  # in accordance with Equation 4.1-3. Note: Generator fuel consumption is included here.
   results[:teu] = rated_output[:fuelElectricity] + 0.4 * (rated_output[:fuelNaturalGas] + rated_output[:fuelFuelOil] + rated_output[:fuelPropane] + rated_output[:fuelWoodCord] + rated_output[:fuelWoodPellets])
-  results[:opp] = -1 * rated_output[:elecPV]
+
+  # On-Site Power Production
+  # Electricity produced minus equivalent electric energy use calculated in accordance
+  # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
+  results[:opp] = -1 * (rated_output[:elecPV] + rated_output[:elecGenerator] - 0.4 * (rated_output[:gasGenerator] - rated_output[:propaneGenerator]))
 
   results[:pefrac] = 1.0
   if results[:teu] > 0
@@ -532,7 +539,7 @@ def get_versions(hpxml_path)
 
   # Check for versions
   ['ERICalculation'].each do |program|
-    version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version')
+    version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
     next if version.nil?
 
     versions[program] = version
