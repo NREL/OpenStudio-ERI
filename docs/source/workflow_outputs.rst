@@ -48,7 +48,7 @@ Current fuel types are:
    Type                       Notes
    ========================== ===========================
    Electricity: Total (MBtu)
-   Electricity: Net (MBtu)    Excludes any PV generation.
+   Electricity: Net (MBtu)    Excludes any power produced by PV or generators.
    Natural Gas: Total (MBtu)
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)
@@ -61,9 +61,9 @@ Annual Energy Consumption By Fuel Type and End Use
 
 Current end use/fuel type combinations are:
 
-   ================================================ =========================
-   Type                                             Notes
-   ================================================ =========================
+   ========================================================== ====================================================
+   Type                                                       Notes
+   ========================================================== ====================================================
    Electricity: Heating (MBtu)
    Electricity: Heating Fans/Pumps (MBtu)
    Electricity: Cooling (MBtu)
@@ -75,8 +75,8 @@ Current end use/fuel type combinations are:
    Electricity: Lighting Garage (MBtu)
    Electricity: Lighting Exterior (MBtu)
    Electricity: Mech Vent (MBtu)
-   Electricity: Mech Vent Preheating (MBtu)         Shared ventilation preconditioning system.
-   Electricity: Mech Vent Precooling (MBtu)         Shared ventilation preconditioning system.
+   Electricity: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   Electricity: Mech Vent Precooling (MBtu)                   Shared ventilation preconditioning system
    Electricity: Whole House Fan (MBtu)
    Electricity: Refrigerator (MBtu)
    Electricity: Dehumidifier (MBtu)
@@ -87,33 +87,36 @@ Current end use/fuel type combinations are:
    Electricity: Ceiling Fan (MBtu)
    Electricity: Television (MBtu)
    Electricity: Plug Loads (MBtu)
-   Electricity: PV (MBtu)
+   Electricity: PV (MBtu)                                     Negative value for any power produced
+   Electricity: Generator (MBtu)                              Negative value for power produced
    Natural Gas: Heating (MBtu)
    Natural Gas: Hot Water (MBtu)
    Natural Gas: Clothes Dryer (MBtu)
    Natural Gas: Range/Oven (MBtu)
-   Natural Gas: Mech Vent Preheating (MBtu)         Shared ventilation preconditioning system.
+   Natural Gas: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   Natural Gas: Generator (MBtu)                              Positive value for any fuel consumed
    Fuel Oil: Heating (MBtu)
    Fuel Oil: Hot Water (MBtu)
    Fuel Oil: Clothes Dryer (MBtu)
    Fuel Oil: Range/Oven (MBtu)
-   Fuel Oil: Mech Vent Preheating (MBtu)            Shared ventilation preconditioning system.
+   Fuel Oil: Mech Vent Preheating (MBtu)                      Shared ventilation preconditioning system
    Propane: Heating (MBtu)
    Propane: Hot Water (MBtu)
    Propane: Clothes Dryer (MBtu)
    Propane: Range/Oven (MBtu)
-   Propane: Mech Vent Preheating (MBtu)             Shared ventilation preconditioning system.
+   Propane: Mech Vent Preheating (MBtu)                       Shared ventilation preconditioning system
+   Propane: Generator (MBtu)                                  Positive value for any fuel consumed
    Wood Cord: Heating (MBtu)
    Wood Cord: Hot Water (MBtu)
    Wood Cord: Clothes Dryer (MBtu)
    Wood Cord: Range/Oven (MBtu)
-   Wood Cord: Mech Vent Preheating (MBtu)           Shared ventilation preconditioning system.
+   Wood Cord: Mech Vent Preheating (MBtu)                     Shared ventilation preconditioning system
    Wood Pellets: Heating (MBtu)
    Wood Pellets: Hot Water (MBtu)
    Wood Pellets: Clothes Dryer (MBtu)
    Wood Pellets: Range/Oven (MBtu)
-   Wood Pellets: Mech Vent Preheating (MBtu)        Shared ventilation preconditioning system.
-   ================================================ =========================
+   Wood Pellets: Mech Vent Preheating (MBtu)                  Shared ventilation preconditioning system
+   ========================================================== ====================================================
 
 Annual Building Loads
 ^^^^^^^^^^^^^^^^^^^^^
