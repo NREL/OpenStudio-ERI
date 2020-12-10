@@ -41,8 +41,8 @@
         </BuildingOccupancy>
         <BuildingConstruction>
           <ResidentialFacilityType>apartment unit</ResidentialFacilityType>
-          <NumberofConditionedFloors>1</NumberofConditionedFloors>
-          <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+          <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>900.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>7200.0</ConditionedBuildingVolume>

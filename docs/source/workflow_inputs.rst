@@ -95,8 +95,8 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   Element                                  Type      Units      Constraints  Required  Default   Notes
   =======================================  ========  =========  ===========  ========  ========  =======================================================================
   ``ResidentialFacilityType``              string               See [#]_     Yes                 Type of dwelling unit
-  ``NumberofConditionedFloors``            integer              > 0          Yes                 Number of conditioned floors (including a basement)
-  ``NumberofConditionedFloorsAboveGrade``  integer              > 0          Yes                 Number of conditioned floors above grade (including a walkout basement)
+  ``NumberofConditionedFloors``            double               > 0          Yes                 Number of conditioned floors (including a basement)
+  ``NumberofConditionedFloorsAboveGrade``  double               > 0          Yes                 Number of conditioned floors above grade (including a walkout basement)
   ``NumberofBedrooms``                     integer              > 0          Yes                 Number of bedrooms
   ``ConditionedFloorArea``                 double    ft2        > 0          Yes                 Floor area within conditioned space boundary
   ``ConditionedBuildingVolume``            double    ft3 or ft  > 0          Yes                 Volume within conditioned space boundary
