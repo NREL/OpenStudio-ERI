@@ -1232,6 +1232,8 @@ def create_sample_hpxmls
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
                   'invalid_files/cooking-range-location.xml',
+                  'invalid_files/dhw-invalid-ef-tank.xml',
+                  'invalid_files/dhw-invalid-uef-tank-heat-pump.xml',
                   'invalid_files/dishwasher-location.xml',
                   'invalid_files/duct-location.xml',
                   'invalid_files/duct-location-unconditioned-space.xml',
