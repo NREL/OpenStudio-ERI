@@ -770,15 +770,15 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
     results = _get_csv_results(csv_path)
     if not is_heat
-      hvac = UnitConversions.convert(results['Electricity: Cooling (MBtu)'], 'MBtu', 'kwh').round(2)
-      hvac_fan = UnitConversions.convert(results['Electricity: Cooling Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac = UnitConversions.convert(results['End Use: Electricity: Cooling (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac_fan = UnitConversions.convert(results['End Use: Electricity: Cooling Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
     else
       if is_electric_heat
-        hvac = UnitConversions.convert(results['Electricity: Heating (MBtu)'], 'MBtu', 'kwh').round(2)
+        hvac = UnitConversions.convert(results['End Use: Electricity: Heating (MBtu)'], 'MBtu', 'kwh').round(2)
       else
-        hvac = UnitConversions.convert(results['Natural Gas: Heating (MBtu)'], 'MBtu', 'therm').round(2)
+        hvac = UnitConversions.convert(results['End Use: Natural Gas: Heating (MBtu)'], 'MBtu', 'therm').round(2)
       end
-      hvac_fan = UnitConversions.convert(results['Electricity: Heating Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac_fan = UnitConversions.convert(results['End Use: Electricity: Heating Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
     end
 
     assert_operator(hvac, :>, 0)
@@ -1811,9 +1811,9 @@ class EnergyRatingIndexTest < Minitest::Test
     CSV.foreach(results_csv) do |row|
       next if row.nil? || row[0].nil?
 
-      if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
+      if ['End Use: Electricity: Hot Water (MBtu)', 'End Use: Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
-      elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
+      elsif row[0] == 'End Use: Electricity: Hot Water Recirc Pump (MBtu)'
         rated_recirc = Float(row[1])
       elsif row[0].start_with?('Hot Water:') && row[0].include?('(gal)')
         rated_gpd += (Float(row[1]) / 365.0)
