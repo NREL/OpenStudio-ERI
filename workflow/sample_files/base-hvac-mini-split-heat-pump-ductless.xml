@@ -326,8 +326,6 @@
               </AnnualHeatingEfficiency>
               <extension>
                 <ChargeNotTested>true</ChargeNotTested>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </HeatPump>
           </HVACPlant>

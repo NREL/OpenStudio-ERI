@@ -507,6 +507,7 @@
                 <Value>3.6</Value>
               </AnnualHeatingEfficiency>
               <extension>
+                <ChargeDefectRatio>0.0</ChargeDefectRatio>
                 <FanPowerNotTested>true</FanPowerNotTested>
                 <AirflowNotTested>true</AirflowNotTested>
                 <PumpPowerWattsPerTon>30.0</PumpPowerWattsPerTon>
@@ -538,8 +539,6 @@
               </AnnualHeatingEfficiency>
               <extension>
                 <ChargeNotTested>true</ChargeNotTested>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </HeatPump>
           </HVACPlant>

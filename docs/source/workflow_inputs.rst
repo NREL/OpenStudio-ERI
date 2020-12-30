@@ -860,7 +860,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/SharedLoopWatts``                                              double             W       >= 0            See [#]_             Shared pump power [#]_
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
-  ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    0 [#]_          Yes                  In accordance with ANSI/RESNET/ACCA 310
+  ``extension/ChargeDefectRatio``                                            double or boolean  frac    0 [#]_          Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ==============================================
 
   .. [#] IsSharedSystem should be true if the SFA/MF building has multiple ground source heat pumps connected to a shared hydronic circulation loop.
@@ -869,6 +869,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   .. [#] SharedLoopWatts only required if IsSharedSystem is true.
   .. [#] Shared loop pump power attributed to the dwelling unit is calculated as SharedLoopWatts / NumberofUnitsServed.
   .. [#] ChargeDefectRatio currently constrained to zero for ground-to-air heat pumps due to an EnergyPlus limitation; this constraint will be relaxed in the future.
+         Likewise ChargeNotTested is not currently supported because it results in Grade 3 refrigerant charge, which is a non-zero charge defect ratio.
 
 HPXML HVAC Control
 ******************

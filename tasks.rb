@@ -1506,14 +1506,21 @@ def create_sample_hpxmls
                    HPXML::HVACTypeHeatPumpGroundToAir,
                    HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
 
-      if heat_pump.fan_watts_per_cfm.nil?
-        heat_pump.fan_power_not_tested = true
+      if not heat_pump.distribution_system_idref.nil? # Ducted, these inputs apply
+        if heat_pump.fan_watts_per_cfm.nil?
+          heat_pump.fan_power_not_tested = true
+        end
+        if heat_pump.airflow_defect_ratio.nil?
+          heat_pump.airflow_not_tested = true
+        end
       end
-      if heat_pump.airflow_defect_ratio.nil?
-        heat_pump.airflow_not_tested = true
-      end
-      if heat_pump.charge_defect_ratio.nil? && (heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir)
-        heat_pump.charge_not_tested = true
+      if heat_pump.charge_defect_ratio.nil?
+        if heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+          # GSHP can't be untested, since that ends up grade 3 and is currently unsupported by E+
+          heat_pump.charge_defect_ratio = 0.0
+        else
+          heat_pump.charge_not_tested = true
+        end
       end
     end
     hpxml.pv_systems.each do |pv_system|

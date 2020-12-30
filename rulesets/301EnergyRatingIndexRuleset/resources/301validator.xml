@@ -669,7 +669,7 @@
       <sch:assert role='ERROR' test='number(h:extension/h:FanPowerWattsPerCFM) &gt;= 0 or not(h:extension/h:FanPowerWattsPerCFM)'>Expected extension/FanPowerWattsPerCFM to be greater than or equal to 0</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:AirflowDefectRatio) + count(h:extension/AirflowNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: extension/AirflowDefectRatio | extension/AirflowNotTested[text()="true"]</sch:assert>
       <sch:assert role='ERROR' test='number(h:extension/h:AirflowDefectRatio) &gt; -1 or not(h:extension/h:AirflowDefectRatio)'>Expected extension/AirflowDefectRatio to be greater than -1</sch:assert>
-      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio) + count(h:extension/ChargeNotTested[text()="true"]) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio | extension/ChargeNotTested[text()="true"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio</sch:assert> <!-- Charge not tested (grade 3) will be supported in the future -->
       <sch:assert role='ERROR' test='number(h:extension/h:ChargeDefectRatio) = 0 or not(h:extension/h:ChargeDefectRatio)'>Expected extension/ChargeDefectRatio to be 0</sch:assert> <!-- Non-zero charge defect will be supported in the future -->
     </sch:rule>
   </sch:pattern>

@@ -1214,7 +1214,7 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
         if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpGroundToAir, HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
-          if not orig_heat_pump.distribution_system_idref.nil?
+          if not orig_heat_pump.distribution_system_idref.nil? # Ducted, these inputs apply
             fan_watts_per_cfm = orig_heat_pump.fan_watts_per_cfm
             fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
 
