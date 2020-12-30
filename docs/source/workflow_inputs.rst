@@ -543,16 +543,17 @@ Furnace
 
 If a furnace is specified, additional information is entered in ``HeatingSystem``.
 
-  =========================================================================  =================  =====  ===========  ========  =========  =======================================
+  =========================================================================  =================  =====  ===========  ========  =========  ============================================
   Element                                                                    Type               Units  Constraints  Required  Default    Notes
-  =========================================================================  =================  =====  ===========  ========  =========  =======================================
+  =========================================================================  =================  =====  ===========  ========  =========  ============================================
   ``DistributionSystem``                                                     idref                     See [#]_     Yes                  ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``                            double             frac   0 - 1        Yes                  Rated efficiency
-  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm  >= 0         Yes                  In accordance with ANSI/RESNET/ACCA 310
+  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm  >= 0         Yes                  In accordance with ANSI/RESNET/ACCA 310 [#]_
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac   > -1         Yes                  In accordance with ANSI/RESNET/ACCA 310
-  =========================================================================  =================  =====  ===========  ========  =========  =======================================
+  =========================================================================  =================  =====  ===========  ========  =========  ============================================
 
   .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] If there is a cooling system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
 
 Wall/Floor Furnace
 ~~~~~~~~~~~~~~~~~~
@@ -661,22 +662,23 @@ Central Air Conditioner
 
 If a central air conditioner is specified, additional information is entered in ``CoolingSystem``.
 
-  =========================================================================  =================  ======  ==============  ========  =========  =======================================
+  =========================================================================  =================  ======  ==============  ========  =========  ============================================
   Element                                                                    Type               Units   Constraints     Required  Default    Notes
-  =========================================================================  =================  ======  ==============  ========  =========  =======================================
+  =========================================================================  =================  ======  ==============  ========  =========  ============================================
   ``DistributionSystem``                                                     idref                      See [#]_        Yes                  ID of attached distribution system
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``                            double             Btu/Wh  > 0             Yes                  Rated efficiency
   ``CoolingCapacity``                                                        double             Btu/hr  >= 0            Yes                  Cooling capacity
   ``SensibleHeatFraction``                                                   double             frac    0 - 1           No                   Sensible heat fraction
   ``CompressorType``                                                         string                     See [#]_        No        See [#]_   Type of compressor
-  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310
+  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310 [#]_
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    -0.25, 0, 0.25  Yes                  In accordance with ANSI/RESNET/ACCA 310
-  =========================================================================  =================  ======  ==============  ========  =========  =======================================
+  =========================================================================  =================  ======  ==============  ========  =========  ============================================
 
   .. [#] HVACDistribution type must be AirDistribution or DSE.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
+  .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
 
 Room Air Conditioner
 ~~~~~~~~~~~~~~~~~~~~
