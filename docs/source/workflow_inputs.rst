@@ -549,7 +549,7 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
   ``DistributionSystem``                                                     idref                     See [#]_     Yes                  ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``                            double             frac   0 - 1        Yes                  Rated efficiency
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm  >= 0         Yes                  Per ANSI/RESNET/ACCA 310
-  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac   -0.5 - 0.5   Yes                  Per ANSI/RESNET/ACCA 310
+  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac   > -1         Yes                  Per ANSI/RESNET/ACCA 310
   =========================================================================  =================  =====  ===========  ========  =========  ==================================
 
   .. [#] HVACDistribution type must be AirDistribution or DSE.
@@ -670,7 +670,7 @@ If a central air conditioner is specified, additional information is entered in 
   ``SensibleHeatFraction``                                                   double             frac    0 - 1           No                   Sensible heat fraction
   ``CompressorType``                                                         string                     See [#]_        No        See [#]_   Type of compressor
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  Per ANSI/RESNET/ACCA 310
-  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    -0.5 - 0.5      Yes                  Per ANSI/RESNET/ACCA 310
+  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  Per ANSI/RESNET/ACCA 310
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    -0.25, 0, 0.25  Yes                  Per ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ==================================
 
@@ -807,7 +807,7 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value``                            double             Btu/Wh  > 0             Yes                  Rated heating efficiency
   ``HeatingCapacity17F``                                                     double             Btu/hr  >= 0            No                   Heating capacity at 17F, if available
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  Per ANSI/RESNET/ACCA 310
-  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    -0.5 - 0.5      Yes                  Per ANSI/RESNET/ACCA 310
+  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  Per ANSI/RESNET/ACCA 310
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    -0.25, 0, 0.25  Yes                  Per ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  =====================================
 
@@ -838,7 +838,7 @@ If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been ent
   Element                                                                    Type               Units   Constraints     Required  Default    Notes
   =========================================================================  =================  ======  ==============  ========  =========  ========================
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  Per ANSI/RESNET/ACCA 310
-  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    -0.5 - 0.5      Yes                  Per ANSI/RESNET/ACCA 310
+  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  Per ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ========================
 
 Ground-to-Air Heat Pump
@@ -857,7 +857,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``extension/PumpPowerWattsPerTon``                                         double             W/ton   >= 0            Yes                  Installed pump efficiency
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  Per ANSI/RESNET/ACCA 310
   ``extension/SharedLoopWatts``                                              double             W       >= 0            See [#]_             Shared pump power [#]_
-  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    -0.5 - 0.5      Yes                  Per ANSI/RESNET/ACCA 310
+  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  Per ANSI/RESNET/ACCA 310
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    0 [#]_          Yes                  Per ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ==============================================
 
