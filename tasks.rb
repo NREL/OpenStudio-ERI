@@ -1619,15 +1619,18 @@ if ARGV[0].to_sym == :create_release_zips
     File.delete(zip_path) if File.exist? zip_path
   end
 
-  # Only include files under git version control
-  command = 'git ls-files'
-  begin
-    git_files = `#{command}`
-  rescue
-    puts "Command failed: '#{command}'. Perhaps git needs to be installed?"
-    exit!
-  end
-
+  if ENV['CI']
+    # CI doesn't have git, so default to everything
+    git_files = Dir['**/*.*']
+  else
+    # Only include files under git version control
+    command = 'git ls-files'
+    begin
+      git_files = `#{command}`
+    rescue
+      puts "Command failed: '#{command}'. Perhaps git needs to be installed?"
+      exit!
+    end
   files = ['hpxml-measures/HPXMLtoOpenStudio/measure.*',
            'hpxml-measures/HPXMLtoOpenStudio/resources/*.*',
            'hpxml-measures/SimulationOutputReport/measure.*',
