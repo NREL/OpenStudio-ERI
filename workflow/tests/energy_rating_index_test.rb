@@ -34,7 +34,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+      hpxmls, csvs, runtime = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml)]['Workflow Runtime (s)'] = runtime
     end
@@ -85,7 +85,7 @@ class EnergyRatingIndexTest < Minitest::Test
       xml2014 = File.absolute_path(File.join(xmldir, File.basename(xml, '.xml') + '_301_2014' + File.extname(xml)))
       XMLHelper.write_file(hpxml.to_oga, xml2014)
 
-      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name, hourly_output: true)
+      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name)
       all_results[File.basename(xml2014)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
 
@@ -600,20 +600,14 @@ class EnergyRatingIndexTest < Minitest::Test
     XMLHelper.write_file(hpxml, out_xml)
   end
 
-  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
+  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
-
-    # Run sample files with hourly output turned on to test hourly results against annual results
-    hourly = ''
-    if hourly_output
-      hourly = ' --hourly ALL'
-    end
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
     # Run energy_rating_index workflow
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml} -o #{rundir}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
