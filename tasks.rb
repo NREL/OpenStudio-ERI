@@ -1631,6 +1631,7 @@ if ARGV[0].to_sym == :create_release_zips
       puts "Command failed: '#{command}'. Perhaps git needs to be installed?"
       exit!
     end
+  end
   files = ['hpxml-measures/HPXMLtoOpenStudio/measure.*',
            'hpxml-measures/HPXMLtoOpenStudio/resources/*.*',
            'hpxml-measures/SimulationOutputReport/measure.*',

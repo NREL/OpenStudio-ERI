@@ -153,6 +153,18 @@ class EnergyRatingIndexTest < Minitest::Test
     FileUtils.mv("#{cache_csv}.bak", cache_csv)
   end
 
+  def test_hourly_output
+    test_name = 'hourly_output'
+
+    # Run simulation
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+
+    # Check for hourly output files
+    assert(File.exist?(csvs[:rated_hourly_results]))
+    assert(File.exist?(csvs[:ref_hourly_results]))
+  end
+
   def test_resnet_ashrae_140
     test_name = 'RESNET_Test_4.1_Standard_140'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
@@ -600,14 +612,19 @@ class EnergyRatingIndexTest < Minitest::Test
     XMLHelper.write_file(hpxml, out_xml)
   end
 
-  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil)
+  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
+    hourly = ''
+    if hourly_output
+      hourly = ' --hourly ALL'
+    end
+
     # Run energy_rating_index workflow
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml} -o #{rundir}"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
@@ -633,6 +650,10 @@ class EnergyRatingIndexTest < Minitest::Test
     if using_iaf
       csvs[:iad_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.csv')
       csvs[:iadref_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+    end
+    if hourly_output
+      csvs[:rated_hourly_results] = File.join(rundir, 'results', 'ERIRatedHome_Hourly.csv')
+      csvs[:ref_hourly_results] = File.join(rundir, 'results', 'ERIReferenceHome_Hourly.csv')
     end
     if expect_error
       if expect_error_msgs.nil?
