@@ -886,7 +886,7 @@ Each separate HVAC distribution system is entered as a ``/HPXML/Building/Buildin
   ==============================  =======  =======  ===========  ========  =========  =============================
 
   .. [#] DistributionSystemType child element choices are ``AirDistribution``, ``HydronicDistribution``, ``HydronicAndAirDistribution``, or ``Other=DSE``.
-  .. [#] ConditionedFloorAreaServed is required for AirDistribution and HydronicAndAir types.
+  .. [#] ConditionedFloorAreaServed is required for AirDistribution and HydronicAndAirDistribution types.
 
 .. note::
   
