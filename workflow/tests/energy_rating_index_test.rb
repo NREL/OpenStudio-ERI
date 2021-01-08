@@ -34,7 +34,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+      hpxmls, csvs, runtime = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml)]['Workflow Runtime (s)'] = runtime
     end
@@ -85,7 +85,7 @@ class EnergyRatingIndexTest < Minitest::Test
       xml2014 = File.absolute_path(File.join(xmldir, File.basename(xml, '.xml') + '_301_2014' + File.extname(xml)))
       XMLHelper.write_file(hpxml.to_oga, xml2014)
 
-      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name, hourly_output: true)
+      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name)
       all_results[File.basename(xml2014)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
 
@@ -151,6 +151,18 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Restore original and cleanup
     FileUtils.mv("#{cache_csv}.bak", cache_csv)
+  end
+
+  def test_hourly_output
+    test_name = 'hourly_output'
+
+    # Run simulation
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+
+    # Check for hourly output files
+    assert(File.exist?(csvs[:rated_hourly_results]))
+    assert(File.exist?(csvs[:ref_hourly_results]))
   end
 
   def test_resnet_ashrae_140
@@ -608,13 +620,12 @@ class EnergyRatingIndexTest < Minitest::Test
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
-    # Run sample files with hourly output turned on to test hourly results against annual results
+    rundir = File.join(@test_files_dir, test_name, File.basename(xml))
+
     hourly = ''
     if hourly_output
       hourly = ' --hourly ALL'
     end
-
-    rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
     # Run energy_rating_index workflow
     command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
@@ -643,6 +654,10 @@ class EnergyRatingIndexTest < Minitest::Test
     if using_iaf
       csvs[:iad_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.csv')
       csvs[:iadref_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+    end
+    if hourly_output
+      csvs[:rated_hourly_results] = File.join(rundir, 'results', 'ERIRatedHome_Hourly.csv')
+      csvs[:ref_hourly_results] = File.join(rundir, 'results', 'ERIReferenceHome_Hourly.csv')
     end
     if expect_error
       if expect_error_msgs.nil?

@@ -1648,6 +1648,7 @@ A single dehumidifier can be entered as a ``/HPXML/Building/BuildingDetails/Appl
   ==============================================  ==========  ==========  ===========  ========  =======  ========================================
   ``SystemIdentifier``                            id                                   Yes                Unique identifier
   ``Type``                                        string                  See [#]_     Yes                Type of dehumidifier
+  ``Location``                                    string                  See [#]_     Yes                Location of dehumidifier
   ``Capacity``                                    double      pints/day   > 0          Yes                Dehumidification capacity
   ``IntegratedEnergyFactor`` or ``EnergyFactor``  double      liters/kWh  > 0          Yes                Rated efficiency
   ``DehumidistatSetpoint``                        double      frac        0 - 1        Yes                Relative humidity setpoint
@@ -1655,10 +1656,16 @@ A single dehumidifier can be entered as a ``/HPXML/Building/BuildingDetails/Appl
   ==============================================  ==========  ==========  ===========  ========  =======  ========================================
   
   .. [#] Type choices are "portable" or "whole-home".
+  .. [#] Location only choice is "living space".
 
 .. note::
 
   Dehumidifiers only affect ERI scores if Version 2019AB or newer is used, as dehumidifiers were incorporated into the ERI calculation as of 301-2019 Addendum B.
+
+.. note::
+
+  Dehumidifiers are currently modeled as located within conditioned space; the model is not suited for a dehumidifier in, e.g., a wet unconditioned basement or crawlspace.
+  Therefore the dehumidifier Location is currently restricted to "living space".
 
 HPXML Cooking Range/Oven
 ************************
