@@ -1226,6 +1226,7 @@ def create_sample_hpxmls
   FileUtils.rm_f(Dir.glob('workflow/sample_files/invalid_files/*.xml'))
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/sample_files/*.xml'), 'workflow/sample_files')
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/sample_files/invalid_files/*.xml'), 'workflow/sample_files/invalid_files')
+  FileUtils.rm_f(Dir.glob('workflow/sample_files/base-hvac-autosize*.xml'))
 
   # Remove files we're not interested in
   exclude_list = ['invalid_files/cfis-with-hydronic-distribution.xml',
@@ -1328,6 +1329,7 @@ def create_sample_hpxmls
                   'base-enclosure-infil-cfm-house-pressure.xml',
                   'base-enclosure-infil-flue.xml',
                   'base-enclosure-rooftypes.xml',
+                  'base-enclosure-split-surfaces2.xml',
                   'base-enclosure-walltypes.xml',
                   'base-enclosure-windows-interior-shading.xml',
                   'base-enclosure-windows-none.xml',

@@ -2031,7 +2031,8 @@ class EnergyRatingIndex301Ruleset
                                 capacity: dehumidifier.capacity,
                                 integrated_energy_factor: ief,
                                 rh_setpoint: 0.60,
-                                fraction_served: dehumidifier.fraction_served)
+                                fraction_served: dehumidifier.fraction_served,
+                                location: dehumidifier.location)
   end
 
   def self.set_appliances_dehumidifier_rated(orig_hpxml, new_hpxml)
@@ -2045,7 +2046,8 @@ class EnergyRatingIndex301Ruleset
                                 energy_factor: dehumidifier.energy_factor,
                                 integrated_energy_factor: dehumidifier.integrated_energy_factor,
                                 rh_setpoint: 0.60,
-                                fraction_served: dehumidifier.fraction_served)
+                                fraction_served: dehumidifier.fraction_served,
+                                location: dehumidifier.location)
   end
 
   def self.set_appliances_dehumidifier_iad(orig_hpxml, new_hpxml)

@@ -169,9 +169,9 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-appliances-dehumidifier-50percent.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_dehumidifier(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5 }])
+    _check_dehumidifier(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_dehumidifier(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5 }])
+    _check_dehumidifier(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_dehumidifier(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -503,6 +503,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml.dehumidifiers.each_with_index do |dehumidifier, idx|
       expected_values = all_expected_values[idx]
       assert_equal(expected_values[:type], dehumidifier.type)
+      assert_equal(expected_values[:location], dehumidifier.location)
       assert_equal(expected_values[:capacity], dehumidifier.capacity)
       if expected_values[:ef].nil?
         assert_nil(dehumidifier.energy_factor)
