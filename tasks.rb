@@ -1386,8 +1386,6 @@ def create_sample_hpxmls
                   'base-hvac-install-qual-blower-efficiency-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-charge-defect-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-none-furnace-gas-central-ac-1-speed.xml',
-                  'base-hvac-mini-split-air-conditioner-only-ducted.xml',
-                  'base-hvac-mini-split-air-conditioner-only-ductless.xml',
                   'base-hvac-programmable-thermostat-detailed.xml',
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',

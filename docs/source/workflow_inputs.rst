@@ -652,7 +652,7 @@ Each cooling system (other than heat pumps) is entered as an ``/HPXML/Building/B
   ``FractionCoolLoadServed``  double    frac    0 - 1 [#]_   Yes                Fraction of cooling load served
   ==========================  ========  ======  ===========  ========  =======  ===============================
 
-  .. [#] CoolingSystemType choices are "central air conditioner", "room air conditioner", "evaporative cooler", "chiller", or "cooling tower".
+  .. [#] CoolingSystemType choices are "central air conditioner", "room air conditioner", "evaporative cooler", "mini-split", "chiller", or "cooling tower".
   .. [#] CoolingSystemFuel only choice is "electricity".
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
          For example, the dwelling unit could have two room air conditioners with values of 0.1 (10%) and 0.2 (20%), respectively, with the rest of the home (70%) uncooled.
@@ -705,6 +705,23 @@ If an evaporative cooler is specified, additional information is entered in ``Co
   =================================  ========  ======  ===========  ========  =========  ==================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution or DSE.
+
+Mini-Split
+~~~~~~~~~~
+
+If a mini-split is specified, additional information is entered in ``CoolingSystem``.
+
+  =================================  ========  ======  ===========  ========  =========  ==================================
+  Element                            Type      Units   Constraints  Required  Default    Notes
+  =================================  ========  ======  ===========  ========  =========  ==================================
+  ``DistributionSystem``             idref             See [#]_     No                   ID of attached distribution system
+  ``CoolingCapacity``                double    Btu/hr  >= 0         Yes       autosized  Cooling capacity
+  ``SensibleHeatFraction``           double    frac    0-1          No                   Sensible heat fraction
+  ``extension/FanPowerWattsPerCFM``  double    W/cfm   >= 0         No        See [#]_   Installed fan efficiency
+  =================================  ========  ======  ===========  ========  =========  ==================================
+
+  .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] If FanPowerWattsPerCFM not provided, defaults to 0.07 W/cfm if ductless, else 0.18 W/cfm.
 
 Chiller
 ~~~~~~~
@@ -899,7 +916,7 @@ Each separate HVAC distribution system is entered as a ``/HPXML/Building/Buildin
   ==============================  =======  =======  ===========  ========  =========  =============================
 
   .. [#] DistributionSystemType child element choices are ``AirDistribution``, ``HydronicDistribution``, ``HydronicAndAirDistribution``, or ``Other=DSE``.
-  .. [#] ConditionedFloorAreaServed is required for AirDistribution and HydronicAndAir types.
+  .. [#] ConditionedFloorAreaServed is required for AirDistribution and HydronicAndAirDistribution types.
 
 .. note::
   
