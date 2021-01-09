@@ -1343,8 +1343,6 @@ def create_sample_hpxmls
                   'base-hvac-furnace-coal-only.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
-                  'base-hvac-mini-split-air-conditioner-only-ducted.xml',
-                  'base-hvac-mini-split-air-conditioner-only-ductless.xml',
                   'base-hvac-programmable-thermostat-detailed.xml',
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',

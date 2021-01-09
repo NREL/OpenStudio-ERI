@@ -3,8 +3,9 @@
 __New Features__
 - **Breaking change**: For ERI____Home.csv output files, the first two sections are now prefixed with "Fuel Use:" and "End Use:", respectively.
 - Implements ANSI/RESNET/ICC Standard 301-2019 Addendum B.
-  - Adds ability to model a dehumidifier.
-- Allows modeling generators (generic on-site power production).
+  - Adds modeling of dehumidifiers.
+- Adds modeling of generators (generic on-site power production).
+- Adds modeling of mini-split air conditioners.
 - Includes hot water loads (in addition to heating/cooling loads) when hourly total loads are requested.
 - Overhauls documentation to be more comprehensive and standardized.
 
