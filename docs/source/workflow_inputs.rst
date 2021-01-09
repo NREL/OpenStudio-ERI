@@ -711,17 +711,25 @@ Mini-Split
 
 If a mini-split is specified, additional information is entered in ``CoolingSystem``.
 
-  =================================  ========  ======  ===========  ========  =========  ==================================
-  Element                            Type      Units   Constraints  Required  Default    Notes
-  =================================  ========  ======  ===========  ========  =========  ==================================
-  ``DistributionSystem``             idref             See [#]_     No                   ID of attached distribution system
-  ``CoolingCapacity``                double    Btu/hr  >= 0         Yes       autosized  Cooling capacity
-  ``SensibleHeatFraction``           double    frac    0-1          No                   Sensible heat fraction
-  ``extension/FanPowerWattsPerCFM``  double    W/cfm   >= 0         No        See [#]_   Installed fan efficiency
-  =================================  ========  ======  ===========  ========  =========  ==================================
+  =====================================================================  =================  ======  ==============  ========  =======  =======================================
+  Element                                                                Type               Units   Constraints     Required  Default  Notes
+  =====================================================================  =================  ======  ==============  ========  =======  =======================================
+  ``DistributionSystem``                                                 idref                      See [#]_        No                 ID of attached distribution system
+  ``CoolingCapacity``                                                    double             Btu/hr  >= 0            Yes                Cooling capacity
+  ``SensibleHeatFraction``                                               double             frac    0 - 1           No                 Sensible heat fraction
+  ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``  double or boolean  frac    -0.25, 0, 0.25  Yes                In accordance with ANSI/RESNET/ACCA 310
+  =====================================================================  =================  ======  ==============  ========  =======  =======================================
 
   .. [#] HVACDistribution type must be AirDistribution or DSE.
-  .. [#] If FanPowerWattsPerCFM not provided, defaults to 0.07 W/cfm if ductless, else 0.18 W/cfm.
+
+If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been entered), additional information is entered in ``CoolingSystem``.
+
+  =========================================================================  =================  ======  ===========  ========  =========  =======================================
+  Element                                                                    Type               Units   Constraints  Required  Default    Notes
+  =========================================================================  =================  ======  ===========  ========  =========  =======================================
+  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0         Yes                  In accordance with ANSI/RESNET/ACCA 310
+  ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1         Yes                  In accordance with ANSI/RESNET/ACCA 310
+  =========================================================================  =================  ======  ===========  ========  =========  =======================================
 
 Chiller
 ~~~~~~~

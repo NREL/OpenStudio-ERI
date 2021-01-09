@@ -1382,7 +1382,6 @@ def create_sample_hpxmls
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
                   'base-hvac-install-qual-airflow-defect-furnace-gas-central-ac-1-speed.xml',
-                  'base-hvac-install-qual-all-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-install-qual-blower-efficiency-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-charge-defect-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-qual-none-furnace-gas-central-ac-1-speed.xml',
@@ -1489,7 +1488,8 @@ def create_sample_hpxmls
       end
     end
     hpxml.cooling_systems.each do |cooling_system|
-      next unless [HPXML::HVACTypeCentralAirConditioner].include? cooling_system.cooling_system_type
+      next unless [HPXML::HVACTypeCentralAirConditioner,
+                   HPXML::HVACTypeMiniSplitAirConditioner].include? cooling_system.cooling_system_type
 
       if cooling_system.fan_watts_per_cfm.nil?
         cooling_system.fan_power_not_tested = true

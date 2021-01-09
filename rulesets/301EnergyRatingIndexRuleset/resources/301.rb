@@ -1170,7 +1170,7 @@ class EnergyRatingIndex301Ruleset
     # Retain cooling system(s)
     orig_hpxml.cooling_systems.each do |orig_cooling_system|
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-        if [HPXML::HVACTypeCentralAirConditioner].include? orig_cooling_system.cooling_system_type
+        if [HPXML::HVACTypeCentralAirConditioner, HPXML::HVACTypeMiniSplitAirConditioner].include? orig_cooling_system.cooling_system_type
           if not orig_cooling_system.distribution_system_idref.nil?
             fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
             fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
