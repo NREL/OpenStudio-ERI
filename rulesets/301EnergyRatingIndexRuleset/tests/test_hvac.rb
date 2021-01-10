@@ -386,6 +386,46 @@ class ERIHVACtest < MiniTest::Test
     _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
+  def test_mini_split_air_conditioner_ducted
+    hpxml_name = 'base-hvac-mini-split-air-conditioner-only-ducted.xml'
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
+      _check_heating_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
+      _check_heat_pump(hpxml, calc_type)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    hpxml = _test_measure(hpxml_name, calc_type)
+    _check_cooling_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeMiniSplitAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: 19, shr: 0.73 }])
+    _check_heating_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
+    _check_heat_pump(hpxml, calc_type)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+  end
+
+  def test_mini_split_air_conditioner_ductless
+    hpxml_name = 'base-hvac-mini-split-air-conditioner-only-ductless.xml'
+    calc_types = [Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+    calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73 }])
+      _check_heating_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
+      _check_heat_pump(hpxml, calc_type)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    hpxml = _test_measure(hpxml_name, calc_type)
+    _check_cooling_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeMiniSplitAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: 19, shr: 0.73 }])
+    _check_heating_system(hpxml, calc_type, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type) }])
+    _check_heat_pump(hpxml, calc_type)
+    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+  end
+
   def test_furnace_gas_and_central_air_conditioner
     hpxml_name = 'base.xml'
     calc_types = [Constants.CalcTypeERIReferenceHome,
