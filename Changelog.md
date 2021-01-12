@@ -6,10 +6,12 @@ __New Features__
   - Adds modeling of dehumidifiers.
 - Adds modeling of generators (generic on-site power production).
 - Adds modeling of mini-split air conditioners.
+- Allows requesting hourly unmet heating/cooling loads.
 - Includes hot water loads (in addition to heating/cooling loads) when hourly total loads are requested.
 - Overhauls documentation to be more comprehensive and standardized.
 
 __Bugfixes__
+- Improved modeling of window/skylight interior shading -- better reflects shading coefficient inputs.
 - Adds various error-checking to the schematron validator.
 - Adds error-checking for empty IDs in the HPXML file.
 - Fixes possible "Error: Electricity category end uses (X) do not sum to total (X)." for a heat pump water heater.
