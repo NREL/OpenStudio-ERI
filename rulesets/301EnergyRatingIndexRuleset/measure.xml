@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_rating_index_301_measure</name>
   <uid>02a31992-9a16-4945-bb51-e99209f7193b</uid>
-  <version_id>849b553c-103f-4320-bb8e-92ff597857c6</version_id>
-  <version_modified>20210109T164041Z</version_modified>
+  <version_id>9925bb18-ee6d-4977-83cd-2c7ddc6ca206</version_id>
+  <version_modified>20210113T212500Z</version_modified>
   <xml_checksum>D8922A73</xml_checksum>
   <class_name>EnergyRatingIndex301Measure</class_name>
   <display_name>Apply Energy Rating Index Ruleset</display_name>
@@ -169,7 +169,7 @@
       <filename>test_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>EA53C662</checksum>
+      <checksum>05FDFF5E</checksum>
     </file>
   </files>
 </measure>

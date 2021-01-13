@@ -146,7 +146,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_furnace_gas
     hpxml_names = ['base-hvac-furnace-gas-only.xml',
-                   'base-hvac-install-qual-all-furnace-gas-only.xml']
+                   'base-hvac-install-quality-all-furnace-gas-only.xml']
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
@@ -250,7 +250,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_air_source_heat_pump
     hpxml_names = ['base-hvac-air-to-air-heat-pump-1-speed.xml',
-                   'base-hvac-install-qual-all-air-to-air-heat-pump-1-speed.xml']
+                   'base-hvac-install-quality-all-air-to-air-heat-pump-1-speed.xml']
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
@@ -282,7 +282,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_mini_split_heat_pump_ducted
     hpxml_names = ['base-hvac-mini-split-heat-pump-ducted.xml',
-                   'base-hvac-install-qual-all-mini-split-heat-pump-ducted.xml']
+                   'base-hvac-install-quality-all-mini-split-heat-pump-ducted.xml']
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
@@ -338,7 +338,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_ground_to_air_heat_pump
     hpxml_names = ['base-hvac-ground-to-air-heat-pump.xml',
-                   'base-hvac-install-qual-all-ground-to-air-heat-pump.xml']
+                   'base-hvac-install-quality-all-ground-to-air-heat-pump.xml']
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
@@ -495,7 +495,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_mini_split_air_conditioner_ducted
     hpxml_names = ['base-hvac-mini-split-air-conditioner-only-ducted.xml',
-                   'base-hvac-install-qual-all-mini-split-air-conditioner-only-ducted.xml']
+                   'base-hvac-install-quality-all-mini-split-air-conditioner-only-ducted.xml']
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
@@ -551,7 +551,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_furnace_gas_and_central_air_conditioner
     hpxml_names = ['base.xml',
-                   'base-hvac-install-qual-all-furnace-gas-central-ac-1-speed.xml']
+                   'base-hvac-install-quality-all-furnace-gas-central-ac-1-speed.xml']
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
