@@ -565,7 +565,7 @@ def calculate_eri(design_outputs, resultsdir)
   return results
 end
 
-hourly_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
+hourly_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'unmetloads', 'temperatures', 'airflows', 'weather']
 
 options = {}
 OptionParser.new do |opts|

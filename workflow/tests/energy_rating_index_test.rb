@@ -729,6 +729,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_hot_water_uses'] = false
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
+    args['include_timeseries_unmet_loads'] = false
     args['include_timeseries_zone_temperatures'] = false
     args['include_timeseries_airflows'] = false
     args['include_timeseries_weather'] = false
