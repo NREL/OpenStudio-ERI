@@ -319,7 +319,9 @@
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
-                <FanPowerWattsPerCFM>0.2</FanPowerWattsPerCFM>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowNotTested>true</AirflowNotTested>
               </extension>
             </CoolingSystem>
           </HVACPlant>

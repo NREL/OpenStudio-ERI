@@ -509,7 +509,9 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.82,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Electric strip heating with COP = 1.0
     hpxml.heating_systems.clear
@@ -528,7 +530,9 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.95,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 78%
     hpxml.heating_systems.clear
@@ -538,7 +542,9 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.78,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 96%
     hpxml.heating_systems.clear
@@ -548,7 +554,9 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.96,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 78%; 0.0005 kW/cfm
@@ -559,7 +567,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.78,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 90%; 0.000375 kW/cfm
     hpxml.heating_systems.clear
@@ -569,7 +578,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 56100,
                               heating_efficiency_afue: 0.9,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
     # Electric Furnace; 56.1 kBtu/h; COP =1.0
     hpxml.heating_systems.clear
@@ -579,7 +589,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeElectricity,
                               heating_capacity: 56100,
                               heating_efficiency_afue: 1,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml',
          'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Gas Furnace; 46.6 kBtu/h
@@ -590,8 +601,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 46600,
                               heating_efficiency_afue: 0.78,
-                              fraction_heat_load_served: 1)
-
+                              fraction_heat_load_served: 1,
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to 56.0 kBtu/h
     hpxml.heating_systems[0].heating_capacity = 56000
@@ -610,7 +621,9 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.78,
-                              fraction_heat_load_served: 1)
+                              fraction_heat_load_served: 1,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true)
   end
 end
 
@@ -627,7 +640,10 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 11)
+                              cooling_efficiency_seer: 11,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true,
+                              charge_not_tested: true)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Central air conditioner with SEER = 15.0
     hpxml.cooling_systems.clear
@@ -637,7 +653,10 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 15)
+                              cooling_efficiency_seer: 15,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true,
+                              charge_not_tested: true)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
     # Cooling system – electric A/C with SEER = 10.0
@@ -648,7 +667,10 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 10)
+                              cooling_efficiency_seer: 10,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true,
+                              charge_not_tested: true)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
@@ -659,7 +681,9 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: 38300,
                               fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 10)
+                              cooling_efficiency_seer: 10,
+                              fan_watts_per_cfm: 0.5,
+                              charge_not_tested: true)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     # Change to SEER = 13
     hpxml.cooling_systems[0].cooling_efficiency_seer = 13
@@ -673,8 +697,9 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: 38400,
                               fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 10)
-
+                              cooling_efficiency_seer: 10,
+                              fan_watts_per_cfm: 0.5,
+                              charge_not_tested: true)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
     # Change to 49.9 kBtu/h
     hpxml.cooling_systems[0].cooling_capacity = 49900
@@ -693,7 +718,10 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
-                              cooling_efficiency_seer: 13)
+                              cooling_efficiency_seer: 13,
+                              fan_power_not_tested: true,
+                              airflow_not_tested: true,
+                              charge_not_tested: true)
   end
 end
 
@@ -716,7 +744,10 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_heat_load_served: 1,
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 7.5,
-                         cooling_efficiency_seer: 12)
+                         cooling_efficiency_seer: 12,
+                         fan_power_not_tested: true,
+                         airflow_not_tested: true,
+                         charge_not_tested: true)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
     # Heating system – electric HP with HSPF = 6.8
     # Cooling system – electric A/C with SEER
@@ -733,7 +764,10 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_heat_load_served: 1,
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 6.8,
-                         cooling_efficiency_seer: 10)
+                         cooling_efficiency_seer: 10,
+                         fan_power_not_tested: true,
+                         airflow_not_tested: true,
+                         charge_not_tested: true)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml'].include? hpxml_file
     # Change to a high efficiency HP with HSPF = 9.85
     hpxml.heat_pumps[0].heating_efficiency_hspf = 9.85
@@ -752,7 +786,9 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_heat_load_served: 1,
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 6.8,
-                         cooling_efficiency_seer: 10)
+                         cooling_efficiency_seer: 10,
+                         fan_watts_per_cfm: 0.5,
+                         charge_not_tested: true)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 9.85
     hpxml.heat_pumps.clear
@@ -768,7 +804,9 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_heat_load_served: 1,
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 9.85,
-                         cooling_efficiency_seer: 13)
+                         cooling_efficiency_seer: 13,
+                         fan_watts_per_cfm: 0.5,
+                         charge_not_tested: true)
   end
 end
 
@@ -1344,6 +1382,10 @@ def create_sample_hpxmls
                   'base-hvac-furnace-coal-only.xml',
                   'base-hvac-furnace-x3-dse.xml',
                   'base-hvac-ideal-air.xml',
+                  'base-hvac-install-quality-airflow-defect-furnace-gas-central-ac-1-speed.xml',
+                  'base-hvac-install-quality-blower-efficiency-furnace-gas-central-ac-1-speed.xml',
+                  'base-hvac-install-quality-charge-defect-furnace-gas-central-ac-1-speed.xml',
+                  'base-hvac-install-quality-none-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-programmable-thermostat-detailed.xml',
                   'base-hvac-undersized-allow-increased-fixed-capacities.xml',
                   'base-lighting-detailed.xml',
@@ -1435,6 +1477,52 @@ def create_sample_hpxmls
       next unless ventilation_fan.is_shared_system.nil?
 
       ventilation_fan.is_shared_system = false
+    end
+    hpxml.heating_systems.each do |heating_system|
+      next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
+
+      if heating_system.fan_watts_per_cfm.nil?
+        heating_system.fan_power_not_tested = true
+      end
+      if heating_system.airflow_defect_ratio.nil?
+        heating_system.airflow_not_tested = true
+      end
+    end
+    hpxml.cooling_systems.each do |cooling_system|
+      next unless [HPXML::HVACTypeCentralAirConditioner,
+                   HPXML::HVACTypeMiniSplitAirConditioner].include? cooling_system.cooling_system_type
+
+      if cooling_system.fan_watts_per_cfm.nil?
+        cooling_system.fan_power_not_tested = true
+      end
+      if cooling_system.airflow_defect_ratio.nil?
+        cooling_system.airflow_not_tested = true
+      end
+      if cooling_system.charge_defect_ratio.nil?
+        cooling_system.charge_not_tested = true
+      end
+    end
+    hpxml.heat_pumps.each do |heat_pump|
+      next unless [HPXML::HVACTypeHeatPumpAirToAir,
+                   HPXML::HVACTypeHeatPumpGroundToAir,
+                   HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
+
+      if not heat_pump.distribution_system_idref.nil? # Ducted, these inputs apply
+        if heat_pump.fan_watts_per_cfm.nil?
+          heat_pump.fan_power_not_tested = true
+        end
+        if heat_pump.airflow_defect_ratio.nil?
+          heat_pump.airflow_not_tested = true
+        end
+      end
+      if heat_pump.charge_defect_ratio.nil?
+        if heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+          # GSHP can't be untested, since that ends up grade 3 and is currently unsupported by E+
+          heat_pump.charge_defect_ratio = 0.0
+        else
+          heat_pump.charge_not_tested = true
+        end
+      end
     end
     hpxml.pv_systems.each do |pv_system|
       next unless pv_system.is_shared_system.nil?

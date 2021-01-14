@@ -531,6 +531,10 @@ class EnergyRatingIndexTest < Minitest::Test
           vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
         end
       end
+      (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac_system|
+        hvac_system.airflow_not_tested = true
+        hvac_system.airflow_defect_ratio = nil
+      end
       XMLHelper.write_file(new_hpxml.to_oga, out_xml)
 
       hpxmls, csvs, runtime = _run_workflow(out_xml, test_name)

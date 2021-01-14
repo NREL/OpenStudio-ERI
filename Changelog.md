@@ -1,13 +1,14 @@
 ## OpenStudio-ERI v1.1.0 (pending)
 
 __New Features__
-- **Breaking change**: For ERI____Home.csv output files, the first two sections are now prefixed with "Fuel Use:" and "End Use:", respectively.
-- Implements ANSI/RESNET/ICC Standard 301-2019 Addendum B.
+- Implements ANSI/RESNET/ICC Standard 301-2019 Addendum B. `ERICalculation/Version` can now be "2019AB" in the HPXML files.
+  - **Breaking change**: New HVAC installation quality inputs required for air conditioners, heat pumps, and furnaces.
   - Adds modeling of dehumidifiers.
 - Adds modeling of generators (generic on-site power production).
 - Adds modeling of mini-split air conditioners.
 - Allows requesting hourly unmet heating/cooling loads.
 - Includes hot water loads (in addition to heating/cooling loads) when hourly total loads are requested.
+- **Breaking change**: For ERI____Home.csv output files, the first two sections are now prefixed with "Fuel Use:" and "End Use:", respectively.
 - Overhauls documentation to be more comprehensive and standardized.
 
 __Bugfixes__

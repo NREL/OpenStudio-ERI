@@ -323,6 +323,10 @@
                 <Units>HSPF</Units>
                 <Value>6.8</Value>
               </AnnualHeatingEfficiency>
+              <extension>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
+              </extension>
             </HeatPump>
           </HVACPlant>
           <HVACControl>
