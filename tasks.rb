@@ -259,7 +259,6 @@ def set_hpxml_site(hpxml_file, hpxml)
 end
 
 def set_hpxml_building_construction(hpxml_file, hpxml)
-  hpxml.building_construction.use_only_ideal_air_system = nil
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
       'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
