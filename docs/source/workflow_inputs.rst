@@ -937,22 +937,23 @@ Each separate HVAC distribution system is entered as a ``/HPXML/Building/Buildin
 Air Distribution
 ~~~~~~~~~~~~~~~~
 
-To define an air distribution system, the presence of duct leakage can be entered in one of three ways:
+To define an air distribution system, the presence of duct leakage must be entered in one of three ways:
 
 1. **Leakage to the Outside**
 
-  Supply and/or return leakage to the outside are entered as a ``HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement``:
+  Supply and return leakage to the outside are each entered as a ``HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement``:
   
   ================================  =======  =======  ===========  ========  =========  =========================================================
   Element                           Type     Units    Constraints  Required  Default    Notes
   ================================  =======  =======  ===========  ========  =========  =========================================================
   ``DuctType``                      string            See [#]_     Yes                  Supply or return ducts
   ``DuctLeakage/Units``             string            CFM25        Yes                  Duct leakage units
-  ``DuctLeakage/Value``             double            >= 0         Yes                  Duct leakage value
+  ``DuctLeakage/Value``             double            >= 0         Yes                  Duct leakage value [#]_
   ``DuctLeakage/TotalOrToOutside``  string            to outside   Yes                  Type of duct leakage (outside conditioned space vs total)
   ================================  =======  =======  ===========  ========  =========  =========================================================
   
   .. [#] DuctType choices are "supply" or "return".
+  .. [#] If the HVAC system has no return ducts (e.g., a ducted evaporative cooler), use zero for the Value.
 
 2. **Total leakage** (Version 2014ADEGL or newer)
 
@@ -990,11 +991,13 @@ Additionally, each supply/return duct present is entered in a ``HVACDistribution
   ========================  =======  ============  ===========  ========  =========  ===============================
   Element                   Type     Units         Constraints  Required  Default    Notes
   ========================  =======  ============  ===========  ========  =========  ===============================
+  ``DuctType``              string                 See [#]_     Yes                  Supply or return ducts
   ``DuctInsulationRValue``  double   F-ft2-hr/Btu  >= 0         Yes                  R-value of duct insulation [#]_
   ``DuctSurfaceArea``       double   ft2           >= 0         Yes                  Duct surface area
   ``DuctLocation``          string                 See [#]_     Yes                  Duct location
   ========================  =======  ============  ===========  ========  =========  ===============================
 
+  .. [#] DuctType choices are "supply" or "return".
   .. [#] DuctInsulationRValue should not include air films (i.e., use 0 for an uninsulated duct).
   .. [#] DuctLocation choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - unvented", "crawlspace - vented", "attic - unvented", "attic - vented", "garage", "outside", "exterior wall", "under slab", "roof deck", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
@@ -1025,7 +1028,7 @@ To define an air and hydronic distribution system, additional information is ent
 
   .. [#] HydronicAndAirDistributionType choices are "fan coil" or "water loop heat pump".
 
-In addition, if the system is ducted, all of the elements from the :ref:`air_distribution` Section can be entered in this ``HydronicAndAirDistribution`` element too (e.g., ``DuctLeakageMeasurement`` and ``Ducts``).
+In addition, all of the elements from the :ref:`air_distribution` Section are available here too (e.g., ``DuctLeakageMeasurement`` and ``Ducts``) to describe ducted systems.
 
 Distribution System Efficiency (DSE)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

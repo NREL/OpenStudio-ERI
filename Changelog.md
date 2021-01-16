@@ -12,6 +12,8 @@ __New Features__
 - Overhauls documentation to be more comprehensive and standardized.
 
 __Bugfixes__
+- **Breaking change**: One of the three duct leakage input types is now required for AirDistribution systems.
+- **Breaking change**: At least one `Ducts` element is now required for AirDistribution systems.
 - Improved modeling of window/skylight interior shading -- better reflects shading coefficient inputs.
 - Adds various error-checking to the schematron validator.
 - Adds error-checking for empty IDs in the HPXML file.
