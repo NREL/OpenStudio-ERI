@@ -502,6 +502,7 @@ def cache_weather
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/materials'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/psychrometrics'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
+  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
