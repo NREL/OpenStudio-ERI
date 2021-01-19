@@ -141,7 +141,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_weather_cache
     # Move existing -cache.csv file
     weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-    cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
+    cache_csv = File.join(weather_dir, 'US_CO_Boulder_AMY_2012-cache.csv')
     FileUtils.mv(cache_csv, "#{cache_csv}.bak")
 
     command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
