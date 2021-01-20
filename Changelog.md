@@ -20,6 +20,7 @@ __Bugfixes__
 - Fixes possible OpenStudio ForwardTranslator "surface construction conflicts" errors.
 - HVAC sizing improvements for floors above crawlspaces/basements and walls.
 - Fixes schematron file not being valid per ISO Schematron standard.
+- Fixes error when using energy_rating_index.rb --cache-weather.
 
 ## OpenStudio-ERI v1.0.0
 
