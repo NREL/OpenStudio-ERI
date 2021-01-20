@@ -1489,7 +1489,7 @@ def create_sample_hpxmls
   end
 end
 
-command_list = [:generate_sample_outputs, :update_version, :update_measures, :create_release_zips]
+command_list = [:generate_sample_outputs, :update_measures, :create_release_zips]
 
 def display_usage(command_list)
   puts "Usage: openstudio #{File.basename(__FILE__)} [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
@@ -1528,24 +1528,6 @@ if ARGV[0].to_sym == :generate_sample_outputs
   dirs.each do |dir|
     FileUtils.copy_entry dir, "sample_results/#{dir}"
   end
-end
-
-if ARGV[0].to_sym == :update_version
-  eri_version_change = { from: '0.10.0',
-                         to: '0.11.0' }
-
-  file_names = ['workflow/energy_rating_index.rb', 'docs/source/getting_started.rst']
-
-  file_names.each do |file_name|
-    text = File.read(file_name)
-    new_contents = text.gsub(eri_version_change[:from], eri_version_change[:to])
-
-    # To write changes to the file, use:
-    File.open(file_name, 'w') { |file| file.puts new_contents }
-    puts "Updated from version #{eri_version_change[:from]} to version #{eri_version_change[:to]} in #{file_name}."
-  end
-
-  puts 'Done. Now check all changed files before committing.'
 end
 
 if ARGV[0].to_sym == :update_measures
