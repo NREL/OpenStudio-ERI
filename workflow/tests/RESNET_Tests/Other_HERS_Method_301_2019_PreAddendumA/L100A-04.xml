@@ -28,8 +28,8 @@
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
-          <NumberofConditionedFloors>1</NumberofConditionedFloors>
-          <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+          <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
@@ -312,6 +312,11 @@
                 <Units>HSPF</Units>
                 <Value>9.85</Value>
               </AnnualHeatingEfficiency>
+              <extension>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowNotTested>true</AirflowNotTested>
+              </extension>
             </HeatPump>
           </HVACPlant>
           <HVACControl>

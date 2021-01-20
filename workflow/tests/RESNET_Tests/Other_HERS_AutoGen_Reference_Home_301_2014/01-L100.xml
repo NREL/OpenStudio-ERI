@@ -28,8 +28,8 @@
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
-          <NumberofConditionedFloors>1</NumberofConditionedFloors>
-          <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+          <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>12312.0</ConditionedBuildingVolume>
@@ -302,6 +302,10 @@
                 <Value>0.82</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <extension>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowNotTested>true</AirflowNotTested>
+              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
@@ -314,6 +318,11 @@
                 <Units>SEER</Units>
                 <Value>11.0</Value>
               </AnnualCoolingEfficiency>
+              <extension>
+                <ChargeNotTested>true</ChargeNotTested>
+                <FanPowerNotTested>true</FanPowerNotTested>
+                <AirflowNotTested>true</AirflowNotTested>
+              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>

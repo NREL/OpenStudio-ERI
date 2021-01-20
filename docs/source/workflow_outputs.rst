@@ -1,0 +1,262 @@
+.. _outputs:
+
+Workflow Outputs
+================
+
+Upon completion of the ERI calculation, summary output files and simulation files are available.
+See the `sample_results <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results>`_ directory for examples of these outputs.
+
+Summary Files
+-------------
+
+Several summary files described below are found in the ``results`` directory.
+
+ERI_Results.csv
+~~~~~~~~~~~~~~~
+
+The ``ERI_Results.csv`` file includes the ERI result as well as the high-level components (e.g., REUL, EC_r, EC_x, IAD_Save) that comprise the ERI calculation.
+The file reflects the format of the Results tab of the HERS Method Test spreadsheet.
+
+Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
+
+See the `example ERI_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Results.csv>`_.
+
+ERI_Worksheet.csv
+~~~~~~~~~~~~~~~~~
+
+The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
+The file reflects the formate of the Worksheet tab of the HERS Method Test spreadsheet.
+
+Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
+
+See the `example ERI_Worksheet.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERI_Worksheet.csv>`_.
+
+ERI______Home.csv
+~~~~~~~~~~~~~~~~~
+
+A CSV file is written for each of the homes simulated (e.g., ``ERIReferenceHome.csv`` for the Reference home).
+The CSV file includes the following sections of output.
+
+See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.csv>`_.
+
+Annual Energy Consumption by Fuel Type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current fuel types are: 
+
+   ========================== ===========================
+   Type                       Notes
+   ========================== ===========================
+   Electricity: Total (MBtu)
+   Electricity: Net (MBtu)    Excludes any power produced by PV or generators.
+   Natural Gas: Total (MBtu)
+   Fuel Oil: Total (MBtu)
+   Propane: Total (MBtu)
+   Wood: Total (MBtu)         Currently unused for ERI.
+   Wood Pellets: Total (MBtu) Currently unused for ERI.
+   ========================== ===========================
+
+Annual Energy Consumption By Fuel Type and End Use
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current end use/fuel type combinations are:
+
+   ========================================================== ====================================================
+   Type                                                       Notes
+   ========================================================== ====================================================
+   Electricity: Heating (MBtu)
+   Electricity: Heating Fans/Pumps (MBtu)
+   Electricity: Cooling (MBtu)
+   Electricity: Cooling Fans/Pumps (MBtu)
+   Electricity: Hot Water (MBtu)
+   Electricity: Hot Water Recirc Pump (MBtu)
+   Electricity: Hot Water Solar Thermal Pump (MBtu)
+   Electricity: Lighting Interior (MBtu)
+   Electricity: Lighting Garage (MBtu)
+   Electricity: Lighting Exterior (MBtu)
+   Electricity: Mech Vent (MBtu)
+   Electricity: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   Electricity: Mech Vent Precooling (MBtu)                   Shared ventilation preconditioning system
+   Electricity: Whole House Fan (MBtu)
+   Electricity: Refrigerator (MBtu)
+   Electricity: Dehumidifier (MBtu)
+   Electricity: Dishwasher (MBtu)
+   Electricity: Clothes Washer (MBtu)
+   Electricity: Clothes Dryer (MBtu)
+   Electricity: Range/Oven (MBtu)
+   Electricity: Ceiling Fan (MBtu)
+   Electricity: Television (MBtu)
+   Electricity: Plug Loads (MBtu)
+   Electricity: PV (MBtu)                                     Negative value for any power produced
+   Electricity: Generator (MBtu)                              Negative value for power produced
+   Natural Gas: Heating (MBtu)
+   Natural Gas: Hot Water (MBtu)
+   Natural Gas: Clothes Dryer (MBtu)
+   Natural Gas: Range/Oven (MBtu)
+   Natural Gas: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   Natural Gas: Generator (MBtu)                              Positive value for any fuel consumed
+   Fuel Oil: Heating (MBtu)
+   Fuel Oil: Hot Water (MBtu)
+   Fuel Oil: Clothes Dryer (MBtu)
+   Fuel Oil: Range/Oven (MBtu)
+   Fuel Oil: Mech Vent Preheating (MBtu)                      Shared ventilation preconditioning system
+   Propane: Heating (MBtu)
+   Propane: Hot Water (MBtu)
+   Propane: Clothes Dryer (MBtu)
+   Propane: Range/Oven (MBtu)
+   Propane: Mech Vent Preheating (MBtu)                       Shared ventilation preconditioning system
+   Propane: Generator (MBtu)                                  Positive value for any fuel consumed
+   Wood Cord: Heating (MBtu)
+   Wood Cord: Hot Water (MBtu)
+   Wood Cord: Clothes Dryer (MBtu)
+   Wood Cord: Range/Oven (MBtu)
+   Wood Cord: Mech Vent Preheating (MBtu)                     Shared ventilation preconditioning system
+   Wood Pellets: Heating (MBtu)
+   Wood Pellets: Hot Water (MBtu)
+   Wood Pellets: Clothes Dryer (MBtu)
+   Wood Pellets: Range/Oven (MBtu)
+   Wood Pellets: Mech Vent Preheating (MBtu)                  Shared ventilation preconditioning system
+   ========================================================== ====================================================
+
+Annual Building Loads
+^^^^^^^^^^^^^^^^^^^^^
+
+Current annual building loads are:
+
+   ===================================== ==================================================================
+   Type                                  Notes
+   ===================================== ==================================================================
+   Load: Heating (MBtu)                  Includes HVAC distribution losses.
+   Load: Cooling (MBtu)                  Includes HVAC distribution losses.
+   Load: Hot Water: Delivered (MBtu)     Includes contributions by desuperheaters or solar thermal systems.
+   Load: Hot Water: Tank Losses (MBtu)
+   Load: Hot Water: Desuperheater (MBtu) Load served by the desuperheater.
+   Load: Hot Water: Solar Thermal (MBtu) Load served by the solar thermal system.
+   ===================================== ==================================================================
+
+Annual Unmet Building Loads
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current annual unmet building loads are:
+
+   ========================== =====
+   Type                       Notes
+   ========================== =====
+   Unmet Load: Heating (MBtu)
+   Unmet Load: Cooling (MBtu)
+   ========================== =====
+
+These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
+An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
+
+Peak Building Electricity
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current peak building electricity outputs are:
+
+   ================================== =========================================================
+   Type                               Notes
+   ================================== =========================================================
+   Peak Electricity: Winter Total (W) Winter season defined by operation of the heating system.
+   Peak Electricity: Summer Total (W) Summer season defined by operation of the cooling system.
+   ================================== =========================================================
+
+Peak Building Loads
+^^^^^^^^^^^^^^^^^^^
+
+Current peak building loads are:
+
+   ========================== ==================================
+   Type                       Notes
+   ========================== ==================================
+   Peak Load: Heating (kBtu)  Includes HVAC distribution losses.
+   Peak Load: Cooling (kBtu)  Includes HVAC distribution losses.
+   ========================== ==================================
+
+Annual Component Building Loads
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Component loads represent the estimated contribution of different building components to the annual heating/cooling building loads.
+The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
+Current component loads disaggregated by Heating/Cooling are:
+   
+   ================================================= =========================================================================================================
+   Type                                              Notes
+   ================================================= =========================================================================================================
+   Component Load: \*: Roofs (MBtu)                  Heat gain/loss through HPXML ``Roof`` elements adjacent to conditioned space
+   Component Load: \*: Ceilings (MBtu)               Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be ceilings) adjacent to conditioned space
+   Component Load: \*: Walls (MBtu)                  Heat gain/loss through HPXML ``Wall`` elements adjacent to conditioned space
+   Component Load: \*: Rim Joists (MBtu)             Heat gain/loss through HPXML ``RimJoist`` elements adjacent to conditioned space
+   Component Load: \*: Foundation Walls (MBtu)       Heat gain/loss through HPXML ``FoundationWall`` elements adjacent to conditioned space
+   Component Load: \*: Doors (MBtu)                  Heat gain/loss through HPXML ``Door`` elements adjacent to conditioned space
+   Component Load: \*: Windows (MBtu)                Heat gain/loss through HPXML ``Window`` elements adjacent to conditioned space, including solar
+   Component Load: \*: Skylights (MBtu)              Heat gain/loss through HPXML ``Skylight`` elements adjacent to conditioned space, including solar
+   Component Load: \*: Floors (MBtu)                 Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be floors) adjacent to conditioned space
+   Component Load: \*: Slabs (MBtu)                  Heat gain/loss through HPXML ``Slab`` elements adjacent to conditioned space
+   Component Load: \*: Internal Mass (MBtu)          Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
+   Component Load: \*: Infiltration (MBtu)           Heat gain/loss from airflow induced by stack and wind effects
+   Component Load: \*: Natural Ventilation (MBtu)    Heat gain/loss from airflow through operable windows
+   Component Load: \*: Mechanical Ventilation (MBtu) Heat gain/loss from airflow/fan energy from a whole house mechanical ventilation system
+   Component Load: \*: Whole House Fan (MBtu)        Heat gain/loss from airflow due to a whole house fan
+   Component Load: \*: Ducts (MBtu)                  Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
+   Component Load: \*: Internal Gains (MBtu)         Heat gain/loss from appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
+   ================================================= =========================================================================================================
+
+Annual Hot Water Uses
+^^^^^^^^^^^^^^^^^^^^^
+
+Current annual hot water uses are:
+
+   =================================== =====
+   Type                                Notes
+   =================================== =====
+   Hot Water: Clothes Washer (gal)
+   Hot Water: Dishwasher (gal)
+   Hot Water: Fixtures (gal)           Showers and faucets.
+   Hot Water: Distribution Waste (gal) 
+   =================================== =====
+
+ERI______Home_Hourly.csv
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+See the :ref:`running` section for requesting hourly outputs.
+When requested, a CSV file of hourly outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv`` for the Reference home).
+
+Depending on the outputs requested, CSV files may include:
+
+   =================================== =====
+   Type                                Notes
+   =================================== =====
+   Fuel Consumptions                   Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
+   End Use Consumptions                Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
+   Hot Water Uses                      Water use for each end use type (in gallons).
+   Total Loads                         Heating, cooling, and hot water loads (in kBtu) for the building.
+   Component Loads                     Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
+   Unmet Loads                         Unmet heating and cooling loads (in kBtu) for the building.
+   Zone Temperatures                   Average temperatures (in deg-F) for each space modeled (e.g., living space, attic, garage, basement, crawlspace, etc.).
+   Airflows                            Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
+   Weather                             Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
+   =================================== =====
+
+See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
+
+ERI______Home.xml
+~~~~~~~~~~~~~~~~~
+
+A HPXML file is written for each of the homes simulated (e.g., ``ERIReferenceHome.xml`` for the Reference home).
+The file reflects the configuration of the home after applying the ERI 301 ruleset.
+
+See the `example ERIRatedHome.xml <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.xml>`_.
+
+Simulation Files
+----------------
+
+In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``ERIRatedHome``, ``ERIReferenceHome``, etc. directories).
+
+.. warning:: 
+
+  It is highly discouraged for software tools to read the raw EnergyPlus output files. 
+  The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. 
+  If there are additional outputs of interest that are not available in our summary output files, please send us a request.
+
+See the `example ERIRatedHome directory <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/ERIRatedHome>`_.

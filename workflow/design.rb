@@ -43,6 +43,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   args['hpxml_path'] = output_hpxml
   args['output_dir'] = File.absolute_path(designdir)
   args['debug'] = debug
+  args['skip_validation'] = false
   update_args_hash(measures, measure_subdir, args)
 
   # Add reporting measure to workflow
@@ -54,6 +55,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   args['include_timeseries_hot_water_uses'] = hourly_outputs.include? 'hotwater'
   args['include_timeseries_total_loads'] = hourly_outputs.include? 'loads'
   args['include_timeseries_component_loads'] = hourly_outputs.include? 'componentloads'
+  args['include_timeseries_unmet_loads'] = hourly_outputs.include? 'unmetloads'
   args['include_timeseries_zone_temperatures'] = hourly_outputs.include? 'temperatures'
   args['include_timeseries_airflows'] = hourly_outputs.include? 'airflows'
   args['include_timeseries_weather'] = hourly_outputs.include? 'weather'

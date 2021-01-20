@@ -34,7 +34,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+      hpxmls, csvs, runtime = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml)]['Workflow Runtime (s)'] = runtime
     end
@@ -85,7 +85,7 @@ class EnergyRatingIndexTest < Minitest::Test
       xml2014 = File.absolute_path(File.join(xmldir, File.basename(xml, '.xml') + '_301_2014' + File.extname(xml)))
       XMLHelper.write_file(hpxml.to_oga, xml2014)
 
-      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name, hourly_output: true)
+      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name)
       all_results[File.basename(xml2014)] = _get_csv_results(csvs[:eri_results])
       all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
 
@@ -141,7 +141,7 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_weather_cache
     # Move existing -cache.csv file
     weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-    cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
+    cache_csv = File.join(weather_dir, 'US_CO_Boulder_AMY_2012-cache.csv')
     FileUtils.mv(cache_csv, "#{cache_csv}.bak")
 
     command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
@@ -151,6 +151,18 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Restore original and cleanup
     FileUtils.mv("#{cache_csv}.bak", cache_csv)
+  end
+
+  def test_hourly_output
+    test_name = 'hourly_output'
+
+    # Run simulation
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+
+    # Check for hourly output files
+    assert(File.exist?(csvs[:rated_hourly_results]))
+    assert(File.exist?(csvs[:ref_hourly_results]))
   end
 
   def test_resnet_ashrae_140
@@ -519,6 +531,10 @@ class EnergyRatingIndexTest < Minitest::Test
           vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
         end
       end
+      (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac_system|
+        hvac_system.airflow_not_tested = true
+        hvac_system.airflow_defect_ratio = nil
+      end
       XMLHelper.write_file(new_hpxml.to_oga, out_xml)
 
       hpxmls, csvs, runtime = _run_workflow(out_xml, test_name)
@@ -604,13 +620,12 @@ class EnergyRatingIndexTest < Minitest::Test
     # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
-    # Run sample files with hourly output turned on to test hourly results against annual results
+    rundir = File.join(@test_files_dir, test_name, File.basename(xml))
+
     hourly = ''
     if hourly_output
       hourly = ' --hourly ALL'
     end
-
-    rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
     # Run energy_rating_index workflow
     command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
@@ -639,6 +654,10 @@ class EnergyRatingIndexTest < Minitest::Test
     if using_iaf
       csvs[:iad_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.csv')
       csvs[:iadref_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+    end
+    if hourly_output
+      csvs[:rated_hourly_results] = File.join(rundir, 'results', 'ERIRatedHome_Hourly.csv')
+      csvs[:ref_hourly_results] = File.join(rundir, 'results', 'ERIReferenceHome_Hourly.csv')
     end
     if expect_error
       if expect_error_msgs.nil?
@@ -714,6 +733,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_hot_water_uses'] = false
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
+    args['include_timeseries_unmet_loads'] = false
     args['include_timeseries_zone_temperatures'] = false
     args['include_timeseries_airflows'] = false
     args['include_timeseries_weather'] = false
@@ -766,15 +786,15 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
     results = _get_csv_results(csv_path)
     if not is_heat
-      hvac = UnitConversions.convert(results['Electricity: Cooling (MBtu)'], 'MBtu', 'kwh').round(2)
-      hvac_fan = UnitConversions.convert(results['Electricity: Cooling Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac = UnitConversions.convert(results['End Use: Electricity: Cooling (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac_fan = UnitConversions.convert(results['End Use: Electricity: Cooling Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
     else
       if is_electric_heat
-        hvac = UnitConversions.convert(results['Electricity: Heating (MBtu)'], 'MBtu', 'kwh').round(2)
+        hvac = UnitConversions.convert(results['End Use: Electricity: Heating (MBtu)'], 'MBtu', 'kwh').round(2)
       else
-        hvac = UnitConversions.convert(results['Natural Gas: Heating (MBtu)'], 'MBtu', 'therm').round(2)
+        hvac = UnitConversions.convert(results['End Use: Natural Gas: Heating (MBtu)'], 'MBtu', 'therm').round(2)
       end
-      hvac_fan = UnitConversions.convert(results['Electricity: Heating Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac_fan = UnitConversions.convert(results['End Use: Electricity: Heating Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
     end
 
     assert_operator(hvac, :>, 0)
@@ -1807,9 +1827,9 @@ class EnergyRatingIndexTest < Minitest::Test
     CSV.foreach(results_csv) do |row|
       next if row.nil? || row[0].nil?
 
-      if ['Electricity: Hot Water (MBtu)', 'Natural Gas: Hot Water (MBtu)'].include? row[0]
+      if ['End Use: Electricity: Hot Water (MBtu)', 'End Use: Natural Gas: Hot Water (MBtu)'].include? row[0]
         rated_dhw = Float(row[1])
-      elsif row[0] == 'Electricity: Hot Water Recirc Pump (MBtu)'
+      elsif row[0] == 'End Use: Electricity: Hot Water Recirc Pump (MBtu)'
         rated_recirc = Float(row[1])
       elsif row[0].start_with?('Hot Water:') && row[0].include?('(gal)')
         rated_gpd += (Float(row[1]) / 365.0)

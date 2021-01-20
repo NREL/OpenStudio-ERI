@@ -74,7 +74,7 @@ class Constants
   end
 
   def self.ERIVersions
-    return ['2014', '2014A', '2014AD', '2014ADE', '2014ADEG', '2014ADEGL', '2019', '2019A']
+    return ['2014', '2014A', '2014AD', '2014ADE', '2014ADEG', '2014ADEGL', '2019', '2019A', '2019AB']
   end
 
   def self.FluidWater
@@ -369,6 +369,10 @@ class Constants
     return "#{hvac_name} shared pump"
   end
 
+  def self.ObjectNameSkylightShade
+    return 'skylight shade'
+  end
+
   def self.ObjectNameSolarHotWater
     return 'solar hot water'
   end
@@ -403,6 +407,10 @@ class Constants
 
   def self.ObjectNameWholeHouseFan
     return 'whole house fan'
+  end
+
+  def self.ObjectNameWindowShade
+    return 'window shade'
   end
 
   def self.ScheduleTypeLimitsFraction
@@ -506,6 +514,18 @@ class Constants
   end
 
   def self.SizingInfoHVACCapacityRatioHeating
+    return __method__.to_s
+  end
+
+  def self.SizingInfoHVACAirflowDefectRatioCooling
+    return __method__.to_s
+  end
+
+  def self.SizingInfoHVACAirflowDefectRatioHeating
+    return __method__.to_s
+  end
+
+  def self.SizingInfoHVACChargeDefectRatio
     return __method__.to_s
   end
 

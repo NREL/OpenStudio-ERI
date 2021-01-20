@@ -88,11 +88,16 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path)
-
-    if not validate_hpxml(runner, hpxml_input_path)
-      return false
+    stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml'),
+                   File.join(File.dirname(__FILE__), 'resources', '301validator.xml')]
+    @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
+    @orig_hpxml.errors.each do |error|
+      runner.registerError(error)
     end
+    @orig_hpxml.warnings.each do |warning|
+      runner.registerWarning(warning)
+    end
+    return false unless @orig_hpxml.errors.empty?
 
     # Weather file
     epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
@@ -126,31 +131,6 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     end
 
     return true
-  end
-
-  def validate_hpxml(runner, hpxml_path)
-    is_valid = true
-
-    # Validate input HPXML against schematron docs
-    stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml'),
-                   File.join(File.dirname(__FILE__), 'resources', '301validator.xml')]
-    errors, warnings = Validator.run_validators(@orig_hpxml.doc, stron_paths)
-    errors.each do |error|
-      runner.registerError("#{hpxml_path}: #{error}")
-      is_valid = false
-    end
-    warnings.each do |warning|
-      runner.registerWarning("#{warning}")
-    end
-
-    # Check for additional errors
-    errors = @orig_hpxml.check_for_errors()
-    errors.each do |error|
-      runner.registerError("#{hpxml_path}: #{error}")
-      is_valid = false
-    end
-
-    return is_valid
   end
 end
 
