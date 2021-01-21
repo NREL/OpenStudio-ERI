@@ -25,7 +25,7 @@ ERI_Worksheet.csv
 ~~~~~~~~~~~~~~~~~
 
 The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
-The file reflects the formate of the Worksheet tab of the HERS Method Test spreadsheet.
+The file reflects the format of the Worksheet tab of the HERS Method Test spreadsheet.
 
 Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
 
