@@ -330,7 +330,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   if results[:teu] > 0
     results[:pefrac] = (results[:teu] - results[:opp]) / results[:teu]
   end
-  
+
   results[:eul_dh] = rated_output[:elecDehumidifier]
   results[:eul_la] = (rated_output[:elecLightingInterior] + rated_output[:elecLightingExterior] +
                       rated_output[:elecLightingGarage] + rated_output[:elecRefrigerator] +
