@@ -1270,6 +1270,8 @@ def create_sample_hpxmls
                   'invalid_files/clothes-washer-location.xml',
                   'invalid_files/clothes-dryer-location.xml',
                   'invalid_files/cooking-range-location.xml',
+                  'invalid_files/dehumidifier-setpoints.xml',
+                  'invalid_files/dehumidifier-fraction-served.xml',
                   'invalid_files/dhw-invalid-ef-tank.xml',
                   'invalid_files/dhw-invalid-uef-tank-heat-pump.xml',
                   'invalid_files/dishwasher-location.xml',
