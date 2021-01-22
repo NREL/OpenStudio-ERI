@@ -1399,8 +1399,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Cooling systems
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Thermostat
 
-    # Note: 301-2019 Addendum B says Grade I, but is being changed to grade III
-    # so that IAD and IAD Reference are the same.
+    # Note: 301-2019 Addendum B says Grade I, but it was changed to Grade III in
+    # RESNET 55i.
     set_systems_hvac_reference(orig_hpxml, new_hpxml)
 
     # Change DSE to 1.0
@@ -1424,7 +1424,7 @@ class EnergyRatingIndex301Ruleset
     if mech_vent_fans.empty?
       # Airflow only
       new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                                     fan_type: HPXML::MechVentTypeBalanced,
+                                     fan_type: HPXML::MechVentTypeBalanced, # Per RESNET 55i
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
                                      fan_power: 0.0,
@@ -1458,7 +1458,7 @@ class EnergyRatingIndex301Ruleset
 
       # Airflow and fan power
       new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
-                                     fan_type: HPXML::MechVentTypeBalanced,
+                                     fan_type: HPXML::MechVentTypeBalanced, # Per RESNET 55i
                                      tested_flow_rate: q_fan_airflow,
                                      hours_in_operation: 24,
                                      fan_power: fan_power_w,
@@ -1481,7 +1481,7 @@ class EnergyRatingIndex301Ruleset
         # Airflow measured; set to max of provided value and min Qfan requirement
         average_oa_unit_flow_rate = [orig_vent_fan.average_oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
         if average_oa_unit_flow_rate > orig_vent_fan.average_oa_unit_flow_rate
-          # Increase hours in operation to try to meet requirement
+          # Increase hours in operation to try to meet requirement, per RESNET 55i
           hours_in_operation = [average_oa_unit_flow_rate / orig_vent_fan.average_oa_unit_flow_rate * hours_in_operation, 24.0].min
         end
       else
@@ -1508,7 +1508,7 @@ class EnergyRatingIndex301Ruleset
         # Fan power provided
         fan_power = orig_vent_fan.fan_power
         if not orig_vent_fan.flow_rate_not_tested
-          # Increase proportionally with airflow
+          # Increase proportionally with airflow, per RESNET 55i
           fan_power = orig_vent_fan.fan_power * total_unit_flow_rate / orig_vent_fan.total_unit_flow_rate
         end
         if not orig_vent_fan.is_shared_system
@@ -2076,7 +2076,7 @@ class EnergyRatingIndex301Ruleset
       ief = 1.82
     end
     new_hpxml.dehumidifiers.add(id: 'Dehumidifier',
-                                type: dehumidifier.type,
+                                type: dehumidifier.type, # Per RESNET 55i
                                 capacity: dehumidifier.capacity,
                                 integrated_energy_factor: ief,
                                 rh_setpoint: 0.60,
@@ -2335,7 +2335,7 @@ class EnergyRatingIndex301Ruleset
     end
     cfm_oa_addtl_exhaust -= unmeasured_exhaust_fans.map { |f| q_fans[f.id] }.sum(0.0)
 
-    # 2. Ensure each unmeasured system is at least 15 cfm per P. Fairey and ASHRAE 62.2
+    # 2. Ensure each unmeasured system is at least 15 cfm per RESNET 55i
     q_fans.each do |id, val|
       q_fans[id] = [q_fans[id], 15.0].max
     end
@@ -2759,7 +2759,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.get_reference_basement_wall_rvalue()
     # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
-    # Basement Wall Exterior R-Value
+    # Basement Wall Exterior R-Value per RESNET 55i
     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
       return 0.0
     elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
