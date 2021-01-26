@@ -2063,40 +2063,42 @@ class EnergyRatingIndex301Ruleset
     return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
     return if orig_hpxml.dehumidifiers.size == 0
 
-    dehumidifier = orig_hpxml.dehumidifiers[0]
-    if dehumidifier.capacity <= 25.0
-      ief = 0.79
-    elsif dehumidifier.capacity <= 35.0
-      ief = 0.95
-    elsif dehumidifier.capacity <= 54.0
-      ief = 1.04
-    elsif dehumidifier.capacity < 75.0
-      ief = 1.20
-    else
-      ief = 1.82
+    orig_hpxml.dehumidifiers.each do |dehumidifier|
+      if dehumidifier.capacity <= 25.0
+        ief = 0.79
+      elsif dehumidifier.capacity <= 35.0
+        ief = 0.95
+      elsif dehumidifier.capacity <= 54.0
+        ief = 1.04
+      elsif dehumidifier.capacity < 75.0
+        ief = 1.20
+      else
+        ief = 1.82
+      end
+      new_hpxml.dehumidifiers.add(id: dehumidifier.id,
+                                  type: dehumidifier.type, # Per RESNET 55i
+                                  capacity: dehumidifier.capacity,
+                                  integrated_energy_factor: ief,
+                                  rh_setpoint: 0.60,
+                                  fraction_served: dehumidifier.fraction_served,
+                                  location: dehumidifier.location)
     end
-    new_hpxml.dehumidifiers.add(id: 'Dehumidifier',
-                                type: dehumidifier.type, # Per RESNET 55i
-                                capacity: dehumidifier.capacity,
-                                integrated_energy_factor: ief,
-                                rh_setpoint: 0.60,
-                                fraction_served: dehumidifier.fraction_served,
-                                location: dehumidifier.location)
   end
 
   def self.set_appliances_dehumidifier_rated(orig_hpxml, new_hpxml)
     return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
     return if orig_hpxml.dehumidifiers.size == 0
 
-    dehumidifier = orig_hpxml.dehumidifiers[0]
-    new_hpxml.dehumidifiers.add(id: 'Dehumidifier',
-                                type: dehumidifier.type,
-                                capacity: dehumidifier.capacity,
-                                energy_factor: dehumidifier.energy_factor,
-                                integrated_energy_factor: dehumidifier.integrated_energy_factor,
-                                rh_setpoint: 0.60,
-                                fraction_served: dehumidifier.fraction_served,
-                                location: dehumidifier.location)
+    orig_hpxml.dehumidifiers.each do |dehumidifier|
+      new_hpxml.dehumidifiers.add(id: dehumidifier.id,
+                                  type: dehumidifier.type,
+                                  capacity: dehumidifier.capacity,
+                                  energy_factor: dehumidifier.energy_factor,
+                                  integrated_energy_factor: dehumidifier.integrated_energy_factor,
+                                  rh_setpoint: 0.60,
+                                  fraction_served: dehumidifier.fraction_served,
+                                  location: dehumidifier.location)
+    end
   end
 
   def self.set_appliances_dehumidifier_iad(orig_hpxml, new_hpxml)
