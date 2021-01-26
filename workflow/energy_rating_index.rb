@@ -331,6 +331,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
     results[:pefrac] = (results[:teu] - results[:opp]) / results[:teu]
   end
 
+  results[:eul_dh] = rated_output[:elecDehumidifier]
   results[:eul_la] = (rated_output[:elecLightingInterior] + rated_output[:elecLightingExterior] +
                       rated_output[:elecLightingGarage] + rated_output[:elecRefrigerator] +
                       rated_output[:elecDishwasher] + rated_output[:elecClothesWasher] +
@@ -341,9 +342,9 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
                       rated_output[:oilClothesDryer] + rated_output[:oilRangeOven] +
                       rated_output[:propaneClothesDryer] + rated_output[:propaneRangeOven] +
                       rated_output[:woodcordClothesDryer] + rated_output[:woodcordRangeOven] +
-                      rated_output[:woodpelletsClothesDryer] + rated_output[:woodpelletsRangeOven] +
-                      rated_output[:elecDehumidifier])
+                      rated_output[:woodpelletsClothesDryer] + rated_output[:woodpelletsRangeOven])
 
+  results[:reul_dh] = ref_output[:elecDehumidifier]
   results[:reul_la] = (ref_output[:elecLightingInterior] + ref_output[:elecLightingExterior] +
                        ref_output[:elecLightingGarage] + ref_output[:elecRefrigerator] +
                        ref_output[:elecDishwasher] + ref_output[:elecClothesWasher] +
@@ -354,8 +355,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
                        ref_output[:oilClothesDryer] + ref_output[:oilRangeOven] +
                        ref_output[:propaneClothesDryer] + ref_output[:propaneRangeOven] +
                        ref_output[:woodcordClothesDryer] + ref_output[:woodcordRangeOven] +
-                       ref_output[:woodpelletsClothesDryer] + ref_output[:woodpelletsRangeOven] +
-                       ref_output[:elecDehumidifier])
+                       ref_output[:woodpelletsClothesDryer] + ref_output[:woodpelletsRangeOven])
 
   # === #
   # ERI #
@@ -364,13 +364,13 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
   results[:trl] = results[:reul_heat].sum(0.0) +
                   results[:reul_cool].sum(0.0) +
                   results[:reul_dhw].sum(0.0) +
-                  results[:reul_la]
+                  results[:reul_la] + results[:reul_dh]
   results[:tnml] = results[:nmeul_heat].sum(0.0) +
                    results[:nmeul_cool].sum(0.0) +
                    results[:nmeul_dhw].sum(0.0) +
                    results[:nmeul_vent_preheat].sum(0.0) +
                    results[:nmeul_vent_precool].sum(0.0) +
-                   results[:eul_la]
+                   results[:eul_la] + results[:eul_dh]
 
   if not results_iad.nil?
 
@@ -410,6 +410,7 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   results_out << ['EC_x Heating (MBtu)', results[:ec_x_heat].map { |x| x.round(2) }.join(',')]
   results_out << ['EC_x Cooling (MBtu)', results[:ec_x_cool].map { |x| x.round(2) }.join(',')]
   results_out << ['EC_x Hot Water (MBtu)', results[:ec_x_dhw].map { |x| x.round(2) }.join(',')]
+  results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(2)]
   results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(2)]
   if not results_iad.nil?
     results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
@@ -469,6 +470,7 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   if not results_iad.nil?
     worksheet_out << ['Ref Home NS', ref_output[:hpxml_nst]]
   end
+  worksheet_out << ['Ref dehumid', results[:reul_dh].round(2)]
   worksheet_out << ['Ref L&A resMELs', ref_output[:elecPlugLoads].round(2)]
   worksheet_out << ['Ref L&A intLgt', (ref_output[:elecLightingInterior] + ref_output[:elecLightingGarage]).round(2)]
   worksheet_out << ['Ref L&A extLgt', ref_output[:elecLightingExterior].round(2)]
@@ -480,7 +482,6 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   worksheet_out << ['Ref L&A cWash', ref_output[:elecClothesWasher].round(2)]
   worksheet_out << ['Ref L&A mechV', ref_output[:elecMechVent].round(2)]
   worksheet_out << ['Ref L&A ceilFan', ref_output[:elecCeilingFan].round(2)]
-  worksheet_out << ['Ref L&A dehumid', ref_output[:elecDehumidifier].round(2)]
   worksheet_out << ['Ref L&A total', results[:reul_la].round(2)]
   CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
 end
