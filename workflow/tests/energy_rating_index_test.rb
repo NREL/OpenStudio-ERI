@@ -628,7 +628,7 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # Run energy_rating_index workflow
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir}"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly} -o #{rundir} --debug"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
