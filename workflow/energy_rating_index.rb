@@ -744,4 +744,4 @@ versions.each do |program, version|
 end
 
 puts "Output files written to #{resultsdir}"
-puts "Completed in #{(Time.now - start_time).round(1)} seconds."
+puts "Completed in #{(Time.now - start_time).round(1)}s."
