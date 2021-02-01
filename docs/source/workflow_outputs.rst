@@ -48,7 +48,7 @@ Current fuel types are:
    Type                       Notes
    ========================== ===========================
    Electricity: Total (MBtu)
-   Electricity: Net (MBtu)    Excludes any power produced by PV or generators.
+   Electricity: Net (MBtu)    Subtracts any power produced by PV or generators.
    Natural Gas: Total (MBtu)
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)
@@ -237,6 +237,9 @@ Depending on the outputs requested, CSV files may include:
    Airflows                            Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
    Weather                             Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
    =================================== =====
+
+Timestamps in the output use the end-of-hour convention.
+Most outputs will be summed over the hour (e.g., energy) but some will be averaged over the hour (e.g., temperatures, airflows).
 
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
 
