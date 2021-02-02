@@ -1247,7 +1247,7 @@ class HVAC
       if heat_pump.heating_capacity_17F.nil?
         heat_cap_ft_spec = [[0.566333415, -0.000744164, -0.0000103, 0.009414634, 0.0000506, -0.00000675]]
       else
-        heat_cap_ft_spec = calc_heat_cap_ft_spec_using_capacity_17F(hp_ap.num_speeds, heat_pump)
+        heat_cap_ft_spec = calc_heat_cap_ft_spec_using_capacity_17F(heat_pump)
       end
       heat_cops = [calc_cop_heating_1speed(heat_pump.heating_efficiency_hspf, hp_ap.heat_c_d, hp_ap.fan_power_rated, heat_eir_ft_spec, heat_cap_ft_spec)]
     elsif hp_ap.num_speeds == 2
@@ -1264,7 +1264,7 @@ class HVAC
         heat_cap_ft_spec = [[0.335690634, 0.002405123, -0.0000464, 0.013498735, 0.0000499, -0.00000725],
                             [0.306358843, 0.005376987, -0.0000579, 0.011645092, 0.0000591, -0.0000203]]
       else
-        heat_cap_ft_spec = calc_heat_cap_ft_spec_using_capacity_17F(hp_ap.num_speeds, heat_pump)
+        heat_cap_ft_spec = calc_heat_cap_ft_spec_using_capacity_17F(heat_pump)
       end
       heat_cops = calc_cops_heating_2speed(heat_pump.heating_efficiency_hspf, hp_ap.heat_c_d, heat_capacity_ratios, heat_fan_speed_ratios, hp_ap.fan_power_rated, heat_eir_ft_spec, heat_cap_ft_spec)
     elsif hp_ap.num_speeds == 4
@@ -1283,7 +1283,7 @@ class HVAC
                             [0.697171186, -0.006189599, 0.0000337077, 0.014291981, 0.0000105633, -0.0000387956],
                             [0.555513805, -0.001337363, -0.00000265117, 0.014328826, 0.0000163849, -0.0000480711]]
       else
-        heat_cap_ft_spec = calc_heat_cap_ft_spec_using_capacity_17F(hp_ap.num_speeds, heat_pump)
+        heat_cap_ft_spec = calc_heat_cap_ft_spec_using_capacity_17F(heat_pump)
       end
       heat_cops = calc_cops_heating_4speed(heat_pump.heating_efficiency_hspf, hp_ap.heat_c_d, heat_capacity_ratios, heat_fan_speed_ratios, hp_ap.fan_power_rated, heat_eir_ft_spec, heat_cap_ft_spec)
     end
@@ -1809,7 +1809,9 @@ class HVAC
     end
   end
 
-  def self.calc_heat_cap_ft_spec_using_capacity_17F(num_speeds, heat_pump)
+  def self.calc_heat_cap_ft_spec_using_capacity_17F(heat_pump)
+    num_speeds = heat_pump.additional_properties.num_speeds
+
     # Indoor temperature slope and intercept used if Q_17 is specified (derived using heat_cap_ft_spec)
     # NOTE: Using Q_17 assumes the same curve for all speeds
     if num_speeds == 1
@@ -3942,25 +3944,18 @@ class HVAC
 
     hpxml.cooling_systems.each do |cooling_system|
       heating_system = nil
-      if cooling_system.cooling_system_type == HPXML::HVACTypeCentralAirConditioner
+      if is_central_air_conditioner_and_furnace(hpxml, cooling_system.attached_heating_system, cooling_system)
         heating_system = cooling_system.attached_heating_system
-        if not is_central_air_conditioner_and_furnace(hpxml, heating_system, cooling_system)
-          heating_system = nil
-        end
       end
       hvac_systems << { cooling: cooling_system,
                         heating: heating_system }
     end
 
     hpxml.heating_systems.each do |heating_system|
-      cooling_system = nil
-      if heating_system.heating_system_type == HPXML::HVACTypeFurnace
-        cooling_system = heating_system.attached_cooling_system
-        if is_central_air_conditioner_and_furnace(hpxml, heating_system, cooling_system)
-          next # Already processed combined AC+furnace
-        end
+      if is_central_air_conditioner_and_furnace(hpxml, heating_system, heating_system.attached_cooling_system)
+        next # Already processed combined AC+furnace
       end
-      hvac_systems << { cooling: cooling_system,
+      hvac_systems << { cooling: nil,
                         heating: heating_system }
     end
 
