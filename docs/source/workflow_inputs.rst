@@ -564,7 +564,7 @@ If a wall furnace or floor furnace is specified, additional information is enter
   Element                                          Type    Units  Constraints  Required  Default  Notes
   ===============================================  ======  =====  ===========  ========  =======  ===================
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double  frac   0 - 1        Yes                Rated efficiency
-  ``extension/FanPowerWatts``                      double  W      >= 0         No        0        Installed fan power
+  ``extension/FanPowerWatts``                      double  W      >= 0         No        0        Fan power
   ===============================================  ======  =====  ===========  ========  =======  ===================
 
 Boiler
@@ -609,7 +609,7 @@ If a stove is specified, additional information is entered in ``HeatingSystem``.
   Element                                             Type    Units  Constraints  Required  Default    Notes
   ==================================================  ======  =====  ===========  ========  =========  ===================
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac   0 - 1        Yes                  Efficiency
-  ``extension/FanPowerWatts``                         double  W      >= 0         No        40         Installed fan power
+  ``extension/FanPowerWatts``                         double  W      >= 0         No        40         Fan power
   ==================================================  ======  =====  ===========  ========  =========  ===================
 
 Portable/Fixed Heater
@@ -621,7 +621,7 @@ If a portable heater or fixed heater is specified, additional information is ent
   Element                                             Type    Units  Constraints  Required  Default    Notes
   ==================================================  ======  =====  ===========  ========  =========  ===================
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac   0 - 1        Yes                  Efficiency
-  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Installed fan power
+  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Fan power
   ==================================================  ======  =====  ===========  ========  =========  ===================
 
 Fireplace
@@ -633,7 +633,7 @@ If a fireplace is specified, additional information is entered in ``HeatingSyste
   Element                                             Type    Units  Constraints  Required  Default    Notes
   ==================================================  ======  =====  ===========  ========  =========  ===================
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac   0 - 1        Yes                  Efficiency
-  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Installed fan power
+  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Fan power
   ==================================================  ======  =====  ===========  ========  =========  ===================
 
 .. _hvac_cooling:
@@ -881,7 +881,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``AnnualCoolingEfficiency[Units="EER"]/Value``                             double             Btu/Wh  > 0             Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="COP"]/Value``                             double             W/W     > 0             Yes                  Rated heating efficiency
   ``NumberofUnitsServed``                                                    integer                    > 0             See [#]_             Number of dwelling units served
-  ``extension/PumpPowerWattsPerTon``                                         double             W/ton   >= 0            Yes                  Installed pump efficiency
+  ``extension/PumpPowerWattsPerTon``                                         double             W/ton   >= 0            Yes                  Pump efficiency based on tons of cooling capacity
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/SharedLoopWatts``                                              double             W       >= 0            See [#]_             Shared pump power [#]_
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
