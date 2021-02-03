@@ -43,11 +43,10 @@ HPXML files submitted to OpenStudio-HPXML should undergo a two step validation p
 Input Defaults
 **************
 
-An increasing number of elements in the HPXML file are being made optional with "smart" defaults.
+A large number of elements in the HPXML file are optional and can be defaulted.
 Default values, equations, and logic are described throughout this documentation.
 
-Most defaults can also be seen by using the ``debug`` argument/flag when running the workflow on an actual HPXML file.
-This will create a new HPXML file (``in.xml`` in the run directory) where additional fields are populated for inspection.
+Defaults can also be seen in the ``in.xml`` file generated in the run directory, where additional fields are populated for inspection.
 
 For example, suppose a HPXML file has a window defined as follows:
 
@@ -83,9 +82,9 @@ In the ``in.xml`` file, the window would have additional elements like so:
 
 .. note::
 
-  The OpenStudio-HPXML workflow generally treats missing HPXML objects differently than missing properties.
-  For example, if there is a ``Window`` with no ``Overhangs`` object defined, the window will be interpreted as having no overhangs and modeled this way.
-  On the other hand, if there is a ``Window`` element with no ``FractionOperable`` property defined, it is assumed that the operable property of the window is unknown and will be defaulted in the model according to :ref:`windowinputs`.
+  The OpenStudio-HPXML workflow generally treats missing elements differently than missing values.
+  For example, if there is a ``Window`` with no ``Overhangs`` element defined, the window will be interpreted as having no overhangs and modeled this way.
+  On the other hand, if there is a ``Window`` with no ``FractionOperable`` value defined, it is assumed that the operable property of the window is unknown and will be defaulted in the model according to :ref:`windowinputs`.
 
 HPXML Software Info
 -------------------
@@ -674,7 +673,7 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
   ===============================================  ======  =====  ===========  ========  =========  ================================================
   ``DistributionSystem``                           idref          See [#]_     Yes                  ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double  frac   0 - 1        Yes                  Rated efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm  >= 0         No        See [#]_   Installed fan efficiency [#]_
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm  >= 0         No        See [#]_   Fan efficiency [#]_
   ``extension/AirflowDefectRatio``                 double  frac   > -1         No        0.0        Deviation between design/installed airflows [#]_
   ===============================================  ======  =====  ===========  ========  =========  ================================================
 
@@ -693,7 +692,7 @@ If a wall furnace or floor furnace is specified, additional information is enter
   Element                                          Type    Units  Constraints  Required  Default  Notes
   ===============================================  ======  =====  ===========  ========  =======  ===================
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double  frac   0 - 1        Yes                Rated efficiency
-  ``extension/FanPowerWatts``                      double  W      >= 0         No        0        Installed fan power
+  ``extension/FanPowerWatts``                      double  W      >= 0         No        0        Fan power
   ===============================================  ======  =====  ===========  ========  =======  ===================
 
 Boiler
@@ -738,7 +737,7 @@ If a stove is specified, additional information is entered in ``HeatingSystem``.
   Element                                             Type    Units  Constraints  Required  Default    Notes
   ==================================================  ======  =====  ===========  ========  =========  ===================
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac   0 - 1        Yes                  Efficiency
-  ``extension/FanPowerWatts``                         double  W      >= 0         No        40         Installed fan power
+  ``extension/FanPowerWatts``                         double  W      >= 0         No        40         Fan power
   ==================================================  ======  =====  ===========  ========  =========  ===================
 
 Portable/Fixed Heater
@@ -750,7 +749,7 @@ If a portable heater or fixed heater is specified, additional information is ent
   Element                                             Type    Units  Constraints  Required  Default    Notes
   ==================================================  ======  =====  ===========  ========  =========  ===================
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac   0 - 1        Yes                  Efficiency
-  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Installed fan power
+  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Fan power
   ==================================================  ======  =====  ===========  ========  =========  ===================
 
 Fireplace
@@ -762,7 +761,7 @@ If a fireplace is specified, additional information is entered in ``HeatingSyste
   Element                                             Type    Units  Constraints  Required  Default    Notes
   ==================================================  ======  =====  ===========  ========  =========  ===================
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac   0 - 1        Yes                  Efficiency
-  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Installed fan power
+  ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Fan power
   ==================================================  ======  =====  ===========  ========  =========  ===================
 
 .. _hvac_cooling:
@@ -799,7 +798,7 @@ If a central air conditioner is specified, additional information is entered in 
   ``CoolingCapacity``                              double    Btu/hr  >= 0         No        autosized  Cooling capacity
   ``SensibleHeatFraction``                         double    frac    0 - 1        No                   Sensible heat fraction
   ``CompressorType``                               string            See [#]_     No        See [#]_   Type of compressor
-  ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Installed fan efficiency [#]_
+  ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Fan efficiency [#]_
   ``extension/AirflowDefectRatio``                 double    frac    > -1         No        0.0        Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double    frac    > -1         No        0.0        Deviation between design/installed charges [#]_
   ===============================================  ========  ======  ===========  ========  =========  ================================================
@@ -845,14 +844,15 @@ Mini-Split
 
 If a mini-split is specified, additional information is entered in ``CoolingSystem``.
 
-  =================================  ========  ======  ===========  ========  =========  ===============================================
-  Element                            Type      Units   Constraints  Required  Default    Notes
-  =================================  ========  ======  ===========  ========  =========  ===============================================
-  ``DistributionSystem``             idref             See [#]_     No                   ID of attached distribution system
-  ``CoolingCapacity``                double    Btu/hr  >= 0         No        autosized  Cooling capacity
-  ``SensibleHeatFraction``           double    frac    0 - 1        No                   Sensible heat fraction
-  ``extension/ChargeDefectRatio``    double    frac    > -1         No        0.0        Deviation between design/installed charges [#]_
-  =================================  ========  ======  ===========  ========  =========  ===============================================
+  ===============================================  ========  ======  ===========  ========  =========  ===============================================
+  Element                                          Type      Units   Constraints  Required  Default    Notes
+  ===============================================  ========  ======  ===========  ========  =========  ===============================================
+  ``DistributionSystem``                           idref             See [#]_     No                   ID of attached distribution system
+  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double    Btu/Wh  > 0          Yes                  Rated cooling efficiency
+  ``CoolingCapacity``                              double    Btu/hr  >= 0         No        autosized  Cooling capacity
+  ``SensibleHeatFraction``                         double    frac    0 - 1        No                   Sensible heat fraction
+  ``extension/ChargeDefectRatio``                  double    frac    > -1         No        0.0        Deviation between design/installed charges [#]_
+  ===============================================  ========  ======  ===========  ========  =========  ===============================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution or DSE.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
@@ -863,7 +863,7 @@ If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been ent
   =================================  ========  ======  ===========  ========  =========  ===============================================
   Element                            Type      Units   Constraints  Required  Default    Notes
   =================================  ========  ======  ===========  ========  =========  ===============================================
-  ``extension/FanPowerWattsPerCFM``  double    W/cfm   >= 0         No        0.18       Installed fan efficiency
+  ``extension/FanPowerWattsPerCFM``  double    W/cfm   >= 0         No        0.18       Fan efficiency
   ``extension/AirflowDefectRatio``   double    frac    > -1         No        0.0        Deviation between design/installed airflows [#]_
   =================================  ========  ======  ===========  ========  =========  ===============================================
 
@@ -980,7 +980,7 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double    Btu/Wh  > 0          Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double    Btu/Wh  > 0          Yes                  Rated heating efficiency
   ``HeatingCapacity17F``                           double    Btu/hr  >= 0         No                   Heating capacity at 17F, if available
-  ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Installed fan efficiency
+  ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Fan efficiency
   ``extension/AirflowDefectRatio``                 double    frac    > -1         No        0.0        Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double    frac    > -1         No        0.0        Deviation between design/installed charges [#]_
   ===============================================  ========  ======  ===========  ========  =========  ================================================
@@ -1018,7 +1018,7 @@ If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been ent
   =================================  ========  ======  ===========  ========  =========  ===============================================
   Element                            Type      Units   Constraints  Required  Default    Notes
   =================================  ========  ======  ===========  ========  =========  ===============================================
-  ``extension/FanPowerWattsPerCFM``  double    W/cfm   >= 0         No        0.18       Installed fan efficiency
+  ``extension/FanPowerWattsPerCFM``  double    W/cfm   >= 0         No        0.18       Fan efficiency
   ``extension/AirflowDefectRatio``   double    frac    > -1         No        0.0        Deviation between design/installed airflows [#]_
   =================================  ========  ======  ===========  ========  =========  ===============================================
 
@@ -1038,8 +1038,8 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``AnnualCoolingEfficiency[Units="EER"]/Value``   double    Btu/Wh  > 0          Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="COP"]/Value``   double    W/W     > 0          Yes                  Rated heating efficiency
   ``NumberofUnitsServed``                          integer           > 0          See [#]_             Number of dwelling units served
-  ``extension/PumpPowerWattsPerTon``               double    W/ton   >= 0         No        See [#]_   Installed pump efficiency
-  ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Installed fan efficiency
+  ``extension/PumpPowerWattsPerTon``               double    W/ton   >= 0         No        See [#]_   Pump efficiency based on tons of cooling capacity
+  ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Fan efficiency
   ``extension/SharedLoopWatts``                    double    W       >= 0         See [#]_             Shared pump power [#]_
   ``extension/AirflowDefectRatio``                 double    frac    > -1         No        0.0        Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double    frac    0.0 [#]_     No        0.0        Deviation between design/installed charges [#]_
@@ -1047,9 +1047,9 @@ If a ground-to-air heat pump is specified, additional information is entered in 
 
   .. [#] IsSharedSystem should be true if the SFA/MF building has multiple ground source heat pumps connected to a shared hydronic circulation loop.
   .. [#] HVACDistribution type must be AirDistribution or DSE.
-  .. [#] If PumpPowerWattsPerTon not provided, defaults to 30 W/ton of cooling capacity per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_ for a closed loop system.
-  .. [#] If FanPowerWattsPerCFM not provided, defaulted to 0.5 W/cfm if COP <= 8.75/3.2, else 0.375 W/cfm.
   .. [#] NumberofUnitsServed only required if IsSharedSystem is true, in which case it must be > 1.
+  .. [#] If PumpPowerWattsPerTon not provided, defaults to 30 W/ton per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_ for a closed loop system.
+  .. [#] If FanPowerWattsPerCFM not provided, defaulted to 0.5 W/cfm if COP <= 8.75/3.2, else 0.375 W/cfm.
   .. [#] SharedLoopWatts only required if IsSharedSystem is true.
   .. [#] Shared loop pump power attributed to the dwelling unit is calculated as SharedLoopWatts / NumberofUnitsServed.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
