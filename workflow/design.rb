@@ -40,8 +40,9 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   # Add HPXML translator measure to workflow
   measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
   args = {}
+  output_dir = File.absolute_path(designdir)
   args['hpxml_path'] = output_hpxml
-  args['output_dir'] = File.absolute_path(designdir)
+  args['output_dir'] = output_dir
   args['debug'] = debug
   args['skip_validation'] = !debug
   update_args_hash(measures, measure_subdir, args)
@@ -63,6 +64,12 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
 
   results = run_hpxml_workflow(designdir, hpxml, measures, measures_dir, debug: debug,
                                                                          print_prefix: "[#{design_name}] ")
+
+  # Update, e.g., ERIRatedHome.xml to include HPXML defaults
+  in_xml = File.join(output_dir, 'in.xml')
+  if File.exists? in_xml
+    FileUtils.cp(in_xml, output_hpxml)
+  end
 
   return output_hpxml
 end

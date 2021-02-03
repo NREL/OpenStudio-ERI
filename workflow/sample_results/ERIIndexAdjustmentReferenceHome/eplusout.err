@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.09.21 15:37,
+Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.02.03 09:11,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
@@ -19,10 +19,11 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.09.21 15:37,
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
-   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC AND FURNACE CLG COIL but not at the AHRI test condition due to curve out of bound.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC CLG COIL but not at the AHRI test condition due to curve out of bound.
    **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
-   ** Warning ** Output:Meter: invalid Key Name="FUELOIL#2:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="FUELOILNO2:FACILITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="PROPANE:FACILITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="OTHERFUEL1:FACILITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="OTHERFUEL2:FACILITY" - not found.
@@ -36,24 +37,28 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.09.21 15:37,
    ** Warning ** Output:Meter: invalid Key Name="MISC POOL PUMP:INTERIOREQUIPMENT:ELECTRICITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="MISC HOT TUB HEATER:INTERIOREQUIPMENT:ELECTRICITY" - not found.
    ** Warning ** Output:Meter: invalid Key Name="MISC HOT TUB PUMP:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC POOL HEATER:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC HOT TUB HEATER:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:GAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOIL#2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOIL#2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:FUELOIL#2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:FUELOIL#2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:FUELOIL#2" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="PHOTOVOLTAIC:ELECTRICITYPRODUCED" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="POWERCONVERSION:ELECTRICITYPRODUCED" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COGENERATION:ELECTRICITYPRODUCED" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC POOL HEATER:INTERIOREQUIPMENT:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC HOT TUB HEATER:INTERIOREQUIPMENT:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COGENERATION:NATURALGAS" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOILNO2" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOILNO2" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:FUELOILNO2" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:FUELOILNO2" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:FUELOILNO2" - not found.
    ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
    ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
    ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:PROPANE" - not found.
    ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:PROPANE" - not found.
    ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:PROPANE" - not found.
+   ** Warning ** Output:Meter: invalid Key Name="COGENERATION:PROPANE" - not found.
    ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
    ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
    ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
@@ -77,44 +82,54 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.09.21 15:37,
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC AND FURNACE CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.799E-005 m3/s/W.
-   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=04/19 15:00 - 16:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
-   **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
-   **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
    ************* Simulation Error Summary *************
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
    **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
    ************* Key=ideal, VarName=ZONE IDEAL LOADS ZONE SENSIBLE HEATING ENERGY, Frequency=
    ************* Key=ideal, VarName=ZONE IDEAL LOADS ZONE SENSIBLE COOLING ENERGY, Frequency=
-   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL FUELOIL#2 ENERGY, Frequency=
-   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
-   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL OTHERFUEL2 ENERGY, Frequency=
-   ************* Key=central ac and furnace htg coil, VarName=HEATING COIL COAL ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER GAS ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER FUELOIL#2 ENERGY, Frequency=
+   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY ELECTRICITY ENERGY, Frequency=
+   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY NATURALGAS ENERGY, Frequency=
+   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY FUELOILNO2 ENERGY, Frequency=
+   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY PROPANE ENERGY, Frequency=
+   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL2 ENERGY, Frequency=
+   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY COAL ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL FUELOILNO2 ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL2 ENERGY, Frequency=
+   ************* Key=furnace htg coil, VarName=HEATING COIL COAL ENERGY, Frequency=
+   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY NATURALGAS ENERGY, Frequency=
+   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY FUELOILNO2 ENERGY, Frequency=
+   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY PROPANE ENERGY, Frequency=
+   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL2 ENERGY, Frequency=
+   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY COAL ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER NATURALGAS ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC NATURALGAS ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC NATURALGAS ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER FUELOILNO2 ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC FUELOILNO2 ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC FUELOILNO2 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC PROPANE ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC PROPANE ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC OTHERFUEL1 ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC OTHERFUEL1 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER OTHERFUEL2 ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC OTHERFUEL2 ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC OTHERFUEL2 ENERGY, Frequency=
    ************* Key=water heater, VarName=WATER HEATER COAL ENERGY, Frequency=
-   ************* There are 1 unused objects in input.
+   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC COAL ENERGY, Frequency=
+   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC COAL ENERGY, Frequency=
+   ************* There are 2 unused objects in input.
    ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
    ************* There are 2 unused schedules in input.
    ************* There are 2 unused week schedules in input.
    ************* There are 4 unused day schedules in input.
    ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
-   *************
-   ************* ===== Recurring Error Summary =====
-   ************* The following recurring error messages occurred.
-   *************
-   *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC AND FURNACE CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 13008 total times;
-   *************  **   ~~~   **   during Warmup 0 times;
-   *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.017336E-005  Min=6.746814E-005
-   *************
    *************
    ************* ===== Final Error Summary =====
    ************* The following error categories occurred.  Consider correcting or noting.
@@ -125,4 +140,4 @@ Program Version,EnergyPlus, Version 9.3.0-baff08990c, YMD=2020.09.21 15:37,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 13064 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  5.42sec
+   ************* EnergyPlus Completed Successfully-- 61 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  5.25sec
