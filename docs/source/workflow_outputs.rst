@@ -48,7 +48,7 @@ Current fuel types are:
    Type                       Notes
    ========================== ===========================
    Electricity: Total (MBtu)
-   Electricity: Net (MBtu)    Excludes any power produced by PV or generators.
+   Electricity: Net (MBtu)    Subtracts any power produced by PV or generators.
    Natural Gas: Total (MBtu)
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)

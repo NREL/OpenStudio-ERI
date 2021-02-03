@@ -67,7 +67,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
 
   # Update, e.g., ERIRatedHome.xml to include HPXML defaults
   in_xml = File.join(output_dir, 'in.xml')
-  if File.exists? in_xml
+  if File.exist? in_xml
     FileUtils.cp(in_xml, output_hpxml)
   end
 

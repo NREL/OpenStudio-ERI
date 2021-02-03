@@ -715,6 +715,7 @@ If a mini-split is specified, additional information is entered in ``CoolingSyst
   Element                                                                Type               Units   Constraints     Required  Default  Notes
   =====================================================================  =================  ======  ==============  ========  =======  =======================================
   ``DistributionSystem``                                                 idref                      See [#]_        No                 ID of attached distribution system
+  ``AnnualCoolingEfficiency[Units="SEER"]/Value``                        double             Btu/Wh  > 0             Yes                Rated cooling efficiency
   ``CoolingCapacity``                                                    double             Btu/hr  >= 0            Yes                Cooling capacity
   ``SensibleHeatFraction``                                               double             frac    0 - 1           No                 Sensible heat fraction
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``  double or boolean  frac    -0.25, 0, 0.25  Yes                In accordance with ANSI/RESNET/ACCA 310
