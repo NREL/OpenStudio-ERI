@@ -59,14 +59,14 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
     arg.setDescription('Absolute/relative path of the HPXML file.')
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument('output_dir', false)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('output_dir', true)
     arg.setDisplayName('Directory for Output Files')
     arg.setDescription('Absolute/relative path for the output files directory.')
     args << arg
 
     arg = OpenStudio::Measure::OSArgument.makeBoolArgument('debug', false)
     arg.setDisplayName('Debug Mode?')
-    arg.setDescription('If true: 1) Writes in.osm file, 2) Writes in.xml HPXML file with defaults populated, 3) Generates additional log output, and 4) Creates all EnergyPlus output files. Any files written will be in the output path specified above.')
+    arg.setDescription('If true: 1) Writes in.osm file, 2) Generates additional log output, and 3) Creates all EnergyPlus output files.')
     arg.setDefaultValue(false)
     args << arg
 
@@ -88,13 +88,13 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    tear_down_model(model, runner)
+    Geometry.tear_down_model(model, runner)
 
     Version.check_openstudio_version()
 
     # assign the user inputs to variables
     hpxml_path = runner.getStringArgumentValue('hpxml_path', user_arguments)
-    output_dir = runner.getOptionalStringArgumentValue('output_dir', user_arguments)
+    output_dir = runner.getStringArgumentValue('output_dir', user_arguments)
     debug = runner.getBoolArgumentValue('debug', user_arguments)
     skip_validation = runner.getBoolArgumentValue('skip_validation', user_arguments)
 
@@ -105,13 +105,8 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
       fail "'#{hpxml_path}' does not exist or is not an .xml file."
     end
 
-    if output_dir.is_initialized
-      output_dir = output_dir.get
-      unless (Pathname.new output_dir).absolute?
-        output_dir = File.expand_path(File.join(File.dirname(__FILE__), output_dir))
-      end
-    else
-      output_dir = nil
+    unless (Pathname.new output_dir).absolute?
+      output_dir = File.expand_path(File.join(File.dirname(__FILE__), output_dir))
     end
 
     begin
@@ -131,7 +126,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
       end
       return false unless hpxml.errors.empty?
 
-      epw_path, cache_path = process_weather(hpxml, runner, model, output_dir, hpxml_path)
+      epw_path, cache_path = process_weather(hpxml, runner, model, hpxml_path)
 
       if debug
         epw_output_path = File.join(output_dir, 'in.epw')
@@ -147,20 +142,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
     return true
   end
 
-  def tear_down_model(model, runner)
-    # Tear down the existing model if it exists
-    has_existing_objects = (model.getThermalZones.size > 0)
-    handles = OpenStudio::UUIDVector.new
-    model.objects.each do |obj|
-      handles << obj.handle
-    end
-    model.removeObjects(handles)
-    if has_existing_objects
-      runner.registerWarning('The model contains existing objects and is being reset.')
-    end
-  end
-
-  def process_weather(hpxml, runner, model, output_dir, hpxml_path)
+  def process_weather(hpxml, runner, model, hpxml_path)
     epw_path = hpxml.climate_and_risk_zones.weather_station_epw_filepath
 
     if not File.exist? epw_path
@@ -278,7 +260,7 @@ class OSModel
     # Uncomment to debug EMS
     # add_ems_debug_output(runner, model)
 
-    if debug && (not output_dir.nil?)
+    if debug
       osm_output_path = File.join(output_dir, 'in.osm')
       File.write(osm_output_path, model.to_s)
       runner.registerInfo("Wrote file: #{osm_output_path}")
@@ -322,12 +304,9 @@ class OSModel
 
     @frac_windows_operable = @hpxml.fraction_of_windows_operable()
 
-    if @debug && (not output_dir.nil?)
-      # Write updated HPXML object to file
-      hpxml_defaults_path = File.join(output_dir, 'in.xml')
-      XMLHelper.write_file(@hpxml.to_oga, hpxml_defaults_path)
-      runner.registerInfo("Wrote file: #{hpxml_defaults_path}")
-    end
+    # Write updated HPXML object (w/ defaults) to file for inspection
+    hpxml_defaults_path = File.join(output_dir, 'in.xml')
+    XMLHelper.write_file(@hpxml.to_oga, hpxml_defaults_path)
   end
 
   def self.add_simulation_params(model)
@@ -2411,7 +2390,7 @@ class OSModel
     @infil_volume = air_infils.select { |i| !i.infiltration_volume.nil? }[0].infiltration_volume
     infil_height = @hpxml.inferred_infiltration_height(@infil_volume)
     Airflow.apply(model, runner, weather, spaces, air_infils, @hpxml.ventilation_fans, @hpxml.clothes_dryers, @nbeds,
-                  duct_systems, @infil_volume, infil_height, open_window_area,
+                  @ncfl_ag, duct_systems, @infil_volume, infil_height, open_window_area,
                   @clg_ssn_sensor, @min_neighbor_distance, vented_attic, vented_crawl,
                   site_type, shelter_coef, @hpxml.building_construction.has_flue_or_chimney, @hvac_map, @eri_version,
                   @apply_ashrae140_assumptions)

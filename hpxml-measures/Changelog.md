@@ -15,6 +15,7 @@ __New Features__
 - Allows requesting timeseries unmet heating/cooling loads.
 - Allows skipping schema/schematron validation (for speed); should only be used if the HPXML was already validated upstream.
 - Includes hot water loads (in addition to heating/cooling loads) when timeseries total loads are requested.
+- The `in.xml` HPXML file is now always produced for inspection of default values. **Breaking change**: The `output_dir` HPXMLtoOpenStudio measure argument is now required.
 - Overhauls documentation to be more comprehensive and standardized.
 - `run_simulation.rb` now returns exit code 1 if not successful (i.e., either invalid inputs or simulation fails).
 
@@ -31,6 +32,7 @@ __Bugfixes__
 - HVAC sizing improvements for floors above crawlspaces/basements and walls.
 - Now recognizes Type="none" to prevent modeling of pools and hot tubs (pumps and heaters).
 - Fixes error for overhangs with zero depth.
+- Fixes possible error where the normalized flue height for the AIM-2 infiltration model is negative.
 - Slight adjustment of default water heater recovery efficiency equation to prevent errors from values being too high.
 - Fixes schematron file not being valid per ISO Schematron standard.
 
