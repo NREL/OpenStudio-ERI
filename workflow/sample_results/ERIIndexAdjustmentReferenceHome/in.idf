@@ -1,6 +1,6 @@
 
 Version,
-  9.3;                                    !- Version Identifier
+  9.4;                                    !- Version Identifier
 
 Timestep,
   1;                                      !- Number of Timesteps per Hour
@@ -15,19 +15,56 @@ Building,
   ,                                       !- Maximum Number of Warmup Days
   ;                                       !- Minimum Number of Warmup Days
 
+Shading:Building:Detailed,
+  WindowAreaEast shading surface,         !- Name
+  trans schedule winter=0.85 summer=0.7,  !- Transmittance Schedule Name
+  ,                                       !- Number of Vertices
+  34.3270159761901, -22.4206491342984, 0.6096, !- X,Y,Z Vertex 1 {m}
+  34.3270159761901, -22.4206491342984, 1.8288, !- X,Y,Z Vertex 2 {m}
+  34.327016086048, -30.6502491342984, 1.8288, !- X,Y,Z Vertex 3 {m}
+  34.327016086048, -30.6502491342984, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+Shading:Building:Detailed,
+  WindowAreaNorth shading surface,        !- Name
+  trans schedule winter=0.85 summer=0.7,  !- Transmittance Schedule Name
+  ,                                       !- Number of Vertices
+  -23.4983852644375, 34.3270150639152, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -23.4983852644375, 34.3270150639152, 1.8288, !- X,Y,Z Vertex 2 {m}
+  -15.2687852644375, 34.3270150639152, 1.8288, !- X,Y,Z Vertex 3 {m}
+  -15.2687852644375, 34.3270150639152, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+Shading:Building:Detailed,
+  WindowAreaSouth shading surface,        !- Name
+  trans schedule winter=0.85 summer=0.7,  !- Transmittance Schedule Name
+  ,                                       !- Number of Vertices
+  -22.4206486760628, -34.3270162754862, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -22.4206486760628, -34.3270162754862, 1.8288, !- X,Y,Z Vertex 2 {m}
+  -30.6502486760628, -34.3270164952021, 1.8288, !- X,Y,Z Vertex 3 {m}
+  -30.6502486760628, -34.3270164952021, 0.6096; !- X,Y,Z Vertex 4 {m}
+
+Shading:Building:Detailed,
+  WindowAreaWest shading surface,         !- Name
+  trans schedule winter=0.85 summer=0.7,  !- Transmittance Schedule Name
+  ,                                       !- Number of Vertices
+  -34.3270165747822, 22.4206482178271, 0.6096, !- X,Y,Z Vertex 1 {m}
+  -34.3270165747822, 22.4206482178271, 1.8288, !- X,Y,Z Vertex 2 {m}
+  -34.3270169043561, 30.6502482178271, 1.8288, !- X,Y,Z Vertex 3 {m}
+  -34.3270169043561, 30.6502482178271, 0.6096; !- X,Y,Z Vertex 4 {m}
+
 Zone,
   attic - vented,                         !- Name
-  ,                                       !- Direction of Relative North {deg}
-  ,                                       !- X Origin {m}
-  ,                                       !- Y Origin {m}
-  ,                                       !- Z Origin {m}
+  0,                                      !- Direction of Relative North {deg}
+  0,                                      !- X Origin {m}
+  0,                                      !- Y Origin {m}
+  0,                                      !- Z Origin {m}
   ,                                       !- Type
-  ,                                       !- Multiplier
+  1,                                      !- Multiplier
   ,                                       !- Ceiling Height {m}
   87.736540214341,                        !- Volume {m3}
   ,                                       !- Floor Area {m2}
   ,                                       !- Zone Inside Convection Algorithm
-  ;                                       !- Zone Outside Convection Algorithm
+  ,                                       !- Zone Outside Convection Algorithm
+  Yes;                                    !- Part of Total Floor Area
 
 BuildingSurface:Detailed,
   Roof:0,                                 !- Name
@@ -135,17 +172,18 @@ Schedule:Constant,
 
 Zone,
   crawlspace - vented,                    !- Name
-  ,                                       !- Direction of Relative North {deg}
-  ,                                       !- X Origin {m}
-  ,                                       !- Y Origin {m}
-  ,                                       !- Z Origin {m}
+  0,                                      !- Direction of Relative North {deg}
+  0,                                      !- X Origin {m}
+  0,                                      !- Y Origin {m}
+  0,                                      !- Z Origin {m}
   ,                                       !- Type
-  ,                                       !- Multiplier
+  1,                                      !- Multiplier
   ,                                       !- Ceiling Height {m}
   67.9604318208,                          !- Volume {m3}
   ,                                       !- Floor Area {m2}
   ,                                       !- Zone Inside Convection Algorithm
-  ;                                       !- Zone Outside Convection Algorithm
+  ,                                       !- Zone Outside Convection Algorithm
+  Yes;                                    !- Part of Total Floor Area
 
 BuildingSurface:Detailed,
   FoundationWall,                         !- Name
@@ -174,10 +212,10 @@ BuildingSurface:Detailed,
   NoWind,                                 !- Wind Exposure
   ,                                       !- View Factor to Ground
   ,                                       !- Number of Vertices
-  -5.27929093413992, -5.27929078879996, -0, !- X,Y,Z Vertex 1 {m}
-  -5.27929093413992, 5.27929078879996, -0, !- X,Y,Z Vertex 2 {m}
-  5.27929093413992, 5.27929078879996, -0, !- X,Y,Z Vertex 3 {m}
-  5.27929093413992, -5.27929078879996, -0; !- X,Y,Z Vertex 4 {m}
+  -5.27929093413992, -5.27929078879996, 0, !- X,Y,Z Vertex 1 {m}
+  -5.27929093413992, 5.27929078879996, 0, !- X,Y,Z Vertex 2 {m}
+  5.27929093413992, 5.27929078879996, 0,  !- X,Y,Z Vertex 3 {m}
+  5.27929093413992, -5.27929078879996, 0; !- X,Y,Z Vertex 4 {m}
 
 SurfaceProperty:ExposedFoundationPerimeter,
   Slab,                                   !- Surface Name
@@ -217,17 +255,18 @@ ZoneInfiltration:DesignFlowRate,
 
 Zone,
   living space,                           !- Name
-  ,                                       !- Direction of Relative North {deg}
-  ,                                       !- X Origin {m}
-  ,                                       !- Y Origin {m}
-  ,                                       !- Z Origin {m}
+  0,                                      !- Direction of Relative North {deg}
+  0,                                      !- X Origin {m}
+  0,                                      !- Y Origin {m}
+  0,                                      !- Z Origin {m}
   ,                                       !- Type
-  ,                                       !- Multiplier
+  1,                                      !- Multiplier
   ,                                       !- Ceiling Height {m}
   577.6636704768,                         !- Volume {m3}
   ,                                       !- Floor Area {m2}
   ,                                       !- Zone Inside Convection Algorithm
-  ;                                       !- Zone Outside Convection Algorithm
+  ,                                       !- Zone Outside Convection Algorithm
+  Yes;                                    !- Part of Total Floor Area
 
 BuildingSurface:Detailed,
   FloorAboveCrawlspace,                   !- Name
@@ -346,7 +385,7 @@ FenestrationSurface:Detailed,
   WindowConstruction 2,                   !- Construction Name
   surface WindowAreaEast,                 !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
-  ,                                       !- View Factor to Ground
+  0.3875,                                 !- View Factor to Ground
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
@@ -377,7 +416,7 @@ FenestrationSurface:Detailed,
   WindowConstruction,                     !- Construction Name
   surface WindowAreaNorth,                !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
-  ,                                       !- View Factor to Ground
+  0.3875,                                 !- View Factor to Ground
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
@@ -408,7 +447,7 @@ FenestrationSurface:Detailed,
   WindowConstruction 1,                   !- Construction Name
   surface WindowAreaSouth,                !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
-  ,                                       !- View Factor to Ground
+  0.3875,                                 !- View Factor to Ground
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
@@ -439,7 +478,7 @@ FenestrationSurface:Detailed,
   WindowConstruction 3,                   !- Construction Name
   surface WindowAreaWest,                 !- Building Surface Name
   ,                                       !- Outside Boundary Condition Object
-  ,                                       !- View Factor to Ground
+  0.3875,                                 !- View Factor to Ground
   ,                                       !- Frame and Divider Name
   ,                                       !- Multiplier
   ,                                       !- Number of Vertices
@@ -534,7 +573,7 @@ People,
   ,                                       !- Zone Floor Area per Person {m2/person}
   0.314170909090909,                      !- Fraction Radiant
   0.563030303030303,                      !- Sensible Heat Fraction
-  Schedule Ruleset 1,                     !- Activity Level Schedule Name
+  occupants activity schedule,            !- Activity Level Schedule Name
   0,                                      !- Carbon Dioxide Generation Rate {m3/s-W}
   No,                                     !- Enable ASHRAE 55 Comfort Warnings
   ZoneAveraged;                           !- Mean Radiant Temperature Calculation Type
@@ -1605,9 +1644,9 @@ Schedule:Day:Interval,
 ElectricEquipment,
   clothes dryer,                          !- Name
   living space,                           !- Zone or ZoneList Name
-  clothes dryer,                          !- Schedule Name
+  clothes dryer schedule,                 !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
-  163.659404231144,                       !- Design Level {W}
+  133836.358463735,                       !- Design Level {W}
   ,                                       !- Watts per Zone Floor Area {W/m2}
   ,                                       !- Watts per Person {W/person}
   0.015,                                  !- Fraction Latent
@@ -1764,7 +1803,7 @@ OtherEquipment,
 
 OtherEquipment,
   water heater EC adjustment,             !- Name
-  electricity,                            !- Fuel Type
+  Electricity,                            !- Fuel Type
   living space,                           !- Zone or ZoneList Name
   Always On Discrete,                     !- Schedule Name
   EquipmentLevel,                         !- Design Level Calculation Method
@@ -1854,7 +1893,14 @@ ZoneControl:Thermostat,
   living space,                           !- Zone or ZoneList Name
   living space Thermostat Schedule,       !- Control Type Schedule Name
   ThermostatSetpoint:DualSetpoint,        !- Control 1 Object Type
-  living space temperature setpoint;      !- Control 1 Name
+  living space temperature setpoint,      !- Control 1 Name
+  ,                                       !- Control 2 Object Type
+  ,                                       !- Control 2 Name
+  ,                                       !- Control 3 Object Type
+  ,                                       !- Control 3 Name
+  ,                                       !- Control 4 Object Type
+  ,                                       !- Control 4 Name
+  0;                                      !- Temperature Difference Between Cutout And Setpoint {deltaC}
 
 Schedule:Compact,
   living space Thermostat Schedule,       !- Name
@@ -1969,34 +2015,49 @@ ZoneHVAC:EquipmentConnections,
 NodeList,
   living space Inlet Node List,           !- Name
   Node 8,                                 !- Node Name 1
-  Node 12;                                !- Node Name 2
+  Node 15,                                !- Node Name 2
+  Node 19;                                !- Node Name 3
 
 NodeList,
   living space Exhaust Node List,         !- Name
-  Node 11;                                !- Node Name 1
+  Node 18;                                !- Node Name 1
 
 NodeList,
   living space Return Node List,          !- Name
-  Node 9;                                 !- Node Name 1
+  Node 9,                                 !- Node Name 1
+  Node 16;                                !- Node Name 2
 
 AirTerminal:SingleDuct:ConstantVolume:NoReheat,
-  central ac and furnace terminal,        !- Name
+  central ac terminal,                    !- Name
   Always On Discrete,                     !- Availability Schedule Name
   Node 10,                                !- Air Inlet Node Name
   Node 8,                                 !- Air Outlet Node Name
-  0.323679516027426;                      !- Maximum Air Flow Rate {m3/s}
+  0.297436187144107;                      !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
-  ADU central ac and furnace terminal,    !- Name
+  ADU central ac terminal,                !- Name
   Node 8,                                 !- Air Distribution Unit Outlet Node Name
   AirTerminal:SingleDuct:ConstantVolume:NoReheat, !- Air Terminal Object Type
-  central ac and furnace terminal;        !- Air Terminal Name
+  central ac terminal;                    !- Air Terminal Name
+
+AirTerminal:SingleDuct:ConstantVolume:NoReheat,
+  furnace terminal,                       !- Name
+  Always On Discrete,                     !- Availability Schedule Name
+  Node 17,                                !- Air Inlet Node Name
+  Node 15,                                !- Air Outlet Node Name
+  0.244905884159413;                      !- Maximum Air Flow Rate {m3/s}
+
+ZoneHVAC:AirDistributionUnit,
+  ADU furnace terminal,                   !- Name
+  Node 15,                                !- Air Distribution Unit Outlet Node Name
+  AirTerminal:SingleDuct:ConstantVolume:NoReheat, !- Air Terminal Object Type
+  furnace terminal;                       !- Air Terminal Name
 
 ZoneHVAC:IdealLoadsAirSystem,
   ideal residual,                         !- Name
   ,                                       !- Availability Schedule Name
-  Node 12,                                !- Zone Supply Air Node Name
-  Node 11,                                !- Zone Exhaust Air Node Name
+  Node 19,                                !- Zone Supply Air Node Name
+  Node 18,                                !- Zone Exhaust Air Node Name
   ,                                       !- System Inlet Air Node Name
   50,                                     !- Maximum Heating Supply Air Temperature {C}
   10,                                     !- Minimum Cooling Supply Air Temperature {C}
@@ -2025,24 +2086,32 @@ ZoneHVAC:EquipmentList,
   living space Equipment List,            !- Name
   SequentialLoad,                         !- Load Distribution Scheme
   ZoneHVAC:AirDistributionUnit,           !- Zone Equipment Object Type 1
-  ADU central ac and furnace terminal,    !- Zone Equipment Name 1
+  ADU central ac terminal,                !- Zone Equipment Name 1
   1,                                      !- Zone Equipment Cooling Sequence 1
   1,                                      !- Zone Equipment Heating or No-Load Sequence 1
   Sequential Fraction Schedule 1,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 1
   Sequential Fraction Schedule,           !- Zone Equipment Sequential Heating Fraction Schedule Name 1
-  ZoneHVAC:IdealLoadsAirSystem,           !- Zone Equipment Object Type 2
-  ideal residual,                         !- Zone Equipment Name 2
+  ZoneHVAC:AirDistributionUnit,           !- Zone Equipment Object Type 2
+  ADU furnace terminal,                   !- Zone Equipment Name 2
   2,                                      !- Zone Equipment Cooling Sequence 2
   2,                                      !- Zone Equipment Heating or No-Load Sequence 2
-  Sequential Fraction Schedule 2,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 2
-  Sequential Fraction Schedule 3;         !- Zone Equipment Sequential Heating Fraction Schedule Name 2
+  Sequential Fraction Schedule 3,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 2
+  Sequential Fraction Schedule 2,         !- Zone Equipment Sequential Heating Fraction Schedule Name 2
+  ZoneHVAC:IdealLoadsAirSystem,           !- Zone Equipment Object Type 3
+  ideal residual,                         !- Zone Equipment Name 3
+  3,                                      !- Zone Equipment Cooling Sequence 3
+  3,                                      !- Zone Equipment Heating or No-Load Sequence 3
+  Sequential Fraction Schedule 4,         !- Zone Equipment Sequential Cooling Fraction Schedule Name 3
+  Sequential Fraction Schedule 5;         !- Zone Equipment Sequential Heating Fraction Schedule Name 3
 
 SimulationControl,
   No,                                     !- Do Zone Sizing Calculation
   No,                                     !- Do System Sizing Calculation
   No,                                     !- Do Plant Sizing Calculation
   No,                                     !- Run Simulation for Sizing Periods
-  Yes;                                    !- Run Simulation for Weather File Run Periods
+  Yes,                                    !- Run Simulation for Weather File Run Periods
+  ,                                       !- Do HVAC Sizing Simulation for Sizing Periods
+  ;                                       !- Maximum Number of HVAC Sizing Simulation Passes
 
 ConvergenceLimits,
   0;                                      !- Minimum System Timestep {minutes}
@@ -2069,7 +2138,7 @@ ShadowCalculation,
   200,                                    !- Maximum Figures in Shadow Overlap Calculations
   SutherlandHodgman,                      !- Polygon Clipping Algorithm
   512,                                    !- Pixel Counting Resolution
-  SimpleSkyDiffuseModeling,               !- Sky Diffuse Modeling Algorithm
+  DetailedSkyDiffuseModeling,             !- Sky Diffuse Modeling Algorithm
   No,                                     !- Output External Shading Calculation Results
   No,                                     !- Disable Self-Shading Within Shading Zone Groups
   No;                                     !- Disable Self-Shading From Shading Zone Groups to Other Zones
@@ -2319,154 +2388,10 @@ Material:NoMass,
   0.7,                                    !- Solar Absorptance
   0.7;                                    !- Visible Absorptance
 
-WindowMaterial:Shade,
-  WindowCoolingShade,                     !- Name
-  0.822705882352941,                      !- Solar Transmittance {dimensionless}
-  0.177284117647059,                      !- Solar Reflectance {dimensionless}
-  0.822705882352941,                      !- Visible Transmittance {dimensionless}
-  0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
-  0.822705882352941,                      !- Infrared Transmittance {dimensionless}
-  0.0001,                                 !- Thickness {m}
-  10000,                                  !- Conductivity {W/m-K}
-  0.001,                                  !- Shade to Glass Distance {m}
-  0,                                      !- Top Opening Multiplier
-  0,                                      !- Bottom Opening Multiplier
-  0,                                      !- Left-Side Opening Multiplier
-  0,                                      !- Right-Side Opening Multiplier
-  0;                                      !- Airflow Permeability {dimensionless}
-
-WindowMaterial:Shade,
-  WindowCoolingShade 1,                   !- Name
-  0.822705882352941,                      !- Solar Transmittance {dimensionless}
-  0.177284117647059,                      !- Solar Reflectance {dimensionless}
-  0.822705882352941,                      !- Visible Transmittance {dimensionless}
-  0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
-  0.822705882352941,                      !- Infrared Transmittance {dimensionless}
-  0.0001,                                 !- Thickness {m}
-  10000,                                  !- Conductivity {W/m-K}
-  0.001,                                  !- Shade to Glass Distance {m}
-  0,                                      !- Top Opening Multiplier
-  0,                                      !- Bottom Opening Multiplier
-  0,                                      !- Left-Side Opening Multiplier
-  0,                                      !- Right-Side Opening Multiplier
-  0;                                      !- Airflow Permeability {dimensionless}
-
-WindowMaterial:Shade,
-  WindowCoolingShade 2,                   !- Name
-  0.822705882352941,                      !- Solar Transmittance {dimensionless}
-  0.177284117647059,                      !- Solar Reflectance {dimensionless}
-  0.822705882352941,                      !- Visible Transmittance {dimensionless}
-  0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
-  0.822705882352941,                      !- Infrared Transmittance {dimensionless}
-  0.0001,                                 !- Thickness {m}
-  10000,                                  !- Conductivity {W/m-K}
-  0.001,                                  !- Shade to Glass Distance {m}
-  0,                                      !- Top Opening Multiplier
-  0,                                      !- Bottom Opening Multiplier
-  0,                                      !- Left-Side Opening Multiplier
-  0,                                      !- Right-Side Opening Multiplier
-  0;                                      !- Airflow Permeability {dimensionless}
-
-WindowMaterial:Shade,
-  WindowCoolingShade 3,                   !- Name
-  0.822705882352941,                      !- Solar Transmittance {dimensionless}
-  0.177284117647059,                      !- Solar Reflectance {dimensionless}
-  0.822705882352941,                      !- Visible Transmittance {dimensionless}
-  0.177284117647059,                      !- Visible Reflectance {dimensionless}
-  1e-05,                                  !- Infrared Hemispherical Emissivity {dimensionless}
-  0.822705882352941,                      !- Infrared Transmittance {dimensionless}
-  0.0001,                                 !- Thickness {m}
-  10000,                                  !- Conductivity {W/m-K}
-  0.001,                                  !- Shade to Glass Distance {m}
-  0,                                      !- Top Opening Multiplier
-  0,                                      !- Bottom Opening Multiplier
-  0,                                      !- Left-Side Opening Multiplier
-  0,                                      !- Right-Side Opening Multiplier
-  0;                                      !- Airflow Permeability {dimensionless}
-
 WindowMaterial:SimpleGlazingSystem,
   WindowMaterial,                         !- Name
   1.9873,                                 !- U-Factor {W/m2-K}
-  0.34;                                   !- Solar Heat Gain Coefficient
-
-WindowShadingControl,
-  WindowShadingControl,                   !- Name
-  living space,                           !- Zone Name
-  1,                                      !- Shading Control Sequence Number
-  InteriorShade,                          !- Shading Type
-  ,                                       !- Construction with Shading Name
-  OnIfScheduleAllows,                     !- Shading Control Type
-  cooling season schedule,                !- Schedule Name
-  ,                                       !- Setpoint {W/m2, W or deg C}
-  Yes,                                    !- Shading Control Is Scheduled
-  No,                                     !- Glare Control Is Active
-  WindowCoolingShade,                     !- Shading Device Material Name
-  ,                                       !- Type of Slat Angle Control for Blinds
-  ,                                       !- Slat Angle Schedule Name
-  ,                                       !- Setpoint 2 {BasedOnField A5}
-  ,                                       !- Daylighting Control Object Name
-  Group,                                  !- Multiple Surface Control Type
-  WindowAreaNorth;                        !- Fenestration Surface Name 1
-
-WindowShadingControl,
-  WindowShadingControl 1,                 !- Name
-  living space,                           !- Zone Name
-  2,                                      !- Shading Control Sequence Number
-  InteriorShade,                          !- Shading Type
-  ,                                       !- Construction with Shading Name
-  OnIfScheduleAllows,                     !- Shading Control Type
-  cooling season schedule,                !- Schedule Name
-  ,                                       !- Setpoint {W/m2, W or deg C}
-  Yes,                                    !- Shading Control Is Scheduled
-  No,                                     !- Glare Control Is Active
-  WindowCoolingShade 1,                   !- Shading Device Material Name
-  ,                                       !- Type of Slat Angle Control for Blinds
-  ,                                       !- Slat Angle Schedule Name
-  ,                                       !- Setpoint 2 {BasedOnField A5}
-  ,                                       !- Daylighting Control Object Name
-  Group,                                  !- Multiple Surface Control Type
-  WindowAreaSouth;                        !- Fenestration Surface Name 1
-
-WindowShadingControl,
-  WindowShadingControl 2,                 !- Name
-  living space,                           !- Zone Name
-  3,                                      !- Shading Control Sequence Number
-  InteriorShade,                          !- Shading Type
-  ,                                       !- Construction with Shading Name
-  OnIfScheduleAllows,                     !- Shading Control Type
-  cooling season schedule,                !- Schedule Name
-  ,                                       !- Setpoint {W/m2, W or deg C}
-  Yes,                                    !- Shading Control Is Scheduled
-  No,                                     !- Glare Control Is Active
-  WindowCoolingShade 2,                   !- Shading Device Material Name
-  ,                                       !- Type of Slat Angle Control for Blinds
-  ,                                       !- Slat Angle Schedule Name
-  ,                                       !- Setpoint 2 {BasedOnField A5}
-  ,                                       !- Daylighting Control Object Name
-  Group,                                  !- Multiple Surface Control Type
-  WindowAreaEast;                         !- Fenestration Surface Name 1
-
-WindowShadingControl,
-  WindowShadingControl 3,                 !- Name
-  living space,                           !- Zone Name
-  4,                                      !- Shading Control Sequence Number
-  InteriorShade,                          !- Shading Type
-  ,                                       !- Construction with Shading Name
-  OnIfScheduleAllows,                     !- Shading Control Type
-  cooling season schedule,                !- Schedule Name
-  ,                                       !- Setpoint {W/m2, W or deg C}
-  Yes,                                    !- Shading Control Is Scheduled
-  No,                                     !- Glare Control Is Active
-  WindowCoolingShade 3,                   !- Shading Device Material Name
-  ,                                       !- Type of Slat Angle Control for Blinds
-  ,                                       !- Slat Angle Schedule Name
-  ,                                       !- Setpoint 2 {BasedOnField A5}
-  ,                                       !- Daylighting Control Object Name
-  Group,                                  !- Multiple Surface Control Type
-  WindowAreaWest;                         !- Fenestration Surface Name 1
+  0.4;                                    !- Solar Heat Gain Coefficient
 
 Construction,
   AdiabaticConst,                         !- Name
@@ -2618,6 +2543,11 @@ Schedule:Constant,
   52.6666666666667;                       !- Hourly Value
 
 Schedule:Constant,
+  occupants activity schedule,            !- Name
+  ActivityLevel,                          !- Schedule Type Limits Name
+  117.228428068889;                       !- Hourly Value
+
+Schedule:Constant,
   Schedule Constant 1,                    !- Name
   Temperature,                            !- Schedule Type Limits Name
   40.5555555555556;                       !- Hourly Value
@@ -2625,7 +2555,7 @@ Schedule:Constant,
 Schedule:Constant,
   Sequential Fraction Schedule,           !- Name
   Fractional,                             !- Schedule Type Limits Name
-  1;                                      !- Hourly Value
+  0;                                      !- Hourly Value
 
 Schedule:Constant,
   Sequential Fraction Schedule 1,         !- Name
@@ -2640,6 +2570,16 @@ Schedule:Constant,
 Schedule:Constant,
   Sequential Fraction Schedule 3,         !- Name
   Fractional,                             !- Schedule Type Limits Name
+  0;                                      !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule 4,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  1;                                      !- Hourly Value
+
+Schedule:Constant,
+  Sequential Fraction Schedule 5,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
   1;                                      !- Hourly Value
 
 Schedule:Constant,
@@ -2648,55 +2588,83 @@ Schedule:Constant,
   52.6666666666667;                       !- Hourly Value
 
 Schedule:Day:Interval,
-  clothes dryer allday1,                  !- Name
+  clothes dryer schedule allday1,         !- Name
   Fractional,                             !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
-  01:00,                                  !- Time 1 {hh:mm}
-  0.123456790123457,                      !- Value Until Time 1
-  02:00,                                  !- Time 2 {hh:mm}
-  0.0740740740740741,                     !- Value Until Time 2
-  03:00,                                  !- Time 3 {hh:mm}
-  0.0493827160493827,                     !- Value Until Time 3
-  04:00,                                  !- Time 4 {hh:mm}
-  0.0246913580246914,                     !- Value Until Time 4
-  05:00,                                  !- Time 5 {hh:mm}
-  0.0493827160493827,                     !- Value Until Time 5
-  06:00,                                  !- Time 6 {hh:mm}
-  0.0740740740740741,                     !- Value Until Time 6
-  07:00,                                  !- Time 7 {hh:mm}
-  0.197530864197531,                      !- Value Until Time 7
-  08:00,                                  !- Time 8 {hh:mm}
-  0.395061728395062,                      !- Value Until Time 8
-  09:00,                                  !- Time 9 {hh:mm}
-  0.592592592592593,                      !- Value Until Time 9
-  10:00,                                  !- Time 10 {hh:mm}
-  0.839506172839506,                      !- Value Until Time 10
-  11:00,                                  !- Time 11 {hh:mm}
-  0.962962962962963,                      !- Value Until Time 11
-  12:00,                                  !- Time 12 {hh:mm}
-  1,                                      !- Value Until Time 12
-  13:00,                                  !- Time 13 {hh:mm}
-  0.91358024691358,                       !- Value Until Time 13
-  14:00,                                  !- Time 14 {hh:mm}
-  0.827160493827161,                      !- Value Until Time 14
-  15:00,                                  !- Time 15 {hh:mm}
-  0.703703703703704,                      !- Value Until Time 15
-  16:00,                                  !- Time 16 {hh:mm}
-  0.753086419753086,                      !- Value Until Time 16
-  17:00,                                  !- Time 17 {hh:mm}
-  0.679012345679012,                      !- Value Until Time 17
-  18:00,                                  !- Time 18 {hh:mm}
-  0.666666666666667,                      !- Value Until Time 18
-  20:00,                                  !- Time 19 {hh:mm}
-  0.62962962962963,                       !- Value Until Time 19
-  21:00,                                  !- Time 20 {hh:mm}
-  0.641975308641975,                      !- Value Until Time 20
-  22:00,                                  !- Time 21 {hh:mm}
-  0.666666666666667,                      !- Value Until Time 21
-  23:00,                                  !- Time 22 {hh:mm}
-  0.54320987654321,                       !- Value Until Time 22
-  24:00,                                  !- Time 23 {hh:mm}
-  0.296296296296296;                      !- Value Until Time 23
+  09:00,                                  !- Time 1 {hh:mm}
+  0,                                      !- Value Until Time 1
+  10:00,                                  !- Time 2 {hh:mm}
+  0.0302713833333333,                     !- Value Until Time 2
+  16:00,                                  !- Time 3 {hh:mm}
+  0,                                      !- Value Until Time 3
+  17:00,                                  !- Time 4 {hh:mm}
+  0.0058593,                              !- Value Until Time 4
+  24:00,                                  !- Time 5 {hh:mm}
+  0;                                      !- Value Until Time 5
+
+Schedule:Day:Interval,
+  clothes dryer schedule allday2,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0;                                      !- Value Until Time 1
+
+Schedule:Day:Interval,
+  clothes dryer schedule allday3,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0;                                      !- Value Until Time 1
+
+Schedule:Day:Interval,
+  clothes dryer schedule allday4,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0;                                      !- Value Until Time 1
+
+Schedule:Day:Interval,
+  clothes dryer schedule allday5,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  06:00,                                  !- Time 1 {hh:mm}
+  0,                                      !- Value Until Time 1
+  07:00,                                  !- Time 2 {hh:mm}
+  0.0211826,                              !- Value Until Time 2
+  11:00,                                  !- Time 3 {hh:mm}
+  0,                                      !- Value Until Time 3
+  12:00,                                  !- Time 4 {hh:mm}
+  0.0193903,                              !- Value Until Time 4
+  20:00,                                  !- Time 5 {hh:mm}
+  0,                                      !- Value Until Time 5
+  21:00,                                  !- Time 6 {hh:mm}
+  0.00874706666666667,                    !- Value Until Time 6
+  22:00,                                  !- Time 7 {hh:mm}
+  0.00322948333333333,                    !- Value Until Time 7
+  23:00,                                  !- Time 8 {hh:mm}
+  0.0123919666666667,                     !- Value Until Time 8
+  24:00,                                  !- Time 9 {hh:mm}
+  0;                                      !- Value Until Time 9
+
+Schedule:Day:Interval,
+  clothes dryer schedule allday6,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0;                                      !- Value Until Time 1
+
+Schedule:Day:Interval,
+  clothes dryer schedule allday7,         !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  13:00,                                  !- Time 1 {hh:mm}
+  0,                                      !- Value Until Time 1
+  14:00,                                  !- Time 2 {hh:mm}
+  0.00380235,                             !- Value Until Time 2
+  15:00,                                  !- Time 3 {hh:mm}
+  0.00029145,                             !- Value Until Time 3
+  24:00,                                  !- Time 4 {hh:mm}
+  0;                                      !- Value Until Time 4
 
 Schedule:Day:Interval,
   clothes washer schedule allday1,        !- Name
@@ -6801,10 +6769,10 @@ Schedule:Day:Interval,
 
 Schedule:Day:Interval,
   Schedule Day 7,                         !- Name
-  ActivityLevel,                          !- Schedule Type Limits Name
+  Fractional,                             !- Schedule Type Limits Name
   No,                                     !- Interpolate to Timestep
   24:00,                                  !- Time 1 {hh:mm}
-  117.228428068889;                       !- Value Until Time 1
+  0;                                      !- Value Until Time 1
 
 Schedule:Day:Interval,
   Schedule Day 8,                         !- Name
@@ -6820,15 +6788,51 @@ Schedule:Day:Interval,
   24:00,                                  !- Time 1 {hh:mm}
   0;                                      !- Value Until Time 1
 
+Schedule:Day:Interval,
+  trans schedule winter=0.85 summer=0.7 allday1, !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0.85;                                   !- Value Until Time 1
+
+Schedule:Day:Interval,
+  trans schedule winter=0.85 summer=0.7 allday11, !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0.85;                                   !- Value Until Time 1
+
+Schedule:Day:Interval,
+  trans schedule winter=0.85 summer=0.7 allday5, !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  No,                                     !- Interpolate to Timestep
+  24:00,                                  !- Time 1 {hh:mm}
+  0.7;                                    !- Value Until Time 1
+
 Schedule:Week:Daily,
-  clothes dryer Week Rule - Jan1-Dec31,   !- Name
-  clothes dryer allday1,                  !- Sunday Schedule:Day Name
-  clothes dryer allday1,                  !- Monday Schedule:Day Name
-  clothes dryer allday1,                  !- Tuesday Schedule:Day Name
-  clothes dryer allday1,                  !- Wednesday Schedule:Day Name
-  clothes dryer allday1,                  !- Thursday Schedule:Day Name
-  clothes dryer allday1,                  !- Friday Schedule:Day Name
-  clothes dryer allday1,                  !- Saturday Schedule:Day Name
+  clothes dryer schedule Week Rule - Jan1-Jan6, !- Name
+  clothes dryer schedule allday1,         !- Sunday Schedule:Day Name
+  clothes dryer schedule allday1,         !- Monday Schedule:Day Name
+  clothes dryer schedule allday2,         !- Tuesday Schedule:Day Name
+  clothes dryer schedule allday3,         !- Wednesday Schedule:Day Name
+  clothes dryer schedule allday4,         !- Thursday Schedule:Day Name
+  clothes dryer schedule allday5,         !- Friday Schedule:Day Name
+  clothes dryer schedule allday6,         !- Saturday Schedule:Day Name
+  Schedule Day 9,                         !- Holiday Schedule:Day Name
+  Schedule Day 9,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 9,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 9,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 9;                         !- CustomDay2 Schedule:Day Name
+
+Schedule:Week:Daily,
+  clothes dryer schedule Week Rule - Jan7-Dec31, !- Name
+  clothes dryer schedule allday7,         !- Sunday Schedule:Day Name
+  clothes dryer schedule allday1,         !- Monday Schedule:Day Name
+  clothes dryer schedule allday2,         !- Tuesday Schedule:Day Name
+  clothes dryer schedule allday3,         !- Wednesday Schedule:Day Name
+  clothes dryer schedule allday4,         !- Thursday Schedule:Day Name
+  clothes dryer schedule allday5,         !- Friday Schedule:Day Name
+  clothes dryer schedule allday6,         !- Saturday Schedule:Day Name
   Schedule Day 9,                         !- Holiday Schedule:Day Name
   Schedule Day 9,                         !- SummerDesignDay Schedule:Day Name
   Schedule Day 9,                         !- WinterDesignDay Schedule:Day Name
@@ -6836,13 +6840,18 @@ Schedule:Week:Daily,
   Schedule Day 9;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
-  clothes dryer,                          !- Name
+  clothes dryer schedule,                 !- Name
   Fractional,                             !- Schedule Type Limits Name
-  clothes dryer Week Rule - Jan1-Dec31,   !- Schedule:Week Name 1
+  clothes dryer schedule Week Rule - Jan1-Jan6, !- Schedule:Week Name 1
   1,                                      !- Start Month 1
   1,                                      !- Start Day 1
-  12,                                     !- End Month 1
-  31;                                     !- End Day 1
+  1,                                      !- End Month 1
+  6,                                      !- End Day 1
+  clothes dryer schedule Week Rule - Jan7-Dec31, !- Schedule:Week Name 2
+  1,                                      !- Start Month 2
+  7,                                      !- Start Day 2
+  12,                                     !- End Month 2
+  31;                                     !- End Day 2
 
 Schedule:Week:Daily,
   clothes washer schedule Week Rule - Jan1-Jan6, !- Name
@@ -8961,11 +8970,11 @@ Schedule:Week:Daily,
   occupants schedule allday1,             !- Thursday Schedule:Day Name
   occupants schedule allday1,             !- Friday Schedule:Day Name
   occupants schedule allday1,             !- Saturday Schedule:Day Name
-  Schedule Day 6,                         !- Holiday Schedule:Day Name
-  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
+  Schedule Day 7,                         !- Holiday Schedule:Day Name
+  Schedule Day 7,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 7,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 7,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 7;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
   occupants schedule,                     !- Name
@@ -8977,28 +8986,108 @@ Schedule:Year,
   31;                                     !- End Day 1
 
 Schedule:Week:Daily,
-  Schedule Ruleset 1 Week Rule - Jan1-Dec31, !- Name
-  Schedule Day 7,                         !- Sunday Schedule:Day Name
-  Schedule Day 7,                         !- Monday Schedule:Day Name
-  Schedule Day 7,                         !- Tuesday Schedule:Day Name
-  Schedule Day 7,                         !- Wednesday Schedule:Day Name
-  Schedule Day 7,                         !- Thursday Schedule:Day Name
-  Schedule Day 7,                         !- Friday Schedule:Day Name
-  Schedule Day 7,                         !- Saturday Schedule:Day Name
-  Schedule Day 7,                         !- Holiday Schedule:Day Name
-  Schedule Day 7,                         !- SummerDesignDay Schedule:Day Name
-  Schedule Day 7,                         !- WinterDesignDay Schedule:Day Name
-  Schedule Day 7,                         !- CustomDay1 Schedule:Day Name
-  Schedule Day 7;                         !- CustomDay2 Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 Week Rule - Jan1-Apr28, !- Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Sunday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Monday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Tuesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Wednesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Thursday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Friday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Saturday Schedule:Day Name
+  Schedule Day 6,                         !- Holiday Schedule:Day Name
+  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
+
+Schedule:Week:Daily,
+  trans schedule winter=0.85 summer=0.7 Week Rule - Apr29-May5, !- Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Sunday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday1, !- Monday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Tuesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Wednesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Thursday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Friday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Saturday Schedule:Day Name
+  Schedule Day 6,                         !- Holiday Schedule:Day Name
+  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
+
+Schedule:Week:Daily,
+  trans schedule winter=0.85 summer=0.7 Week Rule - May6-Oct27, !- Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Sunday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Monday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Tuesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Wednesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Thursday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Friday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Saturday Schedule:Day Name
+  Schedule Day 6,                         !- Holiday Schedule:Day Name
+  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
+
+Schedule:Week:Daily,
+  trans schedule winter=0.85 summer=0.7 Week Rule - Oct28-Nov3, !- Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Sunday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Monday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Tuesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday5, !- Wednesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Thursday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Friday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Saturday Schedule:Day Name
+  Schedule Day 6,                         !- Holiday Schedule:Day Name
+  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
+
+Schedule:Week:Daily,
+  trans schedule winter=0.85 summer=0.7 Week Rule - Nov4-Dec31, !- Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Sunday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Monday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Tuesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Wednesday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Thursday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Friday Schedule:Day Name
+  trans schedule winter=0.85 summer=0.7 allday11, !- Saturday Schedule:Day Name
+  Schedule Day 6,                         !- Holiday Schedule:Day Name
+  Schedule Day 6,                         !- SummerDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- WinterDesignDay Schedule:Day Name
+  Schedule Day 6,                         !- CustomDay1 Schedule:Day Name
+  Schedule Day 6;                         !- CustomDay2 Schedule:Day Name
 
 Schedule:Year,
-  Schedule Ruleset 1,                     !- Name
-  ActivityLevel,                          !- Schedule Type Limits Name
-  Schedule Ruleset 1 Week Rule - Jan1-Dec31, !- Schedule:Week Name 1
+  trans schedule winter=0.85 summer=0.7,  !- Name
+  Fractional,                             !- Schedule Type Limits Name
+  trans schedule winter=0.85 summer=0.7 Week Rule - Jan1-Apr28, !- Schedule:Week Name 1
   1,                                      !- Start Month 1
   1,                                      !- Start Day 1
-  12,                                     !- End Month 1
-  31;                                     !- End Day 1
+  4,                                      !- End Month 1
+  28,                                     !- End Day 1
+  trans schedule winter=0.85 summer=0.7 Week Rule - Apr29-May5, !- Schedule:Week Name 2
+  4,                                      !- Start Month 2
+  29,                                     !- Start Day 2
+  5,                                      !- End Month 2
+  5,                                      !- End Day 2
+  trans schedule winter=0.85 summer=0.7 Week Rule - May6-Oct27, !- Schedule:Week Name 3
+  5,                                      !- Start Month 3
+  6,                                      !- Start Day 3
+  10,                                     !- End Month 3
+  27,                                     !- End Day 3
+  trans schedule winter=0.85 summer=0.7 Week Rule - Oct28-Nov3, !- Schedule:Week Name 4
+  10,                                     !- Start Month 4
+  28,                                     !- Start Day 4
+  11,                                     !- End Month 4
+  3,                                      !- End Day 4
+  trans schedule winter=0.85 summer=0.7 Week Rule - Nov4-Dec31, !- Schedule:Week Name 5
+  11,                                     !- Start Month 5
+  4,                                      !- Start Day 5
+  12,                                     !- End Month 5
+  31;                                     !- End Day 5
 
 Schedule:Compact,
   mains temperature schedule,             !- Name
@@ -10464,27 +10553,28 @@ OutdoorAir:Node,
   Model Outdoor Air Node;                 !- Name
 
 AirLoopHVAC,
-  central ac and furnace airloop,         !- Name
+  central ac airloop,                     !- Name
   ,                                       !- Controller List Name
-  central ac and furnace airloopAvailability Manager List, !- Availability Manager List Name
-  0.323679516027426,                      !- Design Supply Air Flow Rate {m3/s}
-  central ac and furnace airloop Supply Branches, !- Branch List Name
+  central ac airloopAvailability Manager List, !- Availability Manager List Name
+  0.297436187144107,                      !- Design Supply Air Flow Rate {m3/s}
+  central ac airloop Supply Branches,     !- Branch List Name
   ,                                       !- Connector List Name
   Node 4,                                 !- Supply Side Inlet Node Name
   Node 7,                                 !- Demand Side Outlet Node Name
-  central ac and furnace airloop Demand Inlet Nodes, !- Demand Side Inlet Node Names
-  central ac and furnace airloop Supply Outlet Nodes; !- Supply Side Outlet Node Names
+  central ac airloop Demand Inlet Nodes,  !- Demand Side Inlet Node Names
+  central ac airloop Supply Outlet Nodes, !- Supply Side Outlet Node Names
+  1;                                      !- Design Return Air Flow Fraction of Supply Air Flow
 
 NodeList,
-  central ac and furnace airloop Supply Outlet Nodes, !- Name
+  central ac airloop Supply Outlet Nodes, !- Name
   Node 5;                                 !- Node Name 1
 
 NodeList,
-  central ac and furnace airloop Demand Inlet Nodes, !- Name
+  central ac airloop Demand Inlet Nodes,  !- Name
   Node 6;                                 !- Node Name 1
 
 Sizing:System,
-  central ac and furnace airloop,         !- AirLoop Name
+  central ac airloop,                     !- AirLoop Name
   Sensible,                               !- Type of Load to Size On
   Autosize,                               !- Design Outdoor Air Flow Rate {m3/s}
   0.3,                                    !- Central Heating Maximum System Air Flow Ratio
@@ -10523,28 +10613,28 @@ Sizing:System,
   OnOff;                                  !- Central Cooling Capacity Control Method
 
 AvailabilityManagerAssignmentList,
-  central ac and furnace airloopAvailability Manager List, !- Name
+  central ac airloopAvailability Manager List, !- Name
   AvailabilityManager:Scheduled,          !- Availability Manager Object Type 1
-  central ac and furnace airloop Availability Manager; !- Availability Manager Name 1
+  central ac airloop Availability Manager; !- Availability Manager Name 1
 
 AvailabilityManager:Scheduled,
-  central ac and furnace airloop Availability Manager, !- Name
+  central ac airloop Availability Manager, !- Name
   Always On Discrete;                     !- Schedule Name
 
 BranchList,
-  central ac and furnace airloop Supply Branches, !- Name
-  central ac and furnace airloop Main Branch; !- Branch Name 1
+  central ac airloop Supply Branches,     !- Name
+  central ac airloop Main Branch;         !- Branch Name 1
 
 Branch,
-  central ac and furnace airloop Main Branch, !- Name
+  central ac airloop Main Branch,         !- Name
   ,                                       !- Pressure Drop Curve Name
   AirLoopHVAC:UnitarySystem,              !- Component Object Type 1
-  central ac and furnace unitary system,  !- Component Name 1
+  central ac unitary system,              !- Component Name 1
   Node 4,                                 !- Component Inlet Node Name 1
   Node 5;                                 !- Component Outlet Node Name 1
 
 AirLoopHVAC:UnitarySystem,
-  central ac and furnace unitary system,  !- Name
+  central ac unitary system,              !- Name
   Load,                                   !- Control Type
   living space,                           !- Controlling Zone or Thermostat Location
   None,                                   !- Dehumidification Control Type
@@ -10552,26 +10642,26 @@ AirLoopHVAC:UnitarySystem,
   Node 4,                                 !- Air Inlet Node Name
   Node 5,                                 !- Air Outlet Node Name
   Fan:OnOff,                              !- Supply Fan Object Type
-  central ac and furnace supply fan,      !- Supply Fan Name
+  central ac supply fan,                  !- Supply Fan Name
   BlowThrough,                            !- Fan Placement
   Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
-  Coil:Heating:Fuel,                      !- Heating Coil Object Type
-  central ac and furnace htg coil,        !- Heating Coil Name
+  ,                                       !- Heating Coil Object Type
+  ,                                       !- Heating Coil Name
   1,                                      !- DX Heating Coil Sizing Ratio
   Coil:Cooling:DX:SingleSpeed,            !- Cooling Coil Object Type
-  central ac and furnace clg coil,        !- Cooling Coil Name
+  central ac clg coil,                    !- Cooling Coil Name
   No,                                     !- Use DOAS DX Cooling Coil
   2,                                      !- Minimum Supply Air Temperature {C}
   SensibleOnlyLoadControl,                !- Latent Load Control
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0.323679516027426,                      !- Cooling Supply Air Flow Rate {m3/s}
+  0.297436187144107,                      !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
   SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
-  0.320573761876907,                      !- Heating Supply Air Flow Rate {m3/s}
+  0,                                      !- Heating Supply Air Flow Rate {m3/s}
   ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -10593,15 +10683,15 @@ AirLoopHVAC:UnitarySystem,
   0;                                      !- Ancillary Off-Cycle Electric Power {W}
 
 Fan:OnOff,
-  central ac and furnace supply fan,      !- Name
+  central ac supply fan,                  !- Name
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
-  524.002511255477,                       !- Pressure Rise {Pa}
-  0.323684235501858,                      !- Maximum Flow Rate {m3/s}
+  921.712801430852,                       !- Pressure Rise {Pa}
+  0.297440906618539,                      !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 4,                                 !- Air Inlet Node Name
-  central ac and furnace unitary system Fan - Cooling Coil Node, !- Air Outlet Node Name
+  central ac unitary system Fan - Cooling Coil Node, !- Air Outlet Node Name
   Fan On Off Power Curve,                 !- Fan Power Ratio Function of Speed Ratio Curve Name
   Fan On Off Efficiency Curve,            !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
   supply fan;                             !- End-Use Subcategory
@@ -10623,27 +10713,14 @@ Curve:Cubic,
   0,                                      !- Minimum Value of x {BasedOnField A2}
   1;                                      !- Maximum Value of x {BasedOnField A2}
 
-Coil:Heating:Fuel,
-  central ac and furnace htg coil,        !- Name
-  Always On Discrete,                     !- Availability Schedule Name
-  NaturalGas,                             !- Fuel Type
-  0.78,                                   !- Burner Efficiency
-  9016.02053525063,                       !- Nominal Capacity {W}
-  central ac and furnace unitary system Cooling Coil - Heating Coil Node, !- Air Inlet Node Name
-  Node 5,                                 !- Air Outlet Node Name
-  ,                                       !- Temperature Setpoint Node Name
-  0,                                      !- Parasitic Electric Load {W}
-  ,                                       !- Part Load Fraction Correlation Curve Name
-  0;                                      !- Parasitic Fuel Load {W}
-
 Curve:Biquadratic,
   Cool-Cap-fT1,                           !- Name
-  1.550902001,                            !- Coefficient1 Constant
-  -0.0750500892,                          !- Coefficient2 x
-  0.00309713544,                          !- Coefficient3 x**2
-  0.00240111,                             !- Coefficient4 y
-  -5.0544e-05,                            !- Coefficient5 y**2
-  -0.00042728148,                         !- Coefficient6 x*y
+  1.557359706,                            !- Coefficient1 Constant
+  -0.0744481692,                          !- Coefficient2 x
+  0.00309859668,                          !- Coefficient3 x**2
+  0.0014595786,                           !- Coefficient4 y
+  -4.1148e-05,                            !- Coefficient5 y**2
+  -0.00042671448,                         !- Coefficient6 x*y
   13.88,                                  !- Minimum Value of x {BasedOnField A2}
   23.88,                                  !- Maximum Value of x {BasedOnField A2}
   18.33,                                  !- Minimum Value of y {BasedOnField A3}
@@ -10651,9 +10728,9 @@ Curve:Biquadratic,
 
 Curve:Quadratic,
   Cool-Cap-fFF1,                          !- Name
-  0.718605468,                            !- Coefficient1 Constant
-  0.410099989,                            !- Coefficient2 x
-  -0.128705457,                           !- Coefficient3 x**2
+  0.718664047,                            !- Coefficient1 Constant
+  0.41797409,                             !- Coefficient2 x
+  -0.136638137,                           !- Coefficient3 x**2
   0,                                      !- Minimum Value of x {BasedOnField A2}
   2,                                      !- Maximum Value of x {BasedOnField A2}
   0,                                      !- Minimum Curve Output {BasedOnField A3}
@@ -10661,12 +10738,12 @@ Curve:Quadratic,
 
 Curve:Biquadratic,
   Cool-eir-fT1,                           !- Name
-  -0.304282997,                           !- Coefficient1 Constant
-  0.1180477062,                           !- Coefficient2 x
-  -0.00342466704,                         !- Coefficient3 x**2
-  -0.0062619138,                          !- Coefficient4 y
-  0.00069542712,                          !- Coefficient5 y**2
-  -0.00046997496,                         !- Coefficient6 x*y
+  -0.350447695,                           !- Coefficient1 Constant
+  0.116809893,                            !- Coefficient2 x
+  -0.00339950844,                         !- Coefficient3 x**2
+  -0.001226088,                           !- Coefficient4 y
+  0.0006008094,                           !- Coefficient5 y**2
+  -0.000466884,                           !- Coefficient6 x*y
   13.88,                                  !- Minimum Value of x {BasedOnField A2}
   23.88,                                  !- Maximum Value of x {BasedOnField A2}
   18.33,                                  !- Minimum Value of y {BasedOnField A3}
@@ -10674,9 +10751,9 @@ Curve:Biquadratic,
 
 Curve:Quadratic,
   Cool-eir-fFF1,                          !- Name
-  1.32299905,                             !- Coefficient1 Constant
-  -0.477711207,                           !- Coefficient2 x
-  0.154712157,                            !- Coefficient3 x**2
+  1.143487507,                            !- Coefficient1 Constant
+  -0.13943972,                            !- Coefficient2 x
+  -0.004047787,                           !- Coefficient3 x**2
   0,                                      !- Minimum Value of x {BasedOnField A2}
   2,                                      !- Maximum Value of x {BasedOnField A2}
   0,                                      !- Minimum Curve Output {BasedOnField A3}
@@ -10693,15 +10770,15 @@ Curve:Quadratic,
   1;                                      !- Maximum Curve Output {BasedOnField A3}
 
 Coil:Cooling:DX:SingleSpeed,
-  central ac and furnace clg coil,        !- Name
+  central ac clg coil,                    !- Name
   Always On Discrete,                     !- Availability Schedule Name
-  4833.65031934707,                       !- Gross Rated Total Cooling Capacity {W}
-  0.740402528813699,                      !- Gross Rated Sensible Heat Ratio
-  3.99990781858502,                       !- Gross Rated Cooling COP {W/W}
-  0.25044621470579,                       !- Rated Air Flow Rate {m3/s}
+  5922.32934032879,                       !- Gross Rated Total Cooling Capacity {W}
+  0.740612186094823,                      !- Gross Rated Sensible Heat Ratio
+  4.03878394144749,                       !- Gross Rated Cooling COP {W/W}
+  0.313291502931749,                      !- Rated Air Flow Rate {m3/s}
   773.3912012006,                         !- Rated Evaporator Fan Power Per Volume Flow Rate {W/(m3/s)}
-  central ac and furnace unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
-  central ac and furnace unitary system Cooling Coil - Heating Coil Node, !- Air Outlet Node Name
+  central ac unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
+  Node 5,                                 !- Air Outlet Node Name
   Cool-Cap-fT1,                           !- Total Cooling Capacity Function of Temperature Curve Name
   Cool-Cap-fFF1,                          !- Total Cooling Capacity Function of Flow Fraction Curve Name
   Cool-eir-fT1,                           !- Energy Input Ratio Function of Temperature Curve Name
@@ -10725,44 +10802,242 @@ Coil:Cooling:DX:SingleSpeed,
   10;                                     !- Basin Heater Setpoint Temperature {C}
 
 AirLoopHVAC:SupplyPath,
-  central ac and furnace airloop Node 6 Supply Path, !- Name
+  central ac airloop Node 6 Supply Path,  !- Name
   Node 6,                                 !- Supply Air Path Inlet Node Name
   AirLoopHVAC:ZoneSplitter,               !- Component Object Type 1
-  central ac and furnace zone splitter;   !- Component Name 1
+  central ac zone splitter;               !- Component Name 1
 
 AirLoopHVAC:ZoneSplitter,
-  central ac and furnace zone splitter,   !- Name
+  central ac zone splitter,               !- Name
   Node 6,                                 !- Inlet Node Name
   Node 10;                                !- Outlet Node Name 1
 
 AirLoopHVAC:ReturnPath,
-  central ac and furnace airloop Return Path, !- Name
+  central ac airloop Return Path,         !- Name
   Node 7,                                 !- Return Air Path Outlet Node Name
   AirLoopHVAC:ZoneMixer,                  !- Component Object Type 1
-  central ac and furnace zone mixer;      !- Component Name 1
+  central ac zone mixer;                  !- Component Name 1
 
 AirLoopHVAC:ZoneMixer,
-  central ac and furnace zone mixer,      !- Name
+  central ac zone mixer,                  !- Name
   Node 7,                                 !- Outlet Node Name
   Node 9;                                 !- Inlet Node Name 1
+
+AirLoopHVAC,
+  furnace airloop,                        !- Name
+  ,                                       !- Controller List Name
+  furnace airloopAvailability Manager List, !- Availability Manager List Name
+  0.244905884159413,                      !- Design Supply Air Flow Rate {m3/s}
+  furnace airloop Supply Branches,        !- Branch List Name
+  ,                                       !- Connector List Name
+  Node 11,                                !- Supply Side Inlet Node Name
+  Node 14,                                !- Demand Side Outlet Node Name
+  furnace airloop Demand Inlet Nodes,     !- Demand Side Inlet Node Names
+  furnace airloop Supply Outlet Nodes,    !- Supply Side Outlet Node Names
+  1;                                      !- Design Return Air Flow Fraction of Supply Air Flow
+
+NodeList,
+  furnace airloop Supply Outlet Nodes,    !- Name
+  Node 12;                                !- Node Name 1
+
+NodeList,
+  furnace airloop Demand Inlet Nodes,     !- Name
+  Node 13;                                !- Node Name 1
+
+Sizing:System,
+  furnace airloop,                        !- AirLoop Name
+  Sensible,                               !- Type of Load to Size On
+  Autosize,                               !- Design Outdoor Air Flow Rate {m3/s}
+  0.3,                                    !- Central Heating Maximum System Air Flow Ratio
+  7,                                      !- Preheat Design Temperature {C}
+  0.008,                                  !- Preheat Design Humidity Ratio {kgWater/kgDryAir}
+  12.8,                                   !- Precool Design Temperature {C}
+  0.008,                                  !- Precool Design Humidity Ratio {kgWater/kgDryAir}
+  12.8,                                   !- Central Cooling Design Supply Air Temperature {C}
+  16.7,                                   !- Central Heating Design Supply Air Temperature {C}
+  NonCoincident,                          !- Type of Zone Sum to Use
+  Yes,                                    !- 100% Outdoor Air in Cooling
+  Yes,                                    !- 100% Outdoor Air in Heating
+  0.0085,                                 !- Central Cooling Design Supply Air Humidity Ratio {kgWater/kgDryAir}
+  0.008,                                  !- Central Heating Design Supply Air Humidity Ratio {kgWater/kgDryAir}
+  DesignDay,                              !- Cooling Supply Air Flow Rate Method
+  0,                                      !- Cooling Supply Air Flow Rate {m3/s}
+  0.0099676501,                           !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
+  1,                                      !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
+  3.9475456e-05,                          !- Cooling Supply Air Flow Rate Per Unit Cooling Capacity {m3/s-W}
+  DesignDay,                              !- Heating Supply Air Flow Rate Method
+  0,                                      !- Heating Supply Air Flow Rate {m3/s}
+  0.0099676501,                           !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
+  1,                                      !- Heating Fraction of Autosized Heating Supply Air Flow Rate
+  1,                                      !- Heating Fraction of Autosized Cooling Supply Air Flow Rate
+  3.1588213e-05,                          !- Heating Supply Air Flow Rate Per Unit Heating Capacity {m3/s-W}
+  ZoneSum,                                !- System Outdoor Air Method
+  1,                                      !- Zone Maximum Outdoor Air Fraction {dimensionless}
+  CoolingDesignCapacity,                  !- Cooling Design Capacity Method
+  Autosize,                               !- Cooling Design Capacity {W}
+  234.7,                                  !- Cooling Design Capacity Per Floor Area {W/m2}
+  1,                                      !- Fraction of Autosized Cooling Design Capacity
+  HeatingDesignCapacity,                  !- Heating Design Capacity Method
+  Autosize,                               !- Heating Design Capacity {W}
+  157,                                    !- Heating Design Capacity Per Floor Area {W/m2}
+  1,                                      !- Fraction of Autosized Heating Design Capacity
+  OnOff;                                  !- Central Cooling Capacity Control Method
+
+AvailabilityManagerAssignmentList,
+  furnace airloopAvailability Manager List, !- Name
+  AvailabilityManager:Scheduled,          !- Availability Manager Object Type 1
+  furnace airloop Availability Manager;   !- Availability Manager Name 1
+
+AvailabilityManager:Scheduled,
+  furnace airloop Availability Manager,   !- Name
+  Always On Discrete;                     !- Schedule Name
+
+BranchList,
+  furnace airloop Supply Branches,        !- Name
+  furnace airloop Main Branch;            !- Branch Name 1
+
+Branch,
+  furnace airloop Main Branch,            !- Name
+  ,                                       !- Pressure Drop Curve Name
+  AirLoopHVAC:UnitarySystem,              !- Component Object Type 1
+  furnace unitary system,                 !- Component Name 1
+  Node 11,                                !- Component Inlet Node Name 1
+  Node 12;                                !- Component Outlet Node Name 1
+
+AirLoopHVAC:UnitarySystem,
+  furnace unitary system,                 !- Name
+  Load,                                   !- Control Type
+  living space,                           !- Controlling Zone or Thermostat Location
+  None,                                   !- Dehumidification Control Type
+  Always On Discrete,                     !- Availability Schedule Name
+  Node 11,                                !- Air Inlet Node Name
+  Node 12,                                !- Air Outlet Node Name
+  Fan:OnOff,                              !- Supply Fan Object Type
+  furnace supply fan,                     !- Supply Fan Name
+  BlowThrough,                            !- Fan Placement
+  Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
+  Coil:Heating:Fuel,                      !- Heating Coil Object Type
+  furnace htg coil,                       !- Heating Coil Name
+  1,                                      !- DX Heating Coil Sizing Ratio
+  ,                                       !- Cooling Coil Object Type
+  ,                                       !- Cooling Coil Name
+  No,                                     !- Use DOAS DX Cooling Coil
+  2,                                      !- Minimum Supply Air Temperature {C}
+  SensibleOnlyLoadControl,                !- Latent Load Control
+  ,                                       !- Supplemental Heating Coil Object Type
+  ,                                       !- Supplemental Heating Coil Name
+  SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
+  0,                                      !- Cooling Supply Air Flow Rate {m3/s}
+  ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
+  ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
+  ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
+  SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
+  0.244905884159413,                      !- Heating Supply Air Flow Rate {m3/s}
+  ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
+  ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
+  ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
+  ,                                       !- No Load Supply Air Flow Rate Method
+  0,                                      !- No Load Supply Air Flow Rate {m3/s}
+  ,                                       !- No Load Supply Air Flow Rate Per Floor Area {m3/s-m2}
+  ,                                       !- No Load Fraction of Autosized Cooling Supply Air Flow Rate
+  ,                                       !- No Load Fraction of Autosized Heating Supply Air Flow Rate
+  ,                                       !- No Load Supply Air Flow Rate Per Unit of Capacity During Cooling Operation {m3/s-W}
+  ,                                       !- No Load Supply Air Flow Rate Per Unit of Capacity During Heating Operation {m3/s-W}
+  48.8888888888889,                       !- Maximum Supply Air Temperature {C}
+  21,                                     !- Maximum Outdoor Dry-Bulb Temperature for Supplemental Heater Operation {C}
+  ,                                       !- Outdoor Dry-Bulb Temperature Sensor Node Name
+  2.5,                                    !- Maximum Cycling Rate {cycles/hr}
+  60,                                     !- Heat Pump Time Constant {s}
+  0.01,                                   !- Fraction of On-Cycle Power Use
+  60,                                     !- Heat Pump Fan Delay Time {s}
+  0,                                      !- Ancillary On-Cycle Electric Power {W}
+  0;                                      !- Ancillary Off-Cycle Electric Power {W}
+
+Fan:OnOff,
+  furnace supply fan,                     !- Name
+  Always On Discrete,                     !- Availability Schedule Name
+  0.75,                                   !- Fan Total Efficiency
+  921.712801430852,                       !- Pressure Rise {Pa}
+  0.244910603633845,                      !- Maximum Flow Rate {m3/s}
+  1,                                      !- Motor Efficiency
+  1,                                      !- Motor In Airstream Fraction
+  Node 11,                                !- Air Inlet Node Name
+  furnace unitary system Fan - Heating Coil Node, !- Air Outlet Node Name
+  furnace fan power curve,                !- Fan Power Ratio Function of Speed Ratio Curve Name
+  furnace fan eff curve,                  !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
+  supply fan;                             !- End-Use Subcategory
+
+Curve:Exponent,
+  furnace fan power curve,                !- Name
+  0,                                      !- Coefficient1 Constant
+  1,                                      !- Coefficient2 Constant
+  3,                                      !- Coefficient3 Constant
+  -100,                                   !- Minimum Value of x {BasedOnField A2}
+  100;                                    !- Maximum Value of x {BasedOnField A2}
+
+Curve:Cubic,
+  furnace fan eff curve,                  !- Name
+  0,                                      !- Coefficient1 Constant
+  1,                                      !- Coefficient2 x
+  0,                                      !- Coefficient3 x**2
+  0,                                      !- Coefficient4 x**3
+  0,                                      !- Minimum Value of x {BasedOnField A2}
+  1,                                      !- Maximum Value of x {BasedOnField A2}
+  0.01,                                   !- Minimum Curve Output {BasedOnField A3}
+  1;                                      !- Maximum Curve Output {BasedOnField A3}
+
+Coil:Heating:Fuel,
+  furnace htg coil,                       !- Name
+  Always On Discrete,                     !- Availability Schedule Name
+  NaturalGas,                             !- Fuel Type
+  0.78,                                   !- Burner Efficiency
+  9183.85196948978,                       !- Nominal Capacity {W}
+  furnace unitary system Fan - Heating Coil Node, !- Air Inlet Node Name
+  Node 12,                                !- Air Outlet Node Name
+  ,                                       !- Temperature Setpoint Node Name
+  0,                                      !- Parasitic Electric Load {W}
+  ,                                       !- Part Load Fraction Correlation Curve Name
+  0;                                      !- Parasitic Fuel Load {W}
+
+AirLoopHVAC:SupplyPath,
+  furnace airloop Node 13 Supply Path,    !- Name
+  Node 13,                                !- Supply Air Path Inlet Node Name
+  AirLoopHVAC:ZoneSplitter,               !- Component Object Type 1
+  furnace zone splitter;                  !- Component Name 1
+
+AirLoopHVAC:ZoneSplitter,
+  furnace zone splitter,                  !- Name
+  Node 13,                                !- Inlet Node Name
+  Node 17;                                !- Outlet Node Name 1
+
+AirLoopHVAC:ReturnPath,
+  furnace airloop Return Path,            !- Name
+  Node 14,                                !- Return Air Path Outlet Node Name
+  AirLoopHVAC:ZoneMixer,                  !- Component Object Type 1
+  furnace zone mixer;                     !- Component Name 1
+
+AirLoopHVAC:ZoneMixer,
+  furnace zone mixer,                     !- Name
+  Node 14,                                !- Outlet Node Name
+  Node 16;                                !- Inlet Node Name 1
 
 PlantLoop,
   dhw loop,                               !- Name
   Water,                                  !- Fluid Type
   ,                                       !- User Defined Fluid Type
   dhw loop Operation Schemes,             !- Plant Equipment Operation Scheme Name
-  Node 14,                                !- Loop Temperature Setpoint Node Name
+  Node 21,                                !- Loop Temperature Setpoint Node Name
   100,                                    !- Maximum Loop Temperature {C}
   0,                                      !- Minimum Loop Temperature {C}
   0.01,                                   !- Maximum Loop Flow Rate {m3/s}
   0,                                      !- Minimum Loop Flow Rate {m3/s}
   0.003,                                  !- Plant Loop Volume {m3}
-  Node 13,                                !- Plant Side Inlet Node Name
-  Node 14,                                !- Plant Side Outlet Node Name
+  Node 20,                                !- Plant Side Inlet Node Name
+  Node 21,                                !- Plant Side Outlet Node Name
   dhw loop Supply Branches,               !- Plant Side Branch List Name
   dhw loop Supply Connector List,         !- Plant Side Connector List Name
-  Node 16,                                !- Demand Side Inlet Node Name
-  Node 17,                                !- Demand Side Outlet Node Name
+  Node 23,                                !- Demand Side Inlet Node Name
+  Node 24,                                !- Demand Side Outlet Node Name
   dhw loop Demand Branches,               !- Demand Side Branch List Name
   dhw loop Demand Connector List,         !- Demand Side Connector List Name
   Optimal,                                !- Load Distribution Scheme
@@ -10810,13 +11085,13 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pump:VariableSpeed,                     !- Component Object Type 1
   Pump Variable Speed 1,                  !- Component Name 1
-  Node 13,                                !- Component Inlet Node Name 1
-  Node 21;                                !- Component Outlet Node Name 1
+  Node 20,                                !- Component Inlet Node Name 1
+  Node 28;                                !- Component Outlet Node Name 1
 
 Pump:VariableSpeed,
   Pump Variable Speed 1,                  !- Name
-  Node 13,                                !- Inlet Node Name
-  Node 21,                                !- Outlet Node Name
+  Node 20,                                !- Inlet Node Name
+  Node 28,                                !- Outlet Node Name
   0.01,                                   !- Design Maximum Flow Rate {m3/s}
   1,                                      !- Design Pump Head {Pa}
   0,                                      !- Design Power Consumption {W}
@@ -10850,21 +11125,21 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pipe:Adiabatic,                         !- Component Object Type 1
   Pipe Adiabatic 1,                       !- Component Name 1
-  Node 15,                                !- Component Inlet Node Name 1
-  Node 19;                                !- Component Outlet Node Name 1
+  Node 22,                                !- Component Inlet Node Name 1
+  Node 26;                                !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   Pipe Adiabatic 1,                       !- Name
-  Node 15,                                !- Inlet Node Name
-  Node 19;                                !- Outlet Node Name
+  Node 22,                                !- Inlet Node Name
+  Node 26;                                !- Outlet Node Name
 
 Branch,
   dhw loop Supply Branch 2,               !- Name
   ,                                       !- Pressure Drop Curve Name
   WaterHeater:Mixed,                      !- Component Object Type 1
   water heater,                           !- Component Name 1
-  Node 22,                                !- Component Inlet Node Name 1
-  Node 23;                                !- Component Outlet Node Name 1
+  Node 29,                                !- Component Inlet Node Name 1
+  Node 30;                                !- Component Outlet Node Name 1
 
 WaterHeater:Mixed,
   water heater,                           !- Name
@@ -10877,14 +11152,14 @@ WaterHeater:Mixed,
   0,                                      !- Heater Minimum Capacity {W}
   0,                                      !- Heater Ignition Minimum Flow Rate {m3/s}
   0,                                      !- Heater Ignition Delay {s}
-  electricity,                            !- Heater Fuel Type
+  Electricity,                            !- Heater Fuel Type
   1,                                      !- Heater Thermal Efficiency
   ,                                       !- Part Load Factor Curve Name
   0,                                      !- Off Cycle Parasitic Fuel Consumption Rate {W}
-  electricity,                            !- Off Cycle Parasitic Fuel Type
+  Electricity,                            !- Off Cycle Parasitic Fuel Type
   0,                                      !- Off Cycle Parasitic Heat Fraction to Tank
   0,                                      !- On Cycle Parasitic Fuel Consumption Rate {W}
-  electricity,                            !- On Cycle Parasitic Fuel Type
+  Electricity,                            !- On Cycle Parasitic Fuel Type
   0,                                      !- On Cycle Parasitic Heat Fraction to Tank
   Zone,                                   !- Ambient Temperature Indicator
   ,                                       !- Ambient Temperature Schedule Name
@@ -10897,8 +11172,8 @@ WaterHeater:Mixed,
   ,                                       !- Peak Use Flow Rate {m3/s}
   ,                                       !- Use Flow Rate Fraction Schedule Name
   ,                                       !- Cold Water Supply Temperature Schedule Name
-  Node 22,                                !- Use Side Inlet Node Name
-  Node 23,                                !- Use Side Outlet Node Name
+  Node 29,                                !- Use Side Inlet Node Name
+  Node 30,                                !- Use Side Outlet Node Name
   1,                                      !- Use Side Effectiveness
   ,                                       !- Source Side Inlet Node Name
   ,                                       !- Source Side Outlet Node Name
@@ -10915,19 +11190,19 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pipe:Adiabatic,                         !- Component Object Type 1
   Pipe Adiabatic 2,                       !- Component Name 1
-  Node 20,                                !- Component Inlet Node Name 1
-  Node 14;                                !- Component Outlet Node Name 1
+  Node 27,                                !- Component Inlet Node Name 1
+  Node 21;                                !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   Pipe Adiabatic 2,                       !- Name
-  Node 20,                                !- Inlet Node Name
-  Node 14;                                !- Outlet Node Name
+  Node 27,                                !- Inlet Node Name
+  Node 21;                                !- Outlet Node Name
 
 SetpointManager:Scheduled,
   Setpoint Manager Scheduled 1,           !- Name
   Temperature,                            !- Control Variable
   dhw temp,                               !- Schedule Name
-  Node 14;                                !- Setpoint Node or NodeList Name
+  Node 21;                                !- Setpoint Node or NodeList Name
 
 BranchList,
   dhw loop Demand Branches,               !- Name
@@ -10960,12 +11235,12 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   Pipe:Adiabatic,                         !- Component Object Type 1
   dhw loop Demand Inlet Pipe,             !- Component Name 1
-  Node 16,                                !- Component Inlet Node Name 1
+  Node 23,                                !- Component Inlet Node Name 1
   dhw loop Demand Inlet Pipe Node;        !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   dhw loop Demand Inlet Pipe,             !- Name
-  Node 16,                                !- Inlet Node Name
+  Node 23,                                !- Inlet Node Name
   dhw loop Demand Inlet Pipe Node;        !- Outlet Node Name
 
 Branch,
@@ -10973,13 +11248,13 @@ Branch,
   ,                                       !- Pressure Drop Curve Name
   WaterUse:Connections,                   !- Component Object Type 1
   Water Use Connections 1,                !- Component Name 1
-  Node 18,                                !- Component Inlet Node Name 1
-  Node 24;                                !- Component Outlet Node Name 1
+  Node 25,                                !- Component Inlet Node Name 1
+  Node 31;                                !- Component Outlet Node Name 1
 
 WaterUse:Connections,
   Water Use Connections 1,                !- Name
-  Node 18,                                !- Inlet Node Name
-  Node 24,                                !- Outlet Node Name
+  Node 25,                                !- Inlet Node Name
+  Node 31,                                !- Outlet Node Name
   ,                                       !- Supply Water Storage Tank Name
   ,                                       !- Reclamation Water Storage Tank Name
   ,                                       !- Hot Water Supply Temperature Schedule Name
@@ -11039,12 +11314,12 @@ Branch,
   Pipe:Adiabatic,                         !- Component Object Type 1
   dhw loop Demand Outlet Pipe,            !- Component Name 1
   dhw loop Demand Outlet Pipe Node,       !- Component Inlet Node Name 1
-  Node 17;                                !- Component Outlet Node Name 1
+  Node 24;                                !- Component Outlet Node Name 1
 
 Pipe:Adiabatic,
   dhw loop Demand Outlet Pipe,            !- Name
   dhw loop Demand Outlet Pipe Node,       !- Inlet Node Name
-  Node 17;                                !- Outlet Node Name
+  Node 24;                                !- Outlet Node Name
 
 PlantEquipmentOperationSchemes,
   dhw loop Operation Schemes,             !- Name
@@ -11066,6 +11341,39 @@ PlantEquipmentList,
 RunPeriodControl:DaylightSavingTime,
   Mar 12,                                 !- Start Date
   Nov 5;                                  !- End Date
+
+OutputControl:Files,
+  No,                                     !- Output CSV
+  No,                                     !- Output MTR
+  No,                                     !- Output ESO
+  No,                                     !- Output EIO
+  No,                                     !- Output Tabular
+  Yes,                                    !- Output SQLite
+  Yes,                                    !- Output JSON
+  No,                                     !- Output AUDIT
+  Yes,                                    !- Output Zone Sizing
+  Yes,                                    !- Output System Sizing
+  Yes,                                    !- Output DXF
+  No,                                     !- Output BND
+  No,                                     !- Output RDD
+  No,                                     !- Output MDD
+  No,                                     !- Output MTD
+  Yes,                                    !- Output END
+  No,                                     !- Output SHD
+  Yes,                                    !- Output DFS
+  Yes,                                    !- Output GLHE
+  Yes,                                    !- Output DelightIn
+  Yes,                                    !- Output DelightELdmp
+  Yes,                                    !- Output DelightDFdmp
+  Yes,                                    !- Output EDD
+  Yes,                                    !- Output DBG
+  Yes,                                    !- Output PerfLog
+  Yes,                                    !- Output SLN
+  Yes,                                    !- Output SCI
+  Yes,                                    !- Output WRL
+  Yes,                                    !- Output Screen
+  Yes,                                    !- Output ExtShd
+  Yes;                                    !- Output Tarcog
 
 Output:Diagnostics,
   DisplayAdvancedReportVariables;         !- Key 1
@@ -11148,20 +11456,28 @@ Exterior:Lights,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan clg disaggregate, !- Variable Name
+  central ac supply fan clg disaggregate, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan htg primary disaggregate, !- Variable Name
+  furnace supply fan htg primary disaggregate, !- Variable Name
   monthly;                                !- Reporting Frequency
 
 EnergyManagementSystem:GlobalVariable,
-  central_ac_and_furnace_airloop_Fan_RTF; !- Erl Variable Name 1
+  central_ac_airloop_Fan_RTF;             !- Erl Variable Name 1
+
+EnergyManagementSystem:GlobalVariable,
+  furnace_airloop_Fan_RTF;                !- Erl Variable Name 1
 
 EnergyManagementSystem:InternalVariable,
-  central_ac_and_furnace_airloop_max_sup_fan_mfr, !- Name
-  central ac and furnace supply fan,      !- Internal Data Index Key Name
+  central_ac_airloop_max_sup_fan_mfr,     !- Name
+  central ac supply fan,                  !- Internal Data Index Key Name
+  Fan Maximum Mass Flow Rate;             !- Internal Data Type
+
+EnergyManagementSystem:InternalVariable,
+  furnace_airloop_max_sup_fan_mfr,        !- Name
+  furnace supply fan,                     !- Internal Data Index Key Name
   Fan Maximum Mass Flow Rate;             !- Internal Data Type
 
 EnergyManagementSystem:Sensor,
@@ -11190,29 +11506,29 @@ EnergyManagementSystem:Sensor,
   Zone Air Humidity Ratio;                !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_and_furnace_airloop_Fan_RTF_s, !- Name
-  central ac and furnace supply fan,      !- Output:Variable or Output:Meter Index Key Name
+  central_ac_airloop_Fan_RTF_s,           !- Name
+  central ac supply fan,                  !- Output:Variable or Output:Meter Index Key Name
   Fan Runtime Fraction;                   !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_and_furnace_clg_coil_s,      !- Name
-  central ac and furnace clg coil,        !- Output:Variable or Output:Meter Index Key Name
-  Cooling Coil Electric Energy;           !- Output:Variable or Output:Meter Name
+  central_ac_clg_coil_s,                  !- Name
+  central ac clg coil,                    !- Output:Variable or Output:Meter Index Key Name
+  Cooling Coil Electricity Energy;        !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_and_furnace_htg_coil_s,      !- Name
-  central ac and furnace htg coil,        !- Output:Variable or Output:Meter Index Key Name
-  Heating Coil Gas Energy;                !- Output:Variable or Output:Meter Name
+  central_ac_supply_fan_s,                !- Name
+  central ac supply fan,                  !- Output:Variable or Output:Meter Index Key Name
+  Fan Electricity Energy;                 !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_and_furnace_supply_fan_s,    !- Name
-  central ac and furnace supply fan,      !- Output:Variable or Output:Meter Index Key Name
-  Fan Electric Energy;                    !- Output:Variable or Output:Meter Name
+  central_ac_unitary_system_install_quality_tin_s, !- Name
+  living space,                           !- Output:Variable or Output:Meter Index Key Name
+  Zone Mean Air Temperature;              !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
-  central_ac_and_furnace_supply_fan_s_1,  !- Name
-  central ac and furnace supply fan,      !- Output:Variable or Output:Meter Index Key Name
-  Fan Electric Energy;                    !- Output:Variable or Output:Meter Name
+  central_ac_unitary_system_install_quality_tt_s, !- Name
+  living space,                           !- Output:Variable or Output:Meter Index Key Name
+  Zone Outdoor Air Drybulb Temperature;   !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   clg_load_liv,                           !- Name
@@ -11243,6 +11559,21 @@ EnergyManagementSystem:Sensor,
   dhw_rtf,                                !- Name
   water heater,                           !- Output:Variable or Output:Meter Index Key Name
   Water Heater Runtime Fraction;          !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  furnace_airloop_Fan_RTF_s,              !- Name
+  furnace supply fan,                     !- Output:Variable or Output:Meter Index Key Name
+  Fan Runtime Fraction;                   !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  furnace_htg_coil_s,                     !- Name
+  furnace htg coil,                       !- Output:Variable or Output:Meter Index Key Name
+  Heating Coil NaturalGas Energy;         !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Sensor,
+  furnace_supply_fan_s,                   !- Name
+  furnace supply fan,                     !- Output:Variable or Output:Meter Index Key Name
+  Fan Electricity Energy;                 !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   htg_load_liv,                           !- Name
@@ -11892,22 +12223,34 @@ EnergyManagementSystem:Sensor,
 EnergyManagementSystem:Sensor,
   water_heater_EC_adjustment_energy_consumption, !- Name
   water heater EC adjustment,             !- Output:Variable or Output:Meter Index Key Name
-  Other Equipment Electric Energy;        !- Output:Variable or Output:Meter Name
+  Other Equipment Electricity Energy;     !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   water_heater_energy,                    !- Name
   water heater,                           !- Output:Variable or Output:Meter Index Key Name
-  Water Heater Electric Power;            !- Output:Variable or Output:Meter Name
+  Water Heater Electricity Rate;          !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   water_heater_off_cycle_parasitic,       !- Name
   water heater,                           !- Output:Variable or Output:Meter Index Key Name
-  Water Heater Off Cycle Parasitic Electric Power; !- Output:Variable or Output:Meter Name
+  Water Heater Off Cycle Parasitic Electricity Rate; !- Output:Variable or Output:Meter Name
 
 EnergyManagementSystem:Sensor,
   water_heater_on_cycle_parasitic,        !- Name
   water heater,                           !- Output:Variable or Output:Meter Index Key Name
-  Water Heater On Cycle Parasitic Electric Power; !- Output:Variable or Output:Meter Name
+  Water Heater On Cycle Parasitic Electricity Rate; !- Output:Variable or Output:Meter Name
+
+EnergyManagementSystem:Actuator,
+  central_ac_unitary_system_install_quality_cap_clg_act, !- Name
+  Cool-Cap-fFF1,                          !- Actuated Component Unique Name
+  Curve,                                  !- Actuated Component Type
+  Curve Result;                           !- Actuated Component Control Type
+
+EnergyManagementSystem:Actuator,
+  central_ac_unitary_system_install_quality_eir_clg_act, !- Name
+  Cool-eir-fFF1,                          !- Actuated Component Unique Name
+  Curve,                                  !- Actuated Component Type
+  Curve Result;                           !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   infil_flow_act,                         !- Name
@@ -11919,7 +12262,7 @@ EnergyManagementSystem:Actuator,
   mech_vent_house_fan_cfis_act,           !- Name
   mech vent house fan cfis,               !- Actuated Component Unique Name
   ElectricEquipment,                      !- Actuated Component Type
-  Electric Power Level;                   !- Actuated Component Control Type
+  Electricity Rate;                       !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   mech_vent_house_fan_latent_load_equip_act, !- Name
@@ -11949,7 +12292,7 @@ EnergyManagementSystem:Actuator,
   whole_house_fan_act,                    !- Name
   whole house fan,                        !- Actuated Component Unique Name
   ElectricEquipment,                      !- Actuated Component Type
-  Electric Power Level;                   !- Actuated Component Control Type
+  Electricity Rate;                       !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   whole_house_fan_flow_act,               !- Name
@@ -11964,18 +12307,60 @@ EnergyManagementSystem:Actuator,
   Air Exchange Flow Rate;                 !- Actuated Component Control Type
 
 EnergyManagementSystem:Program,
-  central_ac_and_furnace_supply_fan_disaggregate_program, !- Name
-  Set central_ac_and_furnace_supply_fan_clg = 0, !- Program Line 1
-  If central_ac_and_furnace_clg_coil_s > 0, !- Program Line 2
-  Set central_ac_and_furnace_supply_fan_clg = central_ac_and_furnace_supply_fan_s, !- Program Line 3
+  central_ac_supply_fan_disaggregate_program, !- Name
+  Set central_ac_supply_fan_clg = 0,      !- Program Line 1
+  If central_ac_clg_coil_s > 0,           !- Program Line 2
+  Set central_ac_supply_fan_clg = central_ac_supply_fan_s, !- Program Line 3
   EndIf;                                  !- Program Line 4
 
 EnergyManagementSystem:Program,
-  central_ac_and_furnace_supply_fan_disaggregate_program_1, !- Name
-  Set central_ac_and_furnace_supply_fan_primary_htg = 0, !- Program Line 1
-  If central_ac_and_furnace_htg_coil_s > 0, !- Program Line 2
-  Set central_ac_and_furnace_supply_fan_primary_htg = central_ac_and_furnace_supply_fan_s_1, !- Program Line 3
-  EndIf;                                  !- Program Line 4
+  central_ac_unitary_system_install_quality_program, !- Name
+  Set F_CH = -0.25,                       !- Program Line 1
+  Set a1_AF_Qgr_c = 0.718664047,          !- Program Line 2
+  Set a2_AF_Qgr_c = 0.41797409,           !- Program Line 3
+  Set a3_AF_Qgr_c = -0.136638137,         !- Program Line 4
+  Set a1_AF_EIR_c = 1.143487507,          !- Program Line 5
+  Set a2_AF_EIR_c = -0.13943972,          !- Program Line 6
+  Set a3_AF_EIR_c = -0.004047787,         !- Program Line 7
+  Set a1_CH_Qgr_c = -0.946,               !- Program Line 8
+  Set a2_CH_Qgr_c = 0.0493,               !- Program Line 9
+  Set a3_CH_Qgr_c = -0.00118,             !- Program Line 10
+  Set a4_CH_Qgr_c = -1.15,                !- Program Line 11
+  Set a1_CH_P_c = -0.313,                 !- Program Line 12
+  Set a2_CH_P_c = 0.0115,                 !- Program Line 13
+  Set a3_CH_P_c = 0.00266,                !- Program Line 14
+  Set a4_CH_P_c = -0.116,                 !- Program Line 15
+  Set FF_CH_c = 1.182,                    !- Program Line 16
+  Set q0_CH = a1_CH_Qgr_c,                !- Program Line 17
+  Set q1_CH = a2_CH_Qgr_c*central_ac_unitary_system_install_quality_tin_s, !- Program Line 18
+  Set q2_CH = a3_CH_Qgr_c*central_ac_unitary_system_install_quality_tt_s, !- Program Line 19
+  Set q3_CH = a4_CH_Qgr_c*F_CH,           !- Program Line 20
+  Set Y_CH_Q_c = 1 + ((q0_CH+(q1_CH)+(q2_CH)+(q3_CH))*F_CH), !- Program Line 21
+  Set q0_AF_CH = a1_AF_Qgr_c,             !- Program Line 22
+  Set q1_AF_CH = a2_AF_Qgr_c*FF_CH_c,     !- Program Line 23
+  Set q2_AF_CH = a3_AF_Qgr_c*FF_CH_c*FF_CH_c, !- Program Line 24
+  Set p_CH_Q_c = Y_CH_Q_c/(q0_AF_CH+(q1_AF_CH)+(q2_AF_CH)), !- Program Line 25
+  Set p1_CH = a1_CH_P_c,                  !- Program Line 26
+  Set p2_CH = a2_CH_P_c*central_ac_unitary_system_install_quality_tin_s, !- Program Line 27
+  Set p3_CH = a3_CH_P_c*central_ac_unitary_system_install_quality_tt_s, !- Program Line 28
+  Set p4_CH = a4_CH_P_c*F_CH,             !- Program Line 29
+  Set Y_CH_COP_c = Y_CH_Q_c/(1 + (p1_CH+(p2_CH)+(p3_CH)+(p4_CH))*F_CH), !- Program Line 30
+  Set eir0_AF_CH = a1_AF_EIR_c,           !- Program Line 31
+  Set eir1_AF_CH = a2_AF_EIR_c*FF_CH_c,   !- Program Line 32
+  Set eir2_AF_CH = a3_AF_EIR_c*FF_CH_c*FF_CH_c, !- Program Line 33
+  Set p_CH_COP_c = Y_CH_COP_c*(eir0_AF_CH+(eir1_AF_CH)+(eir2_AF_CH)), !- Program Line 34
+  Set FF_AF_c = 1.0 + -0.051,             !- Program Line 35
+  Set FF_AF_comb_c = FF_CH_c * FF_AF_c,   !- Program Line 36
+  Set q0_AF_comb = a1_AF_Qgr_c,           !- Program Line 37
+  Set q1_AF_comb = a2_AF_Qgr_c*FF_AF_comb_c, !- Program Line 38
+  Set q2_AF_comb = a3_AF_Qgr_c*FF_AF_comb_c*FF_AF_comb_c, !- Program Line 39
+  Set p_AF_Q_c = q0_AF_comb+(q1_AF_comb)+(q2_AF_comb), !- Program Line 40
+  Set eir0_AF_comb = a1_AF_EIR_c,         !- Program Line 41
+  Set eir1_AF_comb = a2_AF_EIR_c*FF_AF_comb_c, !- Program Line 42
+  Set eir2_AF_comb = a3_AF_EIR_c*FF_AF_comb_c*FF_AF_comb_c, !- Program Line 43
+  Set p_AF_COP_c = 1.0/(eir0_AF_comb+(eir1_AF_comb)+(eir2_AF_comb)), !- Program Line 44
+  Set central_ac_unitary_system_install_quality_cap_clg_act = (p_CH_Q_c * p_AF_Q_c), !- Program Line 45
+  Set central_ac_unitary_system_install_quality_eir_clg_act = (1.0 / (p_CH_COP_c * p_AF_COP_c)); !- Program Line 46
 
 EnergyManagementSystem:Program,
   component_loads_program,                !- Name
@@ -12095,6 +12480,13 @@ EnergyManagementSystem:Program,
   EndIf;                                  !- Program Line 114
 
 EnergyManagementSystem:Program,
+  furnace_supply_fan_disaggregate_program, !- Name
+  Set furnace_supply_fan_primary_htg = 0, !- Program Line 1
+  If furnace_htg_coil_s > 0,              !- Program Line 2
+  Set furnace_supply_fan_primary_htg = furnace_supply_fan_s, !- Program Line 3
+  EndIf;                                  !- Program Line 4
+
+EnergyManagementSystem:Program,
   infil_program,                          !- Name
   Set p_m = 0.14,                         !- Program Line 1
   Set p_s = 0.22,                         !- Program Line 2
@@ -12129,34 +12521,35 @@ EnergyManagementSystem:Program,
   Set QWHV_cfis_oa = 0.0,                 !- Program Line 31
   Set Qrange = 0,                         !- Program Line 32
   Set Qbath = 0,                          !- Program Line 33
-  Set QWHV_sup = 0.0,                     !- Program Line 34
-  Set QWHV_exh = 0.0,                     !- Program Line 35
-  Set QWHV_bal_erv_hrv = 0.004,           !- Program Line 36
-  Set Qexhaust = Qrange + Qbath + QWHV_exh + QWHV_bal_erv_hrv, !- Program Line 37
-  Set Qsupply = QWHV_sup + QWHV_bal_erv_hrv + QWHV_cfis_oa, !- Program Line 38
-  Set Qfan = (@Max Qexhaust Qsupply),     !- Program Line 39
-  If Qfan > 0,                            !- Program Line 40
-  Set Qavg = ((Qexhaust + Qsupply) / 2.0), !- Program Line 41
-  If ((@Abs (Qexhaust - Qavg)) / Qavg) <= 0.1, !- Program Line 42
-  Set phi = 1,                            !- Program Line 43
-  Else,                                   !- Program Line 44
-  Set phi = (Qinf / (Qinf + Qfan)),       !- Program Line 45
-  EndIf,                                  !- Program Line 46
-  Set Qinf_adj = phi * Qinf,              !- Program Line 47
-  Else,                                   !- Program Line 48
-  Set Qinf_adj = Qinf,                    !- Program Line 49
-  EndIf,                                  !- Program Line 50
-  Set infil_flow_act = Qinf_adj,          !- Program Line 51
-  Set Qload = Qfan,                       !- Program Line 52
-  Set Qload = Qload - 0.0,                !- Program Line 53
-  Set Effectiveness_Sens = 0.0,           !- Program Line 54
-  Set Effectiveness_Lat = 0.0,            !- Program Line 55
-  Set Fan_MFR = Qload * OASupRho,         !- Program Line 56
-  Set FanTotalToLv = Fan_MFR * (OASupInEnth - ZoneAirEnth), !- Program Line 57
-  Set FanSensToLv = Fan_MFR * ZoneCp * (OASupInTemp - ZoneTemp), !- Program Line 58
-  Set FanLatToLv = FanTotalToLv - FanSensToLv, !- Program Line 59
-  Set mech_vent_house_fan_sensible_load_equip_act = mech_vent_house_fan_sensible_load_equip_act + FanSensToLv, !- Program Line 60
-  Set mech_vent_house_fan_latent_load_equip_act = mech_vent_house_fan_latent_load_equip_act + FanLatToLv; !- Program Line 61
+  Set Qdryer = 0,                         !- Program Line 34
+  Set QWHV_sup = 0.0,                     !- Program Line 35
+  Set QWHV_exh = 0.0,                     !- Program Line 36
+  Set QWHV_bal_erv_hrv = 0.004,           !- Program Line 37
+  Set Qexhaust = Qrange + Qbath + Qdryer + QWHV_exh + QWHV_bal_erv_hrv, !- Program Line 38
+  Set Qsupply = QWHV_sup + QWHV_bal_erv_hrv + QWHV_cfis_oa, !- Program Line 39
+  Set Qfan = (@Max Qexhaust Qsupply),     !- Program Line 40
+  If Qfan > 0,                            !- Program Line 41
+  Set Qavg = ((Qexhaust + Qsupply) / 2.0), !- Program Line 42
+  If ((@Abs (Qexhaust - Qavg)) / Qavg) <= 0.1, !- Program Line 43
+  Set phi = 1,                            !- Program Line 44
+  Else,                                   !- Program Line 45
+  Set phi = (Qinf / (Qinf + Qfan)),       !- Program Line 46
+  EndIf,                                  !- Program Line 47
+  Set Qinf_adj = phi * Qinf,              !- Program Line 48
+  Else,                                   !- Program Line 49
+  Set Qinf_adj = Qinf,                    !- Program Line 50
+  EndIf,                                  !- Program Line 51
+  Set infil_flow_act = Qinf_adj,          !- Program Line 52
+  Set Qload = Qfan,                       !- Program Line 53
+  Set Qload = Qload - 0.0,                !- Program Line 54
+  Set Effectiveness_Sens = 0.0,           !- Program Line 55
+  Set Effectiveness_Lat = 0.0,            !- Program Line 56
+  Set Fan_MFR = Qload * OASupRho,         !- Program Line 57
+  Set FanTotalToLv = Fan_MFR * (OASupInEnth - ZoneAirEnth), !- Program Line 58
+  Set FanSensToLv = Fan_MFR * ZoneCp * (OASupInTemp - ZoneTemp), !- Program Line 59
+  Set FanLatToLv = FanTotalToLv - FanSensToLv, !- Program Line 60
+  Set mech_vent_house_fan_sensible_load_equip_act = mech_vent_house_fan_sensible_load_equip_act + FanSensToLv, !- Program Line 61
+  Set mech_vent_house_fan_latent_load_equip_act = mech_vent_house_fan_latent_load_equip_act + FanLatToLv; !- Program Line 62
 
 EnergyManagementSystem:Program,
   natural_vent_program,                   !- Name
@@ -12208,19 +12601,24 @@ EnergyManagementSystem:Program,
   Set water_heater_ec_adj_act = 0.0 * wh_e_cons; !- Program Line 2
 
 EnergyManagementSystem:ProgramCallingManager,
-  central ac and furnace supply fan disaggregate program calling manager, !- Name
+  central ac supply fan disaggregate program calling manager, !- Name
   EndOfSystemTimestepBeforeHVACReporting, !- EnergyPlus Model Calling Point
-  central_ac_and_furnace_supply_fan_disaggregate_program; !- Program Name 1
+  central_ac_supply_fan_disaggregate_program; !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
-  central ac and furnace supply fan disaggregate program calling manager 1, !- Name
-  EndOfSystemTimestepBeforeHVACReporting, !- EnergyPlus Model Calling Point
-  central_ac_and_furnace_supply_fan_disaggregate_program_1; !- Program Name 1
+  central ac unitary system install quality program manager, !- Name
+  BeginTimestepBeforePredictor,           !- EnergyPlus Model Calling Point
+  central_ac_unitary_system_install_quality_program; !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
   component_loads_program calling manager, !- Name
   EndOfZoneTimestepAfterZoneReporting,    !- EnergyPlus Model Calling Point
   component_loads_program;                !- Program Name 1
+
+EnergyManagementSystem:ProgramCallingManager,
+  furnace supply fan disaggregate program calling manager, !- Name
+  EndOfSystemTimestepBeforeHVACReporting, !- EnergyPlus Model Calling Point
+  furnace_supply_fan_disaggregate_program; !- Program Name 1
 
 EnergyManagementSystem:ProgramCallingManager,
   infil_program calling manager,          !- Name
@@ -12238,19 +12636,19 @@ EnergyManagementSystem:ProgramCallingManager,
   water_heater_EC_adj;                    !- Program Name 1
 
 EnergyManagementSystem:OutputVariable,
-  central ac and furnace supply fan clg disaggregate, !- Name
-  central_ac_and_furnace_supply_fan_clg,  !- EMS Variable Name
+  central ac supply fan clg disaggregate, !- Name
+  central_ac_supply_fan_clg,              !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
-  central_ac_and_furnace_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
+  central_ac_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
-  central ac and furnace supply fan htg primary disaggregate, !- Name
-  central_ac_and_furnace_supply_fan_primary_htg, !- EMS Variable Name
+  furnace supply fan htg primary disaggregate, !- Name
+  furnace_supply_fan_primary_htg,         !- EMS Variable Name
   Summed,                                 !- Type of Data in Variable
   SystemTimestep,                         !- Update Frequency
-  central_ac_and_furnace_supply_fan_disaggregate_program_1, !- EMS Program or Subroutine Name
+  furnace_supply_fan_disaggregate_program, !- EMS Program or Subroutine Name
   J;                                      !- Units
 
 EnergyManagementSystem:OutputVariable,
@@ -12278,15 +12676,19 @@ LifeCycleCost:NonrecurringCost,
   ServicePeriod;                          !- Start of Costs
 
 Output:Meter,
+  ElectricityProduced:Facility,           !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter,
   Electricity:Facility,                   !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  Gas:Facility,                           !- Key Name
+  NaturalGas:Facility,                    !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  FuelOil#2:Facility,                     !- Key Name
+  FuelOilNo2:Facility,                    !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
@@ -12386,55 +12788,67 @@ Output:Meter,
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  ElectricityProduced:Facility,           !- Key Name
+  Photovoltaic:ElectricityProduced,       !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  clothes dryer:InteriorEquipment:Gas,    !- Key Name
+  PowerConversion:ElectricityProduced,    !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  cooking range:InteriorEquipment:Gas,    !- Key Name
+  Cogeneration:ElectricityProduced,       !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc pool heater:InteriorEquipment:Gas, !- Key Name
+  clothes dryer:InteriorEquipment:NaturalGas, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc hot tub heater:InteriorEquipment:Gas, !- Key Name
+  cooking range:InteriorEquipment:NaturalGas, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc grill:InteriorEquipment:Gas,       !- Key Name
+  misc pool heater:InteriorEquipment:NaturalGas, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc lighting:InteriorEquipment:Gas,    !- Key Name
+  misc hot tub heater:InteriorEquipment:NaturalGas, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc fireplace:InteriorEquipment:Gas,   !- Key Name
+  misc grill:InteriorEquipment:NaturalGas, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  clothes dryer:InteriorEquipment:FuelOil#2, !- Key Name
+  misc lighting:InteriorEquipment:NaturalGas, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  cooking range:InteriorEquipment:FuelOil#2, !- Key Name
+  misc fireplace:InteriorEquipment:NaturalGas, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc grill:InteriorEquipment:FuelOil#2, !- Key Name
+  Cogeneration:NaturalGas,                !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc lighting:InteriorEquipment:FuelOil#2, !- Key Name
+  clothes dryer:InteriorEquipment:FuelOilNo2, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
-  misc fireplace:InteriorEquipment:FuelOil#2, !- Key Name
+  cooking range:InteriorEquipment:FuelOilNo2, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter,
+  misc grill:InteriorEquipment:FuelOilNo2, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter,
+  misc lighting:InteriorEquipment:FuelOilNo2, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter,
+  misc fireplace:InteriorEquipment:FuelOilNo2, !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
@@ -12455,6 +12869,10 @@ Output:Meter,
 
 Output:Meter,
   misc fireplace:InteriorEquipment:Propane, !- Key Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Meter,
+  Cogeneration:Propane,                   !- Key Name
   runperiod;                              !- Reporting Frequency
 
 Output:Meter,
@@ -13027,83 +13445,168 @@ Output:Variable,
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace clg coil,        !- Key Value
-  Cooling Coil Electric Energy,           !- Variable Name
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Electricity Energy,        !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace clg coil,        !- Key Value
-  Cooling Coil Crankcase Heater Electric Energy, !- Variable Name
+  central ac clg coil,                    !- Key Value
+  Cooling Coil Crankcase Heater Electricity Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace unitary system,  !- Key Value
-  Unitary System Heating Ancillary Electric Energy, !- Variable Name
+  central ac unitary system,              !- Key Value
+  Unitary System Heating Ancillary Electricity Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace htg coil,        !- Key Value
-  Heating Coil Gas Energy,                !- Variable Name
+  central ac unitary system,              !- Key Value
+  Unitary System Heating Ancillary NaturalGas Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace htg coil,        !- Key Value
-  Heating Coil FuelOil#2 Energy,          !- Variable Name
+  central ac unitary system,              !- Key Value
+  Unitary System Heating Ancillary FuelOilNo2 Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace htg coil,        !- Key Value
+  central ac unitary system,              !- Key Value
+  Unitary System Heating Ancillary Propane Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  central ac unitary system,              !- Key Value
+  Unitary System Heating Ancillary OtherFuel1 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  central ac unitary system,              !- Key Value
+  Unitary System Heating Ancillary OtherFuel2 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  central ac unitary system,              !- Key Value
+  Unitary System Heating Ancillary Coal Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace htg coil,                       !- Key Value
+  Heating Coil Electricity Energy,        !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace htg coil,                       !- Key Value
+  Heating Coil NaturalGas Energy,         !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace htg coil,                       !- Key Value
+  Heating Coil FuelOilNo2 Energy,         !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace htg coil,                       !- Key Value
   Heating Coil Propane Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace htg coil,        !- Key Value
+  furnace htg coil,                       !- Key Value
   Heating Coil OtherFuel1 Energy,         !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace htg coil,        !- Key Value
+  furnace htg coil,                       !- Key Value
   Heating Coil OtherFuel2 Energy,         !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace htg coil,        !- Key Value
+  furnace htg coil,                       !- Key Value
   Heating Coil Coal Energy,               !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace htg coil,        !- Key Value
+  furnace htg coil,                       !- Key Value
   Heating Coil Heating Energy,            !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
-  central ac and furnace unitary system,  !- Key Value
-  Unitary System Heating Ancillary Electric Energy, !- Variable Name
+  furnace unitary system,                 !- Key Value
+  Unitary System Heating Ancillary Electricity Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace unitary system,                 !- Key Value
+  Unitary System Heating Ancillary NaturalGas Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace unitary system,                 !- Key Value
+  Unitary System Heating Ancillary FuelOilNo2 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace unitary system,                 !- Key Value
+  Unitary System Heating Ancillary Propane Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace unitary system,                 !- Key Value
+  Unitary System Heating Ancillary OtherFuel1 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace unitary system,                 !- Key Value
+  Unitary System Heating Ancillary OtherFuel2 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  furnace unitary system,                 !- Key Value
+  Unitary System Heating Ancillary Coal Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater Electric Energy,           !- Variable Name
+  Water Heater Electricity Energy,        !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater Off Cycle Parasitic Electric Energy, !- Variable Name
+  Water Heater Off Cycle Parasitic Electricity Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater On Cycle Parasitic Electric Energy, !- Variable Name
+  Water Heater On Cycle Parasitic Electricity Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater Gas Energy,                !- Variable Name
+  Water Heater NaturalGas Energy,         !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   water heater,                           !- Key Value
-  Water Heater FuelOil#2 Energy,          !- Variable Name
+  Water Heater Off Cycle Parasitic NaturalGas Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater On Cycle Parasitic NaturalGas Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater FuelOilNo2 Energy,         !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Off Cycle Parasitic FuelOilNo2 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater On Cycle Parasitic FuelOilNo2 Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -13113,7 +13616,27 @@ Output:Variable,
 
 Output:Variable,
   water heater,                           !- Key Value
+  Water Heater Off Cycle Parasitic Propane Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater On Cycle Parasitic Propane Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
   Water Heater OtherFuel1 Energy,         !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Off Cycle Parasitic OtherFuel1 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater On Cycle Parasitic OtherFuel1 Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -13123,7 +13646,27 @@ Output:Variable,
 
 Output:Variable,
   water heater,                           !- Key Value
+  Water Heater Off Cycle Parasitic OtherFuel2 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater On Cycle Parasitic OtherFuel2 Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
   Water Heater Coal Energy,               !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater Off Cycle Parasitic Coal Energy, !- Variable Name
+  runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  water heater,                           !- Key Value
+  Water Heater On Cycle Parasitic Coal Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
@@ -13138,12 +13681,12 @@ Output:Variable,
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan clg disaggregate, !- Variable Name
+  central ac supply fan clg disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,
   *,                                      !- Key Value
-  central ac and furnace supply fan htg primary disaggregate, !- Variable Name
+  furnace supply fan htg primary disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
 
 Output:Variable,

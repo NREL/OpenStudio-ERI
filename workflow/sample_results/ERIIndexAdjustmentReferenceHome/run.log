@@ -1,2 +1,1 @@
-Warning: Could not load nokogiri, no HPXML validation performed.
-Warning: Could not load nokogiri, no HPXML validation performed.
+Warning: Skipping HPXML input validation. This should only be used if the HPXML file has already been validated.
