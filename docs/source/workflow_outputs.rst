@@ -246,8 +246,17 @@ See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI
 ERI______Home.xml
 ~~~~~~~~~~~~~~~~~
 
-A HPXML file is written for each of the homes simulated (e.g., ``ERIReferenceHome.xml`` for the Reference home).
+An HPXML file is written for each of the homes simulated (e.g., ``ERIReferenceHome.xml`` for the Reference home).
 The file reflects the configuration of the home after applying the ERI 301 ruleset.
+
+The file will also show HPXML default values that are applied as part of modeling this home.
+Defaults will be applied for a few different reasons:
+
+#. Optional ERI inputs aren't provided (e.g., ventilation rate for a vented attic, SHR for an air conditioner, etc.)
+#. Modeling assumptions (e.g., 1 hour timestep, Jan 1 - Dec 31 run period, appliance schedules, etc.)
+#. HVAC sizing calculations (e.g., autosized HVAC capacities and airflow rates, heating/cooling design loads)
+
+Any HPXML-defaulted values will include the ``dataSource='software'`` attribute.
 
 See the `example ERIRatedHome.xml <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.xml>`_.
 
