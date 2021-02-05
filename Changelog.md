@@ -10,7 +10,7 @@ __New Features__
 - Includes hot water loads (in addition to heating/cooling loads) when hourly total loads are requested.
 - **Breaking change**: One of the three duct leakage input types is now required for AirDistribution systems.
 - **Breaking change**: For ERI____Home.csv output files, the first two sections are now prefixed with "Fuel Use:" and "End Use:", respectively.
-- Adds HPXML default values, used when modeling the four ERI homes, to the ERI____Home.xml files.
+- Adds HPXML default values (e.g., Reference Home autosized HVAC capacities) to the four ERI____Home.xml files.
 - Overhauls documentation to be more comprehensive and standardized.
 
 __Bugfixes__

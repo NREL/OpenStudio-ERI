@@ -1228,6 +1228,12 @@ class EnergyRatingIndex301Ruleset
           end
         end
       end
+      if orig_heat_pump.backup_heating_capacity.to_f == 0
+        # Force some backup heating to prevent unmet loads
+        orig_heat_pump.backup_heating_fuel = HPXML::FuelTypeElectricity
+        orig_heat_pump.backup_heating_efficiency_percent = 1.0
+        orig_heat_pump.backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
+      end
       new_hpxml.heat_pumps.add(id: orig_heat_pump.id,
                                is_shared_system: orig_heat_pump.is_shared_system,
                                number_of_units_served: orig_heat_pump.number_of_units_served,

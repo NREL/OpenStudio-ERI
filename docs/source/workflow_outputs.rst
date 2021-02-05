@@ -238,6 +238,9 @@ Depending on the outputs requested, CSV files may include:
    Weather                             Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
    =================================== =====
 
+Timestamps in the output use the end-of-hour convention.
+Most outputs will be summed over the hour (e.g., energy) but some will be averaged over the hour (e.g., temperatures, airflows).
+
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
 
 ERI______Home.xml
