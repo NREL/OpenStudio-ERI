@@ -18,6 +18,9 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_reference_home_ruleset(hpxml)
     end
 
+    # Add HPXML defaults to, e.g., ERIRatedHome.xml
+    HPXMLDefaults.apply(hpxml, @eri_version, @weather)
+
     return hpxml
   end
 
@@ -273,12 +276,12 @@ class EnergyRatingIndex301Ruleset
   def self.set_summary_iad(orig_hpxml, new_hpxml)
     # Global variables
     @bldg_type = orig_hpxml.building_construction.residential_facility_type
-    @cfa = 2400
+    @cfa = 2400.0
     @nbeds = 3
-    @ncfl = 2
-    @ncfl_ag = 2
-    @cvolume = 20400
-    @infil_volume = 20400
+    @ncfl = 2.0
+    @ncfl_ag = 2.0
+    @cvolume = 20400.0
+    @infil_volume = 20400.0
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
