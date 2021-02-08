@@ -1066,7 +1066,6 @@ class EnergyRatingIndex301Ruleset
           orig_wlhp = orig_hpxml.heat_pumps.select { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir }[0]
           # 301-2019 Section 4.4.7.2.1
           fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
-          orig_heating_system.distribution_system_idref = nil
           # Also add heat pump:
           hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_wlhp.heating_efficiency_cop)
           add_reference_heating_heat_pump(new_hpxml, hp_fraction_heat_load_served, orig_wlhp)
