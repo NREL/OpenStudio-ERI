@@ -193,7 +193,6 @@ class OSModel
 
     weather, epw_file = Location.apply_weather_file(model, runner, epw_path, cache_path)
     check_for_errors()
-    update_shared_hvac_systems()
     set_defaults_and_globals(runner, output_dir, epw_file, weather)
     Location.apply(model, runner, weather, epw_file, @hpxml)
     add_simulation_params(model)
@@ -1994,10 +1993,6 @@ class OSModel
     Waterheater.apply_combi_system_EMS(model, @dhw_map, @hpxml.water_heating_systems)
   end
 
-  def self.update_shared_hvac_systems()
-    HVAC.apply_shared_systems(@hpxml)
-  end
-
   def self.add_cooling_system(runner, model, spaces)
     living_zone = spaces[HPXML::LocationLivingSpace].thermalZone.get
 
@@ -2234,14 +2229,14 @@ class OSModel
     return if hvac_distribution.nil?
 
     hvac_distribution_type_map = { HPXML::HVACTypeFurnace => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
-                                   HPXML::HVACTypeBoiler => [HPXML::HVACDistributionTypeHydronic, HPXML::HVACDistributionTypeHydronicAndAir, HPXML::HVACDistributionTypeDSE],
+                                   HPXML::HVACTypeBoiler => [HPXML::HVACDistributionTypeHydronic, HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
                                    HPXML::HVACTypeCentralAirConditioner => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
                                    HPXML::HVACTypeEvaporativeCooler => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
                                    HPXML::HVACTypeMiniSplitAirConditioner => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
                                    HPXML::HVACTypeHeatPumpAirToAir => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
                                    HPXML::HVACTypeHeatPumpMiniSplit => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
                                    HPXML::HVACTypeHeatPumpGroundToAir => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE],
-                                   HPXML::HVACTypeHeatPumpWaterLoopToAir => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir, HPXML::HVACDistributionTypeDSE] }
+                                   HPXML::HVACTypeHeatPumpWaterLoopToAir => [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeDSE] }
 
     if not hvac_distribution_type_map[system_type].include? hvac_distribution.distribution_system_type
       # validator.rb only checks that a HVAC distribution system of the correct type (for the given HVAC system) exists
@@ -2317,7 +2312,7 @@ class OSModel
     # Ducts
     duct_systems = {}
     @hpxml.hvac_distributions.each do |hvac_distribution|
-      next unless [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include? hvac_distribution.distribution_system_type
+      next unless [HPXML::HVACDistributionTypeAir].include? hvac_distribution.distribution_system_type
 
       air_ducts = create_ducts(runner, model, hvac_distribution, spaces)
       next if air_ducts.empty?
@@ -2343,7 +2338,7 @@ class OSModel
       if not added_ducts
         # Check if ducted fan coil, which doesn't have an AirLoopHVAC;
         # assign to FanCoil instead.
-        if hvac_distribution.distribution_system_type && hvac_distribution.hydronic_and_air_type == HPXML::HydronicAndAirTypeFanCoil
+        if hvac_distribution.distribution_system_type && hvac_distribution.air_type == HPXML::AirTypeFanCoil
           hvac_distribution.hvac_systems.each do |hvac_system|
             @hvac_map[hvac_system.id].each do |object|
               next unless object.is_a? OpenStudio::Model::ZoneHVACFourPipeFanCoil
