@@ -1062,15 +1062,14 @@ class EnergyRatingIndex301Ruleset
 
       if orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler
         fraction_heat_load_served = orig_heating_system.fraction_heat_load_served
-        if orig_heating_system.distribution_system.hydronic_and_air_type.to_s == HPXML::HydronicAndAirTypeWaterLoopHeatPump
+        if orig_heating_system.distribution_system.hydronic_type == HPXML::HydronicTypeWaterLoop
+          orig_wlhp = orig_hpxml.heat_pumps.select { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir }[0]
           # 301-2019 Section 4.4.7.2.1
-          fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_heating_system.wlhp_heating_efficiency_cop)
+          fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
           orig_heating_system.distribution_system_idref = nil
           # Also add heat pump:
-          hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_heating_system.wlhp_heating_efficiency_cop)
-          orig_heat_pump = HPXML::HeatPump.new(orig_hpxml)
-          orig_heat_pump.id = "#{orig_heating_system.id}_WLHP"
-          add_reference_heating_heat_pump(new_hpxml, hp_fraction_heat_load_served, orig_heat_pump)
+          hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_wlhp.heating_efficiency_cop)
+          add_reference_heating_heat_pump(new_hpxml, hp_fraction_heat_load_served, orig_wlhp)
         end
         add_reference_heating_gas_boiler(new_hpxml, fraction_heat_load_served, orig_heating_system)
       else
@@ -1105,6 +1104,7 @@ class EnergyRatingIndex301Ruleset
       add_reference_heating_heat_pump(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
+      next if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
       next unless orig_heat_pump.fraction_heat_load_served > 0
 
       add_reference_heating_heat_pump(new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
@@ -1159,7 +1159,6 @@ class EnergyRatingIndex301Ruleset
                                     heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                     fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                     electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
-                                    wlhp_heating_efficiency_cop: orig_heating_system.wlhp_heating_efficiency_cop,
                                     fan_watts_per_cfm: fan_watts_per_cfm,
                                     fan_watts: orig_heating_system.fan_watts,
                                     airflow_defect_ratio: airflow_defect_ratio,
@@ -1201,8 +1200,6 @@ class EnergyRatingIndex301Ruleset
                                     cooling_shr: orig_cooling_system.cooling_shr,
                                     shared_loop_watts: orig_cooling_system.shared_loop_watts,
                                     fan_coil_watts: orig_cooling_system.fan_coil_watts,
-                                    wlhp_cooling_capacity: orig_cooling_system.wlhp_cooling_capacity,
-                                    wlhp_cooling_efficiency_eer: orig_cooling_system.wlhp_cooling_efficiency_eer,
                                     fan_watts_per_cfm: fan_watts_per_cfm,
                                     airflow_defect_ratio: airflow_defect_ratio,
                                     charge_defect_ratio: charge_defect_ratio,
@@ -1225,10 +1222,8 @@ class EnergyRatingIndex301Ruleset
             airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
           end
 
-          if orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpGroundToAir
-            charge_defect_ratio = orig_heat_pump.charge_defect_ratio
-            charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
-          end
+          charge_defect_ratio = orig_heat_pump.charge_defect_ratio
+          charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
         end
       end
       if orig_heat_pump.backup_heating_capacity.to_f == 0
@@ -1300,7 +1295,7 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
       # Leakage exemption?
       zero_leakage = false
-      if [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include?(orig_hvac_distribution.distribution_system_type) && orig_hvac_distribution.duct_leakage_to_outside_testing_exemption
+      if (orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir) && orig_hvac_distribution.duct_leakage_to_outside_testing_exemption
         if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014AD')
           fail "ERI Version #{@eri_version} does not support duct leakage testing exemption."
         elsif Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2014ADEGL')
@@ -1325,14 +1320,14 @@ class EnergyRatingIndex301Ruleset
         new_hvac_distribution.annual_cooling_dse = orig_hvac_distribution.annual_cooling_dse
       end
 
-      if [HPXML::HVACDistributionTypeHydronic, HPXML::HVACDistributionTypeHydronicAndAir].include? orig_hvac_distribution.distribution_system_type
+      if orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeHydronic
         new_hvac_distribution.hydronic_type = orig_hvac_distribution.hydronic_type
-        new_hvac_distribution.hydronic_and_air_type = orig_hvac_distribution.hydronic_and_air_type
       end
 
-      next unless [HPXML::HVACDistributionTypeAir, HPXML::HVACDistributionTypeHydronicAndAir].include? orig_hvac_distribution.distribution_system_type
+      next unless orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
 
       new_hvac_distribution.conditioned_floor_area_served = orig_hvac_distribution.conditioned_floor_area_served
+      new_hvac_distribution.air_type = orig_hvac_distribution.air_type
 
       if zero_leakage
         # Zero leakage
@@ -2538,9 +2533,7 @@ class EnergyRatingIndex301Ruleset
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
-    airflow_not_tested = true if airflow_defect_ratio.nil?
     fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
-    fan_power_not_tested = true if fan_watts_per_cfm.nil?
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   distribution_system_idref: dist_id,
@@ -2550,9 +2543,7 @@ class EnergyRatingIndex301Ruleset
                                   heating_efficiency_afue: 0.78,
                                   fraction_heat_load_served: load_frac,
                                   airflow_defect_ratio: airflow_defect_ratio,
-                                  airflow_not_tested: airflow_not_tested,
                                   fan_watts_per_cfm: fan_watts_per_cfm,
-                                  fan_power_not_tested: fan_power_not_tested,
                                   seed_id: seed_id)
   end
 
@@ -2605,11 +2596,8 @@ class EnergyRatingIndex301Ruleset
     end
 
     airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
-    airflow_not_tested = true if airflow_defect_ratio.nil?
     fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
-    fan_power_not_tested = true if fan_watts_per_cfm.nil?
     charge_defect_ratio = get_reference_hvac_charge_defect_ratio()
-    charge_not_tested = true if charge_defect_ratio.nil?
 
     new_hpxml.heat_pumps.add(id: "HeatPump#{new_hpxml.heat_pumps.size + 1}",
                              distribution_system_idref: dist_id,
@@ -2628,11 +2616,8 @@ class EnergyRatingIndex301Ruleset
                              cooling_efficiency_seer: 13.0, # Arbitrary, not used
                              heating_efficiency_hspf: 7.7,
                              airflow_defect_ratio: airflow_defect_ratio,
-                             airflow_not_tested: airflow_not_tested,
                              fan_watts_per_cfm: fan_watts_per_cfm,
-                             fan_power_not_tested: fan_power_not_tested,
                              charge_defect_ratio: charge_defect_ratio,
-                             charge_not_tested: charge_not_tested,
                              seed_id: seed_id)
   end
 
@@ -2647,11 +2632,8 @@ class EnergyRatingIndex301Ruleset
     dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
 
     airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
-    airflow_not_tested = true if airflow_defect_ratio.nil?
     fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
-    fan_power_not_tested = true if fan_watts_per_cfm.nil?
     charge_defect_ratio = get_reference_hvac_charge_defect_ratio()
-    charge_not_tested = true if charge_defect_ratio.nil?
 
     new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
                                   distribution_system_idref: dist_id,
@@ -2663,11 +2645,8 @@ class EnergyRatingIndex301Ruleset
                                   cooling_efficiency_seer: 13.0,
                                   cooling_shr: shr,
                                   airflow_defect_ratio: airflow_defect_ratio,
-                                  airflow_not_tested: airflow_not_tested,
                                   fan_watts_per_cfm: fan_watts_per_cfm,
-                                  fan_power_not_tested: fan_power_not_tested,
                                   charge_defect_ratio: charge_defect_ratio,
-                                  charge_not_tested: charge_not_tested,
                                   seed_id: seed_id)
   end
 
@@ -2851,7 +2830,7 @@ class EnergyRatingIndex301Ruleset
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
       return -0.25
     else
-      return
+      return 0.0
     end
   end
 
@@ -2867,7 +2846,7 @@ class EnergyRatingIndex301Ruleset
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
       return -0.25
     else
-      return
+      return 0.0
     end
   end
 end
