@@ -25,7 +25,7 @@ ERI_Worksheet.csv
 ~~~~~~~~~~~~~~~~~
 
 The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
-The file reflects the formate of the Worksheet tab of the HERS Method Test spreadsheet.
+The file reflects the format of the Worksheet tab of the HERS Method Test spreadsheet.
 
 Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
 
@@ -48,7 +48,7 @@ Current fuel types are:
    Type                       Notes
    ========================== ===========================
    Electricity: Total (MBtu)
-   Electricity: Net (MBtu)    Excludes any power produced by PV or generators.
+   Electricity: Net (MBtu)    Subtracts any power produced by PV or generators.
    Natural Gas: Total (MBtu)
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)
@@ -238,13 +238,25 @@ Depending on the outputs requested, CSV files may include:
    Weather                             Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
    =================================== =====
 
+Timestamps in the output use the end-of-hour convention.
+Most outputs will be summed over the hour (e.g., energy) but some will be averaged over the hour (e.g., temperatures, airflows).
+
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome_Hourly.csv>`_.
 
 ERI______Home.xml
 ~~~~~~~~~~~~~~~~~
 
-A HPXML file is written for each of the homes simulated (e.g., ``ERIReferenceHome.xml`` for the Reference home).
+An HPXML file is written for each of the homes simulated (e.g., ``ERIReferenceHome.xml`` for the Reference home).
 The file reflects the configuration of the home after applying the ERI 301 ruleset.
+
+The file will also show HPXML default values that are applied as part of modeling this home.
+Defaults will be applied for a few different reasons:
+
+#. Optional ERI inputs aren't provided (e.g., ventilation rate for a vented attic, SHR for an air conditioner, etc.)
+#. Modeling assumptions (e.g., 1 hour timestep, Jan 1 - Dec 31 run period, appliance schedules, etc.)
+#. HVAC sizing calculations (e.g., autosized HVAC capacities and airflow rates, heating/cooling design loads)
+
+Any HPXML-defaulted values will include the ``dataSource='software'`` attribute.
 
 See the `example ERIRatedHome.xml <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results/results/ERIRatedHome.xml>`_.
 

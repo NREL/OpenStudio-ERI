@@ -40,10 +40,11 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   # Add HPXML translator measure to workflow
   measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
   args = {}
+  output_dir = File.absolute_path(designdir)
   args['hpxml_path'] = output_hpxml
-  args['output_dir'] = File.absolute_path(designdir)
+  args['output_dir'] = output_dir
   args['debug'] = debug
-  args['skip_validation'] = false
+  args['skip_validation'] = !debug
   update_args_hash(measures, measure_subdir, args)
 
   # Add reporting measure to workflow
