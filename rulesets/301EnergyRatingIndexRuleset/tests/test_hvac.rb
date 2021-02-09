@@ -32,7 +32,7 @@ class ERIHVACtest < MiniTest::Test
 
   def _get_default_hvac_iq_values(eri_version, pre_addendum_b_fan_watts_per_cfm)
     if eri_version == 'latest'
-      # FIXME: All test files have either -0.25 specified or not tested (Grade 3)
+      # All test files have either -0.25 specified or not tested (Grade 3)
       return { fan_watts_per_cfm: 0.58,
                airflow_defect_ratio: -0.25,
                charge_defect_ratio: -0.25 }
