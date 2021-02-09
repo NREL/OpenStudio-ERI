@@ -514,9 +514,7 @@ class EnergyRatingIndexTest < Minitest::Test
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num)
 
-      # Update HPXML:
-      # 1. Override mech vent fan power
-      # 2. Handle HVAC installation quality inputs
+      # Update HPXML to override mech vent fan power for eRatio test
       new_hpxml = HPXML.new(hpxml_path: out_xml)
       new_hpxml.ventilation_fans.each do |vent_fan|
         next unless vent_fan.used_for_whole_building_ventilation
@@ -530,10 +528,6 @@ class EnergyRatingIndexTest < Minitest::Test
         elsif vent_fan.fan_type == HPXML::MechVentTypeCFIS
           vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
         end
-      end
-      (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac_system|
-        hvac_system.airflow_not_tested = true
-        hvac_system.airflow_defect_ratio = nil
       end
       XMLHelper.write_file(new_hpxml.to_oga, out_xml)
 

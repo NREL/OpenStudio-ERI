@@ -1323,6 +1323,8 @@ def create_sample_hpxmls
                   'invalid_files/multifamily-reference-duct.xml',
                   'invalid_files/multifamily-reference-surface.xml',
                   'invalid_files/multifamily-reference-water-heater.xml',
+                  'invalid_files/multiple-shared-cooling-systems.xml',
+                  'invalid_files/multiple-shared-heating-systems.xml',
                   'invalid_files/net-area-negative-roof.xml',
                   'invalid_files/net-area-negative-wall.xml',
                   'invalid_files/orphaned-hvac-distribution.xml',

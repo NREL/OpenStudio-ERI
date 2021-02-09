@@ -65,12 +65,6 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   results = run_hpxml_workflow(designdir, hpxml, measures, measures_dir, debug: debug,
                                                                          print_prefix: "[#{design_name}] ")
 
-  # Update, e.g., ERIRatedHome.xml to include HPXML defaults
-  in_xml = File.join(output_dir, 'in.xml')
-  if File.exist? in_xml
-    FileUtils.cp(in_xml, output_hpxml)
-  end
-
   return output_hpxml
 end
 
