@@ -57,66 +57,11 @@ class EnergyRatingIndexTest < Minitest::Test
     # Cross-simulation tests
 
     # Verify that REUL Hot Water is identical across water heater types
-    _test_reul(all_results, 'base.xml', 'base-dhw', nil, 'REUL Hot Water (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-dhw', 'REUL Hot Water (MBtu)')
 
     # Verify that REUL Heating/Cooling are identical across HVAC types
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Cooling (MBtu)')
-    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Cooling (MBtu)')
-  end
-
-  def test_sample_files_301_2014
-    test_name = 'sample_files_301_2014'
-    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exist? test_results_csv
-
-    # Run simulations
-    files = 'base*.xml'
-    all_results = {}
-    xmldir = "#{File.dirname(__FILE__)}/../sample_files"
-    Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      next if xml.include? 'base-version'
-
-      # Create derivative file
-
-      hpxml = HPXML.new(hpxml_path: xml)
-      hpxml.header.eri_calculation_version = '2014ADEGL'
-      xml2014 = File.absolute_path(File.join(xmldir, File.basename(xml, '.xml') + '_301_2014' + File.extname(xml)))
-      XMLHelper.write_file(hpxml.to_oga, xml2014)
-
-      hpxmls, csvs, runtime = _run_workflow(xml2014, test_name)
-      all_results[File.basename(xml2014)] = _get_csv_results(csvs[:eri_results])
-      all_results[File.basename(xml2014)]['Workflow Runtime (s)'] = runtime
-
-      File.delete(xml2014)
-    end
-    assert(all_results.size > 0)
-
-    # Write results to csv
-    keys = all_results.values[0].keys
-    CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['XML'] + keys
-      all_results.each_with_index do |(xml, results), i|
-        csv_line = [File.basename(xml)]
-        keys.each do |key|
-          csv_line << results[key]
-        end
-        csv << csv_line
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-
-    # Cross-simulation tests
-
-    # Verify that REUL Hot Water is identical across water heater types
-    _test_reul(all_results, 'base.xml', 'base-dhw', nil, 'REUL Hot Water (MBtu)')
-
-    # Verify that REUL Heating/Cooling are identical across HVAC types
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'base-hvac-shared', 'REUL Cooling (MBtu)')
-    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base-enclosure-attached-multifamily.xml', 'base-hvac-shared', nil, 'REUL Cooling (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Heating (MBtu)')
+    _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Cooling (MBtu)')
   end
 
   def test_sample_files_invalid
@@ -746,7 +691,7 @@ class EnergyRatingIndexTest < Minitest::Test
     return sql_path, csv_path, results[:sim_time]
   end
 
-  def _test_reul(all_results, base_xml, files_include, files_exclude, result_name)
+  def _test_reul(all_results, base_xml, files_include, result_name)
     base_results = all_results[base_xml]
     return if base_results.nil?
 
@@ -754,10 +699,6 @@ class EnergyRatingIndexTest < Minitest::Test
     base_reul = base_results[result_name]
     all_results.each do |compare_xml, compare_results|
       next unless compare_xml.include? files_include
-
-      if not files_exclude.nil?
-        next if compare_xml.include? files_exclude
-      end
 
       if compare_results[result_name].to_s.include? ','
         compare_reul = compare_results[result_name].split(',').map(&:to_f).inject(0, :+) # sum values

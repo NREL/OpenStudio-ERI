@@ -2111,7 +2111,7 @@ AirTerminal:SingleDuct:ConstantVolume:NoReheat,
   Always On Discrete,                     !- Availability Schedule Name
   Node 9,                                 !- Air Inlet Node Name
   Node 7,                                 !- Air Outlet Node Name
-  0.254036207895787;                      !- Maximum Air Flow Rate {m3/s}
+  0.2279506150656;                        !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
   ADU central ac terminal,                !- Name
@@ -2124,7 +2124,7 @@ AirTerminal:SingleDuct:ConstantVolume:NoReheat,
   Always On Discrete,                     !- Availability Schedule Name
   Node 16,                                !- Air Inlet Node Name
   Node 14,                                !- Air Outlet Node Name
-  0.234240389419111;                      !- Maximum Air Flow Rate {m3/s}
+  0.2605149886464;                        !- Maximum Air Flow Rate {m3/s}
 
 ZoneHVAC:AirDistributionUnit,
   ADU furnace terminal,                   !- Name
@@ -10822,7 +10822,7 @@ AirLoopHVAC,
   central ac airloop,                     !- Name
   ,                                       !- Controller List Name
   central ac airloopAvailability Manager List, !- Availability Manager List Name
-  0.254036207895787,                      !- Design Supply Air Flow Rate {m3/s}
+  0.2279506150656,                        !- Design Supply Air Flow Rate {m3/s}
   central ac airloop Supply Branches,     !- Branch List Name
   ,                                       !- Connector List Name
   Node 3,                                 !- Supply Side Inlet Node Name
@@ -10922,7 +10922,7 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Supplemental Heating Coil Object Type
   ,                                       !- Supplemental Heating Coil Name
   SupplyAirFlowRate,                      !- Cooling Supply Air Flow Rate Method
-  0.254036207895787,                      !- Cooling Supply Air Flow Rate {m3/s}
+  0.2279506150656,                        !- Cooling Supply Air Flow Rate {m3/s}
   ,                                       !- Cooling Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -10953,7 +10953,7 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
   921.712801430852,                       !- Pressure Rise {Pa}
-  0.254040927370219,                      !- Maximum Flow Rate {m3/s}
+  0.2279506150656,                        !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 3,                                 !- Air Inlet Node Name
@@ -10980,7 +10980,7 @@ Curve:Cubic,
   1;                                      !- Maximum Value of x {BasedOnField A2}
 
 Curve:Biquadratic,
-  Cool-Cap-fT1,                           !- Name
+  Cool-CAP-fT1,                           !- Name
   1.557359706,                            !- Coefficient1 Constant
   -0.0744481692,                          !- Coefficient2 x
   0.00309859668,                          !- Coefficient3 x**2
@@ -10993,7 +10993,7 @@ Curve:Biquadratic,
   51.66;                                  !- Maximum Value of y {BasedOnField A3}
 
 Curve:Quadratic,
-  Cool-Cap-fFF1,                          !- Name
+  Cool-CAP-fFF1,                          !- Name
   0.718664047,                            !- Coefficient1 Constant
   0.41797409,                             !- Coefficient2 x
   -0.136638137,                           !- Coefficient3 x**2
@@ -11003,7 +11003,7 @@ Curve:Quadratic,
   2;                                      !- Maximum Curve Output {BasedOnField A3}
 
 Curve:Biquadratic,
-  Cool-eir-fT1,                           !- Name
+  Cool-EIR-fT1,                           !- Name
   -0.350447695,                           !- Coefficient1 Constant
   0.116809893,                            !- Coefficient2 x
   -0.00339950844,                         !- Coefficient3 x**2
@@ -11016,7 +11016,7 @@ Curve:Biquadratic,
   51.66;                                  !- Maximum Value of y {BasedOnField A3}
 
 Curve:Quadratic,
-  Cool-eir-fFF1,                          !- Name
+  Cool-EIR-fFF1,                          !- Name
   1.143487507,                            !- Coefficient1 Constant
   -0.13943972,                            !- Coefficient2 x
   -0.004047787,                           !- Coefficient3 x**2
@@ -11038,17 +11038,17 @@ Curve:Quadratic,
 Coil:Cooling:DX:SingleSpeed,
   central ac clg coil,                    !- Name
   Always On Discrete,                     !- Availability Schedule Name
-  5058.1810571629,                        !- Gross Rated Total Cooling Capacity {W}
+  4537.61937947652,                       !- Gross Rated Total Cooling Capacity {W}
   0.740612186094823,                      !- Gross Rated Sensible Heat Ratio
   4.03878394144749,                       !- Gross Rated Cooling COP {W/W}
-  0.267578017775602,                      !- Rated Air Flow Rate {m3/s}
+  0.240040280341705,                      !- Rated Air Flow Rate {m3/s}
   773.3912012006,                         !- Rated Evaporator Fan Power Per Volume Flow Rate {W/(m3/s)}
   central ac unitary system Fan - Cooling Coil Node, !- Air Inlet Node Name
   Node 4,                                 !- Air Outlet Node Name
-  Cool-Cap-fT1,                           !- Total Cooling Capacity Function of Temperature Curve Name
-  Cool-Cap-fFF1,                          !- Total Cooling Capacity Function of Flow Fraction Curve Name
-  Cool-eir-fT1,                           !- Energy Input Ratio Function of Temperature Curve Name
-  Cool-eir-fFF1,                          !- Energy Input Ratio Function of Flow Fraction Curve Name
+  Cool-CAP-fT1,                           !- Total Cooling Capacity Function of Temperature Curve Name
+  Cool-CAP-fFF1,                          !- Total Cooling Capacity Function of Flow Fraction Curve Name
+  Cool-EIR-fT1,                           !- Energy Input Ratio Function of Temperature Curve Name
+  Cool-EIR-fFF1,                          !- Energy Input Ratio Function of Flow Fraction Curve Name
   Cool-PLF-fPLR1,                         !- Part Load Fraction Correlation Curve Name
   -25,                                    !- Minimum Outdoor Dry-Bulb Temperature for Compressor Operation {C}
   1000,                                   !- Nominal Time for Condensate Removal to Begin {s}
@@ -11093,7 +11093,7 @@ AirLoopHVAC,
   furnace airloop,                        !- Name
   ,                                       !- Controller List Name
   furnace airloopAvailability Manager List, !- Availability Manager List Name
-  0.234240389419111,                      !- Design Supply Air Flow Rate {m3/s}
+  0.2605149886464,                        !- Design Supply Air Flow Rate {m3/s}
   furnace airloop Supply Branches,        !- Branch List Name
   ,                                       !- Connector List Name
   Node 10,                                !- Supply Side Inlet Node Name
@@ -11198,7 +11198,7 @@ AirLoopHVAC:UnitarySystem,
   ,                                       !- Cooling Fraction of Autosized Cooling Supply Air Flow Rate
   ,                                       !- Cooling Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
   SupplyAirFlowRate,                      !- Heating Supply Air Flow Rate Method
-  0.234240389419111,                      !- Heating Supply Air Flow Rate {m3/s}
+  0.2605149886464,                        !- Heating Supply Air Flow Rate {m3/s}
   ,                                       !- Heating Supply Air Flow Rate Per Floor Area {m3/s-m2}
   ,                                       !- Heating Fraction of Autosized Heating Supply Air Flow Rate
   ,                                       !- Heating Supply Air Flow Rate Per Unit of Capacity {m3/s-W}
@@ -11224,40 +11224,38 @@ Fan:OnOff,
   Always On Discrete,                     !- Availability Schedule Name
   0.75,                                   !- Fan Total Efficiency
   921.712801430852,                       !- Pressure Rise {Pa}
-  0.234245108893543,                      !- Maximum Flow Rate {m3/s}
+  0.2605149886464,                        !- Maximum Flow Rate {m3/s}
   1,                                      !- Motor Efficiency
   1,                                      !- Motor In Airstream Fraction
   Node 10,                                !- Air Inlet Node Name
   furnace unitary system Fan - Heating Coil Node, !- Air Outlet Node Name
-  furnace fan power curve,                !- Fan Power Ratio Function of Speed Ratio Curve Name
-  furnace fan eff curve,                  !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
+  Fan On Off Power Curve 1,               !- Fan Power Ratio Function of Speed Ratio Curve Name
+  Fan On Off Efficiency Curve 1,          !- Fan Efficiency Ratio Function of Speed Ratio Curve Name
   supply fan;                             !- End-Use Subcategory
 
 Curve:Exponent,
-  furnace fan power curve,                !- Name
-  0,                                      !- Coefficient1 Constant
-  1,                                      !- Coefficient2 Constant
-  3,                                      !- Coefficient3 Constant
-  -100,                                   !- Minimum Value of x {BasedOnField A2}
-  100;                                    !- Maximum Value of x {BasedOnField A2}
+  Fan On Off Power Curve 1,               !- Name
+  1,                                      !- Coefficient1 Constant
+  0,                                      !- Coefficient2 Constant
+  0,                                      !- Coefficient3 Constant
+  0,                                      !- Minimum Value of x {BasedOnField A2}
+  1;                                      !- Maximum Value of x {BasedOnField A2}
 
 Curve:Cubic,
-  furnace fan eff curve,                  !- Name
-  0,                                      !- Coefficient1 Constant
-  1,                                      !- Coefficient2 x
+  Fan On Off Efficiency Curve 1,          !- Name
+  1,                                      !- Coefficient1 Constant
+  0,                                      !- Coefficient2 x
   0,                                      !- Coefficient3 x**2
   0,                                      !- Coefficient4 x**3
   0,                                      !- Minimum Value of x {BasedOnField A2}
-  1,                                      !- Maximum Value of x {BasedOnField A2}
-  0.01,                                   !- Minimum Curve Output {BasedOnField A3}
-  1;                                      !- Maximum Curve Output {BasedOnField A3}
+  1;                                      !- Maximum Value of x {BasedOnField A2}
 
 Coil:Heating:Fuel,
   furnace htg coil,                       !- Name
   Always On Discrete,                     !- Availability Schedule Name
   NaturalGas,                             !- Fuel Type
   0.78,                                   !- Burner Efficiency
-  8783.90108544918,                       !- Nominal Capacity {W}
+  9767.47262669982,                       !- Nominal Capacity {W}
   furnace unitary system Fan - Heating Coil Node, !- Air Inlet Node Name
   Node 11,                                !- Air Outlet Node Name
   ,                                       !- Temperature Setpoint Node Name
@@ -13008,13 +13006,13 @@ EnergyManagementSystem:Sensor,
 
 EnergyManagementSystem:Actuator,
   central_ac_unitary_system_install_quality_cap_clg_act, !- Name
-  Cool-Cap-fFF1,                          !- Actuated Component Unique Name
+  Cool-CAP-fFF1,                          !- Actuated Component Unique Name
   Curve,                                  !- Actuated Component Type
   Curve Result;                           !- Actuated Component Control Type
 
 EnergyManagementSystem:Actuator,
   central_ac_unitary_system_install_quality_eir_clg_act, !- Name
-  Cool-eir-fFF1,                          !- Actuated Component Unique Name
+  Cool-EIR-fFF1,                          !- Actuated Component Unique Name
   Curve,                                  !- Actuated Component Type
   Curve Result;                           !- Actuated Component Control Type
 
@@ -13115,7 +13113,7 @@ EnergyManagementSystem:Program,
   Set eir1_AF_CH = a2_AF_EIR_c*FF_CH_c,   !- Program Line 32
   Set eir2_AF_CH = a3_AF_EIR_c*FF_CH_c*FF_CH_c, !- Program Line 33
   Set p_CH_COP_c = Y_CH_COP_c*(eir0_AF_CH+(eir1_AF_CH)+(eir2_AF_CH)), !- Program Line 34
-  Set FF_AF_c = 1.0 + -0.051,             !- Program Line 35
+  Set FF_AF_c = 1.0 + -0.05,              !- Program Line 35
   Set FF_AF_comb_c = FF_CH_c * FF_AF_c,   !- Program Line 36
   Set q0_AF_comb = a1_AF_Qgr_c,           !- Program Line 37
   Set q1_AF_comb = a2_AF_Qgr_c*FF_AF_comb_c, !- Program Line 38
