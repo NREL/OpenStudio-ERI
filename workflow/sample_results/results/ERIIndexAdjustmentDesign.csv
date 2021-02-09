@@ -1,5 +1,5 @@
-Fuel Use: Electricity: Total (MBtu),39.43
-Fuel Use: Electricity: Net (MBtu),39.43
+Fuel Use: Electricity: Total (MBtu),39.38
+Fuel Use: Electricity: Net (MBtu),39.38
 Fuel Use: Natural Gas: Total (MBtu),27.45
 Fuel Use: Fuel Oil: Total (MBtu),0.0
 Fuel Use: Propane: Total (MBtu),0.0
@@ -9,8 +9,8 @@ Fuel Use: Coal: Total (MBtu),0.0
 
 End Use: Electricity: Heating (MBtu),0.0
 End Use: Electricity: Heating Fans/Pumps (MBtu),0.7
-End Use: Electricity: Cooling (MBtu),3.77
-End Use: Electricity: Cooling Fans/Pumps (MBtu),0.89
+End Use: Electricity: Cooling (MBtu),3.73
+End Use: Electricity: Cooling Fans/Pumps (MBtu),0.88
 End Use: Electricity: Hot Water (MBtu),11.48
 End Use: Electricity: Hot Water Recirc Pump (MBtu),0.0
 End Use: Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
@@ -73,10 +73,10 @@ Load: Hot Water: Desuperheater (MBtu),0.0
 Load: Hot Water: Solar Thermal (MBtu),0.0
 
 Unmet Load: Heating (MBtu),0.0
-Unmet Load: Cooling (MBtu),0.04
+Unmet Load: Cooling (MBtu),0.13
 
 Peak Electricity: Winter Total (W),6970
-Peak Electricity: Summer Total (W),7004
+Peak Electricity: Summer Total (W),7002
 
 Peak Load: Heating (kBtu),22.28
 Peak Load: Cooling (kBtu),18.3
