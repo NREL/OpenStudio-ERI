@@ -746,7 +746,7 @@ If a chiller is specified, additional information is entered in ``CoolingSystem`
   ``extension/FanCoilWatts``                                                  double    W       >= 0         See [#]_             Fan coil power
   ==========================================================================  ========  ======  ===========  ========  =========  =========================================
 
-  .. [#] HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", or "radiant ceiling") or HydronicAndAirDistribution (type: "fan coil" or "water loop heat pump").
+  .. [#] HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or AirDistribution (type: "fan coil").
   .. [#] FanCoilWatts only required if chiller connected to a fan coil.
 
 Cooling Tower
