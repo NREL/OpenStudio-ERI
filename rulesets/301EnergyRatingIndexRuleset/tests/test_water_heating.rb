@@ -391,12 +391,7 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_indirect
-    # Create derivative file for testing
-    hpxml_name = 'base-dhw-indirect.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.water_heating_systems[0].standby_loss = 1.0
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_name = 'base-dhw-indirect-standbyloss.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
