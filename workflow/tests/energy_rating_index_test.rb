@@ -62,6 +62,10 @@ class EnergyRatingIndexTest < Minitest::Test
     # Verify that REUL Heating/Cooling are identical across HVAC types
     _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Heating (MBtu)')
     _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Cooling (MBtu)')
+
+    if ENV['CI']
+      FileUtils.rm_r(File.join(@test_files_dir, test_name)) # Cleanup to prevent space issues on the CI
+    end
   end
 
   def test_sample_files_invalid

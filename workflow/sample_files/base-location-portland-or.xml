@@ -21,7 +21,7 @@
     <Site>
       <SiteID id='SiteID'/>
       <Address>
-        <StateCode>CO</StateCode>
+        <StateCode>OR</StateCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -41,8 +41,8 @@
         </BuildingOccupancy>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
-          <NumberofConditionedFloors>1.5</NumberofConditionedFloors>
-          <NumberofConditionedFloorsAboveGrade>1.5</NumberofConditionedFloorsAboveGrade>
+          <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1350.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>10800.0</ConditionedBuildingVolume>
@@ -51,13 +51,13 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>5B</ClimateZone>
+          <ClimateZone>4C</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Denver, CO</Name>
+          <Name>Portland, OR</Name>
           <extension>
-            <EPWFilePath>USA_CO_Denver.Intl.AP.725650_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_OR_Portland.Intl.AP.726980_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -86,10 +86,16 @@
         </Attics>
         <Foundations>
           <Foundation>
-            <SystemIdentifier id='SlabFoundation'/>
+            <SystemIdentifier id='VentedCrawlspace'/>
             <FoundationType>
-              <SlabOnGrade/>
+              <Crawlspace>
+                <Vented>true</Vented>
+              </Crawlspace>
             </FoundationType>
+            <VentilationRate>
+              <UnitofMeasure>SLA</UnitofMeasure>
+              <Value>0.00667</Value>
+            </VentilationRate>
           </Foundation>
         </Foundations>
         <Roofs>
@@ -108,6 +114,21 @@
             </Insulation>
           </Roof>
         </Roofs>
+        <RimJoists>
+          <RimJoist>
+            <SystemIdentifier id='RimJoistFoundation'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
+            <Area>116.0</Area>
+            <Siding>wood siding</Siding>
+            <SolarAbsorptance>0.7</SolarAbsorptance>
+            <Emittance>0.92</Emittance>
+            <Insulation>
+              <SystemIdentifier id='RimJoistFoundationInsulation'/>
+              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='Wall'/>
@@ -142,6 +163,36 @@
             </Insulation>
           </Wall>
         </Walls>
+        <FoundationWalls>
+          <FoundationWall>
+            <SystemIdentifier id='FoundationWall'/>
+            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
+            <Height>4.0</Height>
+            <Area>600.0</Area>
+            <Thickness>8.0</Thickness>
+            <DepthBelowGrade>3.0</DepthBelowGrade>
+            <Insulation>
+              <SystemIdentifier id='FoundationWallInsulation'/>
+              <Layer>
+                <InstallationType>continuous - exterior</InstallationType>
+                <NominalRValue>8.9</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>4.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <extension>
+                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                </extension>
+              </Layer>
+            </Insulation>
+          </FoundationWall>
+        </FoundationWalls>
         <FrameFloors>
           <FrameFloor>
             <SystemIdentifier id='FloorBelowAttic'/>
@@ -153,17 +204,26 @@
               <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
+          <FrameFloor>
+            <SystemIdentifier id='FloorAboveVentedCrawl'/>
+            <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>1350.0</Area>
+            <Insulation>
+              <SystemIdentifier id='FloorAboveVentedCrawlInsulation'/>
+              <AssemblyEffectiveRValue>18.7</AssemblyEffectiveRValue>
+            </Insulation>
+          </FrameFloor>
         </FrameFloors>
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab'/>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
             <Area>1350.0</Area>
-            <Thickness>4.0</Thickness>
+            <Thickness>0.0</Thickness>
             <ExposedPerimeter>150.0</ExposedPerimeter>
             <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
-            <UnderSlabInsulationSpansEntireSlab>true</UnderSlabInsulationSpansEntireSlab>
-            <DepthBelowGrade>0.0</DepthBelowGrade>
+            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
             <PerimeterInsulation>
               <SystemIdentifier id='SlabPerimeterInsulation'/>
               <Layer>
@@ -173,11 +233,11 @@
             <UnderSlabInsulation>
               <SystemIdentifier id='SlabUnderSlabInsulation'/>
               <Layer>
-                <NominalRValue>5.0</NominalRValue>
+                <NominalRValue>0.0</NominalRValue>
               </Layer>
             </UnderSlabInsulation>
             <extension>
-              <CarpetFraction>1.0</CarpetFraction>
+              <CarpetFraction>0.0</CarpetFraction>
               <CarpetRValue>2.5</CarpetRValue>
             </extension>
           </Slab>
@@ -327,15 +387,16 @@
                 <Ducts>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>4.0</DuctInsulationRValue>
-                  <DuctLocation>under slab</DuctLocation>
+                  <DuctLocation>crawlspace - vented</DuctLocation>
                   <DuctSurfaceArea>150.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>under slab</DuctLocation>
+                  <DuctLocation>crawlspace - vented</DuctLocation>
                   <DuctSurfaceArea>50.0</DuctSurfaceArea>
                 </Ducts>
+                <NumberofReturnRegisters>1</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
             <ConditionedFloorAreaServed>1350.0</ConditionedFloorAreaServed>
@@ -346,7 +407,7 @@
             <SystemIdentifier id='WaterHeater'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>living space</Location>
+            <Location>crawlspace - vented</Location>
             <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>

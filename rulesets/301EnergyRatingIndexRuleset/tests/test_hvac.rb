@@ -200,8 +200,8 @@ class ERIHVACtest < MiniTest::Test
     end
   end
 
-  def test_stove_oil
-    hpxml_name = 'base-hvac-stove-oil-only.xml'
+  def test_stove_wood_pellets
+    hpxml_name = 'base-hvac-stove-wood-pellets-only.xml'
 
     _eri_versions.each do |eri_version|
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
@@ -219,7 +219,7 @@ class ERIHVACtest < MiniTest::Test
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeStove, fuel: HPXML::FuelTypeOil, eff: 0.8 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeStove, fuel: HPXML::FuelTypeWoodPellets, eff: 0.8 }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
@@ -633,32 +633,6 @@ class ERIHVACtest < MiniTest::Test
     end
   end
 
-  def test_furnace_gas_room_air_conditioner
-    hpxml_name = 'base-hvac-furnace-gas-room-ac.xml'
-
-    _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      calc_types = [Constants.CalcTypeERIReferenceHome,
-                    Constants.CalcTypeERIIndexAdjustmentDesign,
-                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-      calc_types.each do |calc_type|
-        hpxml = _test_measure(hpxml_name, calc_type)
-        hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, dse: _dse(calc_type), shr: 0.65, **hvac_iq_values }])
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, dse: _dse(calc_type), **hvac_iq_values }])
-        _check_heat_pump(hpxml)
-        _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
-      end
-      calc_type = Constants.CalcTypeERIRatedHome
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeRoomAirConditioner, fuel: HPXML::FuelTypeElectricity, eer: 8.5, shr: 0.65 }])
-      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, **hvac_iq_values }])
-      _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
-    end
-  end
-
   def test_multiple_hvac
     hpxml_name = 'base-hvac-multiple.xml'
 
@@ -934,7 +908,13 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_custom_setpoints
-    hpxml_name = 'base-hvac-setpoints.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.hvac_controls[0].heating_setpoint_temp = 60
+    hpxml.hvac_controls[0].cooling_setpoint_temp = 80
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     calc_types = [Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIReferenceHome,
