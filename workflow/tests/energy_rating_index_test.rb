@@ -646,6 +646,10 @@ class EnergyRatingIndexTest < Minitest::Test
       end
     end
 
+    if ENV['CI']
+      FileUtils.rm_r(rundir) # Cleanup to prevent space issues on the CI
+    end
+
     return hpxmls, csvs, runtime
   end
 
