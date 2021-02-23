@@ -11,6 +11,11 @@ require_relative 'util.rb'
 class ERIWaterHeatingTest < MiniTest::Test
   def before_setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
+  end
+
+  def after_teardown
+    File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 
   def test_water_heating_tank_elec
@@ -385,8 +390,13 @@ class ERIWaterHeatingTest < MiniTest::Test
     end
   end
 
-  def test_indirect_standbyloss
-    hpxml_name = 'base-dhw-indirect-standbyloss.xml'
+  def test_indirect
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-indirect.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].standby_loss = 1.0
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
