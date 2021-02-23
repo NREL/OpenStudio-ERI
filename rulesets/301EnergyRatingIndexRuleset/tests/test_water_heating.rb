@@ -342,12 +342,12 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_indirect_water_heating
-    hpxml_name = 'base-dhw-indirect.xml'
+    hpxml_name = 'base-dhw-indirect-standbyloss.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeCombiStorage, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss: 0.843 }])
+    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeCombiStorage, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss: 1.0 }])
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
@@ -387,21 +387,6 @@ class ERIWaterHeatingTest < MiniTest::Test
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
-    end
-  end
-
-  def test_indirect
-    hpxml_name = 'base-dhw-indirect-standbyloss.xml'
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeCombiStorage, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss: 1.0 }])
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
     end
   end
 
