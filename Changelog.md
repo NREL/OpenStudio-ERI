@@ -1,3 +1,10 @@
+## OpenStudio-ERI v1.2.0 (Pending)
+
+__New Features__
+
+__Bugfixes__
+- Fixes possible "Electricity category end uses do not sum to total" error due to boiler pump energy.
+
 ## OpenStudio-ERI v1.1.0 (pending)
 
 __New Features__
