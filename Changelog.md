@@ -5,7 +5,7 @@ __New Features__
 __Bugfixes__
 - Fixes possible "Electricity category end uses do not sum to total" error due to boiler pump energy.
 
-## OpenStudio-ERI v1.1.0 (pending)
+## OpenStudio-ERI v1.1.0
 
 __New Features__
 - Implements ANSI/RESNET/ICC Standard 301-2019 Addendum B. `ERICalculation/Version` can now be "2019AB" in the HPXML files.
