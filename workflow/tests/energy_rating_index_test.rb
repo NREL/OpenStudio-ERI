@@ -681,7 +681,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_weather'] = false
     update_args_hash(measures, measure_subdir, args)
 
-    results = run_hpxml_workflow(rundir, xml, measures, measures_dir)
+    results = run_hpxml_workflow(rundir, measures, measures_dir)
 
     assert(results[:success])
 
