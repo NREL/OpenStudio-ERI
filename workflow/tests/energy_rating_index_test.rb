@@ -560,7 +560,6 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
-    # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))

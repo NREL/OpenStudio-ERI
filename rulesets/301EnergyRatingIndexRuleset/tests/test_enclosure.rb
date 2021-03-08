@@ -1158,7 +1158,7 @@ class ERIEnclosureTest < MiniTest::Test
 
     values_by_azimuth.each do |azimuth, values|
       assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:rvalue], azimuth_rvalue_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(values[:rvalue], azimuth_rvalue_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
     end
   end
 
