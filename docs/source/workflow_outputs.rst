@@ -52,7 +52,7 @@ Current fuel uses are listed below.
    Natural Gas: Total (MBtu)
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)
-   Wood: Total (MBtu)         
+   Wood Cord: Total (MBtu)         
    Wood Pellets: Total (MBtu) 
    ========================== ===========================
 
