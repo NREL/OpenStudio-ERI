@@ -438,7 +438,7 @@ class EnergyRatingIndex301Ruleset
                           emittance: emittance,
                           pitch: avg_pitch,
                           radiant_barrier: false,
-                          insulation_assembly_r_value: 1.0 / ceiling_ufactor)
+                          insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
     end
 
     # Preserve other roofs:
@@ -509,7 +509,7 @@ class EnergyRatingIndex301Ruleset
                                azimuth: nil,
                                solar_absorptance: solar_abs,
                                emittance: emittance,
-                               insulation_assembly_r_value: 1.0 / ufactor)
+                               insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
 
     # Preserve other rim joists:
@@ -519,7 +519,7 @@ class EnergyRatingIndex301Ruleset
       next if orig_rim_joist.is_exterior_thermal_boundary
 
       if orig_rim_joist.is_thermal_boundary
-        insulation_assembly_r_value = 1.0 / ufactor
+        insulation_assembly_r_value = (1.0 / ufactor).round(3)
       else
         insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
       end
@@ -575,7 +575,7 @@ class EnergyRatingIndex301Ruleset
                           azimuth: nil,
                           solar_absorptance: solar_abs,
                           emittance: emittance,
-                          insulation_assembly_r_value: 1.0 / ufactor)
+                          insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
 
     # Preserve other walls:
@@ -585,7 +585,7 @@ class EnergyRatingIndex301Ruleset
       next if orig_wall.is_exterior_thermal_boundary
 
       if orig_wall.is_thermal_boundary
-        insulation_assembly_r_value = 1.0 / ufactor
+        insulation_assembly_r_value = (1.0 / ufactor).round(3)
       else
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
       end
@@ -632,9 +632,9 @@ class EnergyRatingIndex301Ruleset
                         wall_type: HPXML::WallTypeWoodStud,
                         area: 2355.52,
                         azimuth: nil,
-                        solar_absorptance: avg_solar_abs,
-                        emittance: avg_emittance,
-                        insulation_assembly_r_value: avg_r_value)
+                        solar_absorptance: avg_solar_abs.round(2),
+                        emittance: avg_emittance.round(2),
+                        insulation_assembly_r_value: avg_r_value.round(3))
   end
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
@@ -716,7 +716,7 @@ class EnergyRatingIndex301Ruleset
 
       if orig_frame_floor.is_thermal_boundary
         # Insulated for, e.g., ceilings between vented attic and living space.
-        insulation_assembly_r_value = 1.0 / ceiling_ufactor
+        insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       else
         # Uninsulated for, e.g., ceilings between vented attic and garage.
         insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 2.1].min # uninsulated
@@ -772,7 +772,7 @@ class EnergyRatingIndex301Ruleset
       # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
       # Uninsulated for, e.g., floors between living space and conditioned basement.
       if orig_frame_floor.is_thermal_boundary
-        insulation_assembly_r_value = 1.0 / floor_ufactor
+        insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
       else
         insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
       end
@@ -810,7 +810,7 @@ class EnergyRatingIndex301Ruleset
                                interior_adjacent_to: HPXML::LocationLivingSpace,
                                exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
                                area: 1200,
-                               insulation_assembly_r_value: 1.0 / floor_ufactor)
+                               insulation_assembly_r_value: (1.0 / floor_ufactor).round(3))
   end
 
   def self.set_enclosure_slabs_reference(orig_hpxml, new_hpxml)
@@ -916,7 +916,7 @@ class EnergyRatingIndex301Ruleset
     # Create equally distributed windows
     for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
       new_hpxml.windows.add(id: "WindowArea#{orientation}",
-                            area: 0.18 * @cfa * fa * f * 0.25,
+                            area: (0.18 * @cfa * fa * f * 0.25).round(2),
                             azimuth: azimuth,
                             ufactor: ufactor,
                             shgc: shgc,
@@ -1013,7 +1013,7 @@ class EnergyRatingIndex301Ruleset
                           wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
                           azimuth: 0,
-                          r_value: 1.0 / ufactor)
+                          r_value: (1.0 / ufactor).round(3))
     end
     # TODO: Create adiabatic wall/door?
   end
@@ -1042,7 +1042,7 @@ class EnergyRatingIndex301Ruleset
                           wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
                           azimuth: 0,
-                          r_value: avg_r_value)
+                          r_value: avg_r_value.round(3))
     end
     # TODO: Create adiabatic wall/door?
   end
@@ -1428,7 +1428,7 @@ class EnergyRatingIndex301Ruleset
       # Airflow only
       new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                      fan_type: HPXML::MechVentTypeBalanced, # Per RESNET 55i
-                                     tested_flow_rate: q_fan_airflow,
+                                     tested_flow_rate: q_fan_airflow.round(2),
                                      hours_in_operation: 24,
                                      fan_power: 0.0,
                                      used_for_whole_building_ventilation: true,
@@ -1462,9 +1462,9 @@ class EnergyRatingIndex301Ruleset
       # Airflow and fan power
       new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                      fan_type: HPXML::MechVentTypeBalanced, # Per RESNET 55i
-                                     tested_flow_rate: q_fan_airflow,
+                                     tested_flow_rate: q_fan_airflow.round(2),
                                      hours_in_operation: 24,
-                                     fan_power: fan_power_w,
+                                     fan_power: fan_power_w.round(3),
                                      used_for_whole_building_ventilation: true,
                                      is_shared_system: false)
     end
@@ -1540,30 +1540,30 @@ class EnergyRatingIndex301Ruleset
       if not orig_vent_fan.is_shared_system
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
-                                       tested_flow_rate: total_unit_flow_rate,
+                                       tested_flow_rate: total_unit_flow_rate.round(2),
                                        hours_in_operation: hours_in_operation,
                                        total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
                                        total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
                                        sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
                                        sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
-                                       fan_power: unit_fan_power,
+                                       fan_power: unit_fan_power.round(3),
                                        distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                        used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
                                        is_shared_system: orig_vent_fan.is_shared_system)
       else
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
-                                       rated_flow_rate: system_flow_rate,
+                                       rated_flow_rate: system_flow_rate.round(2),
                                        hours_in_operation: hours_in_operation,
                                        total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
                                        total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
                                        sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
                                        sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
-                                       fan_power: system_fan_power,
+                                       fan_power: system_fan_power.round(3),
                                        distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                        used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
                                        is_shared_system: orig_vent_fan.is_shared_system,
-                                       in_unit_flow_rate: total_unit_flow_rate,
+                                       in_unit_flow_rate: total_unit_flow_rate.round(2),
                                        fraction_recirculation: orig_vent_fan.fraction_recirculation,
                                        preheating_fuel: orig_vent_fan.preheating_fuel,
                                        preheating_efficiency_cop: orig_vent_fan.preheating_efficiency_cop,
@@ -1592,9 +1592,9 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
                                    fan_type: HPXML::MechVentTypeBalanced,
-                                   tested_flow_rate: q_fan,
+                                   tested_flow_rate: q_fan.round(2),
                                    hours_in_operation: 24,
-                                   fan_power: fan_power_w,
+                                   fan_power: fan_power_w.round(3),
                                    used_for_whole_building_ventilation: true,
                                    is_shared_system: false)
   end
@@ -1660,7 +1660,7 @@ class EnergyRatingIndex301Ruleset
                                           performance_adjustment: 1.0,
                                           tank_volume: tank_volume,
                                           fraction_dhw_load_served: 1.0,
-                                          heating_capacity: heating_capacity,
+                                          heating_capacity: heating_capacity.round(0),
                                           energy_factor: energy_factor,
                                           recovery_efficiency: recovery_efficiency,
                                           uses_desuperheater: false,
@@ -1734,7 +1734,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.hot_water_distributions.add(id: 'HotWaterDistribution',
                                           system_type: HPXML::DHWDistTypeStandard,
                                           pipe_r_value: 0,
-                                          standard_piping_length: standard_piping_length)
+                                          standard_piping_length: standard_piping_length.round(3))
 
     # New water fixtures
     new_hpxml.water_fixtures.add(id: 'ShowerHead',
@@ -2680,7 +2680,7 @@ class EnergyRatingIndex301Ruleset
                                         performance_adjustment: 1.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,
-                                        heating_capacity: wh_cap,
+                                        heating_capacity: wh_cap.round(0),
                                         energy_factor: wh_ef,
                                         recovery_efficiency: wh_re,
                                         uses_desuperheater: false,

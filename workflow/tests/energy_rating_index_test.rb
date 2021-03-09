@@ -560,7 +560,6 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
-    # Check input HPXML is valid
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -682,7 +681,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_weather'] = false
     update_args_hash(measures, measure_subdir, args)
 
-    results = run_hpxml_workflow(rundir, xml, measures, measures_dir)
+    results = run_hpxml_workflow(rundir, measures, measures_dir)
 
     assert(results[:success])
 
