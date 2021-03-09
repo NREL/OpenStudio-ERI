@@ -324,7 +324,6 @@
                 <Value>9.85</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <ChargeNotTested>true</ChargeNotTested>
                 <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
               </extension>
             </HeatPump>

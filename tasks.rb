@@ -351,7 +351,7 @@ def set_hpxml_attics(hpxml_file, hpxml)
   hpxml.attics.clear
   hpxml.attics.add(id: 'VentedAttic',
                    attic_type: HPXML::AtticTypeVented,
-                   vented_attic_sla: (1.0 / 300.0).round(5))
+                   vented_attic_sla: (1.0 / 300.0).round(6))
 end
 
 def set_hpxml_foundations(hpxml_file, hpxml)
@@ -681,8 +681,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_capacity: 38300,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 10,
-                              fan_watts_per_cfm: 0.5,
-                              charge_not_tested: true)
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1b.xml'].include? hpxml_file
     # Change to SEER = 13
     hpxml.cooling_systems[0].cooling_efficiency_seer = 13
@@ -697,8 +696,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_capacity: 38400,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 10,
-                              fan_watts_per_cfm: 0.5,
-                              charge_not_tested: true)
+                              fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
     # Change to 49.9 kBtu/h
     hpxml.cooling_systems[0].cooling_capacity = 49900
@@ -786,8 +784,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 6.8,
                          cooling_efficiency_seer: 10,
-                         fan_watts_per_cfm: 0.5,
-                         charge_not_tested: true)
+                         fan_watts_per_cfm: 0.5)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 9.85
     hpxml.heat_pumps.clear
@@ -804,8 +801,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 9.85,
                          cooling_efficiency_seer: 13,
-                         fan_watts_per_cfm: 0.5,
-                         charge_not_tested: true)
+                         fan_watts_per_cfm: 0.5)
   end
 end
 
@@ -814,9 +810,7 @@ def set_hpxml_hvac_controls(hpxml_file, hpxml)
     hpxml.hvac_controls.clear
     if hpxml.heating_systems.size + hpxml.cooling_systems.size + hpxml.heat_pumps.size > 0
       hpxml.hvac_controls.add(id: 'HVACControl',
-                              control_type: HPXML::HVACControlTypeManual,
-                              heating_setpoint_temp: 68,
-                              cooling_setpoint_temp: 78)
+                              control_type: HPXML::HVACControlTypeManual)
     end
   end
 end
@@ -1055,9 +1049,9 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
   piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
 
   if hpxml.hot_water_distributions.size > 0
-    if (hpxml.hot_water_distributions[0].system_type == HPXML::DHWDistTypeStandard) && hpxml.hot_water_distributions[0].standard_piping_length.nil?
+    if hpxml.hot_water_distributions[0].system_type == HPXML::DHWDistTypeStandard
       hpxml.hot_water_distributions[0].standard_piping_length = piping_length.round(2)
-    elsif (hpxml.hot_water_distributions[0].system_type == HPXML::DHWDistTypeRecirc) && hpxml.hot_water_distributions[0].recirculation_piping_length.nil?
+    elsif hpxml.hot_water_distributions[0].system_type == HPXML::DHWDistTypeRecirc
       hpxml.hot_water_distributions[0].recirculation_piping_length = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length).round(2)
     end
   end
