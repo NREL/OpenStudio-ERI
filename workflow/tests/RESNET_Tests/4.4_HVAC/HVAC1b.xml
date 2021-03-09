@@ -329,7 +329,6 @@
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <extension>
-                <ChargeNotTested>true</ChargeNotTested>
                 <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
               </extension>
             </CoolingSystem>

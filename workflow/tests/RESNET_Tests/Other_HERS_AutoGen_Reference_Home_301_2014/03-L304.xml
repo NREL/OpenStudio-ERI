@@ -69,7 +69,7 @@
             </AtticType>
             <VentilationRate>
               <UnitofMeasure>SLA</UnitofMeasure>
-              <Value>0.00333</Value>
+              <Value>0.003333</Value>
             </VentilationRate>
           </Attic>
         </Attics>
@@ -341,8 +341,6 @@
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
             <ControlType>manual thermostat</ControlType>
-            <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
-            <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution'/>
