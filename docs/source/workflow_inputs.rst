@@ -97,12 +97,13 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   ``ResidentialFacilityType``              string               See [#]_                           Yes                 Type of dwelling unit
   ``NumberofConditionedFloors``            double               > 0                                Yes                 Number of conditioned floors (including a basement)
   ``NumberofConditionedFloorsAboveGrade``  double               > 0, <= NumberofConditionedFloors  Yes                 Number of conditioned floors above grade (including a walkout basement)
-  ``NumberofBedrooms``                     integer              > 0                                Yes                 Number of bedrooms
+  ``NumberofBedrooms``                     integer              > 0 [#]_                           Yes                 Number of bedrooms
   ``ConditionedFloorArea``                 double    ft2        > 0                                Yes                 Floor area within conditioned space boundary
   ``ConditionedBuildingVolume``            double    ft3 or ft  > 0                                Yes                 Volume within conditioned space boundary
   =======================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", "apartment unit", or "manufactured home".
+  .. [#] NumberofBedrooms must also be <= (ConditionedFloorArea-120)/70.
 
 HPXML Weather Station
 ---------------------
@@ -1143,7 +1144,7 @@ If the specified system is a shared system (i.e., serving multiple dwelling unit
 
   .. [#] 1-FractionRecirculation is assumed to be the fraction of supply air that is provided from outside.
          The value must be 0 for exhaust only systems.
-  .. [#] InUnitFlowRate must also be > RatedFlowRate.
+  .. [#] InUnitFlowRate must also be < RatedFlowRate.
   .. [#] PreHeating not allowed for exhaust only systems.
   .. [#] PreCooling not allowed for exhaust only systems.
 
@@ -1518,11 +1519,12 @@ Each generator that provides on-site power is entered as a ``/HPXML/Building/Bui
   ``IsSharedSystem``          boolean                        Yes                Whether it serves multiple dwelling units
   ``FuelType``                string            See [#]_     Yes                Fuel type
   ``AnnualConsumptionkBtu``   double   kBtu/yr  > 0          Yes                Annual fuel consumed
-  ``AnnualOutputkWh``         double   kWh/yr   > 0          Yes                Annual electricity produced
+  ``AnnualOutputkWh``         double   kWh/yr   > 0 [#]_     Yes                Annual electricity produced
   ``NumberofBedroomsServed``  integer           > 1          See [#]_           Number of bedrooms served
   ==========================  =======  =======  ===========  ========  =======  ============================================
 
   .. [#] FuelType choices are "natural gas" or "propane".
+  .. [#] AnnualOutputkWh must also be < AnnualConsumptionkBtu*3.412 (i.e., the generator must consume more energy than it produces).
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
          Annual consumption and annual production will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the generator.
 
