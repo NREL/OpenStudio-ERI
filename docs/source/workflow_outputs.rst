@@ -52,8 +52,8 @@ Current fuel uses are listed below.
    Natural Gas: Total (MBtu)
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)
-   Wood: Total (MBtu)         Currently unused for ERI.
-   Wood Pellets: Total (MBtu) Currently unused for ERI.
+   Wood Cord: Total (MBtu)         
+   Wood Pellets: Total (MBtu) 
    ========================== ===========================
 
 Annual Energy Consumption By End Use
