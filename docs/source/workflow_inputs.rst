@@ -963,7 +963,18 @@ Each separate HVAC distribution system is entered as a ``/HPXML/Building/Buildin
 Air Distribution
 ~~~~~~~~~~~~~~~~
 
-To define an air distribution system, the presence of duct leakage must be entered in one of three ways:
+To define an air distribution system, additional information is entered in ``HVACDistribution/DistributionSystemType/AirDistribution``.
+
+  =============================================  =======  =======  ===========  ========  =========  ==========================
+  Element                                        Type     Units    Constraints  Required  Default    Notes
+  =============================================  =======  =======  ===========  ========  =========  ==========================
+  ``AirDistributionType``                        string            See [#]_     See [#]_             Type of air distribution
+  =============================================  =======  =======  ===========  ========  =========  ==========================
+  
+  .. [#] AirDistributionType choices are "gravity", "high velocity", "regular velocity", or "fan coil".
+  .. [#] AirDistributionType only required if the distribution system is for shared boilers/chillers with fan coils, in which case value must be "fan coil".
+
+For the air distribution system, the presence of duct leakage must be entered in one of three ways:
 
 1. **Leakage to the Outside**
 
@@ -997,9 +1008,9 @@ To define an air distribution system, the presence of duct leakage must be enter
   
     Total leakage should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
 
-3. **Leakage Testing Exemption** (Version 2014AD or newer)
+3. **Leakage to Outside Testing Exemption** (Version 2014AD or newer)
 
-   A duct leakage testing exemption is entered in ``HVACDistribution/DistributionSystemType/AirDistribution``:
+   A duct leakage to outside testing exemption is entered in ``HVACDistribution/DistributionSystemType/AirDistribution``:
    
   =======================================================  =======  =======  ===========  ========  =========  =============================
   Element                                                  Type     Units    Constraints  Required  Default    Notes
