@@ -251,19 +251,16 @@ def to_boolean(value)
 end
 
 def to_float_or_nil(value)
-  return if value.nil?
-
+  return if value.nil? || (value.instance_of?(String) && value.empty?)
   return to_float(value)
 end
 
 def to_integer_or_nil(value)
-  return if value.nil?
-
+  return if value.nil? || (value.instance_of?(String) && value.empty?)
   return to_integer(value)
 end
 
 def to_boolean_or_nil(value)
-  return if value.nil?
-
+  return if value.nil? || (value.instance_of?(String) && value.empty?)
   return to_boolean(value)
 end
