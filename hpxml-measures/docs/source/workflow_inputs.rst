@@ -151,18 +151,12 @@ Building site information is entered in ``/HPXML/Building/BuildingDetails/Buildi
   Element                           Type      Units  Constraints  Required  Default   Notes
   ================================  ========  =====  ===========  ========  ========  ============================================================
   ``SiteType``                      string           See [#]_     No        suburban  Terrain type for infiltration model
-  ``extension/ShelterCoefficient``  double           0 - 1        No        0.5 [#]_  Nearby buildings, trees, obstructions for infiltration model
+  ``ShieldingofHome``               string           See [#]_     No        normal    Presence of nearby buildings, trees, obstructions for infiltration model
   ``extension/Neighbors``           element          >= 0         No        <none>    Presence of neighboring buildings for solar shading
   ================================  ========  =====  ===========  ========  ========  ============================================================
 
   .. [#] SiteType choices are "rural", "suburban", or "urban".
-  .. [#] ShelterCoefficient values are described as follows: 
-
-         - **1.0**: No obstructions or local shielding;
-         - **0.9**: Light local shielding with few obstructions within two building heights;
-         - **0.7**: Local shielding with many large obstructions within two building heights;
-         - **0.5**: Heavily shielded, many large obstructions within one building height;
-         - **0.3**: Complete shielding with large buildings immediately adjacent.
+  .. [#] ShieldingofHome choices are "normal", "exposed", or "well-shielded".
 
 For each neighboring building defined, additional information is entered in a ``extension/Neighbors/NeighborBuilding``.
 
@@ -1875,22 +1869,11 @@ If not entered, the simulation will not include a clothes dryer.
          See :ref:`hpxmllocations` for descriptions.
   .. [#] FuelType choices are "natural gas", "fuel oil", "fuel oil 1", "fuel oil 2", "fuel oil 4", "fuel oil 5/6", "diesel", "propane", "kerosene", "coal", "coke", "bituminous coal", "anthracite coal", "electricity", "wood", or "wood pellets".
   .. [#] If neither CombinedEnergyFactor nor EnergyFactor provided, the following default values representing a standard clothes dryer from 2006 will be used:
-         CombinedEnergyFactor = 3.01,
-         ControlType = timer.
+         CombinedEnergyFactor = 3.01.
   .. [#] If EnergyFactor (EF) provided instead of CombinedEnergyFactor (CEF), it will be converted using the following equation based on the `Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF <https://www.resnet.us/wp-content/uploads/No.-301-2014-10-Section-4.2.2.5.2.8-Clothes-Dryer-CEF-Rating.pdf>`_:
          CEF = EF / 1.15.
   .. [#] VentedFlowRate only required if IsVented is true.
   .. [#] VentedFlowRate default based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
-
-If the CombinedEnergyFactor or EnergyFactor is provided, a complete set of EnergyGuide label information is entered in ``ClothesDryer``.
-
-  ===============  =======  =======  ===========  ========  =======  ================
-  Element          Type     Units    Constraints  Required  Default  Notes
-  ===============  =======  =======  ===========  ========  =======  ================
-  ``ControlType``  string            See [#]_     Yes                Type of controls
-  ===============  =======  =======  ===========  ========  =======  ================
-
-  .. [#] ControlType choices are "timer" or "moisture".
 
 Clothes dryer energy use is calculated per the Energy Rating Rated Home in `ANSI/RESNET/ICC 301-2019 Addendum A <https://www.resnet.us/wp-content/uploads/ANSI_RESNET_ICC-301-2019-Addendum-A-2019_7.16.20-1.pdf>`_.
 
