@@ -2,8 +2,10 @@
 
 __New Features__
 - Moves additional error-checking from the ruby measure to the schematron validator.
+- Adds more detail to error messages regarding the wrong data type in the HPXML file.
 
 __Bugfixes__
+- Fixes ruby error if elements (e.g., `SystemIdentifier`) exist without the proper 'id'/'idref' attribute.
 - Fixes possible "Electricity category end uses do not sum to total" error due to boiler pump energy.
 - Fixes possible "Construction R-value ... does not match Assembly R-value" error for highly insulated enclosure elements.
 
