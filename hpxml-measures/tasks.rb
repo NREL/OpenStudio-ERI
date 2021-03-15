@@ -96,6 +96,7 @@ def create_hpxmls
     'invalid_files/invalid-facility-type-surfaces.xml' => 'base.xml',
     'invalid_files/invalid-foundation-wall-properties.xml' => 'base-foundation-unconditioned-basement-wall-insulation.xml',
     'invalid_files/invalid-id.xml' => 'base-enclosure-skylights.xml',
+    'invalid_files/invalid-id2.xml' => 'base-enclosure-skylights.xml',
     'invalid_files/invalid-infiltration-volume.xml' => 'base.xml',
     'invalid_files/invalid-input-parameters.xml' => 'base.xml',
     'invalid_files/invalid-neighbor-shading-azimuth.xml' => 'base-misc-neighbor-shading.xml',
@@ -429,7 +430,7 @@ def create_hpxmls
     'base-misc-loads-large-uncommon2.xml' => 'base-misc-loads-large-uncommon.xml',
     'base-misc-loads-none.xml' => 'base.xml',
     'base-misc-neighbor-shading.xml' => 'base.xml',
-    'base-misc-shelter-coefficient.xml' => 'base.xml',
+    'base-misc-shielding-of-home.xml' => 'base.xml',
     'base-misc-usage-multiplier.xml' => 'base.xml',
     'base-multiple-buildings.xml' => 'base.xml',
     'base-pv.xml' => 'base.xml',
@@ -523,6 +524,9 @@ def create_hpxmls
       elsif ['invalid_files/invalid-schema-version.xml'].include? derivative
         root = XMLHelper.get_element(hpxml_doc, '/HPXML')
         XMLHelper.add_attribute(root, 'schemaVersion', '2.3')
+      elsif ['invalid_files/invalid-id2.xml'].include? derivative
+        element = XMLHelper.get_element(hpxml_doc, '/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight/SystemIdentifier')
+        XMLHelper.delete_attribute(element, 'id')
       end
 
       if derivative.include? 'ASHRAE_Standard_140'
@@ -644,8 +648,8 @@ def set_hpxml_site(hpxml_file, hpxml)
   if ['base.xml'].include? hpxml_file
     hpxml.site.fuels = [HPXML::FuelTypeElectricity, HPXML::FuelTypeNaturalGas]
     hpxml.site.site_type = HPXML::SiteTypeSuburban
-  elsif ['base-misc-shelter-coefficient.xml'].include? hpxml_file
-    hpxml.site.shelter_coefficient = 0.8
+  elsif ['base-misc-shielding-of-home.xml'].include? hpxml_file
+    hpxml.site.shielding_of_home = HPXML::ShieldingWellShielded
   elsif ['base-misc-defaults.xml'].include? hpxml_file
     hpxml.site.site_type = nil
   elsif ['invalid_files/invalid-input-parameters.xml'].include? hpxml_file
@@ -2322,9 +2326,6 @@ def set_hpxml_slabs(hpxml_file, hpxml)
       slab.carpet_fraction = nil
       slab.carpet_fraction = nil
     end
-  elsif ['invalid_files/mismatched-slab-and-foundation-wall.xml'].include? hpxml_file
-    hpxml.slabs[0].interior_adjacent_to = HPXML::LocationBasementUnconditioned
-    hpxml.slabs[0].depth_below_grade = 7.0
   elsif ['invalid_files/slab-zero-exposed-perimeter.xml'].include? hpxml_file
     hpxml.slabs[0].exposed_perimeter = 0
   elsif ['invalid_files/enclosure-living-missing-floor-slab.xml',
@@ -3903,13 +3904,6 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
         duct.duct_surface_area = nil
         duct.duct_location = nil
       end
-    end
-  elsif ['invalid_files/missing-duct-location-and-surface-area.xml'].include? hpxml_file
-    hpxml.hvac_distributions.each do |hvac_distribution|
-      next unless hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
-
-      hvac_distribution.ducts[1].duct_surface_area = nil
-      hvac_distribution.ducts[1].duct_location = nil
     end
   elsif ['invalid_files/missing-duct-location.xml'].include? hpxml_file
     hpxml.hvac_distributions.each do |hvac_distribution|
@@ -5545,12 +5539,53 @@ def create_schematron_hpxml_validator(hpxml_docs)
     end
   end
 
+  # Add ID/IDref checks
+  # TODO: Dynamically obtain these lists
+  id_names = ['SystemIdentifier',
+              'BuildingID']
+  idref_names = ['AttachedToRoof',
+                 'AttachedToFrameFloor',
+                 'AttachedToSlab',
+                 'AttachedToFoundationWall',
+                 'AttachedToWall',
+                 'DistributionSystem',
+                 'AttachedToHVACDistributionSystem',
+                 'RelatedHVACSystem',
+                 'ConnectedTo']
+  elements_in_sample_files.each do |element_xpath|
+    element_name = element_xpath.split('/')[-1].gsub('h:', '')
+    context_xpath = "/#{element_xpath.split('/')[0..-2].join('/')}"
+    if id_names.include? element_name
+      rule = rules[context_xpath]
+      if rule.nil?
+        # Need new rule
+        rule = XMLHelper.add_element(pattern, 'sch:rule')
+        XMLHelper.add_attribute(rule, 'context', context_xpath)
+        rules[context_xpath] = rule
+      end
+      assertion = XMLHelper.add_element(rule, 'sch:assert', "Expected id attribute for #{element_name}", :string)
+      XMLHelper.add_attribute(assertion, 'role', 'ERROR')
+      XMLHelper.add_attribute(assertion, 'test', "count(h:#{element_name}[@id]) = 1 or not (h:#{element_name})")
+    elsif idref_names.include? element_name
+      rule = rules[context_xpath]
+      if rule.nil?
+        # Need new rule
+        rule = XMLHelper.add_element(pattern, 'sch:rule')
+        XMLHelper.add_attribute(rule, 'context', context_xpath)
+        rules[context_xpath] = rule
+      end
+      assertion = XMLHelper.add_element(rule, 'sch:assert', "Expected idref attribute for #{element_name}", :string)
+      XMLHelper.add_attribute(assertion, 'role', 'ERROR')
+      XMLHelper.add_attribute(assertion, 'test', "count(h:#{element_name}[@idref]) = 1 or not(h:#{element_name})")
+    end
+  end
+
   XMLHelper.write_file(hpxml_validator, File.join(File.dirname(__FILE__), 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml'))
 end
 
 def get_element_full_xpaths(element_xpaths, complex_type_or_group_dict, element_xpath, element_type)
   if not complex_type_or_group_dict.keys.include? element_type
-    return element_xpaths[element_xpath] = element_type
+    element_xpaths[element_xpath] = element_type
   else
     complex_type_or_group = deep_copy_object(complex_type_or_group_dict[element_type])
     complex_type_or_group.each do |k, v|
