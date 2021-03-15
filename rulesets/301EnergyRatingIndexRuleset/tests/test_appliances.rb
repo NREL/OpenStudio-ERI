@@ -27,14 +27,14 @@ class ERIApplianceTest < MiniTest::Test
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
       _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
       _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
-    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationLivingSpace)
     _check_dishwasher(hpxml, ef: nil, annual_kwh: 307, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
     _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
     _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -66,14 +66,14 @@ class ERIApplianceTest < MiniTest::Test
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
       _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
       _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
-    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeMoisture, location: HPXML::LocationLivingSpace)
+    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, location: HPXML::LocationLivingSpace)
     _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 6, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
     _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
     _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -104,11 +104,11 @@ class ERIApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, control: HPXML::ClothesDryerControlTypeMoisture, location: HPXML::LocationLivingSpace)
+    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, location: HPXML::LocationLivingSpace)
     _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
 
     # Test w/ 301-2019 pre-Addendum A
@@ -158,7 +158,7 @@ class ERIApplianceTest < MiniTest::Test
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
       _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
       _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -237,12 +237,12 @@ class ERIApplianceTest < MiniTest::Test
         if ratio_of_units_to_appliance > 14
           # Reference appliances
           _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-          _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+          _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
         else
           # Business as usual
           if calc_type == Constants.CalcTypeERIRatedHome
             _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
-            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationOtherHeatedSpace)
+            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationOtherHeatedSpace)
           else
             if calc_type == Constants.CalcTypeERIReferenceHome
               location = HPXML::LocationOtherHeatedSpace
@@ -250,7 +250,7 @@ class ERIApplianceTest < MiniTest::Test
               location = HPXML::LocationLivingSpace
             end
             _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: location)
-            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, control: HPXML::ClothesDryerControlTypeTimer, location: location)
+            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: location)
           end
         end
       end
@@ -414,7 +414,7 @@ class ERIApplianceTest < MiniTest::Test
     end
   end
 
-  def _check_clothes_dryer(hpxml, fuel_type:, ef:, cef:, control:, location:)
+  def _check_clothes_dryer(hpxml, fuel_type:, ef:, cef:, control: nil, location:)
     assert_equal(1, hpxml.clothes_dryers.size)
     clothes_dryer = hpxml.clothes_dryers[0]
     assert_equal(location, clothes_dryer.location)
@@ -426,7 +426,11 @@ class ERIApplianceTest < MiniTest::Test
       assert_nil(clothes_dryer.combined_energy_factor)
       assert_in_epsilon(ef, clothes_dryer.energy_factor, 0.01)
     end
-    assert_equal(control, clothes_dryer.control_type)
+    if control.nil?
+      assert_nil(clothes_dryer.control_type)
+    else
+      assert_equal(control, clothes_dryer.control_type)
+    end
     assert_equal(true, clothes_dryer.is_vented)
     assert_equal(0.0, clothes_dryer.vented_flow_rate)
 
