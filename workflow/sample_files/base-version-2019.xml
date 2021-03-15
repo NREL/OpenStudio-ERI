@@ -434,7 +434,6 @@
           <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
           <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
-          <LabelUsage>999.0</LabelUsage>
           <Capacity>3.2</Capacity>
         </ClothesWasher>
         <ClothesDryer>
@@ -455,10 +454,6 @@
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
-          <LabelElectricRate>999.0</LabelElectricRate>
-          <LabelGasRate>999.0</LabelGasRate>
-          <LabelAnnualGasCost>999.0</LabelAnnualGasCost>
-          <LabelUsage>999.0</LabelUsage>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator'/>

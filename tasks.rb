@@ -1129,7 +1129,6 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
                              is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
-                             control_type: default_values[:control_type],
                              combined_energy_factor: default_values[:combined_energy_factor])
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
@@ -1145,7 +1144,6 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
                              is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
-                             control_type: default_values[:control_type],
                              combined_energy_factor: default_values[:combined_energy_factor])
   end
 end
@@ -1616,12 +1614,14 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = eri_version
 
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
-      # Arbitrary appliance inputs new as of 301-2019 Addendum A
-      hpxml.clothes_washers[0].label_usage = 999
-      hpxml.dishwashers[0].label_electric_rate = 999
-      hpxml.dishwashers[0].label_gas_rate = 999
-      hpxml.dishwashers[0].label_annual_gas_cost = 999
-      hpxml.dishwashers[0].label_usage = 999
+      # Need old input for clothes dryers
+      hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
+      # Don't yet need these inputs
+      hpxml.clothes_washers[0].label_usage = nil
+      hpxml.dishwashers[0].label_electric_rate = nil
+      hpxml.dishwashers[0].label_gas_rate = nil
+      hpxml.dishwashers[0].label_annual_gas_cost = nil
+      hpxml.dishwashers[0].label_usage = nil
     end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
