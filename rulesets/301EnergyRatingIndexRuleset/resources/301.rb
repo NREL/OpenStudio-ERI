@@ -234,7 +234,6 @@ class EnergyRatingIndex301Ruleset
     @infil_volume = get_infiltration_volume(orig_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
-    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
@@ -259,7 +258,6 @@ class EnergyRatingIndex301Ruleset
     @infil_volume = get_infiltration_volume(orig_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
-    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
@@ -284,7 +282,6 @@ class EnergyRatingIndex301Ruleset
     @infil_volume = 20400.0
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
-    new_hpxml.site.shelter_coefficient = Airflow.get_default_shelter_coefficient()
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
     new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
