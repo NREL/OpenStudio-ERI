@@ -1135,7 +1135,9 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-01.xml',
+         'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-04.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-01.xml',
+         'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-04.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Standard electric
