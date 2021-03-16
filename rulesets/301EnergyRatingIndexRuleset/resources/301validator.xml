@@ -1150,8 +1150,7 @@
       <sch:assert role='ERROR' test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="garage" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:CombinedEnergyFactor) + count(h:EnergyFactor) = 1'>Expected 1 element(s) for xpath: CombinedEnergyFactor | EnergyFactor</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ControlType) = 1'>Expected 1 element(s) for xpath: ControlType</sch:assert>
-      <sch:assert role='ERROR' test='h:ControlType[text()="timer" or text()="moisture"] or not(h:ControlType)'>Expected ControlType to be 'timer' or 'moisture'</sch:assert>
+      <sch:assert role='ERROR' test='count(h:ControlType[text()="timer" or text()="moisture"]) + count(../../../../h:SoftwareInfo/h:extension/h:ERICalculation/h:Version[contains(text(),"2019A") or text()="latest"]) &gt;= 1'>Expected 1 or more element(s) for xpath: ControlType | ../../../../SoftwareInfo/extension/ERICalculation/Version[text() &lt; 2019A]</sch:assert>
     </sch:rule>
   </sch:pattern>
 

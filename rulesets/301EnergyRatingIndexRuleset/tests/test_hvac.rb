@@ -951,12 +951,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_duct_leakage_exemption
     # Addendum L
-    # Create derivative file for testing
-    hpxml_name = 'base-hvac-ducts-leakage-to-outside-exemption.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.header.eri_calculation_version = '2014ADEGL'
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-to-outside-exemption.xml', '2014ADEGL')
 
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIIndexAdjustmentDesign,
@@ -978,12 +973,7 @@ class ERIHVACtest < MiniTest::Test
     _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
 
     # Addendum D
-    # Create derivative file for testing
-    hpxml_name = 'base-hvac-ducts-leakage-to-outside-exemption.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.header.eri_calculation_version = '2014AD'
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-to-outside-exemption.xml', '2014AD')
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 0.0)
@@ -991,12 +981,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_duct_leakage_total
     # Addendum L
-    # Create derivative file for testing
-    hpxml_name = 'base-hvac-ducts-leakage-total.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.header.eri_calculation_version = '2014ADEGL'
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-total.xml', '2014ADEGL')
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 75.0)

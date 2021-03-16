@@ -244,7 +244,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_resnet_hers_method_301_2019_pre_addendum_a
-    all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2019_PreAddendumA.3_HERS_Method',
+    all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2019_PreAddendumA',
                                            'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA')
 
     # Check results
@@ -256,7 +256,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_resnet_hers_method_301_2014_pre_addendum_e
     # Tests before 301-2019 Addendum E (IAF) was in place
-    all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2014_PreAddendumE.3_HERS_Method',
+    all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2014_PreAddendumE',
                                            'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE')
 
     # Check results

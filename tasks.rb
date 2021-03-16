@@ -1135,7 +1135,9 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
          'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-01.xml',
+         'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE/L100A-04.xml',
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-01.xml',
+         'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-04.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Standard electric
@@ -1584,6 +1586,7 @@ def create_sample_hpxmls
   # ... and invalid test file (pre-Addendum L)
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
   hpxml.header.eri_calculation_version = '2014A'
+  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml')
 
   # Duct leakage total
@@ -1608,6 +1611,7 @@ def create_sample_hpxmls
   # ... and invalid test file (pre-Addendum L)
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
   hpxml.header.eri_calculation_version = '2014ADEG'
+  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
 
   # Older versions
@@ -1616,12 +1620,8 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = eri_version
 
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
-      # Arbitrary appliance inputs new as of 301-2019 Addendum A
-      hpxml.clothes_washers[0].label_usage = 999
-      hpxml.dishwashers[0].label_electric_rate = 999
-      hpxml.dishwashers[0].label_gas_rate = 999
-      hpxml.dishwashers[0].label_annual_gas_cost = 999
-      hpxml.dishwashers[0].label_usage = 999
+      # Need old input for clothes dryers
+      hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
     end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
