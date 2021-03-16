@@ -1129,6 +1129,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
                              is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
+                             control_type: default_values[:control_type],
                              combined_energy_factor: default_values[:combined_energy_factor])
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
@@ -1144,6 +1145,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
                              is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
+                             control_type: default_values[:control_type],
                              combined_energy_factor: default_values[:combined_energy_factor])
   end
 end
@@ -1582,6 +1584,7 @@ def create_sample_hpxmls
   # ... and invalid test file (pre-Addendum L)
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
   hpxml.header.eri_calculation_version = '2014A'
+  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml')
 
   # Duct leakage total
@@ -1606,6 +1609,7 @@ def create_sample_hpxmls
   # ... and invalid test file (pre-Addendum L)
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
   hpxml.header.eri_calculation_version = '2014ADEG'
+  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
 
   # Older versions
@@ -1616,12 +1620,6 @@ def create_sample_hpxmls
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
       # Need old input for clothes dryers
       hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-      # Don't yet need these inputs
-      hpxml.clothes_washers[0].label_usage = nil
-      hpxml.dishwashers[0].label_electric_rate = nil
-      hpxml.dishwashers[0].label_gas_rate = nil
-      hpxml.dishwashers[0].label_annual_gas_cost = nil
-      hpxml.dishwashers[0].label_usage = nil
     end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")

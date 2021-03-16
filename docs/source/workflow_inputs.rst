@@ -1564,7 +1564,7 @@ A single clothes washer can be entered as a ``/HPXML/Building/BuildingDetails/Ap
   ``LabelElectricRate``                                           double   $/kWh        > 0          Yes                EnergyGuide label electricity rate
   ``LabelGasRate``                                                double   $/therm      > 0          Yes                EnergyGuide label natural gas rate
   ``LabelAnnualGasCost``                                          double   $            > 0          Yes                EnergyGuide label annual gas cost
-  ``LabelUsage``                                                  double   cyc/wk       > 0          See [#]_           EnergyGuide label number of cycles
+  ``LabelUsage``                                                  double   cyc/wk       > 0          Yes                EnergyGuide label number of cycles (not used if 301 version < 2019A)
   ``Capacity``                                                    double   ft3          > 0          Yes                Clothes dryer volume
   ==============================================================  =======  ===========  ===========  ========  =======  ==============================================
 
@@ -1573,7 +1573,6 @@ A single clothes washer can be entered as a ``/HPXML/Building/BuildingDetails/Ap
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If ModifiedEnergyFactor (MEF) provided instead of IntegratedModifiedEnergyFactor (IMEF), it will be converted using the `Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF <https://www.resnet.us/wp-content/uploads/No.-301-2014-08-sECTION-4.2.2.5.2.8-Clothes-Washers-Eq-4.2-6.pdf>`_:
          IMEF = (MEF - 0.503) / 0.95.
-  .. [#] LabelUsage only required if ERI Version >= 2019A.
 
 If the clothes washer is shared, additional information is entered in ``/HPXML/Building/BuildingDetails/Appliances/ClothesWasher``.
 
@@ -1643,10 +1642,10 @@ A single dishwasher can be entered as a ``/HPXML/Building/BuildingDetails/Applia
   ``IsSharedAppliance``                   boolean                            Yes                Whether it serves multiple dwelling units [#]_
   ``Location``                            string                See [#]_     Yes                Location
   ``RatedAnnualkWh`` or ``EnergyFactor``  double   kWh/yr or #  > 0          Yes                EnergyGuide label consumption/efficiency [#]_
-  ``LabelElectricRate``                   double   $/kWh        > 0          See [#]_           EnergyGuide label electricity rate
-  ``LabelGasRate``                        double   $/therm      > 0          See [#]_           EnergyGuide label natural gas rate
-  ``LabelAnnualGasCost``                  double   $            > 0          See [#]_           EnergyGuide label annual gas cost
-  ``LabelUsage``                          double   cyc/wk       > 0          See [#]_           EnergyGuide label number of cycles
+  ``LabelElectricRate``                   double   $/kWh        > 0          Yes                EnergyGuide label electricity rate (not used if 301 version < 2019A)
+  ``LabelGasRate``                        double   $/therm      > 0          Yes                EnergyGuide label natural gas rate (not used if 301 version < 2019A)
+  ``LabelAnnualGasCost``                  double   $            > 0          Yes                EnergyGuide label annual gas cost (not used if 301 version < 2019A)
+  ``LabelUsage``                          double   cyc/wk       > 0          Yes                EnergyGuide label number of cycles (not used if 301 version < 2019A)
   ``PlaceSettingCapacity``                integer  #            > 0          Yes                Number of place settings
   ======================================  =======  ===========  ===========  ========  =======  ==============================================
 
@@ -1655,10 +1654,6 @@ A single dishwasher can be entered as a ``/HPXML/Building/BuildingDetails/Applia
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If EnergyFactor (EF) provided instead of RatedAnnualkWh, it will be converted using the following equation based on `ANSI/RESNET/ICC 301-2014 <https://codes.iccsafe.org/content/document/843>`_:
          RatedAnnualkWh = 215.0 / EF.
-  .. [#] LabelElectricRate only required if ERI Version >= 2019A.
-  .. [#] LabelGasRate only required if ERI Version >= 2019A.
-  .. [#] LabelAnnualGasCost only required if ERI Version >= 2019A.
-  .. [#] LabelUsage only required if ERI Version >= 2019A.
 
 If the dishwasher is shared, additional information is entered in ``/HPXML/Building/BuildingDetails/Appliances/Dishwasher``.
 
