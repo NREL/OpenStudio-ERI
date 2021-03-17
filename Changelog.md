@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.2.0 (Pending)
 
 __New Features__
+- Allow `Slab/ExposedPerimeter` to be zero.
 - `ClothesDryer/ControlType` is no longer required if 301 version >= 2019A
 - Moves additional error-checking from the ruby measure to the schematron validator.
 - Adds more detail to error messages regarding the wrong data type in the HPXML file.
