@@ -161,6 +161,19 @@ class ERI301ValidationTest < MiniTest::Test
     puts
   end
 
+  def test_schematron_validation
+    # Check that the schematron file is valid
+    begin
+      require 'schematron-nokogiri'
+      
+      xml_doc = Nokogiri::XML(File.open(@stron_path)) do |config|
+        config.options = Nokogiri::XML::ParseOptions::STRICT
+      end
+      stron_doc = SchematronNokogiri::Schema.new(xml_doc)
+    rescue LoadError
+    end
+  end
+
   private
 
   def _test_schematron_validation(hpxml_doc, expected_error_msg = nil)
