@@ -548,12 +548,17 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
   =========================================================================  =================  =====  ===========  ========  =========  ============================================
   ``DistributionSystem``                                                     idref                     See [#]_     Yes                  ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``                            double             frac   0 - 1        Yes                  Rated efficiency
-  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm  >= 0         Yes                  In accordance with ANSI/RESNET/ACCA 310 [#]_
+  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm  >= 0 [#]_    Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac   > -1         Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  =====  ===========  ========  =========  ============================================
 
   .. [#] HVACDistribution type must be AirDistribution or DSE.
   .. [#] If there is a cooling system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
+  
+.. warning::
+
+  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 Wall/Floor Furnace
 ~~~~~~~~~~~~~~~~~~
@@ -667,7 +672,7 @@ If a central air conditioner is specified, additional information is entered in 
   ``CoolingCapacity``                                                        double             Btu/hr  >= 0            Yes                  Cooling capacity
   ``SensibleHeatFraction``                                                   double             frac    0 - 1           No                   Sensible heat fraction
   ``CompressorType``                                                         string                     See [#]_        No        See [#]_   Type of compressor
-  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310 [#]_
+  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0 [#]_       Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    -0.25, 0, 0.25  Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ============================================
@@ -676,6 +681,11 @@ If a central air conditioner is specified, additional information is entered in 
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
+
+.. warning::
+
+  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 Room Air Conditioner
 ~~~~~~~~~~~~~~~~~~~~
@@ -729,6 +739,11 @@ If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been ent
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0         Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1         Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ===========  ========  =========  =======================================
+
+.. warning::
+
+  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 Chiller
 ~~~~~~~
@@ -828,6 +843,11 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
 
+.. warning::
+
+  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
+
 Mini-Split Heat Pump
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -861,6 +881,11 @@ If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been ent
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  =======================================
 
+.. warning::
+
+  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
+
 Ground-to-Air Heat Pump
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -880,8 +905,8 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``AnnualHeatingEfficiency[Units="COP"]/Value``                             double             W/W     > 0             Yes                  Rated heating efficiency
   ``NumberofUnitsServed``                                                    integer                    > 0             See [#]_             Number of dwelling units served
   ``extension/PumpPowerWattsPerTon``                                         double             W/ton   >= 0            Yes                  Pump efficiency [#]_
-  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/SharedLoopWatts``                                              double             W       >= 0            See [#]_             Shared pump power [#]_
+  ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/ChargeDefectRatio``                                            double or boolean  frac    0 [#]_          Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ==============================================
@@ -896,6 +921,11 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   .. [#] Shared loop pump power attributed to the dwelling unit is calculated as SharedLoopWatts / NumberofUnitsServed.
   .. [#] ChargeDefectRatio currently constrained to zero for ground-to-air heat pumps due to an EnergyPlus limitation; this constraint will be relaxed in the future.
          Likewise ChargeNotTested is not currently supported because it results in Grade 3 refrigerant charge, which is a non-zero charge defect ratio.
+
+.. warning::
+
+  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 Water-Loop-to-Air Heat Pump
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -992,7 +1022,7 @@ For the air distribution system, the presence of duct leakage must be entered in
   .. [#] DuctType choices are "supply" or "return".
   .. [#] If the HVAC system has no return ducts (e.g., a ducted evaporative cooler), use zero for the Value.
 
-2. **Total leakage** (Version 2014ADEGL or newer)
+2. **Total Leakage** (Version 2014ADEGL or newer)
 
   Total leakage is entered as a ``HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement``:
 
@@ -1004,9 +1034,15 @@ For the air distribution system, the presence of duct leakage must be entered in
   ``DuctLeakage/TotalOrToOutside``  string            total        Yes                  Type of duct leakage (outside conditioned space vs total)
   ================================  =======  =======  ===========  ========  =========  =========================================================
   
-  .. warning::
+  If the ResidentialFacilityType is "apartment unit", OS-ERI will calculate leakage to outside for the given distribution system as half the total leakage.
   
+  If the ResidentialFacilityType is anything else, OS-ERI will calculate leakage to outside for the given distribution system based on total leakage, the fraction of duct surface area outside conditioned space, and HVAC capacities.
+  OS-ERI currently assumes the air handler is located outside conditioned space; future inputs will be available to describe when the air handler is within conditioned space.
+  
+  .. warning::
+
     Total leakage should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
+    OS-ERI does not check that, for example, the total duct leakage or infiltration requirements for dwellings and townhouses have been met per ANSI 301; that is currently the responsibility of the software developer.
 
 3. **Leakage to Outside Testing Exemption** (Version 2014AD or newer)
 
@@ -1018,10 +1054,11 @@ For the air distribution system, the presence of duct leakage must be entered in
   ``extension/DuctLeakageToOutsideTestingExemption=true``  boolean           true         Yes                  Leakage to outside exemption?
   =======================================================  =======  =======  ===========  ========  =========  =============================
 
+  OS-ERI will use a DSE of 0.88 for the given distribution system.
+
   .. warning::
 
-    Leakage testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
-    OpenStudio-ERI does not assess the validity of the duct test exemption claim.
+    The duct leakage to outside testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
 
 Additionally, each supply/return duct present is entered in a ``HVACDistribution/DistributionSystemType/AirDistribution/Ducts``.
 
