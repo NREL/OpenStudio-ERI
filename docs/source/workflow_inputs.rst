@@ -1121,13 +1121,12 @@ Each mechanical ventilation system that provides ventilation to the whole dwelli
   ``FanType``                                           string                      See [#]_      Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``RatedFlowRate``               double             cfm      >= 0          Yes                  Flow rate [#]_
   ``HoursInOperation``                                  double             hrs/day  0 - 24        Yes                  Hours per day of operation
-  ``FanPower`` or ``extension/FanPowerDefaulted=true``  double or boolean  W        >= 0 or true  See [#]_             Fan power or whether fan power is unknown
+  ``FanPower`` or ``extension/FanPowerDefaulted=true``  double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ====================================================  =================  =======  ============  ========  =========  =========================================
 
   .. [#] For central fan integrated supply systems, IsSharedSystem must be false.
   .. [#] FanType choices are "energy recovery ventilator", "heat recovery ventilator", "exhaust only", "supply only", "balanced", or "central fan integrated supply".
   .. [#] For a central fan integrated supply system, the flow rate should equal the amount of outdoor air provided to the distribution system.
-  .. [#] FanPower or FanPowerDefaulted=true required if IsSharedSystem is false.
 
 Exhaust/Supply Only
 ~~~~~~~~~~~~~~~~~~~
