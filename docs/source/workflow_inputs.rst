@@ -1119,59 +1119,73 @@ Each mechanical ventilation system that provides ventilation to the whole dwelli
   ``UsedForWholeBuildingVentilation``                   boolean                     true          Yes                  Must be set to true
   ``IsSharedSystem``                                    boolean                     See [#]_      Yes                  Whether it serves multiple dwelling units
   ``FanType``                                           string                      See [#]_      Yes                  Type of ventilation system
-  ``TestedFlowRate`` or ``RatedFlowRate``               double             cfm      >= 0          Yes                  Flow rate [#]_
   ``HoursInOperation``                                  double             hrs/day  0 - 24        Yes                  Hours per day of operation
   ``FanPower`` or ``extension/FanPowerDefaulted=true``  double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ====================================================  =================  =======  ============  ========  =========  =========================================
 
   .. [#] For central fan integrated supply systems, IsSharedSystem must be false.
   .. [#] FanType choices are "energy recovery ventilator", "heat recovery ventilator", "exhaust only", "supply only", "balanced", or "central fan integrated supply".
-  .. [#] For a central fan integrated supply system, the flow rate should equal the amount of outdoor air provided to the distribution system.
 
 Exhaust/Supply Only
 ~~~~~~~~~~~~~~~~~~~
 
-If a supply only or exhaust only system is specified, no additional information is entered.
+If a supply only or exhaust only system is specified, additional information is entered in ``VentilationFan``.
+
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  Element                                                                   Type               Units  Constraints   Required  Default  Notes
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm    >= 0 or true  Yes                Flow rate or whether flow rate unmeasured
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
 
 Balanced
 ~~~~~~~~
 
-If a balanced system is specified, no additional information is entered.
+If a balanced system is specified, additional information is entered in ``VentilationFan``.
+
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  Element                                                                   Type               Units  Constraints   Required  Default  Notes
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm    >= 0 or true  Yes                Flow rate or whether flow rate unmeasured
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
 
 Heat Recovery Ventilator
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a heat recovery ventilator system is specified, additional information is entered in ``VentilationFan``.
 
-  ========================================================================  ======  =====  ===========  ========  =======  =======================================
-  Element                                                                   Type    Units  Constraints  Required  Default  Notes
-  ========================================================================  ======  =====  ===========  ========  =======  =======================================
-  ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double  frac   0 - 1        Yes                (Adjusted) Sensible recovery efficiency
-  ========================================================================  ======  =====  ===========  ========  =======  =======================================
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  Element                                                                   Type               Units  Constraints   Required  Default  Notes
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm    >= 0 or true  Yes                Flow rate or whether flow rate unmeasured
+  ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac   0 - 1         Yes                (Adjusted) Sensible recovery efficiency
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
 
 Energy Recovery Ventilator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If an energy recovery ventilator system is specified, additional information is entered in ``VentilationFan``.
 
-  ========================================================================  ======  =====  ===========  ========  =======  =======================================
-  Element                                                                   Type    Units  Constraints  Required  Default  Notes
-  ========================================================================  ======  =====  ===========  ========  =======  =======================================
-  ``TotalRecoveryEfficiency`` or ``AdjustedTotalRecoveryEfficiency``        double  frac   0 - 1        Yes                (Adjusted) Total recovery efficiency
-  ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double  frac   0 - 1        Yes                (Adjusted) Sensible recovery efficiency
-  ========================================================================  ======  =====  ===========  ========  =======  =======================================
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  Element                                                                   Type               Units  Constraints   Required  Default  Notes
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm    >= 0 or true  Yes                Flow rate or whether flow rate unmeasured
+  ``TotalRecoveryEfficiency`` or ``AdjustedTotalRecoveryEfficiency``        double             frac   0 - 1         Yes                (Adjusted) Total recovery efficiency
+  ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac   0 - 1         Yes                (Adjusted) Sensible recovery efficiency
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
 
 Central Fan Integrated Supply
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a central fan integrated supply system is specified, additional information is entered in ``VentilationFan``.
 
-  ====================================  ======  =====  ===========  ========  =======  ==================================
-  Element                               Type    Units  Constraints  Required  Default  Notes
-  ====================================  ======  =====  ===========  ========  =======  ==================================
-  ``AttachedToHVACDistributionSystem``  idref          See [#]_     Yes                ID of attached distribution system
-  ====================================  ======  =====  ===========  ========  =======  ==================================
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  Element                                                                   Type               Units  Constraints   Required  Default  Notes
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
+  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm    >= 0 or true  Yes                Flow rate [#]_ or whether flow rate unmeasured
+  ``AttachedToHVACDistributionSystem``                                      idref                     See [#]_      Yes                ID of attached distribution system
+  ========================================================================  =================  =====  ============  ========  =======  =======================================
 
+  .. [#] TestedFlowRate should equal the amount of outdoor air provided to the distribution system.
   .. [#] HVACDistribution type cannot be HydronicDistribution.
 
 Shared System
@@ -1179,15 +1193,15 @@ Shared System
 
 If the specified system is a shared system (i.e., serving multiple dwelling units), additional information is entered in ``VentilationFan``.
 
-  ====================================================================  =================  =====  =================  ========  =======  ==========================================================================
+  ====================================================================  =================  =====  =================  ========  =======  ========================================================================
   Element                                                               Type               Units  Constraints        Required  Default  Notes
-  ====================================================================  =================  =====  =================  ========  =======  ==========================================================================
+  ====================================================================  =================  =====  =================  ========  =======  ========================================================================
   ``RatedFlowRate``                                                     double             cfm    >= 0               Yes                Total flow rate of shared system
   ``FractionRecirculation``                                             double             frac   0 - 1              Yes                Fraction of supply air that is recirculated [#]_
-  ``extension/InUnitFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm    >= 0 [#]_ or true  Yes                Flow rate delivered to the dwelling unit or whether flow rate not measured
+  ``extension/InUnitFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm    >= 0 [#]_ or true  Yes                Flow rate delivered to the dwelling unit or whether flow rate unmeasured
   ``extension/PreHeating``                                              element                   0 - 1              No        <none>   Supply air preconditioned by heating equipment? [#]_
   ``extension/PreCooling``                                              element                   0 - 1              No        <none>   Supply air preconditioned by cooling equipment? [#]_
-  ====================================================================  =================  =====  =================  ========  =======  ==========================================================================
+  ====================================================================  =================  =====  =================  ========  =======  ========================================================================
 
   .. [#] 1-FractionRecirculation is assumed to be the fraction of supply air that is provided from outside.
          The value must be 0 for exhaust only systems.
