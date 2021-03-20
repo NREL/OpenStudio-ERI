@@ -376,7 +376,7 @@ def _calculate_eri(rated_output, ref_output, results_iad = nil)
 
     # ANSI/RESNET/ICC 301-2014 Addendum E-2018 House Size Index Adjustment Factors (IAF)
 
-    results[:iad_save] = (100.0 - results_iad[:eri]) / 100.0
+    results[:iad_save] = [(100.0 - results_iad[:eri]) / 100.0, 0.0].max
 
     results[:iaf_cfa] = (2400.0 / rated_output[:hpxml_cfa])**(0.304 * results[:iad_save])
     results[:iaf_nbr] = 1.0 + (0.069 * results[:iad_save] * (rated_output[:hpxml_nbr] - 3.0))
