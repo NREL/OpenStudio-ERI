@@ -165,7 +165,7 @@ class ERI301ValidationTest < MiniTest::Test
     # Check that the schematron file is valid
     begin
       require 'schematron-nokogiri'
-      
+
       xml_doc = Nokogiri::XML(File.open(@stron_path)) do |config|
         config.options = Nokogiri::XML::ParseOptions::STRICT
       end
