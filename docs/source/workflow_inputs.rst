@@ -572,6 +572,8 @@ If a wall furnace or floor furnace is specified, additional information is enter
   ``extension/FanPowerWatts``                      double  W      >= 0         No        0        Fan power
   ===============================================  ======  =====  ===========  ========  =======  ===================
 
+.. _hvac_heating_boiler:
+
 Boiler
 ~~~~~~
 
@@ -588,6 +590,7 @@ If a boiler is specified, additional information is entered in ``HeatingSystem``
 
   .. [#] For in-unit boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or DSE.
          For shared boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or AirDistribution (type: "fan coil").
+         If the shared boiler has "water loop" distribution, a :ref:`hvac_heatpump_wlhp` must also be specified.
   .. [#] | For shared boilers, ElectricAuxiliaryEnergy can alternatively be calculated as:
          | EAE = (SP / N_dweq + aux_in) * HLH
          | where
@@ -745,6 +748,8 @@ If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been ent
   HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
+.. _hvac_cooling_chiller:
+
 Chiller
 ~~~~~~~
 
@@ -763,7 +768,10 @@ If a chiller is specified, additional information is entered in ``CoolingSystem`
   ==========================================================================  ========  ======  ===========  ========  =========  =========================================
 
   .. [#] HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or AirDistribution (type: "fan coil").
+         If the chiller has "water loop" distribution, a :ref:`hvac_heatpump_wlhp` must also be specified.
   .. [#] FanCoilWatts only required if chiller connected to a fan coil.
+
+.. _hvac_cooling_tower:
 
 Cooling Tower
 ~~~~~~~~~~~~~
@@ -780,6 +788,7 @@ If a cooling tower is specified, additional information is entered in ``CoolingS
   ==========================================================================  ========  ======  ===========  ========  =========  =========================================
 
   .. [#] HVACDistribution type must be HydronicDistribution (type: "water loop").
+         A :ref:`hvac_heatpump_wlhp` must also be specified.
   
 .. _hvac_heatpump:
 
@@ -927,6 +936,8 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
+.. _hvac_heatpump_wlhp:
+
 Water-Loop-to-Air Heat Pump
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -950,7 +961,7 @@ If a water-loop-to-air heat pump is specified, additional information is entered
 
 .. note::
 
-  If a water loop heat pump is specified, there must be at least one shared heating system (i.e., boiler) and/or one shared cooling system (i.e., chiller or cooling tower) specified with water loop distribution.
+  If a water loop heat pump is specified, there must be at least one shared heating system (i.e., :ref:`hvac_heating_boiler`) and/or one shared cooling system (i.e., :ref:`hvac_cooling_chiller` or :ref:`hvac_cooling_tower`) specified with water loop distribution.
 
 HPXML HVAC Control
 ******************
