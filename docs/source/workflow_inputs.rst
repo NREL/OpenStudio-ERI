@@ -913,7 +913,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``AnnualCoolingEfficiency[Units="EER"]/Value``                             double             Btu/Wh  > 0             Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="COP"]/Value``                             double             W/W     > 0             Yes                  Rated heating efficiency
   ``NumberofUnitsServed``                                                    integer                    > 0             See [#]_             Number of dwelling units served
-  ``extension/PumpPowerWattsPerTon``                                         double             W/ton   >= 0            Yes                  Pump efficiency [#]_
+  ``extension/PumpPowerWattsPerTon``                                         double             W/ton   >= 0            Yes                  Pump power [#]_
   ``extension/SharedLoopWatts``                                              double             W       >= 0            See [#]_             Shared pump power [#]_
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
@@ -926,6 +926,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] NumberofUnitsServed only required if IsSharedSystem is true, in which case it must be > 1.
   .. [#] Pump power is calculated using PumpPowerWattsPerTon and the cooling capacity in tons, unless the system only provides heating, in which case the heating capacity in tons is used instead.
+         Any pump power that is shared by multiple dwelling units should be included in SharedLoopWatts, *not* PumpPowerWattsPerTon, so that shared loop pump power attributed to the dwelling unit is calculated.
   .. [#] SharedLoopWatts only required if IsSharedSystem is true.
   .. [#] Shared loop pump power attributed to the dwelling unit is calculated as SharedLoopWatts / NumberofUnitsServed.
   .. [#] ChargeDefectRatio currently constrained to zero for ground-to-air heat pumps due to an EnergyPlus limitation; this constraint will be relaxed in the future.
