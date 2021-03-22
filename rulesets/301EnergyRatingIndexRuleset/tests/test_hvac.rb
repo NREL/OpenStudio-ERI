@@ -885,7 +885,7 @@ class ERIHVACtest < MiniTest::Test
       hpxml = _test_measure(hpxml_name, calc_type)
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
       hvac_iq_values[:charge_defect_ratio] = 0.0 # Can't currently handle non-zero GSHP charge defect
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 30, num_units_served: 6, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 0, num_units_served: 6, **hvac_iq_values }])
       _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
