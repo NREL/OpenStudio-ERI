@@ -26,6 +26,14 @@ Individual tests (any method in workflow/tests/energy_rating_index_test.rb that 
 For example:  
 ``openstudio energy_rating_index_test.rb --name=test_resnet_hers_method``
 
+All current HERS tests can be run using as follows:
+``openstudio energy_rating_index_test.rb --name=test_resnet_ashrae_140``
+``openstudio energy_rating_index_test.rb --name=test_resnet_hers_reference_home_auto_generation``
+``openstudio energy_rating_index_test.rb --name=test_resnet_hers_method``
+``openstudio energy_rating_index_test.rb --name=test_resnet_hvac``
+``openstudio energy_rating_index_test.rb --name=test_resnet_dse``
+``openstudio energy_rating_index_test.rb --name=test_resnet_hot_water``
+
 Test results in CSV format are created at workflow/tests/test_results. 
 For many RESNET tests, the Excel spreadsheet test criteria are also implemented in code to automate the process of checking for test failures.
 All simulation/HPXML/etc. files generated from running the tests can be found inside the workflow/tests/test_files directory.
