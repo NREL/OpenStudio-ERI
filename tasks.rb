@@ -990,7 +990,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     energy_factor: 0.62,
                                     recovery_efficiency: 0.78)
   elsif hpxml_file.include?('HERS_AutoGen')
-    # 40 gal electric with EF = 0.88
+    # 40 gal electric with EF = 0.92
     hpxml.water_heating_systems.clear
     hpxml.water_heating_systems.add(id: 'WaterHeater',
                                     is_shared_system: false,
