@@ -222,7 +222,7 @@
                 <FanPowerNotTested>true</FanPowerNotTested>
                 <AirflowNotTested>true</AirflowNotTested>
                 <PumpPowerWattsPerTon>0.0</PumpPowerWattsPerTon>
-                <SharedLoopWatts>6.0</SharedLoopWatts>
+                <SharedLoopWatts>600.0</SharedLoopWatts>
               </extension>
             </HeatPump>
           </HVACPlant>
