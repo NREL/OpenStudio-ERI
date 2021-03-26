@@ -1,4 +1,4 @@
-## OpenStudio-ERI v1.2.0 (Pending)
+## OpenStudio-ERI v1.1.1
 
 __New Features__
 - Allow `Slab/ExposedPerimeter` to be zero.
