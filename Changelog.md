@@ -5,6 +5,7 @@ __New Features__
 - `ClothesDryer/ControlType` is no longer required if 301 version >= 2019A
 - Moves additional error-checking from the ruby measure to the schematron validator.
 - Adds more detail to error messages regarding the wrong data type in the HPXML file.
+- Adds error-checking for negative SEEReq results for shared cooling systems.
 - Relaxes tolerance for duct leakage to outside warning when ducts solely in conditioned space.
 
 __Bugfixes__
