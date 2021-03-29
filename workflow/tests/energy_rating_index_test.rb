@@ -126,6 +126,7 @@ class EnergyRatingIndexTest < Minitest::Test
       _test_schema_validation(xml)
       sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
       htg_load, clg_load = _get_simulation_load_results(csv_path)
+      xml = File.basename(xml)
       if xml.include? 'C.xml'
         all_results << [xml, htg_load, 'N/A']
         assert_operator(htg_load, :>, 0)
@@ -870,14 +871,14 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Above-grade walls
     wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml)
-    results['Above-grade walls (Uo)'] = wall_u
-    results['Above-grade wall solar absorptance (α)'] = wall_solar_abs
-    results['Above-grade wall infrared emittance (ε)'] = wall_emiss
+    results['Above-grade walls (Uo)'] = wall_u.round(3)
+    results['Above-grade wall solar absorptance (α)'] = wall_solar_abs.round(2)
+    results['Above-grade wall infrared emittance (ε)'] = wall_emiss.round(2)
 
     # Basement walls
     bsmt_wall_r = _get_basement_walls(hpxml)
     if test_num == 4
-      results['Basement walls insulation R-Value'] = bsmt_wall_r
+      results['Basement walls insulation R-Value'] = bsmt_wall_r.round(0)
     else
       results['Basement walls insulation R-Value'] = 'n/a'
     end
@@ -885,7 +886,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Above-grade floors
     floors_u = _get_above_grade_floors(hpxml)
     if test_num <= 2
-      results['Above-grade floors (Uo)'] = floors_u
+      results['Above-grade floors (Uo)'] = floors_u.round(3)
     else
       results['Above-grade floors (Uo)'] = 'n/a'
     end
@@ -893,36 +894,36 @@ class EnergyRatingIndexTest < Minitest::Test
     # Slab insulation
     slab_r, carpet_r, exp_mas_floor_area = _get_hpxml_slabs(hpxml)
     if test_num >= 3
-      results['Slab insulation R-Value'] = slab_r
+      results['Slab insulation R-Value'] = slab_r.round(0)
     else
       results['Slab insulation R-Value'] = 'n/a'
     end
 
     # Ceilings
     ceil_u, ceil_area = _get_ceilings(hpxml)
-    results['Ceilings (Uo)'] = ceil_u
+    results['Ceilings (Uo)'] = ceil_u.round(3)
 
     # Roofs
     roof_solar_abs, roof_emiss, roof_area = _get_roofs(hpxml)
-    results['Roof solar absorptance (α)'] = roof_solar_abs
-    results['Roof infrared emittance (ε)'] = roof_emiss
+    results['Roof solar absorptance (α)'] = roof_solar_abs.round(2)
+    results['Roof infrared emittance (ε)'] = roof_emiss.round(2)
 
     # Attic vent area
     attic_vent_area = _get_attic_vent_area(hpxml)
-    results['Attic vent area (ft2)'] = attic_vent_area
+    results['Attic vent area (ft2)'] = attic_vent_area.round(2)
 
     # Crawlspace vent area
     crawl_vent_area = _get_crawl_vent_area(hpxml)
     if test_num == 2
-      results['Crawlspace vent area (ft2)'] = crawl_vent_area
+      results['Crawlspace vent area (ft2)'] = crawl_vent_area.round(2)
     else
       results['Crawlspace vent area (ft2)'] = 'n/a'
     end
 
     # Slabs
     if test_num >= 3
-      results['Exposed masonry floor area (ft2)'] = exp_mas_floor_area
-      results['Carpet & pad R-Value'] = carpet_r
+      results['Exposed masonry floor area (ft2)'] = exp_mas_floor_area.round(1)
+      results['Carpet & pad R-Value'] = carpet_r.round(1)
     else
       results['Exposed masonry floor area (ft2)'] = 'n/a'
       results['Carpet & pad R-Value'] = 'n/a'
@@ -930,8 +931,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Doors
     door_u, door_area = _get_doors(hpxml)
-    results['Door Area (ft2)'] = door_area
-    results['Door U-Factor'] = door_u
+    results['Door Area (ft2)'] = door_area.round(0)
+    results['Door U-Factor'] = door_u.round(2)
 
     # Windows
     win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml)
@@ -939,9 +940,9 @@ class EnergyRatingIndexTest < Minitest::Test
     results['South window area (ft2)'] = win_areas[180].round(2)
     results['East window area (ft2)'] = win_areas[90].round(2)
     results['West window area (ft2)'] = win_areas[270].round(2)
-    results['Window U-Factor'] = win_u
-    results['Window SHGCo (heating)'] = win_shgc_htg
-    results['Window SHGCo (cooling)'] = win_shgc_clg
+    results['Window U-Factor'] = win_u.round(2)
+    results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
+    results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
 
     # Infiltration
     sla, ach50 = _get_infiltration(hpxml)
@@ -955,18 +956,18 @@ class EnergyRatingIndexTest < Minitest::Test
     # HVAC
     afue, hspf, seer, dse = _get_hvac(hpxml)
     if (test_num == 1) || (test_num == 4)
-      results['Labeled heating system rating and efficiency'] = afue
+      results['Labeled heating system rating and efficiency'] = afue.round(2)
     else
-      results['Labeled heating system rating and efficiency'] = hspf
+      results['Labeled heating system rating and efficiency'] = hspf.round(1)
     end
-    results['Labeled cooling system rating and efficiency'] = seer
-    results['Air Distribution System Efficiency'] = dse
+    results['Labeled cooling system rating and efficiency'] = seer.round(1)
+    results['Air Distribution System Efficiency'] = dse.round(2)
 
     # Thermostat
     tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml)
     results['Thermostat Type'] = tstat
-    results['Heating thermostat settings'] = htg_sp
-    results['Cooling thermostat settings'] = clg_sp
+    results['Heating thermostat settings'] = htg_sp.round(0)
+    results['Cooling thermostat settings'] = clg_sp.round(0)
 
     # Mechanical ventilation
     mv_kwh, mv_cfm = _get_mech_vent(hpxml)
@@ -1053,27 +1054,27 @@ class EnergyRatingIndexTest < Minitest::Test
   def _check_reference_home_components(results, test_num, version)
     # Table 4.2.3.1(1): Acceptance Criteria for Test Cases 1 - 4
 
-    epsilon = 0.0005 # 0.05%
+    epsilon = 0.001 # 0.1%
 
     # Above-grade walls
     if test_num <= 3
-      assert_in_delta(0.082, results['Above-grade walls (Uo)'], 0.001)
+      assert_equal(0.082, results['Above-grade walls (Uo)'])
     else
-      assert_in_delta(0.060, results['Above-grade walls (Uo)'], 0.001)
+      assert_equal(0.060, results['Above-grade walls (Uo)'])
     end
     assert_equal(0.75, results['Above-grade wall solar absorptance (α)'])
     assert_equal(0.90, results['Above-grade wall infrared emittance (ε)'])
 
     # Basement walls
     if test_num == 4
-      assert_in_delta(10, results['Basement walls insulation R-Value'], 0.001)
+      assert_equal(10, results['Basement walls insulation R-Value'])
     else
       assert_equal('n/a', results['Basement walls insulation R-Value'])
     end
 
     # Above-grade floors
     if test_num <= 2
-      assert_in_delta(0.047, results['Above-grade floors (Uo)'], 0.001)
+      assert_equal(0.047, results['Above-grade floors (Uo)'])
     else
       assert_equal('n/a', results['Above-grade floors (Uo)'])
     end
@@ -1087,9 +1088,9 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Ceilings
     if (test_num == 1) || (test_num == 4)
-      assert_in_delta(0.030, results['Ceilings (Uo)'], 0.001)
+      assert_equal(0.030, results['Ceilings (Uo)'])
     else
-      assert_in_delta(0.035, results['Ceilings (Uo)'], 0.001)
+      assert_equal(0.035, results['Ceilings (Uo)'])
     end
 
     # Roofs
@@ -1118,13 +1119,13 @@ class EnergyRatingIndexTest < Minitest::Test
     # Doors
     assert_equal(40, results['Door Area (ft2)'])
     if test_num == 1
-      assert_in_delta(0.40, results['Door U-Factor'], 0.01)
+      assert_equal(0.40, results['Door U-Factor'])
     elsif test_num == 2
-      assert_in_delta(0.65, results['Door U-Factor'], 0.01)
+      assert_equal(0.65, results['Door U-Factor'])
     elsif test_num == 3
-      assert_in_delta(1.20, results['Door U-Factor'], 0.01)
+      assert_equal(1.20, results['Door U-Factor'])
     else
-      assert_in_delta(0.35, results['Door U-Factor'], 0.01)
+      assert_equal(0.35, results['Door U-Factor'])
     end
 
     # Windows
@@ -1140,19 +1141,19 @@ class EnergyRatingIndexTest < Minitest::Test
       assert_in_epsilon(102.63, results['West window area (ft2)'], epsilon)
     end
     if test_num == 1
-      assert_in_delta(0.40, results['Window U-Factor'], 0.01)
+      assert_equal(0.40, results['Window U-Factor'])
     elsif test_num == 2
-      assert_in_delta(0.65, results['Window U-Factor'], 0.01)
+      assert_equal(0.65, results['Window U-Factor'])
     elsif test_num == 3
-      assert_in_delta(1.20, results['Window U-Factor'], 0.01)
+      assert_equal(1.20, results['Window U-Factor'])
     else
-      assert_in_delta(0.35, results['Window U-Factor'], 0.01)
+      assert_equal(0.35, results['Window U-Factor'])
     end
-    assert_in_delta(0.34, results['Window SHGCo (heating)'], 0.01)
-    assert_in_delta(0.28, results['Window SHGCo (cooling)'], 0.01)
+    assert_equal(0.34, results['Window SHGCo (heating)'])
+    assert_equal(0.28, results['Window SHGCo (cooling)'])
 
     # Infiltration
-    assert_in_delta(0.00036, results['SLAo (ft2/ft2)'], 0.00001)
+    assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
     # Internal gains
     if version == '2019A'
@@ -1201,7 +1202,6 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(78, results['Cooling thermostat settings'])
 
     # Mechanical ventilation
-    mv_epsilon = 0.001 # 0.1%
     mv_kwh_yr = nil
     if version == '2014'
       if test_num == 1
@@ -1225,7 +1225,7 @@ class EnergyRatingIndexTest < Minitest::Test
         mv_kwh_yr = 762.8
       end
     end
-    assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], mv_epsilon)
+    assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], epsilon)
 
     # Domestic hot water
     dhw_epsilon = 0.1 # 0.1 ft
