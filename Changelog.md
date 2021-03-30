@@ -1,3 +1,10 @@
+## OpenStudio-ERI v1.2.0 (pending)
+
+__New Features__
+- Adds a `--skip-component-loads` argument for faster performance.
+
+__Bugfixes__
+
 ## OpenStudio-ERI v1.1.1
 
 __New Features__

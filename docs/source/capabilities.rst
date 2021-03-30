@@ -29,3 +29,4 @@ There are additional ways that software developers using this workflow can reduc
 - Run on Linux/Mac platform, which is significantly faster by taking advantage of the POSIX fork call.
 - Do not use the ``--hourly`` flag unless hourly output is required. If required, limit requests to hourly variables of interest.
 - Run on computing environments with 1) fast CPUs, 2) sufficient memory, and 3) enough processors to allow all simulations to run in parallel.
+- Use the ``--skip-component-loads`` argument if heating/cooling component loads are not of interest.
