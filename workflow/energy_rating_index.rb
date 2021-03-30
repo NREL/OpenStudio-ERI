@@ -38,7 +38,7 @@ def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs)
+def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, skip_comp_loads)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
