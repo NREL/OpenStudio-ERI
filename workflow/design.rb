@@ -76,6 +76,6 @@ if ARGV.size == 8
   hpxml = ARGV[4]
   debug = (ARGV[5].downcase.to_s == 'true')
   hourly_outputs = ARGV[6].split('|')
-  skip_comp_loads = (ARGV[7].downcase.to_s == 'true')
-  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, skip_comp_loads)
+  add_comp_loads = (ARGV[7].downcase.to_s == 'true')
+  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
 end
