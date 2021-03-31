@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.2.0 (pending)
 
 __New Features__
-- Adds a `--skip-component-loads` argument for faster performance.
+- **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
 
 __Bugfixes__
 

@@ -27,18 +27,18 @@ def hourly_outputs_for_run(run, hourly_outputs)
   return []
 end
 
-def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, skip_comp_loads)
+def run_design_direct(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
-  output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, skip_comp_loads)
+  output_hpxml_path = run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, skip_comp_loads)
+def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -49,7 +49,7 @@ def run_design_spawn(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_
   hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\" \"#{skip_comp_loads}\"")
+  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{output_dir}\" \"#{run.join('|')}\" \"#{resultsdir}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\" \"#{add_comp_loads}\"")
 
   return output_hpxml_path, designdir, pid
 end
@@ -594,9 +594,9 @@ OptionParser.new do |opts|
     options[:cache] = t
   end
 
-  options[:skip_comp_loads] = false
-  opts.on('--skip-component-loads', 'Skip heating/cooling component loads calculation for faster performance') do |t|
-    options[:skip_comp_loads] = true
+  options[:add_comp_loads] = false
+  opts.on('--add-component-loads', 'Add heating/cooling component loads calculation') do |t|
+    options[:add_comp_loads] = true
   end
 
   options[:debug] = false
@@ -698,7 +698,7 @@ if Process.respond_to?(:fork) # e.g., most Unix systems
 
   Parallel.map(runs, in_processes: runs.size) do |run|
     output_hpxml_path, designdir = run_design_direct(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug],
-                                                     options[:hourly_outputs], options[:skip_comp_loads])
+                                                     options[:hourly_outputs], options[:add_comp_loads])
     kill unless File.exist? File.join(designdir, 'eplusout.end')
   end
 
@@ -719,7 +719,7 @@ else # e.g., Windows
   pids = {}
   Parallel.map(runs, in_threads: runs.size) do |run|
     output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, options[:output_dir], run, resultsdir, options[:hpxml], options[:debug],
-                                                               options[:hourly_outputs], options[:skip_comp_loads])
+                                                               options[:hourly_outputs], options[:add_comp_loads])
     Process.wait pids[run]
     if not File.exist? File.join(designdir, 'eplusout.end')
       kill(pids)

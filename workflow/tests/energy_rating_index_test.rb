@@ -114,6 +114,25 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(File.exist?(csvs[:ref_hourly_results]))
   end
 
+  def test_component_loads
+    test_name = 'component_loads'
+
+    # Run simulation
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    hpxmls, csvs, runtime = _run_workflow(xml, test_name, component_loads: true)
+
+    # Check for presence of component loads
+    [csvs[:rated_results], csvs[:ref_results]].each do |csv_output_path|
+      component_loads = {}
+      CSV.read(csv_output_path, headers: false).each do |data|
+        next unless data[0].to_s.start_with? 'Component Load'
+
+        component_loads[data[0]] = Float(data[1])
+      end
+      assert(component_loads.size > 0)
+    end
+  end
+
   def test_resnet_ashrae_140
     test_name = 'RESNET_Test_4.1_Standard_140'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
@@ -560,7 +579,7 @@ class EnergyRatingIndexTest < Minitest::Test
     XMLHelper.write_file(hpxml, out_xml)
   end
 
-  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false)
+  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false, component_loads: false)
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -569,9 +588,13 @@ class EnergyRatingIndexTest < Minitest::Test
     if hourly_output
       hourly = ' --hourly ALL'
     end
+    comploads = ''
+    if component_loads
+      comploads = ' --add-component-loads'
+    end
 
     # Run energy_rating_index workflow
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" --skip-component-loads -x #{xml}#{hourly} -o #{rundir} --debug"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly}#{comploads} -o #{rundir} --debug"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
