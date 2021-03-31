@@ -20,7 +20,7 @@ def get_output_hpxml(resultsdir, designdir)
   return File.join(resultsdir, File.basename(designdir) + '.xml')
 end
 
-def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, skip_comp_loads)
+def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
   measures_dir = File.join(File.dirname(__FILE__), '..')
   design_name, designdir = get_design_name_and_dir(output_dir, run)
   output_hpxml = get_output_hpxml(resultsdir, designdir)
@@ -44,7 +44,7 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   args['hpxml_path'] = output_hpxml
   args['output_dir'] = output_dir
   args['debug'] = debug
-  args['skip_component_loads'] = skip_comp_loads
+  args['add_component_loads'] = (add_comp_loads || hourly_outputs.include?('componentloads'))
   args['skip_validation'] = !debug
   update_args_hash(measures, measure_subdir, args)
 
@@ -76,6 +76,6 @@ if ARGV.size == 8
   hpxml = ARGV[4]
   debug = (ARGV[5].downcase.to_s == 'true')
   hourly_outputs = ARGV[6].split('|')
-  skip_comp_loads = (ARGV[7].downcase.to_s == 'true')
-  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, skip_comp_loads)
+  add_comp_loads = (ARGV[7].downcase.to_s == 'true')
+  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
 end
