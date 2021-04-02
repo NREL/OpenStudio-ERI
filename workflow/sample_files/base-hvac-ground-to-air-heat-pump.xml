@@ -308,6 +308,7 @@
           <HVACPlant>
             <HeatPump>
               <SystemIdentifier id='HeatPump'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatPumpType>ground-to-air</HeatPumpType>

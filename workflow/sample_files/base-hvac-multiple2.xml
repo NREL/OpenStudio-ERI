@@ -308,6 +308,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <HeatingSystemType>
                 <Furnace/>
@@ -326,6 +327,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem2'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution2'/>
               <HeatingSystemType>
                 <Furnace/>
@@ -372,6 +374,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
@@ -391,6 +394,7 @@
             </CoolingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem2'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution2'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
@@ -409,6 +413,7 @@
             </CoolingSystem>
             <HeatPump>
               <SystemIdentifier id='HeatPump'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution4'/>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
@@ -441,6 +446,7 @@
             </HeatPump>
             <HeatPump>
               <SystemIdentifier id='HeatPump2'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution5'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatPumpType>ground-to-air</HeatPumpType>

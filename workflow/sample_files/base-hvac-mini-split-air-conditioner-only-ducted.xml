@@ -308,6 +308,7 @@
           <HVACPlant>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <CoolingSystemType>mini-split</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>

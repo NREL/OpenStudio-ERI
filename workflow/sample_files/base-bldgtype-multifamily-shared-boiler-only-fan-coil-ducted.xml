@@ -193,6 +193,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <IsSharedSystem>true</IsSharedSystem>
               <NumberofUnitsServed>6</NumberofUnitsServed>

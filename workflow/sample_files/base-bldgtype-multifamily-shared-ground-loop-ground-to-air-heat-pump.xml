@@ -193,6 +193,7 @@
           <HVACPlant>
             <HeatPump>
               <SystemIdentifier id='HeatPump'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <IsSharedSystem>true</IsSharedSystem>
               <NumberofUnitsServed>6</NumberofUnitsServed>

@@ -210,6 +210,7 @@
             </CoolingSystem>
             <HeatPump>
               <SystemIdentifier id='WLHP'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistributionWLHP'/>
               <HeatPumpType>water-loop-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>

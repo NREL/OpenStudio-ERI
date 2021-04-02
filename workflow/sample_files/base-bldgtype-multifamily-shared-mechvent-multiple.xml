@@ -193,6 +193,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <HeatingSystemType>
                 <Furnace/>
@@ -211,6 +212,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem2'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution2'/>
               <HeatingSystemType>
                 <Furnace/>
@@ -229,6 +231,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
@@ -248,6 +251,7 @@
             </CoolingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem2'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution2'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>

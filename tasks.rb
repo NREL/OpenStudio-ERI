@@ -1560,6 +1560,19 @@ def create_sample_hpxmls
         end
       end
     end
+    hpxml.hvac_distributions.each do |hvac_dist|
+      next unless hvac_dist.distribution_system_type == HPXML::HVACDistributionTypeAir
+
+      if hvac_dist.ducts.select { |d| d.duct_location != HPXML::LocationLivingSpace && d.duct_location != HPXML::LocationBasementConditioned }.size > 0
+        hvac_dist.hvac_systems.each do |hvac_system|
+          hvac_system.location = HPXML::LocationUnconditionedSpace
+        end
+      else
+        hvac_dist.hvac_systems.each do |hvac_system|
+          hvac_system.location = HPXML::LocationLivingSpace
+        end
+      end
+    end
     hpxml.pv_systems.each do |pv_system|
       next unless pv_system.is_shared_system.nil?
 

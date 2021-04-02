@@ -2,6 +2,7 @@
 
 __New Features__
 - **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
+- **Breaking change**: `UnitLocation` now required for each HVAC system; used to determine air handler duct leakage contribution for apartment units when total leakage used in lieu of leakage to outside.
 
 __Bugfixes__
 

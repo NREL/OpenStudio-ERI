@@ -1356,8 +1356,13 @@ class EnergyRatingIndex301Ruleset
               end
               leakage_to_outside = orig_leakage_measurement.duct_leakage_value * (1.0 - duct_surface_area_conditioned / duct_surface_area_total)
               htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_hvac_distribution)
-              leakage_air_handler = [0.025 * 400.0 * htg_cap / 12000.0, 0.025 * 400.0 * clg_cap / 12000.0].min
-              leakage_to_outside += leakage_air_handler
+
+              air_handler_in_unconditioned_space = (orig_hvac_distribution.hvac_systems.select { |h| h.location != HPXML::LocationLivingSpace }.size > 0)
+              if air_handler_in_unconditioned_space
+                leakage_air_handler = [0.025 * 400.0 * htg_cap / 12000.0, 0.025 * 400.0 * clg_cap / 12000.0].min
+                leakage_to_outside += leakage_air_handler
+              end
+
               leakage_to_outside = [leakage_to_outside, orig_leakage_measurement.duct_leakage_value].min
             else # Dwellings/Townhouses
               leakage_to_outside = 0.5 * orig_leakage_measurement.duct_leakage_value

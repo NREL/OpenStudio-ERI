@@ -308,6 +308,7 @@
           <HVACPlant>
             <HeatPump>
               <SystemIdentifier id='HeatPump'/>
+              <UnitLocation>unconditioned space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>

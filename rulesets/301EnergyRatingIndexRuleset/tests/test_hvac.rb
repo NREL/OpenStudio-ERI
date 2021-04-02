@@ -996,6 +996,19 @@ class ERIHVACtest < MiniTest::Test
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 128.2)
+
+    # Same as above but with air handler in conditioned space
+    hpxml_name = 'base-hvac-ducts-leakage-total.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+    (hpxml.heating_systems + hpxml.cooling_systems).each do |hvac_system|
+      hvac_system.location = HPXML::LocationLivingSpace
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 88.2)
   end
 
   def _test_measure(hpxml_name, calc_type)

@@ -515,12 +515,15 @@ Each heating system (other than a heat pump) is entered as an ``/HPXML/Building/
   Element                            Type      Units   Constraints  Required  Default    Notes
   =================================  ========  ======  ===========  ========  =========  ===============================
   ``SystemIdentifier``               id                             Yes                  Unique identifier
+  ``UnitLocation``                   string            See [#]_     Yes                  Location of heating system (e.g., air handler location for split system) [#]_
   ``HeatingSystemType``              element           1 [#]_       Yes                  Type of heating system
   ``FractionHeatLoadServed``         double    frac    0 - 1 [#]_   Yes                  Fraction of heating load served
   ``HeatingSystemFuel``              string            See [#]_     Yes                  Fuel type
   ``HeatingCapacity``                double    Btu/hr  >= 0         See [#]_             Input heating capacity
   =================================  ========  ======  ===========  ========  =========  ===============================
 
+  .. [#] UnitLocation choices are "living space" or "unconditioned space".
+  .. [#] UnitLocation only used to determine air handler duct leakage contribution for apartment units when total duct leakage used in lieu of duct leakage to outside.
   .. [#] HeatingSystemType child element choices are ``ElectricResistance``, ``Furnace``, ``WallFurnace``, ``FloorFurnace``, ``Boiler``, ``Stove``, ``PortableHeater``, ``FixedHeater``, or ``Fireplace``.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] HeatingSystemFuel choices are  "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
@@ -653,11 +656,14 @@ Each cooling system (other than a heat pump) is entered as an ``/HPXML/Building/
   Element                     Type      Units   Constraints  Required  Default  Notes
   ==========================  ========  ======  ===========  ========  =======  ===============================
   ``SystemIdentifier``        id                             Yes                Unique identifier
+  ``UnitLocation``            string            See [#]_     Yes                Location of cooling system (e.g., air handler location for split system) [#]_
   ``CoolingSystemType``       string            See [#]_     Yes                Type of cooling system
   ``CoolingSystemFuel``       string            See [#]_     Yes                Fuel type
   ``FractionCoolLoadServed``  double    frac    0 - 1 [#]_   Yes                Fraction of cooling load served
   ==========================  ========  ======  ===========  ========  =======  ===============================
 
+  .. [#] UnitLocation choices are "living space" or "unconditioned space".
+  .. [#] UnitLocation only used to determine air handler duct leakage contribution for apartment units when total duct leakage used in lieu of duct leakage to outside.
   .. [#] CoolingSystemType choices are "central air conditioner", "room air conditioner", "evaporative cooler", "mini-split", "chiller", or "cooling tower".
   .. [#] CoolingSystemFuel only choice is "electricity".
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
@@ -801,11 +807,14 @@ Each heat pump is entered as an ``/HPXML/Building/BuildingDetails/Systems/HVAC/H
   Element                            Type      Units   Constraints  Required  Default    Notes
   =================================  ========  ======  ===========  ========  =========  ===============================================
   ``SystemIdentifier``               id                             Yes                  Unique identifier
+  ``UnitLocation``                   string            See [#]_     Yes                  Location of heat pump (e.g., air handler location for split system) [#]_
   ``HeatPumpType``                   string            See [#]_     Yes                  Type of heat pump
   ``HeatPumpFuel``                   string            See [#]_     Yes                  Fuel type
   ``BackupSystemFuel``               string            See [#]_     No                   Fuel type of backup heating, if present
   =================================  ========  ======  ===========  ========  =========  ===============================================
 
+  .. [#] UnitLocation choices are "living space" or "unconditioned space".
+  .. [#] UnitLocation only used to determine air handler duct leakage contribution for apartment units when total duct leakage used in lieu of duct leakage to outside.
   .. [#] HeatPumpType choices are "air-to-air", "mini-split", "ground-to-air", or "water-loop-to-air".
   .. [#] HeatPumpFuel only choice is "electricity".
   .. [#] BackupSystemFuel choices are "electricity", "natural gas", "fuel oil", "propane", "wood", or "wood pellets".
@@ -1048,8 +1057,7 @@ For the air distribution system, the presence of duct leakage must be entered in
   
   If the ResidentialFacilityType is "apartment unit", OS-ERI will calculate leakage to outside for the given distribution system as half the total leakage.
   
-  If the ResidentialFacilityType is anything else, OS-ERI will calculate leakage to outside for the given distribution system based on total leakage, the fraction of duct surface area outside conditioned space, and HVAC capacities.
-  OS-ERI currently assumes the air handler is located outside conditioned space; future inputs will be available to describe when the air handler is within conditioned space.
+  If the ResidentialFacilityType is anything else, OS-ERI will calculate leakage to outside for the given distribution system based on total leakage, the fraction of duct surface area outside conditioned space, whether the air handler is located in conditioned space (see ``UnitLocation`` inputs for attached HVAC systems), and the attached HVAC capacities.
   
   .. warning::
 
