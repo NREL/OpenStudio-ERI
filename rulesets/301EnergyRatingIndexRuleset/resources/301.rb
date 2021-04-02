@@ -2064,22 +2064,12 @@ class EnergyRatingIndex301Ruleset
     return if orig_hpxml.dehumidifiers.size == 0
 
     orig_hpxml.dehumidifiers.each do |dehumidifier|
-      if dehumidifier.capacity <= 25.0
-        ief = 0.79
-      elsif dehumidifier.capacity <= 35.0
-        ief = 0.95
-      elsif dehumidifier.capacity <= 54.0
-        ief = 1.04
-      elsif dehumidifier.capacity < 75.0
-        ief = 1.20
-      else
-        ief = 1.82
-      end
+      reference_values = HVAC.get_dehumidifier_default_values(dehumidifier.capacity)
       new_hpxml.dehumidifiers.add(id: dehumidifier.id,
                                   type: dehumidifier.type, # Per RESNET 55i
                                   capacity: dehumidifier.capacity,
-                                  integrated_energy_factor: ief,
-                                  rh_setpoint: 0.60,
+                                  integrated_energy_factor: reference_values[:ief],
+                                  rh_setpoint: reference_values[:rh_setpoint],
                                   fraction_served: dehumidifier.fraction_served,
                                   location: dehumidifier.location)
     end
@@ -2535,7 +2525,7 @@ class EnergyRatingIndex301Ruleset
                                   distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeFurnace,
                                   heating_system_fuel: HPXML::FuelTypeNaturalGas,
-                                  heating_capacity: -1, # Use Manual J auto-sizing
+                                  heating_capacity: -1, # Use auto-sizing
                                   heating_efficiency_afue: 0.78,
                                   fraction_heat_load_served: load_frac,
                                   airflow_defect_ratio: airflow_defect_ratio,
@@ -2557,7 +2547,7 @@ class EnergyRatingIndex301Ruleset
                                   distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeBoiler,
                                   heating_system_fuel: HPXML::FuelTypeNaturalGas,
-                                  heating_capacity: -1, # Use Manual J auto-sizing
+                                  heating_capacity: -1, # Use auto-sizing
                                   heating_efficiency_afue: 0.80,
                                   fraction_heat_load_served: load_frac,
                                   seed_id: seed_id)
@@ -2600,8 +2590,8 @@ class EnergyRatingIndex301Ruleset
                              heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                              heat_pump_fuel: HPXML::FuelTypeElectricity,
                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
-                             cooling_capacity: -1, # Use Manual J auto-sizing
-                             heating_capacity: -1, # Use Manual J auto-sizing
+                             cooling_capacity: -1, # Use auto-sizing
+                             heating_capacity: -1, # Use auto-sizing
                              backup_heating_fuel: backup_fuel,
                              backup_heating_capacity: backup_capacity,
                              backup_heating_efficiency_percent: backup_efficiency_percent,
@@ -2636,7 +2626,7 @@ class EnergyRatingIndex301Ruleset
                                   cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                                   cooling_system_fuel: HPXML::FuelTypeElectricity,
                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
-                                  cooling_capacity: -1, # Use Manual J auto-sizing
+                                  cooling_capacity: -1, # Use auto-sizing
                                   fraction_cool_load_served: load_frac,
                                   cooling_efficiency_seer: 13.0,
                                   cooling_shr: shr,
@@ -2707,7 +2697,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
-    # # Table 4.2.2(1) - Service water heating systems
+    # Table 4.2.2(1) - Service water heating systems
     ef = nil
     re = nil
     if wh_fuel_type == HPXML::FuelTypeElectricity
