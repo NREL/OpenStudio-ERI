@@ -9,9 +9,7 @@ coverage
 /workflow/ERIIndexAdjustmentDesign
 /workflow/ERIIndexAdjustmentReferenceHome
 /workflow/results
-/workflow/SimulationHome
 /workflow/tests/test_results
-/workflow/tests/RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/ERIReferenceHome.xml
 /weather/*.cache
 /weather/USA_AK_Adak.NAS.704540_TMY3-cache.csv
 /weather/USA_AK_Adak.NAS.704540_TMY3.epw
