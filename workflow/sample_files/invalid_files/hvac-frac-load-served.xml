@@ -346,6 +346,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem3'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution3'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
@@ -361,6 +362,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem4'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution4'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
@@ -377,6 +379,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem5'/>
+              <UnitLocation>living space</UnitLocation>
               <HeatingSystemType>
                 <ElectricResistance/>
               </HeatingSystemType>
@@ -390,6 +393,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem6'/>
+              <UnitLocation>living space</UnitLocation>
               <HeatingSystemType>
                 <Stove/>
               </HeatingSystemType>
@@ -406,6 +410,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem7'/>
+              <UnitLocation>living space</UnitLocation>
               <HeatingSystemType>
                 <WallFurnace/>
               </HeatingSystemType>
@@ -442,6 +447,7 @@
             </CoolingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem2'/>
+              <UnitLocation>living space</UnitLocation>
               <CoolingSystemType>room air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>9600.0</CoolingCapacity>
@@ -520,6 +526,7 @@
             </HeatPump>
             <HeatPump>
               <SystemIdentifier id='HeatPump3'/>
+              <UnitLocation>living space</UnitLocation>
               <HeatPumpType>mini-split</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>4800.0</HeatingCapacity>

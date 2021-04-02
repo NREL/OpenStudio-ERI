@@ -193,6 +193,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <IsSharedSystem>true</IsSharedSystem>
               <NumberofUnitsServed>6</NumberofUnitsServed>
@@ -211,6 +212,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <IsSharedSystem>true</IsSharedSystem>
               <NumberofUnitsServed>6</NumberofUnitsServed>

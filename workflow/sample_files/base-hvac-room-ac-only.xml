@@ -308,6 +308,7 @@
           <HVACPlant>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
+              <UnitLocation>living space</UnitLocation>
               <CoolingSystemType>room air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>48000.0</CoolingCapacity>

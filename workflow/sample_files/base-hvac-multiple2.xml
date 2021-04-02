@@ -346,6 +346,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem3'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution3'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
@@ -361,6 +362,7 @@
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem4'/>
+              <UnitLocation>living space</UnitLocation>
               <HeatingSystemType>
                 <ElectricResistance/>
               </HeatingSystemType>

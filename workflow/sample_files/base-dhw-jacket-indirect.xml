@@ -308,6 +308,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
