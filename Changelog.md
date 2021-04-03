@@ -2,7 +2,9 @@
 
 __New Features__
 - **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
-- **Breaking change**: `UnitLocation` now required for each HVAC system; used to determine air handler duct leakage contribution for apartment units when total leakage used in lieu of leakage to outside.
+- When using total leakage in lieu of leakage to outside:
+  - For apartment units, will now credit air handlers in conditioned space. **Breaking change**: `UnitLocation` now required for each HVAC system.
+  - For SFD/SFA homes, will now take into account the total duct leakage and building infiltration thresholds. **Breaking change**: `NumberofReturnRegisters` is now required for each air distribution system.
 
 __Bugfixes__
 

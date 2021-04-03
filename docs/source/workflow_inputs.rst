@@ -1019,7 +1019,8 @@ To define an air distribution system, additional information is entered in ``HVA
   =============================================  =======  =======  ===========  ========  =========  ==========================
   Element                                        Type     Units    Constraints  Required  Default    Notes
   =============================================  =======  =======  ===========  ========  =========  ==========================
-  ``AirDistributionType``                        string            See [#]_     See [#]_             Type of air distribution
+  ``AirDistributionType``                        string            See [#]_     See [#]_             Type of air distribution system
+  ``NumberofReturnRegisters``                    integer           >= 0         Yes                  Number of return registers for this air distribution system
   =============================================  =======  =======  ===========  ========  =========  ==========================
   
   .. [#] AirDistributionType choices are "gravity", "high velocity", "regular velocity", or "fan coil".
@@ -1055,14 +1056,16 @@ For the air distribution system, the presence of duct leakage must be entered in
   ``DuctLeakage/TotalOrToOutside``  string            total        Yes                  Type of duct leakage (outside conditioned space vs total)
   ================================  =======  =======  ===========  ========  =========  =========================================================
   
-  If the ResidentialFacilityType is "apartment unit", OS-ERI will calculate leakage to outside for the given distribution system as half the total leakage.
+  If ResidentialFacilityType is "apartment unit", OS-ERI will calculate leakage to outside for the given distribution system based on total leakage, the fraction of duct surface area outside conditioned space, whether the air handler is located in conditioned space (see ``UnitLocation`` inputs for attached HVAC systems), and the attached HVAC capacities.
   
-  If the ResidentialFacilityType is anything else, OS-ERI will calculate leakage to outside for the given distribution system based on total leakage, the fraction of duct surface area outside conditioned space, whether the air handler is located in conditioned space (see ``UnitLocation`` inputs for attached HVAC systems), and the attached HVAC capacities.
+  If ResidentialFacilityType is anything else, OS-ERI will specify leakage to outside for the given distribution system as:
+
+  - If both total duct leakage and building infiltration thresholds in ANSI/RESNET/ICC 301 are met: 50% of the total leakage.
+  - Otherwise: 100% of the total leakage.
   
   .. warning::
 
     Total leakage should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
-    OS-ERI does not check that, for example, the total duct leakage or infiltration requirements for dwellings and townhouses have been met per ANSI 301; that is currently the responsibility of the software developer.
 
 3. **Leakage to Outside Testing Exemption** (Version 2014AD or newer)
 

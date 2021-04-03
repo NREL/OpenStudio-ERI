@@ -984,7 +984,27 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = _change_eri_version('base-hvac-ducts-leakage-total.xml', '2014ADEGL')
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 75.0)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 50.0) # 50% of input
+
+    # Same as above but with high total duct leakage
+    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-total.xml', '2014ADEGL')
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.hvac_distributions[0].duct_leakage_measurements[0].duct_leakage_value = 150
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 150.0) # 100% of input
+
+    # Same as above but with high infiltration instead
+    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-total.xml', '2014ADEGL')
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.air_infiltration_measurements[0].air_leakage = 3.1
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 100.0) # 100% of input
 
     # Addendum L - Apartments
     # Create derivative file for testing
@@ -995,7 +1015,7 @@ class ERIHVACtest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 128.2)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 98.8) # Calculated w/ air handler leakage contribution
 
     # Same as above but with air handler in conditioned space
     hpxml_name = 'base-hvac-ducts-leakage-total.xml'
@@ -1008,7 +1028,7 @@ class ERIHVACtest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 88.2)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 58.8) # Calculated w/o air handler leakage contribution
   end
 
   def _test_measure(hpxml_name, calc_type)

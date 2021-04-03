@@ -359,7 +359,7 @@
                 <DuctLeakageMeasurement>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>150.0</Value>
+                    <Value>100.0</Value>
                     <TotalOrToOutside>total</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>

@@ -1613,7 +1613,7 @@ def create_sample_hpxmls
   # Add total duct leakage
   hpxml.hvac_distributions[0].duct_leakage_measurements.clear
   hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_leakage_units: HPXML::UnitsCFM25,
-                                                            duct_leakage_value: 150,
+                                                            duct_leakage_value: 100,
                                                             duct_leakage_total_or_to_outside: HPXML::DuctLeakageTotal)
   # Add supply duct in conditioned space
   hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,

@@ -1344,6 +1344,8 @@ class EnergyRatingIndex301Ruleset
               fail "ERI Version #{@eri_version} does not support total duct leakage testing."
             end
 
+            total_dl = orig_leakage_measurement.duct_leakage_value
+
             if @bldg_type == HPXML::ResidentialTypeApartment
               # Apartment
               duct_surface_area_conditioned = 0.0
@@ -1354,7 +1356,7 @@ class EnergyRatingIndex301Ruleset
                 end
                 duct_surface_area_total += orig_duct.duct_surface_area
               end
-              leakage_to_outside = orig_leakage_measurement.duct_leakage_value * (1.0 - duct_surface_area_conditioned / duct_surface_area_total)
+              leakage_to_outside = total_dl * (1.0 - duct_surface_area_conditioned / duct_surface_area_total)
               htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_hvac_distribution)
 
               air_handler_in_unconditioned_space = (orig_hvac_distribution.hvac_systems.select { |h| h.location != HPXML::LocationLivingSpace }.size > 0)
@@ -1363,9 +1365,23 @@ class EnergyRatingIndex301Ruleset
                 leakage_to_outside += leakage_air_handler
               end
 
-              leakage_to_outside = [leakage_to_outside, orig_leakage_measurement.duct_leakage_value].min
+              leakage_to_outside = [leakage_to_outside, total_dl].min
             else # Dwellings/Townhouses
-              leakage_to_outside = 0.5 * orig_leakage_measurement.duct_leakage_value
+
+              n_registers = orig_hvac_distribution.number_of_return_registers
+              cfa_served = orig_hvac_distribution.conditioned_floor_area_served
+              ach50 = get_infiltration_ach50(orig_hpxml)
+              if n_registers < 3
+                cfm_threshold = [4.0 / 100.0 * cfa_served, 40.0].max
+              else
+                cfm_threshold = [6.0 / 100.0 * cfa_served, 60.0].max
+              end
+
+              if (total_dl <= cfm_threshold) && (ach50 <= 3.0)
+                leakage_to_outside = 0.5 * total_dl # Half of the measured total leakage shall be assigned duct leakage to outside
+              else
+                leakage_to_outside = total_dl # Alternatively, total duct leakage ... is permitted to be used ... as if it were duct leakage to outside
+              end
             end
             new_hvac_distribution.duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                                 duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
@@ -2354,25 +2370,30 @@ class EnergyRatingIndex301Ruleset
     return q_fans
   end
 
-  def self.calc_rated_home_infiltration_ach50(orig_hpxml)
+  def self.get_infiltration_ach50(orig_hpxml)
+    # Returns the entered air infiltration in ACH50
     air_infiltration_measurements = []
     orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
       air_infiltration_measurements << orig_infil_measurement
     end
 
-    ach50 = nil
     air_infiltration_measurements.each do |infil_measurement|
       if (infil_measurement.unit_of_measure == HPXML::UnitsACHNatural) && infil_measurement.house_pressure.nil?
         nach = infil_measurement.air_leakage
         sla = Airflow.get_infiltration_SLA_from_ACH(nach, @infil_height, @weather)
-        ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
+        return Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
       elsif (infil_measurement.unit_of_measure == HPXML::UnitsACH) && (infil_measurement.house_pressure == 50)
-        ach50 = infil_measurement.air_leakage
+        return infil_measurement.air_leakage
       elsif (infil_measurement.unit_of_measure == HPXML::UnitsCFM) && (infil_measurement.house_pressure == 50)
-        ach50 = infil_measurement.air_leakage * 60.0 / @infil_volume
+        return infil_measurement.air_leakage * 60.0 / @infil_volume
       end
-      break unless ach50.nil?
     end
+  end
+
+  def self.calc_rated_home_infiltration_ach50(orig_hpxml)
+    # Applies 301 rules for the Rated Home to the entered air infiltration
+
+    ach50 = get_infiltration_ach50(orig_hpxml)
 
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
