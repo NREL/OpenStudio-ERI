@@ -447,6 +447,7 @@
           <HVACPlant>
             <HeatPump>
               <SystemIdentifier id='HeatPump'/>
+              <UnitLocation>living space</UnitLocation>
               <DistributionSystem idref='HVACDistribution'/>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
@@ -511,6 +512,7 @@
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>77.0</DuctSurfaceArea>
                 </Ducts>
+                <NumberofReturnRegisters>1</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
             <ConditionedFloorAreaServed>1539.0</ConditionedFloorAreaServed>
