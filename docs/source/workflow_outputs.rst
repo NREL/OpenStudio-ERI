@@ -73,7 +73,7 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    Electricity: Cooling Fans/Pumps (MBtu)
    Electricity: Hot Water (MBtu)                              Excludes recirc pump and solar thermal pump
    Electricity: Hot Water Recirc Pump (MBtu)
-   Electricity: Hot Water Solar Thermal Pump (MBtu)
+   Electricity: Hot Water Solar Thermal Pump (MBtu)           Non-zero only when using detailed (not simple) solar thermal inputs
    Electricity: Lighting Interior (MBtu)
    Electricity: Lighting Garage (MBtu)
    Electricity: Lighting Exterior (MBtu)
