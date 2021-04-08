@@ -552,7 +552,7 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac   > -1         Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  =====  ===========  ========  =========  ============================================
 
-  .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity" or "gravity") or DSE.
   .. [#] If there is a cooling system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
   
 .. warning::
@@ -680,7 +680,7 @@ If a central air conditioner is specified, additional information is entered in 
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    -0.25, 0, 0.25  Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ============================================
 
-  .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
@@ -715,7 +715,7 @@ If an evaporative cooler is specified, additional information is entered in ``Co
   ``CoolingCapacity``                double    Btu/hr  >= 0         No        autosized  Cooling capacity
   =================================  ========  ======  ===========  ========  =========  ==================================
 
-  .. [#] If provided, HVACDistribution type must be AirDistribution or DSE.
+  .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
 
 Mini-Split
 ~~~~~~~~~~
@@ -732,7 +732,7 @@ If a mini-split is specified, additional information is entered in ``CoolingSyst
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``  double or boolean  frac    -0.25, 0, 0.25  Yes                In accordance with ANSI/RESNET/ACCA 310
   =====================================================================  =================  ======  ==============  ========  =======  =======================================
 
-  .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
 
 If a ducted mini-split is specified (i.e., a ``DistributionSystem`` has been entered), additional information is entered in ``CoolingSystem``.
 
@@ -846,7 +846,7 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    -0.25, 0, 0.25  Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  =======================================
 
-  .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
@@ -877,7 +877,7 @@ If a mini-split heat pump is specified, additional information is entered in ``H
   ``extension/ChargeDefectRatio`` or ``extension/ChargeNotTested=true``      double or boolean  frac    -0.25, 0, 0.25  Yes                  In accordance with ANSI/RESNET/ACCA 310
   =========================================================================  =================  ======  ==============  ========  =========  ==============================================
 
-  .. [#] If provided, HVACDistribution type must be AirDistribution or DSE.
+  .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
 
@@ -921,7 +921,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   =========================================================================  =================  ======  ==============  ========  =========  ==============================================
 
   .. [#] IsSharedSystem should be true if the SFA/MF building has multiple ground source heat pumps connected to a shared hydronic circulation loop.
-  .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] NumberofUnitsServed only required if IsSharedSystem is true, in which case it must be > 1.
@@ -954,7 +954,7 @@ If a water-loop-to-air heat pump is specified, additional information is entered
   ``AnnualHeatingEfficiency[Units="COP"]/Value``   double    W/W     > 0          See [#]_             Rated heating efficiency
   ===============================================  ========  ======  ===========  ========  =========  ==============================================
 
-  .. [#] HVACDistribution type must be AirDistribution or DSE.
+  .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] HeatingCapacity required if there is a shared boiler with water loop distribution.
   .. [#] CoolingCapacity required if there is a shared chiller or cooling tower with water loop distribution.
   .. [#] AnnualCoolingEfficiency required if there is a shared chiller or cooling tower with water loop distribution.
@@ -1010,13 +1010,14 @@ To define an air distribution system, additional information is entered in ``HVA
   =============================================  =======  =======  ===========  ========  =========  ==========================
   Element                                        Type     Units    Constraints  Required  Default    Notes
   =============================================  =======  =======  ===========  ========  =========  ==========================
-  ``AirDistributionType``                        string            See [#]_     See [#]_             Type of air distribution
+  ``AirDistributionType``                        string            See [#]_     Yes                  Type of air distribution
   =============================================  =======  =======  ===========  ========  =========  ==========================
   
-  .. [#] AirDistributionType choices are "gravity", "high velocity", "regular velocity", or "fan coil".
-  .. [#] AirDistributionType only required if the distribution system is for shared boilers/chillers with fan coils, in which case value must be "fan coil".
+  .. [#] AirDistributionType choices are "regular velocity", "gravity", or "fan coil" and are further restricted based on attached HVAC system type (e.g., only "regular velocity" or "gravity" for a furnace, only "fan coil" for a shared boiler, etc.).
 
-For the air distribution system, the presence of duct leakage must be entered in one of three ways:
+For the air distribution system, duct leakage inputs are required if AirDistributionType is "regular velocity" or "gravity" and optional if AirDistributionType is "fan coil".
+
+When provided, duct leakage must be entered in one of three ways:
 
 1. **Leakage to the Outside**
 
