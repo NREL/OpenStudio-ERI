@@ -1308,22 +1308,17 @@ class EnergyRatingIndex301Ruleset
       end
 
       new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
-                                       distribution_system_type: orig_hvac_distribution.distribution_system_type)
+                                       distribution_system_type: orig_hvac_distribution.distribution_system_type,
+                                       conditioned_floor_area_served: orig_hvac_distribution.conditioned_floor_area_served,
+                                       number_of_return_registers: orig_hvac_distribution.number_of_return_registers,
+                                       hydronic_type: orig_hvac_distribution.hydronic_type,
+                                       air_type: orig_hvac_distribution.air_type,
+                                       annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
+                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
+
       new_hvac_distribution = new_hpxml.hvac_distributions[-1]
 
-      if orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeDSE
-        new_hvac_distribution.annual_heating_dse = orig_hvac_distribution.annual_heating_dse
-        new_hvac_distribution.annual_cooling_dse = orig_hvac_distribution.annual_cooling_dse
-      end
-
-      if orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeHydronic
-        new_hvac_distribution.hydronic_type = orig_hvac_distribution.hydronic_type
-      end
-
       next unless orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
-
-      new_hvac_distribution.conditioned_floor_area_served = orig_hvac_distribution.conditioned_floor_area_served
-      new_hvac_distribution.air_type = orig_hvac_distribution.air_type
 
       if zero_leakage
         # Zero leakage

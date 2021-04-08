@@ -825,7 +825,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
     hpxml.hvac_distributions.add(id: 'HVACDistribution',
-                                 distribution_system_type: HPXML::HVACDistributionTypeAir)
+                                 distribution_system_type: HPXML::HVACDistributionTypeAir,
+                                 air_type: HPXML::AirTypeRegularVelocity)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
@@ -836,7 +837,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
   elsif hpxml_file.include? 'Hot_Water'
     hpxml.hvac_distributions.clear
     hpxml.hvac_distributions.add(id: 'HVACDistribution',
-                                 distribution_system_type: HPXML::HVACDistributionTypeAir)
+                                 distribution_system_type: HPXML::HVACDistributionTypeAir,
+                                 air_type: HPXML::AirTypeRegularVelocity)
   end
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml',
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
