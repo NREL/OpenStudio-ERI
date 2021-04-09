@@ -482,6 +482,7 @@
             <SystemIdentifier id='HVACDistribution'/>
             <DistributionSystemType>
               <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
                 <DuctLeakageMeasurement>
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
@@ -531,6 +532,7 @@
             <SystemIdentifier id='HVACDistribution2'/>
             <DistributionSystemType>
               <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
                 <DuctLeakageMeasurement>
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
@@ -588,6 +590,7 @@
             <SystemIdentifier id='HVACDistribution4'/>
             <DistributionSystemType>
               <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
                 <DuctLeakageMeasurement>
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
@@ -637,6 +640,7 @@
             <SystemIdentifier id='HVACDistribution5'/>
             <DistributionSystemType>
               <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
                 <DuctLeakageMeasurement>
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
