@@ -4,7 +4,6 @@ OpenStudio-ERI
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/NREL/OpenStudio-ERI?include_prereleases)](https://github.com/NREL/OpenStudio-ERI/releases)
 [![ci](https://github.com/NREL/OpenStudio-ERI/workflows/ci/badge.svg)](https://github.com/NREL/OpenStudio-ERI/actions)
 [![Documentation Status](https://readthedocs.org/projects/openstudio-eri/badge/?version=latest)](https://openstudio-eri.readthedocs.io/en/latest/?badge=latest)
-[![codecov](https://codecov.io/gh/NREL/OpenStudio-ERI/branch/master/graph/badge.svg)](https://codecov.io/gh/NREL/OpenStudio-ERI)
 
 
 Calculates an Energy Rating Index (ERI) via an OpenStudio/EnergyPlus-based workflow. Building information is provided through an [HPXML file](https://hpxml.nrel.gov/).
