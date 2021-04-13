@@ -770,7 +770,6 @@
   <sch:pattern>
     <sch:title>[HVACDistributionType=Air]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACDistribution/h:DistributionSystemType/h:AirDistribution'>
-      <sch:assert role='ERROR' test='count(../../h:ConditionedFloorAreaServed) = 1'>Expected 1 element(s) for xpath: ../../ConditionedFloorAreaServed</sch:assert>
       <sch:assert role='ERROR' test='count(h:AirDistributionType) = 1'>Expected 1 element(s) for xpath: AirDistributionType</sch:assert>
       <sch:assert role='ERROR' test='h:AirDistributionType[text()="regular velocity" or text()="gravity" or text()="fan coil"] or not(h:AirDistributionType)'>Expected AirDistributionType to be 'regular velocity' or 'gravity' or 'fan coil'</sch:assert> <!-- See [AirDistributionType=RegularVelocityOrGravity] or [AirDistributionType=FanCoil] -->
       <sch:assert role='ERROR' test='count(h:Ducts) &gt;= 0'>Expected 0 or more element(s) for xpath: Ducts</sch:assert> <!-- See [HVACDuct] -->
@@ -826,6 +825,7 @@
       <sch:assert role='ERROR' test='count(h:DuctInsulationRValue) = 1'>Expected 1 element(s) for xpath: DuctInsulationRValue</sch:assert>
       <sch:assert role='ERROR' test='count(h:DuctLocation[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="exterior wall" or text()="under slab" or text()="roof deck" or text()="outside" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]) = 1'>Expected 1 element(s) for xpath: DuctLocation[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="exterior wall" or text()="under slab" or text()="roof deck" or text()="outside" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:DuctSurfaceArea) = 1'>Expected 1 element(s) for xpath: DuctSurfaceArea</sch:assert>
+      <sch:assert role='ERROR' test='count(../../../h:ConditionedFloorAreaServed) = 1'>Expected 1 element(s) for xpath: ../../../ConditionedFloorAreaServed</sch:assert>
     </sch:rule>
   </sch:pattern>
 

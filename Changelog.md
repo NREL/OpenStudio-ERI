@@ -3,7 +3,7 @@
 __New Features__
 - **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
 - **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
-- Allows `DuctLeakageMeasurement` to not be specified for ductless fan coil systems.
+- Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems.
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
