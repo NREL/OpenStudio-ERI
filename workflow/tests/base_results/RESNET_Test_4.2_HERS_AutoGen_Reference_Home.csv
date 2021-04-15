@@ -1,0 +1,36 @@
+Component,Test 1 Results,Test 2 Results,Test 3 Results,Test 4 Results
+Above-grade walls (Uo),0.082,0.082,0.082,0.06
+Above-grade wall solar absorptance (α),0.75,0.75,0.75,0.75
+Above-grade wall infrared emittance (ε),0.9,0.9,0.9,0.9
+Basement walls insulation R-Value,n/a,n/a,n/a,10
+Above-grade floors (Uo),0.047,0.047,n/a,n/a
+Slab insulation R-Value,n/a,n/a,0,0
+Ceilings (Uo),0.03,0.035,0.035,0.03
+Roof solar absorptance (α),0.75,0.75,0.75,0.75
+Roof infrared emittance (ε),0.9,0.9,0.9,0.9
+Attic vent area (ft2),5.13,5.13,5.13,5.13
+Crawlspace vent area (ft2),n/a,10.26,n/a,n/a
+Exposed masonry floor area (ft2),n/a,n/a,307.8,307.8
+Carpet & pad R-Value,n/a,n/a,2.0,2.0
+Door Area (ft2),40,40,40,40
+Door U-Factor,0.4,0.65,1.2,0.35
+North window area (ft2),69.26,69.26,69.26,102.64
+South window area (ft2),69.26,69.26,69.26,102.64
+East window area (ft2),69.26,69.26,69.26,102.64
+West window area (ft2),69.26,69.26,69.26,102.64
+Window U-Factor,0.4,0.65,1.2,0.35
+Window SHGCo (heating),0.34,0.34,0.34,0.34
+Window SHGCo (cooling),0.28,0.28,0.28,0.28
+SLAo (ft2/ft2),0.00036,0.00036,0.00036,0.00036
+Sensible Internal gains (Btu/day),55114,52470,47839,82690
+Latent Internal gains (Btu/day),13663,12565,9150,17765
+Labeled heating system rating and efficiency,0.78,7.7,7.7,0.78
+Labeled cooling system rating and efficiency,13.0,13.0,13.0,13.0
+Air Distribution System Efficiency,0.8,0.8,0.8,0.8
+Thermostat Type,manual,manual,manual,manual
+Heating thermostat settings,68,68,68,68
+Cooling thermostat settings,78,78,78,78
+Mechanical ventilation (kWh/y),0.0,222.09,287.79,762.63
+DHW pipe length refPipeL,88.5,88.5,88.5,98.5
+DHW loop length refLoopL,156.9,156.9,156.9,176.9
+e-Ratio,0.9999885265345402,1.0000091812469971,1.0000112662304133,0.9999949997499875
