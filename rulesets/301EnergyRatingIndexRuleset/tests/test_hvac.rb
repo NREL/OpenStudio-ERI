@@ -8,12 +8,12 @@ require 'fileutils'
 require_relative 'util.rb'
 
 class ERIHVACtest < MiniTest::Test
-  def before_setup
+  def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
-  def after_teardown
+  def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 
@@ -994,7 +994,7 @@ class ERIHVACtest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 128.2)
+    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 108.2)
   end
 
   def _test_measure(hpxml_name, calc_type)

@@ -8,12 +8,12 @@ require 'fileutils'
 require_relative 'util.rb'
 
 class ERIEnclosureTest < MiniTest::Test
-  def before_setup
+  def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
-  def after_teardown
+  def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 
@@ -656,13 +656,13 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-enclosure-skylights.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 45, ufactor: 0.33, shgc: 0.45 },
-                                                 180 => { area: 45, ufactor: 0.35, shgc: 0.47 } })
+    _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
+                                                 180 => { area: 15, ufactor: 0.35, shgc: 0.47 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_skylights(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 45, ufactor: 0.33, shgc: 0.45 },
-                                                 180 => { area: 45, ufactor: 0.35, shgc: 0.47 } })
+    _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
+                                                 180 => { area: 15, ufactor: 0.35, shgc: 0.47 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_skylights(hpxml)
 

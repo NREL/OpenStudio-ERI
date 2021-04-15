@@ -8,12 +8,12 @@ require 'fileutils'
 require_relative 'util.rb'
 
 class ERIMechVentTest < MiniTest::Test
-  def before_setup
+  def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
-  def after_teardown
+  def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 
@@ -410,7 +410,7 @@ class ERIMechVentTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, power: 800.0 }])
+    _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, power: 400.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
