@@ -33,9 +33,8 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs, runtime = _run_workflow(xml, test_name)
+      hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
-      all_results[File.basename(xml)]['Workflow Runtime (s)'] = runtime
     end
     assert(all_results.size > 0)
 
@@ -106,7 +105,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run simulation
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    hpxmls, csvs, runtime = _run_workflow(xml, test_name, hourly_output: true)
+    hpxmls, csvs = _run_workflow(xml, test_name, hourly_output: true)
 
     # Check for hourly output files
     assert(File.exist?(csvs[:rated_hourly_results]))
@@ -118,7 +117,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run simulation
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    hpxmls, csvs, runtime = _run_workflow(xml, test_name, component_loads: true)
+    hpxmls, csvs = _run_workflow(xml, test_name, component_loads: true)
 
     # Check for presence of component loads
     [csvs[:rated_results], csvs[:ref_results]].each do |csv_output_path|
@@ -499,7 +498,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
       XMLHelper.write_file(new_hpxml.to_oga, out_xml)
 
-      hpxmls, csvs, runtime = _run_workflow(out_xml, test_name)
+      hpxmls, csvs = _run_workflow(out_xml, test_name)
       worksheet_results = _get_csv_results(csvs[:eri_worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
     end
@@ -529,7 +528,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, csvs, runtime = _run_workflow(xml, test_name)
+      hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:eri_results])
     end
     assert(all_results.size > 0)
@@ -672,7 +671,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
     end
 
-    return hpxmls, csvs, runtime
+    return hpxmls, csvs
   end
 
   def _run_simulation(xml, test_name)
