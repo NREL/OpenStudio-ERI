@@ -8,12 +8,12 @@ require 'fileutils'
 require_relative 'util.rb'
 
 class ERIWaterHeatingTest < MiniTest::Test
-  def before_setup
+  def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
-  def after_teardown
+  def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 

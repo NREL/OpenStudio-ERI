@@ -16,7 +16,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversi
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 class EnergyRatingIndexTest < Minitest::Test
-  def before_setup
+  def setup
     @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
     FileUtils.mkdir_p @test_results_dir
     @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')

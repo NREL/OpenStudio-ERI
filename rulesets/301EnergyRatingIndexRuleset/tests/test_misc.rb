@@ -8,7 +8,7 @@ require 'fileutils'
 require_relative 'util.rb'
 
 class ERIMiscTest < MiniTest::Test
-  def before_setup
+  def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
   end
 
