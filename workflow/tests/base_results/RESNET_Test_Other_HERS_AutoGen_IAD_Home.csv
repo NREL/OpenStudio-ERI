@@ -1,0 +1,28 @@
+Component,Test 1 Results,Test 2 Results,Test 3 Results,Test 4 Results
+Number of Stories,2.0,2.0,2.0,2.0
+Number of Bedrooms,3,3,3,3
+Conditioned Floor Area (ft2),2400.0,2400.0,2400.0,2400.0
+Infiltration Volume (ft3),20400.0,20400.0,20400.0,20400.0
+Above-grade walls area (ft2),2355.52,2355.52,2355.52,2355.52
+Above-grade walls (Uo),0.08503401360544217,0.08503401360544217,0.08503401360544217,0.08503401360544217
+Roof gross area (ft2),1300.0,1300.0,1300.0,1300.0
+Ceiling gross projected footprint area (ft2),1200.0,1200.0,1200.0,1200.0
+Ceilings (Uo),0.05420054200542006,0.05420054200542006,0.05420054200542006,0.05420054200542006
+Crawlspace vent area (ft2),8.0004,8.0004,8.0004,8.0004
+Door Area (ft2),40.0,40.0,40.0,40.0
+Door R-value,3.0399999999999996,3.0399999999999996,3.0399999999999996,3.0399999999999996
+North window area (ft2),108.0,108.0,108.0,108.0
+South window area (ft2),108.0,108.0,108.0,108.0
+East window area (ft2),108.0,108.0,108.0,108.0
+West window area (ft2),108.0,108.0,108.0,108.0
+Window U-Factor,1.039,1.039,1.039,1.039
+Window SHGCo (heating),0.5695,0.5695,0.5695,0.5695
+Window SHGCo (cooling),0.469,0.469,0.469,0.469
+Infiltration rate (ACH50),3.0,3.0,5.0,3.0
+Mechanical ventilation rate,66.37,64.24,53.31,57.11
+Mechanical ventilation,406.99836,393.8934000000001,326.89691999999997,350.19852
+Labeled heating system rating and efficiency,0.78,7.7,7.7,0.78
+Labeled cooling system rating and efficiency,13.0,13.0,13.0,13.0
+Thermostat Type,manual,manual,manual,manual
+Heating thermostat settings,68,68,68,68
+Cooling thermostat settings,78,78,78,78
