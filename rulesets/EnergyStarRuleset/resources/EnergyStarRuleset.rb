@@ -1899,6 +1899,7 @@ class EnergyStarRuleset
     if hvac_dist.number_of_return_registers.nil?
       hvac_dist.number_of_return_registers = 1 # EPA guidance
     end
+    hvac_dist.number_of_return_registers = [1, hvac_dist.number_of_return_registers].max # Ensure at least 1 register
     if hvac_dist.conditioned_floor_area_served.nil?
       # Estimate CFA served based on CFA and fraction load served
       estd_cfa_heated = 0.0
