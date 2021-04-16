@@ -2299,6 +2299,13 @@ def create_sample_hpxmls
         end
       end
     end
+    hpxml.heating_systems.each do |heating_system|
+      next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
+      next unless heating_system.is_shared_system
+      next unless heating_system.heating_capacity.nil?
+
+      heating_system.heating_capacity = 300000
+    end
     hpxml.pv_systems.each do |pv_system|
       next unless pv_system.is_shared_system.nil?
 
