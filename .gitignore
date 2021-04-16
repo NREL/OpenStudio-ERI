@@ -8,6 +8,8 @@ coverage
 /workflow/ERIReferenceHome
 /workflow/ERIIndexAdjustmentDesign
 /workflow/ERIIndexAdjustmentReferenceHome
+/workflow/ESRated
+/workflow/ESReference
 /workflow/results
 /workflow/tests/test_results
 /weather/*.cache
@@ -541,8 +543,6 @@ coverage
 /weather/USA_FL_St.Petersburg-Clearwater.Intl.AP.722116_TMY3.epw
 /weather/USA_FL_Tallahassee.Rgnl.AP.722140_TMY3-cache.csv
 /weather/USA_FL_Tallahassee.Rgnl.AP.722140_TMY3.epw
-/weather/USA_FL_Tampa.Intl.AP.722110_TMY3-cache.csv
-/weather/USA_FL_Tampa.Intl.AP.722110_TMY3.epw
 /weather/USA_FL_Tyndall.AFB.747750_TMY3-cache.csv
 /weather/USA_FL_Tyndall.AFB.747750_TMY3.epw
 /weather/USA_FL_Valparaiso-Elgin.AFB.722210_TMY3-cache.csv
@@ -1141,8 +1141,6 @@ coverage
 /weather/USA_MO_Springfield.Rgnl.AP.724400_TMY3.epw
 /weather/USA_MO_St.Joseph-Rosecrans.Mem.AP.724490_TMY3-cache.csv
 /weather/USA_MO_St.Joseph-Rosecrans.Mem.AP.724490_TMY3.epw
-/weather/USA_MO_St.Louis-Lambert.Intl.AP.724340_TMY3-cache.csv
-/weather/USA_MO_St.Louis-Lambert.Intl.AP.724340_TMY3.epw
 /weather/USA_MO_St.Louis-Spirit.of.St.Louis.AP.724345_TMY3-cache.csv
 /weather/USA_MO_St.Louis-Spirit.of.St.Louis.AP.724345_TMY3.epw
 /weather/USA_MO_Whiteman.AFB.724467_TMY3-cache.csv
@@ -1859,8 +1857,6 @@ coverage
 /weather/USA_VA_Winchester.Rgnl.AP.724053_TMY3.epw
 /weather/USA_VA_Wise-Lonesome.Pine.AP.724117_TMY3-cache.csv
 /weather/USA_VA_Wise-Lonesome.Pine.AP.724117_TMY3.epw
-/weather/USA_VT_Burlington.Intl.AP.726170_TMY3-cache.csv
-/weather/USA_VT_Burlington.Intl.AP.726170_TMY3.epw
 /weather/USA_VT_Montpelier.AP.726145_TMY3-cache.csv
 /weather/USA_VT_Montpelier.AP.726145_TMY3.epw
 /weather/USA_VT_Rutland.State.AP.725165_TMY3-cache.csv

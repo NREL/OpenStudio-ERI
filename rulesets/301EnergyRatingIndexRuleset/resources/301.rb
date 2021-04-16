@@ -197,6 +197,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.eri_design = @calc_type
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
+    new_hpxml.header.state_code = orig_hpxml.header.state_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.use_max_load_for_heat_pumps = true
 
@@ -419,7 +420,7 @@ class EnergyRatingIndex301Ruleset
     ceiling_ufactor = get_reference_ceiling_ufactor()
 
     ext_thermal_bndry_roofs = orig_hpxml.roofs.select { |roof| roof.is_exterior_thermal_boundary }
-    sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.inject(0, :+)
+    sum_gross_area = ext_thermal_bndry_roofs.map { |roof| roof.area }.sum(0)
     avg_pitch = calc_area_weighted_avg(ext_thermal_bndry_roofs, :pitch, backup_value: 5)
     solar_abs = 0.75
     emittance = 0.90
@@ -492,19 +493,36 @@ class EnergyRatingIndex301Ruleset
     ufactor = get_reference_wall_ufactor()
 
     ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
-    sum_gross_area = ext_thermal_bndry_rim_joists.map { |rim_joist| rim_joist.area }.inject(0, :+)
-    solar_abs = 0.75
+
+    ext_thermal_bndry_rim_joists_ag = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationLivingSpace }
+    sum_gross_area_ag = ext_thermal_bndry_rim_joists_ag.map { |rim_joist| rim_joist.area }.sum(0)
+
+    ext_thermal_bndry_rim_joists_bg = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationBasementConditioned }
+    sum_gross_area_bg = ext_thermal_bndry_rim_joists_bg.map { |rim_joist| rim_joist.area }.sum(0)
+
+    solar_absorptance = 0.75
     emittance = 0.90
 
     # Create insulated rim joists for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be consistent with walls.
-    if sum_gross_area > 0
+    # Need to preserve above-grade vs below-grade for inferred infiltration height.
+    if sum_gross_area_ag > 0
       new_hpxml.rim_joists.add(id: 'RimJoistArea',
                                exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: ext_thermal_bndry_rim_joists[0].interior_adjacent_to,
-                               area: sum_gross_area,
+                               interior_adjacent_to: HPXML::LocationLivingSpace,
+                               area: sum_gross_area_ag,
                                azimuth: nil,
-                               solar_absorptance: solar_abs,
+                               solar_absorptance: solar_absorptance,
+                               emittance: emittance,
+                               insulation_assembly_r_value: (1.0 / ufactor).round(3))
+    end
+    if sum_gross_area_bg > 0
+      new_hpxml.rim_joists.add(id: 'RimJoistAreaBasement',
+                               exterior_adjacent_to: HPXML::LocationOutside,
+                               interior_adjacent_to: HPXML::LocationBasementConditioned,
+                               area: sum_gross_area_bg,
+                               azimuth: nil,
+                               solar_absorptance: solar_absorptance,
                                emittance: emittance,
                                insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
@@ -515,17 +533,16 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.rim_joists.each do |orig_rim_joist|
       next if orig_rim_joist.is_exterior_thermal_boundary
 
+      insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
       if orig_rim_joist.is_thermal_boundary
         insulation_assembly_r_value = (1.0 / ufactor).round(3)
-      else
-        insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
       end
       new_hpxml.rim_joists.add(id: orig_rim_joist.id,
                                exterior_adjacent_to: orig_rim_joist.exterior_adjacent_to.gsub('unvented', 'vented'),
                                interior_adjacent_to: orig_rim_joist.interior_adjacent_to.gsub('unvented', 'vented'),
                                area: orig_rim_joist.area,
                                azimuth: orig_rim_joist.azimuth,
-                               solar_absorptance: solar_abs,
+                               solar_absorptance: solar_absorptance,
                                emittance: emittance,
                                insulation_id: orig_rim_joist.insulation_id,
                                insulation_assembly_r_value: insulation_assembly_r_value)
@@ -556,8 +573,9 @@ class EnergyRatingIndex301Ruleset
     ufactor = get_reference_wall_ufactor()
 
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
-    sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.inject(0, :+)
-    solar_abs = 0.75
+    sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
+
+    solar_absorptance = 0.75
     emittance = 0.90
 
     # Create insulated walls for exterior thermal boundary surface.
@@ -570,7 +588,7 @@ class EnergyRatingIndex301Ruleset
                           wall_type: HPXML::WallTypeWoodStud,
                           area: sum_gross_area,
                           azimuth: nil,
-                          solar_absorptance: solar_abs,
+                          solar_absorptance: solar_absorptance,
                           emittance: emittance,
                           insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
@@ -592,7 +610,7 @@ class EnergyRatingIndex301Ruleset
                           wall_type: orig_wall.wall_type,
                           area: orig_wall.area,
                           azimuth: orig_wall.azimuth,
-                          solar_absorptance: solar_abs,
+                          solar_absorptance: solar_absorptance,
                           emittance: emittance,
                           insulation_id: orig_wall.insulation_id,
                           insulation_assembly_r_value: insulation_assembly_r_value)
@@ -920,6 +938,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: fraction_operable,
+                            performance_class: HPXML::WindowClassResidential,
                             wall_idref: new_hpxml.walls[0].id)
     end
   end
@@ -940,6 +959,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: orig_window.fraction_operable,
+                            performance_class: orig_window.performance_class,
                             wall_idref: orig_window.wall_idref)
     end
   end
@@ -964,6 +984,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: fraction_operable,
+                            performance_class: HPXML::WindowClassResidential,
                             wall_idref: new_hpxml.walls[0].id)
     end
   end
@@ -991,7 +1012,7 @@ class EnergyRatingIndex301Ruleset
     # it's possible that skylights no longer fit on the roof. To resolve this,
     # scale down skylight area to fit as needed.
     new_hpxml.roofs.each do |new_roof|
-      new_skylight_area = new_roof.skylights.map { |skylight| skylight.area }.inject(0, :+)
+      new_skylight_area = new_roof.skylights.map { |skylight| skylight.area }.sum(0)
       next unless new_skylight_area > new_roof.area
 
       new_roof.skylights.each do |new_skylight|
@@ -1065,31 +1086,31 @@ class EnergyRatingIndex301Ruleset
           fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
           # Also add heat pump:
           hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_wlhp.heating_efficiency_cop)
-          add_reference_heating_heat_pump(new_hpxml, hp_fraction_heat_load_served, orig_wlhp)
+          add_reference_heating_heat_pump(orig_hpxml, new_hpxml, hp_fraction_heat_load_served, orig_wlhp)
         end
-        add_reference_heating_gas_boiler(new_hpxml, fraction_heat_load_served, orig_heating_system)
+        add_reference_heating_gas_boiler(orig_hpxml, new_hpxml, fraction_heat_load_served, orig_heating_system)
       else
-        add_reference_heating_gas_furnace(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
+        add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
       end
     end
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_gas_furnace(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Cooling
     orig_hpxml.cooling_systems.each do |orig_cooling_system|
       next unless orig_cooling_system.fraction_cool_load_served > 0
 
-      add_reference_cooling_air_conditioner(new_hpxml, orig_cooling_system.fraction_cool_load_served, orig_cooling_system)
+      add_reference_cooling_air_conditioner(orig_hpxml, new_hpxml, orig_cooling_system.fraction_cool_load_served, orig_cooling_system)
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       next if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
       next unless orig_heat_pump.fraction_cool_load_served > 0
 
-      add_reference_cooling_air_conditioner(new_hpxml, orig_heat_pump.fraction_cool_load_served, orig_heat_pump)
+      add_reference_cooling_air_conditioner(orig_hpxml, new_hpxml, orig_heat_pump.fraction_cool_load_served, orig_heat_pump)
     end
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_cooling_air_conditioner(new_hpxml, (1.0 - sum_frac_cool_load).round(3))
+      add_reference_cooling_air_conditioner(orig_hpxml, new_hpxml, (1.0 - sum_frac_cool_load).round(3))
     end
 
     # HeatPump
@@ -1097,16 +1118,16 @@ class EnergyRatingIndex301Ruleset
       next unless orig_heating_system.fraction_heat_load_served > 0
       next unless orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
 
-      add_reference_heating_heat_pump(new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
+      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       next if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
       next unless orig_heat_pump.fraction_heat_load_served > 0
 
-      add_reference_heating_heat_pump(new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
+      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
     end
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_heat_pump(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Table 303.4.1(1) - Thermostat
@@ -1117,7 +1138,7 @@ class EnergyRatingIndex301Ruleset
                                 cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
 
     # Distribution system
-    add_reference_distribution_system(new_hpxml)
+    add_reference_distribution_system(orig_hpxml, new_hpxml)
   end
 
   def self.set_systems_hvac_rated(orig_hpxml, new_hpxml)
@@ -1162,7 +1183,7 @@ class EnergyRatingIndex301Ruleset
     end
     # Add reference heating system for residual load
     if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_gas_furnace(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Retain cooling system(s)
@@ -1203,7 +1224,7 @@ class EnergyRatingIndex301Ruleset
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_cooling_air_conditioner(new_hpxml, (1.0 - sum_frac_cool_load).round(3))
+      add_reference_cooling_air_conditioner(orig_hpxml, new_hpxml, (1.0 - sum_frac_cool_load).round(3))
     end
 
     # Retain heat pump(s)
@@ -1259,7 +1280,7 @@ class EnergyRatingIndex301Ruleset
     end
     # Add reference heat pump for residual load
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
-      add_reference_heating_heat_pump(new_hpxml, (1.0 - sum_frac_heat_load).round(3))
+      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
     # Table 303.4.1(1) - Thermostat
@@ -1386,7 +1407,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Add DSE distribution for these systems
-    add_reference_distribution_system(new_hpxml)
+    add_reference_distribution_system(orig_hpxml, new_hpxml)
   end
 
   def self.set_systems_hvac_iad(orig_hpxml, new_hpxml)
@@ -2488,13 +2509,13 @@ class EnergyRatingIndex301Ruleset
     return ext_cb_area / tot_cb_area
   end
 
-  def self.get_new_distribution_id(new_hpxml)
+  def self.get_new_distribution_id(orig_hpxml, new_hpxml)
     i = 0
     while true
       i += 1
       dist_id = "HVACDistributionDSE_#{i}"
       found_id = false
-      (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
+      (new_hpxml.hvac_systems + orig_hpxml.hvac_systems).each do |hvac|
         next if hvac.distribution_system_idref.nil?
         next unless hvac.distribution_system_idref == dist_id
 
@@ -2504,14 +2525,14 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_heating_gas_furnace(new_hpxml, load_frac, orig_system = nil)
+  def self.add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, load_frac, orig_system = nil)
     # 78% AFUE gas furnace
     if not orig_system.nil?
       seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
     seed_id = 'ResidualHeating' if seed_id.nil?
-    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
+    dist_id = get_new_distribution_id(orig_hpxml, new_hpxml) if dist_id.nil?
 
     airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
     fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
@@ -2528,14 +2549,14 @@ class EnergyRatingIndex301Ruleset
                                   seed_id: seed_id)
   end
 
-  def self.add_reference_heating_gas_boiler(new_hpxml, load_frac, orig_system = nil)
+  def self.add_reference_heating_gas_boiler(orig_hpxml, new_hpxml, load_frac, orig_system = nil)
     # 80% AFUE gas boiler
     if not orig_system.nil?
       seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
     seed_id = 'ResidualHeating' if seed_id.nil?
-    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
+    dist_id = get_new_distribution_id(orig_hpxml, new_hpxml) if dist_id.nil?
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   is_shared_system: false,
@@ -2549,14 +2570,14 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_boiler_eae(new_hpxml.heating_systems[-1])
   end
 
-  def self.add_reference_heating_heat_pump(new_hpxml, load_frac, orig_system = nil)
+  def self.add_reference_heating_heat_pump(orig_hpxml, new_hpxml, load_frac, orig_system = nil)
     # 7.7 HSPF air source heat pump
     if not orig_system.nil?
       seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
     seed_id = 'ResidualHeating' if seed_id.nil?
-    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
+    dist_id = get_new_distribution_id(orig_hpxml, new_hpxml) if dist_id.nil?
 
     # Handle backup
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
@@ -2602,7 +2623,7 @@ class EnergyRatingIndex301Ruleset
                              seed_id: seed_id)
   end
 
-  def self.add_reference_cooling_air_conditioner(new_hpxml, load_frac, orig_system = nil)
+  def self.add_reference_cooling_air_conditioner(orig_hpxml, new_hpxml, load_frac, orig_system = nil)
     # 13 SEER electric air conditioner
     if not orig_system.nil?
       seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
@@ -2610,7 +2631,7 @@ class EnergyRatingIndex301Ruleset
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
     seed_id = 'ResidualCooling' if seed_id.nil?
-    dist_id = get_new_distribution_id(new_hpxml) if dist_id.nil?
+    dist_id = get_new_distribution_id(orig_hpxml, new_hpxml) if dist_id.nil?
 
     airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio()
     fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
@@ -2631,13 +2652,13 @@ class EnergyRatingIndex301Ruleset
                                   seed_id: seed_id)
   end
 
-  def self.add_reference_distribution_system(new_hpxml)
-    (new_hpxml.heating_systems + new_hpxml.cooling_systems + new_hpxml.heat_pumps).each do |hvac|
+  def self.add_reference_distribution_system(orig_hpxml, new_hpxml)
+    new_hpxml.hvac_systems.each do |hvac|
       next if hvac.distribution_system_idref.nil?
       next if new_hpxml.hvac_distributions.select { |d| d.id == hvac.distribution_system_idref }.size > 0
 
       # Add new DSE distribution if distribution doesn't already exist
-      dist_id = get_new_distribution_id(new_hpxml)
+      dist_id = get_new_distribution_id(orig_hpxml, new_hpxml)
       hvac.distribution_system_idref = dist_id
       new_hpxml.hvac_distributions.add(id: dist_id,
                                        distribution_system_type: HPXML::HVACDistributionTypeDSE,
@@ -2791,8 +2812,8 @@ class EnergyRatingIndex301Ruleset
     end
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
       # Calculate portion of door area that is exterior by preserving ratio from rated home
-      orig_total_area = orig_hpxml.doors.map { |d| d.area }.inject(0, :+)
-      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior }.map { |d| d.area }.inject(0, :+)
+      orig_total_area = orig_hpxml.doors.map { |d| d.area }.sum(0)
+      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior }.map { |d| d.area }.sum(0)
       if orig_total_area <= 0
         exterior_area = 0
       else

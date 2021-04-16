@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<measure>
+  <schema_version>3.0</schema_version>
+  <name>energy_star_measure</name>
+  <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
+  <version_id>b0755f6e-18fe-4870-a2ea-281158868b02</version_id>
+  <version_modified>20210415T220314Z</version_modified>
+  <xml_checksum>48718AE9</xml_checksum>
+  <class_name>EnergyStarMeasure</class_name>
+  <display_name>Apply ENERGY STAR Ruleset</display_name>
+  <description>Generates a HPXML building description for, e.g., the Reference Home or Rated Home, based on the ENERGY STAR requirements.</description>
+  <modeler_description>Based on the provided HPXML building description and choice of calculation type (e.g., ERI Reference Home, ERI Rated Home, etc.), creates an updated version of the HPXML file as specified by ANSI/RESNET/ICC 301-2014 "Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index".</modeler_description>
+  <arguments>
+    <argument>
+      <name>calc_type</name>
+      <display_name>Calculation Type</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>ES Reference</default_value>
+      <choices>
+        <choice>
+          <value>ES Rated</value>
+          <display_name>ES Rated</display_name>
+        </choice>
+        <choice>
+          <value>ES Reference</value>
+          <display_name>ES Reference</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>hpxml_input_path</name>
+      <display_name>HPXML Input File Path</display_name>
+      <description>Absolute (or relative) path of the input HPXML file.</description>
+      <type>String</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+    <argument>
+      <name>hpxml_output_path</name>
+      <display_name>HPXML Output File Path</display_name>
+      <description>Absolute (or relative) path of the output HPXML file.</description>
+      <type>String</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+    </argument>
+  </arguments>
+  <outputs />
+  <provenances />
+  <tags>
+    <tag>Whole Building.Space Types</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>CF29B891</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>5D39198E</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>98B1ED89</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DDAB5436</checksum>
+    </file>
+    <file>
+      <filename>test_es_util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>49639B6B</checksum>
+    </file>
+    <file>
+      <filename>test_es_misc.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>567A39AD</checksum>
+    </file>
+    <file>
+      <filename>test_es_lighting.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>3AD1DD6D</checksum>
+    </file>
+    <file>
+      <filename>test_es_pv.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D30B16F7</checksum>
+    </file>
+    <file>
+      <filename>test_es_generator.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>9FEB3750</checksum>
+    </file>
+    <file>
+      <filename>test_es_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>D57AB727</checksum>
+    </file>
+    <file>
+      <filename>test_es_appliances.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>846F7D1F</checksum>
+    </file>
+    <file>
+      <filename>test_es_enclosure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>A0605ABF</checksum>
+    </file>
+    <file>
+      <filename>test_es_water_heating.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>2F5E3B4A</checksum>
+    </file>
+    <file>
+      <filename>EnergyStarRuleset.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>1E6AB806</checksum>
+    </file>
+    <file>
+      <filename>test_es_hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8063F3BF</checksum>
+    </file>
+  </files>
+</measure>

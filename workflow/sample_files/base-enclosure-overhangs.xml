@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -246,6 +249,7 @@
               <DistanceToBottomOfWindow>4.0</DistanceToBottomOfWindow>
             </Overhangs>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -265,6 +269,7 @@
               <DistanceToBottomOfWindow>5.0</DistanceToBottomOfWindow>
             </Overhangs>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -284,6 +289,7 @@
               <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
             </Overhangs>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -303,6 +309,7 @@
               <DistanceToBottomOfWindow>7.0</DistanceToBottomOfWindow>
             </Overhangs>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
