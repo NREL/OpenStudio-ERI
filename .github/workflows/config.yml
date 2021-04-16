@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: workflow/tests/test_results
-          name: results
+          name: test_results
 
   compare-results:
     if: github.event_name == 'pull_request'
