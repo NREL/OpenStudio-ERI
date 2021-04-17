@@ -633,13 +633,6 @@ class EnergyStarRuleset
     # Exhibit 2 - Heating and Cooling Systems
     hvac_configurations = get_hvac_configurations(orig_hpxml)
 
-    orig_hpxml.hvac_distributions.each do |orig_hvac_dist|
-      next unless orig_hvac_dist.distribution_system_type == HPXML::HVACDistributionTypeAir
-
-      # Default CFA served and/or number of return registers as needed
-      apply_air_distribution_cfa_served_and_n_returns(orig_hvac_dist, orig_hvac_dist.hvac_systems)
-    end
-
     hvac_configurations.each do |hvac_configuration|
       heating_system = hvac_configuration[:heating_system]
       cooling_system = hvac_configuration[:cooling_system]
@@ -686,38 +679,37 @@ class EnergyStarRuleset
                                        number_of_return_registers: orig_hvac_distribution.number_of_return_registers,
                                        hydronic_type: orig_hvac_distribution.hydronic_type,
                                        air_type: orig_hvac_distribution.air_type)
+      new_hvac_dist = new_hpxml.hvac_distributions[-1]
 
-      apply_ducts_and_leakage_to_air_distribution(orig_hpxml, new_hpxml.hvac_distributions[-1])
-    end
-  end
+      next unless new_hvac_dist.distribution_system_type == HPXML::HVACDistributionTypeAir
 
-  def self.apply_ducts_and_leakage_to_air_distribution(orig_hpxml, new_hvac_dist)
-    return unless new_hvac_dist.distribution_system_type == HPXML::HVACDistributionTypeAir
+      apply_air_distribution_cfa_served_and_n_returns(new_hvac_dist)
 
-    # Duct leakage to outside calculated based on conditioned floor area served
-    total_duct_leakage_to_outside = calc_default_duct_leakage_to_outside(new_hvac_dist.conditioned_floor_area_served)
+      # Duct leakage to outside calculated based on conditioned floor area served
+      total_duct_leakage_to_outside = calc_default_duct_leakage_to_outside(new_hvac_dist.conditioned_floor_area_served)
 
-    [HPXML::DuctTypeSupply, HPXML::DuctTypeReturn].each do |duct_type|
-      # Split the total duct leakage to outside evenly and assign it to supply ducts and return ducts
-      duct_leakage_to_outside = total_duct_leakage_to_outside * 0.5
+      [HPXML::DuctTypeSupply, HPXML::DuctTypeReturn].each do |duct_type|
+        # Split the total duct leakage to outside evenly and assign it to supply ducts and return ducts
+        duct_leakage_to_outside = total_duct_leakage_to_outside * 0.5
 
-      new_hvac_dist.duct_leakage_measurements.add(duct_type: duct_type,
-                                                  duct_leakage_units: HPXML::UnitsCFM25,
-                                                  duct_leakage_value: duct_leakage_to_outside,
-                                                  duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
+        new_hvac_dist.duct_leakage_measurements.add(duct_type: duct_type,
+                                                    duct_leakage_units: HPXML::UnitsCFM25,
+                                                    duct_leakage_value: duct_leakage_to_outside,
+                                                    duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
 
-      # ASHRAE 152 duct area calculation based on conditioned floor area served
-      primary_duct_area, secondary_duct_area = HVAC.get_default_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
-      total_duct_area = primary_duct_area + secondary_duct_area
+        # ASHRAE 152 duct area calculation based on conditioned floor area served
+        primary_duct_area, secondary_duct_area = HVAC.get_default_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
+        total_duct_area = primary_duct_area + secondary_duct_area
 
-      duct_location_and_surface_area = get_duct_location_and_surface_area(orig_hpxml, total_duct_area)
+        duct_location_and_surface_area = get_duct_location_and_surface_area(orig_hpxml, total_duct_area)
 
-      duct_location_and_surface_area.each do |duct_location, duct_surface_area|
-        duct_insulation_r_value = get_duct_insulation_r_value(duct_type, duct_location)
-        new_hvac_dist.ducts.add(duct_type: duct_type,
-                                duct_insulation_r_value: duct_insulation_r_value,
-                                duct_location: duct_location,
-                                duct_surface_area: duct_surface_area.round(2))
+        duct_location_and_surface_area.each do |duct_location, duct_surface_area|
+          duct_insulation_r_value = get_duct_insulation_r_value(duct_type, duct_location)
+          new_hvac_dist.ducts.add(duct_type: duct_type,
+                                  duct_insulation_r_value: duct_insulation_r_value,
+                                  duct_location: duct_location,
+                                  duct_surface_area: duct_surface_area.round(2))
+        end
       end
     end
   end
@@ -1870,32 +1862,22 @@ class EnergyStarRuleset
     return false
   end
 
-  def self.add_air_distribution(orig_hpxml, new_hpxml, orig_system)
+  def self.add_air_distribution(orig_hpxml)
     i = 0
     while true
       i += 1
       dist_id = "HVACDistributionDucted_#{i}"
-      found_id = false
-      new_hpxml.hvac_systems.each do |hvac|
-        next if hvac.distribution_system_idref.nil?
-        next unless hvac.distribution_system_idref == dist_id
+      next if orig_hpxml.hvac_distributions.select { |d| d.id == dist_id }.size > 0
 
-        found_id = true
-      end
-      next if found_id
-
-      new_hpxml.hvac_distributions.add(id: dist_id,
-                                       distribution_system_type: HPXML::HVACDistributionTypeAir,
-                                       air_type: HPXML::AirTypeRegularVelocity)
-
-      apply_air_distribution_cfa_served_and_n_returns(new_hpxml.hvac_distributions[-1], [orig_system])
-      apply_ducts_and_leakage_to_air_distribution(orig_hpxml, new_hpxml.hvac_distributions[-1])
+      orig_hpxml.hvac_distributions.add(id: dist_id,
+                                        distribution_system_type: HPXML::HVACDistributionTypeAir,
+                                        air_type: HPXML::AirTypeRegularVelocity)
 
       return dist_id
     end
   end
 
-  def self.apply_air_distribution_cfa_served_and_n_returns(hvac_dist, hvac_systems)
+  def self.apply_air_distribution_cfa_served_and_n_returns(hvac_dist)
     if hvac_dist.number_of_return_registers.nil?
       hvac_dist.number_of_return_registers = 1 # EPA guidance
     end
@@ -1904,7 +1886,7 @@ class EnergyStarRuleset
       # Estimate CFA served based on CFA and fraction load served
       estd_cfa_heated = 0.0
       estd_cfa_cooled = 0.0
-      hvac_systems.each do |hvac_system|
+      hvac_dist.hvac_systems.each do |hvac_system|
         if hvac_system.respond_to?(:fraction_heat_load_served)
           if hvac_system.fraction_heat_load_served > 0
             estd_cfa_heated = @cfa * hvac_system.fraction_heat_load_served
@@ -1916,6 +1898,7 @@ class EnergyStarRuleset
         end
       end
 
+      # FIXME: Need to ensure CFA served does not exceed remaining CFA to be served
       hvac_dist.conditioned_floor_area_served = [estd_cfa_heated.to_f, estd_cfa_cooled.to_f].max
     end
   end
@@ -1955,7 +1938,7 @@ class EnergyStarRuleset
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
-      dist_id = add_air_distribution(orig_hpxml, new_hpxml, orig_system)
+      dist_id = add_air_distribution(orig_hpxml)
     end
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
@@ -1975,7 +1958,7 @@ class EnergyStarRuleset
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
-      dist_id = add_air_distribution(orig_hpxml, new_hpxml, orig_system)
+      dist_id = add_air_distribution(orig_hpxml)
     end
 
     new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
@@ -2053,7 +2036,7 @@ class EnergyStarRuleset
       if (not orig_htg_system.distribution_system.nil?) && (orig_htg_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
         dist_id = orig_htg_system.distribution_system.id
       else
-        dist_id = add_air_distribution(orig_hpxml, new_hpxml, orig_htg_system)
+        dist_id = add_air_distribution(orig_hpxml)
       end
     end
 
