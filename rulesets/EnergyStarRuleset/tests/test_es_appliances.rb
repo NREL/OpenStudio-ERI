@@ -83,14 +83,6 @@ class EnergyStarApplianceTest < MiniTest::Test
       hpxml = _test_measure()
       _check_dehumidifiers(hpxml)
 
-      _convert_to_es('base-appliances-dehumidifier-50percent.xml', es_version)
-      hpxml = _test_measure()
-      _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace }])
-    end
-  end
-
-  def test_appliances_dehumidifier_multiple
-    ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-appliances-dehumidifier-multiple.xml', es_version)
       hpxml = _test_measure()
       _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace },

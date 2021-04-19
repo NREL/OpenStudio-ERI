@@ -94,7 +94,7 @@ class EnergyRatingIndexTest < Minitest::Test
         elsif [ESConstants.MFNationalVer1_1_2019].include? program_version
           next unless xml.include?('base-bldgtype-multifamily') || xml.include?('base-bldgtype-single-family-attached')
         elsif [ESConstants.MFNationalVer1_2019].include? program_version
-          next unless xml.include?('base-bldgtype-multifamily.xml')
+          next unless xml.include?('base-bldgtype-multifamily.xml') || xml.include?('base-bldgtype-single-family-attached.xml')
         elsif [ESConstants.MFOregonWashingtonVer1_2_2019].include? program_version
           next unless xml.include?('base-bldgtype-multifamily-location-portland-or.xml')
         else

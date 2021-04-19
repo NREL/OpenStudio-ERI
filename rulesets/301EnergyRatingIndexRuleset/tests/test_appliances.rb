@@ -165,32 +165,6 @@ class ERIApplianceTest < MiniTest::Test
   end
 
   def test_appliances_dehumidifier
-    hpxml_name = 'base-appliances-dehumidifier-50percent.xml'
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace }])
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace }])
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_dehumidifiers(hpxml)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_dehumidifiers(hpxml)
-
-    # Test w/ 301-2019 pre-Addendum B
-    # No credit/penalty for dehumidifiers
-    hpxml_name = _change_eri_version(hpxml_name, '2019A')
-
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_dehumidifiers(hpxml)
-    end
-  end
-
-  def test_appliances_dehumidifier_multiple
     hpxml_name = 'base-appliances-dehumidifier-multiple.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

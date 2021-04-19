@@ -126,7 +126,15 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tank_gas
-    hpxml_name = 'base-dhw-tank-gas.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tank-gas-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].tank_volume = 50.0
+    hpxml.water_heating_systems[0].energy_factor = 0.59
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml.water_heating_systems[0].first_hour_rating = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
@@ -171,7 +179,15 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tank_heat_pump
-    hpxml_name = 'base-dhw-tank-heat-pump.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tank-heat-pump-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].energy_factor = 2.3
+    hpxml.water_heating_systems[0].tank_volume = 80.0
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml.water_heating_systems[0].first_hour_rating = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 80, ef: 0.8644, n_units_served: 1 }])
@@ -201,7 +217,13 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tankless_electric
-    hpxml_name = 'base-dhw-tankless-electric.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tankless-electric-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].energy_factor = 0.99
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
@@ -231,7 +253,13 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tankless_gas
-    hpxml_name = 'base-dhw-tankless-gas.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tankless-gas-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].energy_factor = 0.82
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])

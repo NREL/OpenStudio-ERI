@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>b24ffba4-efb9-4d36-a3a8-4f6976e20461</version_id>
-  <version_modified>20210418T165334Z</version_modified>
+  <version_id>3774fc09-ebe8-405b-bcf1-629e409f36e6</version_id>
+  <version_modified>20210419T214846Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -155,22 +155,10 @@
       <checksum>D57AB727</checksum>
     </file>
     <file>
-      <filename>test_es_appliances.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>846F7D1F</checksum>
-    </file>
-    <file>
       <filename>test_es_enclosure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>A0605ABF</checksum>
-    </file>
-    <file>
-      <filename>test_es_water_heating.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>2F5E3B4A</checksum>
     </file>
     <file>
       <filename>EnergyStarRuleset.rb</filename>
@@ -182,7 +170,19 @@
       <filename>test_es_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>5CDA3586</checksum>
+      <checksum>5AAD0B7B</checksum>
+    </file>
+    <file>
+      <filename>test_es_water_heating.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FB6A1B00</checksum>
+    </file>
+    <file>
+      <filename>test_es_appliances.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>37D78395</checksum>
     </file>
   </files>
 </measure>

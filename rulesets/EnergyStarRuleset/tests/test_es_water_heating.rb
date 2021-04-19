@@ -56,16 +56,16 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
 
   def test_water_heating_tank_gas
     ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-dhw-tank-gas.xml', es_version)
+      _convert_to_es('base-dhw-tank-gas-uef.xml', es_version)
       hpxml = _test_measure()
       if [ESConstants.MFNationalVer1_2019, ESConstants.MFNationalVer1_1_2019].include? es_version
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.67, n_units_served: 1 }])
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.67, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.80, n_units_served: 1 }])
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.80, n_units_served: 1 }])
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2_2019].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, ef: 0.91, n_units_served: 1 }])
       else
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.59, n_units_served: 1 }])
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.63, n_units_served: 1 }])
       end
       _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(es_version), pipe_l: 93.5)
       _check_water_fixtures(hpxml, low_flow_shower: is_low_flow(es_version), low_flow_faucet: is_low_flow(es_version))
@@ -94,17 +94,17 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
 
   def test_water_heating_tank_heat_pump
     ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-dhw-tank-heat-pump.xml', es_version)
+      _convert_to_es('base-dhw-tank-heat-pump-uef.xml', es_version)
       hpxml = _test_measure()
       if [ESConstants.MFNationalVer1_2019, ESConstants.MFNationalVer1_1_2019].include? es_version
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 80, ef: 0.95, n_units_served: 1 }])
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.95, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.90, n_units_served: 1 }])
         _check_solar_thermal_system(hpxml, [{ system_type: 'hot water', solar_fraction: 0.90 }])
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2_2019].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 60, ef: 2.50, n_units_served: 1 }])
       else
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 80, ef: 0.89, n_units_served: 1 }])
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.92, n_units_served: 1 }])
       end
       _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(es_version), pipe_l: 93.5)
       _check_water_fixtures(hpxml, low_flow_shower: is_low_flow(es_version), low_flow_faucet: is_low_flow(es_version))
@@ -114,7 +114,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
 
   def test_water_heating_tankless_electric
     ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-dhw-tankless-electric.xml', es_version)
+      _convert_to_es('base-dhw-tankless-electric-uef.xml', es_version)
       hpxml = _test_measure()
       if [ESConstants.MFNationalVer1_2019, ESConstants.MFNationalVer1_1_2019].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 60, ef: 0.95, n_units_served: 1 }])
