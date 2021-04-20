@@ -675,6 +675,7 @@ class EnergyRatingIndexTest < Minitest::Test
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       rundir, hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:eri_results])
+      all_results[xml].delete('EC_x Dehumid (MBtu)') # Not yet included in RESNET spreadsheet
     end
     assert(all_results.size > 0)
 
@@ -1083,6 +1084,7 @@ class EnergyRatingIndexTest < Minitest::Test
     else
       results['Basement walls insulation R-Value'] = 'n/a'
     end
+    results['Basement walls (Uo)'] = 'n/a'
 
     # Above-grade floors
     floors_u = _get_above_grade_floors(hpxml)
