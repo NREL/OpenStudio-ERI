@@ -2502,7 +2502,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.calc_mech_vent_Aext_ratio(hpxml)
     tot_cb_area, ext_cb_area = hpxml.compartmentalization_boundary_areas()
-    if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeManufactured].include? @bldg_type
+    if @bldg_type == HPXML::ResidentialTypeSFD
       return 1.0
     end
 

@@ -134,7 +134,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
 
   def test_water_heating_tankless_gas
     ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-dhw-tankless-gas.xml', es_version)
+      _convert_to_es('base-dhw-tankless-gas-uef.xml', es_version)
       hpxml = _test_measure()
       if [ESConstants.MFNationalVer1_2019, ESConstants.MFNationalVer1_1_2019].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.67, n_units_served: 1 }])

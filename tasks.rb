@@ -2023,6 +2023,7 @@ def create_sample_hpxmls
                   'invalid_files/num-bedrooms-exceeds-limit.xml',
                   'base.xml',
                   'base-appliances-dehumidifier.xml',
+                  'base-appliances-dehumidifier-ief-whole-home.xml',
                   'base-appliances-dehumidifier-multiple.xml',
                   'base-appliances-gas.xml',
                   'base-appliances-modified.xml',
@@ -2056,6 +2057,7 @@ def create_sample_hpxmls
                   'base-bldgtype-multifamily-shared-water-heater.xml',
                   'base-bldgtype-multifamily-shared-water-heater-recirc.xml',
                   'base-bldgtype-single-family-attached.xml',
+                  'base-dhw-combi-tankless.xml',
                   'base-dhw-desuperheater.xml',
                   'base-dhw-dwhr.xml',
                   'base-dhw-indirect-standbyloss.xml',
@@ -2112,8 +2114,11 @@ def create_sample_hpxmls
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml',
                   'base-hvac-elec-resistance-only.xml',
                   'base-hvac-evap-cooler-only.xml',
+                  'base-hvac-evap-cooler-only-ducted.xml',
+                  'base-hvac-fireplace-wood-only.xml',
                   'base-hvac-fixed-heater-gas-only.xml',
                   'base-hvac-floor-furnace-propane-only.xml',
+                  'base-hvac-furnace-elec-only.xml',
                   'base-hvac-furnace-gas-only.xml',
                   'base-hvac-ground-to-air-heat-pump.xml',
                   'base-hvac-ground-to-air-heat-pump-cooling-only.xml',
@@ -2121,6 +2126,7 @@ def create_sample_hpxmls
                   'base-hvac-install-quality-all-air-to-air-heat-pump-1-speed.xml',
                   'base-hvac-install-quality-all-furnace-gas-central-ac-1-speed.xml',
                   'base-hvac-install-quality-all-ground-to-air-heat-pump.xml',
+                  'base-hvac-install-quality-all-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-install-quality-all-mini-split-heat-pump-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ductless.xml',
@@ -2130,10 +2136,12 @@ def create_sample_hpxmls
                   'base-hvac-mini-split-heat-pump-ductless.xml',
                   'base-hvac-multiple.xml',
                   'base-hvac-none.xml',
+                  'base-hvac-portable-heater-gas-only.xml',
                   'base-hvac-programmable-thermostat.xml',
                   'base-hvac-room-ac-only.xml',
                   'base-hvac-stove-wood-pellets-only.xml',
                   'base-hvac-undersized.xml',
+                  'base-hvac-wall-furnace-elec-only.xml',
                   'base-lighting-ceiling-fans.xml',
                   'base-location-baltimore-md.xml',
                   'base-location-dallas-tx.xml',
@@ -2429,9 +2437,10 @@ end
 if ARGV[0].to_sym == :generate_sample_outputs
   Dir.chdir('workflow')
 
-  FileUtils.rm_rf('sample_results/.', secure: true)
+  # Update ERI sample files
+  FileUtils.rm_rf('sample_results_eri/.', secure: true)
   sleep 1
-  FileUtils.mkdir_p('sample_results')
+  FileUtils.mkdir_p('sample_results_eri')
 
   cli_path = OpenStudio.getOpenStudioCLI
   command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly ALL"
@@ -2443,7 +2452,23 @@ if ARGV[0].to_sym == :generate_sample_outputs
           'ERIIndexAdjustmentReferenceHome',
           'results']
   dirs.each do |dir|
-    FileUtils.copy_entry dir, "sample_results/#{dir}"
+    FileUtils.copy_entry dir, "sample_results_eri/#{dir}"
+  end
+
+  # Update ENERGY STAR sample files
+  FileUtils.rm_rf('sample_results_energystar/.', secure: true)
+  sleep 1
+  FileUtils.mkdir_p('sample_results_energystar')
+
+  cli_path = OpenStudio.getOpenStudioCLI
+  command = "\"#{cli_path}\" energy_star.rb -x sample_files/base.xml --hourly ALL"
+  system(command)
+
+  dirs = ['ESRated',
+          'ESReference',
+          'results']
+  dirs.each do |dir|
+    FileUtils.copy_entry dir, "sample_results_energystar/#{dir}"
   end
 end
 

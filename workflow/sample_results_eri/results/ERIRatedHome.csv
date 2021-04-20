@@ -1,0 +1,122 @@
+Fuel Use: Electricity: Total (MBtu),36.66
+Fuel Use: Electricity: Net (MBtu),36.66
+Fuel Use: Natural Gas: Total (MBtu),31.23
+Fuel Use: Fuel Oil: Total (MBtu),0.0
+Fuel Use: Propane: Total (MBtu),0.0
+Fuel Use: Wood Cord: Total (MBtu),0.0
+Fuel Use: Wood Pellets: Total (MBtu),0.0
+Fuel Use: Coal: Total (MBtu),0.0
+
+End Use: Electricity: Heating (MBtu),0.0
+End Use: Electricity: Heating Fans/Pumps (MBtu),0.94
+End Use: Electricity: Cooling (MBtu),4.26
+End Use: Electricity: Cooling Fans/Pumps (MBtu),1.03
+End Use: Electricity: Hot Water (MBtu),9.15
+End Use: Electricity: Hot Water Recirc Pump (MBtu),0.0
+End Use: Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
+End Use: Electricity: Lighting Interior (MBtu),4.51
+End Use: Electricity: Lighting Garage (MBtu),0.0
+End Use: Electricity: Lighting Exterior (MBtu),0.33
+End Use: Electricity: Mech Vent (MBtu),0.0
+End Use: Electricity: Mech Vent Preheating (MBtu),0.0
+End Use: Electricity: Mech Vent Precooling (MBtu),0.0
+End Use: Electricity: Whole House Fan (MBtu),0.0
+End Use: Electricity: Refrigerator (MBtu),2.22
+End Use: Electricity: Dehumidifier (MBtu),0
+End Use: Electricity: Dishwasher (MBtu),0.32
+End Use: Electricity: Clothes Washer (MBtu),0.37
+End Use: Electricity: Clothes Dryer (MBtu),1.51
+End Use: Electricity: Range/Oven (MBtu),1.53
+End Use: Electricity: Ceiling Fan (MBtu),0.0
+End Use: Electricity: Television (MBtu),2.11
+End Use: Electricity: Plug Loads (MBtu),8.37
+End Use: Electricity: PV (MBtu),0.0
+End Use: Electricity: Generator (MBtu),0.0
+End Use: Natural Gas: Heating (MBtu),31.23
+End Use: Natural Gas: Hot Water (MBtu),0.0
+End Use: Natural Gas: Clothes Dryer (MBtu),0.0
+End Use: Natural Gas: Range/Oven (MBtu),0.0
+End Use: Natural Gas: Mech Vent Preheating (MBtu),0.0
+End Use: Natural Gas: Generator (MBtu),0.0
+End Use: Fuel Oil: Heating (MBtu),0.0
+End Use: Fuel Oil: Hot Water (MBtu),0.0
+End Use: Fuel Oil: Clothes Dryer (MBtu),0.0
+End Use: Fuel Oil: Range/Oven (MBtu),0.0
+End Use: Fuel Oil: Mech Vent Preheating (MBtu),0.0
+End Use: Propane: Heating (MBtu),0.0
+End Use: Propane: Hot Water (MBtu),0.0
+End Use: Propane: Clothes Dryer (MBtu),0.0
+End Use: Propane: Range/Oven (MBtu),0.0
+End Use: Propane: Mech Vent Preheating (MBtu),0.0
+End Use: Propane: Generator (MBtu),0.0
+End Use: Wood Cord: Heating (MBtu),0.0
+End Use: Wood Cord: Hot Water (MBtu),0.0
+End Use: Wood Cord: Clothes Dryer (MBtu),0.0
+End Use: Wood Cord: Range/Oven (MBtu),0.0
+End Use: Wood Cord: Mech Vent Preheating (MBtu),0.0
+End Use: Wood Pellets: Heating (MBtu),0.0
+End Use: Wood Pellets: Hot Water (MBtu),0.0
+End Use: Wood Pellets: Clothes Dryer (MBtu),0.0
+End Use: Wood Pellets: Range/Oven (MBtu),0.0
+End Use: Wood Pellets: Mech Vent Preheating (MBtu),0.0
+End Use: Coal: Heating (MBtu),0.0
+End Use: Coal: Hot Water (MBtu),0.0
+End Use: Coal: Clothes Dryer (MBtu),0.0
+End Use: Coal: Range/Oven (MBtu),0.0
+End Use: Coal: Mech Vent Preheating (MBtu),0.0
+
+Load: Heating (MBtu),29.66
+Load: Cooling (MBtu),12.09
+Load: Hot Water: Delivered (MBtu),9.22
+Load: Hot Water: Tank Losses (MBtu),0.62
+Load: Hot Water: Desuperheater (MBtu),0.0
+Load: Hot Water: Solar Thermal (MBtu),0.0
+
+Unmet Load: Heating (MBtu),0.0
+Unmet Load: Cooling (MBtu),0.15
+
+Peak Electricity: Winter Total (W),6647
+Peak Electricity: Summer Total (W),6819
+
+Peak Load: Heating (kBtu),31.54
+Peak Load: Cooling (kBtu),22.91
+
+Component Load: Heating: Roofs (MBtu),0.0
+Component Load: Heating: Ceilings (MBtu),3.72
+Component Load: Heating: Walls (MBtu),3.74
+Component Load: Heating: Rim Joists (MBtu),0.54
+Component Load: Heating: Foundation Walls (MBtu),4.09
+Component Load: Heating: Doors (MBtu),1.89
+Component Load: Heating: Windows (MBtu),-0.11
+Component Load: Heating: Skylights (MBtu),0.0
+Component Load: Heating: Floors (MBtu),0.0
+Component Load: Heating: Slabs (MBtu),2.89
+Component Load: Heating: Internal Mass (MBtu),-0.23
+Component Load: Heating: Infiltration (MBtu),17.49
+Component Load: Heating: Natural Ventilation (MBtu),0.0
+Component Load: Heating: Mechanical Ventilation (MBtu),0.0
+Component Load: Heating: Whole House Fan (MBtu),0.0
+Component Load: Heating: Ducts (MBtu),7.35
+Component Load: Heating: Internal Gains (MBtu),-11.76
+Component Load: Cooling: Roofs (MBtu),0.0
+Component Load: Cooling: Ceilings (MBtu),0.15
+Component Load: Cooling: Walls (MBtu),-0.27
+Component Load: Cooling: Rim Joists (MBtu),0.01
+Component Load: Cooling: Foundation Walls (MBtu),3.89
+Component Load: Cooling: Doors (MBtu),-0.21
+Component Load: Cooling: Windows (MBtu),9.82
+Component Load: Cooling: Skylights (MBtu),0.0
+Component Load: Cooling: Floors (MBtu),0.0
+Component Load: Cooling: Slabs (MBtu),-5.83
+Component Load: Cooling: Internal Mass (MBtu),-0.19
+Component Load: Cooling: Infiltration (MBtu),-2.98
+Component Load: Cooling: Natural Ventilation (MBtu),-5.81
+Component Load: Cooling: Mechanical Ventilation (MBtu),0.0
+Component Load: Cooling: Whole House Fan (MBtu),0.0
+Component Load: Cooling: Ducts (MBtu),3.89
+Component Load: Cooling: Internal Gains (MBtu),9.54
+
+Hot Water: Clothes Washer (gal),1354
+Hot Water: Dishwasher (gal),998
+Hot Water: Fixtures (gal),11561
+Hot Water: Distribution Waste (gal),2653

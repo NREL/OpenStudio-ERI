@@ -4,7 +4,7 @@ def calc_energystar_saf(results, es_version, hpxml_obj_or_path)
   # Calculates the ENERGY STAR Size Adjustment Factor
 
   if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
-    if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeManufactured].include? results[:rated_facility_type]
+    if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeSFA].include? results[:rated_facility_type]
       # Calculate the Energy Star ERI Target for all single-family detached homes, townhomes, rowhomes, duplexes, triplexes, and quadplexes.
       cfa = results[:rated_cfa]
       nbr = results[:rated_nbr]
