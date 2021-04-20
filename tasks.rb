@@ -2553,8 +2553,10 @@ if ARGV[0].to_sym == :create_release_zips
            'workflow/*.*',
            'workflow/sample_files/*.*',
            'workflow/tests/*.rb',
-           'workflow/tests/base_results/*_4.*.csv',
+           'workflow/tests/base_results/RESNET_Test_4.*.csv',
+           'workflow/tests/base_results/EPA_Tests.csv',
            'workflow/tests/RESNET_Tests/4.*/*.xml',
+           'workflow/tests/EPA_Tests/**/*.xml',
            'documentation/index.html',
            'documentation/_static/**/*.*']
 
