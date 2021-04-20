@@ -1749,30 +1749,12 @@ if ARGV[0].to_sym == :create_release_zips
            'workflow/*.*',
            'workflow/sample_files/*.*',
            'workflow/tests/*.rb',
+           'workflow/tests/base_results/*_4.*.csv',
            'workflow/tests/RESNET_Tests/4.*/*.xml',
            'documentation/index.html',
            'documentation/_static/**/*.*']
 
   if not ENV['CI']
-    # Run RESNET tests
-    puts 'Running RESNET tests (this will take a few minutes)...'
-    results_dir = File.join('workflow', 'tests', 'test_results')
-    tests = { 'test_resnet_ashrae_140' => File.join(results_dir, 'RESNET_Test_4.1_Standard_140.csv'),
-              'test_resnet_hers_reference_home_auto_generation' => File.join(results_dir, 'RESNET_Test_4.2_HERS_AutoGen_Reference_Home.csv'),
-              'test_resnet_hers_method' => File.join(results_dir, 'RESNET_Test_4.3_HERS_Method.csv'),
-              'test_resnet_hvac' => File.join(results_dir, 'RESNET_Test_4.4_HVAC.csv'),
-              'test_resnet_dse' => File.join(results_dir, 'RESNET_Test_4.5_DSE.csv'),
-              'test_resnet_hot_water' => File.join(results_dir, 'RESNET_Test_4.6_Hot_Water.csv') }
-    tests.each do |test_name, results_csv|
-      command = "\"#{OpenStudio.getOpenStudioCLI}\" workflow/tests/energy_rating_index_test.rb --name=#{test_name} > log.txt"
-      system(command)
-      if not File.exist? results_csv
-        puts "#{results_csv} not generated. Aborting..."
-        exit!
-      end
-      File.delete('log.txt')
-    end
-
     # Generate documentation
     puts 'Generating documentation...'
     command = 'sphinx-build -b singlehtml docs/source documentation'
@@ -1811,11 +1793,6 @@ if ARGV[0].to_sym == :create_release_zips
   release_map.each do |zip_path, include_all_epws|
     puts "Creating #{zip_path}..."
     zip = OpenStudio::ZipFile.new(zip_path, false)
-    if not ENV['CI']
-      tests.values.each do |results_csv|
-        zip.addFile(results_csv, File.join('OpenStudio-ERI', results_csv))
-      end
-    end
     files.each do |f|
       Dir[f].each do |file|
         if file.start_with? 'documentation'
