@@ -47,3 +47,9 @@ At the completion of the test, there will also be output that denotes the number
 
 Software developers may find it convenient to export HPXML files with the same name as the test files included in the repository.
 This allows issuing the same commands above to generate test results.
+
+Official Test Results
+---------------------
+
+The official OpenStudio-ERI test results can be found in any release or any checkout of the code at ``workflow/tests/base_results``.
+The results are based on using the HPXML files found under ``workflow/tests``.
