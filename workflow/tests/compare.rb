@@ -69,7 +69,7 @@ files.each do |file|
         base_field.zip(feature_field).each do |b, f|
           m << (f - b).round(1)
         end
-        m = m.join(',')
+        m = m.reduce(:+)
       rescue
         begin
           m = 0
