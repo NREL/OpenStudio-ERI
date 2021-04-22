@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: workflow/tests/test_results
-          name: test_results
+          name: results
 
   compare-results:
     if: github.event_name == 'pull_request'
@@ -51,7 +51,7 @@ jobs:
         with:
           path: |
             results
-          name: test_results
+          name: results
 
       - name: Compare results
         run: |
@@ -87,7 +87,7 @@ jobs:
         with:
           path: |
             results
-          name: test_results
+          name: results
 
       - name: Commit latest results
         shell: bash        
