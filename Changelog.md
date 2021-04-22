@@ -1,13 +1,16 @@
 ## OpenStudio-ERI v1.2.0 (pending)
 
 __New Features__
+- Updates to OpenStudio 3.2.0/EnergyPlus 9.5.0.
 - **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
 - **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
 - Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems.
+- Allows additional fuel types for generators.
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
 - Fixes room air conditioner performance curve.
+- Improves ground reflectance when there is shading of windows/skylights.
 
 ## OpenStudio-ERI v1.1.1
 
