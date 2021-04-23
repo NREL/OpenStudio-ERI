@@ -11,9 +11,6 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
-      <EnergyStarCalculation>
-        <Version>SF_National_3.1</Version>
-      </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -244,7 +241,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -259,7 +255,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -274,7 +269,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -289,7 +283,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
@@ -363,7 +356,6 @@
                 <Value>1.0</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>170.0</ElectricAuxiliaryEnergy>
             </HeatingSystem>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem4'/>
@@ -604,7 +596,7 @@
                 <NumberofReturnRegisters>2</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>245.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
           </HVACDistribution>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution2'/>
@@ -654,7 +646,7 @@
                 <NumberofReturnRegisters>2</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>245.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
           </HVACDistribution>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution3'/>
@@ -720,7 +712,7 @@
                 <NumberofReturnRegisters>2</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>245.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
           </HVACDistribution>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution6'/>
@@ -770,7 +762,7 @@
                 <NumberofReturnRegisters>2</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>245.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <WaterHeating>

@@ -3,6 +3,7 @@ Above-grade walls (Uo),0.082,0.082,0.082,0.06
 Above-grade wall solar absorptance (α),0.75,0.75,0.75,0.75
 Above-grade wall infrared emittance (ε),0.9,0.9,0.9,0.9
 Basement walls insulation R-Value,n/a,n/a,n/a,10
+Basement walls (Uo),n/a,n/a,n/a,n/a
 Above-grade floors (Uo),0.047,0.047,n/a,n/a
 Slab insulation R-Value,n/a,n/a,0,0
 Ceilings (Uo),0.03,0.035,0.035,0.03
