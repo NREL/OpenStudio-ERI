@@ -2294,17 +2294,6 @@ def create_sample_hpxmls
 
       generator.is_shared_system = false
     end
-    hpxml.heating_systems.each do |heating_system|
-      next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
-      next if heating_system.is_shared_system
-      next unless heating_system.electric_auxiliary_energy.nil?
-
-      if heating_system.heating_system_fuel == HPXML::FuelTypeOil
-        heating_system.electric_auxiliary_energy = 330.0
-      else
-        heating_system.electric_auxiliary_energy = 170.0
-      end
-    end
 
     # Handle extra inputs for ENERGY STAR
 

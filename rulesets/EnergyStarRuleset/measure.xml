@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>cc909378-d78b-4158-9a30-132abbe30954</version_id>
-  <version_modified>20210423T173524Z</version_modified>
+  <version_id>822a0436-8662-4c08-a72d-a487728c5bba</version_id>
+  <version_modified>20210423T190523Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -162,18 +162,6 @@
       <checksum>B4C17AA6</checksum>
     </file>
     <file>
-      <filename>test_es_hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B85878A1</checksum>
-    </file>
-    <file>
-      <filename>EnergyStarRuleset.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>B52027FA</checksum>
-    </file>
-    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -183,6 +171,18 @@
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
       <checksum>A1B009CD</checksum>
+    </file>
+    <file>
+      <filename>EnergyStarRuleset.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DB72EBA9</checksum>
+    </file>
+    <file>
+      <filename>test_es_hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AC241595</checksum>
     </file>
   </files>
 </measure>

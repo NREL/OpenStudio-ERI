@@ -1071,7 +1071,7 @@ class EnergyStarRuleset
       return 0.30
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_radiant_barrier_bool(orig_hpxml)
@@ -1149,7 +1149,7 @@ class EnergyStarRuleset
       return infil_air_leakage, infil_unit_of_measure
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_systems_mechanical_ventilation_default_fan_type()
@@ -1165,7 +1165,7 @@ class EnergyStarRuleset
       return HPXML::MechVentTypeExhaust
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_door_ufactor_shgc()
@@ -1175,7 +1175,7 @@ class EnergyStarRuleset
       return 0.17, nil
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.calc_default_total_win_area(orig_hpxml, cfa)
@@ -1225,7 +1225,7 @@ class EnergyStarRuleset
       return 15.0 # interior insulation R-value
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_enclosure_walls_default_ufactor()
@@ -1249,7 +1249,6 @@ class EnergyStarRuleset
       elsif ['GU', 'MP'].include? @state_code
         return 0.401
       end
-
       fail "Unexpected state code: #{@state_code}."
     elsif [ESConstants.SFFloridaVer3_1].include? @program_version
       return 0.082
@@ -1275,7 +1274,7 @@ class EnergyStarRuleset
       end
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_enclosure_floors_over_uncond_spc_default_ufactor()
@@ -1311,7 +1310,7 @@ class EnergyStarRuleset
       end
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_hot_water_distribution_low_flow
@@ -1444,7 +1443,7 @@ class EnergyStarRuleset
       return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_boiler_eff(orig_system)
@@ -1465,8 +1464,6 @@ class EnergyStarRuleset
           end
         elsif fuel_type == HPXML::FuelTypeElectricity
           return 0.98 # AFUE
-        else
-          fail "Unexpected boiler fuel type: #{fuel_type}."
         end
       elsif [ESConstants.SFNationalVer3_1, ESConstants.MFNationalVer1_1_2019].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
@@ -1483,16 +1480,12 @@ class EnergyStarRuleset
           end
         elsif fuel_type == HPXML::FuelTypeElectricity
           return 0.98 # AFUE
-        else
-          fail "Unexpected boiler fuel type: #{fuel_type}."
         end
       elsif [ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
           return 0.80 # AFUE
         elsif fuel_type == HPXML::FuelTypeElectricity
           return 0.98 # AFUE
-        else
-          fail "Unexpected boiler fuel type: #{fuel_type}."
         end
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2_2019].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
@@ -1501,12 +1494,10 @@ class EnergyStarRuleset
           return 0.86 # AFUE
         elsif fuel_type == HPXML::FuelTypeElectricity
           return 0.98 # AFUE
-        elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2_2019].include? @program_version
-          fail "Unexpected boiler fuel type: #{fuel_type}."
         end
       end
 
-      fail "Unexpected program version: #{@program_version}."
+      fail 'Unexpected case.'
     end
   end
 
@@ -1551,7 +1542,7 @@ class EnergyStarRuleset
       end
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_ashp_hspf()
@@ -1573,7 +1564,7 @@ class EnergyStarRuleset
       return 9.5
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_heat_pump_backup_fuel()
@@ -1587,7 +1578,7 @@ class EnergyStarRuleset
       return HPXML::FuelTypeElectricity
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_gshp_cop()
@@ -1605,7 +1596,7 @@ class EnergyStarRuleset
       end
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_wlhp_cop()
@@ -1641,7 +1632,7 @@ class EnergyStarRuleset
       return 13.0
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_ashp_seer()
@@ -1663,7 +1654,7 @@ class EnergyStarRuleset
       return 15.0
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_default_gshp_eer()
@@ -1681,7 +1672,7 @@ class EnergyStarRuleset
       end
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_fan_cfm_per_w()
@@ -1691,7 +1682,7 @@ class EnergyStarRuleset
       return 2.8
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_foundation_type(orig_hpxml)
@@ -1811,9 +1802,12 @@ class EnergyStarRuleset
         end
       end
     end
-    return duct_location_and_surface_area
 
-    fail "Unexpected program version: #{@program_version}."
+    if duct_location_and_surface_area.empty?
+      fail 'Unexpected case.'
+    end
+
+    return duct_location_and_surface_area
   end
 
   def self.get_duct_insulation_r_value(duct_type, duct_location)
@@ -1843,7 +1837,7 @@ class EnergyStarRuleset
       return [(0.04 * cfa), 40].max
     end
 
-    fail "Unexpected program version: #{@program_version}."
+    fail 'Unexpected case.'
   end
 
   def self.get_has_space_type(hpxml, adjacent_to)

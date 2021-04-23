@@ -633,8 +633,13 @@ If an in-unit boiler if specified, additional information is entered in ``Heatin
   ===========================  ========  ======  ===========  ========  ========  =========================
   Element                      Type      Units   Constraints  Required  Default   Notes
   ===========================  ========  ======  ===========  ========  ========  =========================
-  ``ElectricAuxiliaryEnergy``  double    kWh/yr  >= 0         Yes                 Electric auxiliary energy
+  ``ElectricAuxiliaryEnergy``  double    kWh/yr  >= 0         No        See [#]_  Electric auxiliary energy
   ===========================  ========  ======  ===========  ========  ========  =========================
+  
+  .. [#] If ElectricAuxiliaryEnergy not provided, defaults as follows:
+
+         - **Oil boiler**: 330 kWh/yr
+         - **Gas boiler**: 170 kWh/yr
 
 If instead a shared boiler is specified, additional information is entered in ``HeatingSystem``.
 
