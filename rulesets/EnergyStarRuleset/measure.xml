@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>822a0436-8662-4c08-a72d-a487728c5bba</version_id>
-  <version_modified>20210423T190523Z</version_modified>
+  <version_id>af9d060c-9007-4969-95c1-94c7af3d7eac</version_id>
+  <version_modified>20210423T231843Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -138,12 +138,6 @@
       <checksum>D57AB727</checksum>
     </file>
     <file>
-      <filename>test_es_enclosure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>A0605ABF</checksum>
-    </file>
-    <file>
       <filename>test_es_appliances.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -173,16 +167,22 @@
       <checksum>A1B009CD</checksum>
     </file>
     <file>
-      <filename>EnergyStarRuleset.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DB72EBA9</checksum>
-    </file>
-    <file>
       <filename>test_es_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>AC241595</checksum>
+    </file>
+    <file>
+      <filename>EnergyStarRuleset.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>0850BD86</checksum>
+    </file>
+    <file>
+      <filename>test_es_enclosure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>162B0CD5</checksum>
     </file>
   </files>
 </measure>

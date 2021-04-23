@@ -146,7 +146,7 @@ class EnergyStarRuleset
                                  attic_type: HPXML::AtticTypeVented)
           end
         elsif [ESConstants.MFNationalVer1_2019, ESConstants.MFOregonWashingtonVer1_2_2019].include? @program_version
-          # With or without an attic in orig_hpxml, there should be an attic in nex_hpxml. Because duct Locations shall be configured to be either 100% or 75% in vented attic depending on the number of story of the unit
+          # With or without an attic in orig_hpxml, there should be an attic in new_hpxml. Because duct Locations shall be configured to be either 100% or 75% in vented attic depending on the number of story of the unit
           new_hpxml.attics.add(id: 'VentedAttic',
                                attic_type: HPXML::AtticTypeVented)
           @has_auto_generated_attic = true unless @has_attic
@@ -188,7 +188,7 @@ class EnergyStarRuleset
     emittance = 0.90
 
     orig_hpxml.roofs.each do |orig_roof|
-      if @has_auto_generated_attic && orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace
+      if orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace
         roof_interior_adjacent_to = HPXML::LocationAtticVented
       else
         roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')

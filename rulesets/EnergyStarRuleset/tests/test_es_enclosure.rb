@@ -69,19 +69,19 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base.xml', es_version)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-cathedral.xml', es_version)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-conditioned.xml', es_version)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-flat.xml', es_version)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
 
     ESConstants.MFVersions.each do |es_version|
@@ -104,7 +104,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       else
         rb_grade = nil
       end
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
 
     # SFPacificVer3 - Regional test
@@ -118,19 +118,19 @@ class EnergyStarEnclosureTest < MiniTest::Test
       # In both HI and GU, if > 10 linear ft. of ductwork are located in unconditioned attic, place radiant barrier
       _convert_to_es('base.xml', ESConstants.SFPacificVer3, state_code)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1)
+      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-cathedral.xml', ESConstants.SFPacificVer3, state_code)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-conditioned.xml', ESConstants.SFPacificVer3, state_code)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-flat.xml', ESConstants.SFPacificVer3, state_code)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade)
+      _check_roofs(hpxml, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
   end
 
@@ -647,7 +647,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
     assert_in_epsilon(value, air_infiltration_measurement.air_leakage, 0.01)
   end
 
-  def _check_roofs(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil, rb_grade: nil)
+  def _check_roofs(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil, rb_grade: nil, adjacent_to: nil)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
     sabs_x_area_values = [] # Area-weighted
@@ -664,6 +664,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         assert_equal(true, roof.radiant_barrier)
         assert_equal(rb_grade, roof.radiant_barrier_grade)
       end
+      assert_equal(adjacent_to, roof.interior_adjacent_to)
     end
 
     if area.nil?
