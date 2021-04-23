@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 class EnergyStarRuleset
-  def self.apply_ruleset(hpxml, calc_type, weather)
-    # Global variables
-    @weather = weather
-
+  def self.apply_ruleset(hpxml, calc_type)
     # Use latest version of 301-2019
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
@@ -13,11 +10,6 @@ class EnergyStarRuleset
     if calc_type == ESConstants.CalcTypeEnergyStarReference
       hpxml = apply_energy_star_ruleset_reference(hpxml)
     end
-
-    # Add HPXML defaults to, e.g., ESReference.xml
-    # Note: We exclude HVAC sizing so that the ERI Rated Home of the
-    # ESRD is auto-sized, as opposed to the ESRD itself.
-    HPXMLDefaults.apply(hpxml, @eri_version, @weather, do_hvac_sizing: false)
 
     return hpxml
   end
@@ -671,14 +663,14 @@ class EnergyStarRuleset
 
     # Exhibit 2 - Thermal distribution systems
     orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
-      next if orig_hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeDSE
-
       new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
                                        distribution_system_type: orig_hvac_distribution.distribution_system_type,
                                        conditioned_floor_area_served: orig_hvac_distribution.conditioned_floor_area_served,
                                        number_of_return_registers: orig_hvac_distribution.number_of_return_registers,
                                        hydronic_type: orig_hvac_distribution.hydronic_type,
-                                       air_type: orig_hvac_distribution.air_type)
+                                       air_type: orig_hvac_distribution.air_type,
+                                       annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
+                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
       new_hvac_dist = new_hpxml.hvac_distributions[-1]
 
       next unless new_hvac_dist.distribution_system_type == HPXML::HVACDistributionTypeAir
@@ -1862,7 +1854,7 @@ class EnergyStarRuleset
     return false
   end
 
-  def self.add_air_distribution(orig_hpxml)
+  def self.add_air_distribution(orig_hpxml, orig_system)
     i = 0
     while true
       i += 1
@@ -1872,6 +1864,11 @@ class EnergyStarRuleset
       orig_hpxml.hvac_distributions.add(id: dist_id,
                                         distribution_system_type: HPXML::HVACDistributionTypeAir,
                                         air_type: HPXML::AirTypeRegularVelocity)
+
+      # Remove existing distribution system, if one exists
+      if not orig_system.distribution_system.nil?
+        orig_system.distribution_system.delete
+      end
 
       return dist_id
     end
@@ -1938,7 +1935,7 @@ class EnergyStarRuleset
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
-      dist_id = add_air_distribution(orig_hpxml)
+      dist_id = add_air_distribution(orig_hpxml, orig_system)
     end
 
     new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
@@ -1958,7 +1955,7 @@ class EnergyStarRuleset
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
-      dist_id = add_air_distribution(orig_hpxml)
+      dist_id = add_air_distribution(orig_hpxml, orig_system)
     end
 
     new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
@@ -2036,7 +2033,7 @@ class EnergyStarRuleset
       if (not orig_htg_system.distribution_system.nil?) && (orig_htg_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
         dist_id = orig_htg_system.distribution_system.id
       else
-        dist_id = add_air_distribution(orig_hpxml)
+        dist_id = add_air_distribution(orig_hpxml, orig_htg_system)
       end
     end
 

@@ -127,7 +127,7 @@ class EnergyStarHVACtest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-boiler-elec-only.xml', es_version)
       hpxml = _test_measure()
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0, eae: 170 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -140,7 +140,7 @@ class EnergyStarHVACtest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-boiler-gas-only.xml', es_version)
       hpxml = _test_measure()
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_boiler_afue_cz5(es_version), frac_load: 1.0, eae: 170 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_boiler_afue_cz5(es_version), frac_load: 1.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -156,7 +156,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, shr: 0.73, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -231,7 +231,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, shr: 0.73, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -256,7 +256,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, shr: 0.73, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -286,7 +286,7 @@ class EnergyStarHVACtest < MiniTest::Test
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       hvac_iq_values[:charge_defect_ratio] = 0 # FIXME: Temporary
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, shr: 0.732, pump_w_per_ton: 30, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 30, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -311,7 +311,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -366,7 +366,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -391,7 +391,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -416,7 +416,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -471,7 +471,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -496,7 +496,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -520,7 +520,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -545,7 +545,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -570,7 +570,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -598,7 +598,7 @@ class EnergyStarHVACtest < MiniTest::Test
         hpxml = _test_measure()
         hvac_iq_values = get_default_hvac_iq_values(es_version)
         _check_heating_system(hpxml)
-        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
         _check_heat_pump(hpxml)
         _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
         if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -624,7 +624,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -649,7 +649,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -670,7 +670,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -692,7 +692,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -715,7 +715,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if es_version == ESConstants.SFNationalVer3
@@ -744,7 +744,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if es_version == ESConstants.SFNationalVer3
@@ -773,7 +773,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if es_version == ESConstants.SFNationalVer3
@@ -801,17 +801,17 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 0.1, **hvac_iq_values },
-                                    { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 0.1, eae: 170 },
-                                    { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_boiler_afue_cz5(es_version), frac_load: 0.1, eae: 170 },
+                                    { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 0.1 },
+                                    { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_boiler_afue_cz5(es_version), frac_load: 0.1 },
                                     { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeOil, eff: get_es_oil_furnace_afue_cz5(es_version), frac_load: 0.1, **hvac_iq_values },
                                     { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypePropane, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 0.1, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.2, shr: 0.73, **hvac_iq_values },
-                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.2, shr: 0.65, **hvac_iq_values }])
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
-                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }, # Electric Resistance => ASHP
-                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
-                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
-                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }]) # Mini-split => ASHP
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.2, shr: 0.73, **hvac_iq_values },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.2, shr: 0.65, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
+                               { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 66.2, duct_location: HPXML::LocationBasementConditioned },
@@ -903,7 +903,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 0.2, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.3, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.3, shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -929,7 +929,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, eae: 220.2 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -943,11 +943,11 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       if [ESConstants.SFNationalVer3, ESConstants.MFNationalVer1_2019].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, eae: 220.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       elsif [ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, eae: 220.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       else
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, eae: 220.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       end
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -964,7 +964,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -986,11 +986,11 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       if [ESConstants.SFNationalVer3, ESConstants.MFNationalVer1_2019].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       elsif [ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       else
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       end
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -1015,7 +1015,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -1037,11 +1037,11 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       if [ESConstants.SFNationalVer3, ESConstants.MFNationalVer1_2019].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       elsif [ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       else
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, eae: 532.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       end
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -1066,9 +1066,9 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.89, num_units_served: 6, frac_load: 1 - 1 / 4.2, eae: 220.2 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.89, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0, frac_load_heat: 1 / 4.2, frac_load_cool: 0.0 }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         return_duct_r = (es_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
@@ -1088,14 +1088,14 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       if [ESConstants.SFNationalVer3, ESConstants.MFNationalVer1_2019].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1 - 1 / 4.2, eae: 220.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       elsif [ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? es_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1 - 1 / 4.2, eae: 220.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       else
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1 - 1 / 4.2, eae: 220.2 }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       end
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0, frac_load_heat: 1 / 4.2, frac_load_cool: 0.0 }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         return_duct_r = (es_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
@@ -1115,12 +1115,8 @@ class EnergyStarHVACtest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
       hpxml = _test_measure()
-      hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.375 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 14.19, frac_load: 1.0, dse: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       _check_ducts(hpxml)
@@ -1133,12 +1129,8 @@ class EnergyStarHVACtest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
       hpxml = _test_measure()
-      hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.5 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 12.74, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -1159,12 +1151,8 @@ class EnergyStarHVACtest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
       hpxml = _test_measure()
-      hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.5 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 12.74, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -1185,13 +1173,9 @@ class EnergyStarHVACtest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
       hpxml = _test_measure()
-      hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.5 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 5.26, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
-      _check_heat_pump(hpxml)
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         return_duct_r = (es_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
@@ -1211,13 +1195,9 @@ class EnergyStarHVACtest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
       hpxml = _test_measure()
-      hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.5 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 12.99, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
-      _check_heat_pump(hpxml)
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeCoolingTower, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         return_duct_r = (es_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
@@ -1240,7 +1220,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFOregonWashingtonVer3_2].include? es_version
         return_duct_r = (es_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
@@ -1405,11 +1385,6 @@ class EnergyStarHVACtest < MiniTest::Test
       end
       assert_equal(expected_values[:systype], heat_pump.heat_pump_type)
       assert_equal(expected_values[:fuel], heat_pump.heat_pump_fuel)
-      if not expected_values[:comptype].nil?
-        assert_equal(expected_values[:comptype], heat_pump.compressor_type)
-      else
-        assert_nil(heat_pump.compressor_type)
-      end
       if not expected_values[:hspf].nil?
         assert_equal(expected_values[:hspf], heat_pump.heating_efficiency_hspf)
       else
@@ -1510,11 +1485,6 @@ class EnergyStarHVACtest < MiniTest::Test
       end
       assert_equal(expected_values[:systype], cooling_system.cooling_system_type)
       assert_equal(expected_values[:fuel], cooling_system.cooling_system_fuel)
-      if not expected_values[:comptype].nil?
-        assert_equal(expected_values[:comptype], cooling_system.compressor_type)
-      else
-        assert_nil(cooling_system.compressor_type)
-      end
       if not expected_values[:seer].nil?
         assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.01)
       else
@@ -1524,6 +1494,11 @@ class EnergyStarHVACtest < MiniTest::Test
         assert_equal(expected_values[:eer], cooling_system.cooling_efficiency_eer)
       else
         assert_nil(cooling_system.cooling_efficiency_eer)
+      end
+      if not expected_values[:kw_per_ton].nil?
+        assert_equal(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton)
+      else
+        assert_nil(cooling_system.cooling_efficiency_kw_per_ton)
       end
       if not expected_values[:frac_load].nil?
         assert_equal(expected_values[:frac_load], cooling_system.fraction_cool_load_served)

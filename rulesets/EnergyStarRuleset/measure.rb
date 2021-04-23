@@ -5,21 +5,10 @@ require 'csv'
 require 'oga'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/airflow'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/geometry'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml_defaults'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/materials'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/psychrometrics'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/util'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/validator'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative 'resources/EnergyStarRuleset'
@@ -103,30 +92,8 @@ class EnergyStarMeasure < OpenStudio::Measure::ModelMeasure
     end
     return false unless @orig_hpxml.errors.empty?
 
-    # Weather file
-    epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-    if not File.exist? epw_path
-      test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
-      epw_path = test_epw_path if File.exist? test_epw_path
-    end
-    if not File.exist? epw_path
-      test_epw_path = File.join(File.dirname(__FILE__), '..', '..', 'weather', epw_path)
-      epw_path = test_epw_path if File.exist? test_epw_path
-    end
-    if not File.exist?(epw_path)
-      fail "'#{epw_path}' could not be found."
-    end
-    cache_path = epw_path.gsub('.epw', '-cache.csv')
-    if not File.exist?(cache_path)
-      runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
-      return false
-    end
-
-    # Obtain weather object
-    weather = WeatherProcess.new(nil, nil, cache_path)
-
     # Apply ENERGY STAR ruleset on HPXML object
-    @new_hpxml = EnergyStarRuleset.apply_ruleset(@orig_hpxml, calc_type, weather)
+    @new_hpxml = EnergyStarRuleset.apply_ruleset(@orig_hpxml, calc_type)
 
     # Write new HPXML file
     if hpxml_output_path.is_initialized
