@@ -11,7 +11,7 @@ SF_National_3.1,base-appliances-oil.xml,68.0,1.0,68.0,81.0,81.0,FAIL
 SF_National_3.1,base-appliances-propane.xml,68.0,1.0,68.0,81.0,81.0,FAIL
 SF_National_3.1,base-appliances-wood.xml,68.0,1.0,68.0,81.0,81.0,FAIL
 SF_National_3.1,base-atticroof-cathedral.xml,66.0,1.0,66.0,74.0,74.0,FAIL
-SF_National_3.1,base-atticroof-conditioned.xml,100.0,1.0,100.0,80.0,80.0,PASS
+SF_National_3.1,base-atticroof-conditioned.xml,67.0,1.0,67.0,80.0,80.0,FAIL
 SF_National_3.1,base-atticroof-flat.xml,67.0,1.0,67.0,73.0,73.0,FAIL
 SF_National_3.1,base-atticroof-radiant-barrier.xml,64.0,1.0,64.0,67.0,67.0,FAIL
 SF_National_3.1,base-atticroof-unvented-insulated-roof.xml,67.0,1.0,67.0,76.0,76.0,FAIL
