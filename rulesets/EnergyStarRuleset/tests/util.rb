@@ -38,8 +38,11 @@ def convert_to_es(hpxml_name, program_version, root_path, tmp_hpxml_path, state_
   # Change program version to ENERGY STAR
   hpxml.header.energystar_calculation_version = program_version
 
-  # Use SFA for all tests, since it runs with both SF and MF versions of ENERGY STAR
-  hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+  if ESConstants.SFVersions.include? program_version
+    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+  else
+    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+  end
 
   # Save new file
   XMLHelper.write_file(hpxml.to_oga, tmp_hpxml_path)

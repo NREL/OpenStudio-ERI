@@ -138,7 +138,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =======================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
+         For ENERGY STAR, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
   .. [#] NumberofBedrooms must also be <= (ConditionedFloorArea-120)/70.
 
 HPXML Weather Station

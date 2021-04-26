@@ -2381,10 +2381,13 @@ def create_sample_hpxmls
 
   # Invalid ENERGY STAR version test files
   es_files = { ESConstants.SFNationalVer3 => HPXML::ResidentialTypeApartment,
+               ESConstants.SFNationalVer3_1 => HPXML::ResidentialTypeApartment,
+               ESConstants.SFFloridaVer3_1 => HPXML::ResidentialTypeApartment,
+               ESConstants.SFOregonWashingtonVer3_2 => HPXML::ResidentialTypeApartment,
+               ESConstants.SFPacificVer3 => HPXML::ResidentialTypeApartment,
                ESConstants.MFNationalVer1_2019 => HPXML::ResidentialTypeSFD,
-               ESConstants.SFFloridaVer3_1 => HPXML::ResidentialTypeSFD,
-               ESConstants.SFOregonWashingtonVer3_2 => HPXML::ResidentialTypeSFD,
-               ESConstants.SFPacificVer3 => HPXML::ResidentialTypeSFD }
+               ESConstants.MFNationalVer1_1_2019 => HPXML::ResidentialTypeSFD,
+               ESConstants.MFOregonWashingtonVer1_2_2019 => HPXML::ResidentialTypeSFA }
   es_files.each do |es_version, bldg_type|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.energystar_calculation_version = es_version
