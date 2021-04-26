@@ -1,5 +1,4 @@
 ES Version,XML,Reference Home ERI,SAF (Size Adjustment Factor),SAF Adjusted ERI Target,Rated Home ERI,Rated Home ERI w/o OPP,ENERGY STAR Certification
-SF_National_3.0,base-pv.xml,76.0,1.0,76.0,80.0,80.0,FAIL
 SF_National_3.0,base.xml,76.0,1.0,76.0,80.0,80.0,FAIL
 SF_National_3.1,base-appliances-dehumidifier-ief-whole-home.xml,65.0,1.0,65.0,67.0,67.0,FAIL
 SF_National_3.1,base-appliances-dehumidifier-multiple.xml,65.0,1.0,65.0,67.0,67.0,FAIL
@@ -150,7 +149,6 @@ SF_Pacific_3.0,base-location-honolulu-hi.xml,61.0,1.0,61.0,75.0,75.0,FAIL
 SF_Florida_3.1,base-location-miami-fl.xml,65.0,1.0,65.0,73.0,73.0,FAIL
 SF_OregonWashington_3.2,base-location-portland-or.xml,67.0,1.0,67.0,77.0,77.0,FAIL
 MF_National_1.0_2019,base-bldgtype-multifamily.xml,73.0,1.0,73.0,64.0,64.0,PASS
-MF_National_1.0_2019,base-bldgtype-single-family-attached.xml,82.0,1.0,82.0,75.0,75.0,PASS
 MF_National_1.1_2019,base-bldgtype-multifamily-adjacent-to-multiple.xml,72.0,1.0,72.0,68.0,68.0,PASS
 MF_National_1.1_2019,base-bldgtype-multifamily-location-portland-or.xml,73.0,1.0,73.0,69.0,69.0,PASS
 MF_National_1.1_2019,base-bldgtype-multifamily-shared-boiler-only-baseboard.xml,72.0,1.0,72.0,66.0,66.0,PASS
@@ -171,5 +169,4 @@ MF_National_1.1_2019,base-bldgtype-multifamily-shared-pv.xml,69.0,1.0,69.0,64.0,
 MF_National_1.1_2019,base-bldgtype-multifamily-shared-water-heater-recirc.xml,64.0,1.0,64.0,62.0,62.0,PASS
 MF_National_1.1_2019,base-bldgtype-multifamily-shared-water-heater.xml,63.0,1.0,63.0,61.0,61.0,PASS
 MF_National_1.1_2019,base-bldgtype-multifamily.xml,69.0,1.0,69.0,64.0,64.0,PASS
-MF_National_1.1_2019,base-bldgtype-single-family-attached.xml,68.0,1.0,68.0,75.0,75.0,FAIL
 MF_OregonWashington_1.2_2019,base-bldgtype-multifamily-location-portland-or.xml,62.0,1.0,62.0,69.0,69.0,FAIL
