@@ -128,7 +128,7 @@ class EnergyStarRuleset
     new_hpxml.air_infiltration_measurements.add(id: "Infiltration_#{infil_unit_of_measure}50",
                                                 house_pressure: 50,
                                                 unit_of_measure: infil_unit_of_measure,
-                                                air_leakage: infil_air_leakage,
+                                                air_leakage: infil_air_leakage.round(1),
                                                 infiltration_volume: @infilvolume)
   end
 
@@ -2038,6 +2038,7 @@ class EnergyStarRuleset
     if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
       heat_pump_backup_fuel = get_default_heat_pump_backup_fuel()
       heat_pump_backup_eff = 1.0 unless heat_pump_backup_fuel.nil?
+      heating_capacity_17F = -1 if heating_capacity_17F.nil? # Use auto-sizing
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = HVAC.get_default_gshp_pump_power()
     end
@@ -2067,6 +2068,7 @@ class EnergyStarRuleset
                              heat_pump_fuel: HPXML::FuelTypeElectricity,
                              cooling_capacity: cooling_capacity,
                              heating_capacity: heating_capacity,
+                             heating_capacity_17F: heating_capacity_17F,
                              backup_heating_fuel: heat_pump_backup_fuel,
                              backup_heating_capacity: backup_heating_capacity,
                              backup_heating_efficiency_percent: heat_pump_backup_eff,
