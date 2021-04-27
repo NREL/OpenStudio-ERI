@@ -850,13 +850,11 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml'
 
     _eri_versions.each do |eri_version|
-      puts eri_version
       hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
       calc_types = [Constants.CalcTypeERIReferenceHome,
                     Constants.CalcTypeERIIndexAdjustmentDesign,
                     Constants.CalcTypeERIIndexAdjustmentReferenceHome]
       calc_types.each do |calc_type|
-        puts calc_type
         hpxml = _test_measure(hpxml_name, calc_type)
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
         _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
@@ -865,7 +863,6 @@ class ERIHVACtest < MiniTest::Test
         _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
       end
       calc_type = Constants.CalcTypeERIRatedHome
-      puts calc_type
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600, fan_coil_watts: 150 }])
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
