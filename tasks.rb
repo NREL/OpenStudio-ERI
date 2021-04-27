@@ -2387,7 +2387,7 @@ def create_sample_hpxmls
                ESConstants.SFPacificVer3_0 => HPXML::ResidentialTypeApartment,
                ESConstants.MFNationalVer1_0 => HPXML::ResidentialTypeSFD,
                ESConstants.MFNationalVer1_1 => HPXML::ResidentialTypeSFD,
-               ESConstants.MFOregonWashingtonVer1_2 => HPXML::ResidentialTypeSFA }
+               ESConstants.MFOregonWashingtonVer1_2 => HPXML::ResidentialTypeSFD }
   es_files.each do |es_version, bldg_type|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.energystar_calculation_version = es_version

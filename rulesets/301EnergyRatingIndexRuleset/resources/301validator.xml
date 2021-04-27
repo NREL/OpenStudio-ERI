@@ -61,14 +61,14 @@
   <sch:pattern>
     <sch:title>[EnergyStar=MFNational]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[contains(text(), "MF_National")]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]]</sch:assert>
+      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
   
   <sch:pattern>
     <sch:title>[EnergyStar=MFOregonWashington]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[contains(text(), "MF_OregonWashington")]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]]</sch:assert>
+      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="OR" or text()="WA"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]</sch:assert>
     </sch:rule>
   </sch:pattern>

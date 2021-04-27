@@ -68,7 +68,6 @@ class EnergyStarRuleset
 
   def self.create_new_hpxml(orig_hpxml)
     new_hpxml = HPXML.new
-    @program_version = orig_hpxml.header.energystar_calculation_version
     @state_code = orig_hpxml.header.state_code
 
     new_hpxml.header.xml_type = orig_hpxml.header.xml_type
@@ -81,6 +80,23 @@ class EnergyStarRuleset
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
+
+    @program_version = orig_hpxml.header.energystar_calculation_version
+    bldg_type = orig_hpxml.building_construction.residential_facility_type
+    if bldg_type == HPXML::ResidentialTypeSFA
+      if @program_version == ESConstants.MFNationalVer1_1
+        # ESRD configured as SF National v3.1
+        @program_version = ESConstants.SFNationalVer3_1
+      elsif @program_version == ESConstants.MFNationalVer1_0
+        # ESRD configured as SF National v3
+        @program_version = ESConstants.SFNationalVer3_0
+      elsif @program_version == ESConstants.MFOregonWashingtonVer1_2
+        # ESRD configured as SF Oregon/Washington v3.2
+        @program_version = ESConstants.SFOregonWashingtonVer3_2
+      elsif @program_version.include? 'MF'
+        fail "Need to handle program version '#{@program_version}'."
+      end
+    end
 
     return new_hpxml
   end

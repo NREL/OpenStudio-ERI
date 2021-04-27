@@ -92,9 +92,9 @@ class EnergyRatingIndexTest < Minitest::Test
         elsif [ESConstants.SFOregonWashingtonVer3_2].include? program_version
           next unless xml.include? 'base-location-portland-or.xml' # One file
         elsif [ESConstants.MFNationalVer1_1].include? program_version
-          next unless xml.include?('base-bldgtype-multifamily') # All MF files
+          next unless xml.include?('base-bldgtype-multifamily') || xml.include?('base-bldgtype-single-family-attached') # All MF/SFA files
         elsif [ESConstants.MFNationalVer1_0].include? program_version
-          next unless xml.include?('base-bldgtype-multifamily.xml') # One file
+          next unless xml.include?('base-bldgtype-multifamily.xml') || xml.include?('base-bldgtype-single-family-attached.xml') # Two files
         elsif [ESConstants.MFOregonWashingtonVer1_2].include? program_version
           next unless xml.include?('base-bldgtype-multifamily-location-portland-or.xml') # One file
         else
@@ -176,9 +176,9 @@ class EnergyRatingIndexTest < Minitest::Test
                                                                           'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_OregonWashington")]]'],
                             'energy-star-SF_Pacific_3.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
                                                                  'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Pacific")]]'],
-                            'energy-star-MF_National_1.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
-                            'energy-star-MF_National_1.1.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
-                            'energy-star-MF_OregonWashington_1.2.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]',
+                            'energy-star-MF_National_1.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_National_1.1.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_OregonWashington_1.2.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]',
                                                                           'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
 
     Dir["#{xmldir}/*.xml"].sort.each do |xml|

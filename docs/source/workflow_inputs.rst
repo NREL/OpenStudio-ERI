@@ -138,7 +138,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =======================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
+         For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
   .. [#] NumberofBedrooms must also be <= (ConditionedFloorArea-120)/70.
 
 HPXML Weather Station
@@ -487,7 +487,7 @@ Each window or glass door area is entered as an ``/HPXML/Building/BuildingDetail
   .. [#] FractionOperable reflects whether the windows are operable (can be opened), not how they are used by the occupants.
          If a ``Window`` represents a single window, the value should be 0 or 1.
          If a ``Window`` represents multiple windows (e.g., 4), the value should be between 0 and 1 (e.g., 0, 0.25, 0.5, 0.75, or 1).
-  .. [#] PerformanceClass choices "residential" (e.g., Class R) or "architectural" (e.g., Class AW).
+  .. [#] PerformanceClass choices are "residential" (e.g., Class R) or "architectural" (e.g., Class AW).
   .. [#] AttachedToWall must reference a ``Wall`` or ``FoundationWall``.
 
 If overhangs are specified, additional information is entered in ``Overhangs``.

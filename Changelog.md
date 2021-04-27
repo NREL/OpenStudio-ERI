@@ -6,7 +6,7 @@ __New Features__
   - **Breaking change**: `Building/Site/Address/StateCode` (values like "CO" or "FL") now required.
   - **Breaking change**: For windows, `Window/PerformanceClass` (values of "residential" or "architectural") now required.
   - **Breaking change**: For shared boilers, `HeatingSystem/HeatingCapacity`, `HeatingSystem/extension/SharedLoopWatts`, and `HeatingSystem/extension/FanCoilWatts` (fan coil only) now required.
-  - **Breaking change**: For air distribution systems, `AirDistribution/NumberofReturnRegisters` now required.
+  - **Breaking change**: For air distribution systems with ducts, `AirDistribution/NumberofReturnRegisters` now required.
   - **Breaking change**: For shared recirculation hot water systems, `HotWaterDistribution/extension/SharedRecirculation/PumpPower` now required.
   - Optional `extension/SharedLoopMotorEfficiency` for shared boilers, chillers, cooling towers, and GSHPs w/ shared loop and `extension/SharedRecirculation/MotorEfficiency` for shared recirculation hot water systems.
 - **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
