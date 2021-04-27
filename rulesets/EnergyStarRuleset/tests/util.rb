@@ -39,7 +39,7 @@ def convert_to_es(hpxml_name, program_version, root_path, tmp_hpxml_path, state_
   hpxml.header.energystar_calculation_version = program_version
 
   if ESConstants.SFVersions.include? program_version
-    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFD
+    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
   else
     hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
   end
