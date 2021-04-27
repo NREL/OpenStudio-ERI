@@ -11241,7 +11241,7 @@ WaterHeater:Mixed,
   2,                                      !- Deadband Temperature Difference {deltaC}
   99,                                     !- Maximum Temperature Limit {C}
   Cycle,                                  !- Heater Control Type
-  5500.06477392209,                       !- Heater Maximum Capacity {W}
+  5500,                                   !- Heater Maximum Capacity {W}
   0,                                      !- Heater Minimum Capacity {W}
   0,                                      !- Heater Ignition Minimum Flow Rate {m3/s}
   0,                                      !- Heater Ignition Delay {s}

@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.19 18:14,
+Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.27 09:33,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
@@ -140,4 +140,4 @@ Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.19 18:14,
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 61 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  5.54sec
+   ************* EnergyPlus Completed Successfully-- 61 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  5.91sec

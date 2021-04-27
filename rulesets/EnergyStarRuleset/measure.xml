@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>7f5494e8-0ac8-4ec7-852b-b8e61bbdfdbc</version_id>
-  <version_modified>20210426T162402Z</version_modified>
+  <version_id>1b62f87b-ece8-4c79-955c-229ef00f3fae</version_id>
+  <version_modified>20210427T152529Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -90,28 +90,10 @@
   </attributes>
   <files>
     <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>DDAB5436</checksum>
-    </file>
-    <file>
-      <filename>test_es_util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>49639B6B</checksum>
-    </file>
-    <file>
       <filename>test_es_misc.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>567A39AD</checksum>
-    </file>
-    <file>
-      <filename>test_es_lighting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>3AD1DD6D</checksum>
     </file>
     <file>
       <filename>test_es_pv.rb</filename>
@@ -126,28 +108,10 @@
       <checksum>9FEB3750</checksum>
     </file>
     <file>
-      <filename>test_es_ventilation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D57AB727</checksum>
-    </file>
-    <file>
       <filename>test_es_appliances.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>37D78395</checksum>
-    </file>
-    <file>
-      <filename>util.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>C0522B6B</checksum>
-    </file>
-    <file>
-      <filename>test_es_water_heating.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>B4C17AA6</checksum>
     </file>
     <file>
       <version>
@@ -161,28 +125,64 @@
       <checksum>A1B009CD</checksum>
     </file>
     <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>EA2BA100</checksum>
+    </file>
+    <file>
+      <filename>test_es_util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>50A17C27</checksum>
+    </file>
+    <file>
+      <filename>test_es_lighting.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>BBC0B2C6</checksum>
+    </file>
+    <file>
+      <filename>test_es_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>26342B84</checksum>
+    </file>
+    <file>
+      <filename>util.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>8B5935CF</checksum>
+    </file>
+    <file>
+      <filename>test_es_water_heating.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>55764DAE</checksum>
+    </file>
+    <file>
       <filename>test_es_hvac.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>AC241595</checksum>
+      <checksum>7DBB4DCA</checksum>
     </file>
     <file>
       <filename>EnergyStarRuleset.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>0850BD86</checksum>
+      <checksum>42EEE0F5</checksum>
     </file>
     <file>
       <filename>test_es_enclosure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>162B0CD5</checksum>
+      <checksum>E5E0CF7A</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>D7AEC1C9</checksum>
+      <checksum>FF3BA16A</checksum>
     </file>
   </files>
 </measure>

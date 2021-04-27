@@ -272,11 +272,11 @@ def set_hpxml_header(hpxml_file, hpxml)
     if hpxml_file.include?('SFv3_1')
       hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_1
     elsif hpxml_file.include?('SFv3_0')
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3
+      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_0
     elsif hpxml_file.include?('MFv1_1')
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1_2019
+      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1
     elsif hpxml_file.include?('MFv1_0')
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2019
+      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_0
     end
     hpxml.header.state_code = File.basename(hpxml_file)[11..12]
   end
@@ -2298,11 +2298,11 @@ def create_sample_hpxmls
     # Handle extra inputs for ENERGY STAR
 
     if hpxml_path.include? 'base-bldgtype-multifamily'
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1_2019
+      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1
     elsif hpxml.header.state_code == 'FL'
       hpxml.header.energystar_calculation_version = ESConstants.SFFloridaVer3_1
     elsif hpxml.header.state_code == 'HI'
-      hpxml.header.energystar_calculation_version = ESConstants.SFPacificVer3
+      hpxml.header.energystar_calculation_version = ESConstants.SFPacificVer3_0
     elsif hpxml.header.state_code == 'OR'
       hpxml.header.energystar_calculation_version = ESConstants.SFOregonWashingtonVer3_2
     else
@@ -2380,14 +2380,14 @@ def create_sample_hpxmls
   end
 
   # Invalid ENERGY STAR version test files
-  es_files = { ESConstants.SFNationalVer3 => HPXML::ResidentialTypeApartment,
+  es_files = { ESConstants.SFNationalVer3_0 => HPXML::ResidentialTypeApartment,
                ESConstants.SFNationalVer3_1 => HPXML::ResidentialTypeApartment,
                ESConstants.SFFloridaVer3_1 => HPXML::ResidentialTypeApartment,
                ESConstants.SFOregonWashingtonVer3_2 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFPacificVer3 => HPXML::ResidentialTypeApartment,
-               ESConstants.MFNationalVer1_2019 => HPXML::ResidentialTypeSFD,
-               ESConstants.MFNationalVer1_1_2019 => HPXML::ResidentialTypeSFD,
-               ESConstants.MFOregonWashingtonVer1_2_2019 => HPXML::ResidentialTypeSFA }
+               ESConstants.SFPacificVer3_0 => HPXML::ResidentialTypeApartment,
+               ESConstants.MFNationalVer1_0 => HPXML::ResidentialTypeSFD,
+               ESConstants.MFNationalVer1_1 => HPXML::ResidentialTypeSFD,
+               ESConstants.MFOregonWashingtonVer1_2 => HPXML::ResidentialTypeSFA }
   es_files.each do |es_version, bldg_type|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.energystar_calculation_version = es_version
@@ -2398,7 +2398,7 @@ def create_sample_hpxmls
 
   # ENERGY STAR Oregon/Washington MF file
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-multifamily.xml')
-  hpxml.header.energystar_calculation_version = ESConstants.MFOregonWashingtonVer1_2_2019
+  hpxml.header.energystar_calculation_version = ESConstants.MFOregonWashingtonVer1_2
   hpxml.climate_and_risk_zones.iecc_zone = '4C'
   hpxml.climate_and_risk_zones.weather_station_name = 'Portland, OR'
   hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_OR_Portland.Intl.AP.726980_TMY3.epw'

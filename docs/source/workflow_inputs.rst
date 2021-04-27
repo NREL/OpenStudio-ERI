@@ -72,7 +72,7 @@ The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/e
   ``Version``  string             See [#]_     No [#]_            Version of ENERGY STAR program
   ===========  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0_2019", "MF_National_1.1_2019", or "MF_OregonWashington_1.2_2019".
+  .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
   .. [#] Version only required to run ENERGY STAR calculation.
 
 HPXML Building Summary

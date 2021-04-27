@@ -83,19 +83,19 @@ class EnergyRatingIndexTest < Minitest::Test
 
         if [ESConstants.SFNationalVer3_1].include? program_version
           # Run all files (MF files converted to SFA below)
-        elsif [ESConstants.SFNationalVer3].include? program_version
+        elsif [ESConstants.SFNationalVer3_0].include? program_version
           next unless xml.include?('base.xml') # One file
-        elsif [ESConstants.SFPacificVer3].include? program_version
+        elsif [ESConstants.SFPacificVer3_0].include? program_version
           next unless xml.include? 'base-location-honolulu-hi.xml' # One file
         elsif [ESConstants.SFFloridaVer3_1].include? program_version
           next unless xml.include? 'base-location-miami-fl.xml' # One file
         elsif [ESConstants.SFOregonWashingtonVer3_2].include? program_version
           next unless xml.include? 'base-location-portland-or.xml' # One file
-        elsif [ESConstants.MFNationalVer1_1_2019].include? program_version
+        elsif [ESConstants.MFNationalVer1_1].include? program_version
           next unless xml.include?('base-bldgtype-multifamily') # All MF files
-        elsif [ESConstants.MFNationalVer1_2019].include? program_version
+        elsif [ESConstants.MFNationalVer1_0].include? program_version
           next unless xml.include?('base-bldgtype-multifamily.xml') # One file
-        elsif [ESConstants.MFOregonWashingtonVer1_2_2019].include? program_version
+        elsif [ESConstants.MFOregonWashingtonVer1_2].include? program_version
           next unless xml.include?('base-bldgtype-multifamily-location-portland-or.xml') # One file
         else
           fail "Unhandled ENERGY STAR version: #{program_version}."
@@ -106,7 +106,7 @@ class EnergyRatingIndexTest < Minitest::Test
         # Create derivative files for ES testing
         hpxml = HPXML.new(hpxml_path: xml)
         hpxml.header.energystar_calculation_version = program_version
-        if program_version == ESConstants.MFOregonWashingtonVer1_2_2019
+        if program_version == ESConstants.MFOregonWashingtonVer1_2
           hpxml.header.state_code = 'OR'
         end
         if (program_version == ESConstants.SFNationalVer3_1) && (hpxml.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment)
@@ -176,10 +176,10 @@ class EnergyRatingIndexTest < Minitest::Test
                                                                           'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_OregonWashington")]]'],
                             'energy-star-SF_Pacific_3.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
                                                                  'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Pacific")]]'],
-                            'energy-star-MF_National_1.0_2019.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
-                            'energy-star-MF_National_1.1_2019.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
-                            'energy-star-MF_OregonWashington_1.2_2019.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]',
-                                                                               'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
+                            'energy-star-MF_National_1.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_National_1.1.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_OregonWashington_1.2.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]',
+                                                                          'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
 
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next unless xml.include? 'energy-star'

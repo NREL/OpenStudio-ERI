@@ -3,7 +3,7 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2021-04-19T18:14:19-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2021-04-27T09:33:34-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -106,7 +106,7 @@
             </AtticType>
             <VentilationRate>
               <UnitofMeasure>SLA</UnitofMeasure>
-              <Value>0.003333</Value>
+              <Value dataSource='software'>0.003333</Value>
             </VentilationRate>
           </Attic>
         </Attics>
@@ -361,7 +361,7 @@
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity dataSource='software'>13444.0</CoolingCapacity>
-              <CompressorType>single stage</CompressorType>
+              <CompressorType dataSource='software'>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -490,7 +490,7 @@
             <PerformanceAdjustment>1.0</PerformanceAdjustment>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
+            <HeatingCapacity>18766.77898220368</HeatingCapacity>
             <EnergyFactor>0.93</EnergyFactor>
             <RecoveryEfficiency>0.98</RecoveryEfficiency>
             <HotWaterTemperature>125.0</HotWaterTemperature>

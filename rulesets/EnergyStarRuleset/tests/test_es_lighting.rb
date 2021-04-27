@@ -21,7 +21,7 @@ class EnergyStarLightingTest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
       hpxml = _test_measure()
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
         _check_lighting(hpxml, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
         _check_lighting(hpxml, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)

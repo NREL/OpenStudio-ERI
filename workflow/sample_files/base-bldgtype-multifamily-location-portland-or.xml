@@ -12,7 +12,7 @@
         <Version>latest</Version>
       </ERICalculation>
       <EnergyStarCalculation>
-        <Version>MF_OregonWashington_1.2_2019</Version>
+        <Version>MF_OregonWashington_1.2</Version>
       </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>

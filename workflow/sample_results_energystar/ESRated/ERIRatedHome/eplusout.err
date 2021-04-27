@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.19 18:14,
+Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.27 09:33,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
@@ -123,11 +123,6 @@ Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.19 18:14,
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC AND FURNACE CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range at 6.776E-005 m3/s/W.
-   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=05/10 12:00 - 13:00
-   **   ~~~   ** Expected range for VolumeFlowPerRatedTotalCapacity=[2.684E-005--6.713E-005]
-   **   ~~~   ** Possible causes include inconsistent air flow rates in system components,
-   **   ~~~   ** or variable air volume [VAV] system using incorrect coil type.
    ************* Simulation Error Summary *************
    ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
    **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
@@ -216,16 +211,6 @@ Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.19 18:14,
    ************* There are 2 unused week schedules in input.
    ************* There are 4 unused day schedules in input.
    ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
-   *************
-   ************* ===== Recurring Error Summary =====
-   ************* The following recurring error messages occurred.
-   *************
-   *************  ** Warning ** CalcDoe2DXCoil: Coil:Cooling:DX:SingleSpeed="CENTRAL AC AND FURNACE CLG COIL" - Air volume flow rate per watt of rated total cooling capacity is out of range error continues...
-   *************  **   ~~~   **   This error occurred 13448 total times;
-   *************  **   ~~~   **   during Warmup 0 times;
-   *************  **   ~~~   **   during Sizing 0 times.
-   *************  **   ~~~   **   Max=7.061073E-005  Min=6.767819E-005
-   *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 13559 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  9.59sec
+   ************* EnergyPlus Completed Successfully-- 111 Warning; 0 Severe Errors; Elapsed Time=00hr 00min 10.69sec

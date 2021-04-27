@@ -18,18 +18,18 @@ class EnergyStarVentTest < MiniTest::Test
   end
 
   def cfm_per_watt(es_version)
-    if [ESConstants.SFNationalVer3, ESConstants.MFNationalVer1_2019, ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? es_version
+    if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
       return 2.2
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1_2019, ESConstants.MFOregonWashingtonVer1_2_2019].include? es_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? es_version
       return 2.8
     end
   end
 
   def fan_type(es_version, hpxml)
     iecc_zone = hpxml.climate_and_risk_zones.iecc_zone
-    if [ESConstants.SFPacificVer3, ESConstants.SFFloridaVer3_1].include? es_version
+    if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
       return HPXML::MechVentTypeSupply
-    elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2_2019].include? es_version
+    elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
       return HPXML::MechVentTypeExhaust
     else
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone

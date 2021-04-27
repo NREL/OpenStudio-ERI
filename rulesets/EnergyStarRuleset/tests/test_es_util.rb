@@ -23,7 +23,7 @@ class EnergyStarUtilTest < MiniTest::Test
     hpxml.building_construction.conditioned_floor_area *= 2.0
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 0.95)
       else
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
@@ -37,7 +37,7 @@ class EnergyStarUtilTest < MiniTest::Test
     hpxml.building_construction.number_of_bedrooms = 2
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 0.877)
       else
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
@@ -51,7 +51,7 @@ class EnergyStarUtilTest < MiniTest::Test
     hpxml.building_construction.number_of_bedrooms = 5
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
       else
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
@@ -63,7 +63,7 @@ class EnergyStarUtilTest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', 'base.xml'))
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
       else
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
@@ -78,7 +78,7 @@ class EnergyStarUtilTest < MiniTest::Test
     end
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 0.95)
       else
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
@@ -90,7 +90,7 @@ class EnergyStarUtilTest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', 'base-bldgtype-single-family-attached.xml'))
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
       else
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
@@ -102,7 +102,7 @@ class EnergyStarUtilTest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', 'base-bldgtype-multifamily.xml'))
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
       else
         _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
@@ -112,7 +112,7 @@ class EnergyStarUtilTest < MiniTest::Test
 
   def test_opp_limit
     ESConstants.AllVersions.each do |es_version|
-      if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
         _check_opp_limit(calc_opp_eri_limit(94.5, 0.95, es_version), 5.0)
       else
         _check_opp_limit(calc_opp_eri_limit(94.5, 0.95, es_version), 0.0)

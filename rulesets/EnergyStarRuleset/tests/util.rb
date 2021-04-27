@@ -7,7 +7,7 @@ def convert_to_es(hpxml_name, program_version, root_path, tmp_hpxml_path, state_
   hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', hpxml_name))
 
   # Change weather station for regional ENERGY STAR
-  if [ESConstants.SFPacificVer3].include? program_version
+  if [ESConstants.SFPacificVer3_0].include? program_version
     if ['HI'].include?(state_code) || state_code.nil? # if state_code isn't provided, default to HI
       hpxml.climate_and_risk_zones.iecc_zone = '1A'
       hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
@@ -27,7 +27,7 @@ def convert_to_es(hpxml_name, program_version, root_path, tmp_hpxml_path, state_
     hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
     hpxml.climate_and_risk_zones.weather_station_wmo = 722020
     hpxml.header.state_code = 'FL'
-  elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2_2019].include? program_version
+  elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
     hpxml.climate_and_risk_zones.iecc_zone = '4C'
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Portland, OR'

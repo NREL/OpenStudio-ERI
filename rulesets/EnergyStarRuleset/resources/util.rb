@@ -3,7 +3,7 @@
 def calc_energystar_saf(results, es_version, hpxml_obj_or_path)
   # Calculates the ENERGY STAR Size Adjustment Factor
 
-  if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+  if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
     if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeSFA].include? results[:rated_facility_type]
       # Calculate the Energy Star ERI Target for all single-family detached homes, townhomes, rowhomes, duplexes, triplexes, and quadplexes.
       cfa = results[:rated_cfa]
@@ -63,7 +63,7 @@ def calc_opp_eri_limit(esrd_eri, saf, es_version)
   # Calculates the limit, in ERI points, for On-site Power Production per
   # ENERGY STAR Program Requirements
 
-  if [ESConstants.SFNationalVer3, ESConstants.SFPacificVer3].include? es_version
+  if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
     # on-site power generation may only be used to meet the ENERGY STAR ERI Target for homes
     # that are larger than the Benchmark Home and only for the incremental change in the ENERGY
     # STAR ERI Target caused by the Size Adjustment Factor

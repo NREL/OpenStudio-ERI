@@ -12,7 +12,7 @@
         <Version>latest</Version>
       </ERICalculation>
       <EnergyStarCalculation>
-        <Version>MF_National_1.1_2019</Version>
+        <Version>MF_OregonWashington_1.2</Version>
       </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
@@ -43,7 +43,7 @@
           <NumberofResidents>3.0</NumberofResidents>
         </BuildingOccupancy>
         <BuildingConstruction>
-          <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
+          <ResidentialFacilityType>single-family attached</ResidentialFacilityType>
           <NumberofConditionedFloors>2.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>

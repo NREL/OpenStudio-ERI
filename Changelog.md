@@ -1,6 +1,14 @@
 ## OpenStudio-ERI v1.2.0 (pending)
 
 __New Features__
+- Adds ENERGY STAR ERI Target workflow for new construction in accordance with ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path.
+  - Optional `SoftwareInfo/extension/EnergyStarCalculation/Version` (values like "SF_National_3.1"; required if running ENERGY STAR calculation).
+  - **Breaking change**: `Building/Site/Address/StateCode` (values like "CO" or "FL") now required.
+  - **Breaking change**: For windows, `Window/PerformanceClass` (values of "residential" or "architectural") now required.
+  - **Breaking change**: For shared boilers, `HeatingSystem/HeatingCapacity`, `HeatingSystem/extension/SharedLoopWatts`, and `HeatingSystem/extension/FanCoilWatts` (fan coil only) now required.
+  - **Breaking change**: For air distribution systems, `AirDistribution/NumberofReturnRegisters` now required.
+  - **Breaking change**: For shared recirculation hot water systems, `HotWaterDistribution/extension/SharedRecirculation/PumpPower` now required.
+  - Optional `extension/SharedLoopMotorEfficiency` for shared boilers, chillers, cooling towers, and GSHPs w/ shared loop and `extension/SharedRecirculation/MotorEfficiency` for shared recirculation hot water systems.
 - **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
 - **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
 - Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems.
