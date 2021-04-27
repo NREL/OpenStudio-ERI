@@ -13,6 +13,8 @@ __New Features__
 - **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
 - Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems.
 - Switches room air conditioner model to use Cutler performance curves.
+- Shared systems now preserved in the Rated Home (as opposed to configuring, e.g., the equivalent central AC w/ SEEReq for a chiller).
+- Water loop heat pumps no longer get added electric backup heating in the Rated Home.
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
