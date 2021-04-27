@@ -6,6 +6,7 @@ require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require 'csv'
 require 'oga'
+require_relative '../../rulesets/EnergyStarRuleset/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
@@ -33,8 +34,10 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      hpxmls, csvs = _run_workflow(xml, test_name)
+      rundir, hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
+
+      _rm_path(rundir)
     end
     assert(all_results.size > 0)
 
@@ -60,14 +63,92 @@ class EnergyRatingIndexTest < Minitest::Test
     # Verify that REUL Heating/Cooling are identical across HVAC types
     _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Heating (MBtu)')
     _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Cooling (MBtu)')
+  end
 
-    if ENV['CI']
-      FileUtils.rm_r(File.join(@test_files_dir, test_name)) # Cleanup to prevent space issues on the CI
+  def test_sample_files_energystar
+    test_name = 'sample_files_energystar'
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
+    File.delete(test_results_csv) if File.exist? test_results_csv
+
+    all_results = {}
+
+    ESConstants.AllVersions.each do |program_version|
+      # Run simulations
+      version_results = {}
+      files = 'base*.xml'
+      xmldir = "#{File.dirname(__FILE__)}/../sample_files"
+      Dir["#{xmldir}/#{files}"].sort.each do |xml|
+        next unless File.exist?(xml)
+        next if xml.include? 'base-version'
+
+        if [ESConstants.SFNationalVer3_1].include? program_version
+          # Run all files (MF files converted to SFA below)
+        elsif [ESConstants.SFNationalVer3_0].include? program_version
+          next unless xml.include?('base.xml') # One file
+        elsif [ESConstants.SFPacificVer3_0].include? program_version
+          next unless xml.include? 'base-location-honolulu-hi.xml' # One file
+        elsif [ESConstants.SFFloridaVer3_1].include? program_version
+          next unless xml.include? 'base-location-miami-fl.xml' # One file
+        elsif [ESConstants.SFOregonWashingtonVer3_2].include? program_version
+          next unless xml.include? 'base-location-portland-or.xml' # One file
+        elsif [ESConstants.MFNationalVer1_1].include? program_version
+          next unless xml.include?('base-bldgtype-multifamily') || xml.include?('base-bldgtype-single-family-attached') # All MF/SFA files
+        elsif [ESConstants.MFNationalVer1_0].include? program_version
+          next unless xml.include?('base-bldgtype-multifamily.xml') || xml.include?('base-bldgtype-single-family-attached.xml') # Two files
+        elsif [ESConstants.MFOregonWashingtonVer1_2].include? program_version
+          next unless xml.include?('base-bldgtype-multifamily-location-portland-or.xml') # One file
+        else
+          fail "Unhandled ENERGY STAR version: #{program_version}."
+        end
+
+        puts "Running [#{program_version}] #{File.basename(xml)}..."
+
+        # Create derivative files for ES testing
+        hpxml = HPXML.new(hpxml_path: xml)
+        hpxml.header.energystar_calculation_version = program_version
+        if program_version == ESConstants.MFOregonWashingtonVer1_2
+          hpxml.header.state_code = 'OR'
+        end
+        if (program_version == ESConstants.SFNationalVer3_1) && (hpxml.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment)
+          # Set HPXML file to SFA so that we can test it
+          hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+        end
+
+        es_xml = File.absolute_path(File.join(xmldir, 'tmp.xml'))
+        XMLHelper.write_file(hpxml.to_oga, es_xml)
+
+        rundir, hpxmls, csvs = _run_workflow(es_xml, test_name, run_energystar: true)
+        key = "[#{program_version}] #{File.basename(xml)}"
+        version_results[key] = _get_csv_results(csvs[:es_results])
+
+        File.delete(es_xml)
+
+        _rm_path(rundir)
+      end
+      assert(version_results.size > 0) # Ensure every ES version was tested against at least one sample file
+      all_results.merge!(version_results)
     end
+
+    # Write results to csv
+    keys = all_results.values[0].keys
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['[Version] XML'] + keys
+      all_results.each_with_index do |(xml_key, results), i|
+        csv_line = [xml_key]
+        keys.each do |key|
+          csv_line << results[key]
+        end
+        csv << csv_line
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
   end
 
   def test_sample_files_invalid
+    xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     test_name = 'invalid_files'
+
+    # Test against ERI workflow
     expected_error_msgs = { 'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
                             'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
                             'missing-elements.xml' => ['Expected 1 element(s) for xpath: NumberofConditionedFloors [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]',
@@ -79,9 +160,32 @@ class EnergyRatingIndexTest < Minitest::Test
                             'num-bedrooms-exceeds-limit.xml' => ['Expected NumberofBedrooms to be less than or equal to (ConditionedFloorArea-120)/70 [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
                             'enclosure-floor-area-exceeds-cfa.xml' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas. [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'] }
 
-    xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _run_workflow(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
+      next if xml.include? 'energy-star'
+
+      rundir, hpxmls, csvs = _run_workflow(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
+      _rm_path(rundir)
+    end
+
+    # Test against ES workflow
+    expected_error_msgs = { 'energy-star-SF_Florida_3.1.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                                 'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Florida")]]'],
+                            'energy-star-SF_National_3.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
+                            'energy-star-SF_National_3.1.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
+                            'energy-star-SF_OregonWashington_3.2.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                                          'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_OregonWashington")]]'],
+                            'energy-star-SF_Pacific_3.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                                 'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Pacific")]]'],
+                            'energy-star-MF_National_1.0.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_National_1.1.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_OregonWashington_1.2.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]',
+                                                                          'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
+
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      next unless xml.include? 'energy-star'
+
+      rundir, hpxmls, csvs = _run_workflow(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)], run_energystar: true)
+      _rm_path(rundir)
     end
   end
 
@@ -103,9 +207,17 @@ class EnergyRatingIndexTest < Minitest::Test
   def test_hourly_output
     test_name = 'hourly_output'
 
-    # Run simulation
+    # Run ERI workflow
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    hpxmls, csvs = _run_workflow(xml, test_name, hourly_output: true)
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name, hourly_output: true)
+
+    # Check for hourly output files
+    assert(File.exist?(csvs[:rated_hourly_results]))
+    assert(File.exist?(csvs[:ref_hourly_results]))
+
+    # Run ENERGY STAR workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name, hourly_output: true, run_energystar: true)
 
     # Check for hourly output files
     assert(File.exist?(csvs[:rated_hourly_results]))
@@ -117,7 +229,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run simulation
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    hpxmls, csvs = _run_workflow(xml, test_name, component_loads: true)
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name, component_loads: true)
 
     # Check for presence of component loads
     [csvs[:rated_results], csvs[:ref_results]].each do |csv_output_path|
@@ -402,6 +514,46 @@ class EnergyRatingIndexTest < Minitest::Test
     _check_hot_water_301_2014_pre_addendum_a(dhw_energy)
   end
 
+  def test_epa
+    test_name = 'EPA_Tests'
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
+    File.delete(test_results_csv) if File.exist? test_results_csv
+
+    # Run simulations
+    xmldir = File.join(File.dirname(__FILE__), 'EPA_Tests')
+    all_results = {}
+    Dir["#{xmldir}/**/*.xml"].sort.each do |xml|
+      rundir, hpxmls, csvs = _run_workflow(xml, test_name, run_energystar: true)
+      ref_results = _get_csv_results(csvs[:ref_eri_results])
+      rated_results = _get_csv_results(csvs[:rated_eri_results])
+
+      all_results[xml] = {}
+      all_results[xml]['Reference Home ERI'] = ref_results['ERI']
+      all_results[xml]['Rated Home ERI'] = rated_results['ERI']
+    end
+    assert(all_results.size > 0)
+
+    # Write results to csv
+    keys = all_results.values[0].keys
+    CSV.open(test_results_csv, 'w') do |csv|
+      csv << ['[Version] XML'] + keys
+      all_results.each_with_index do |(xml, results), i|
+        es_version = xml.split('/')[-2]
+        csv_line = ["[#{es_version}] #{File.basename(xml)}"]
+        keys.each do |key|
+          csv_line << results[key]
+        end
+        csv << csv_line
+      end
+    end
+    puts "Wrote results to #{test_results_csv}."
+
+    # Check ERI scores are equal for manually configured test homes (from EPA) and auto-generated ESRDs
+    all_results.each do |xml, results|
+      assert_equal(results['Reference Home ERI'], results['Rated Home ERI'])
+    end
+  end
+
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
     command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.absolute_path(__FILE__)} --name=foo"
@@ -498,7 +650,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
       XMLHelper.write_file(new_hpxml.to_oga, out_xml)
 
-      hpxmls, csvs = _run_workflow(out_xml, test_name)
+      rundir, hpxmls, csvs = _run_workflow(out_xml, test_name)
       worksheet_results = _get_csv_results(csvs[:eri_worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']
     end
@@ -528,7 +680,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      hpxmls, csvs = _run_workflow(xml, test_name)
+      rundir, hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:eri_results])
       all_results[xml].delete('EC_x Dehumid (MBtu)') # Not yet included in RESNET spreadsheet
     end
@@ -578,7 +730,7 @@ class EnergyRatingIndexTest < Minitest::Test
     XMLHelper.write_file(hpxml, out_xml)
   end
 
-  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false, component_loads: false)
+  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false, run_energystar: false, component_loads: false)
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -592,47 +744,82 @@ class EnergyRatingIndexTest < Minitest::Test
       comploads = ' --add-component-loads'
     end
 
-    # Run energy_rating_index workflow
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '../energy_rating_index.rb')}\" -x #{xml}#{hourly}#{comploads} -o #{rundir} --debug"
+    # Run workflow
+    if run_energystar
+      workflow_rb = 'energy_star.rb'
+    else
+      workflow_rb = 'energy_rating_index.rb'
+    end
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{hourly}#{comploads} -o #{rundir} --debug"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
 
-    using_iaf = false
-    File.open(xml, 'r').each do |line|
-      next unless line.strip.downcase.start_with? '<version>'
-
-      if line.include?('latest') || line.include?('2014ADE')
-        using_iaf = true
-      end
-      break
-    end
-
     hpxmls = {}
-    hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
-    hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
     csvs = {}
-    csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
-    csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
-    csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
-    csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
-    if using_iaf
-      csvs[:iad_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentDesign.csv')
-      csvs[:iadref_results] = File.join(rundir, 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+    if not run_energystar
+      hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
+      hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
+      csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
+      csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
+      csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
+      csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
+      if hourly_output
+        csvs[:rated_hourly_results] = File.join(rundir, 'results', 'ERIRatedHome_Hourly.csv')
+        csvs[:ref_hourly_results] = File.join(rundir, 'results', 'ERIReferenceHome_Hourly.csv')
+      end
+      log_dirs = [Constants.CalcTypeERIRatedHome,
+                  Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome].map { |d| d.gsub(' ', '') }
+    else
+      hpxmls[:ref] = File.join(rundir, 'results', 'ESReference.xml')
+      hpxmls[:rated] = File.join(rundir, 'results', 'ESRated.xml')
+      hpxmls[:ref_ref] = File.join(rundir, 'ESReference', 'results', 'ERIReferenceHome.xml')
+      hpxmls[:ref_rated] = File.join(rundir, 'ESReference', 'results', 'ERIRatedHome.xml')
+      hpxmls[:ref_iad] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentDesign.xml')
+      hpxmls[:ref_iadref] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentReferenceHome.xml')
+      hpxmls[:rated_ref] = File.join(rundir, 'ESRated', 'results', 'ERIReferenceHome.xml')
+      hpxmls[:rated_rated] = File.join(rundir, 'ESRated', 'results', 'ERIRatedHome.xml')
+      hpxmls[:rated_iad] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentDesign.xml')
+      hpxmls[:rated_iadref] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentReferenceHome.xml')
+      csvs[:es_results] = File.join(rundir, 'results', 'ES_Results.csv')
+      csvs[:ref_eri_results] = File.join(rundir, 'ESReference', 'results', 'ERI_Results.csv')
+      csvs[:ref_eri_worksheet] = File.join(rundir, 'ESReference', 'results', 'ERI_Worksheet.csv')
+      csvs[:ref_rated_results] = File.join(rundir, 'ESReference', 'results', 'ERIRatedHome.csv')
+      csvs[:ref_ref_results] = File.join(rundir, 'ESReference', 'results', 'ERIReferenceHome.csv')
+      csvs[:ref_iad_results] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentDesign.csv')
+      csvs[:ref_iadref_results] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+      csvs[:rated_eri_results] = File.join(rundir, 'ESRated', 'results', 'ERI_Results.csv')
+      csvs[:rated_eri_worksheet] = File.join(rundir, 'ESRated', 'results', 'ERI_Worksheet.csv')
+      csvs[:rated_rated_results] = File.join(rundir, 'ESRated', 'results', 'ERIRatedHome.csv')
+      csvs[:rated_ref_results] = File.join(rundir, 'ESRated', 'results', 'ERIReferenceHome.csv')
+      csvs[:rated_iad_results] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentDesign.csv')
+      csvs[:rated_iadref_results] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentReferenceHome.csv')
+      if hourly_output
+        csvs[:rated_hourly_results] = File.join(rundir, 'ESRated', 'results', 'ERIRatedHome_Hourly.csv')
+        csvs[:ref_hourly_results] = File.join(rundir, 'ESReference', 'results', 'ERIReferenceHome_Hourly.csv')
+      end
+      log_dirs = [File.join('ESRated', Constants.CalcTypeERIRatedHome),
+                  File.join('ESRated', Constants.CalcTypeERIReferenceHome),
+                  File.join('ESRated', Constants.CalcTypeERIIndexAdjustmentDesign),
+                  File.join('ESRated', Constants.CalcTypeERIIndexAdjustmentReferenceHome),
+                  File.join('ESReference', Constants.CalcTypeERIRatedHome),
+                  File.join('ESReference', Constants.CalcTypeERIReferenceHome),
+                  File.join('ESReference', Constants.CalcTypeERIIndexAdjustmentDesign),
+                  File.join('ESReference', Constants.CalcTypeERIIndexAdjustmentReferenceHome)].map { |d| d.gsub(' ', '') }
+      log_dirs << 'results'
     end
-    if hourly_output
-      csvs[:rated_hourly_results] = File.join(rundir, 'results', 'ERIRatedHome_Hourly.csv')
-      csvs[:ref_hourly_results] = File.join(rundir, 'results', 'ERIReferenceHome_Hourly.csv')
-    end
+
     if expect_error
       if expect_error_msgs.nil?
         flunk "No error message defined for #{File.basename(xml)}."
       else
         found_error_msg = false
-        ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
-          next unless File.exist? File.join(rundir, design, 'run.log')
+        log_dirs.each do |log_dir|
+          next unless File.exist? File.join(rundir, log_dir, 'run.log')
 
-          run_log = File.readlines(File.join(rundir, design, 'run.log')).map(&:strip)
+          run_log = File.readlines(File.join(rundir, log_dir, 'run.log')).map(&:strip)
           expect_error_msgs.each do |error_msg|
             run_log.each do |run_line|
               next unless run_line.include? error_msg
@@ -660,19 +847,19 @@ class EnergyRatingIndexTest < Minitest::Test
       end
 
       # Check run.log for OS warnings
-      ['ERIRatedHome', 'ERIReferenceHome', 'ERIIndexAdjustmentDesign', 'ERIIndexAdjustmentReferenceHome'].each do |design|
-        next unless File.exist? File.join(rundir, design, 'run.log')
+      log_dirs.each do |log_dir|
+        next unless File.exist? File.join(rundir, log_dir, 'run.log')
 
-        run_log = File.readlines(File.join(rundir, design, 'run.log')).map(&:strip)
+        run_log = File.readlines(File.join(rundir, log_dir, 'run.log')).map(&:strip)
         run_log.each do |log_line|
           next unless log_line.include? 'OS Message:'
 
-          flunk "Unexpected warning found in #{design} run.log: #{log_line}"
+          flunk "Unexpected warning found in #{log_dir} run.log: #{log_line}"
         end
       end
     end
 
-    return hpxmls, csvs
+    return rundir, hpxmls, csvs
   end
 
   def _run_simulation(xml, test_name)
@@ -1650,7 +1837,7 @@ class EnergyRatingIndexTest < Minitest::Test
     CSV.foreach(csv) do |row|
       next if row.nil? || (row.size < 2)
 
-      if row[1].include? ',' # Occurs if, e.g., multiple HVAC
+      if row[1].include?(',') || (row[0] == 'ENERGY STAR Certification') # String outputs
         results[row[0]] = row[1]
       else
         results[row[0]] = Float(row[1])

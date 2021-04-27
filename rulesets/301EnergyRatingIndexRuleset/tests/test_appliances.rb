@@ -164,7 +164,7 @@ class ERIApplianceTest < MiniTest::Test
     end
   end
 
-  def test_appliances_dehumidifier_multiple
+  def test_appliances_dehumidifier
     hpxml_name = 'base-appliances-dehumidifier-multiple.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)

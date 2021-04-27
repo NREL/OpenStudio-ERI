@@ -226,20 +226,16 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
 
-    hpxml_names = ['base-bldgtype-multifamily-adjacent-to-multifamily-buffer-space.xml',
-                   'base-bldgtype-multifamily-adjacent-to-non-freezing-space.xml',
-                   'base-bldgtype-multifamily-adjacent-to-other-heated-space.xml']
+    hpxml_name = 'base-bldgtype-multifamily-adjacent-to-multiple.xml'
 
-    hpxml_names.each do |hpxml_name|
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_walls(hpxml, area: 980, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_walls(hpxml, area: 980, rvalue: 16.67, sabs: 0.75, emit: 0.9)
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
-    end
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_walls(hpxml, area: 1086, rvalue: (23.0 * 986 + 4.0 * 100) / 1086, sabs: 0.7, emit: 0.92)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_walls(hpxml, area: 1086, rvalue: (16.67 * 986 + 4.0 * 100) / 1086, sabs: 0.75, emit: 0.9)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
 
     hpxml_name = 'base-enclosure-garage.xml'
 
@@ -382,20 +378,16 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
 
-    hpxml_names = ['base-bldgtype-multifamily-adjacent-to-multifamily-buffer-space.xml',
-                   'base-bldgtype-multifamily-adjacent-to-non-freezing-space.xml',
-                   'base-bldgtype-multifamily-adjacent-to-other-heated-space.xml']
+    hpxml_name = ['base-bldgtype-multifamily-adjacent-to-multiple.xml']
 
-    hpxml_names.each do |hpxml_name|
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_floors(hpxml, area: 1800, rvalue: 18.7)
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_floors(hpxml, area: 1800, rvalue: (33.33 * 900 + 30.3 * 900) / 1800)
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_floors(hpxml, area: 2400, rvalue: (18.7 * 1200 + 30.3 * 1200) / 2400)
-      hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_floors(hpxml, area: 2400, rvalue: (33.3 * 1200 + 30.3 * 1200) / 2400)
-    end
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_floors(hpxml, area: 1800, rvalue: (18.7 * 750 + 2.1 * 1050) / 1800)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_floors(hpxml, area: 1800, rvalue: (30.3 * 900 + 2.1 * 900) / 1800)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
   end
 
   def test_enclosure_slabs

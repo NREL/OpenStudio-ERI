@@ -48,20 +48,32 @@ HPXML Software Info
 
 High-level simulation inputs are entered in ``/HPXML/SoftwareInfo``.
 
-HPXML ERI Calculation
-*********************
+HPXML ERI/ES Calculation
+************************
 
 The version of the ERI calculation is entered in ``/HPXML/SoftwareInfo/extension/ERICalculation``.
 
   ===========  ========  =======  ===========  ========  =======  ==================================
   Element      Type      Units    Constraints  Required  Default  Description
   ===========  ========  =======  ===========  ========  =======  ==================================
-  ``Version``  string             See [#]_     Yes                Version of 301 Standard w/ addenda
+  ``Version``  string             See [#]_     No [#]_            Version of 301 Standard w/ addenda
   ===========  ========  =======  ===========  ========  =======  ==================================
   
   .. [#] Version choices are "latest", "2019AB", "2019A", "2019", "2014ADEGL", "2014ADEG", "2014ADE", "2014AD", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
+  .. [#] Version only required to run ERI calculation.
+
+The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/extension/EnergyStarCalculation``.
+
+  ===========  ========  =======  ===========  ========  =======  ==================================
+  Element      Type      Units    Constraints  Required  Default  Description
+  ===========  ========  =======  ===========  ========  =======  ==================================
+  ``Version``  string             See [#]_     No [#]_            Version of ENERGY STAR program
+  ===========  ========  =======  ===========  ========  =======  ==================================
+  
+  .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
+  .. [#] Version only required to run ENERGY STAR calculation.
 
 HPXML Building Summary
 ----------------------
@@ -70,6 +82,29 @@ High-level building summary information is entered in ``/HPXML/Building/Building
 
 HPXML Site
 **********
+
+Site information is entered in ``/HPXML/Building/Site``.
+
+  =====================  ========  =======  ===========  ========  =======  ============================
+  Element                Type      Units    Constraints  Required  Default  Description
+  =====================  ========  =======  ===========  ========  =======  ============================
+  ``SiteID``             id                              Yes                Unique identifier
+  ``Address/StateCode``  string             See [#]_     Yes                State/territory where the home is located
+  =====================  ========  =======  ===========  ========  =======  ============================
+
+  .. [#] StateCode choices are only used for the ENERGY STAR calculation and depend on version:
+         
+         ===================  =========
+         ENERGY STAR version  StateCode
+         ===================  =========
+         National             AA, AE, AK, AL, AP, AR, AS, AZ, CA, CO, CT, DC, DE, FL, FM, GA, GU, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MH, MI, MN, MO, MP, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, PR, PW, RI, SC, SD, TN, TX, UT, VA, VI, VT, WA, WI, WV, WY
+         Pacific              HI, GU, MP
+         Florida              FL
+         OregonWashington     OR, WA
+         ===================  =========
+
+HPXML Building Fuels
+********************
 
 Each fuel type available to the building is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable``.
 
@@ -102,7 +137,8 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   ``ConditionedBuildingVolume``            double    ft3 or ft  > 0                                Yes                 Volume within conditioned space boundary
   =======================================  ========  =========  =================================  ========  ========  =======================================================================
 
-  .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", "apartment unit", or "manufactured home".
+  .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
+         For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
   .. [#] NumberofBedrooms must also be <= (ConditionedFloorArea-120)/70.
 
 HPXML Weather Station
@@ -444,12 +480,14 @@ Each window or glass door area is entered as an ``/HPXML/Building/BuildingDetail
   ``SHGC``                                      double                  0 - 1        Yes                  Full-assembly NFRC solar heat gain coefficient
   ``Overhangs``                                 element                 0 - 1        No        <none>     Presence of overhangs (including roof eaves)
   ``FractionOperable``                          double    frac          0 - 1        Yes                  Operable fraction [#]_
+  ``PerformanceClass``                          string                  See [#]_     Yes                  Performance class
   ``AttachedToWall``                            idref                   See [#]_     Yes                  ID of attached wall
   ============================================  ========  ============  ===========  ========  =========  ==============================================
 
   .. [#] FractionOperable reflects whether the windows are operable (can be opened), not how they are used by the occupants.
          If a ``Window`` represents a single window, the value should be 0 or 1.
          If a ``Window`` represents multiple windows (e.g., 4), the value should be between 0 and 1 (e.g., 0, 0.25, 0.5, 0.75, or 1).
+  .. [#] PerformanceClass choices are "residential" (e.g., Class R) or "architectural" (e.g., Class AW).
   .. [#] AttachedToWall must reference a ``Wall`` or ``FoundationWall``.
 
 If overhangs are specified, additional information is entered in ``Overhangs``.
@@ -516,16 +554,15 @@ Each heating system (other than a heat pump) is entered as an ``/HPXML/Building/
   =================================  ========  ======  ===========  ========  =========  ===============================
   ``SystemIdentifier``               id                             Yes                  Unique identifier
   ``HeatingSystemType``              element           1 [#]_       Yes                  Type of heating system
-  ``FractionHeatLoadServed``         double    frac    0 - 1 [#]_   Yes                  Fraction of heating load served
   ``HeatingSystemFuel``              string            See [#]_     Yes                  Fuel type
-  ``HeatingCapacity``                double    Btu/hr  >= 0         See [#]_             Input heating capacity
+  ``HeatingCapacity``                double    Btu/hr  >= 0         Yes                  Input heating capacity
+  ``FractionHeatLoadServed``         double    frac    0 - 1 [#]_   Yes                  Fraction of heating load served
   =================================  ========  ======  ===========  ========  =========  ===============================
 
   .. [#] HeatingSystemType child element choices are ``ElectricResistance``, ``Furnace``, ``WallFurnace``, ``FloorFurnace``, ``Boiler``, ``Stove``, ``PortableHeater``, ``FixedHeater``, or ``Fireplace``.
-  .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] HeatingSystemFuel choices are  "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
          For ``ElectricResistance``, "electricity" is required.
-  .. [#] HeatingCapacity required for all systems other than shared boilers.
+  .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
 
 Electric Resistance
 ~~~~~~~~~~~~~~~~~~~
@@ -585,26 +622,37 @@ If a boiler is specified, additional information is entered in ``HeatingSystem``
   ``IsSharedSystem``                                                          boolean                        Yes                 Whether it serves multiple dwelling units
   ``DistributionSystem``                                                      idref             See [#]_     Yes                 ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``                             double    frac    0 - 1        Yes                 Rated efficiency
-  ``ElectricAuxiliaryEnergy``                                                 double    kWh/yr  >= 0         No [#]_   See [#]_  Electric auxiliary energy
   ==========================================================================  ========  ======  ===========  ========  ========  =========================================
 
   .. [#] For in-unit boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or DSE.
          For shared boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or AirDistribution (type: "fan coil").
          If the shared boiler has "water loop" distribution, a :ref:`hvac_heatpump_wlhp` must also be specified.
-  .. [#] | For shared boilers, ElectricAuxiliaryEnergy can alternatively be calculated as:
-         | EAE = (SP / N_dweq + aux_in) * HLH
-         | where
-         | SP = Shared pump power [W] provided as ``extension/SharedLoopWatts``,
-         | N_dweq = Number of units served by the shared system provided as ``NumberofUnitsServed``,
-         | aux_in = In-unit fan coil power [W] provided as ``extension/FanCoilWatts``,
-         | HLH = Annual heating load hours.
-  .. [#] If ElectricAuxiliaryEnergy not provided (nor calculated for shared boilers), defaults as follows:
 
-         - **Oil boiler**: 330
-         - **Gas boiler (in-unit)**: 170
-         - **Gas boiler (shared, w/ baseboard)**: 220
-         - **Gas boiler (shared, w/ water loop heat pump)**: 265
-         - **Gas boiler (shared, w/ fan coil)**: 438
+If an in-unit boiler if specified, additional information is entered in ``HeatingSystem``.
+
+  ===========================  ========  ======  ===========  ========  ========  =========================
+  Element                      Type      Units   Constraints  Required  Default   Notes
+  ===========================  ========  ======  ===========  ========  ========  =========================
+  ``ElectricAuxiliaryEnergy``  double    kWh/yr  >= 0         No        See [#]_  Electric auxiliary energy
+  ===========================  ========  ======  ===========  ========  ========  =========================
+  
+  .. [#] If ElectricAuxiliaryEnergy not provided, defaults as follows:
+
+         - **Oil boiler**: 330 kWh/yr
+         - **Gas boiler**: 170 kWh/yr
+
+If instead a shared boiler is specified, additional information is entered in ``HeatingSystem``.
+
+  =======================================  ========  =====  ===========  ========  ========  =========================
+  Element                                  Type      Units  Constraints  Required  Default   Notes
+  =======================================  ========  =====  ===========  ========  ========  =========================
+  ``NumberofUnitsServed``                  integer          > 1          Yes                 Number of dwelling units served
+  ``extension/SharedLoopWatts``            double    W      >= 0         Yes                 Shared loop power
+  ``extension/SharedLoopMotorEfficiency``  double    frac   0 - 1        No        0.85      Shared loop motor efficiency
+  ``extension/FanCoilWatts``               double    W      >= 0         See [#]_            Fan coil power
+  =======================================  ========  =====  ===========  ========  ========  =========================
+
+  .. [#] FanCoilWatts only required if boiler connected to fan coil.
 
 Stove
 ~~~~~
@@ -764,12 +812,13 @@ If a chiller is specified, additional information is entered in ``CoolingSystem`
   ``CoolingCapacity``                                                         double    Btu/hr  >= 0         Yes                  Total cooling capacity
   ``AnnualCoolingEfficiency[Units="kW/ton"]/Value``                           double    kW/ton  > 0          Yes                  Rated efficiency
   ``extension/SharedLoopWatts``                                               double    W       >= 0         Yes                  Pumping and fan power serving the system
+  ``extension/SharedLoopMotorEfficiency``                                     double    frac    0 - 1        No        0.85       Shared loop motor efficiency
   ``extension/FanCoilWatts``                                                  double    W       >= 0         See [#]_             Fan coil power
   ==========================================================================  ========  ======  ===========  ========  =========  =========================================
 
   .. [#] HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or AirDistribution (type: "fan coil").
          If the chiller has "water loop" distribution, a :ref:`hvac_heatpump_wlhp` must also be specified.
-  .. [#] FanCoilWatts only required if chiller connected to a fan coil.
+  .. [#] FanCoilWatts only required if chiller connected to fan coil.
 
 .. _hvac_cooling_tower:
 
@@ -785,6 +834,7 @@ If a cooling tower is specified, additional information is entered in ``CoolingS
   ``DistributionSystem``                                                      idref             See [#]_     Yes                  ID of attached distribution system
   ``NumberofUnitsServed``                                                     integer           > 1          Yes                  Number of dwelling units served
   ``extension/SharedLoopWatts``                                               double    W       >= 0         Yes                  Pumping and fan power serving the system
+  ``extension/SharedLoopMotorEfficiency``                                     double    frac    0 - 1        No        0.85       Shared loop motor efficiency
   ==========================================================================  ========  ======  ===========  ========  =========  =========================================
 
   .. [#] HVACDistribution type must be HydronicDistribution (type: "water loop").
@@ -903,7 +953,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   =========================================================================  =================  ======  ==============  ========  =========  ==============================================
   Element                                                                    Type               Units   Constraints     Required  Default    Notes
   =========================================================================  =================  ======  ==============  ========  =========  ==============================================
-  ``IsSharedSystem``                                                         boolean                                    Yes                  Whether it serves multiple dwelling units [#]_
+  ``IsSharedSystem``                                                         boolean                                    Yes                  Whether it has a shared hydronic circulation loop [#]_
   ``DistributionSystem``                                                     idref                      See [#]_        Yes                  ID of attached distribution system
   ``HeatingCapacity``                                                        double             Btu/hr  >= 0            Yes                  Heating capacity (excluding any backup heating)
   ``CoolingCapacity``                                                        double             Btu/hr  >= 0            Yes                  Cooling capacity
@@ -915,6 +965,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``NumberofUnitsServed``                                                    integer                    > 0             See [#]_             Number of dwelling units served
   ``extension/PumpPowerWattsPerTon``                                         double             W/ton   >= 0            Yes                  Pump power [#]_
   ``extension/SharedLoopWatts``                                              double             W       >= 0            See [#]_             Shared pump power [#]_
+  ``extension/SharedLoopMotorEfficiency``                                    double             frac    0 - 1           No        0.85 [#]_  Shared loop motor efficiency
   ``extension/FanPowerWattsPerCFM`` or ``extension/FanPowerNotTested=true``  double or boolean  W/cfm   >= 0            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/AirflowDefectRatio`` or ``extension/AirflowNotTested=true``    double or boolean  frac    > -1            Yes                  In accordance with ANSI/RESNET/ACCA 310
   ``extension/ChargeDefectRatio``                                            double or boolean  frac    0 [#]_          Yes                  In accordance with ANSI/RESNET/ACCA 310
@@ -929,6 +980,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
          Any pump power that is shared by multiple dwelling units should be included in SharedLoopWatts, *not* PumpPowerWattsPerTon, so that shared loop pump power attributed to the dwelling unit is calculated.
   .. [#] SharedLoopWatts only required if IsSharedSystem is true.
   .. [#] Shared loop pump power attributed to the dwelling unit is calculated as SharedLoopWatts / NumberofUnitsServed.
+  .. [#] SharedLoopMotorEfficiency only used if IsSharedSystem is true.
   .. [#] ChargeDefectRatio currently constrained to zero for ground-to-air heat pumps due to an EnergyPlus limitation; this constraint will be relaxed in the future.
          Likewise ChargeNotTested is not currently supported because it results in Grade 3 refrigerant charge, which is a non-zero charge defect ratio.
 
@@ -1011,9 +1063,11 @@ To define an air distribution system, additional information is entered in ``HVA
   Element                                        Type     Units    Constraints  Required  Default    Notes
   =============================================  =======  =======  ===========  ========  =========  ==========================
   ``AirDistributionType``                        string            See [#]_     Yes                  Type of air distribution
+  ``NumberofReturnRegisters``                    integer           >= 0         See [#]_             Number of return registers
   =============================================  =======  =======  ===========  ========  =========  ==========================
   
   .. [#] AirDistributionType choices are "regular velocity", "gravity", or "fan coil" and are further restricted based on attached HVAC system type (e.g., only "regular velocity" or "gravity" for a furnace, only "fan coil" for a shared boiler, etc.).
+  .. [#] NumberofReturnRegisters required only if ``AirDistribution/Ducts`` are present.
 
 For the air distribution system, duct leakage inputs are required if AirDistributionType is "regular velocity" or "gravity" and optional if AirDistributionType is "fan coil".
 
@@ -1075,14 +1129,14 @@ When provided, duct leakage must be entered in one of three ways:
 
 Additionally, each supply/return duct present is entered in a ``HVACDistribution/DistributionSystemType/AirDistribution/Ducts``.
 
-  ========================  =======  ============  ===========  ========  =========  ===============================
-  Element                   Type     Units         Constraints  Required  Default    Notes
-  ========================  =======  ============  ===========  ========  =========  ===============================
-  ``DuctType``              string                 See [#]_     Yes                  Supply or return ducts
-  ``DuctInsulationRValue``  double   F-ft2-hr/Btu  >= 0         Yes                  R-value of duct insulation [#]_
-  ``DuctSurfaceArea``       double   ft2           >= 0         Yes                  Duct surface area
-  ``DuctLocation``          string                 See [#]_     Yes                  Duct location
-  ========================  =======  ============  ===========  ========  =========  ===============================
+  ===========================  =======  ============  ===========  ========  =========  ===============================
+  Element                      Type     Units         Constraints  Required  Default    Notes
+  ===========================  =======  ============  ===========  ========  =========  ===============================
+  ``DuctType``                 string                 See [#]_     Yes                  Supply or return ducts
+  ``DuctInsulationRValue``     double   F-ft2-hr/Btu  >= 0         Yes                  R-value of duct insulation [#]_
+  ``DuctSurfaceArea``          double   ft2           >= 0         Yes                  Duct surface area
+  ``DuctLocation``             string                 See [#]_     Yes                  Duct location
+  ===========================  =======  ============  ===========  ========  =========  ===============================
 
   .. [#] DuctType choices are "supply" or "return".
   .. [#] DuctInsulationRValue should not include air films (i.e., use 0 for an uninsulated duct).
@@ -1447,7 +1501,8 @@ If a shared recirculation system is specified, additional information is entered
   Element                  Type     Units  Constraints  Required  Default   Notes
   =======================  =======  =====  ===========  ========  ========  =================================
   ``NumberofUnitsServed``  integer         > 1          Yes                 Number of dwelling units served
-  ``PumpPower``            double   W      >= 0         No        220       Shared recirculation pump power
+  ``PumpPower``            double   W      >= 0         Yes                 Shared recirculation pump power
+  ``MotorEfficiency``      double   frac   0 - 1        No        0.85      Shared recirculation motor efficiency
   ``ControlType``          string          See [#]_     Yes                 Shared recirculation control type
   =======================  =======  =====  ===========  ========  ========  =================================
 

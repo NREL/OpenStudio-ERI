@@ -15,6 +15,12 @@
   </SoftwareInfo>
   <Building>
     <BuildingID id='MyBuilding'/>
+    <Site>
+      <SiteID id='SiteID'/>
+      <Address>
+        <StateCode>FL</StateCode>
+      </Address>
+    </Site>
     <ProjectStatus>
       <EventType>proposed workscope</EventType>
     </ProjectStatus>
@@ -258,6 +264,7 @@
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='WallNorth'/>
           </Window>
           <Window>
@@ -267,6 +274,7 @@
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='WallEast'/>
           </Window>
           <Window>
@@ -276,6 +284,7 @@
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='WallSouth'/>
           </Window>
           <Window>
@@ -285,6 +294,7 @@
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='WallWest'/>
           </Window>
         </Windows>
@@ -376,6 +386,7 @@
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>77.0</DuctSurfaceArea>
                 </Ducts>
+                <NumberofReturnRegisters>1</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
             <ConditionedFloorAreaServed>1539.0</ConditionedFloorAreaServed>

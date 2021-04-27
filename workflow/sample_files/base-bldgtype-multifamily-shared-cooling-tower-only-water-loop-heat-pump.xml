@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>MF_National_1.1</Version>
+      </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -147,6 +150,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -161,6 +165,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -175,6 +180,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
@@ -201,6 +207,7 @@
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <extension>
                 <SharedLoopWatts>600.0</SharedLoopWatts>
+                <SharedLoopMotorEfficiency>0.9</SharedLoopMotorEfficiency>
               </extension>
             </CoolingSystem>
             <HeatPump>
