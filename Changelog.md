@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.2.0 (pending)
 
 __New Features__
-- Adds ENERGY STAR ERI Target workflow for new construction in accordance with ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path.
+- Adds ENERGY STAR ERI Target workflow for new construction in accordance with [ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path](https://www.energystar.gov/sites/default/files/asset/document/ENERGY%20STAR%20Certification%20System.pdf).
   - Optional `SoftwareInfo/extension/EnergyStarCalculation/Version` (values like "SF_National_3.1"; required if running ENERGY STAR calculation).
   - **Breaking change**: `Building/Site/Address/StateCode` (values like "CO" or "FL") now required.
   - **Breaking change**: For windows, `Window/PerformanceClass` (values of "residential" or "architectural") now required.
