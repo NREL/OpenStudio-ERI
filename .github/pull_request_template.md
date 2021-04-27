@@ -7,7 +7,7 @@
 Not all may apply:
 
 - [ ] OS-HPXML git subtree has been pulled
-- [ ] 301 ruleset and unit tests have been updated
+- [ ] 301/ES rulesets and unit tests have been updated
 - [ ] 301validator.xml has been updated (reference EPvalidator.xml)
 - [ ] Workflow tests have been updated
 - [ ] Documentation has been updated
