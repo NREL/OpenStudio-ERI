@@ -678,6 +678,21 @@ class EnergyStarRuleset
                                 control_type: HPXML::HVACControlTypeProgrammable)
 
     # Exhibit 2 - Thermal distribution systems
+    remaining_cfa_served_heating = @cfa # init
+    remaining_cfa_served_cooling = @cfa # init
+    remaining_fracload_served_heating = 1.0 # init
+    remaining_fracload_served_cooling = 1.0 # init
+    orig_hpxml.hvac_systems.each do |h|
+      next if h.distribution_system_idref.nil?
+      if h.respond_to?(:fraction_heat_load_served) && h.fraction_heat_load_served.to_f > 0
+        remaining_cfa_served_heating -= h.distribution_system.conditioned_floor_area_served.to_f
+        remaining_fracload_served_heating -= h.fraction_heat_load_served
+      end
+      if h.respond_to?(:fraction_cool_load_served) && h.fraction_cool_load_served.to_f > 0
+        remaining_cfa_served_cooling -= h.distribution_system.conditioned_floor_area_served.to_f
+        remaining_fracload_served_cooling -= h.fraction_cool_load_served
+      end
+    end
     orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
       new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
                                        distribution_system_type: orig_hvac_distribution.distribution_system_type,
@@ -691,7 +706,27 @@ class EnergyStarRuleset
 
       next unless new_hvac_dist.distribution_system_type == HPXML::HVACDistributionTypeAir
 
-      apply_air_distribution_cfa_served_and_n_returns(new_hvac_dist)
+      if new_hvac_dist.number_of_return_registers.nil?
+        new_hvac_dist.number_of_return_registers = 1 # EPA guidance
+      end
+      new_hvac_dist.number_of_return_registers = [1, new_hvac_dist.number_of_return_registers].max # Ensure at least 1 register
+
+      if new_hvac_dist.conditioned_floor_area_served.nil?
+        # Estimate CFA served
+        # This methodology tries to prevent the possibility of sum(CFAServed) > CFA in the ESRD,
+        # which would generate an error downstream in the ENERGY STAR calcultion.
+        estd_cfa_heated = @cfa
+        estd_cfa_cooled = @cfa
+        new_hvac_dist.hvac_systems.each do |h|
+          if h.respond_to?(:fraction_heat_load_served) && h.fraction_heat_load_served.to_f > 0
+            estd_cfa_heated = remaining_cfa_served_heating * h.fraction_heat_load_served / remaining_fracload_served_heating
+          end
+          if h.respond_to?(:fraction_cool_load_served) && h.fraction_cool_load_served.to_f > 0
+            estd_cfa_cooled = remaining_cfa_served_cooling * h.fraction_cool_load_served / remaining_fracload_served_cooling
+          end
+        end
+        new_hvac_dist.conditioned_floor_area_served = [estd_cfa_heated.to_f, estd_cfa_cooled.to_f].min
+      end
 
       # Duct leakage to outside calculated based on conditioned floor area served
       total_duct_leakage_to_outside = calc_default_duct_leakage_to_outside(new_hvac_dist.conditioned_floor_area_served)
@@ -1881,32 +1916,6 @@ class EnergyStarRuleset
       end
 
       return dist_id
-    end
-  end
-
-  def self.apply_air_distribution_cfa_served_and_n_returns(hvac_dist)
-    if hvac_dist.number_of_return_registers.nil?
-      hvac_dist.number_of_return_registers = 1 # EPA guidance
-    end
-    hvac_dist.number_of_return_registers = [1, hvac_dist.number_of_return_registers].max # Ensure at least 1 register
-    if hvac_dist.conditioned_floor_area_served.nil?
-      # Estimate CFA served based on CFA and fraction load served
-      estd_cfa_heated = 0.0
-      estd_cfa_cooled = 0.0
-      hvac_dist.hvac_systems.each do |hvac_system|
-        if hvac_system.respond_to?(:fraction_heat_load_served)
-          if hvac_system.fraction_heat_load_served > 0
-            estd_cfa_heated = @cfa * hvac_system.fraction_heat_load_served
-          end
-        end
-        next unless hvac_system.respond_to?(:fraction_cool_load_served)
-        if hvac_system.fraction_cool_load_served > 0
-          estd_cfa_cooled = @cfa * hvac_system.fraction_cool_load_served
-        end
-      end
-
-      # FIXME: Need to ensure CFA served does not exceed remaining CFA to be served
-      hvac_dist.conditioned_floor_area_served = [estd_cfa_heated.to_f, estd_cfa_cooled.to_f].max
     end
   end
 
