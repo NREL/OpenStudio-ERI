@@ -13,6 +13,7 @@ __New Features__
 - Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems; **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
 - Switches room air conditioner model to use Cutler performance curves.
 - Shared systems now preserved in the Rated Home (as opposed to configuring, e.g., the equivalent central AC w/ SEEReq for a chiller).
+- Removes limitation that a shared water heater serving a shared laundry room can't also serve dwelling unit fixtures (i.e., FractionDHWLoadServed is no longer required to be zero).
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
