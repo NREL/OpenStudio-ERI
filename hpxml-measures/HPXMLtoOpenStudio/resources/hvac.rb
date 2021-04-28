@@ -4132,11 +4132,6 @@ class HVAC
       end
 
       heating_system.heating_capacity = nil # Autosize the equipment
-      heating_system.is_shared_system = false
-      heating_system.number_of_units_served = nil
-      heating_system.shared_loop_watts = nil
-      heating_system.shared_loop_motor_efficiency = nil
-      heating_system.fan_coil_watts = nil
     end
 
     return applied
