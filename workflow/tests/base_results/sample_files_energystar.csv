@@ -28,7 +28,7 @@
 [SF_National_3.1] base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml,72.0,1.0,72.0,65.0,65.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-generator.xml,67.0,1.0,67.0,68.0,68.0,FAIL
 [SF_National_3.1] base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml,66.0,1.0,66.0,65.0,65.0,PASS
-[SF_National_3.1] base-bldgtype-multifamily-shared-laundry-room.xml,69.0,1.0,69.0,63.0,63.0,PASS
+[SF_National_3.1] base-bldgtype-multifamily-shared-laundry-room.xml,85.0,1.0,85.0,59.0,59.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-mechvent-preconditioning.xml,67.0,1.0,67.0,73.0,73.0,FAIL
 [SF_National_3.1] base-bldgtype-multifamily-shared-mechvent.xml,67.0,1.0,67.0,65.0,65.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-pv.xml,67.0,1.0,67.0,63.0,63.0,PASS
@@ -163,7 +163,7 @@
 [MF_National_1.1] base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml,74.0,1.0,74.0,67.0,67.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-generator.xml,69.0,1.0,69.0,69.0,69.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml,68.0,1.0,68.0,66.0,66.0,PASS
-[MF_National_1.1] base-bldgtype-multifamily-shared-laundry-room.xml,70.0,1.0,70.0,64.0,64.0,PASS
+[MF_National_1.1] base-bldgtype-multifamily-shared-laundry-room.xml,63.0,1.0,63.0,60.0,60.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-mechvent-preconditioning.xml,69.0,1.0,69.0,74.0,74.0,FAIL
 [MF_National_1.1] base-bldgtype-multifamily-shared-mechvent.xml,69.0,1.0,69.0,66.0,66.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-pv.xml,69.0,1.0,69.0,64.0,64.0,PASS
