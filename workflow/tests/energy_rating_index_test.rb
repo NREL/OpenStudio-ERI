@@ -101,7 +101,7 @@ class EnergyRatingIndexTest < Minitest::Test
           fail "Unhandled ENERGY STAR version: #{program_version}."
         end
 
-        puts "Running #{File.basename(xml)} w/ #{program_version}..."
+        puts "Running [#{program_version}] #{File.basename(xml)}..."
 
         # Create derivative files for ES testing
         hpxml = HPXML.new(hpxml_path: xml)
@@ -118,7 +118,7 @@ class EnergyRatingIndexTest < Minitest::Test
         XMLHelper.write_file(hpxml.to_oga, es_xml)
 
         rundir, hpxmls, csvs = _run_workflow(es_xml, test_name, run_energystar: true)
-        key = [program_version, File.basename(xml)]
+        key = "[#{program_version}] #{File.basename(xml)}"
         version_results[key] = _get_csv_results(csvs[:es_results])
 
         File.delete(es_xml)
@@ -132,9 +132,9 @@ class EnergyRatingIndexTest < Minitest::Test
     # Write results to csv
     keys = all_results.values[0].keys
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['ES Version', 'XML'] + keys
+      csv << ['[Version] XML'] + keys
       all_results.each_with_index do |(xml_key, results), i|
-        csv_line = xml_key
+        csv_line = [xml_key]
         keys.each do |key|
           csv_line << results[key]
         end
@@ -536,10 +536,10 @@ class EnergyRatingIndexTest < Minitest::Test
     # Write results to csv
     keys = all_results.values[0].keys
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Version', 'XML'] + keys
+      csv << ['[Version] XML'] + keys
       all_results.each_with_index do |(xml, results), i|
         es_version = xml.split('/')[-2]
-        csv_line = [es_version, File.basename(xml)]
+        csv_line = ["[#{es_version}] #{File.basename(xml)}"]
         keys.each do |key|
           csv_line << results[key]
         end
