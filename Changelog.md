@@ -19,6 +19,7 @@ __New Features__
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
 - Fixes room air conditioner performance curve.
+- Fixes heating load fractions for boiler w/ WLHP.
 
 ## OpenStudio-ERI v1.1.1
 
