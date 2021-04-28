@@ -306,6 +306,19 @@ class ERIWaterHeatingTest < MiniTest::Test
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
     end
+
+    # Test tie between water heating fuel types; should choose fossil fuel
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems.each do |w|
+      w.fraction_dhw_load_served = 0.0
+    end
+    hpxml.water_heating_systems.select { |w| w.fuel_type == HPXML::FuelTypeElectricity }[0].fraction_dhw_load_served = 0.5
+    hpxml.water_heating_systems.select { |w| w.fuel_type == HPXML::FuelTypeNaturalGas }[0].fraction_dhw_load_served = 0.5
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    assert_equal(HPXML::FuelTypeNaturalGas, hpxml.water_heating_systems[0].fuel_type)
   end
 
   def test_indirect_water_heating
@@ -355,6 +368,23 @@ class ERIWaterHeatingTest < MiniTest::Test
       _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
     end
+
+    # Test tie between space heating fuel types
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.heating_systems[0].fraction_heat_load_served = 0.15
+    { HPXML::FuelTypeOil => 0.35, HPXML::FuelTypeElectricity => 0.5 }.each do |fuel, frac|
+      hpxml.heating_systems.add(id: "HeatingSystem#{fuel}",
+                                heating_system_type: HPXML::HVACTypeStove,
+                                heating_system_fuel: fuel,
+                                heating_capacity: 999,
+                                heating_efficiency_percent: 0.8,
+                                fraction_heat_load_served: frac)
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    assert_equal(HPXML::FuelTypeOil, hpxml.water_heating_systems[0].fuel_type)
   end
 
   def test_water_heating_pre_addendum_a
