@@ -13,6 +13,7 @@ __New Features__
 - **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
 - Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems.
 - Switches room air conditioner model to use Cutler performance curves.
+- When Reference/Rated water heater fuels are determined by predominant water/space heating fuels, fossil fuel is now selected in the case of a tie.
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
