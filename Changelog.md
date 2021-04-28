@@ -14,6 +14,7 @@ __New Features__
 - Switches room air conditioner model to use Cutler performance curves.
 - Shared systems now preserved in the Rated Home (as opposed to configuring, e.g., the equivalent central AC w/ SEEReq for a chiller).
 - Removes limitation that a shared water heater serving a shared laundry room can't also serve dwelling unit fixtures (i.e., FractionDHWLoadServed is no longer required to be zero).
+- When Reference/Rated water heater fuels are determined by predominant water/space heating fuels, fossil fuel is now selected in the case of a tie.
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
