@@ -19,7 +19,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(hpxml, @eri_version, @weather)
+    HPXMLDefaults.apply(hpxml, @eri_version, @weather, convert_shared_systems: false)
 
     return hpxml
   end
@@ -1081,10 +1081,10 @@ class EnergyRatingIndex301Ruleset
       if orig_heating_system.heating_system_type == HPXML::HVACTypeBoiler
         fraction_heat_load_served = orig_heating_system.fraction_heat_load_served
         if orig_heating_system.distribution_system.hydronic_type == HPXML::HydronicTypeWaterLoop
-          orig_wlhp = orig_hpxml.heat_pumps.select { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir }[0]
+          # Maintain same fractions of heating load between boiler and heat pump
           # 301-2019 Section 4.4.7.2.1
+          orig_wlhp = orig_hpxml.heat_pumps.select { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir }[0]
           fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
-          # Also add heat pump:
           hp_fraction_heat_load_served = orig_heating_system.fraction_heat_load_served * (1.0 / orig_wlhp.heating_efficiency_cop)
           add_reference_heating_heat_pump(orig_hpxml, new_hpxml, hp_fraction_heat_load_served, orig_wlhp)
         end
@@ -1243,7 +1243,7 @@ class EnergyRatingIndex301Ruleset
           charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
         end
       end
-      if orig_heat_pump.backup_heating_capacity.to_f == 0
+      if orig_heat_pump.backup_heating_capacity.to_f == 0 && orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
         # Force some backup heating to prevent unmet loads
         orig_heat_pump.backup_heating_fuel = HPXML::FuelTypeElectricity
         orig_heat_pump.backup_heating_efficiency_percent = 1.0

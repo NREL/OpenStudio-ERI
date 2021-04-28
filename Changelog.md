@@ -10,14 +10,15 @@ __New Features__
   - **Breaking change**: For shared recirculation hot water systems, `HotWaterDistribution/extension/SharedRecirculation/PumpPower` now required.
   - Optional `extension/SharedLoopMotorEfficiency` for shared boilers, chillers, cooling towers, and GSHPs w/ shared loop and `extension/SharedRecirculation/MotorEfficiency` for shared recirculation hot water systems.
 - **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
-- **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
-- Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems.
+- Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems; **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
 - Switches room air conditioner model to use Cutler performance curves.
-- When Reference/Rated water heater fuels are determined by predominant water/space heating fuels, fossil fuel is now selected in the case of a tie.
+- Shared systems now preserved in the Rated Home (as opposed to configuring, e.g., the equivalent central AC w/ SEEReq for a chiller).
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
 - Fixes room air conditioner performance curve.
+- Fixes heating load fractions for boiler w/ WLHP.
+- Water loop heat pumps no longer get added electric backup heating in the Rated Home.
 
 ## OpenStudio-ERI v1.1.1
 

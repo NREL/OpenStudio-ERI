@@ -20,7 +20,7 @@
 [SF_National_3.1] base-bldgtype-multifamily-shared-boiler-only-baseboard.xml,70.0,1.0,70.0,65.0,65.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-boiler-only-fan-coil-ducted.xml,70.0,1.0,70.0,65.0,65.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-boiler-only-fan-coil.xml,70.0,1.0,70.0,65.0,65.0,PASS
-[SF_National_3.1] base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml,67.0,1.0,67.0,64.0,64.0,PASS
+[SF_National_3.1] base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml,69.0,1.0,69.0,64.0,64.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-chiller-only-baseboard.xml,71.0,1.0,71.0,64.0,64.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-chiller-only-fan-coil-ducted.xml,72.0,1.0,72.0,66.0,66.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml,72.0,1.0,72.0,65.0,65.0,PASS
@@ -155,7 +155,7 @@
 [MF_National_1.1] base-bldgtype-multifamily-shared-boiler-only-baseboard.xml,72.0,1.0,72.0,66.0,66.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-boiler-only-fan-coil-ducted.xml,72.0,1.0,72.0,66.0,66.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-boiler-only-fan-coil.xml,72.0,1.0,72.0,66.0,66.0,PASS
-[MF_National_1.1] base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml,68.0,1.0,68.0,65.0,65.0,PASS
+[MF_National_1.1] base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml,70.0,1.0,70.0,65.0,65.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-chiller-only-baseboard.xml,74.0,1.0,74.0,65.0,65.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-chiller-only-fan-coil-ducted.xml,74.0,1.0,74.0,67.0,67.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml,74.0,1.0,74.0,66.0,66.0,PASS
