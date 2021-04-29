@@ -67,7 +67,7 @@ def process_arguments(calling_rb, args, basedir)
   end
 
   if options[:version]
-    workflow_version = '1.1.0'
+    workflow_version = '1.2.0'
     puts "OpenStudio-ERI v#{workflow_version}"
     puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
     puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"

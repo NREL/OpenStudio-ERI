@@ -1,4 +1,4 @@
-## OpenStudio-ERI v1.2.0 (pending)
+## OpenStudio-ERI v1.2.0
 
 __New Features__
 - Adds ENERGY STAR ERI Target workflow for new construction in accordance with [ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path](https://www.energystar.gov/sites/default/files/asset/document/ENERGY%20STAR%20Certification%20System.pdf).
