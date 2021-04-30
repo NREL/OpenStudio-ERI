@@ -29,6 +29,12 @@ jobs:
           path: workflow/tests/test_results
           name: test_results
 
+      - name: Store code coverage
+        uses: actions/upload-artifact@v2
+        with:
+          path: coverage
+          name: coverage
+
   compare-results:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
