@@ -92,16 +92,12 @@ Site information is entered in ``/HPXML/Building/Site``.
   ``Address/StateCode``  string             See [#]_     Yes                State/territory where the home is located
   =====================  ========  =======  ===========  ========  =======  ============================
 
-  .. [#] StateCode choices are only used for the ENERGY STAR calculation and depend on version:
+  .. [#] StateCode choices are only used for the ENERGY STAR calculation and depend on the ENERGY STAR version:
          
-         ===================  =========
-         ENERGY STAR version  StateCode
-         ===================  =========
-         National             AA, AE, AK, AL, AP, AR, AS, AZ, CA, CO, CT, DC, DE, FL, FM, GA, GU, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MH, MI, MN, MO, MP, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, PR, PW, RI, SC, SD, TN, TX, UT, VA, VI, VT, WA, WI, WV, WY
-         Pacific              HI, GU, MP
-         Florida              FL
-         OregonWashington     OR, WA
-         ===================  =========
+         - **National**: AA, AE, AK, AL, AP, AR, AS, AZ, CA, CO, CT, DC, DE, FL, FM, GA, GU, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MH, MI, MN, MO, MP, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, PR, PW, RI, SC, SD, TN, TX, UT, VA, VI, VT, WA, WI, WV, WY
+         - **Pacific**: HI, GU, MP
+         - **Florida**: FL
+         - **OregonWashington**: OR, WA
 
 HPXML Building Fuels
 ********************
