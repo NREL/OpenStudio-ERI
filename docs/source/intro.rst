@@ -5,6 +5,7 @@ The OpenStudio-ERI project allows calculating an Energy Rating Index (ERI) using
 The building description is provided in an `HPXML file <https://hpxml.nrel.gov/>`_ format.
 
 The project supports:
+
 - ANSI/RESNET/ICC 301© Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
 - ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path
 
