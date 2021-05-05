@@ -1,16 +1,36 @@
-## OpenStudio-ERI v1.2.0 (pending)
+## OpenStudio-ERI v1.3.0 (Pending)
 
 __New Features__
 - Updates to OpenStudio 3.2.0/EnergyPlus 9.5.0.
-- **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
-- **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
-- Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems.
 - Allows additional fuel types for generators.
+
+__Bugfixes__
+- Improves ground reflectance when there is shading of windows/skylights.
+
+## OpenStudio-ERI v1.2.0
+
+__New Features__
+- Adds ENERGY STAR ERI Target workflow for new construction in accordance with [ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path](https://www.energystar.gov/sites/default/files/asset/document/ENERGY%20STAR%20Certification%20System.pdf).
+  - Optional `SoftwareInfo/extension/EnergyStarCalculation/Version` (values like "SF_National_3.1"; required if running ENERGY STAR calculation).
+  - **Breaking change**: `Building/Site/Address/StateCode` (values like "CO" or "FL") now required.
+  - **Breaking change**: For windows, `Window/PerformanceClass` (values of "residential" or "architectural") now required.
+  - **Breaking change**: For shared boilers, `HeatingSystem/HeatingCapacity`, `HeatingSystem/extension/SharedLoopWatts`, and `HeatingSystem/extension/FanCoilWatts` (fan coil only) now required.
+  - **Breaking change**: For air distribution systems with ducts, `AirDistribution/NumberofReturnRegisters` now required.
+  - **Breaking change**: For shared recirculation hot water systems, `HotWaterDistribution/extension/SharedRecirculation/PumpPower` now required.
+  - Optional `extension/SharedLoopMotorEfficiency` for shared boilers, chillers, cooling towers, and GSHPs w/ shared loop and `extension/SharedRecirculation/MotorEfficiency` for shared recirculation hot water systems.
+- **Breaking change**: Heating/cooling component loads no longer calculated by default for faster performance; use `--add-component-loads` argument if desired.
+- Allows `DuctLeakageMeasurement` & `ConditionedFloorAreaServed` to not be specified for ductless fan coil systems; **Breaking change**: `AirDistributionType` is now required for all air distribution systems.
+- Switches room air conditioner model to use Cutler performance curves.
+- Shared systems now preserved in the Rated Home (as opposed to configuring, e.g., the equivalent central AC w/ SEEReq for a chiller).
+- Removes limitation that a shared water heater serving a shared laundry room can't also serve dwelling unit fixtures (i.e., FractionDHWLoadServed is no longer required to be zero).
+- When Reference/Rated water heater fuels are determined by predominant water/space heating fuels, fossil fuel is now selected in the case of a tie.
+- Adds IDs to schematron validation errors/warnings when possible.
 
 __Bugfixes__
 - Prevents a solar hot water system w/ SolarFraction=1.
 - Fixes room air conditioner performance curve.
-- Improves ground reflectance when there is shading of windows/skylights.
+- Fixes heating load fractions for boiler w/ WLHP.
+- Water loop heat pumps no longer get added electric backup heating in the Rated Home.
 
 ## OpenStudio-ERI v1.1.1
 

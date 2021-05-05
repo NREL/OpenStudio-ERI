@@ -13,6 +13,7 @@ The current set of tests include:
 - RESNET HVAC tests
 - RESNET Duct distribution system efficiency tests
 - RESNET Hot water system performance tests
+- EPA Tests for ENERGY STAR
 
 If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
 
@@ -34,6 +35,11 @@ All current HERS tests can be run using as follows:
 | ``openstudio energy_rating_index_test.rb --name=test_resnet_hvac``
 | ``openstudio energy_rating_index_test.rb --name=test_resnet_dse``
 | ``openstudio energy_rating_index_test.rb --name=test_resnet_hot_water``
+| 
+
+EPA tests for ENERGY STAR can be run using:
+
+| ``openstudio energy_rating_index_test.rb --name=test_epa``
 | 
 
 Test results in CSV format are created at workflow/tests/test_results. 

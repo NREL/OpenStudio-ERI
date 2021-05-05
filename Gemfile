@@ -8,4 +8,5 @@ gem 'schematron-nokogiri'
 gem 'rake'
 gem 'minitest', '~> 5.9'
 gem 'minitest-reporters'
-gem 'minitest-ci' # For CircleCI Automatic test metadata collection
+gem 'simplecov'
+gem 'simplecov-html'

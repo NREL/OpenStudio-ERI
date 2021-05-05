@@ -125,68 +125,16 @@ class ERIWaterHeatingTest < MiniTest::Test
     end
   end
 
-  def test_water_heating_recirc_nocontrol
-    hpxml_name = 'base-dhw-recirc-nocontrol.xml'
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeRecirc, pipe_r: 0.0, recirc_control: HPXML::DHWRecirControlTypeNone, recirc_loop_l: 50, recirc_branch_l: 50, recirc_pump_power: 50)
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
-    end
-  end
-
-  def test_water_heating_recirc_timer
-    hpxml_name = 'base-dhw-recirc-timer.xml'
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeRecirc, pipe_r: 0.0, recirc_control: HPXML::DHWRecirControlTypeTimer, recirc_loop_l: 50, recirc_branch_l: 50, recirc_pump_power: 50)
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
-    end
-  end
-
-  def test_water_heating_recirc_temperature
-    hpxml_name = 'base-dhw-recirc-temperature.xml'
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeRecirc, pipe_r: 0.0, recirc_control: HPXML::DHWRecirControlTypeTemperature, recirc_loop_l: 50, recirc_branch_l: 50, recirc_pump_power: 50)
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
-    end
-  end
-
-  def test_water_heating_recirc_manual
-    hpxml_name = 'base-dhw-recirc-manual.xml'
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeRecirc, pipe_r: 3.0, recirc_control: HPXML::DHWRecirControlTypeManual, recirc_loop_l: 50, recirc_branch_l: 50, recirc_pump_power: 50)
-    calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
-    end
-  end
-
   def test_water_heating_tank_gas
-    hpxml_name = 'base-dhw-tank-gas.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tank-gas-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].tank_volume = 50.0
+    hpxml.water_heating_systems[0].energy_factor = 0.59
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml.water_heating_systems[0].first_hour_rating = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
@@ -231,7 +179,15 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tank_heat_pump
-    hpxml_name = 'base-dhw-tank-heat-pump.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tank-heat-pump-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].energy_factor = 2.3
+    hpxml.water_heating_systems[0].tank_volume = 80.0
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml.water_heating_systems[0].first_hour_rating = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 80, ef: 0.8644, n_units_served: 1 }])
@@ -261,7 +217,13 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tankless_electric
-    hpxml_name = 'base-dhw-tankless-electric.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tankless-electric-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].energy_factor = 0.99
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
@@ -291,7 +253,13 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_tankless_gas
-    hpxml_name = 'base-dhw-tankless-gas.xml'
+    # Create derivative file for testing
+    hpxml_name = 'base-dhw-tankless-gas-uef.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems[0].energy_factor = 0.82
+    hpxml.water_heating_systems[0].uniform_energy_factor = nil
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
@@ -338,6 +306,19 @@ class ERIWaterHeatingTest < MiniTest::Test
       hpxml = _test_measure(hpxml_name, calc_type)
       _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
     end
+
+    # Test tie between water heating fuel types; should choose fossil fuel
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.water_heating_systems.each do |w|
+      w.fraction_dhw_load_served = 0.0
+    end
+    hpxml.water_heating_systems.select { |w| w.fuel_type == HPXML::FuelTypeElectricity }[0].fraction_dhw_load_served = 0.5
+    hpxml.water_heating_systems.select { |w| w.fuel_type == HPXML::FuelTypeNaturalGas }[0].fraction_dhw_load_served = 0.5
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    assert_equal(HPXML::FuelTypeNaturalGas, hpxml.water_heating_systems[0].fuel_type)
   end
 
   def test_indirect_water_heating
@@ -387,6 +368,23 @@ class ERIWaterHeatingTest < MiniTest::Test
       _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
     end
+
+    # Test tie between space heating fuel types
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.heating_systems[0].fraction_heat_load_served = 0.15
+    { HPXML::FuelTypeOil => 0.35, HPXML::FuelTypeElectricity => 0.5 }.each do |fuel, frac|
+      hpxml.heating_systems.add(id: "HeatingSystem#{fuel}",
+                                heating_system_type: HPXML::HVACTypeStove,
+                                heating_system_fuel: fuel,
+                                heating_capacity: 999,
+                                heating_efficiency_percent: 0.8,
+                                fraction_heat_load_served: frac)
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    assert_equal(HPXML::FuelTypeOil, hpxml.water_heating_systems[0].fuel_type)
   end
 
   def test_water_heating_pre_addendum_a
@@ -426,17 +424,16 @@ class ERIWaterHeatingTest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-laundry-room.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
+    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.59, n_units_served: 1 }])
     _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 70.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.95, n_units_served: 1 },
-                                { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationOtherHeatedSpace, tank_vol: 40, ef: 0.95, n_units_served: 6, frac_load: 0 }])
+    _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 120, ef: 0.59, n_units_served: 6 }])
     _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 50)
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
+      _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.59, n_units_served: 1 }])
       _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 89.28)
     end
   end

@@ -167,35 +167,29 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_furnace_gas
-    hpxml_names = ['base-hvac-furnace-gas-only.xml',
-                   'base-hvac-install-quality-all-furnace-gas-only.xml']
+    hpxml_name = 'base-hvac-furnace-gas-only.xml'
 
-    hpxml_names.each do |hpxml_name|
-      _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        calc_types = [Constants.CalcTypeERIReferenceHome,
-                      Constants.CalcTypeERIIndexAdjustmentDesign,
-                      Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-        calc_types.each do |calc_type|
-          hpxml = _test_measure(hpxml_name, calc_type)
-          hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-          _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
-          _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
-          _check_heat_pump(hpxml)
-          _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
-        end
-        calc_type = Constants.CalcTypeERIRatedHome
+    _eri_versions.each do |eri_version|
+      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
+      calc_types = [Constants.CalcTypeERIReferenceHome,
+                    Constants.CalcTypeERIIndexAdjustmentDesign,
+                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+      calc_types.each do |calc_type|
         hpxml = _test_measure(hpxml_name, calc_type)
-        hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-        if hpxml_name.include? 'install-quality'
-          hvac_iq_values[:fan_watts_per_cfm] = 0.365
-        end
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, **hvac_iq_values }])
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
         _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
         _check_heat_pump(hpxml)
         _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
       end
+      calc_type = Constants.CalcTypeERIRatedHome
+      hpxml = _test_measure(hpxml_name, calc_type)
+      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, **hvac_iq_values }])
+      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
   end
 
@@ -748,6 +742,58 @@ class ERIHVACtest < MiniTest::Test
     end
   end
 
+  def test_shared_boiler_fan_coil
+    hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-fan-coil.xml'
+
+    _eri_versions.each do |eri_version|
+      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
+      calc_types = [Constants.CalcTypeERIReferenceHome,
+                    Constants.CalcTypeERIIndexAdjustmentDesign,
+                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+      calc_types.each do |calc_type|
+        hpxml = _test_measure(hpxml_name, calc_type)
+        hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, frac_load: 1.0, dse: _dse(calc_type), eae: 170 }])
+        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml)
+        _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+      end
+      calc_type = Constants.CalcTypeERIRatedHome
+      hpxml = _test_measure(hpxml_name, calc_type)
+      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 520, num_units_served: 6 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+    end
+  end
+
+  def test_shared_boiler_fan_coil_ducted
+    hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-fan-coil-ducted.xml'
+
+    _eri_versions.each do |eri_version|
+      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
+      calc_types = [Constants.CalcTypeERIReferenceHome,
+                    Constants.CalcTypeERIIndexAdjustmentDesign,
+                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+      calc_types.each do |calc_type|
+        hpxml = _test_measure(hpxml_name, calc_type)
+        hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, frac_load: 1.0, dse: _dse(calc_type), eae: 170 }])
+        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml)
+        _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+      end
+      calc_type = Constants.CalcTypeERIRatedHome
+      hpxml = _test_measure(hpxml_name, calc_type)
+      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 520, num_units_served: 6 }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+    end
+  end
+
   def test_shared_boiler_water_loop_heat_pump
     hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml'
 
@@ -767,9 +813,9 @@ class ERIHVACtest < MiniTest::Test
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1 - 1 / 4.4, eae: 208, num_units_served: 6 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 208, num_units_served: 6 }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.4, frac_load_heat: 1 / 4.4, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, frac_load_cool: 0.0 }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.4 }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
   end
@@ -792,11 +838,59 @@ class ERIHVACtest < MiniTest::Test
       end
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600 }])
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.5 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 12.45, frac_load: 1.0, dse: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
+      _check_heat_pump(hpxml)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+    end
+  end
+
+  def test_shared_chiller_fan_coil
+    hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml'
+
+    _eri_versions.each do |eri_version|
+      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
+      calc_types = [Constants.CalcTypeERIReferenceHome,
+                    Constants.CalcTypeERIIndexAdjustmentDesign,
+                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+      calc_types.each do |calc_type|
+        hpxml = _test_measure(hpxml_name, calc_type)
+        hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
+        _check_heat_pump(hpxml)
+        _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+      end
+      calc_type = Constants.CalcTypeERIRatedHome
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600, fan_coil_watts: 150 }])
+      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
+      _check_heat_pump(hpxml)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+    end
+  end
+
+  def test_shared_chiller_fan_coil_ducted
+    hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-fan-coil-ducted.xml'
+
+    _eri_versions.each do |eri_version|
+      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
+      calc_types = [Constants.CalcTypeERIReferenceHome,
+                    Constants.CalcTypeERIIndexAdjustmentDesign,
+                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+      calc_types.each do |calc_type|
+        hpxml = _test_measure(hpxml_name, calc_type)
+        hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
+        _check_heat_pump(hpxml)
+        _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+      end
+      calc_type = Constants.CalcTypeERIRatedHome
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600, fan_coil_watts: 150 }])
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
       _check_heat_pump(hpxml)
@@ -822,14 +916,10 @@ class ERIHVACtest < MiniTest::Test
       end
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
-      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.5 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 4.57, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600 }])
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
-      _check_heat_pump(hpxml)
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, eer: 12.8 }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
   end
@@ -852,14 +942,10 @@ class ERIHVACtest < MiniTest::Test
       end
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
-      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      hvac_iq_values[:fan_watts_per_cfm] = 0.5 # Chiller converted to AC, default AC fan w/cfm
-      hvac_iq_values[:airflow_defect_ratio] = 0.0 # Chiller converted to AC, no airflow defect
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Chiller converted to AC, no charge defect
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 11.98, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeCoolingTower, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, shared_loop_watts: 600 }])
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
-      _check_heat_pump(hpxml)
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, eer: 12.8 }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
     end
   end
@@ -990,6 +1076,7 @@ class ERIHVACtest < MiniTest::Test
     hpxml_name = 'base-hvac-ducts-leakage-total.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+    hpxml.header.energystar_calculation_version = nil
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
@@ -1091,6 +1178,11 @@ class ERIHVACtest < MiniTest::Test
         assert_nil(heating_system.shared_loop_watts)
       else
         assert_in_epsilon(expected_values[:shared_loop_watts], heating_system.shared_loop_watts, 0.01)
+      end
+      if expected_values[:fan_coil_watts].nil?
+        assert_nil(heating_system.fan_coil_watts)
+      else
+        assert_in_epsilon(expected_values[:fan_coil_watts], heating_system.fan_coil_watts, 0.01)
       end
     end
   end
@@ -1228,6 +1320,11 @@ class ERIHVACtest < MiniTest::Test
       else
         assert_nil(cooling_system.cooling_efficiency_eer)
       end
+      if not expected_values[:kw_per_ton].nil?
+        assert_equal(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton)
+      else
+        assert_nil(cooling_system.cooling_efficiency_kw_per_ton)
+      end
       if not expected_values[:frac_load].nil?
         assert_equal(expected_values[:frac_load], cooling_system.fraction_cool_load_served)
       else
@@ -1263,6 +1360,11 @@ class ERIHVACtest < MiniTest::Test
         assert_nil(cooling_system.shared_loop_watts)
       else
         assert_in_epsilon(expected_values[:shared_loop_watts], cooling_system.shared_loop_watts, 0.01)
+      end
+      if expected_values[:fan_coil_watts].nil?
+        assert_nil(cooling_system.fan_coil_watts)
+      else
+        assert_in_epsilon(expected_values[:fan_coil_watts], cooling_system.fan_coil_watts, 0.01)
       end
     end
   end

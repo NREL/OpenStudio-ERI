@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -294,6 +297,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -308,6 +312,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -322,6 +327,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -336,6 +342,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -345,6 +352,7 @@
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
             <FractionOperable>0.0</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='WallAtticGableCond'/>
           </Window>
           <Window>
@@ -354,6 +362,7 @@
             <UFactor>0.3</UFactor>
             <SHGC>0.45</SHGC>
             <FractionOperable>0.0</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='WallAtticGableCond'/>
           </Window>
         </Windows>
@@ -515,10 +524,8 @@
           <Location>basement - conditioned</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
-          <extension>
-            <IsVented>true</IsVented>
-            <VentedFlowRate>150.0</VentedFlowRate>
-          </extension>
+          <Vented>true</Vented>
+          <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>

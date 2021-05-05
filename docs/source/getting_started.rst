@@ -18,13 +18,13 @@ To get started:
 
 .. _running:
 
-Running
--------
+Running ERI
+-----------
 
 Run the ERI calculation on a provided sample HPXML file as follows:
 ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml``
 
-Note that the Reference Home, Rated Home and Index Adjustment Home (if applicable) simulations will be executed in parallel on the local machine.
+Note that all simulations will be executed in parallel if there are sufficient cpus/cores available.
 
 This will generate output as shown below:
 
@@ -40,8 +40,16 @@ Or one or more specific hourly output types can be requested, e.g.:
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 
+Running ENERGY STAR
+-------------------
+
+Run the ENERGY STAR calculation on a provided sample HPXML file as follows:
+``openstudio workflow/energy_star.rb -x workflow/sample_files/base.xml``
+
+Note that all simulations will be executed in parallel if there are sufficient cpus/cores available.
+
 Output
 ------
 
-Upon completion, ERI is provided in the console (stdout) as well as available in some of the summary output files.
+Upon completion, results are provided in the console (stdout) as well as available in summary output files.
 See the :ref:`outputs` section for a description of all available outputs.

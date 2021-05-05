@@ -1,48 +1,37 @@
 # frozen_string_literal: true
 
-# Used by energy_rating_index.rb.
 # Separate ruby script to allow being called using system() on Windows.
 
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
-def get_design_name_and_dir(output_dir, run)
-  design_name = ''
-  run.each do |x|
-    next if x.nil?
-
-    design_name += '_' if design_name.length > 0
-    design_name += x
-  end
-  return design_name, File.join(output_dir, design_name.gsub(' ', ''))
+def get_design_dir(run)
+  return File.join(run[2], run[0].gsub(' ', ''))
 end
 
-def get_output_hpxml(resultsdir, designdir)
-  return File.join(resultsdir, File.basename(designdir) + '.xml')
+def get_output_filename(run, file_suffix = '.xml')
+  return File.join(run[3], run[0].gsub(' ', '') + file_suffix)
 end
 
-def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
+def run_design(basedir, run, hpxml, debug, hourly_outputs, add_comp_loads)
   measures_dir = File.join(File.dirname(__FILE__), '..')
-  design_name, designdir = get_design_name_and_dir(output_dir, run)
-  output_hpxml = get_output_hpxml(resultsdir, designdir)
+  designdir = get_design_dir(run)
+  output_hpxml = get_output_filename(run)
 
   measures = {}
 
-  if not run[0].nil?
-    # Add 301 measure to workflow
-    measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
-    args = {}
-    args['calc_type'] = run[0]
-    args['hpxml_input_path'] = hpxml
-    args['hpxml_output_path'] = output_hpxml
-    update_args_hash(measures, measure_subdir, args)
-  end
+  # Add 301 measure to workflow
+  measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
+  args = {}
+  args['calc_type'] = run[0]
+  args['hpxml_input_path'] = run[1]
+  args['hpxml_output_path'] = output_hpxml
+  update_args_hash(measures, measure_subdir, args)
 
   # Add HPXML translator measure to workflow
   measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
   args = {}
-  output_dir = File.absolute_path(designdir)
   args['hpxml_path'] = output_hpxml
-  args['output_dir'] = output_dir
+  args['output_dir'] = File.absolute_path(designdir)
   args['debug'] = debug
   args['add_component_loads'] = (add_comp_loads || hourly_outputs.include?('componentloads'))
   args['skip_validation'] = !debug
@@ -63,19 +52,19 @@ def run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_output
   args['include_timeseries_weather'] = hourly_outputs.include? 'weather'
   update_args_hash(measures, measure_subdir, args)
 
-  results = run_hpxml_workflow(designdir, measures, measures_dir, debug: debug, print_prefix: "[#{design_name}] ")
+  print_prefix = "[#{run[0]}] "
+
+  results = run_hpxml_workflow(designdir, measures, measures_dir, debug: debug, print_prefix: print_prefix)
 
   return output_hpxml
 end
 
-if ARGV.size == 8
+if ARGV.size == 6
   basedir = ARGV[0]
-  output_dir = ARGV[1]
-  run = ARGV[2].split('|').map { |x| (x.length == 0 ? nil : x) }
-  resultsdir = ARGV[3]
-  hpxml = ARGV[4]
-  debug = (ARGV[5].downcase.to_s == 'true')
-  hourly_outputs = ARGV[6].split('|')
-  add_comp_loads = (ARGV[7].downcase.to_s == 'true')
-  run_design(basedir, output_dir, run, resultsdir, hpxml, debug, hourly_outputs, add_comp_loads)
+  run = ARGV[1].split('|').map { |x| (x.length == 0 ? nil : x) }
+  hpxml = ARGV[2]
+  debug = (ARGV[3].downcase.to_s == 'true')
+  hourly_outputs = ARGV[4].split('|')
+  add_comp_loads = (ARGV[5].downcase.to_s == 'true')
+  run_design(basedir, run, hpxml, debug, hourly_outputs, add_comp_loads)
 end
