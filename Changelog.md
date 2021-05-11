@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.1.2
 
 __New Features__
-
+- Revises shared mechanical ventilation preconditioning control logic to operate less often.
 
 ## OpenStudio-ERI v1.1.1
 
