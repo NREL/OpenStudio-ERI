@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.2.1
+
+__New Features__
+- Revises shared mechanical ventilation preconditioning control logic to operate less often.
+
 ## OpenStudio-ERI v1.2.0
 
 __New Features__
@@ -22,6 +27,11 @@ __Bugfixes__
 - Fixes room air conditioner performance curve.
 - Fixes heating load fractions for boiler w/ WLHP.
 - Water loop heat pumps no longer get added electric backup heating in the Rated Home.
+
+## OpenStudio-ERI v1.1.2
+
+__New Features__
+- Revises shared mechanical ventilation preconditioning control logic to operate less often.
 
 ## OpenStudio-ERI v1.1.1
 
