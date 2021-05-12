@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+$VERBOSE = nil # Prevents ruby warnings, see https://github.com/NREL/OpenStudio/issues/4301
+
 def create_test_hpxmls
   this_dir = File.dirname(__FILE__)
   tests_dir = File.join(this_dir, 'workflow/tests')
@@ -2023,6 +2025,7 @@ def create_sample_hpxmls
                   'invalid_files/num-bedrooms-exceeds-limit.xml',
                   'base.xml',
                   'base-appliances-dehumidifier.xml',
+                  'base-appliances-dehumidifier-ief-portable.xml',
                   'base-appliances-dehumidifier-ief-whole-home.xml',
                   'base-appliances-dehumidifier-multiple.xml',
                   'base-appliances-gas.xml',

@@ -24,7 +24,7 @@ class ERIGeneratorTest < MiniTest::Test
     end
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_generator(hpxml, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 500, is_shared: false },
-                             { fuel: HPXML::FuelTypePropane, annual_input: 8500, annual_output: 500, is_shared: false }])
+                             { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 500, is_shared: false }])
   end
 
   def test_generator_shared

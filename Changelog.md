@@ -1,8 +1,11 @@
 ## OpenStudio-ERI v1.3.0 (Pending)
 
 __New Features__
+- Updates to OpenStudio 3.2.0/EnergyPlus 9.5.0.
+- Allows additional fuel types for generators.
 
 __Bugfixes__
+- Improves ground reflectance when there is shading of windows/skylights.
 
 ## OpenStudio-ERI v1.2.1
 
