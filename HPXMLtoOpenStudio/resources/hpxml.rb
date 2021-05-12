@@ -807,6 +807,7 @@ class HPXML < Object
             end
           end
           next unless (not end_day.nil?) && (months.include? end_month)
+
           if not valid_days.include? end_day
             errors << "#{sim_ctl} End Day of Month (#{end_day}) must be one of: #{valid_days.join(', ')}."
           end
@@ -816,12 +817,14 @@ class HPXML < Object
       { 'Run Period' => [@sim_begin_month, @sim_begin_day, @sim_end_month, @sim_end_day] }.each do |sim_ctl, months_and_days|
         begin_month, begin_day, end_month, end_day = months_and_days
         next unless (not begin_month.nil?) && (not end_month.nil?)
+
         if begin_month > end_month
           errors << "#{sim_ctl} Begin Month (#{begin_month}) cannot come after #{sim_ctl} End Month (#{end_month})."
         end
 
         next unless (not begin_day.nil?) && (not end_day.nil?)
         next unless begin_month == end_month
+
         if begin_day > end_day
           errors << "#{sim_ctl} Begin Day of Month (#{begin_day}) cannot come after #{sim_ctl} End Day of Month (#{end_day}) for the same month (#{begin_month})."
         end
@@ -3550,7 +3553,7 @@ class HPXML < Object
       end
       XMLHelper.add_element(ducts_el, 'DuctInsulationRValue', @duct_insulation_r_value, :float) unless @duct_insulation_r_value.nil?
       XMLHelper.add_element(ducts_el, 'DuctLocation', @duct_location, :string, @duct_location_isdefaulted) unless @duct_location.nil?
-      XMLHelper.add_element(ducts_el, 'FractionDuctArea', @duct_fraction_area, :float) unless @duct_fraction_area.nil?
+      XMLHelper.add_element(ducts_el, 'FractionDuctArea', @duct_fraction_area, :float, @duct_fraction_area_isdefaulted) unless @duct_fraction_area.nil?
       XMLHelper.add_element(ducts_el, 'DuctSurfaceArea', @duct_surface_area, :float, @duct_surface_area_isdefaulted) unless @duct_surface_area.nil?
     end
 
@@ -4424,9 +4427,9 @@ class HPXML < Object
       XMLHelper.add_element(clothes_dryer, 'EnergyFactor', @energy_factor, :float) unless @energy_factor.nil?
       XMLHelper.add_element(clothes_dryer, 'CombinedEnergyFactor', @combined_energy_factor, :float, @combined_energy_factor_isdefaulted) unless @combined_energy_factor.nil?
       XMLHelper.add_element(clothes_dryer, 'ControlType', @control_type, :string, @control_type_isdefaulted) unless @control_type.nil?
+      XMLHelper.add_element(clothes_dryer, 'Vented', @is_vented, :boolean, @is_vented_isdefaulted) unless @is_vented.nil?
+      XMLHelper.add_element(clothes_dryer, 'VentedFlowRate', @vented_flow_rate, :float, @vented_flow_rate_isdefaulted) unless @vented_flow_rate.nil?
       XMLHelper.add_extension(clothes_dryer, 'UsageMultiplier', @usage_multiplier, :float, @usage_multiplier_isdefaulted) unless @usage_multiplier.nil?
-      XMLHelper.add_extension(clothes_dryer, 'IsVented', @is_vented, :boolean, @is_vented_isdefaulted) unless @is_vented.nil?
-      XMLHelper.add_extension(clothes_dryer, 'VentedFlowRate', @vented_flow_rate, :float, @vented_flow_rate_isdefaulted) unless @vented_flow_rate.nil?
     end
 
     def from_oga(clothes_dryer)
@@ -4441,9 +4444,9 @@ class HPXML < Object
       @energy_factor = XMLHelper.get_value(clothes_dryer, 'EnergyFactor', :float)
       @combined_energy_factor = XMLHelper.get_value(clothes_dryer, 'CombinedEnergyFactor', :float)
       @control_type = XMLHelper.get_value(clothes_dryer, 'ControlType', :string)
+      @is_vented = XMLHelper.get_value(clothes_dryer, 'Vented', :boolean)
+      @vented_flow_rate = XMLHelper.get_value(clothes_dryer, 'VentedFlowRate', :float)
       @usage_multiplier = XMLHelper.get_value(clothes_dryer, 'extension/UsageMultiplier', :float)
-      @is_vented = XMLHelper.get_value(clothes_dryer, 'extension/IsVented', :boolean)
-      @vented_flow_rate = XMLHelper.get_value(clothes_dryer, 'extension/VentedFlowRate', :float)
     end
   end
 
