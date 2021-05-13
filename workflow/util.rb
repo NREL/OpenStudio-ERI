@@ -470,7 +470,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   # On-Site Power Production
   # Electricity produced minus equivalent electric energy use calculated in accordance
   # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
-  results[:opp] = -1 * (rated_output[:elecPV] + rated_output[:elecGenerator] - 0.4 * (rated_output[:gasGenerator] - rated_output[:propaneGenerator]))
+  results[:opp] = -1 * (rated_output[:elecPV] + rated_output[:elecGenerator]) - 0.4 * (rated_output[:gasGenerator] + rated_output[:oilGenerator] + rated_output[:propaneGenerator] + rated_output[:woodcordGenerator] + rated_output[:woodpelletsGenerator])
 
   results[:pefrac] = 1.0
   if results[:teu] > 0
@@ -683,6 +683,7 @@ def cache_weather
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
+  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/schedules'
 
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   weather_dir = File.join(File.dirname(__FILE__), '..', 'weather')
