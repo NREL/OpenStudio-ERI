@@ -3,6 +3,7 @@
 __New Features__
 - Updates to OpenStudio 3.2.0/EnergyPlus 9.5.0.
 - Allows additional fuel types for generators.
+- Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
 
 __Bugfixes__
 - Improves ground reflectance when there is shading of windows/skylights.
