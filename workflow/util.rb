@@ -683,6 +683,7 @@ def cache_weather
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
+  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/schedules'
 
   # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   weather_dir = File.join(File.dirname(__FILE__), '..', 'weather')
