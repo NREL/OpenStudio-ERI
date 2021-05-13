@@ -2022,7 +2022,6 @@ def create_sample_hpxmls
                   'invalid_files/hvac-frac-load-served.xml',
                   'invalid_files/invalid-epw-filepath.xml',
                   'invalid_files/missing-elements.xml',
-                  'invalid_files/num-bedrooms-exceeds-limit.xml',
                   'base.xml',
                   'base-appliances-dehumidifier.xml',
                   'base-appliances-dehumidifier-ief-portable.xml',
