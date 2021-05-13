@@ -6,7 +6,7 @@ __New Features__
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
 
 __Bugfixes__
-- Improves ground reflectance when there is shading of windows/skylights.
+- Improves ground reflectance for window interior shading.
 
 ## OpenStudio-ERI v1.2.1
 
