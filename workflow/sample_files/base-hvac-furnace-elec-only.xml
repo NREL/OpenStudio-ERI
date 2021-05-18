@@ -323,12 +323,12 @@
               <HeatingCapacity>36000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
-                <Value>1.0</Value>
+                <Value>0.98</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <extension>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
               </extension>
             </HeatingSystem>
           </HVACPlant>

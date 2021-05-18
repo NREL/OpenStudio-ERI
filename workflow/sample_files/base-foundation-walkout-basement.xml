@@ -393,8 +393,8 @@
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <extension>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
               </extension>
             </HeatingSystem>
             <CoolingSystem>
@@ -411,9 +411,9 @@
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
-                <ChargeNotTested>true</ChargeNotTested>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
               </extension>
             </CoolingSystem>
           </HVACPlant>

@@ -224,9 +224,9 @@
                 <Value>3.6</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <ChargeDefectRatio>0.0</ChargeDefectRatio>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
                 <PumpPowerWattsPerTon>0.0</PumpPowerWattsPerTon>
                 <SharedLoopWatts>600.0</SharedLoopWatts>
                 <SharedLoopMotorEfficiency>0.9</SharedLoopMotorEfficiency>

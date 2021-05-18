@@ -480,9 +480,9 @@
                 <Value>7.5</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <ChargeNotTested>true</ChargeNotTested>
-                <FanPowerNotTested>true</FanPowerNotTested>
-                <AirflowNotTested>true</AirflowNotTested>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
               </extension>
             </HeatPump>
           </HVACPlant>

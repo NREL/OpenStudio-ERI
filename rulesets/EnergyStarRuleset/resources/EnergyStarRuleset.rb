@@ -2076,11 +2076,7 @@ class EnergyStarRuleset
     end
 
     if heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
-      if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
-        charge_defect_ratio = 0.0 # FIXME: Temporary until we can model -0.25 w/ EnergyPlus
-      else
-        charge_defect_ratio = -0.25
-      end
+      charge_defect_ratio = -0.25
       airflow_defect_ratio = -0.25
       fan_watts_per_cfm = 0.58
     end

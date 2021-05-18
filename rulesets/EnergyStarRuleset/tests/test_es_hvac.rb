@@ -285,7 +285,6 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      hvac_iq_values[:charge_defect_ratio] = 0 # FIXME: Temporary
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 30, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -338,7 +337,6 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
-      hvac_iq_values[:charge_defect_ratio] = 0 # FIXME: Temporary
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 30, **hvac_iq_values }])
@@ -443,7 +441,6 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
-      hvac_iq_values[:charge_defect_ratio] = 0 # FIXME: Temporary
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 30, **hvac_iq_values }])
@@ -1244,7 +1241,6 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Can't currently handle non-zero GSHP charge defect
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_gshp_eer_cz7(es_version), cop: get_es_gshp_cop_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 30, is_shared_system: true, **hvac_iq_values }])

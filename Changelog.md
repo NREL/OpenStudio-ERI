@@ -2,7 +2,9 @@
 
 __New Features__
 - Updates to OpenStudio 3.2.0/EnergyPlus 9.5.0.
+- **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeDefectRatio` are no longer accepted.
 - Allows additional fuel types for generators.
+- Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
 
 __Bugfixes__

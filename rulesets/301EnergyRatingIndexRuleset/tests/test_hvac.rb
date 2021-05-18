@@ -31,7 +31,7 @@ class ERIHVACtest < MiniTest::Test
 
   def _get_default_hvac_iq_values(eri_version, pre_addendum_b_fan_watts_per_cfm)
     if eri_version == 'latest'
-      # All test files have either -0.25 specified or not tested (Grade 3)
+      # All test files have -0.25 specified
       return { fan_watts_per_cfm: 0.58,
                airflow_defect_ratio: -0.25,
                charge_defect_ratio: -0.25 }
@@ -106,7 +106,7 @@ class ERIHVACtest < MiniTest::Test
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 1.0, eae: 170 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0, eae: 170 }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
@@ -158,7 +158,7 @@ class ERIHVACtest < MiniTest::Test
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0, **hvac_iq_values }])
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
@@ -238,7 +238,7 @@ class ERIHVACtest < MiniTest::Test
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeWallFurnace, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 1.0 }])
+      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeWallFurnace, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0 }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
@@ -353,9 +353,8 @@ class ERIHVACtest < MiniTest::Test
       end
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
-      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      hvac_iq_values[:airflow_defect_ratio] = nil # Ductless, so airflow defect doesn't apply:
-      hvac_iq_values[:fan_watts_per_cfm] = 0.07 # Ductless, so fan watt grade doesn't apply:
+      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.07)
+      hvac_iq_values[:airflow_defect_ratio] = 0.0
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpMiniSplit, fuel: HPXML::FuelTypeElectricity, hspf: 10, seer: 19, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
@@ -384,7 +383,6 @@ class ERIHVACtest < MiniTest::Test
         calc_type = Constants.CalcTypeERIRatedHome
         hpxml = _test_measure(hpxml_name, calc_type)
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-        hvac_iq_values[:charge_defect_ratio] = 0.0 # Can't currently handle non-zero GSHP charge defect
         if hpxml_name.include? 'install-quality'
           hvac_iq_values[:fan_watts_per_cfm] = 0.365
         end
@@ -583,11 +581,11 @@ class ERIHVACtest < MiniTest::Test
       end
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
-      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      hvac_iq_values[:airflow_defect_ratio] = nil # Ductless, so airflow defect doesn't apply:
-      hvac_iq_values[:fan_watts_per_cfm] = 0.07 # Ductless, so fan watt grade doesn't apply:
+      hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.07)
+      hvac_iq_values[:airflow_defect_ratio] = 0.0
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeMiniSplitAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: 19, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+      puts hvac_iq_values
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
@@ -659,10 +657,8 @@ class ERIHVACtest < MiniTest::Test
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
       ac_furn_hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
       gshp_hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-      gshp_hvac_iq_values[:charge_defect_ratio] = 0.0 # Can't currently handle non-zero GSHP charge defect
-      mshp_hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-      mshp_hvac_iq_values[:airflow_defect_ratio] = nil # Ductless, so airflow defect doesn't apply:
-      mshp_hvac_iq_values[:fan_watts_per_cfm] = 0.07 # Ductless, so fan watt grade doesn't apply:
+      mshp_hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.07)
+      mshp_hvac_iq_values[:airflow_defect_ratio] = 0.0
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 0.2, shr: 0.73, **ac_furn_hvac_iq_values },
                                     { systype: HPXML::HVACTypeRoomAirConditioner, fuel: HPXML::FuelTypeElectricity, eer: 8.5, frac_load: 0.2, shr: 0.65 }])
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 0.1, **ac_furn_hvac_iq_values },
@@ -969,7 +965,6 @@ class ERIHVACtest < MiniTest::Test
       calc_type = Constants.CalcTypeERIRatedHome
       hpxml = _test_measure(hpxml_name, calc_type)
       hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Can't currently handle non-zero GSHP charge defect
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 0, num_units_served: 6, shared_loop_watts: 600, **hvac_iq_values }])
       _check_cooling_system(hpxml)
       _check_heating_system(hpxml)
