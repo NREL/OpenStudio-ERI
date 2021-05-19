@@ -104,11 +104,11 @@ base-hvac-furnace-gas-only.xml,79.48,24.36,8.26,10.46,38.79,4.85,11.49,32.36,4.7
 base-hvac-ground-to-air-heat-pump-cooling-only.xml,82.25,24.36,8.26,10.46,38.79,4.85,11.49,35.72,3.84,9.15,0.0,21.28,0.22123
 base-hvac-ground-to-air-heat-pump-heating-only.xml,77.84,24.36,8.26,10.46,18.33,4.85,11.49,13.3,4.79,9.15,0.0,21.28,0.22082
 base-hvac-ground-to-air-heat-pump.xml,75.36,24.36,8.26,10.46,18.33,4.85,11.49,12.44,4.42,9.15,0.0,21.28,0.22082
-base-hvac-install-quality-all-air-to-air-heat-pump-1-speed.xml,82.24,24.36,8.26,10.46,18.33,4.85,11.49,17.29,3.51,9.15,0.0,21.28,0.22082
-base-hvac-install-quality-all-furnace-gas-central-ac-1-speed.xml,79.07,24.36,8.26,10.46,38.79,4.85,11.49,32.09,4.71,9.15,0.0,21.28,0.22123
-base-hvac-install-quality-all-ground-to-air-heat-pump.xml,73.25,24.36,8.26,10.46,18.33,4.85,11.49,12.14,3.77,9.15,0.0,21.28,0.22082
-base-hvac-install-quality-all-mini-split-air-conditioner-only-ducted.xml,78.44,24.36,8.26,10.46,38.79,4.85,11.49,35.72,2.25,9.15,0.0,21.28,0.22123
-base-hvac-install-quality-all-mini-split-heat-pump-ducted.xml,63.8,24.36,8.26,10.46,18.33,4.85,11.49,9.27,2.05,9.15,0.0,21.28,0.22082
+base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml,82.24,24.36,8.26,10.46,18.33,4.85,11.49,17.29,3.51,9.15,0.0,21.28,0.22082
+base-hvac-install-quality-furnace-gas-central-ac-1-speed.xml,79.07,24.36,8.26,10.46,38.79,4.85,11.49,32.09,4.71,9.15,0.0,21.28,0.22123
+base-hvac-install-quality-ground-to-air-heat-pump.xml,73.25,24.36,8.26,10.46,18.33,4.85,11.49,12.14,3.77,9.15,0.0,21.28,0.22082
+base-hvac-install-quality-mini-split-air-conditioner-only-ducted.xml,78.44,24.36,8.26,10.46,38.79,4.85,11.49,35.72,2.25,9.15,0.0,21.28,0.22123
+base-hvac-install-quality-mini-split-heat-pump-ducted.xml,63.8,24.36,8.26,10.46,18.33,4.85,11.49,9.27,2.05,9.15,0.0,21.28,0.22082
 base-hvac-mini-split-air-conditioner-only-ducted.xml,78.7,24.36,8.26,10.46,38.79,4.85,11.49,35.72,2.35,9.15,0.0,21.28,0.22123
 base-hvac-mini-split-air-conditioner-only-ductless.xml,76.5,24.36,8.26,10.46,38.79,4.85,11.49,35.72,1.43,9.15,0.0,21.28,0.22123
 base-hvac-mini-split-heat-pump-ducted-cooling-only.xml,78.18,24.36,8.26,10.46,38.79,4.85,11.49,35.72,2.14,9.15,0.0,21.28,0.22123

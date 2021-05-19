@@ -105,11 +105,11 @@
 [SF_National_3.1] base-hvac-ground-to-air-heat-pump-cooling-only.xml,76.0,1.0,76.0,82.0,82.0,FAIL
 [SF_National_3.1] base-hvac-ground-to-air-heat-pump-heating-only.xml,70.0,1.0,70.0,78.0,78.0,FAIL
 [SF_National_3.1] base-hvac-ground-to-air-heat-pump.xml,68.0,1.0,68.0,75.0,75.0,FAIL
-[SF_National_3.1] base-hvac-install-quality-all-air-to-air-heat-pump-1-speed.xml,68.0,1.0,68.0,82.0,82.0,FAIL
-[SF_National_3.1] base-hvac-install-quality-all-furnace-gas-central-ac-1-speed.xml,67.0,1.0,67.0,79.0,79.0,FAIL
-[SF_National_3.1] base-hvac-install-quality-all-ground-to-air-heat-pump.xml,68.0,1.0,68.0,73.0,73.0,FAIL
-[SF_National_3.1] base-hvac-install-quality-all-mini-split-air-conditioner-only-ducted.xml,78.0,1.0,78.0,78.0,78.0,PASS
-[SF_National_3.1] base-hvac-install-quality-all-mini-split-heat-pump-ducted.xml,68.0,1.0,68.0,64.0,64.0,PASS
+[SF_National_3.1] base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml,68.0,1.0,68.0,82.0,82.0,FAIL
+[SF_National_3.1] base-hvac-install-quality-furnace-gas-central-ac-1-speed.xml,67.0,1.0,67.0,79.0,79.0,FAIL
+[SF_National_3.1] base-hvac-install-quality-ground-to-air-heat-pump.xml,68.0,1.0,68.0,73.0,73.0,FAIL
+[SF_National_3.1] base-hvac-install-quality-mini-split-air-conditioner-only-ducted.xml,78.0,1.0,78.0,78.0,78.0,PASS
+[SF_National_3.1] base-hvac-install-quality-mini-split-heat-pump-ducted.xml,68.0,1.0,68.0,64.0,64.0,PASS
 [SF_National_3.1] base-hvac-mini-split-air-conditioner-only-ducted.xml,78.0,1.0,78.0,79.0,79.0,FAIL
 [SF_National_3.1] base-hvac-mini-split-air-conditioner-only-ductless.xml,78.0,1.0,78.0,76.0,76.0,PASS
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ducted-cooling-only.xml,76.0,1.0,76.0,78.0,78.0,FAIL
