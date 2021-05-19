@@ -588,30 +588,26 @@ class EnergyStarHVACtest < MiniTest::Test
 
   def test_mini_split_air_conditioner_ducted
     ESConstants.AllVersions.each do |es_version|
-      hpxml_files = ['base-hvac-mini-split-air-conditioner-only-ducted.xml',
-                     'base-hvac-install-quality-all-mini-split-air-conditioner-only-ducted.xml']
-      hpxml_files.each do |hpxml_file|
-        _convert_to_es(hpxml_file, es_version)
-        hpxml = _test_measure()
-        hvac_iq_values = get_default_hvac_iq_values(es_version)
-        _check_heating_system(hpxml)
-        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
-        _check_heat_pump(hpxml)
-        _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-        if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationBasementConditioned }])
-        elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? es_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
-        elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? es_version
-          return_r = (es_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
-        end
-        _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                    { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _convert_to_es('base-hvac-mini-split-air-conditioner-only-ducted.xml', es_version)
+      hpxml = _test_measure()
+      hvac_iq_values = get_default_hvac_iq_values(es_version)
+      _check_heating_system(hpxml)
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml)
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationBasementConditioned }])
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? es_version
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+      elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? es_version
+        return_r = (es_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
+      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
