@@ -29,7 +29,7 @@ base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml,66.
 base-bldgtype-multifamily-shared-generator.xml,69.21,7.84,5.49,10.46,12.49,3.48,11.47,3.04,2.8,9.68,0.0,13.08,0.23144
 base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml,66.1,7.84,5.49,10.46,6.0,3.48,11.47,3.1,2.02,9.68,0.0,13.08,0.23057
 base-bldgtype-multifamily-shared-laundry-room.xml,60.43,7.31,5.77,10.49,11.64,3.6,18.26,3.23,2.71,12.53,0.0,13.08,0.23106
-base-bldgtype-multifamily-shared-mechvent-preconditioning.xml,73.99,7.71,5.58,10.46,12.28,3.52,11.47,0.6,3.49,9.67,0.0,14.58,0.23144
+base-bldgtype-multifamily-shared-mechvent-preconditioning.xml,69.79,7.71,5.58,10.46,12.28,3.52,11.47,0.77,3.1,9.67,0.0,14.58,0.23144
 base-bldgtype-multifamily-shared-mechvent.xml,66.02,7.71,5.58,10.46,12.28,3.52,11.47,2.85,2.81,9.69,0.0,14.58,0.23144
 base-bldgtype-multifamily-shared-pv.xml,5.69,7.84,5.49,10.46,12.49,3.48,11.47,3.04,2.8,9.68,0.0,13.08,0.23144
 base-bldgtype-multifamily-shared-water-heater-recirc.xml,62.08,7.09,5.97,10.49,11.29,3.68,18.25,3.11,2.77,13.63,0.0,13.08,0.23106
@@ -83,7 +83,7 @@ base-foundation-walkout-basement.xml,81.22,26.92,8.73,10.46,42.88,5.1,11.49,35.5
 base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml,82.91,24.36,8.26,10.46,38.79,4.85,11.49,35.72,4.12,9.15,0.0,21.28,0.22123
 base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml,86.8,24.36,8.26,10.46,18.33,4.85,11.49,18.1,4.79,9.15,0.0,21.28,0.22082
 base-hvac-air-to-air-heat-pump-1-speed.xml,84.19,24.36,8.26,10.46,18.33,4.85,11.49,17.79,3.94,9.15,0.0,21.28,0.22082
-base-hvac-boiler-elec-only.xml,97.72,24.36,8.26,10.46,18.33,4.85,11.49,23.95,4.79,9.15,0.0,21.28,0.22082
+base-hvac-boiler-elec-only.xml,98.63,24.36,8.26,10.46,18.33,4.85,11.49,24.44,4.79,9.15,0.0,21.28,0.22082
 base-hvac-boiler-gas-only.xml,72.99,24.36,8.26,10.46,40.24,4.85,11.49,26.02,4.79,9.15,0.0,21.28,0.23057
 base-hvac-boiler-oil-only.xml,73.0,24.36,8.26,10.46,40.24,4.85,11.49,26.04,4.79,9.15,0.0,21.28,0.23057
 base-hvac-boiler-propane-only.xml,72.99,24.36,8.26,10.46,40.24,4.85,11.49,26.02,4.79,9.15,0.0,21.28,0.23057
@@ -99,7 +99,7 @@ base-hvac-evap-cooler-only.xml,74.72,24.36,8.26,10.46,38.79,4.85,11.49,35.72,0.6
 base-hvac-fireplace-wood-only.xml,77.5,24.36,8.26,10.46,38.79,4.85,11.49,28.06,4.79,9.15,0.0,21.28,0.22123
 base-hvac-fixed-heater-gas-only.xml,70.56,24.36,8.26,10.46,38.79,4.85,11.49,22.45,4.79,9.15,0.0,21.28,0.22123
 base-hvac-floor-furnace-propane-only.xml,77.5,24.36,8.26,10.46,38.79,4.85,11.49,28.06,4.79,9.15,0.0,21.28,0.22123
-base-hvac-furnace-elec-only.xml,108.73,24.36,8.26,10.46,18.33,4.85,11.49,29.85,4.79,9.15,0.0,21.28,0.22082
+base-hvac-furnace-elec-only.xml,109.83,24.36,8.26,10.46,18.33,4.85,11.49,30.44,4.79,9.15,0.0,21.28,0.22082
 base-hvac-furnace-gas-only.xml,79.48,24.36,8.26,10.46,38.79,4.85,11.49,32.36,4.79,9.15,0.0,21.28,0.22123
 base-hvac-ground-to-air-heat-pump-cooling-only.xml,79.62,24.36,8.26,10.46,38.79,4.85,11.49,35.72,2.74,9.15,0.0,21.28,0.22123
 base-hvac-ground-to-air-heat-pump-heating-only.xml,69.13,24.36,8.26,10.46,18.33,4.85,11.49,8.63,4.79,9.15,0.0,21.28,0.22082
@@ -122,7 +122,7 @@ base-hvac-programmable-thermostat.xml,77.11,24.36,8.26,10.46,38.79,4.85,11.49,30
 base-hvac-room-ac-only.xml,82.53,24.36,8.26,10.46,38.79,5.14,11.49,35.72,4.19,9.15,0.0,21.28,0.22083
 base-hvac-stove-wood-pellets-only.xml,77.48,24.36,8.26,10.46,38.79,4.85,11.49,28.04,4.79,9.15,0.0,21.28,0.22123
 base-hvac-undersized.xml,75.1,24.36,8.26,10.46,38.79,4.85,11.49,27.8,4.51,9.15,0.0,21.28,0.22123
-base-hvac-wall-furnace-elec-only.xml,94.91,24.36,8.26,10.46,18.33,4.85,11.49,22.45,4.79,9.15,0.0,21.28,0.22082
+base-hvac-wall-furnace-elec-only.xml,95.77,24.36,8.26,10.46,18.33,4.85,11.49,22.91,4.79,9.15,0.0,21.28,0.22082
 base-lighting-ceiling-fans.xml,79.82,24.35,8.16,10.46,38.78,4.79,11.48,32.01,5.04,9.15,0.0,21.8,0.21878
 base-location-baltimore-md.xml,65.92,21.16,10.08,9.59,33.73,6.09,10.82,17.03,5.95,8.62,0.0,15.13,0.27246
 base-location-dallas-tx.xml,66.83,6.85,17.45,7.51,10.93,10.57,8.49,3.77,8.07,6.82,0.0,15.13,0.27598
