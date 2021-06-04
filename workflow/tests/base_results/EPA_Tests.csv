@@ -4,10 +4,10 @@
 [MF_National_1.0] CZ6_VT_elec_middle_interior.xml,67.46,67.46
 [MF_National_1.1] CZ2_FL_elec_top_corner.xml,60.04,60.04
 [MF_National_1.1] CZ4_MO_elec_ground_corner_vented_crawl.xml,61.04,61.04
-[MF_National_1.1] CZ6_VT_gas_ground_corner_cond_bsmt.xml,59.59,59.59
-[SF_National_3.0] CZ2_FL_gas_slab.xml,74.3,74.3
-[SF_National_3.0] CZ4_MO_gas_vented_crawl.xml,79.78,79.78
-[SF_National_3.0] CZ6_VT_elec_cond_bsmt.xml,71.26,71.26
-[SF_National_3.1] CZ2_FL_elec_slab.xml,64.46,64.46
-[SF_National_3.1] CZ4_MO_elec_vented_crawl.xml,63.38,63.38
-[SF_National_3.1] CZ6_VT_gas_cond_bsmt.xml,59.56,59.56
+[MF_National_1.1] CZ6_VT_gas_ground_corner_cond_bsmt.xml,58.68,58.68
+[SF_National_3.0] CZ2_FL_gas_slab.xml,74.33,74.33
+[SF_National_3.0] CZ4_MO_gas_vented_crawl.xml,79.63,79.63
+[SF_National_3.0] CZ6_VT_elec_cond_bsmt.xml,69.76,69.76
+[SF_National_3.1] CZ2_FL_elec_slab.xml,64.41,64.41
+[SF_National_3.1] CZ4_MO_elec_vented_crawl.xml,63.05,63.05
+[SF_National_3.1] CZ6_VT_gas_cond_bsmt.xml,58.01,58.01
