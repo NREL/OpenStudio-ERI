@@ -24,6 +24,7 @@ class HPXMLDefaults
     apply_rim_joists(hpxml)
     apply_walls(hpxml)
     apply_foundation_walls(hpxml)
+    apply_frame_floors(hpxml)
     apply_slabs(hpxml)
     apply_windows(hpxml)
     apply_skylights(hpxml)
@@ -293,12 +294,29 @@ class HPXMLDefaults
         roof.radiant_barrier = false
         roof.radiant_barrier_isdefaulted = true
       end
+      if roof.roof_color.nil? && roof.solar_absorptance.nil?
+        roof.roof_color = HPXML::ColorMedium
+        roof.roof_color_isdefaulted = true
+      end
       if roof.roof_color.nil?
         roof.roof_color = Constructions.get_default_roof_color(roof.roof_type, roof.solar_absorptance)
         roof.roof_color_isdefaulted = true
       elsif roof.solar_absorptance.nil?
         roof.solar_absorptance = Constructions.get_default_roof_solar_absorptance(roof.roof_type, roof.roof_color)
         roof.solar_absorptance_isdefaulted = true
+      end
+      if roof.interior_finish_type.nil?
+        if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? roof.interior_adjacent_to
+          roof.interior_finish_type = HPXML::InteriorFinishGypsumBoard
+        else
+          roof.interior_finish_type = HPXML::InteriorFinishNone
+        end
+        roof.interior_finish_type_isdefaulted = true
+      end
+      next unless roof.interior_finish_thickness.nil?
+      if roof.interior_finish_type != HPXML::InteriorFinishNone
+        roof.interior_finish_thickness = 0.5
+        roof.interior_finish_thickness_isdefaulted = true
       end
     end
   end
@@ -315,6 +333,10 @@ class HPXMLDefaults
         rim_joist.siding = HPXML::SidingTypeWood
         rim_joist.siding_isdefaulted = true
       end
+      if rim_joist.color.nil? && rim_joist.solar_absorptance.nil?
+        rim_joist.color = HPXML::ColorMedium
+        rim_joist.color_isdefaulted = true
+      end
       if rim_joist.color.nil?
         rim_joist.color = Constructions.get_default_wall_color(rim_joist.solar_absorptance)
         rim_joist.color_isdefaulted = true
@@ -327,22 +349,39 @@ class HPXMLDefaults
 
   def self.apply_walls(hpxml)
     hpxml.walls.each do |wall|
-      next unless wall.is_exterior
-
-      if wall.emittance.nil?
-        wall.emittance = 0.90
-        wall.emittance_isdefaulted = true
+      if wall.is_exterior
+        if wall.emittance.nil?
+          wall.emittance = 0.90
+          wall.emittance_isdefaulted = true
+        end
+        if wall.siding.nil?
+          wall.siding = HPXML::SidingTypeWood
+          wall.siding_isdefaulted = true
+        end
+        if wall.color.nil? && wall.solar_absorptance.nil?
+          wall.color = HPXML::ColorMedium
+          wall.color_isdefaulted = true
+        end
+        if wall.color.nil?
+          wall.color = Constructions.get_default_wall_color(wall.solar_absorptance)
+          wall.color_isdefaulted = true
+        elsif wall.solar_absorptance.nil?
+          wall.solar_absorptance = Constructions.get_default_wall_solar_absorptance(wall.color)
+          wall.solar_absorptance_isdefaulted = true
+        end
       end
-      if wall.siding.nil?
-        wall.siding = HPXML::SidingTypeWood
-        wall.siding_isdefaulted = true
+      if wall.interior_finish_type.nil?
+        if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? wall.interior_adjacent_to
+          wall.interior_finish_type = HPXML::InteriorFinishGypsumBoard
+        else
+          wall.interior_finish_type = HPXML::InteriorFinishNone
+        end
+        wall.interior_finish_type_isdefaulted = true
       end
-      if wall.color.nil?
-        wall.color = Constructions.get_default_wall_color(wall.solar_absorptance)
-        wall.color_isdefaulted = true
-      elsif wall.solar_absorptance.nil?
-        wall.solar_absorptance = Constructions.get_default_wall_solar_absorptance(wall.color)
-        wall.solar_absorptance_isdefaulted = true
+      next unless wall.interior_finish_thickness.nil?
+      if wall.interior_finish_type != HPXML::InteriorFinishNone
+        wall.interior_finish_thickness = 0.5
+        wall.interior_finish_thickness_isdefaulted = true
       end
     end
   end
@@ -352,6 +391,39 @@ class HPXMLDefaults
       if foundation_wall.thickness.nil?
         foundation_wall.thickness = 8.0
         foundation_wall.thickness_isdefaulted = true
+      end
+      if foundation_wall.interior_finish_type.nil?
+        if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? foundation_wall.interior_adjacent_to
+          foundation_wall.interior_finish_type = HPXML::InteriorFinishGypsumBoard
+        else
+          foundation_wall.interior_finish_type = HPXML::InteriorFinishNone
+        end
+        foundation_wall.interior_finish_type_isdefaulted = true
+      end
+      next unless foundation_wall.interior_finish_thickness.nil?
+      if foundation_wall.interior_finish_type != HPXML::InteriorFinishNone
+        foundation_wall.interior_finish_thickness = 0.5
+        foundation_wall.interior_finish_thickness_isdefaulted = true
+      end
+    end
+  end
+
+  def self.apply_frame_floors(hpxml)
+    hpxml.frame_floors.each do |frame_floor|
+      if frame_floor.interior_finish_type.nil?
+        if frame_floor.is_floor
+          frame_floor.interior_finish_type = HPXML::InteriorFinishNone
+        elsif [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? frame_floor.interior_adjacent_to
+          frame_floor.interior_finish_type = HPXML::InteriorFinishGypsumBoard
+        else
+          frame_floor.interior_finish_type = HPXML::InteriorFinishNone
+        end
+        frame_floor.interior_finish_type_isdefaulted = true
+      end
+      next unless frame_floor.interior_finish_thickness.nil?
+      if frame_floor.interior_finish_type != HPXML::InteriorFinishNone
+        frame_floor.interior_finish_thickness = 0.5
+        frame_floor.interior_finish_thickness_isdefaulted = true
       end
     end
   end
@@ -475,7 +547,7 @@ class HPXMLDefaults
         cooling_system.cooling_efficiency_seer = HVAC.get_default_hvac_efficiency_by_year_installed(year_installed, cooling_system_type, cooling_system_fuel, HPXML::UnitsSEER)
         cooling_system.cooling_efficiency_seer_isdefaulted = true
       elsif cooling_system_type == HPXML::HVACTypeRoomAirConditioner
-        next unless cooling_system.cooling_efficiency_eer.nil?
+        next unless cooling_system.cooling_efficiency_eer.nil? && cooling_system.cooling_efficiency_ceer.nil?
 
         cooling_system.cooling_efficiency_eer = HVAC.get_default_hvac_efficiency_by_year_installed(year_installed, cooling_system_type, cooling_system_fuel, HPXML::UnitsEER)
         cooling_system.cooling_efficiency_eer_isdefaulted = true
@@ -582,7 +654,6 @@ class HPXMLDefaults
 
       cooling_system.charge_defect_ratio = 0.0
       cooling_system.charge_defect_ratio_isdefaulted = true
-      cooling_system.charge_not_tested = nil
     end
     hpxml.heat_pumps.each do |heat_pump|
       next unless [HPXML::HVACTypeHeatPumpAirToAir,
@@ -592,7 +663,6 @@ class HPXMLDefaults
 
       heat_pump.charge_defect_ratio = 0.0
       heat_pump.charge_defect_ratio_isdefaulted = true
-      heat_pump.charge_not_tested = nil
     end
 
     # Airflow defect ratio
@@ -602,38 +672,30 @@ class HPXMLDefaults
 
       heating_system.airflow_defect_ratio = 0.0
       heating_system.airflow_defect_ratio_isdefaulted = true
-      heating_system.airflow_not_tested = nil
     end
     hpxml.cooling_systems.each do |cooling_system|
       next unless [HPXML::HVACTypeCentralAirConditioner,
                    HPXML::HVACTypeMiniSplitAirConditioner].include? cooling_system.cooling_system_type
-      if cooling_system.cooling_system_type == HPXML::HVACTypeMiniSplitAirConditioner && cooling_system.distribution_system_idref.nil?
-        next # Ducted mini-splits only
-      end
       next unless cooling_system.airflow_defect_ratio.nil?
 
       cooling_system.airflow_defect_ratio = 0.0
       cooling_system.airflow_defect_ratio_isdefaulted = true
-      cooling_system.airflow_not_tested = nil
     end
     hpxml.heat_pumps.each do |heat_pump|
       next unless [HPXML::HVACTypeHeatPumpAirToAir,
                    HPXML::HVACTypeHeatPumpGroundToAir,
                    HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
-      if heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpMiniSplit && heat_pump.distribution_system_idref.nil?
-        next # Ducted mini-splits only
-      end
       next unless heat_pump.airflow_defect_ratio.nil?
 
       heat_pump.airflow_defect_ratio = 0.0
       heat_pump.airflow_defect_ratio_isdefaulted = true
-      heat_pump.airflow_not_tested = nil
     end
 
     # Fan power
     psc_watts_per_cfm = 0.5 # W/cfm, PSC fan
     ecm_watts_per_cfm = 0.375 # W/cfm, ECM fan
-    mini_split_ducted_watts_per_cfm = 0.18 # W/cfm, ducted mini split
+    mini_split_ductless_watts_per_cfm = 0.07 # W/cfm
+    mini_split_ducted_watts_per_cfm = 0.18 # W/cfm
     hpxml.heating_systems.each do |heating_system|
       if [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
         if heating_system.fan_watts_per_cfm.nil?
@@ -645,7 +707,6 @@ class HPXMLDefaults
             heating_system.fan_watts_per_cfm = psc_watts_per_cfm
           end
           heating_system.fan_watts_per_cfm_isdefaulted = true
-          heating_system.fan_power_not_tested = nil
         end
       elsif [HPXML::HVACTypeStove].include? heating_system.heating_system_type
         if heating_system.fan_watts.nil?
@@ -669,7 +730,6 @@ class HPXMLDefaults
       if (not cooling_system.attached_heating_system.nil?) && (not cooling_system.attached_heating_system.fan_watts_per_cfm.nil?)
         cooling_system.fan_watts_per_cfm = cooling_system.attached_heating_system.fan_watts_per_cfm
         cooling_system.fan_watts_per_cfm_isdefaulted = true
-        cooling_system.fan_power_not_tested = nil
       elsif [HPXML::HVACTypeCentralAirConditioner].include? cooling_system.cooling_system_type
         if cooling_system.cooling_efficiency_seer > 13.5 # HEScore assumption
           cooling_system.fan_watts_per_cfm = ecm_watts_per_cfm
@@ -677,13 +737,13 @@ class HPXMLDefaults
           cooling_system.fan_watts_per_cfm = psc_watts_per_cfm
         end
         cooling_system.fan_watts_per_cfm_isdefaulted = true
-        cooling_system.fan_power_not_tested = nil
       elsif [HPXML::HVACTypeMiniSplitAirConditioner].include? cooling_system.cooling_system_type
         if not cooling_system.distribution_system.nil?
           cooling_system.fan_watts_per_cfm = mini_split_ducted_watts_per_cfm
+        else
+          cooling_system.fan_watts_per_cfm = mini_split_ductless_watts_per_cfm
         end
         cooling_system.fan_watts_per_cfm_isdefaulted = true
-        cooling_system.fan_power_not_tested = nil
       elsif [HPXML::HVACTypeEvaporativeCooler].include? cooling_system.cooling_system_type
         # Depends on airflow rate, so defaulted in hvac_sizing.rb
       end
@@ -698,7 +758,6 @@ class HPXMLDefaults
           heat_pump.fan_watts_per_cfm = psc_watts_per_cfm
         end
         heat_pump.fan_watts_per_cfm_isdefaulted = true
-        heat_pump.fan_power_not_tested = nil
       elsif [HPXML::HVACTypeHeatPumpGroundToAir].include? heat_pump.heat_pump_type
         if heat_pump.heating_efficiency_cop > 8.75 / 3.2 # HEScore assumption
           heat_pump.fan_watts_per_cfm = ecm_watts_per_cfm
@@ -706,13 +765,13 @@ class HPXMLDefaults
           heat_pump.fan_watts_per_cfm = psc_watts_per_cfm
         end
         heat_pump.fan_watts_per_cfm_isdefaulted = true
-        heat_pump.fan_power_not_tested = nil
       elsif [HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
         if not heat_pump.distribution_system.nil?
           heat_pump.fan_watts_per_cfm = mini_split_ducted_watts_per_cfm
+        else
+          heat_pump.fan_watts_per_cfm = mini_split_ductless_watts_per_cfm
         end
         heat_pump.fan_watts_per_cfm_isdefaulted = true
-        heat_pump.fan_power_not_tested = nil
       end
     end
 
@@ -1039,6 +1098,13 @@ class HPXMLDefaults
         water_heating_system.location = Waterheater.get_default_location(hpxml, hpxml.climate_and_risk_zones.iecc_zone)
         water_heating_system.location_isdefaulted = true
       end
+      next unless water_heating_system.usage_bin.nil? && (not water_heating_system.uniform_energy_factor.nil?) # FHR & UsageBin only applies to UEF
+      if not water_heating_system.first_hour_rating.nil?
+        water_heating_system.usage_bin = Waterheater.get_usage_bin_from_first_hour_rating(water_heating_system.first_hour_rating)
+      else
+        water_heating_system.usage_bin = HPXML::WaterHeaterUsageBinMedium
+      end
+      water_heating_system.usage_bin_isdefaulted = true
     end
   end
 
