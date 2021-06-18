@@ -748,13 +748,13 @@ Room Air Conditioner
 
 If a room air conditioner is specified, additional information is entered in ``CoolingSystem``.
 
-  ==============================================  ========  ======  ===========  ========  =========  ======================
-  Element                                         Type      Units   Constraints  Required  Default    Notes
-  ==============================================  ========  ======  ===========  ========  =========  ======================
-  ``AnnualCoolingEfficiency[Units="EER"]/Value``  double    Btu/Wh  > 0          Yes                  Rated efficiency
-  ``CoolingCapacity``                             double    Btu/hr  >= 0         Yes                  Cooling capacity
-  ``SensibleHeatFraction``                        double    frac    0 - 1        No                   Sensible heat fraction
-  ==============================================  ========  ======  ===========  ========  =========  ======================
+  ==============================================================  ========  ======  ===========  ========  =========  ======================
+  Element                                                         Type      Units   Constraints  Required  Default    Notes
+  ==============================================================  ========  ======  ===========  ========  =========  ======================
+  ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``  double    Btu/Wh  > 0          Yes                  Rated efficiency
+  ``CoolingCapacity``                                             double    Btu/hr  >= 0         Yes                  Cooling capacity
+  ``SensibleHeatFraction``                                        double    frac    0 - 1        No                   Sensible heat fraction
+  ==============================================================  ========  ======  ===========  ========  =========  ======================
 
 Evaporative Cooler
 ~~~~~~~~~~~~~~~~~~

@@ -2141,6 +2141,7 @@ def create_sample_hpxmls
                   'base-hvac-portable-heater-gas-only.xml',
                   'base-hvac-programmable-thermostat.xml',
                   'base-hvac-room-ac-only.xml',
+                  'base-hvac-room-ac-only-ceer.xml',
                   'base-hvac-stove-wood-pellets-only.xml',
                   'base-hvac-undersized.xml',
                   'base-hvac-wall-furnace-elec-only.xml',

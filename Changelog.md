@@ -5,6 +5,7 @@ __New Features__
 - **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeDefectRatio` are no longer accepted.
 - Allows additional fuel types for generators.
 - Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
+- Allows CEER (Combined Energy Efficiency Ratio) efficiency unit for room AC.
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
 
 __Bugfixes__

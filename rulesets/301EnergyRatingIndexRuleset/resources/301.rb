@@ -1197,6 +1197,7 @@ class EnergyRatingIndex301Ruleset
                                     fraction_cool_load_served: orig_cooling_system.fraction_cool_load_served,
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
+                                    cooling_efficiency_ceer: orig_cooling_system.cooling_efficiency_ceer,
                                     cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
                                     cooling_shr: orig_cooling_system.cooling_shr,
                                     shared_loop_watts: orig_cooling_system.shared_loop_watts,
