@@ -264,9 +264,9 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-foundation-multiple.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_rim_joists(hpxml, area: 197, rvalue: 2.3, sabs: 0.7, emit: 0.92)
+    _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_rim_joists(hpxml, area: 197, rvalue: 2.3, sabs: 0.75, emit: 0.9)
+    _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.9)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_rim_joists(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -708,8 +708,8 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 4.4 },
-                                             180 => { area: 40, rvalue: 4.4 } })
+    _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 },
+                                             180 => { area: 20, rvalue: 4.4 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)

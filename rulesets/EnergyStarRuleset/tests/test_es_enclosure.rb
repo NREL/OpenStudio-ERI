@@ -221,7 +221,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base-foundation-multiple.xml', es_version)
       hpxml = _test_measure()
-      _check_rim_joists(hpxml, area: 197, rvalue: 2.3, sabs: 0.75, emit: 0.90)
+      _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.90)
     end
   end
 
@@ -595,8 +595,8 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base.xml', es_version)
       hpxml = _test_measure()
-      _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: rvalue },
-                                               180 => { area: 40, rvalue: rvalue } })
+      _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: rvalue },
+                                               180 => { area: 20, rvalue: rvalue } })
     end
   end
 

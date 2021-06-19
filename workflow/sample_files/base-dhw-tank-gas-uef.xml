@@ -416,7 +416,7 @@
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>30000.0</HeatingCapacity>
             <UniformEnergyFactor>0.59</UniformEnergyFactor>
-            <UsageBin>medium</UsageBin>
+            <FirstHourRating>56.0</FirstHourRating>
             <RecoveryEfficiency>0.75</RecoveryEfficiency>
             <HotWaterTemperature>125.0</HotWaterTemperature>
           </WaterHeatingSystem>

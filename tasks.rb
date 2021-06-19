@@ -2298,6 +2298,22 @@ def create_sample_hpxmls
 
       generator.is_shared_system = false
     end
+    # TODO: Allow UsageBin in 301validator and remove code below
+    hpxml.water_heating_systems.each do |dhw_system|
+      next if dhw_system.uniform_energy_factor.nil?
+      next unless [HPXML::WaterHeaterTypeStorage, HPXML::WaterHeaterTypeHeatPump].include? dhw_system.water_heater_type
+      next unless dhw_system.first_hour_rating.nil?
+
+      if dhw_system.usage_bin == HPXML::WaterHeaterUsageBinLow
+        dhw_system.usage_bin = nil
+        dhw_system.first_hour_rating = 46.0
+      elsif dhw_system.usage_bin == HPXML::WaterHeaterUsageBinMedium
+        dhw_system.usage_bin = nil
+        dhw_system.first_hour_rating = 56.0
+      else
+        fail hpxml_path
+      end
+    end
 
     # Handle extra inputs for ENERGY STAR
 
