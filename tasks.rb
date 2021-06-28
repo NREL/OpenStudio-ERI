@@ -320,21 +320,20 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
       hpxml.building_construction.number_of_conditioned_floors = 2
       hpxml.building_construction.number_of_conditioned_floors_above_grade = 2
       hpxml.building_construction.number_of_bedrooms = 3
-      hpxml.building_construction.conditioned_floor_area = 2400
-      hpxml.building_construction.conditioned_building_volume = 20400
+      hpxml.building_construction.conditioned_floor_area = 2376
     elsif hpxml_file.include?('MF')
       hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
       hpxml.building_construction.number_of_conditioned_floors = 1
       hpxml.building_construction.number_of_conditioned_floors_above_grade = 1
       hpxml.building_construction.number_of_bedrooms = 2
       hpxml.building_construction.conditioned_floor_area = 1200
-      hpxml.building_construction.conditioned_building_volume = 10200
     end
     if hpxml_file.include?('cond_bsmt')
+      footprint_area = (hpxml.building_construction.conditioned_floor_area / hpxml.building_construction.number_of_conditioned_floors)
       hpxml.building_construction.number_of_conditioned_floors += 1
-      hpxml.building_construction.conditioned_floor_area += 1200
-      hpxml.building_construction.conditioned_building_volume += 5100
+      hpxml.building_construction.conditioned_floor_area += footprint_area
     end
+    hpxml.building_construction.conditioned_building_volume = 8.5 * hpxml.building_construction.conditioned_floor_area
   end
 end
 
@@ -489,10 +488,15 @@ def set_hpxml_roofs(hpxml_file, hpxml)
     elsif hpxml_file.include?('ground_corner') || hpxml_file.include?('middle_interior')
       return
     end
+    if hpxml_file.include?('EPA_Tests/SF')
+      area = 1485
+    elsif hpxml_file.include?('EPA_Tests/MF')
+      area = 1500
+    end
     hpxml.roofs.clear
     hpxml.roofs.add(id: 'Roof',
                     interior_adjacent_to: HPXML::LocationAtticVented,
-                    area: 1500,
+                    area: area,
                     solar_absorptance: 0.92,
                     emittance: 0.9,
                     pitch: 9,
@@ -522,7 +526,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
     hpxml.rim_joists.add(id: 'RimJoist',
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationLivingSpace,
-                         area: 140,
+                         area: 152,
                          solar_absorptance: 0.75,
                          emittance: 0.9,
                          insulation_assembly_r_value: assembly_r)
@@ -538,7 +542,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
       hpxml.rim_joists.add(id: 'RimJoistFoundation',
                            exterior_adjacent_to: HPXML::LocationOutside,
                            interior_adjacent_to: interior_adjacent_to,
-                           area: 140,
+                           area: 152,
                            solar_absorptance: 0.75,
                            emittance: 0.9,
                            insulation_assembly_r_value: assembly_r)
@@ -604,7 +608,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
                     exterior_adjacent_to: HPXML::LocationOutside,
                     interior_adjacent_to: HPXML::LocationLivingSpace,
                     wall_type: HPXML::WallTypeWoodStud,
-                    area: 2380,
+                    area: 2584,
                     solar_absorptance: 0.75,
                     emittance: 0.9,
                     insulation_assembly_r_value: assembly_r)
@@ -709,47 +713,54 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
     for i in 0..hpxml.foundation_walls.size - 1
       hpxml.foundation_walls[i].interior_adjacent_to = HPXML::LocationBasementUnconditioned
     end
-  elsif hpxml_file.include?('EPA_Tests') && hpxml_file.include?('vented_crawl')
-    hpxml.foundation_walls.clear
-    hpxml.foundation_walls.add(id: 'FoundationWall',
-                               exterior_adjacent_to: HPXML::LocationGround,
-                               interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                               height: 4.0,
-                               area: 552,
-                               thickness: 8,
-                               depth_below_grade: 2.0,
-                               insulation_interior_r_value: 0,
-                               insulation_interior_distance_to_top: 0,
-                               insulation_interior_distance_to_bottom: 0,
-                               insulation_exterior_r_value: 0,
-                               insulation_exterior_distance_to_top: 0,
-                               insulation_exterior_distance_to_bottom: 0)
-  elsif hpxml_file.include?('EPA_Tests') && hpxml_file.include?('cond_bsmt')
-    if hpxml_file.include?('MF') && hpxml_file.include?('CZ6')
-      insulation_interior_r_value = 7.5
-      insulation_interior_distance_to_top = 0
-      insulation_interior_distance_to_bottom = 8
-      insulation_exterior_r_value = 0
-      insulation_exterior_distance_to_top = 0
-      insulation_exterior_distance_to_bottom = 0
-    else
-      assembly_r = (1.0 / 0.05).round(3)
+  elsif hpxml_file.include?('EPA_Tests')
+    if hpxml_file.include?('EPA_Tests/SF')
+      perimeter = 1216 / 8
+    elsif hpxml_file.include?('EPA_Tests/MF')
+      perimeter = 1104 / 8
     end
-    hpxml.foundation_walls.clear
-    hpxml.foundation_walls.add(id: 'FoundationWall',
-                               exterior_adjacent_to: HPXML::LocationGround,
-                               interior_adjacent_to: HPXML::LocationBasementConditioned,
-                               height: 8.0,
-                               area: 1104,
-                               thickness: 8,
-                               depth_below_grade: 6.0,
-                               insulation_interior_r_value: insulation_interior_r_value,
-                               insulation_interior_distance_to_top: insulation_interior_distance_to_top,
-                               insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
-                               insulation_exterior_r_value: insulation_exterior_r_value,
-                               insulation_exterior_distance_to_top: insulation_exterior_distance_to_top,
-                               insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom,
-                               insulation_assembly_r_value: assembly_r)
+    if hpxml_file.include?('vented_crawl')
+      hpxml.foundation_walls.clear
+      hpxml.foundation_walls.add(id: 'FoundationWall',
+                                 exterior_adjacent_to: HPXML::LocationGround,
+                                 interior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                                 height: 4.0,
+                                 area: perimeter * 4.0,
+                                 thickness: 8,
+                                 depth_below_grade: 2.0,
+                                 insulation_interior_r_value: 0,
+                                 insulation_interior_distance_to_top: 0,
+                                 insulation_interior_distance_to_bottom: 0,
+                                 insulation_exterior_r_value: 0,
+                                 insulation_exterior_distance_to_top: 0,
+                                 insulation_exterior_distance_to_bottom: 0)
+    elsif hpxml_file.include?('cond_bsmt')
+      if hpxml_file.include?('MF') && hpxml_file.include?('CZ6')
+        insulation_interior_r_value = 7.5
+        insulation_interior_distance_to_top = 0
+        insulation_interior_distance_to_bottom = 8
+        insulation_exterior_r_value = 0
+        insulation_exterior_distance_to_top = 0
+        insulation_exterior_distance_to_bottom = 0
+      else
+        assembly_r = (1.0 / 0.05).round(3)
+      end
+      hpxml.foundation_walls.clear
+      hpxml.foundation_walls.add(id: 'FoundationWall',
+                                 exterior_adjacent_to: HPXML::LocationGround,
+                                 interior_adjacent_to: HPXML::LocationBasementConditioned,
+                                 height: 8.0,
+                                 area: perimeter * 8.0,
+                                 thickness: 8,
+                                 depth_below_grade: 6.0,
+                                 insulation_interior_r_value: insulation_interior_r_value,
+                                 insulation_interior_distance_to_top: insulation_interior_distance_to_top,
+                                 insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
+                                 insulation_exterior_r_value: insulation_exterior_r_value,
+                                 insulation_exterior_distance_to_top: insulation_exterior_distance_to_top,
+                                 insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom,
+                                 insulation_assembly_r_value: assembly_r)
+    end
   end
 end
 
@@ -769,6 +780,11 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
     hpxml.frame_floors.delete_at(1)
   elsif hpxml_file.include?('EPA_Tests')
     # Ceiling
+    if hpxml_file.include?('EPA_Tests/SF')
+      area = 1188
+    elsif hpxml_file.include?('EPA_Tests/MF')
+      area = 1200
+    end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('middle_interior')
       exterior_adjacent_to = HPXML::LocationOtherHousingUnit
       other_space_above_or_below = HPXML::FrameFloorOtherSpaceAbove
@@ -792,7 +808,7 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
     hpxml.frame_floors.add(id: 'Ceiling',
                            exterior_adjacent_to: exterior_adjacent_to,
                            interior_adjacent_to: HPXML::LocationLivingSpace,
-                           area: 1200,
+                           area: area,
                            insulation_assembly_r_value: ceiling_assembly_r,
                            other_space_above_or_below: other_space_above_or_below)
     # Floor
@@ -805,13 +821,13 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
       hpxml.frame_floors.add(id: 'Floor',
                              exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
                              interior_adjacent_to: HPXML::LocationLivingSpace,
-                             area: 1200,
+                             area: area,
                              insulation_assembly_r_value: floor_assembly_r)
     elsif hpxml_file.include?('top_corner') || hpxml_file.include?('middle_interior')
       hpxml.frame_floors.add(id: 'Floor',
                              exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                              interior_adjacent_to: HPXML::LocationLivingSpace,
-                             area: 1200,
+                             area: area,
                              insulation_assembly_r_value: 3.1,
                              other_space_above_or_below: HPXML::FrameFloorOtherSpaceBelow)
     end
@@ -858,15 +874,17 @@ def set_hpxml_slabs(hpxml_file, hpxml)
       return
     end
     if hpxml_file.include?('EPA_Tests/SF')
-      exposed_perimeter = 138
+      exposed_perimeter = 152
+      area = 1188
     elsif hpxml_file.include?('EPA_Tests/MF')
       exposed_perimeter = 110
+      area = 1200
     end
     hpxml.slabs.clear
     hpxml.slabs.add(id: name,
                     interior_adjacent_to: interior_adjacent_to,
                     depth_below_grade: depth_below_grade,
-                    area: 1200,
+                    area: area,
                     thickness: thickness,
                     exposed_perimeter: exposed_perimeter,
                     perimeter_insulation_depth: 0,
@@ -1432,7 +1450,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 125
     end
   elsif hpxml_file.include?('EPA_Tests')
-    tot_cfm25 = 4.0 * hpxml.building_construction.conditioned_floor_area / 100.0
+    tot_cfm25 = (4.0 * hpxml.building_construction.conditioned_floor_area / 100.0).round
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
@@ -1482,8 +1500,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts[i].duct_insulation_r_value = 6
     end
   elsif hpxml_file.include?('EPA_Tests')
-    supply_area = 0.27 * hpxml.building_construction.conditioned_floor_area
-    return_area = 0.05 * hpxml.building_construction.conditioned_floor_area
+    supply_area = (0.27 * hpxml.building_construction.conditioned_floor_area).round
+    return_area = (0.05 * hpxml.building_construction.conditioned_floor_area).round
     if hpxml_file.include?('SF_National_3.1') || hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.0')
       if hpxml_file.include?('MF_National_1.0') && hpxml_file.include?('top_corner')
         location = HPXML::LocationAtticVented
