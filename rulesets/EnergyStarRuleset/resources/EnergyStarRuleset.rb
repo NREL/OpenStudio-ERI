@@ -684,6 +684,7 @@ class EnergyStarRuleset
     remaining_fracload_served_cooling = 1.0 # init
     orig_hpxml.hvac_systems.each do |h|
       next if h.distribution_system_idref.nil?
+
       if h.respond_to?(:fraction_heat_load_served) && h.fraction_heat_load_served.to_f > 0
         remaining_cfa_served_heating -= h.distribution_system.conditioned_floor_area_served.to_f
         remaining_fracload_served_heating -= h.fraction_heat_load_served
@@ -1300,6 +1301,7 @@ class EnergyStarRuleset
       elsif ['GU', 'MP'].include? @state_code
         return 0.401
       end
+
       fail "Unexpected state code: #{@state_code}."
     elsif [ESConstants.SFFloridaVer3_1].include? @program_version
       return 0.082
@@ -1775,11 +1777,13 @@ class EnergyStarRuleset
     # calculate total ceiling area and adiabatic ceiling area
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.is_ceiling
+
       total_ceiling_area += orig_frame_floor.area
 
       ceiling_exterior_boundary << orig_frame_floor.exterior_adjacent_to unless ceiling_exterior_boundary.include?(orig_frame_floor.exterior_adjacent_to)
 
       next unless [HPXML::LocationLivingSpace, HPXML::LocationOtherHousingUnit].include? orig_frame_floor.exterior_adjacent_to
+
       adiabatic_ceiling_area += orig_frame_floor.area
     end
 

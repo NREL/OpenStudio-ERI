@@ -232,6 +232,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
            HPXML::FuelTypeWoodPellets].include? fuel
       return 1.0943, 0.4030
     end
+
     fail 'Could not identify EEC coefficients for heating system.'
   end
 
@@ -249,6 +250,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
            HPXML::FuelTypeWoodPellets].include? fuel
       return 1.1877, 1.0130
     end
+
     fail 'Could not identify EEC coefficients for water heating system.'
   end
 

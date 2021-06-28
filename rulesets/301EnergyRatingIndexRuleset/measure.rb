@@ -117,6 +117,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     if not File.exist?(epw_path)
       fail "'#{epw_path}' could not be found."
     end
+
     cache_path = epw_path.gsub('.epw', '-cache.csv')
     if not File.exist?(cache_path)
       runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")

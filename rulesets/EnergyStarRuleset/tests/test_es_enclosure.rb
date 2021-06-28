@@ -506,6 +506,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.windows.each do |window|
         next unless window.azimuth == 0
+
         window.performance_class = HPXML::WindowClassArchitectural
         window.fraction_operable = 0.0
       end
@@ -527,6 +528,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.windows.each do |window|
         next unless window.azimuth == 180
+
         window.performance_class = HPXML::WindowClassArchitectural
         window.fraction_operable = 1.0
       end
@@ -561,7 +563,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
-      _check_windows(hpxml, frac_operable:  0.67,
+      _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: areas[0], ufactor: ufactor, shgc: shgc },
                                                  180 => { area: areas[1], ufactor: ufactor, shgc: shgc },
                                                  90 => { area: areas[2], ufactor: ufactor, shgc: shgc },

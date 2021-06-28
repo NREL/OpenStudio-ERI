@@ -91,6 +91,7 @@ class EnergyStarVentTest < MiniTest::Test
   def test_mech_vent_attached_or_multifamily_location_miami_fl
     ESConstants.AllVersions.each do |es_version|
       next unless ESConstants.NationalVersions.include?(es_version)
+
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.climate_and_risk_zones.iecc_zone = '1A'

@@ -8,12 +8,6 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <ERICalculation>
-        <Version>latest</Version>
-      </ERICalculation>
-      <EnergyStarCalculation>
-        <Version>SF_National_3.1</Version>
-      </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -44,11 +38,12 @@
         </BuildingOccupancy>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
-          <NumberofConditionedFloors>3.0</NumberofConditionedFloors>
-          <NumberofConditionedFloorsAboveGrade>2.0</NumberofConditionedFloorsAboveGrade>
+          <NumberofConditionedFloors>2.0</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <ConditionedFloorArea>4050.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>32400.0</ConditionedBuildingVolume>
+          <NumberofBathrooms>2</NumberofBathrooms>
+          <ConditionedFloorArea>2700.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -73,7 +68,7 @@
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>32400.0</InfiltrationVolume>
+            <InfiltrationVolume>21600.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -127,19 +122,6 @@
               <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
-          <RimJoist>
-            <SystemIdentifier id='RimJoist2ndStory'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>116.0</Area>
-            <Siding>wood siding</Siding>
-            <SolarAbsorptance>0.7</SolarAbsorptance>
-            <Emittance>0.92</Emittance>
-            <Insulation>
-              <SystemIdentifier id='RimJoist2ndStoryInsulation'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
-            </Insulation>
-          </RimJoist>
         </RimJoists>
         <Walls>
           <Wall>
@@ -149,7 +131,7 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>2400.0</Area>
+            <Area>1200.0</Area>
             <Siding>wood siding</Siding>
             <SolarAbsorptance>0.7</SolarAbsorptance>
             <Emittance>0.92</Emittance>
@@ -256,7 +238,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='WindowNorth'/>
-            <Area>216.0</Area>
+            <Area>108.0</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -266,12 +248,11 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
             <SystemIdentifier id='WindowSouth'/>
-            <Area>216.0</Area>
+            <Area>108.0</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -281,12 +262,11 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
             <SystemIdentifier id='WindowEast'/>
-            <Area>144.0</Area>
+            <Area>72.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -296,12 +276,11 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
             <SystemIdentifier id='WindowWest'/>
-            <Area>144.0</Area>
+            <Area>72.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.33</UFactor>
             <SHGC>0.45</SHGC>
@@ -311,7 +290,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
@@ -341,37 +319,208 @@
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
+              <HeatingCapacity>6400.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>1.0</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem2'/>
+              <DistributionSystem idref='HVACDistribution2'/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>48000.0</HeatingCapacity>
+              <HeatingCapacity>6400.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem3'/>
+              <DistributionSystem idref='HVACDistribution3'/>
+              <HeatingSystemType>
+                <Boiler/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
+              <HeatingCapacity>6400.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>1.0</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem4'/>
+              <DistributionSystem idref='HVACDistribution4'/>
+              <HeatingSystemType>
+                <Boiler/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>6400.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.92</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+              <ElectricAuxiliaryEnergy>200.0</ElectricAuxiliaryEnergy>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem5'/>
+              <HeatingSystemType>
+                <ElectricResistance/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>electricity</HeatingSystemFuel>
+              <HeatingCapacity>6400.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem6'/>
+              <HeatingSystemType>
+                <Stove/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>fuel oil</HeatingSystemFuel>
+              <HeatingCapacity>6400.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>0.8</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
               <extension>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <FanPowerWatts>40.0</FanPowerWatts>
+              </extension>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem7'/>
+              <HeatingSystemType>
+                <WallFurnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>propane</HeatingSystemFuel>
+              <HeatingCapacity>6400.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.8</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+              <extension>
+                <FanPowerWatts>0.0</FanPowerWatts>
               </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
-              <DistributionSystem idref='HVACDistribution'/>
+              <DistributionSystem idref='HVACDistribution2'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>36000.0</CoolingCapacity>
+              <CoolingCapacity>4800.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
-              <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
+              <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
-              <extension>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
-                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-              </extension>
             </CoolingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='CoolingSystem2'/>
+              <CoolingSystemType>room air conditioner</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>9600.0</CoolingCapacity>
+              <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>8.5</Value>
+              </AnnualCoolingEfficiency>
+              <SensibleHeatFraction>0.65</SensibleHeatFraction>
+            </CoolingSystem>
+            <HeatPump>
+              <SystemIdentifier id='HeatPump'/>
+              <DistributionSystem idref='HVACDistribution5'/>
+              <HeatPumpType>air-to-air</HeatPumpType>
+              <HeatPumpFuel>electricity</HeatPumpFuel>
+              <HeatingCapacity>4800.0</HeatingCapacity>
+              <HeatingCapacity17F>3024.0</HeatingCapacity17F>
+              <CoolingCapacity>4800.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
+              <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
+              <BackupSystemFuel>electricity</BackupSystemFuel>
+              <BackupAnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </BackupAnnualHeatingEfficiency>
+              <BackupHeatingCapacity>3412.0</BackupHeatingCapacity>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+              <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>13.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualHeatingEfficiency>
+                <Units>HSPF</Units>
+                <Value>7.7</Value>
+              </AnnualHeatingEfficiency>
+            </HeatPump>
+            <HeatPump>
+              <SystemIdentifier id='HeatPump2'/>
+              <DistributionSystem idref='HVACDistribution6'/>
+              <HeatPumpType>ground-to-air</HeatPumpType>
+              <HeatPumpFuel>electricity</HeatPumpFuel>
+              <HeatingCapacity>4800.0</HeatingCapacity>
+              <CoolingCapacity>4800.0</CoolingCapacity>
+              <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
+              <BackupSystemFuel>electricity</BackupSystemFuel>
+              <BackupAnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </BackupAnnualHeatingEfficiency>
+              <BackupHeatingCapacity>3412.0</BackupHeatingCapacity>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+              <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>16.6</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualHeatingEfficiency>
+                <Units>COP</Units>
+                <Value>3.6</Value>
+              </AnnualHeatingEfficiency>
+              <extension>
+                <PumpPowerWattsPerTon>30.0</PumpPowerWattsPerTon>
+              </extension>
+            </HeatPump>
+            <HeatPump>
+              <SystemIdentifier id='HeatPump3'/>
+              <HeatPumpType>mini-split</HeatPumpType>
+              <HeatPumpFuel>electricity</HeatPumpFuel>
+              <HeatingCapacity>4800.0</HeatingCapacity>
+              <HeatingCapacity17F>2723.076923076923</HeatingCapacity17F>
+              <CoolingCapacity>4800.0</CoolingCapacity>
+              <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
+              <BackupSystemFuel>electricity</BackupSystemFuel>
+              <BackupAnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </BackupAnnualHeatingEfficiency>
+              <BackupHeatingCapacity>3412.0</BackupHeatingCapacity>
+              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
+              <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
+              <AnnualCoolingEfficiency>
+                <Units>SEER</Units>
+                <Value>19.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualHeatingEfficiency>
+                <Units>HSPF</Units>
+                <Value>10.0</Value>
+              </AnnualHeatingEfficiency>
+            </HeatPump>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl'/>
@@ -402,32 +551,194 @@
                 </DuctLeakageMeasurement>
                 <Ducts>
                   <DuctType>supply</DuctType>
-                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
                   <DuctLocation>attic - unvented</DuctLocation>
-                  <DuctSurfaceArea>112.5</DuctSurfaceArea>
-                </Ducts>
-                <Ducts>
-                  <DuctType>return</DuctType>
-                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>attic - unvented</DuctLocation>
-                  <DuctSurfaceArea>37.5</DuctSurfaceArea>
+                  <DuctSurfaceArea>75.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>supply</DuctType>
-                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
-                  <DuctLocation>exterior wall</DuctLocation>
-                  <DuctSurfaceArea>37.5</DuctSurfaceArea>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
-                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>12.5</DuctSurfaceArea>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
                 </Ducts>
-                <NumberofReturnRegisters>3</NumberofReturnRegisters>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
+                </Ducts>
+                <NumberofReturnRegisters>2</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>4050.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution2'/>
+            <DistributionSystemType>
+              <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
+                <DuctLeakageMeasurement>
+                  <DuctType>supply</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>75.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <DuctLeakageMeasurement>
+                  <DuctType>return</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>25.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>75.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
+                </Ducts>
+                <NumberofReturnRegisters>2</NumberofReturnRegisters>
+              </AirDistribution>
+            </DistributionSystemType>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution3'/>
+            <DistributionSystemType>
+              <HydronicDistribution>
+                <HydronicDistributionType>baseboard</HydronicDistributionType>
+              </HydronicDistribution>
+            </DistributionSystemType>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution4'/>
+            <DistributionSystemType>
+              <HydronicDistribution>
+                <HydronicDistributionType>baseboard</HydronicDistributionType>
+              </HydronicDistribution>
+            </DistributionSystemType>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution5'/>
+            <DistributionSystemType>
+              <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
+                <DuctLeakageMeasurement>
+                  <DuctType>supply</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>75.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <DuctLeakageMeasurement>
+                  <DuctType>return</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>25.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>75.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
+                </Ducts>
+                <NumberofReturnRegisters>2</NumberofReturnRegisters>
+              </AirDistribution>
+            </DistributionSystemType>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
+          </HVACDistribution>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution6'/>
+            <DistributionSystemType>
+              <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
+                <DuctLeakageMeasurement>
+                  <DuctType>supply</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>75.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <DuctLeakageMeasurement>
+                  <DuctType>return</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>25.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>75.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>outside</DuctLocation>
+                  <DuctSurfaceArea>25.0</DuctSurfaceArea>
+                </Ducts>
+                <NumberofReturnRegisters>2</NumberofReturnRegisters>
+              </AirDistribution>
+            </DistributionSystemType>
+            <ConditionedFloorAreaServed>270.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <WaterHeating>
@@ -436,7 +747,6 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
-            <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
@@ -469,7 +779,6 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -481,7 +790,6 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
@@ -490,7 +798,6 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
@@ -596,7 +903,7 @@
           <PlugLoadType>other</PlugLoadType>
           <Load>
             <Units>kWh/year</Units>
-            <Value>3685.5</Value>
+            <Value>2457.0</Value>
           </Load>
           <extension>
             <FracSensible>0.855</FracSensible>

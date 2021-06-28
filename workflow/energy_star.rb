@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-$VERBOSE = nil # Prevents ruby warnings, see https://github.com/NREL/OpenStudio/issues/4301
-
 start_time = Time.now
 
 args = ARGV.dup
@@ -33,6 +31,7 @@ def get_es_version(hpxml_path)
   if not ESConstants.AllVersions.include?(es_version)
     fail "Unexpected EnergyStarCalculation/Version: '#{es_version}'."
   end
+
   return es_version
 end
 

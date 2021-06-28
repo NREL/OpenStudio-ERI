@@ -8,12 +8,6 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <ERICalculation>
-        <Version>latest</Version>
-      </ERICalculation>
-      <EnergyStarCalculation>
-        <Version>SF_National_3.1</Version>
-      </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -47,6 +41,7 @@
           <NumberofConditionedFloors>3.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
+          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>4050.0</ConditionedFloorArea>
           <ConditionedBuildingVolume>32400.0</ConditionedBuildingVolume>
         </BuildingConstruction>
@@ -266,7 +261,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -281,7 +275,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -296,7 +289,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
           <Window>
@@ -311,7 +303,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall'/>
           </Window>
         </Windows>
@@ -348,10 +339,6 @@
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <extension>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
-              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem'/>
@@ -366,11 +353,6 @@
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
-              <extension>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
-                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
@@ -404,25 +386,25 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>4.0</DuctInsulationRValue>
                   <DuctLocation>attic - unvented</DuctLocation>
-                  <DuctSurfaceArea>112.5</DuctSurfaceArea>
+                  <FractionDuctArea>0.65</FractionDuctArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>attic - unvented</DuctLocation>
-                  <DuctSurfaceArea>37.5</DuctSurfaceArea>
+                  <FractionDuctArea>0.65</FractionDuctArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>4.0</DuctInsulationRValue>
                   <DuctLocation>exterior wall</DuctLocation>
-                  <DuctSurfaceArea>37.5</DuctSurfaceArea>
+                  <FractionDuctArea>0.15</FractionDuctArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>12.5</DuctSurfaceArea>
+                  <FractionDuctArea>0.15</FractionDuctArea>
                 </Ducts>
                 <NumberofReturnRegisters>3</NumberofReturnRegisters>
               </AirDistribution>
@@ -436,7 +418,6 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
-            <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
@@ -469,7 +450,6 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -481,7 +461,6 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
@@ -490,7 +469,6 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
