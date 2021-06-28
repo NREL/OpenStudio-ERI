@@ -1451,15 +1451,15 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 125
     end
   elsif hpxml_file.include?('EPA_Tests')
-    tot_cfm25 = (4.0 * hpxml.building_construction.conditioned_floor_area / 100.0).round
+    tot_cfm25 = 4.0 * hpxml.building_construction.conditioned_floor_area / 100.0
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: tot_cfm25 * 0.5,
+                                                              duct_leakage_value: (tot_cfm25 * 0.5).round(2),
                                                               duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: tot_cfm25 * 0.5,
+                                                              duct_leakage_value: (tot_cfm25 * 0.5).round(2),
                                                               duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
   end
 
@@ -1501,8 +1501,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts[i].duct_insulation_r_value = 6
     end
   elsif hpxml_file.include?('EPA_Tests')
-    supply_area = (0.27 * hpxml.building_construction.conditioned_floor_area).round
-    return_area = (0.05 * hpxml.building_construction.conditioned_floor_area).round
+    supply_area = 0.27 * hpxml.building_construction.conditioned_floor_area
+    return_area = 0.05 * hpxml.building_construction.conditioned_floor_area
     if hpxml_file.include?('SF_National_3.1') || hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.0')
       if hpxml_file.include?('MF_National_1.0') && hpxml_file.include?('top_corner')
         location = HPXML::LocationAtticVented
@@ -1517,11 +1517,11 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: supply_r,
                                             duct_location: location,
-                                            duct_surface_area: supply_area)
+                                            duct_surface_area: supply_area.round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: return_r,
                                             duct_location: location,
-                                            duct_surface_area: return_area)
+                                            duct_surface_area: return_area.round(2))
     elsif hpxml_file.include?('SF_National_3.0')
       if hpxml_file.include?('slab')
         non_attic_location = HPXML::LocationLivingSpace
@@ -1542,19 +1542,19 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: 8,
                                             duct_location: HPXML::LocationAtticVented,
-                                            duct_surface_area: supply_area * (1.0 - non_attic_frac))
+                                            duct_surface_area: (supply_area * (1.0 - non_attic_frac)).round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: 6,
                                             duct_location: HPXML::LocationAtticVented,
-                                            duct_surface_area: return_area * (1.0 - non_attic_frac))
+                                            duct_surface_area: (return_area * (1.0 - non_attic_frac)).round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: non_attic_rvalue,
                                             duct_location: non_attic_location,
-                                            duct_surface_area: supply_area * non_attic_frac)
+                                            duct_surface_area: (supply_area * non_attic_frac).round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: non_attic_rvalue,
                                             duct_location: non_attic_location,
-                                            duct_surface_area: return_area * non_attic_frac)
+                                            duct_surface_area: (return_area * non_attic_frac).round(2))
     end
   end
 

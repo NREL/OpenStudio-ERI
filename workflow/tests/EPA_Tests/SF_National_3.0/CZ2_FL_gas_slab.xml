@@ -278,7 +278,7 @@
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>47.5</Value>
+                    <Value>47.52</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -286,7 +286,7 @@
                   <DuctType>return</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>47.5</Value>
+                    <Value>47.52</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -294,25 +294,25 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
-                  <DuctSurfaceArea>481.5</DuctSurfaceArea>
+                  <DuctSurfaceArea>481.14</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
-                  <DuctSurfaceArea>89.25</DuctSurfaceArea>
+                  <DuctSurfaceArea>89.1</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>160.5</DuctSurfaceArea>
+                  <DuctSurfaceArea>160.38</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>29.75</DuctSurfaceArea>
+                  <DuctSurfaceArea>29.7</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>1</NumberofReturnRegisters>
               </AirDistribution>

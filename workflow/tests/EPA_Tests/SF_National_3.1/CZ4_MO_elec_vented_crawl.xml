@@ -351,13 +351,13 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>642.0</DuctSurfaceArea>
+                  <DuctSurfaceArea>641.52</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>119.0</DuctSurfaceArea>
+                  <DuctSurfaceArea>118.8</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>1</NumberofReturnRegisters>
               </AirDistribution>
