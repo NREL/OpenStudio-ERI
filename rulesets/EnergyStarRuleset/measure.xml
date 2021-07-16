@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>66626e58-c56f-47d2-897f-f4c9bd8dc4dd</version_id>
-  <version_modified>20210519T143051Z</version_modified>
+  <version_id>0c9514d8-9bed-4634-add7-1789f5d98f11</version_id>
+  <version_modified>20210716T155139Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -143,12 +143,6 @@
       <checksum>BBC0B2C6</checksum>
     </file>
     <file>
-      <filename>test_es_ventilation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>26342B84</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -161,18 +155,6 @@
       <checksum>55764DAE</checksum>
     </file>
     <file>
-      <filename>test_es_enclosure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E5E0CF7A</checksum>
-    </file>
-    <file>
-      <filename>EnergyStarRuleset.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>E7B293C7</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -183,6 +165,24 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>5F3803B5</checksum>
+    </file>
+    <file>
+      <filename>test_es_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>95EC34B2</checksum>
+    </file>
+    <file>
+      <filename>test_es_enclosure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>F9F2179E</checksum>
+    </file>
+    <file>
+      <filename>EnergyStarRuleset.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>E1EABF62</checksum>
     </file>
   </files>
 </measure>
