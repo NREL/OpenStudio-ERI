@@ -1143,6 +1143,7 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
     elsif hpxml_file.include?('CZ6')
       afue = 0.95
     end
+
     hpxml.heating_systems.clear
     hpxml.heating_systems.add(id: 'HeatingSystem',
                               distribution_system_idref: 'HVACDistribution',
@@ -1257,6 +1258,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
     elsif hpxml_file.include?('CZ2')
       seer = 14.5
     end
+
     hpxml.cooling_systems.clear
     hpxml.cooling_systems.add(id: 'CoolingSystem',
                               distribution_system_idref: 'HVACDistribution',
@@ -1364,6 +1366,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
       hspf = 9.5
       seer = 14.5
     end
+
     hpxml.heat_pumps.clear
     hpxml.heat_pumps.add(id: 'HeatPump',
                          distribution_system_idref: 'HVACDistribution',

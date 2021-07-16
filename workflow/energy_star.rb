@@ -33,6 +33,7 @@ def get_es_version(hpxml_path)
   if not ESConstants.AllVersions.include?(es_version)
     fail "Unexpected EnergyStarCalculation/Version: '#{es_version}'."
   end
+
   return es_version
 end
 

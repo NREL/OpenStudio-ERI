@@ -225,11 +225,11 @@ Current annual hot water uses are listed below.
    Hot Water: Distribution Waste (gal) 
    =================================== =====
 
-ERI______Home_Hourly.csv
-~~~~~~~~~~~~~~~~~~~~~~~~
+Timeseries Outputs
+~~~~~~~~~~~~~~~~~~
 
-See the :ref:`running` section for requesting hourly outputs.
-When requested, a CSV file of hourly outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv`` for the Reference home).
+See the :ref:`running` section for requesting timeseries outputs.
+When requested, a CSV file of timeseries outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv``, ``ERIReferenceHome_Daily.csv``, or ``ERIReferenceHome_Monthly.csv`` for the Reference home).
 
 Depending on the outputs requested, CSV files may include:
 
@@ -247,7 +247,9 @@ Depending on the outputs requested, CSV files may include:
    Weather                             Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
    =================================== =====
 
-Timestamps in the output use the end-of-hour convention.
+Timeseries outputs can be one of the following frequencies: hourly, daily, or monthly.
+
+Timestamps in the output use the end-of-hour (or end-of-day for daily frequency, etc.) convention.
 Most outputs will be summed over the hour (e.g., energy) but some will be averaged over the hour (e.g., temperatures, airflows).
 
 See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome_Hourly.csv>`_.

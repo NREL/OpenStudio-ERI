@@ -31,6 +31,7 @@ def get_eri_version(hpxml_path)
   if (eri_version != 'latest') && (not Constants.ERIVersions.include?(eri_version))
     fail "Unexpected ERICalculation/Version: '#{eri_version}'."
   end
+
   return eri_version
 end
 
