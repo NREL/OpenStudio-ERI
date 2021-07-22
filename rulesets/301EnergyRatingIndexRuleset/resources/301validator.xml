@@ -135,7 +135,6 @@
       <sch:assert role='ERROR' test='count(h:NumberofBedrooms) = 1'>Expected 1 element(s) for xpath: NumberofBedrooms</sch:assert>
       <sch:assert role='ERROR' test='count(h:ConditionedFloorArea) = 1'>Expected 1 element(s) for xpath: ConditionedFloorArea</sch:assert>
       <sch:assert role='ERROR' test='number(h:ConditionedFloorArea) &gt;= (sum(../../h:Enclosure/h:Slabs/h:Slab[h:InteriorAdjacentTo="living space" or h:InteriorAdjacentTo="basement - conditioned"]/h:Area) + sum(../../h:Enclosure/h:FrameFloors/h:FrameFloor[h:InteriorAdjacentTo="living space" and not(h:ExteriorAdjacentTo="attic - vented" or h:ExteriorAdjacentTo="attic - unvented" or ((h:ExteriorAdjacentTo="other housing unit" or h:ExteriorAdjacentTo="other heated space" or h:ExteriorAdjacentTo="other multifamily buffer space" or h:ExteriorAdjacentTo="other non-freezing space") and h:extension/h:OtherSpaceAboveOrBelow="above"))]/h:Area) - 1) or not(h:ConditionedFloorArea)'>Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas.</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ConditionedBuildingVolume) = 1'>Expected 1 element(s) for xpath: ConditionedBuildingVolume</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -163,7 +162,6 @@
       <sch:assert role='ERROR' test='count(h:HousePressure[number(text())=50]) = 1'>Expected 1 element(s) for xpath: HousePressure[number(text())=50]</sch:assert>
       <sch:assert role='ERROR' test='count(h:BuildingAirLeakage/h:AirLeakage) = 1'>Expected 1 element(s) for xpath: BuildingAirLeakage/AirLeakage</sch:assert>
       <sch:assert role='ERROR' test='count(h:InfiltrationVolume) = 1'>Expected 1 element(s) for xpath: InfiltrationVolume</sch:assert>
-      <sch:assert role='ERROR' test='number(h:InfiltrationVolume) &gt;= number(../../../h:BuildingSummary/h:BuildingConstruction/h:ConditionedBuildingVolume) or not(h:InfiltrationVolume) or not(../../../h:BuildingSummary/h:BuildingConstruction/h:ConditionedBuildingVolume)'>Expected InfiltrationVolume to be greater than or equal to ../../../BuildingSummary/BuildingConstruction/ConditionedBuildingVolume</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -174,7 +172,6 @@
       <sch:assert role='ERROR' test='count(h:HousePressure) = 0'>Expected 0 element(s) for xpath: HousePressure</sch:assert>
       <sch:assert role='ERROR' test='count(h:BuildingAirLeakage/h:AirLeakage) = 1'>Expected 1 element(s) for xpath: BuildingAirLeakage/AirLeakage</sch:assert>
       <sch:assert role='ERROR' test='count(h:InfiltrationVolume) = 1'>Expected 1 element(s) for xpath: InfiltrationVolume</sch:assert>
-      <sch:assert role='ERROR' test='number(h:InfiltrationVolume) &gt;= number(../../../h:BuildingSummary/h:BuildingConstruction/h:ConditionedBuildingVolume) or not(h:InfiltrationVolume) or not(../../../h:BuildingSummary/h:BuildingConstruction/h:ConditionedBuildingVolume)'>Expected InfiltrationVolume to be greater than or equal to ../../../BuildingSummary/BuildingConstruction/ConditionedBuildingVolume</sch:assert>
     </sch:rule>
   </sch:pattern>
 

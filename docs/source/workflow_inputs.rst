@@ -130,7 +130,6 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   ``NumberofConditionedFloorsAboveGrade``  double               > 0, <= NumberofConditionedFloors  Yes                 Number of conditioned floors above grade (including a walkout basement)
   ``NumberofBedrooms``                     integer              > 0                                Yes                 Number of bedrooms
   ``ConditionedFloorArea``                 double    ft2        > 0                                Yes                 Floor area within conditioned space boundary
-  ``ConditionedBuildingVolume``            double    ft3 or ft  > 0                                Yes                 Volume within conditioned space boundary
   =======================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
@@ -194,15 +193,15 @@ HPXML Air Infiltration
 
 Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
 
-  ====================================  ======  =====  =================================  =========  =======  ===============================================
-  Element                               Type    Units  Constraints                        Required   Default  Notes
-  ====================================  ======  =====  =================================  =========  =======  ===============================================
-  ``SystemIdentifier``                  id                                                Yes                 Unique identifier
-  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_                           Yes                 Units for air leakage
-  ``HousePressure``                     double  Pa     > 0                                See [#]_            House pressure with respect to outside [#]_
-  ``BuildingAirLeakage/AirLeakage``     double         > 0                                Yes                 Value for air leakage
-  ``InfiltrationVolume``                double  ft3    > 0, >= ConditionedBuildingVolume  Yes                 Volume associated with infiltration measurement
-  ====================================  ======  =====  =================================  =========  =======  ===============================================
+  ====================================  ======  =====  ===========  =========  =======  ===============================================
+  Element                               Type    Units  Constraints  Required   Default  Notes
+  ====================================  ======  =====  ===========  =========  =======  ===============================================
+  ``SystemIdentifier``                  id                          Yes                 Unique identifier
+  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                 Units for air leakage
+  ``HousePressure``                     double  Pa     > 0          See [#]_            House pressure with respect to outside [#]_
+  ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                 Value for air leakage
+  ``InfiltrationVolume``                double  ft3    > 0          Yes                 Volume associated with infiltration measurement
+  ====================================  ======  =====  ===========  =========  =======  ===============================================
 
   .. [#] UnitofMeasure choices are "ACH" (air changes per hour at user-specified pressure), "CFM" (cubic feet per minute at user-specified pressure), or "ACHnatural" (natural air changes per hour).
   .. [#] HousePressure only required if BuildingAirLeakage/UnitofMeasure is not "ACHnatural".
