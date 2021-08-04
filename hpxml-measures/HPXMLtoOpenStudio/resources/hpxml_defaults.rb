@@ -166,7 +166,7 @@ class HPXMLDefaults
   def self.apply_building_construction(hpxml, cfa, nbeds, infil_volume)
     if hpxml.building_construction.conditioned_building_volume.nil? && hpxml.building_construction.average_ceiling_height.nil?
       if not infil_volume.nil?
-        hpxml.building_construction.average_ceiling_height = [infil_volume / cfa, 8.0].max
+        hpxml.building_construction.average_ceiling_height = infil_volume / cfa
       else
         hpxml.building_construction.average_ceiling_height = 8.0
       end
