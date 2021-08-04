@@ -5,6 +5,7 @@ __New Features__
 - Allows monthly or daily timeseries outputs instead of hourly.
 - Allows additional fuel types for generators.
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
+- `ConditionedBuildingVolume` input is not longer needed.
 
 __Bugfixes__
 - Improves ground reflectance for window interior shading.
