@@ -219,7 +219,7 @@ class HPXMLDefaults
   def self.apply_infiltration(hpxml, infil_volume, infil_measurements)
     if infil_volume.nil?
       infil_volume = hpxml.building_construction.conditioned_building_volume
-      infil_volume_measurements.each do |m|
+      infil_measurements.each do |m|
         m.infiltration_volume = infil_volume
         m.infiltration_volume_isdefaulted = true
       end
