@@ -37,7 +37,6 @@
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>2</NumberofBedrooms>
           <ConditionedFloorArea>1200.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>10200.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -62,7 +61,7 @@
               <UnitofMeasure>CFM</UnitofMeasure>
               <AirLeakage>1101.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>10200.0</InfiltrationVolume>
+            <InfiltrationVolume>9600.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <RimJoists>

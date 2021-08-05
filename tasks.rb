@@ -297,6 +297,7 @@ def set_hpxml_site(hpxml_file, hpxml)
 end
 
 def set_hpxml_building_construction(hpxml_file, hpxml)
+  hpxml.building_construction.conditioned_building_volume = nil
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
       'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
@@ -313,7 +314,6 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
     # Unconditioned basement
     hpxml.building_construction.number_of_conditioned_floors = 1
     hpxml.building_construction.conditioned_floor_area = 1539
-    hpxml.building_construction.conditioned_building_volume = 12312
   elsif hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('SF')
       hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFD
@@ -333,7 +333,6 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
       hpxml.building_construction.number_of_conditioned_floors += 1
       hpxml.building_construction.conditioned_floor_area += footprint_area
     end
-    hpxml.building_construction.conditioned_building_volume = 8.5 * hpxml.building_construction.conditioned_floor_area
   end
 end
 
@@ -411,7 +410,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             house_pressure: 50,
                                             unit_of_measure: HPXML::UnitsACH,
                                             air_leakage: 3,
-                                            infiltration_volume: hpxml.building_construction.conditioned_building_volume)
+                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.0)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/03-L304.xml'].include? hpxml_file
     # 5 ACH50
     hpxml.air_infiltration_measurements.clear
@@ -419,7 +418,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             unit_of_measure: HPXML::UnitsACH,
                                             house_pressure: 50,
                                             air_leakage: 5,
-                                            infiltration_volume: hpxml.building_construction.conditioned_building_volume)
+                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.0)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     hpxml.air_infiltration_measurements[0].infiltration_volume = 12312
     hpxml.air_infiltration_measurements[0].air_leakage = 0.67
@@ -440,7 +439,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             unit_of_measure: HPXML::UnitsACH,
                                             house_pressure: 50,
                                             air_leakage: ach50,
-                                            infiltration_volume: hpxml.building_construction.conditioned_building_volume)
+                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.0)
   elsif hpxml_file.include?('EPA_Tests/MF')
     tot_cb_area, ext_cb_area = hpxml.compartmentalization_boundary_areas()
     hpxml.air_infiltration_measurements.clear
@@ -448,7 +447,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             unit_of_measure: HPXML::UnitsCFM,
                                             house_pressure: 50,
                                             air_leakage: 0.3 * tot_cb_area,
-                                            infiltration_volume: hpxml.building_construction.conditioned_building_volume)
+                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.0)
   end
 end
 
@@ -2206,9 +2205,11 @@ def create_sample_hpxmls
   hpxml_paths.each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
 
-    # Handle extra inputs for ERI
+    # Handle different inputs for ERI
+
     hpxml.header.eri_calculation_version = 'latest'
     hpxml.building_construction.number_of_bathrooms = nil
+    hpxml.building_construction.conditioned_building_volume = nil
     hpxml.heating_systems.each do |heating_system|
       next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
       next unless heating_system.is_shared_system.nil?
@@ -2318,7 +2319,7 @@ def create_sample_hpxmls
       generator.is_shared_system = false
     end
 
-    # Handle extra inputs for ENERGY STAR
+    # Handle different inputs for ENERGY STAR
 
     if hpxml_path.include? 'base-bldgtype-multifamily'
       hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1
