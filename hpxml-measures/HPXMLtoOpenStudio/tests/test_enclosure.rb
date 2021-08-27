@@ -61,6 +61,8 @@ class HPXMLtoOpenStudioEnclosureTest < MiniTest::Test
       assert_equal(subsurface_view_factor, program_values["#{window_actuator.name.to_s}"][0])
     end
   end
+  
+  # FIXME: Add test for southern hemisphere (note June/January references above)
 
   def test_skylights
     args_hash = {}
