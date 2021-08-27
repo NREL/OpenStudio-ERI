@@ -297,6 +297,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
     @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
@@ -1021,10 +1022,15 @@ class EnergyRatingIndex301Ruleset
 
     # Create new exterior door
     if exterior_area > 0
+      if @is_southern_hemisphere
+        azimuth = 180
+      else
+        azimuth = 0
+      end
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
                           wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
-                          azimuth: 0,
+                          azimuth: azimuth,
                           r_value: (1.0 / ufactor).round(3))
     end
     # TODO: Create adiabatic wall/door?
@@ -1050,10 +1056,15 @@ class EnergyRatingIndex301Ruleset
 
     # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
     if exterior_area > 0
+      if @is_southern_hemisphere
+        azimuth = 180
+      else
+        azimuth = 0
+      end
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
                           wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
-                          azimuth: 0,
+                          azimuth: azimuth,
                           r_value: avg_r_value.round(3))
     end
     # TODO: Create adiabatic wall/door?
