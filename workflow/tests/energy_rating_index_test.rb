@@ -105,6 +105,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
         # Create derivative files for ES testing
         hpxml = HPXML.new(hpxml_path: xml)
+        next if hpxml.header.state_code.nil? # Skip
+        
         hpxml.header.energystar_calculation_version = program_version
         if program_version == ESConstants.MFOregonWashingtonVer1_2
           hpxml.header.state_code = 'OR'

@@ -20,6 +20,7 @@
     <BuildingID id='MyBuilding'/>
     <Site>
       <SiteID id='SiteID'/>
+      <Address/>
     </Site>
     <ProjectStatus>
       <EventType>proposed workscope</EventType>
