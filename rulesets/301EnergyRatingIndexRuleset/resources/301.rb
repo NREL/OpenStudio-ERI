@@ -1408,7 +1408,7 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
-    q_tot = calc_mech_vent_q_tot()
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
 
     mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1565,7 +1565,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
-    q_tot = calc_mech_vent_q_tot()
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
 
     # Calculate fan cfm
     sla = nil
@@ -2441,13 +2441,9 @@ class EnergyRatingIndex301Ruleset
   def self.calc_rated_home_qfan(orig_hpxml, is_balanced)
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
-    q_tot = calc_mech_vent_q_tot()
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
     q_fan_power = calc_mech_vent_q_fan(q_tot, sla, is_balanced)
     return q_fan_power
-  end
-
-  def self.calc_mech_vent_q_tot()
-    return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
   end
 
   def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)

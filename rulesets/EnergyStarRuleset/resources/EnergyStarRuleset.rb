@@ -761,7 +761,7 @@ class EnergyStarRuleset
   def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Whole-House Mechanical ventilation
     # mechanical vent fan cfm
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, nil)
+    q_tot = 0.01 * @cfa + 7.5 * (@nbeds + 1)
 
     # mechanical vent fan type
     fan_type = get_systems_mechanical_ventilation_default_fan_type()
