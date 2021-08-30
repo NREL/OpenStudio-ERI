@@ -110,10 +110,10 @@ class EnergyStarRuleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
-    @has_cond_bsmnt = has_location(orig_hpxml, HPXML::LocationBasementConditioned)
-    @has_uncond_bsmnt = has_location(orig_hpxml, HPXML::LocationBasementUnconditioned)
-    @has_crawlspace = (has_location(orig_hpxml, HPXML::LocationCrawlspaceVented) || has_location(orig_hpxml, HPXML::LocationCrawlspaceUnvented))
-    @has_attic = (has_location(orig_hpxml, HPXML::LocationAtticVented) || has_location(orig_hpxml, HPXML::LocationAtticUnvented))
+    @has_cond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementConditioned)
+    @has_uncond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementUnconditioned)
+    @has_crawlspace = (orig_hpxml.has_location(HPXML::LocationCrawlspaceVented) || orig_hpxml.has_location(HPXML::LocationCrawlspaceUnvented))
+    @has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
     @has_auto_generated_attic = false
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
