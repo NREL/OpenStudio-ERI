@@ -15,22 +15,23 @@ class Constants
     return 1e-9
   end
 
-  def self.NumDaysInMonths(year)
+  def self.NumDaysInMonths(model)
+    is_leap_year = !model.nil? && model.getYearDescription.isLeapYear
     num_days_in_months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    num_days_in_months[1] += 1 if Date.leap?(year)
+    num_days_in_months[1] += 1 if is_leap_year
     return num_days_in_months
   end
 
-  def self.NumDaysInYear(is_leap_year)
-    num_days_in_months = NumDaysInMonths(is_leap_year)
+  def self.NumDaysInYear(model)
+    num_days_in_months = NumDaysInMonths(model)
     num_days_in_year = num_days_in_months.sum
-    return num_days_in_year
+    return num_days_in_year.to_f
   end
 
-  def self.NumHoursInYear(is_leap_year)
-    num_days_in_year = NumDaysInYear(is_leap_year)
+  def self.NumHoursInYear(model)
+    num_days_in_year = NumDaysInYear(model)
     num_hours_in_year = num_days_in_year * 24
-    return num_hours_in_year
+    return num_hours_in_year.to_f
   end
 
   # Strings --------------------
@@ -141,6 +142,10 @@ class Constants
 
   def self.ObjectNameCombiWaterHeatingEnergy(water_heater_name)
     return "#{water_heater_name} dhw energy"
+  end
+
+  def self.ObjectNameCombiSpaceHeatingEnergyAdjustment(water_heater_name)
+    return "#{water_heater_name} heating energy adj"
   end
 
   def self.ObjectNameComponentLoadsProgram
@@ -267,8 +272,12 @@ class Constants
     return 'mech vent'
   end
 
-  def self.ObjectNameMechanicalVentilationPreconditioning
-    return 'mech vent preconditioning'
+  def self.ObjectNameMechanicalVentilationPrecooling
+    return 'mech vent precooling'
+  end
+
+  def self.ObjectNameMechanicalVentilationPreheating
+    return 'mech vent preheating'
   end
 
   def self.ObjectNameMechanicalVentilationHouseFan

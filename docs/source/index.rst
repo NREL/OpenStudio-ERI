@@ -11,7 +11,7 @@ OpenStudio-HPXML documentation
    :caption: Contents:
 
    intro
-   usage_instructions
+   getting_started
    workflow_inputs
    workflow_outputs
 
