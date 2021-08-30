@@ -1823,7 +1823,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_dhw(hpxml)
-    has_uncond_bsmnt = hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
+    has_uncond_bsmnt = hpxml.has_location(HPXML::LocationBasementUnconditioned)
     cfa = hpxml.building_construction.conditioned_floor_area
     ncfl = hpxml.building_construction.number_of_conditioned_floors
     ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)

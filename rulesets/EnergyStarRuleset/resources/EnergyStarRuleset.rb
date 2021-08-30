@@ -110,10 +110,10 @@ class EnergyStarRuleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
-    @has_cond_bsmnt = get_has_space_type(orig_hpxml, HPXML::LocationBasementConditioned)
-    @has_uncond_bsmnt = get_has_space_type(orig_hpxml, HPXML::LocationBasementUnconditioned)
-    @has_crawlspace = (get_has_space_type(orig_hpxml, HPXML::LocationCrawlspaceVented) || get_has_space_type(orig_hpxml, HPXML::LocationCrawlspaceUnvented))
-    @has_attic = (get_has_space_type(orig_hpxml, HPXML::LocationAtticVented) || get_has_space_type(orig_hpxml, HPXML::LocationAtticUnvented))
+    @has_cond_bsmnt = has_location(orig_hpxml, HPXML::LocationBasementConditioned)
+    @has_uncond_bsmnt = has_location(orig_hpxml, HPXML::LocationBasementUnconditioned)
+    @has_crawlspace = (has_location(orig_hpxml, HPXML::LocationCrawlspaceVented) || has_location(orig_hpxml, HPXML::LocationCrawlspaceUnvented))
+    @has_attic = (has_location(orig_hpxml, HPXML::LocationAtticVented) || has_location(orig_hpxml, HPXML::LocationAtticUnvented))
     @has_auto_generated_attic = false
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
@@ -1893,14 +1893,6 @@ class EnergyStarRuleset
     end
 
     fail 'Unexpected case.'
-  end
-
-  def self.get_has_space_type(hpxml, adjacent_to)
-    (hpxml.roofs + hpxml.rim_joists + hpxml.walls + hpxml.foundation_walls + hpxml.frame_floors + hpxml.slabs).each do |surface|
-      return true if surface.interior_adjacent_to == adjacent_to
-      return true if surface.exterior_adjacent_to == adjacent_to
-    end
-    return false
   end
 
   def self.add_air_distribution(orig_hpxml, orig_system)

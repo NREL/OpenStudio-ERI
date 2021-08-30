@@ -1716,7 +1716,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
-    has_uncond_bsmnt = new_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
+    has_uncond_bsmnt = new_hpxml.has_location(HPXML::LocationBasementUnconditioned)
     standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
 
     # New hot water distribution
