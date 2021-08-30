@@ -5,7 +5,6 @@ __New Features__
 - **Breaking change**: Replaces ClothesDryer `extension/IsVented` and `extension/VentedFlowRate` with `Vented` and `VentedFlowRate`.
 - Expanded capabilities for scheduling:
   - Allows modeling detailed occupancy via a schedule CSV file.
-  - Introduces a measure for automatically generating detailed smooth/stochastic schedule CSV files.
   - Expands simplified weekday/weekend/monthly schedule inputs to additional building features.
   - Allows `HeatingSeason` & `CoolingSeason` to be specified for defining heating and cooling equipment availability.
 - Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
@@ -35,6 +34,7 @@ __New Features__
 - Updates the reporting measure to register all outputs from the annual CSV with the OS runner (for use in, e.g., PAT).
 - Removes timeseries CSV output columns that are all zeroes to reduce file size and processing time.
 - Adds an `--ep-input-format` argument to run_simulation.rb to choose epJSON as the EnergyPlus input file format instead of IDF.
+- Reduces EnergyPlus warnings related to unused objects or invalid output meters/variables.
 
 __Bugfixes__
 - Improves ground reflectance when there is shading of windows/skylights.
