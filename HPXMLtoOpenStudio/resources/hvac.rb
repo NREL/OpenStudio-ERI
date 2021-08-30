@@ -395,8 +395,6 @@ class HVAC
     hp_ap = heat_pump.additional_properties
     htg_cfm = heat_pump.heating_airflow_cfm
     clg_cfm = heat_pump.cooling_airflow_cfm
-    htg_cfm_rated = heat_pump.airflow_defect_ratio.nil? ? htg_cfm : (htg_cfm / (1.0 + heat_pump.airflow_defect_ratio))
-    clg_cfm_rated = heat_pump.airflow_defect_ratio.nil? ? clg_cfm : (clg_cfm / (1.0 + heat_pump.airflow_defect_ratio))
 
     if hp_ap.frac_glycol == 0
       hp_ap.fluid_type = Constants.FluidWater
@@ -412,7 +410,7 @@ class HVAC
     clg_coil.setRatedCoolingCoefficientofPerformance(1.0 / hp_ap.cool_rated_eirs[0])
     clg_coil.setNominalTimeforCondensateRemovaltoBegin(1000)
     clg_coil.setRatioofInitialMoistureEvaporationRateandSteadyStateLatentCapacity(1.5)
-    clg_coil.setRatedAirFlowRate(UnitConversions.convert(clg_cfm_rated, 'cfm', 'm^3/s'))
+    clg_coil.setRatedAirFlowRate(UnitConversions.convert(clg_cfm, 'cfm', 'm^3/s'))
     clg_coil.setRatedWaterFlowRate(UnitConversions.convert(hp_ap.GSHP_Loop_flow, 'gal/min', 'm^3/s'))
     clg_coil.setRatedTotalCoolingCapacity(UnitConversions.convert(heat_pump.cooling_capacity, 'Btu/hr', 'W'))
     clg_coil.setRatedSensibleCoolingCapacity(UnitConversions.convert(hp_ap.cooling_capacity_sensible, 'Btu/hr', 'W'))
@@ -424,7 +422,7 @@ class HVAC
     htg_coil = OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit.new(model, htg_cap_curve, htg_power_curve)
     htg_coil.setName(obj_name + ' htg coil')
     htg_coil.setRatedHeatingCoefficientofPerformance(1.0 / hp_ap.heat_rated_eirs[0])
-    htg_coil.setRatedAirFlowRate(UnitConversions.convert(htg_cfm_rated, 'cfm', 'm^3/s'))
+    htg_coil.setRatedAirFlowRate(UnitConversions.convert(htg_cfm, 'cfm', 'm^3/s'))
     htg_coil.setRatedWaterFlowRate(UnitConversions.convert(hp_ap.GSHP_Loop_flow, 'gal/min', 'm^3/s'))
     htg_coil.setRatedHeatingCapacity(UnitConversions.convert(heat_pump.heating_capacity, 'Btu/hr', 'W'))
     hvac_map[heat_pump.id] << htg_coil
@@ -952,37 +950,42 @@ class HVAC
     end
   end
 
-  def self.apply_ceiling_fans(model, runner, weather, ceiling_fan, living_space)
+  def self.apply_ceiling_fans(model, runner, weather, ceiling_fan, living_space, schedules_file)
     obj_name = Constants.ObjectNameCeilingFan
-    monthly_sch = get_default_ceiling_fan_months(weather)
-    medium_cfm = 3000.0
-    weekday_sch = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
-    weekend_sch = weekday_sch
-    hrs_per_day = weekday_sch.sum(0.0)
+    medium_cfm = 3000.0 # From ANSI 301-2019
+    hrs_per_day = 10.5 # From ANSI 301-2019
     cfm_per_w = ceiling_fan.efficiency
     quantity = ceiling_fan.quantity
     annual_kwh = UnitConversions.convert(quantity * medium_cfm / cfm_per_w * hrs_per_day * 365.0, 'Wh', 'kWh')
-    annual_kwh *= monthly_sch.sum(0.0) / 12.0
+    annual_kwh *= ceiling_fan.monthly_multipliers.split(',').map(&:to_f).sum(0.0) / 12.0
 
-    ceiling_fan_sch = MonthWeekdayWeekendSchedule.new(model, obj_name + ' schedule', weekday_sch, weekend_sch, monthly_sch, Constants.ScheduleTypeLimitsFraction)
-
-    space_design_level = ceiling_fan_sch.calcDesignLevelFromDailykWh(annual_kwh / 365.0)
+    if not schedules_file.nil?
+      ceiling_fan_design_level = schedules_file.calc_design_level_from_annual_kwh(col_name: 'ceiling_fan', annual_kwh: annual_kwh)
+      ceiling_fan_sch = schedules_file.create_schedule_file(col_name: 'ceiling_fan')
+    else
+      weekday_sch = ceiling_fan.weekday_fractions
+      weekend_sch = ceiling_fan.weekend_fractions
+      monthly_sch = ceiling_fan.monthly_multipliers
+      ceiling_fan_sch_obj = MonthWeekdayWeekendSchedule.new(model, obj_name + ' schedule', weekday_sch, weekend_sch, monthly_sch, Constants.ScheduleTypeLimitsFraction)
+      ceiling_fan_design_level = ceiling_fan_sch_obj.calcDesignLevelFromDailykWh(annual_kwh / 365.0)
+      ceiling_fan_sch = ceiling_fan_sch_obj.schedule
+    end
 
     equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
     equip_def.setName(obj_name)
     equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
     equip.setName(equip_def.name.to_s)
     equip.setSpace(living_space)
-    equip_def.setDesignLevel(space_design_level)
+    equip_def.setDesignLevel(ceiling_fan_design_level)
     equip_def.setFractionRadiant(0.558)
     equip_def.setFractionLatent(0)
     equip_def.setFractionLost(0)
     equip.setEndUseSubcategory(obj_name)
-    equip.setSchedule(ceiling_fan_sch.schedule)
+    equip.setSchedule(ceiling_fan_sch)
   end
 
-  def self.apply_setpoints(model, runner, weather, hvac_control, living_zone, has_ceiling_fan, heating_days, cooling_days)
-    num_days = Schedule.get_num_days_in_year(model)
+  def self.apply_setpoints(model, runner, weather, hvac_control, living_zone, has_ceiling_fan, heating_days, cooling_days, year)
+    num_days = Constants.NumDaysInYear(year)
 
     if hvac_control.weekday_heating_setpoints.nil? || hvac_control.weekend_heating_setpoints.nil?
       # Base heating setpoint
@@ -1041,7 +1044,7 @@ class HVAC
       clg_ceiling_fan_offset = hvac_control.ceiling_fan_cooling_setpoint_temp_offset
       if not clg_ceiling_fan_offset.nil?
         months = get_default_ceiling_fan_months(weather)
-        Schedule.months_to_days(model, months).each_with_index do |operation, d|
+        Schedule.months_to_days(year, months).each_with_index do |operation, d|
           next if operation != 1
 
           clg_weekday_setpoints[d] = [clg_weekday_setpoints[d], Array.new(24, clg_ceiling_fan_offset)].transpose.map { |i| i.reduce(:+) }
@@ -1680,20 +1683,28 @@ class HVAC
     # Note: fan_cfms should include all unique airflow rates (both heating and cooling, at all speeds)
     fan = OpenStudio::Model::FanSystemModel.new(model)
     fan.setSpeedControlMethod('Discrete')
-    fan.setDesignPowerSizingMethod('TotalEfficiencyAndPressure')
+    fan.setDesignPowerSizingMethod('PowerPerFlow')
+    fan.setElectricPowerPerUnitFlowRate([fan_watts_per_cfm / UnitConversions.convert(1.0, 'cfm', 'm^3/s'), 0.00001].max)
     fan.setAvailabilitySchedule(model.alwaysOnDiscreteSchedule)
-    set_fan_power(fan, fan_watts_per_cfm)
     fan.setName(obj_name + ' supply fan')
     fan.setEndUseSubcategory('supply fan')
     fan.setMotorEfficiency(1.0)
     fan.setMotorInAirStreamFraction(1.0)
     max_fan_cfm = Float(fan_cfms.max) # Convert to float to prevent integer division below
     fan.setDesignMaximumAirFlowRate(UnitConversions.convert(max_fan_cfm, 'cfm', 'm^3/s'))
+
+    # For each fan speed, we preserve the W/cfm instead of using the fan power law. This
+    # ensures that, e.g., a standalone furnace has the same fan power as a furnace attached
+    # to a central air conditioner. For multi-speed systems or systems with different
+    # heating and cooling airflow rates, this essentially means that the W/cfm is treated
+    # as an average value over the range of airflow rates, as opposed to the value at maximum
+    # airflow rate.
     fan_cfms.sort.each do |fan_cfm|
       fan_ratio = fan_cfm / max_fan_cfm
-      power_fraction = fan_ratio**3 # fan power curve
+      power_fraction = fan_ratio
       fan.addSpeed(fan_ratio.round(5), power_fraction.round(5))
     end
+
     return fan
   end
 
@@ -3117,18 +3128,6 @@ class HVAC
     end
   end
 
-  def self.set_fan_power(fan, fan_watts_per_cfm)
-    if fan_watts_per_cfm > 0
-      fan_eff = 0.75 # Overall Efficiency of the Fan, Motor and Drive
-      pressure_rise = fan_eff * fan_watts_per_cfm / UnitConversions.convert(1.0, 'cfm', 'm^3/s') # Pa
-    else
-      fan_eff = 1
-      pressure_rise = 0.000001
-    end
-    fan.setFanTotalEfficiency(fan_eff)
-    fan.setDesignPressureRise(pressure_rise)
-  end
-
   def self.calc_pump_rated_flow_rate(pump_eff, pump_w, pump_head_pa)
     # Calculate needed pump rated flow rate to achieve a given pump power with an assumed
     # efficiency and pump head.
@@ -3701,7 +3700,7 @@ class HVAC
     return primary_duct_location, secondary_duct_location
   end
 
-  def self.get_charge_fault_cooling_coeff(f_chg)
+  def self.get_installation_quality_cooling_coeff(f_chg)
     if f_chg <= 0
       qgr_values = [-9.46E-01, 4.93E-02, -1.18E-03, -1.15E+00]
       p_values = [-3.13E-01, 1.15E-02, 2.66E-03, -1.16E-01]
@@ -3713,181 +3712,16 @@ class HVAC
     return qgr_values, p_values, ff_chg_values
   end
 
-  def self.get_charge_fault_heating_coeff(f_chg)
+  def self.get_installation_quality_heating_coeff(f_chg)
     if f_chg <= 0
-      qgr_values = [-0.0338595, 0.0, 0.0202827, -2.6226343] # Add a zero term to combine cooling and heating claculation
-      p_values = [0.0615649, 0.0, 0.0044554, -0.2598507] # Add a zero term to combine cooling and heating claculation
+      qgr_values = [-0.0338595, 0.0202827, -2.6226343]
+      p_values = [0.0615649, 0.0044554, -0.2598507]
     else
-      qgr_values = [-0.0029514, 0.0, 0.0007379, -0.0064112] # Add a zero term to combine cooling and heating claculation
-      p_values = [-0.0594134, 0.0, 0.0159205, 1.8872153] # Add a zero term to combine cooling and heating claculation
+      qgr_values = [-0.0029514, 0.0007379, -0.0064112]
+      p_values = [-0.0594134, 0.0159205, 1.8872153]
     end
-    ff_chg_values = [0.0, 8.33] # Add a zero term to combine cooling and heating claculation
+    ff_chg_values = [8.33]
     return qgr_values, p_values, ff_chg_values
-  end
-
-  def self.get_airflow_fault_cooling_coeff()
-    # Cutler curve coefficients for single speed
-    cool_cap_fflow_spec = [0.718664047, 0.41797409, -0.136638137]
-    cool_eir_fflow_spec = [1.143487507, -0.13943972, -0.004047787]
-    return cool_cap_fflow_spec, cool_eir_fflow_spec
-  end
-
-  def self.get_airflow_fault_heating_coeff()
-    # Cutler curve coefficients for single speed
-    heat_cap_fflow_spec = [0.694045465, 0.474207981, -0.168253446]
-    heat_eir_fflow_spec = [2.185418751, -1.942827919, 0.757409168]
-    return heat_cap_fflow_spec, heat_eir_fflow_spec
-  end
-
-  def self.add_install_quality_calculations(fault_program, tin_sensor, tout_sensor, airflow_rated_defect_ratio, clg_or_htg_coil, model, f_chg, obj_name, mode)
-    if mode == :clg
-      if clg_or_htg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
-        num_speeds = 1
-        cap_fff_curves = [clg_or_htg_coil.totalCoolingCapacityFunctionOfFlowFractionCurve.to_CurveQuadratic.get]
-        eir_fff_curves = [clg_or_htg_coil.energyInputRatioFunctionOfFlowFractionCurve.to_CurveQuadratic.get]
-      elsif clg_or_htg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
-        num_speeds = clg_or_htg_coil.stages.size
-        cap_fff_curves = clg_or_htg_coil.stages.map { |stage| stage.totalCoolingCapacityFunctionofFlowFractionCurve.to_CurveQuadratic.get }
-        eir_fff_curves = clg_or_htg_coil.stages.map { |stage| stage.energyInputRatioFunctionofFlowFractionCurve.to_CurveQuadratic.get }
-      elsif clg_or_htg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
-        num_speeds = 1
-        cap_fff_curves = [clg_or_htg_coil.totalCoolingCapacityCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
-        eir_fff_curves = [clg_or_htg_coil.coolingPowerConsumptionCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
-        # variables are the same for eir and cap curve
-        var1_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 1 Value')
-        var1_sensor.setName('Cool Cap Curve Var 1')
-        var1_sensor.setKeyName(cap_fff_curves[0].name.to_s)
-        var2_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 2 Value')
-        var2_sensor.setName('Cool Cap Curve Var 2')
-        var2_sensor.setKeyName(cap_fff_curves[0].name.to_s)
-        var4_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 4 Value')
-        var4_sensor.setName('Cool Cap Curve Var 4')
-        var4_sensor.setKeyName(cap_fff_curves[0].name.to_s)
-      else
-        fail 'cooling coil not supported'
-      end
-    elsif mode == :htg
-      if clg_or_htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
-        num_speeds = 1
-        cap_fff_curves = [clg_or_htg_coil.totalHeatingCapacityFunctionofFlowFractionCurve.to_CurveQuadratic.get]
-        eir_fff_curves = [clg_or_htg_coil.energyInputRatioFunctionofFlowFractionCurve.to_CurveQuadratic.get]
-      elsif clg_or_htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
-        num_speeds = clg_or_htg_coil.stages.size
-        cap_fff_curves = clg_or_htg_coil.stages.map { |stage| stage.heatingCapacityFunctionofFlowFractionCurve.to_CurveQuadratic.get }
-        eir_fff_curves = clg_or_htg_coil.stages.map { |stage| stage.energyInputRatioFunctionofFlowFractionCurve.to_CurveQuadratic.get }
-      elsif clg_or_htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
-        num_speeds = 1
-        cap_fff_curves = [clg_or_htg_coil.heatingCapacityCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
-        eir_fff_curves = [clg_or_htg_coil.heatingPowerConsumptionCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
-        # variables are the same for eir and cap curve
-        var1_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 1 Value')
-        var1_sensor.setName('Heat Cap Curve Var 1')
-        var1_sensor.setKeyName(cap_fff_curves[0].name.to_s)
-        var2_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 2 Value')
-        var2_sensor.setName('Heat Cap Curve Var 2')
-        var2_sensor.setKeyName(cap_fff_curves[0].name.to_s)
-        var4_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 4 Value')
-        var4_sensor.setName('Heat Cap Curve Var 4')
-        var4_sensor.setKeyName(cap_fff_curves[0].name.to_s)
-      else
-        fail 'heating coil not supported'
-      end
-    end
-
-    # Apply Cutler curve airflow coefficients to later equations
-    if mode == :clg
-      cap_fflow_spec, eir_fflow_spec = get_airflow_fault_cooling_coeff()
-      qgr_values, p_values, ff_chg_values = get_charge_fault_cooling_coeff(f_chg)
-      suffix = 'clg'
-    elsif mode == :htg
-      cap_fflow_spec, eir_fflow_spec = get_airflow_fault_heating_coeff()
-      qgr_values, p_values, ff_chg_values = get_charge_fault_heating_coeff(f_chg)
-      suffix = 'htg'
-    end
-    fault_program.addLine("Set a1_AF_Qgr_#{suffix} = #{cap_fflow_spec[0]}")
-    fault_program.addLine("Set a2_AF_Qgr_#{suffix} = #{cap_fflow_spec[1]}")
-    fault_program.addLine("Set a3_AF_Qgr_#{suffix} = #{cap_fflow_spec[2]}")
-    fault_program.addLine("Set a1_AF_EIR_#{suffix} = #{eir_fflow_spec[0]}")
-    fault_program.addLine("Set a2_AF_EIR_#{suffix} = #{eir_fflow_spec[1]}")
-    fault_program.addLine("Set a3_AF_EIR_#{suffix} = #{eir_fflow_spec[2]}")
-
-    # charge fault coefficients
-    fault_program.addLine("Set a1_CH_Qgr_#{suffix} = #{qgr_values[0]}")
-    fault_program.addLine("Set a2_CH_Qgr_#{suffix} = #{qgr_values[1]}")
-    fault_program.addLine("Set a3_CH_Qgr_#{suffix} = #{qgr_values[2]}")
-    fault_program.addLine("Set a4_CH_Qgr_#{suffix} = #{qgr_values[3]}")
-
-    fault_program.addLine("Set a1_CH_P_#{suffix} = #{p_values[0]}")
-    fault_program.addLine("Set a2_CH_P_#{suffix} = #{p_values[1]}")
-    fault_program.addLine("Set a3_CH_P_#{suffix} = #{p_values[2]}")
-    fault_program.addLine("Set a4_CH_P_#{suffix} = #{p_values[3]}")
-
-    fault_program.addLine("Set q0_CH_#{suffix} = a1_CH_Qgr_#{suffix}")
-    fault_program.addLine("Set q1_CH_#{suffix} = a2_CH_Qgr_#{suffix}*#{tin_sensor.name}")
-    fault_program.addLine("Set q2_CH_#{suffix} = a3_CH_Qgr_#{suffix}*#{tout_sensor.name}")
-    fault_program.addLine("Set q3_CH_#{suffix} = a4_CH_Qgr_#{suffix}*F_CH")
-    fault_program.addLine("Set Y_CH_Q_#{suffix} = 1 + ((q0_CH_#{suffix}+(q1_CH_#{suffix})+(q2_CH_#{suffix})+(q3_CH_#{suffix}))*F_CH)")
-
-    fault_program.addLine("Set p1_CH_#{suffix} = a1_CH_P_#{suffix}")
-    fault_program.addLine("Set p2_CH_#{suffix} = a2_CH_P_#{suffix}*#{tin_sensor.name}")
-    fault_program.addLine("Set p3_CH_#{suffix} = a3_CH_P_#{suffix}*#{tout_sensor.name}")
-    fault_program.addLine("Set p4_CH_#{suffix} = a4_CH_P_#{suffix}*F_CH")
-    fault_program.addLine("Set Y_CH_COP_#{suffix} = Y_CH_Q_#{suffix}/(1 + (p1_CH_#{suffix}+(p2_CH_#{suffix})+(p3_CH_#{suffix})+(p4_CH_#{suffix}))*F_CH)")
-
-    # air flow defect and charge defect combined to modify airflow curve output
-    ff_ch = 1.0 / (1.0 + (qgr_values[0] + (qgr_values[1] * ff_chg_values[0]) + (qgr_values[2] * ff_chg_values[1]) + (qgr_values[3] * f_chg)) * f_chg)
-    fault_program.addLine("Set FF_CH = #{ff_ch.round(3)}")
-
-    for speed in 0..(num_speeds - 1)
-      cap_fff_curve = cap_fff_curves[speed]
-      cap_fff_act = OpenStudio::Model::EnergyManagementSystemActuator.new(cap_fff_curve, 'Curve', 'Curve Result')
-      cap_fff_act.setName("#{obj_name} cap act #{suffix}")
-
-      eir_fff_curve = eir_fff_curves[speed]
-      eir_fff_act = OpenStudio::Model::EnergyManagementSystemActuator.new(eir_fff_curve, 'Curve', 'Curve Result')
-      eir_fff_act.setName("#{obj_name} eir act #{suffix}")
-
-      fault_program.addLine("Set FF_AF_#{suffix} = 1.0 + (#{airflow_rated_defect_ratio[speed].round(3)})")
-      fault_program.addLine("Set q_AF_CH_#{suffix} = (a1_AF_Qgr_#{suffix}) + ((a2_AF_Qgr_#{suffix})*FF_CH) + ((a3_AF_Qgr_#{suffix})*FF_CH*FF_CH)")
-      fault_program.addLine("Set eir_AF_CH_#{suffix} = (a1_AF_EIR_#{suffix}) + ((a2_AF_EIR_#{suffix})*FF_CH) + ((a3_AF_EIR_#{suffix})*FF_CH*FF_CH)")
-      fault_program.addLine("Set p_CH_Q_#{suffix} = Y_CH_Q_#{suffix}/q_AF_CH_#{suffix}")
-      fault_program.addLine("Set p_CH_COP_#{suffix} = Y_CH_COP_#{suffix}*eir_AF_CH_#{suffix}")
-      fault_program.addLine("Set FF_AF_comb_#{suffix} = FF_CH * FF_AF_#{suffix}")
-      fault_program.addLine("Set p_AF_Q_#{suffix} = (a1_AF_Qgr_#{suffix}) + ((a2_AF_Qgr_#{suffix})*FF_AF_comb_#{suffix}) + ((a3_AF_Qgr_#{suffix})*FF_AF_comb_#{suffix}*FF_AF_comb_#{suffix})")
-      fault_program.addLine("Set p_AF_COP_#{suffix} = 1.0 / ((a1_AF_EIR_#{suffix}) + ((a2_AF_EIR_#{suffix})*FF_AF_comb_#{suffix}) + ((a3_AF_EIR_#{suffix})*FF_AF_comb_#{suffix}*FF_AF_comb_#{suffix}))")
-      fault_program.addLine("Set CAP_Cutler_Curve_Pre_#{suffix} = (a1_AF_Qgr_#{suffix}) + ((a2_AF_Qgr_#{suffix})*FF_AF_#{suffix}) + ((a3_AF_Qgr_#{suffix})*FF_AF_#{suffix}*FF_AF_#{suffix})")
-      fault_program.addLine("Set EIR_Cutler_Curve_Pre_#{suffix} = (a1_AF_EIR_#{suffix}) + ((a2_AF_EIR_#{suffix})*FF_AF_#{suffix}) + ((a3_AF_EIR_#{suffix})*FF_AF_#{suffix}*FF_AF_#{suffix})")
-      fault_program.addLine("Set CAP_Cutler_Curve_After_#{suffix} = p_CH_Q_#{suffix} * p_AF_Q_#{suffix}")
-      fault_program.addLine("Set EIR_Cutler_Curve_After_#{suffix} = (1.0 / (p_CH_COP_#{suffix} * p_AF_COP_#{suffix}))")
-      fault_program.addLine("Set CAP_IQ_adj_#{suffix} = CAP_Cutler_Curve_After_#{suffix} / CAP_Cutler_Curve_Pre_#{suffix}")
-      fault_program.addLine("Set EIR_IQ_adj_#{suffix} = EIR_Cutler_Curve_After_#{suffix} / EIR_Cutler_Curve_Pre_#{suffix}")
-      # NOTE: heat pump (cooling) curves don't exhibit expected trends at extreme faults;
-      if (not clg_or_htg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit) && (not clg_or_htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit)
-        fault_program.addLine("Set CAP_c1_#{suffix} = #{cap_fff_curve.coefficient1Constant}")
-        fault_program.addLine("Set CAP_c2_#{suffix} = #{cap_fff_curve.coefficient2x}")
-        fault_program.addLine("Set CAP_c3_#{suffix} = #{cap_fff_curve.coefficient3xPOW2}")
-        fault_program.addLine("Set EIR_c1_#{suffix} = #{eir_fff_curve.coefficient1Constant}")
-        fault_program.addLine("Set EIR_c2_#{suffix} = #{eir_fff_curve.coefficient2x}")
-        fault_program.addLine("Set EIR_c3_#{suffix} = #{eir_fff_curve.coefficient3xPOW2}")
-        fault_program.addLine("Set cap_curve_v_pre_#{suffix} = (CAP_c1_#{suffix}) + ((CAP_c2_#{suffix})*FF_AF_#{suffix}) + ((CAP_c3_#{suffix})*FF_AF_#{suffix}*FF_AF_#{suffix})")
-        fault_program.addLine("Set eir_curve_v_pre_#{suffix} = (EIR_c1_#{suffix}) + ((EIR_c2_#{suffix})*FF_AF_#{suffix}) + ((EIR_c3_#{suffix})*FF_AF_#{suffix}*FF_AF_#{suffix})")
-      else
-        fault_program.addLine("Set CAP_c1_#{suffix} = #{cap_fff_curve.coefficient1Constant}")
-        fault_program.addLine("Set CAP_c2_#{suffix} = #{cap_fff_curve.coefficient2w}")
-        fault_program.addLine("Set CAP_c3_#{suffix} = #{cap_fff_curve.coefficient3x}")
-        fault_program.addLine("Set CAP_c4_#{suffix} = #{cap_fff_curve.coefficient4y}")
-        fault_program.addLine("Set CAP_c5_#{suffix} = #{cap_fff_curve.coefficient5z}")
-        fault_program.addLine("Set EIR_c1_#{suffix} = #{eir_fff_curve.coefficient1Constant}")
-        fault_program.addLine("Set EIR_c2_#{suffix} = #{eir_fff_curve.coefficient2w}")
-        fault_program.addLine("Set EIR_c3_#{suffix} = #{eir_fff_curve.coefficient3x}")
-        fault_program.addLine("Set EIR_c4_#{suffix} = #{eir_fff_curve.coefficient4y}")
-        fault_program.addLine("Set EIR_c5_#{suffix} = #{eir_fff_curve.coefficient5z}")
-        fault_program.addLine("Set cap_curve_v_pre_#{suffix} = CAP_c1_#{suffix} + ((CAP_c2_#{suffix})*#{var1_sensor.name}) + (CAP_c3_#{suffix}*#{var2_sensor.name}) + (CAP_c4_#{suffix}*FF_AF_#{suffix}) + (CAP_c5_#{suffix}*#{var4_sensor.name})")
-        fault_program.addLine("Set eir_curve_v_pre_#{suffix} = EIR_c1_#{suffix} + ((EIR_c2_#{suffix})*#{var1_sensor.name}) + (EIR_c3_#{suffix}*#{var2_sensor.name}) + (EIR_c4_#{suffix}*FF_AF_#{suffix})+ (EIR_c5_#{suffix}*#{var4_sensor.name})")
-      end
-      fault_program.addLine("Set #{cap_fff_act.name} = cap_curve_v_pre_#{suffix} * CAP_IQ_adj_#{suffix}")
-      fault_program.addLine("Set #{eir_fff_act.name} = eir_curve_v_pre_#{suffix} * EIR_IQ_adj_#{suffix}")
-    end
   end
 
   def self.apply_installation_quality(model, heating_system, cooling_system, unitary_system, htg_coil, clg_coil, control_zone)
@@ -3924,7 +3758,7 @@ class HVAC
 
     return if cool_airflow_rated_defect_ratio.empty? && heat_airflow_rated_defect_ratio.empty?
 
-    obj_name = "#{unitary_system.name} IQ"
+    obj_name = "#{unitary_system.name} install quality"
 
     tin_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Zone Mean Air Temperature')
     tin_sensor.setName("#{obj_name} tin s")
@@ -3941,11 +3775,194 @@ class HVAC
     fault_program.addLine("Set F_CH = #{f_chg.round(3)}")
 
     if not cool_airflow_rated_defect_ratio.empty?
-      add_install_quality_calculations(fault_program, tin_sensor, tout_sensor, cool_airflow_rated_defect_ratio, clg_coil, model, f_chg, obj_name, :clg)
+      if clg_coil.is_a? OpenStudio::Model::CoilCoolingDXSingleSpeed
+        num_speeds = 1
+        cool_cap_fff_curves = [clg_coil.totalCoolingCapacityFunctionOfFlowFractionCurve.to_CurveQuadratic.get]
+        cool_eir_fff_curves = [clg_coil.energyInputRatioFunctionOfFlowFractionCurve.to_CurveQuadratic.get]
+      elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingDXMultiSpeed
+        num_speeds = clg_coil.stages.size
+        cool_cap_fff_curves = clg_coil.stages.map { |stage| stage.totalCoolingCapacityFunctionofFlowFractionCurve.to_CurveQuadratic.get }
+        cool_eir_fff_curves = clg_coil.stages.map { |stage| stage.energyInputRatioFunctionofFlowFractionCurve.to_CurveQuadratic.get }
+      elsif clg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
+        num_speeds = 1
+        cool_cap_fff_curves = [clg_coil.totalCoolingCapacityCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
+        cool_eir_fff_curves = [clg_coil.coolingPowerConsumptionCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
+        # variables are the same for eir and cap curve
+        var1_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 1 Value')
+        var1_sensor.setName('Cool Cap Curve Var 1')
+        var1_sensor.setKeyName(cool_cap_fff_curves[0].name.to_s)
+        var2_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 2 Value')
+        var2_sensor.setName('Cool Cap Curve Var 2')
+        var2_sensor.setKeyName(cool_cap_fff_curves[0].name.to_s)
+        var4_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 4 Value')
+        var4_sensor.setName('Cool Cap Curve Var 4')
+        var4_sensor.setKeyName(cool_cap_fff_curves[0].name.to_s)
+      else
+        fail 'cooling coil not supported'
+      end
+
+      for speed in 0..(num_speeds - 1)
+        cool_cap_fff_curve = cool_cap_fff_curves[speed]
+        cool_cap_fff_act = OpenStudio::Model::EnergyManagementSystemActuator.new(cool_cap_fff_curve, 'Curve', 'Curve Result')
+        cool_cap_fff_act.setName("#{obj_name} cap clg act")
+
+        cool_eir_fff_curve = cool_eir_fff_curves[speed]
+        cool_eir_fff_act = OpenStudio::Model::EnergyManagementSystemActuator.new(cool_eir_fff_curve, 'Curve', 'Curve Result')
+        cool_eir_fff_act.setName("#{obj_name} eir clg act")
+
+        # NOTE: heat pump (cooling) curves don't exhibit expected trends at extreme faults;
+        if not clg_coil.is_a? OpenStudio::Model::CoilCoolingWaterToAirHeatPumpEquationFit
+          fault_program.addLine("Set a1_AF_Qgr_c = #{cool_cap_fff_curve.coefficient1Constant}")
+          fault_program.addLine("Set a2_AF_Qgr_c = #{cool_cap_fff_curve.coefficient2x}")
+          fault_program.addLine("Set a3_AF_Qgr_c = #{cool_cap_fff_curve.coefficient3xPOW2}")
+          fault_program.addLine("Set a1_AF_EIR_c = #{cool_eir_fff_curve.coefficient1Constant}")
+          fault_program.addLine("Set a2_AF_EIR_c = #{cool_eir_fff_curve.coefficient2x}")
+          fault_program.addLine("Set a3_AF_EIR_c = #{cool_eir_fff_curve.coefficient3xPOW2}")
+        else
+          fault_program.addLine("Set a1_AF_Qgr_c = #{cool_cap_fff_curve.coefficient1Constant} + (#{cool_cap_fff_curve.coefficient2w}*#{var1_sensor.name}) + (#{cool_cap_fff_curve.coefficient3x}*#{var2_sensor.name}) + (#{cool_cap_fff_curve.coefficient5z}*#{var4_sensor.name})")
+          fault_program.addLine("Set a2_AF_Qgr_c = #{cool_cap_fff_curve.coefficient4y}")
+          fault_program.addLine('Set a3_AF_Qgr_c = 0')
+          fault_program.addLine("Set a1_AF_EIR_c = #{cool_eir_fff_curve.coefficient1Constant} + (#{cool_eir_fff_curve.coefficient2w}*#{var1_sensor.name}) + (#{cool_eir_fff_curve.coefficient3x}*#{var2_sensor.name}) + (#{cool_eir_fff_curve.coefficient5z}*#{var4_sensor.name})")
+          fault_program.addLine("Set a2_AF_EIR_c = #{cool_eir_fff_curve.coefficient4y}")
+          fault_program.addLine('Set a3_AF_EIR_c = 0')
+        end
+
+        qgr_values, p_values, ff_chg_values = get_installation_quality_cooling_coeff(f_chg)
+
+        # charge defect impact
+        fault_program.addLine("Set a1_CH_Qgr_c = #{qgr_values[0]}")
+        fault_program.addLine("Set a2_CH_Qgr_c = #{qgr_values[1]}")
+        fault_program.addLine("Set a3_CH_Qgr_c = #{qgr_values[2]}")
+        fault_program.addLine("Set a4_CH_Qgr_c = #{qgr_values[3]}")
+
+        fault_program.addLine("Set a1_CH_P_c = #{p_values[0]}")
+        fault_program.addLine("Set a2_CH_P_c = #{p_values[1]}")
+        fault_program.addLine("Set a3_CH_P_c = #{p_values[2]}")
+        fault_program.addLine("Set a4_CH_P_c = #{p_values[3]}")
+
+        fault_program.addLine('Set q0_CH = a1_CH_Qgr_c')
+        fault_program.addLine("Set q1_CH = a2_CH_Qgr_c*#{tin_sensor.name}")
+        fault_program.addLine("Set q2_CH = a3_CH_Qgr_c*#{tout_sensor.name}")
+        fault_program.addLine('Set q3_CH = a4_CH_Qgr_c*F_CH')
+        fault_program.addLine('Set Y_CH_Q_c = 1 + ((q0_CH+(q1_CH)+(q2_CH)+(q3_CH))*F_CH)')
+
+        fault_program.addLine('Set p1_CH = a1_CH_P_c')
+        fault_program.addLine("Set p2_CH = a2_CH_P_c*#{tin_sensor.name}")
+        fault_program.addLine("Set p3_CH = a3_CH_P_c*#{tout_sensor.name}")
+        fault_program.addLine('Set p4_CH = a4_CH_P_c*F_CH')
+        fault_program.addLine('Set Y_CH_COP_c = Y_CH_Q_c/(1 + (p1_CH+(p2_CH)+(p3_CH)+(p4_CH))*F_CH)')
+
+        # air flow defect and charge defect combined to modify airflow curve output
+        ff_ch_c = 1.0 / (1.0 + (qgr_values[0] + (qgr_values[1] * ff_chg_values[0]) + (qgr_values[2] * ff_chg_values[1]) + (qgr_values[3] * f_chg)) * f_chg)
+        fault_program.addLine("Set FF_CH_c = #{ff_ch_c.round(3)}")
+        fault_program.addLine("Set FF_AF_c = 1.0 + #{cool_airflow_rated_defect_ratio[speed].round(3)}")
+        fault_program.addLine('Set FF_AF_comb_c = FF_CH_c * FF_AF_c')
+
+        fault_program.addLine('Set q_AF_CH = (a1_AF_Qgr_c) + (a2_AF_Qgr_c*FF_CH_c) + (a3_AF_Qgr_c*FF_CH_c*FF_CH_c)')
+        fault_program.addLine('Set eir_AF_CH = (a1_AF_EIR_c) + (a2_AF_EIR_c*FF_CH_c) + (a3_AF_EIR_c*FF_CH_c*FF_CH_c)')
+        fault_program.addLine('Set p_CH_Q_c = Y_CH_Q_c/q_AF_CH')
+        fault_program.addLine('Set p_CH_COP_c = Y_CH_COP_c*eir_AF_CH')
+
+        fault_program.addLine('Set p_AF_Q_c = (a1_AF_Qgr_c) + (a2_AF_Qgr_c*FF_AF_comb_c) + (a3_AF_Qgr_c*FF_AF_comb_c*FF_AF_comb_c)')
+        fault_program.addLine('Set p_AF_COP_c = 1.0 / ((a1_AF_EIR_c) + (a2_AF_EIR_c*FF_AF_comb_c) + (a3_AF_EIR_c*FF_AF_comb_c*FF_AF_comb_c))')
+
+        fault_program.addLine("Set #{cool_cap_fff_act.name} = (p_CH_Q_c * p_AF_Q_c)")
+        fault_program.addLine("Set #{cool_eir_fff_act.name} = (1.0 / (p_CH_COP_c * p_AF_COP_c))")
+      end
     end
 
     if not heat_airflow_rated_defect_ratio.empty?
-      add_install_quality_calculations(fault_program, tin_sensor, tout_sensor, heat_airflow_rated_defect_ratio, htg_coil, model, f_chg, obj_name, :htg)
+
+      if htg_coil.is_a? OpenStudio::Model::CoilHeatingDXSingleSpeed
+        num_speeds = 1
+        heat_cap_fff_curves = [htg_coil.totalHeatingCapacityFunctionofFlowFractionCurve.to_CurveQuadratic.get]
+        heat_eir_fff_curves = [htg_coil.energyInputRatioFunctionofFlowFractionCurve.to_CurveQuadratic.get]
+      elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingDXMultiSpeed
+        num_speeds = htg_coil.stages.size
+        heat_cap_fff_curves = htg_coil.stages.map { |stage| stage.heatingCapacityFunctionofFlowFractionCurve.to_CurveQuadratic.get }
+        heat_eir_fff_curves = htg_coil.stages.map { |stage| stage.energyInputRatioFunctionofFlowFractionCurve.to_CurveQuadratic.get }
+      elsif htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
+        num_speeds = 1
+        heat_cap_fff_curves = [htg_coil.heatingCapacityCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
+        heat_eir_fff_curves = [htg_coil.heatingPowerConsumptionCurve.to_CurveQuadLinear.get] # quadlinear curve, only forth term is for airflow
+        # variables are the same for eir and cap curve
+        var1_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 1 Value')
+        var1_sensor.setName('Heat Cap Curve Var 1')
+        var1_sensor.setKeyName(heat_cap_fff_curves[0].name.to_s)
+        var2_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 2 Value')
+        var2_sensor.setName('Heat Cap Curve Var 2')
+        var2_sensor.setKeyName(heat_cap_fff_curves[0].name.to_s)
+        var4_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Performance Curve Input Variable 4 Value')
+        var4_sensor.setName('Heat Cap Curve Var 4')
+        var4_sensor.setKeyName(heat_cap_fff_curves[0].name.to_s)
+      else
+        fail 'heating coil not supported'
+      end
+      for speed in 0..(num_speeds - 1)
+        heat_cap_fff_curve = heat_cap_fff_curves[speed]
+        heat_cap_fff_act = OpenStudio::Model::EnergyManagementSystemActuator.new(heat_cap_fff_curve, 'Curve', 'Curve Result')
+        heat_cap_fff_act.setName("#{obj_name} cap htg act")
+
+        heat_eir_fff_curve = heat_eir_fff_curves[speed]
+        heat_eir_fff_act = OpenStudio::Model::EnergyManagementSystemActuator.new(heat_eir_fff_curve, 'Curve', 'Curve Result')
+        heat_eir_fff_act.setName("#{obj_name} eir htg act")
+
+        # NOTE: heat pump (cooling) curves don't exhibit expected trends at extreme faults;
+        if not htg_coil.is_a? OpenStudio::Model::CoilHeatingWaterToAirHeatPumpEquationFit
+          fault_program.addLine("Set a1_AF_Qgr_h = #{heat_cap_fff_curve.coefficient1Constant}")
+          fault_program.addLine("Set a2_AF_Qgr_h = #{heat_cap_fff_curve.coefficient2x}")
+          fault_program.addLine("Set a3_AF_Qgr_h = #{heat_cap_fff_curve.coefficient3xPOW2}")
+          fault_program.addLine("Set a1_AF_EIR_h = #{heat_eir_fff_curve.coefficient1Constant}")
+          fault_program.addLine("Set a2_AF_EIR_h = #{heat_eir_fff_curve.coefficient2x}")
+          fault_program.addLine("Set a3_AF_EIR_h = #{heat_eir_fff_curve.coefficient3xPOW2}")
+        else
+          fault_program.addLine("Set a1_AF_Qgr_h = #{heat_cap_fff_curve.coefficient1Constant} + (#{heat_cap_fff_curve.coefficient2w}*#{var1_sensor.name}) + (#{heat_cap_fff_curve.coefficient3x}*#{var2_sensor.name}) + (#{heat_cap_fff_curve.coefficient5z}*#{var4_sensor.name})")
+          fault_program.addLine("Set a2_AF_Qgr_h = #{heat_cap_fff_curve.coefficient4y}")
+          fault_program.addLine('Set a3_AF_Qgr_h = 0')
+          fault_program.addLine("Set a1_AF_EIR_h = #{heat_eir_fff_curve.coefficient1Constant} + (#{heat_eir_fff_curve.coefficient2w}*#{var1_sensor.name}) + (#{heat_eir_fff_curve.coefficient3x}*#{var2_sensor.name}) + (#{heat_eir_fff_curve.coefficient5z}*#{var4_sensor.name})")
+          fault_program.addLine("Set a2_AF_EIR_h = #{heat_eir_fff_curve.coefficient4y}")
+          fault_program.addLine('Set a3_AF_EIR_h = 0')
+        end
+
+        qgr_values, p_values, ff_chg_values = get_installation_quality_heating_coeff(f_chg)
+
+        # charge defect impact
+        fault_program.addLine("Set a1_CH_Qgr_h = #{qgr_values[0]}")
+        fault_program.addLine("Set a2_CH_Qgr_h = #{qgr_values[1]}")
+        fault_program.addLine("Set a3_CH_Qgr_h = #{qgr_values[2]}")
+
+        fault_program.addLine("Set a1_CH_P_h = #{p_values[0]}")
+        fault_program.addLine("Set a2_CH_P_h = #{p_values[1]}")
+        fault_program.addLine("Set a3_CH_P_h = #{p_values[2]}")
+
+        fault_program.addLine('Set qh1_CH = a1_CH_Qgr_h')
+        fault_program.addLine("Set qh2_CH = a2_CH_Qgr_h*#{tout_sensor.name}")
+        fault_program.addLine('Set qh3_CH = a3_CH_Qgr_h*F_CH')
+        fault_program.addLine('Set Y_CH_Q_h = 1 + ((qh1_CH+(qh2_CH)+(qh3_CH))*F_CH)')
+
+        fault_program.addLine('Set ph1_CH = a1_CH_P_h')
+        fault_program.addLine("Set ph2_CH = a2_CH_P_h*#{tout_sensor.name}")
+        fault_program.addLine('Set ph3_CH = a3_CH_P_h*F_CH')
+        fault_program.addLine('Set Y_CH_COP_h = Y_CH_Q_h/(1 + ((ph1_CH+(ph2_CH)+(ph3_CH))*F_CH))')
+
+        # air flow defect and charge defect combined to modify airflow curve output
+        ff_ch_h = 1 / (1 + (qgr_values[0] + qgr_values[1] * ff_chg_values[0] + qgr_values[2] * f_chg) * f_chg)
+        fault_program.addLine("Set FF_CH_h = #{ff_ch_h.round(3)}")
+
+        fault_program.addLine("Set FF_AF_h = 1.0 + #{heat_airflow_rated_defect_ratio[speed].round(3)}")
+        fault_program.addLine('Set FF_AF_comb_h = FF_CH_h * FF_AF_h')
+
+        fault_program.addLine('Set qh_AF_CH = a1_AF_Qgr_h + (a2_AF_Qgr_h*FF_CH_h) + (a3_AF_Qgr_h*FF_CH_h*FF_CH_h)')
+        fault_program.addLine('Set eirh_AF_CH = a1_AF_EIR_h + (a2_AF_EIR_h*FF_CH_h) + (a3_AF_EIR_h*FF_CH_h*FF_CH_h)')
+        fault_program.addLine('Set p_CH_Q_h = Y_CH_Q_h / qh_AF_CH')
+        fault_program.addLine('Set p_CH_COP_h = Y_CH_COP_h * eirh_AF_CH')
+
+        fault_program.addLine('Set p_AF_Q_h = a1_AF_Qgr_h + (a2_AF_Qgr_h*FF_AF_comb_h) + (a3_AF_Qgr_h*FF_AF_comb_h*FF_AF_comb_h)')
+        fault_program.addLine('Set p_AF_COP_h = 1.0 / ((a1_AF_EIR_h)+(a2_AF_EIR_h*FF_AF_comb_h)+(a3_AF_EIR_h*FF_AF_comb_h*FF_AF_comb_h))')
+
+        fault_program.addLine("Set #{heat_cap_fff_act.name} = (p_CH_Q_h * p_AF_Q_h)")
+        fault_program.addLine("Set #{heat_eir_fff_act.name} = 1.0 / (p_CH_COP_h * p_AF_COP_h)")
+      end
     end
     program_calling_manager = OpenStudio::Model::EnergyManagementSystemProgramCallingManager.new(model)
     program_calling_manager.setName("#{obj_name} program manager")
