@@ -1454,7 +1454,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_rated(orig_hpxml, new_hpxml)
-    mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.hours_in_operation > 0 && f.flow_rate > 0 }
+    mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.hours_in_operation > 0 && (f.flow_rate_not_tested || f.flow_rate > 0) }
 
     q_fans = calc_rated_home_q_fans_by_system(orig_hpxml, mech_vent_fans)
 
