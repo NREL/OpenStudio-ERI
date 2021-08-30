@@ -137,6 +137,74 @@ HVAC equipment sizing controls are entered in ``/HPXML/SoftwareInfo/extension/HV
   .. [#] If AllowIncreasedFixedCapacities is true, the larger of user-specified fixed capacity and design load will be used (to reduce potential for unmet loads); otherwise user-specified fixed capacity is used.
   .. [#] If UseMaxLoadForHeatPumps is true, autosized heat pumps are sized based on the maximum of heating/cooling design loads; otherwise sized per ACCA Manual J/S based on cooling design loads with some oversizing allowances for heating design loads.
 
+HPXML Schedules
+***************
+
+Schedules for a variety of building features can be 1) specified via simple inputs, 2) specified via detailed inputs, or 3) defaulted.
+
+Simple Schedule Inputs
+~~~~~~~~~~~~~~~~~~~~~~
+
+Simple schedule inputs are available as weekday/weekend fractions and monthly multipliers.
+For example, see the ``WeekdayScheduleFractions``, ``WeekendScheduleFractions``, and ``MonthlyScheduleMultipliers`` inputs for :ref:`buildingoccupancy`.
+
+.. _detailedschedules:
+
+Detailed Schedule Inputs
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Detailed schedule inputs allow schedule values for every hour or timestep of the simulation.
+They can be smooth schedules, or they can reflect real-world or stochastic occupancy.
+Note that if detailed schedule inputs are used, they must be used for *all* building features; you cannot use detailed schedules for some features and simple/default schedules for other features.
+
+Detailed schedule inputs are provided via a CSV file that should be referenced in the HPXML file at ``/HPXML/SoftwareInfo/extension/SchedulesFilePath``.
+Each column must be normalized to MAX=1; that is, the schedules only define *when* energy is used, not *how much* energy is used.
+The columns in the schedule CSV are:
+
+  =============================  ========  ========================================================  ===================
+  Column Name                    Required  Description                                               Affected by Vacancy
+  =============================  ========  ========================================================  ===================
+  ``occupants``                  Yes       Occupant heat gain schedule.                              Yes
+  ``lighting_interior``          Yes       Interior lighting energy use schedule.                    Yes
+  ``lighting_exterior``          Yes       Exterior lighting energy use schedule.                    Yes
+  ``lighting_garage``            Yes       Garage lighting energy use schedule.                      Yes
+  ``lighting_exterior_holiday``  Yes       Exterior holiday lighting energy use schedule.            Yes
+  ``cooking_range``              Yes       Cooking range & oven energy use schedule.                 Yes
+  ``refrigerator``               Yes       Primary refrigerator energy use schedule.                 No
+  ``extra_refrigerator``         Yes       Non-primary refrigerator energy use schedule.             No
+  ``freezer``                    Yes       Freezer energy use schedule.                              No
+  ``dishwasher``                 Yes       Dishwasher energy use schedule.                           Yes
+  ``clothes_washer``             Yes       Clothes washer energy use schedule.                       Yes
+  ``clothes_dryer``              Yes       Clothes dryer energy use schedule.                        Yes
+  ``ceiling_fan``                Yes       Ceiling fan energy use schedule.                          Yes
+  ``plug_loads_other``           Yes       Other plug load energy use schedule.                      Yes
+  ``plug_loads_tv``              Yes       Television plug load energy use schedule.                 Yes
+  ``plug_loads_vehicle``         Yes       Electric vehicle plug load energy use schedule.           Yes
+  ``plug_loads_well_pump``       Yes       Well pump plug load energy use schedule.                  Yes
+  ``fuel_loads_grill``           Yes       Grill fuel load energy use schedule.                      Yes
+  ``fuel_loads_lighting``        Yes       Lighting fuel load energy use schedule.                   Yes
+  ``fuel_loads_fireplace``       Yes       Fireplace fuel load energy use schedule.                  Yes
+  ``pool_pump``                  Yes       Pool pump energy use schedule.                            No
+  ``pool_heater``                Yes       Pool heater energy use schedule.                          No
+  ``hot_tub_pump``               Yes       Hot tub pump energy use schedule.                         No
+  ``hot_tub_heater``             Yes       Hot tub heater energy use schedule.                       No
+  ``hot_water_dishwasher``       Yes       Dishwasher hot water use schedule.                        Yes
+  ``hot_water_clothes_washer``   Yes       Clothes washer hot water use schedule.                    Yes
+  ``hot_water_fixtures``         Yes       Fixtures (sinks, showers, baths) hot water use schedule.  Yes
+  ``vacancy``                    No        1=Home is vacant. Automatically overrides other columns.  N/A
+  =============================  ========  ========================================================  ===================
+
+A couple schedule CSV file examples are provided in the ``HPXMLtoOpenStudio/resources/schedule_files`` directory.
+
+A detailed stochastic or smooth schedule CSV file can also be automatically generated for you; see the :ref:`usage_instructions` for the commands.
+
+Default Schedules
+~~~~~~~~~~~~~~~~~
+
+If neither simple nor detailed inputs are provided, then schedules are defaulted.
+Default schedules are typically smooth, averaged schedules.
+These default schedules are described elsewhere in the documentation (e.g., see :ref:`buildingoccupancy`).
+
 HPXML Building Summary
 ----------------------
 
@@ -160,29 +228,40 @@ Building site information is entered in ``/HPXML/Building/BuildingDetails/Buildi
 
 For each neighboring building defined, additional information is entered in a ``extension/Neighbors/NeighborBuilding``.
 
-  ============  ========  =======  ===========  ========  ========  =============================================
-  Element       Type      Units    Constraints  Required  Default   Notes
-  ============  ========  =======  ===========  ========  ========  =============================================
-  ``Azimuth``   integer   deg      0 - 359      Yes                 Direction of neighbors (clockwise from North)
-  ``Distance``  double    ft       > 0          Yes                 Distance of neighbor from the dwelling unit
-  ``Height``    double    ft       > 0          No        See [#]_  Height of neighbor
-  ============  ========  =======  ===========  ========  ========  =============================================
+  ==============================  =================  ================  ===================  ========  ========  =============================================
+  Element                         Type               Units             Constraints          Required  Default   Notes
+  ==============================  =================  ================  ===================  ========  ========  =============================================
+  ``Azimuth`` or ``Orientation``  integer or string  deg or direction  0 - 359 or See [#]_  Yes                 Direction of neighbors (clockwise from North)
+  ``Distance``                    double             ft                > 0                  Yes                 Distance of neighbor from the dwelling unit
+  ``Height``                      double             ft                > 0                  No        See [#]_  Height of neighbor
+  ==============================  =================  ================  ===================  ========  ========  =============================================
   
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
   .. [#] If Height not provided, assumed to be same height as the dwelling unit.
+
+.. _buildingoccupancy:
 
 HPXML Building Occupancy
 ************************
 
 Building occupancy is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary/BuildingOccupancy``.
 
-  =====================  ========  =====  ===========  ========  ====================  ========================
-  Element                Type      Units  Constraints  Required  Default               Notes
-  =====================  ========  =====  ===========  ========  ====================  ========================
-  ``NumberofResidents``  integer          >= 0         No        <number of bedrooms>  Number of occupants [#]_
-  =====================  ========  =====  ===========  ========  ====================  ========================
+  ========================================  ========  =====  ===========  ========  ====================  ========================
+  Element                                   Type      Units  Constraints  Required  Default               Notes
+  ========================================  ========  =====  ===========  ========  ====================  ========================
+  ``NumberofResidents``                     integer          >= 0         No        <number of bedrooms>  Number of occupants
+  ``extension/WeekdayScheduleFractions``    array                         No        See [#]_              24 comma-separated weekday fractions
+  ``extension/WeekendScheduleFractions``    array                         No                              24 comma-separated weekend fractions
+  ``extension/MonthlyScheduleMultipliers``  array                         No        See [#]_              12 comma-separated monthly multipliers
+  ========================================  ========  =====  ===========  ========  ====================  ========================
 
-  .. [#] NumberofResidents is only used for occupant heat gain.
-         Most occupancy assumptions (e.g., usage of plug loads, appliances, hot water, etc.) are driven by the number of bedrooms, not number of occupants.
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figures 25 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.053, 0.025, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.018, 0.033, 0.054, 0.054, 0.054, 0.061, 0.061, 0.061".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
+
+.. note::
+
+  The above inputs are only used to define heat gain from occupants.
+  Usages of plug loads, appliances, hot water, etc. are driven by number of bedrooms, not number of occupants.
 
 HPXML Building Construction
 ***************************
@@ -195,7 +274,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   ``ResidentialFacilityType``                                string               See [#]_                           Yes                 Type of dwelling unit
   ``NumberofConditionedFloors``                              double               > 0                                Yes                 Number of conditioned floors (including a basement)
   ``NumberofConditionedFloorsAboveGrade``                    double               > 0, <= NumberofConditionedFloors  Yes                 Number of conditioned floors above grade (including a walkout basement)
-  ``NumberofBedrooms``                                       integer              > 0                                Yes                 Number of bedrooms [#]_
+  ``NumberofBedrooms``                                       integer              > 0                                Yes                 Number of bedrooms
   ``NumberofBathrooms``                                      integer              > 0                                No        See [#]_  Number of bathrooms
   ``ConditionedFloorArea``                                   double    ft2        > 0                                Yes                 Floor area within conditioned space boundary
   ``ConditionedBuildingVolume`` or ``AverageCeilingHeight``  double    ft3 or ft  > 0                                No        See [#]_  Volume/ceiling height within conditioned space boundary
@@ -203,9 +282,8 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =========================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", "apartment unit", or "manufactured home".
-  .. [#] NumberofBedrooms is currently used to determine usage of plug loads, appliances, hot water, etc.
   .. [#] If NumberofBathrooms not provided, calculated as NumberofBedrooms/2 + 0.5 based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
-  .. [#] If neither ConditionedBuildingVolume nor AverageCeilingHeight provided, AverageCeilingHeight defaults to 8.0.
+  .. [#] If neither ConditionedBuildingVolume nor AverageCeilingHeight provided, AverageCeilingHeight defaults to the lesser of 8.0 and InfiltrationVolume / ConditionedFloorArea.
          If needed, additional defaulting is performed using the following relationship: ConditionedBuildingVolume = ConditionedFloorArea * AverageCeilingHeight.
   .. [#] If HasFlueOrChimney not provided, assumed to be true if any of the following conditions are met: 
          
@@ -247,8 +325,8 @@ For example, a foundation wall between the unit's vented crawlspace and the neig
   It is the software tool's responsibility to provide the appropriate building surfaces. 
   While some error-checking is in place, it is not possible to know whether some surfaces are incorrectly missing.
 
-Also note that wall and roof surfaces do not require an azimuth to be specified. 
-Rather, only the windows/skylights themselves require an azimuth. 
+Also note that wall and roof surfaces do not require an azimuth/orientation to be specified. 
+Rather, only the windows/skylights themselves require an azimuth/orientation. 
 Thus, software tools can choose to use a single wall (or roof) surface to represent multiple wall (or roof) surfaces for the entire building if all their other properties (construction type, interior/exterior adjacency, etc.) are identical.
 
 HPXML Air Infiltration
@@ -307,40 +385,45 @@ Each pitched or flat roof surface that is exposed to ambient conditions is enter
 
 For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``FrameFloor`` and not a ``Roof``.
 
-  ======================================  ================  ============  =================  =========  ==============================  ==================================
-  Element                                 Type              Units         Constraints        Required   Default                         Notes
-  ======================================  ================  ============  =================  =========  ==============================  ==================================
-  ``SystemIdentifier``                    id                                                 Yes                                        Unique identifier
-  ``InteriorAdjacentTo``                  string                          See [#]_           Yes                                        Interior adjacent space type
-  ``Area``                                double            ft2           > 0                Yes                                        Gross area (including skylights)
-  ``Azimuth``                             integer           deg           0 - 359            No         See [#]_                        Azimuth (clockwise from North)
-  ``RoofType``                            string                          See [#]_           No         asphalt or fiberglass shingles  Roof type
-  ``RoofColor`` or ``SolarAbsorptance``   string or double                See [#]_ or 0 - 1  No         medium                          Roof color or solar absorptance [#]_
-  ``Emittance``                           double                          0 - 1              No         0.90                            Emittance
-  ``InteriorFinish/Type``                 string                          See [#]_           No         See [#]_                        Interior finish material
-  ``InteriorFinish/Thickness``            double            in            >= 0               No         0.5                             Interior finish thickness
-  ``Pitch``                               integer           ?:12          >= 0               Yes                                        Pitch
-  ``RadiantBarrier``                      boolean                                            No         false                           Presence of radiant barrier
-  ``RadiantBarrierGrade``                 integer                         1 - 3              See [#]_                                   Radiant barrier installation grade
-  ``Insulation/SystemIdentifier``         id                                                 Yes                                        Unique identifier
-  ``Insulation/AssemblyEffectiveRValue``  double            F-ft2-hr/Btu  > 0                Yes                                        Assembly R-value [#]_
-  ======================================  ================  ============  =================  =========  ==============================  ==================================
+  ======================================  =================  ================  =====================  =========  ==============================  ==================================
+  Element                                 Type               Units             Constraints            Required   Default                         Notes
+  ======================================  =================  ================  =====================  =========  ==============================  ==================================
+  ``SystemIdentifier``                    id                                                          Yes                                        Unique identifier
+  ``InteriorAdjacentTo``                  string                               See [#]_               Yes                                        Interior adjacent space type
+  ``Area``                                double             ft2               > 0                    Yes                                        Gross area (including skylights)
+  ``Azimuth`` or ``Orientation``          integer or string  deg or direction  0 - 359 or See [#]_    No         See [#]_                        Direction (clockwise from North)
+  ``RoofType``                            string                               See [#]_               No         asphalt or fiberglass shingles  Roof type
+  ``RoofColor`` or ``SolarAbsorptance``   string or double                     See [#]_ or 0 - 1      No         medium                          Roof color or solar absorptance [#]_
+  ``Emittance``                           double                               0 - 1                  No         0.90                            Emittance
+  ``InteriorFinish/Type``                 string                               See [#]_               No         See [#]_                        Interior finish material
+  ``InteriorFinish/Thickness``            double             in                >= 0                   No         0.5                             Interior finish thickness
+  ``Pitch``                               integer            ?:12              >= 0                   Yes                                        Pitch
+  ``RadiantBarrier``                      boolean                                                     No         false                           Presence of radiant barrier
+  ``RadiantBarrierGrade``                 integer                              1 - 3                  No         1                               Radiant barrier installation grade
+  ``Insulation/SystemIdentifier``         id                                                          Yes                                        Unique identifier
+  ``Insulation/AssemblyEffectiveRValue``  double             F-ft2-hr/Btu      > 0                    Yes                                        Assembly R-value [#]_
+  ======================================  =================  ================  =====================  =========  ==============================  ==================================
 
   .. [#] InteriorAdjacentTo choices are "attic - vented", "attic - unvented", "living space", or "garage".
          See :ref:`hpxmllocations` for descriptions.
-  .. [#] If Azimuth not provided, modeled as four surfaces of equal area facing every direction.
-  .. [#] RoofType choices are "asphalt or fiberglass shingles", "wood shingles or shakes", "slate or tile shingles", or "metal surfacing".
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
+  .. [#] If neither Azimuth nor Orientation provided, modeled as four surfaces of equal area facing every direction.
+  .. [#] RoofType choices are "asphalt or fiberglass shingles", "wood shingles or shakes", "shingles", "slate or tile shingles", "metal surfacing", "plastic/rubber/synthetic sheeting", "expanded polystyrene sheathing", "concrete", or "cool roof".
   .. [#] RoofColor choices are "light", "medium", "medium dark", "dark", or "reflective".
   .. [#] If SolarAbsorptance not provided, defaults based on RoofType and RoofColor:
          
          - **asphalt or fiberglass shingles**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
          - **wood shingles or shakes**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
+         - **shingles**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
          - **slate or tile shingles**: dark=0.90, medium dark=0.83, medium=0.75, light=0.60, reflective=0.30
          - **metal surfacing**: dark=0.90, medium dark=0.83, medium=0.75, light=0.60, reflective=0.30
+         - **plastic/rubber/synthetic sheeting**: dark=0.90, medium dark=0.83, medium=0.75, light=0.60, reflective=0.30
+         - **expanded polystyrene sheathing**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
+         - **concrete**: dark=0.90, medium dark=0.83, medium=0.75, light=0.65, reflective=0.50
+         - **cool roof**: 0.30
 
   .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "none".
   .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is living space, otherwise "none".
-  .. [#] RadiantBarrierGrade only required if RadiantBarrier is provided.
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
 HPXML Rim Joists
@@ -348,27 +431,28 @@ HPXML Rim Joists
 
 Each rim joist surface (i.e., the perimeter of floor joists typically found between stories of a building or on top of a foundation wall) is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/RimJoists/RimJoist``.
 
-  ======================================  ================  ============  =================  ========  ===========  ==============================
-  Element                                 Type              Units         Constraints        Required  Default      Notes
-  ======================================  ================  ============  =================  ========  ===========  ==============================
-  ``SystemIdentifier``                    id                                                 Yes                    Unique identifier
-  ``ExteriorAdjacentTo``                  string                          See [#]_           Yes                    Exterior adjacent space type
-  ``InteriorAdjacentTo``                  string                          See [#]_           Yes                    Interior adjacent space type
-  ``Area``                                double            ft2           > 0                Yes                    Gross area
-  ``Azimuth``                             integer           deg           0 - 359            No        See [#]_     Azimuth (clockwise from North)
-  ``Siding``                              string                          See [#]_           No        wood siding  Siding material
-  ``Color`` or ``SolarAbsorptance``       string or double                See [#]_ or 0 - 1  No        medium       Color or solar absorptance [#]_
-  ``Emittance``                           double                          0 - 1              No        0.90         Emittance
-  ``Insulation/SystemIdentifier``         id                                                 Yes                    Unique identifier
-  ``Insulation/AssemblyEffectiveRValue``  double            F-ft2-hr/Btu  > 0                Yes                    Assembly R-value [#]_
-  ======================================  ================  ============  =================  ========  ===========  ==============================
+  ======================================  =================  ================  =====================  ========  ===========  ==============================
+  Element                                 Type               Units             Constraints            Required  Default      Notes
+  ======================================  =================  ================  =====================  ========  ===========  ==============================
+  ``SystemIdentifier``                    id                                                          Yes                    Unique identifier
+  ``ExteriorAdjacentTo``                  string                               See [#]_               Yes                    Exterior adjacent space type
+  ``InteriorAdjacentTo``                  string                               See [#]_               Yes                    Interior adjacent space type
+  ``Area``                                double             ft2               > 0                    Yes                    Gross area
+  ``Azimuth`` or ``Orientation``          integer or string  deg or direction  0 - 359 or See [#]_    No        See [#]_     Direction (clockwise from North)
+  ``Siding``                              string                               See [#]_               No        wood siding  Siding material
+  ``Color`` or ``SolarAbsorptance``       string or double                     See [#]_ or 0 - 1      No        medium       Color or solar absorptance [#]_
+  ``Emittance``                           double                               0 - 1                  No        0.90         Emittance
+  ``Insulation/SystemIdentifier``         id                                                          Yes                    Unique identifier
+  ``Insulation/AssemblyEffectiveRValue``  double             F-ft2-hr/Btu      > 0                    Yes                    Assembly R-value [#]_
+  ======================================  =================  ================  =====================  ========  ===========  ==============================
 
   .. [#] ExteriorAdjacentTo choices are "outside", "attic - vented", "attic - unvented", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "garage", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] InteriorAdjacentTo choices are "living space", "attic - vented", "attic - unvented", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", or "garage".
          See :ref:`hpxmllocations` for descriptions.
-  .. [#] If Azimuth not provided, modeled as four surfaces of equal area facing every direction.
-  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "aluminum siding", or "none".
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
+  .. [#] If neither Azimuth nor Orientation provided, modeled as four surfaces of equal area facing every direction.
+  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "aluminum siding", "masonite siding", "composite shingle siding", "asbestos siding", "synthetic stucco", or "none".
   .. [#] Color choices are "light", "medium", "medium dark", "dark", or "reflective".
   .. [#] If SolarAbsorptance not provided, defaults based on Color:
 
@@ -385,31 +469,32 @@ HPXML Walls
 
 Each wall that has no contact with the ground and bounds a space type is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/Walls/Wall``.
 
-  ======================================  ================  ============  =================  =============  ===========  ====================================
-  Element                                 Type              Units         Constraints        Required       Default      Notes
-  ======================================  ================  ============  =================  =============  ===========  ====================================
-  ``SystemIdentifier``                    id                                                 Yes                         Unique identifier
-  ``ExteriorAdjacentTo``                  string                          See [#]_           Yes                         Exterior adjacent space type
-  ``InteriorAdjacentTo``                  string                          See [#]_           Yes                         Interior adjacent space type
-  ``WallType``                            element                         1 [#]_             Yes                         Wall type (for thermal mass)
-  ``Area``                                double            ft2           > 0                Yes                         Gross area (including doors/windows)
-  ``Azimuth``                             integer           deg           0 - 359            No             See [#]_     Azimuth (clockwise from North)
-  ``Siding``                              string                          See [#]_           No             wood siding  Siding material
-  ``Color`` or ``SolarAbsorptance``       string or double                See [#]_ or 0 - 1  No             medium       Color or solar absorptance [#]_
-  ``Emittance``                           double                          0 - 1              No             0.90         Emittance
-  ``InteriorFinish/Type``                 string                          See [#]_           No             See [#]_     Interior finish material
-  ``InteriorFinish/Thickness``            double            in            >= 0               No             0.5          Interior finish thickness
-  ``Insulation/SystemIdentifier``         id                                                 Yes                         Unique identifier
-  ``Insulation/AssemblyEffectiveRValue``  double            F-ft2-hr/Btu  > 0                Yes                         Assembly R-value [#]_
-  ======================================  ================  ============  =================  =============  ===========  ====================================
+  ======================================  =================  ================  =====================  =============  ===========  ====================================
+  Element                                 Type               Units             Constraints            Required       Default      Notes
+  ======================================  =================  ================  =====================  =============  ===========  ====================================
+  ``SystemIdentifier``                    id                                                          Yes                         Unique identifier
+  ``ExteriorAdjacentTo``                  string                               See [#]_               Yes                         Exterior adjacent space type
+  ``InteriorAdjacentTo``                  string                               See [#]_               Yes                         Interior adjacent space type
+  ``WallType``                            element                              1 [#]_                 Yes                         Wall type (for thermal mass)
+  ``Area``                                double             ft2               > 0                    Yes                         Gross area (including doors/windows)
+  ``Azimuth`` or ``Orientation``          integer or string  deg or direction  0 - 359 or See [#]_    No             See [#]_     Direction (clockwise from North)
+  ``Siding``                              string                               See [#]_               No             wood siding  Siding material
+  ``Color`` or ``SolarAbsorptance``       string or double                     See [#]_ or 0 - 1      No             medium       Color or solar absorptance [#]_
+  ``Emittance``                           double                               0 - 1                  No             0.90         Emittance
+  ``InteriorFinish/Type``                 string                               See [#]_               No             See [#]_     Interior finish material
+  ``InteriorFinish/Thickness``            double             in                >= 0                   No             0.5          Interior finish thickness
+  ``Insulation/SystemIdentifier``         id                                                          Yes                         Unique identifier
+  ``Insulation/AssemblyEffectiveRValue``  double             F-ft2-hr/Btu      > 0                    Yes                         Assembly R-value [#]_
+  ======================================  =================  ================  =====================  =============  ===========  ====================================
 
   .. [#] ExteriorAdjacentTo choices are "outside", "attic - vented", "attic - unvented", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "garage", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] InteriorAdjacentTo choices are "living space", "attic - vented", "attic - unvented", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", or "garage".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] WallType child element choices are ``WoodStud``, ``DoubleWoodStud``, ``ConcreteMasonryUnit``, ``StructurallyInsulatedPanel``, ``InsulatedConcreteForms``, ``SteelFrame``, ``SolidConcrete``, ``StructuralBrick``, ``StrawBale``, ``Stone``, ``LogWall``, or ``Adobe``.
-  .. [#] If Azimuth not provided, modeled as four surfaces of equal area facing every direction.
-  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "aluminum siding", or "none".
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
+  .. [#] If neither Azimuth nor Orientation provided, modeled as four surfaces of equal area facing every direction.
+  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "aluminum siding", "masonite siding", "composite shingle siding", "asbestos siding", "synthetic stucco", or "none".
   .. [#] Color choices are "light", "medium", "medium dark", "dark", or "reflective".
   .. [#] If SolarAbsorptance not provided, defaults based on Color:
 
@@ -430,31 +515,32 @@ Each wall that is in contact with the ground should be specified as an ``/HPXML/
 
 Other walls (e.g., wood framed walls) that are connected to a below-grade space but have no contact with the ground should be specified as a ``Wall`` and not a ``FoundationWall``.
 
-  ==============================================================  ========  ============  ===========  =========  ========  ====================================
-  Element                                                         Type      Units         Constraints  Required   Default   Notes
-  ==============================================================  ========  ============  ===========  =========  ========  ====================================
-  ``SystemIdentifier``                                            id                                   Yes                  Unique identifier
-  ``ExteriorAdjacentTo``                                          string                  See [#]_     Yes                  Exterior adjacent space type [#]_
-  ``InteriorAdjacentTo``                                          string                  See [#]_     Yes                  Interior adjacent space type
-  ``Height``                                                      double    ft            > 0          Yes                  Total height
-  ``Area``                                                        double    ft2           > 0          Yes                  Gross area (including doors/windows)
-  ``Azimuth``                                                     integer   deg           0 - 359      No         See [#]_  Azimuth (clockwise from North)
-  ``Thickness``                                                   double    inches        > 0          No         8.0       Thickness excluding interior framing
-  ``DepthBelowGrade``                                             double    ft            0 - Height   Yes                  Depth below grade [#]_
-  ``InteriorFinish/Type``                                         string                  See [#]_     No         See [#]_  Interior finish material
-  ``InteriorFinish/Thickness``                                    double    in            >= 0         No         0.5       Interior finish thickness
-  ``Insulation/SystemIdentifier``                                 id                                   Yes                  Unique identifier
-  ``Insulation/Layer[InstallationType="continuous - interior"]``  element                 0 - 1        See [#]_             Interior insulation layer
-  ``Insulation/Layer[InstallationType="continuous - exterior"]``  element                 0 - 1        See [#]_             Exterior insulation layer
-  ``Insulation/AssemblyEffectiveRValue``                          double    F-ft2-hr/Btu  > 0          See [#]_             Assembly R-value [#]_
-  ==============================================================  ========  ============  ===========  =========  ========  ====================================
+  ==============================================================  =================  ================  ===================  =========  ========  ====================================
+  Element                                                         Type               Units             Constraints          Required   Default   Notes
+  ==============================================================  =================  ================  ===================  =========  ========  ====================================
+  ``SystemIdentifier``                                            id                                                        Yes                  Unique identifier
+  ``ExteriorAdjacentTo``                                          string                               See [#]_             Yes                  Exterior adjacent space type [#]_
+  ``InteriorAdjacentTo``                                          string                               See [#]_             Yes                  Interior adjacent space type
+  ``Height``                                                      double             ft                > 0                  Yes                  Total height
+  ``Area`` or ``Length``                                          double             ft2 or ft         > 0                  Yes                  Gross area (including doors/windows) or length
+  ``Azimuth`` or ``Orientation``                                  integer or string  deg or direction  0 - 359 or See [#]_  No         See [#]_  Direction (clockwise from North)
+  ``Thickness``                                                   double             inches            > 0                  No         8.0       Thickness excluding interior framing
+  ``DepthBelowGrade``                                             double             ft                0 - Height           Yes                  Depth below grade [#]_
+  ``InteriorFinish/Type``                                         string                               See [#]_             No         See [#]_  Interior finish material
+  ``InteriorFinish/Thickness``                                    double             in                >= 0                 No         0.5       Interior finish thickness
+  ``Insulation/SystemIdentifier``                                 id                                                        Yes                  Unique identifier
+  ``Insulation/Layer[InstallationType="continuous - interior"]``  element                              0 - 1                See [#]_             Interior insulation layer
+  ``Insulation/Layer[InstallationType="continuous - exterior"]``  element                              0 - 1                See [#]_             Exterior insulation layer
+  ``Insulation/AssemblyEffectiveRValue``                          double             F-ft2-hr/Btu      > 0                  See [#]_             Assembly R-value [#]_
+  ==============================================================  =================  ================  ===================  =========  ========  ====================================
 
   .. [#] ExteriorAdjacentTo choices are "ground", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "garage", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] InteriorAdjacentTo choices are "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", or "garage".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] Interior foundation walls (e.g., between basement and crawlspace) should **not** use "ground" even if the foundation wall has some contact with the ground due to the difference in below-grade depths of the two adjacent spaces.
-  .. [#] If Azimuth not provided, modeled as four surfaces of equal area facing every direction.
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
+  .. [#] If neither Azimuth nor Orientation provided, modeled as four surfaces of equal area facing every direction.
   .. [#] For exterior foundation walls, depth below grade is relative to the ground plane.
          For interior foundation walls, depth below grade is the vertical span of foundation wall in contact with the ground.
          For example, an interior foundation wall between an 8 ft conditioned basement and a 3 ft crawlspace has a height of 8 ft and a depth below grade of 5 ft.
@@ -473,14 +559,14 @@ If insulation layers are provided, additional information is entered in each ``F
   Element                                     Type      Units         Constraints                         Required  Default  Notes
   ==========================================  ========  ============  ==================================  ========  =======  =====================================================================
   ``NominalRValue``                           double    F-ft2-hr/Btu  >= 0                                Yes                R-value of the foundation wall insulation; use zero if no insulation
-  ``extension/DistanceToTopOfInsulation``     double    ft            >= 0                                Yes                Vertical distance from top of foundation wall to top of insulation
-  ``extension/DistanceToBottomOfInsulation``  double    ft            DistanceToTopOfInsulation - Height  Yes                Vertical distance from top of foundation wall to bottom of insulation
+  ``extension/DistanceToTopOfInsulation``     double    ft            >= 0                                No        0        Vertical distance from top of foundation wall to top of insulation
+  ``extension/DistanceToBottomOfInsulation``  double    ft            DistanceToTopOfInsulation - Height  No        Height   Vertical distance from top of foundation wall to bottom of insulation
   ==========================================  ========  ============  ==================================  ========  =======  =====================================================================
 
 HPXML Frame Floors
 ******************
 
-Each horizontal floor/ceiling surface that is not in contact with the ground (Slab) nor adjacent to ambient conditions above (Roof) is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor``.
+Each floor/ceiling surface that is not in contact with the ground (Slab) nor adjacent to ambient conditions above (Roof) is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor``.
 
   ======================================  ========  ============  ===========  ========  ========  ============================
   Element                                 Type      Units         Constraints  Required  Default   Notes
@@ -558,23 +644,24 @@ HPXML Windows
 
 Each window or glass door area is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/Windows/Window``.
 
-  ============================================  ========  ============  ===========  ========  =========  =============================================================
-  Element                                       Type      Units         Constraints  Required  Default    Notes
-  ============================================  ========  ============  ===========  ========  =========  =============================================================
-  ``SystemIdentifier``                          id                                   Yes                  Unique identifier
-  ``Area``                                      double    ft2           > 0          Yes                  Total area
-  ``Azimuth``                                   integer   deg           0 - 359      Yes                  Azimuth (clockwise from North)
-  ``UFactor``                                   double    Btu/F-ft2-hr  > 0          Yes                  Full-assembly NFRC U-factor
-  ``SHGC``                                      double                  0 - 1        Yes                  Full-assembly NFRC solar heat gain coefficient
-  ``ExteriorShading/SummerShadingCoefficient``  double    frac          0 - 1        No        1.00       Exterior summer shading coefficient (1=transparent, 0=opaque)
-  ``ExteriorShading/WinterShadingCoefficient``  double    frac          0 - 1        No        1.00       Exterior winter shading coefficient (1=transparent, 0=opaque)
-  ``InteriorShading/SummerShadingCoefficient``  double    frac          0 - 1        No        0.70 [#]_  Interior summer shading coefficient (1=transparent, 0=opaque)
-  ``InteriorShading/WinterShadingCoefficient``  double    frac          0 - 1        No        0.85 [#]_  Interior winter shading coefficient (1=transparent, 0=opaque)
-  ``Overhangs``                                 element                 0 - 1        No        <none>     Presence of overhangs (including roof eaves)
-  ``FractionOperable``                          double    frac          0 - 1        No        0.67       Operable fraction [#]_
-  ``AttachedToWall``                            idref                   See [#]_     Yes                  ID of attached wall
-  ============================================  ========  ============  ===========  ========  =========  =============================================================
+  ============================================  =================  ================  ===================  ========  =========  =============================================================
+  Element                                       Type               Units             Constraints          Required  Default    Notes
+  ============================================  =================  ================  ===================  ========  =========  =============================================================
+  ``SystemIdentifier``                          id                                                        Yes                  Unique identifier
+  ``Area``                                      double             ft2               > 0                  Yes                  Total area
+  ``Azimuth`` or ``Orientation``                integer or string  deg or direction  0 - 359 or See [#]_  Yes                  Direction (clockwise from North)
+  ``UFactor``                                   double             Btu/F-ft2-hr      > 0                  Yes                  Full-assembly NFRC U-factor
+  ``SHGC``                                      double                               0 - 1                Yes                  Full-assembly NFRC solar heat gain coefficient
+  ``ExteriorShading/SummerShadingCoefficient``  double             frac              0 - 1                No        1.00       Exterior summer shading coefficient (1=transparent, 0=opaque)
+  ``ExteriorShading/WinterShadingCoefficient``  double             frac              0 - 1                No        1.00       Exterior winter shading coefficient (1=transparent, 0=opaque)
+  ``InteriorShading/SummerShadingCoefficient``  double             frac              0 - 1                No        0.70 [#]_  Interior summer shading coefficient (1=transparent, 0=opaque)
+  ``InteriorShading/WinterShadingCoefficient``  double             frac              0 - 1                No        0.85 [#]_  Interior winter shading coefficient (1=transparent, 0=opaque)
+  ``Overhangs``                                 element                              0 - 1                No        <none>     Presence of overhangs (including roof eaves)
+  ``FractionOperable``                          double             frac              0 - 1                No        0.67       Operable fraction [#]_
+  ``AttachedToWall``                            idref                                See [#]_             Yes                  ID of attached wall
+  ============================================  =================  ================  ===================  ========  =========  =============================================================
 
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
   .. [#] InteriorShading/SummerShadingCoefficient default value indicates 30% reduction in solar heat gain, based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_.
   .. [#] InteriorShading/WinterShadingCoefficient default value indicates 15% reduction in solar heat gain, based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_.
   .. [#] FractionOperable reflects whether the windows are operable (can be opened), not how they are used by the occupants.
@@ -600,21 +687,22 @@ HPXML Skylights
 
 Each skylight is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight``.
 
-  ============================================  ========  ============  ===========  ========  ==========  =============================================================
-  Element                                       Type      Units         Constraints  Required  Default     Notes
-  ============================================  ========  ============  ===========  ========  ==========  =============================================================
-  ``SystemIdentifier``                          id                                   Yes                   Unique identifier
-  ``Area``                                      double    ft2           > 0          Yes                   Total area
-  ``Azimuth``                                   integer   deg           0 - 359      Yes                   Azimuth (clockwise from North)
-  ``UFactor``                                   double    Btu/F-ft2-hr  > 0          Yes                   Full-assembly NFRC U-factor
-  ``SHGC``                                      double                  0 - 1        Yes                   Full-assembly NFRC solar heat gain coefficient
-  ``ExteriorShading/SummerShadingCoefficient``  double    frac          0 - 1        No        1.00        Exterior summer shading coefficient (1=transparent, 0=opaque)
-  ``ExteriorShading/WinterShadingCoefficient``  double    frac          0 - 1        No        1.00        Exterior winter shading coefficient (1=transparent, 0=opaque)
-  ``InteriorShading/SummerShadingCoefficient``  double    frac          0 - 1        No        1.00        Interior summer shading coefficient (1=transparent, 0=opaque)
-  ``InteriorShading/WinterShadingCoefficient``  double    frac          0 - 1        No        1.00        Interior winter shading coefficient (1=transparent, 0=opaque)
-  ``AttachedToRoof``                            idref                   See [#]_     Yes                   ID of attached roof
-  ============================================  ========  ============  ===========  ========  ==========  =============================================================
+  ============================================  =================  ================  ===================  ========  =========  =============================================================
+  Element                                       Type               Units             Constraints          Required  Default    Notes
+  ============================================  =================  ================  ===================  ========  =========  =============================================================
+  ``SystemIdentifier``                          id                                                        Yes                  Unique identifier
+  ``Area``                                      double             ft2               > 0                  Yes                  Total area
+  ``Azimuth`` or ``Orientation``                integer or string  deg or direction  0 - 359 or See [#]_  Yes                  Direction (clockwise from North)
+  ``UFactor``                                   double             Btu/F-ft2-hr      > 0                  Yes                  Full-assembly NFRC U-factor
+  ``SHGC``                                      double                               0 - 1                Yes                  Full-assembly NFRC solar heat gain coefficient
+  ``ExteriorShading/SummerShadingCoefficient``  double             frac              0 - 1                No        1.00       Exterior summer shading coefficient (1=transparent, 0=opaque)
+  ``ExteriorShading/WinterShadingCoefficient``  double             frac              0 - 1                No        1.00       Exterior winter shading coefficient (1=transparent, 0=opaque)
+  ``InteriorShading/SummerShadingCoefficient``  double             frac              0 - 1                No        1.00       Interior summer shading coefficient (1=transparent, 0=opaque)
+  ``InteriorShading/WinterShadingCoefficient``  double             frac              0 - 1                No        1.00       Interior winter shading coefficient (1=transparent, 0=opaque)
+  ``AttachedToRoof``                            idref                                See [#]_             Yes                  ID of attached roof
+  ============================================  =================  ================  ===================  ========  =========  =============================================================
 
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
   .. [#] AttachedToRoof must reference a ``Roof``.
 
 HPXML Doors
@@ -622,18 +710,19 @@ HPXML Doors
 
 Each opaque door is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/Doors/Door``.
 
-  ============================================  ========  ============  ===========  ========  =========  ==============================
-  Element                                       Type      Units         Constraints  Required  Default    Notes
-  ============================================  ========  ============  ===========  ========  =========  ==============================
-  ``SystemIdentifier``                          id                                   Yes                  Unique identifier
-  ``AttachedToWall``                            idref                   See [#]_     Yes                  ID of attached wall
-  ``Area``                                      double    ft2           > 0          Yes                  Total area
-  ``Azimuth``                                   integer   deg           0 - 359      No        See [#]_   Azimuth (clockwise from North)
-  ``RValue``                                    double    F-ft2-hr/Btu  > 0          Yes                  R-value
-  ============================================  ========  ============  ===========  ========  =========  ==============================
+  ============================================  =================  ============  ===================  ========  =========  ==============================
+  Element                                       Type               Units         Constraints          Required  Default    Notes
+  ============================================  =================  ============  ===================  ========  =========  ==============================
+  ``SystemIdentifier``                          id                                                    Yes                  Unique identifier
+  ``AttachedToWall``                            idref                            See [#]_             Yes                  ID of attached wall
+  ``Area``                                      double             ft2           > 0                  Yes                  Total area
+  ``Azimuth`` or ``Orientation``                integer or string  deg           0 - 359 or See [#]_  No        See [#]_   Direction (clockwise from North)
+  ``RValue``                                    double             F-ft2-hr/Btu  > 0                  Yes                  R-value
+  ============================================  =================  ============  ===================  ========  =========  ==============================
 
   .. [#] AttachedToWall must reference a ``Wall`` or ``FoundationWall``.
-  .. [#] If neither Azimuth nor attached wall azimuth provided, defaults to the azimuth with the largest surface area defined in the HPXML file.
+  .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
+  .. [#] If neither Azimuth nor Orientation nor AttachedToWall azimuth provided, defaults to the azimuth with the largest surface area defined in the HPXML file.
 
 HPXML Systems
 -------------
@@ -1135,14 +1224,30 @@ HPXML HVAC Control
 
 If any HVAC systems are specified, a single thermostat is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACControl``.
 
-  =======================================================  ========  =======  ===========  ========  =========  ========================================
-  Element                                                  Type      Units    Constraints  Required  Default    Notes
-  =======================================================  ========  =======  ===========  ========  =========  ========================================
-  ``SystemIdentifier``                                     id                              Yes                  Unique identifier
-  ``extension/CeilingFanSetpointTempCoolingSeasonOffset``  double    F        >= 0         No        0          Cooling setpoint temperature offset [#]_
-  =======================================================  ========  =======  ===========  ========  =========  ========================================
+  =======================================================  ========  =====  ===========  ========  =========  ========================================
+  Element                                                  Type      Units  Constraints  Required  Default    Notes
+  =======================================================  ========  =====  ===========  ========  =========  ========================================
+  ``SystemIdentifier``                                     id                            Yes                  Unique identifier
+  ``HeatingSeason``                                        element                       No        See [#]_   Heating season        
+  ``CoolingSeason``                                        element                       No                   Cooling season
+  ``extension/CeilingFanSetpointTempCoolingSeasonOffset``  double    F      >= 0         No        0          Cooling setpoint temperature offset [#]_
+  =======================================================  ========  =====  ===========  ========  =========  ========================================
 
+  .. [#] If HeatingSeason or CoolingSeason not provided, defaults to year-round.
   .. [#] CeilingFanSetpointTempCoolingSeasonOffset should only be used if there are sufficient ceiling fans present to warrant a reduced cooling setpoint.
+
+If a heating and/or cooling season is defined, additional information is entered in ``HVACControl/HeatingSeason`` and/or ``HVACControl/CoolingSeason``.
+
+  ===================  ========  =====  ===========  ========  =======  ===========
+  Element              Type      Units  Constraints  Required  Default  Description
+  ===================  ========  =====  ===========  ========  =======  ===========
+  ``BeginMonth``       integer          1 - 12       Yes                Begin month
+  ``BeginDayOfMonth``  integer          1 - 31       Yes                Begin day
+  ``EndMonth``         integer          1 - 12       Yes                End month
+  ``EndDayOfMonth``    integer          1 - 31       Yes                End day
+  ===================  ========  =====  ===========  ========  =======  ===========
+
+Heating and cooling seasons, when combined, must span the entire year.
 
 Thermostat setpoints are additionally entered using either simple inputs or detailed inputs.
 
@@ -1156,11 +1261,7 @@ To define simple thermostat setpoints, additional information is entered in ``HV
   =============================  ========  =======  ===========  ========  =========  ============================
   ``SetpointTempHeatingSeason``  double    F                     Yes                  Heating setpoint temperature
   ``SetpointTempCoolingSeason``  double    F                     Yes                  Cooling setpoint temperature
-  ``HeatingSeason``              element                         No                   Heating season        
-  ``CoolingSeason``              element                         No                   Cooling season
   =============================  ========  =======  ===========  ========  =========  ============================
-
-If heating and cooling seasons are not provided, they both default to year-round.
 
 If there is a heating temperature setback, additional information is entered in ``HVACControl``.
 
@@ -1181,19 +1282,6 @@ If there is a cooling temperature setup, additional information is entered in ``
   ``TotalSetupHoursperWeekCooling``      integer   hrs/week  > 0          Yes                  Hours/week of cooling temperature setup
   ``extension/SetupStartHourCooling``    integer             0 - 23       No        9 (9am)    Daily setup start hour
   =====================================  ========  ========  ===========  ========  =========  =========================================
-
-If a heating and/or cooling season is defined, additional information is entered in ``HVACControl/HeatingSeason`` and/or ``HVACControl/CoolingSeason``.
-
-  ======================================  ========  =====  =================  ========  =============================  ===========
-  Element                                 Type      Units  Constraints        Required  Default                        Description
-  ======================================  ========  =====  =================  ========  =============================  ===========
-  ``BeginMonth``                          integer          1 - 12             Yes                                      Begin month
-  ``BeginDayOfMonth``                     integer          1 - 31             Yes                                      Begin day
-  ``EndMonth``                            integer          1 - 12             Yes                                      End month
-  ``EndDayOfMonth``                       integer          1 - 31             Yes                                      End day
-  ======================================  ========  =====  =================  ========  =============================  ===========
-
-Heating and cooling seasons, when combined, must span the entire year.
 
 Detailed Inputs
 ~~~~~~~~~~~~~~~
@@ -1334,20 +1422,21 @@ HPXML Whole Ventilation Fan
 Each mechanical ventilation system that provides ventilation to the whole dwelling unit is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
 If not entered, the simulation will not include mechanical ventilation.
 
-  =======================================  ========  =======  ===========  ========  =========  =========================================
-  Element                                  Type      Units    Constraints  Required  Default    Notes
-  =======================================  ========  =======  ===========  ========  =========  =========================================
-  ``SystemIdentifier``                     id                              Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``      boolean            true         Yes                  Must be set to true
-  ``IsSharedSystem``                       boolean            See [#]_     No        false      Whether it serves multiple dwelling units
-  ``FanType``                              string             See [#]_     Yes                  Type of ventilation system
-  ``TestedFlowRate`` or ``RatedFlowRate``  double    cfm      >= 0         Yes                  Flow rate [#]_
-  ``HoursInOperation``                     double    hrs/day  0 - 24       No        See [#]_   Hours per day of operation
-  ``FanPower``                             double    W        >= 0         No        See [#]_   Fan power
-  =======================================  ========  =======  ===========  ========  =========  =========================================
+  =============================================================================================  ========  =======  ===========  ========  =========  =========================================
+  Element                                                                                        Type      Units    Constraints  Required  Default    Notes
+  =============================================================================================  ========  =======  ===========  ========  =========  =========================================
+  ``SystemIdentifier``                                                                           id                              Yes                  Unique identifier
+  ``UsedForWholeBuildingVentilation``                                                            boolean            true         Yes                  Must be set to true
+  ``IsSharedSystem``                                                                             boolean            See [#]_     No        false      Whether it serves multiple dwelling units
+  ``FanType``                                                                                    string             See [#]_     Yes                  Type of ventilation system
+  ``RatedFlowRate`` or ``TestedFlowRate`` or ``CalculatedFlowRate`` or ``DeliveredVentilation``  double    cfm      >= 0         No        See [#]_   Flow rate [#]_
+  ``HoursInOperation``                                                                           double    hrs/day  0 - 24       No        See [#]_   Hours per day of operation
+  ``FanPower``                                                                                   double    W        >= 0         No        See [#]_   Fan power
+  =============================================================================================  ========  =======  ===========  ========  =========  =========================================
 
   .. [#] For central fan integrated supply systems, IsSharedSystem must be false.
   .. [#] FanType choices are "energy recovery ventilator", "heat recovery ventilator", "exhaust only", "supply only", "balanced", or "central fan integrated supply".
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_, including adjustments for A) infiltration credit, B) balanced vs imbalanced systems, and C) adiabatic surfaces for SFA/MF buildings.
   .. [#] For a central fan integrated supply system, the flow rate should equal the amount of outdoor air provided to the distribution system.
   .. [#] If HoursInOperation not provided, defaults to 24 (i.e., running continuously) for all system types other than central fan integrated supply (CFIS), and 8.0 (i.e., running intermittently) for CFIS systems.
   .. [#] If FanPower not provided, defaults based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_:
@@ -1419,7 +1508,7 @@ If the specified system is a shared system (i.e., serving multiple dwelling unit
 
   .. [#] 1-FractionRecirculation is assumed to be the fraction of supply air that is provided from outside.
          The value must be 0 for exhaust only systems.
-  .. [#] InUnitFlowRate must also be < TestedFlowRate (or RatedFlowRate).
+  .. [#] InUnitFlowRate must also be < (RatedFlowRate or TestedFlowRate or CalculatedFlowRate or DeliveredVentilation).
   .. [#] PreHeating not allowed for exhaust only systems.
   .. [#] PreCooling not allowed for exhaust only systems.
 
@@ -1453,24 +1542,24 @@ HPXML Local Ventilation Fan
 Each kitchen range fan or bathroom fan that provides local ventilation is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
 If not entered, the simulation will not include kitchen/bathroom fans.
 
-  ===========================  =======  =======  ===========  ========  ========  =============================
-  Element                      Type     Units    Constraints  Required  Default   Notes
-  ===========================  =======  =======  ===========  ========  ========  =============================
-  ``SystemIdentifier``         id                             Yes                 Unique identifier
-  ``UsedForLocalVentilation``  boolean           true         Yes                 Must be set to true
-  ``Quantity``                 integer           >= 0         No        See [#]_  Number of identical fans
-  ``RatedFlowRate``            double   cfm      >= 0         No        See [#]_  Flow rate
-  ``HoursInOperation``         double   hrs/day  0 - 24       No        See [#]_  Hours per day of operation
-  ``FanLocation``              string            See [#]_     Yes                 Location of the fan
-  ``FanPower``                 double   W        >= 0         No        See [#]_  Fan power
-  ``extension/StartHour``      integer           0 - 23       No        See [#]_  Daily start hour of operation
-  ===========================  =======  =======  ===========  ========  ========  =============================
+  =============================================================================================  =======  =======  ===========  ========  ========  =============================
+  Element                                                                                        Type     Units    Constraints  Required  Default   Notes
+  =============================================================================================  =======  =======  ===========  ========  ========  =============================
+  ``SystemIdentifier``                                                                           id                             Yes                 Unique identifier
+  ``UsedForLocalVentilation``                                                                    boolean           true         Yes                 Must be set to true
+  ``Quantity``                                                                                   integer           >= 0         No        See [#]_  Number of identical fans
+  ``RatedFlowRate`` or ``TestedFlowRate`` or ``CalculatedFlowRate`` or ``DeliveredVentilation``  double   cfm      >= 0         No        See [#]_  Flow rate
+  ``HoursInOperation``                                                                           double   hrs/day  0 - 24       No        See [#]_  Hours per day of operation
+  ``FanLocation``                                                                                string            See [#]_     Yes                 Location of the fan
+  ``FanPower``                                                                                   double   W        >= 0         No        See [#]_  Fan power
+  ``extension/StartHour``                                                                        integer           0 - 23       No        See [#]_  Daily start hour of operation
+  =============================================================================================  =======  =======  ===========  ========  ========  =============================
 
   .. [#] If Quantity not provided, defaults to 1 for kitchen fans and NumberofBathrooms for bath fans based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
-  .. [#] If RatedFlowRate not provided, defaults to 100 cfm for kitchen fans and 50 cfm for bath fans based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
+  .. [#] If flow rate not provided, defaults to 100 cfm for kitchen fans and 50 cfm for bath fans based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
   .. [#] If HoursInOperation not provided, defaults to 1 based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
   .. [#] FanLocation choices are "kitchen" or "bath".
-  .. [#] If FanPower not provided, defaults to 0.3 W/cfm * RatedFlowRate based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
+  .. [#] If FanPower not provided, defaults to 0.3 W/cfm based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
   .. [#] If StartHour not provided, defaults to 18 for kitchen fans and 7 for bath fans  based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
 
 HPXML Whole House Fan
@@ -1479,14 +1568,16 @@ HPXML Whole House Fan
 Each whole house fan that provides cooling load reduction is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
 If not entered, the simulation will not include whole house fans.
 
-  =======================================  =======  =======  ===========  ========  ========  ==========================
-  Element                                  Type     Units    Constraints  Required  Default   Notes
-  =======================================  =======  =======  ===========  ========  ========  ==========================
-  ``SystemIdentifier``                     id                             Yes                 Unique identifier
-  ``UsedForSeasonalCoolingLoadReduction``  boolean           true         Yes                 Must be set to true
-  ``RatedFlowRate``                        double   cfm      >= 0         Yes                 Flow rate
-  ``FanPower``                             double   W        >= 0         Yes                 Fan power
-  =======================================  =======  =======  ===========  ========  ========  ==========================
+  =============================================================================================  =======  =======  ===========  ========  ======================  ==========================
+  Element                                                                                        Type     Units    Constraints  Required  Default                 Notes
+  =============================================================================================  =======  =======  ===========  ========  ======================  ==========================
+  ``SystemIdentifier``                                                                           id                             Yes                               Unique identifier
+  ``UsedForSeasonalCoolingLoadReduction``                                                        boolean           true         Yes                               Must be set to true
+  ``RatedFlowRate`` or ``TestedFlowRate`` or ``CalculatedFlowRate`` or ``DeliveredVentilation``  double   cfm      >= 0         No        ConditionedFloorArea*2  Flow rate
+  ``FanPower``                                                                                   double   W        >= 0         No        See [#]_                Fan power
+  =============================================================================================  =======  =======  ===========  ========  ======================  ==========================
+
+  .. [#] If FanPower not provided, defaults to 0.1 W/cfm.
 
 .. note::
 
@@ -1753,8 +1844,19 @@ Each water fixture is entered as a ``/HPXML/Building/BuildingDetails/Systems/Wat
   .. [#] WaterFixtureType choices are "shower head" or "faucet".
   .. [#] LowFlow should be true if the fixture's flow rate (gpm) is <= 2.0.
 
-In addition, a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/extension/WaterFixturesUsageMultiplier`` can be optionally provided that scales hot water usage.
-if not provided, it is assumed to be 1.0.
+Additional information can be entered in ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/``.
+
+  =====================================================  =======  =====  ===========  ========  ========  ===============================================
+  Element                                                Type     Units  Constraints  Required  Default   Notes
+  =====================================================  =======  =====  ===========  ========  ========  ===============================================
+  ``extension/WaterFixturesUsageMultiplier``             double          >= 0         No        1.0       Multiplier on hot water usage
+  ``extension/WaterFixturesWeekdayScheduleFractions``    array                        No        See [#]_  24 comma-separated weekday fractions
+  ``extension/WaterFixturesWeekendScheduleFractions``    array                        No                  24 comma-separated weekend fractions
+  ``extension/WaterFixturesMonthlyScheduleMultipliers``  array                        No        See [#]_  12 comma-separated monthly multipliers
+  =====================================================  =======  =====  ===========  ========  ========  ===============================================
+
+  .. [#] If WaterFixturesWeekdayScheduleFractions or WaterFixturesWeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figures 9-11 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.012, 0.006, 0.004, 0.005, 0.010, 0.034, 0.078, 0.087, 0.080, 0.067, 0.056, 0.047, 0.040, 0.035, 0.033, 0.031, 0.039, 0.051, 0.060, 0.060, 0.055, 0.048, 0.038, 0.026".
+  .. [#] If WaterFixturesMonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 HPXML Solar Thermal
 *******************
@@ -1796,22 +1898,23 @@ Detailed Inputs
 
 To define a detailed solar hot water system, additional information is entered in ``SolarThermalSystem``.
 
-  ===================================  =======  ============  ===========  ========  ========  ==============================
-  Element                              Type     Units         Constraints  Required  Default   Notes
-  ===================================  =======  ============  ===========  ========  ========  ==============================
-  ``CollectorArea``                    double   ft2           > 0          Yes                 Area
-  ``CollectorLoopType``                string                 See [#]_     Yes                 Loop type
-  ``CollectorType``                    string                 See [#]_     Yes                 System type
-  ``CollectorAzimuth``                 integer  deg           0 - 359      Yes                 Azimuth (clockwise from North)
-  ``CollectorTilt``                    double   deg           0 - 90       Yes                 Tilt relative to horizontal
-  ``CollectorRatedOpticalEfficiency``  double   frac          0 - 1        Yes                 Rated optical efficiency [#]_
-  ``CollectorRatedThermalLosses``      double   Btu/hr-ft2-R  > 0          Yes                 Rated thermal losses [#]_
-  ``StorageVolume``                    double   gal           > 0          No        See [#]_  Hot water storage volume
-  ``ConnectedTo``                      idref                  See [#]_     Yes                 Connected water heater
-  ===================================  =======  ============  ===========  ========  ========  ==============================
+  ================================================  =================  ================  ===================  ========  ========  ==============================
+  Element                                           Type               Units             Constraints          Required  Default   Notes
+  ================================================  =================  ================  ===================  ========  ========  ==============================
+  ``CollectorArea``                                 double             ft2               > 0                  Yes                 Area
+  ``CollectorLoopType``                             string                               See [#]_             Yes                 Loop type
+  ``CollectorType``                                 string                               See [#]_             Yes                 System type
+  ``CollectorAzimuth`` or ``CollectorOrientation``  integer or string  deg or direction  0 - 359 or See [#]_  Yes                 Direction panels face (clockwise from North)
+  ``CollectorTilt``                                 double             deg               0 - 90               Yes                 Tilt relative to horizontal
+  ``CollectorRatedOpticalEfficiency``               double             frac              0 - 1                Yes                 Rated optical efficiency [#]_
+  ``CollectorRatedThermalLosses``                   double             Btu/hr-ft2-R      > 0                  Yes                 Rated thermal losses [#]_
+  ``StorageVolume``                                 double             gal               > 0                  No        See [#]_  Hot water storage volume
+  ``ConnectedTo``                                   idref                                See [#]_             Yes                 Connected water heater
+  ================================================  =================  ================  ===================  ========  ========  ==============================
   
   .. [#] CollectorLoopType choices are "liquid indirect", "liquid direct", or "passive thermosyphon".
   .. [#] CollectorType choices are "single glazing black", "double glazing black", "evacuated tube", or "integrated collector storage".
+  .. [#] CollectorOrientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
   .. [#] CollectorRatedOpticalEfficiency is FRTA (y-intercept) from the `Directory of SRCC OG-100 Certified Solar Collector Ratings <https://solar-rating.org/programs/og-100-program/>`_.
   .. [#] CollectorRatedThermalLosses is FRUL (slope) from the `Directory of SRCC OG-100 Certified Solar Collector Ratings <https://solar-rating.org/programs/og-100-program/>`_.
   .. [#] If StorageVolume not provided, calculated as 1.5 gal/ft2 * CollectorArea.
@@ -1825,25 +1928,26 @@ If not entered, the simulation will not include photovoltaics.
 
 Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_.
 
-  =======================================================  =================  =========  ===============  ========  ========  ============================================
-  Element                                                  Type               Units      Constraints      Required  Default   Notes
-  =======================================================  =================  =========  ===============  ========  ========  ============================================
-  ``SystemIdentifier``                                     id                                             Yes                 Unique identifier
-  ``IsSharedSystem``                                       boolean                                        No        false     Whether it serves multiple dwelling units
-  ``Location``                                             string                        See [#]_         No        roof      Mounting location
-  ``ModuleType``                                           string                        See [#]_         No        standard  Type of module
-  ``Tracking``                                             string                        See [#]_         No        fixed     Type of tracking
-  ``ArrayAzimuth``                                         integer            deg        0 - 359          Yes                 Direction panels face (clockwise from North)
-  ``ArrayTilt``                                            double             deg        0 - 90           Yes                 Tilt relative to horizontal
-  ``MaxPowerOutput``                                       double             W          >= 0             Yes                 Peak power
-  ``InverterEfficiency``                                   double             frac       0 - 1            No        0.96      Inverter efficiency
-  ``SystemLossesFraction`` or ``YearModulesManufactured``  double or integer  frac or #  0 - 1 or > 1600  No        0.14      System losses [#]_
-  ``extension/NumberofBedroomsServed``                     integer                       > 1              See [#]_            Number of bedrooms served
-  =======================================================  =================  =========  ===============  ========  ========  ============================================
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+  Element                                                  Type               Units             Constraints          Required  Default   Notes
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+  ``SystemIdentifier``                                     id                                                        Yes                 Unique identifier
+  ``IsSharedSystem``                                       boolean                                                   No        false     Whether it serves multiple dwelling units
+  ``Location``                                             string                               See [#]_             No        roof      Mounting location
+  ``ModuleType``                                           string                               See [#]_             No        standard  Type of module
+  ``Tracking``                                             string                               See [#]_             No        fixed     Type of tracking
+  ``ArrayAzimuth`` or ``ArrayOrientation``                 integer or string  deg or direction  0 - 359 or See [#]_  Yes                 Direction panels face (clockwise from North)
+  ``ArrayTilt``                                            double             deg               0 - 90               Yes                 Tilt relative to horizontal
+  ``MaxPowerOutput``                                       double             W                 >= 0                 Yes                 Peak power
+  ``InverterEfficiency``                                   double             frac              0 - 1                No        0.96      Inverter efficiency
+  ``SystemLossesFraction`` or ``YearModulesManufactured``  double or integer  frac or #         0 - 1 or > 1600      No        0.14      System losses [#]_
+  ``extension/NumberofBedroomsServed``                     integer                              > 1                  See [#]_            Number of bedrooms served
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
   
   .. [#] Location choices are "ground" or "roof" mounted.
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
   .. [#] Tracking choices are "fixed", "1-axis", "1-axis backtracked", or "2-axis".
+  .. [#] ArrayOrientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
   .. [#] System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
          If YearModulesManufactured provided but not SystemLossesFraction, system losses calculated as:
          SystemLossesFraction = 1.0 - (1.0 - 0.14) * (1.0 - (1.0 - 0.995^(CurrentYear - YearModulesManufactured))).
@@ -1896,6 +2000,9 @@ If not entered, the simulation will not include a clothes washer.
   ``IntegratedModifiedEnergyFactor`` or ``ModifiedEnergyFactor``  double   ft3/kWh/cyc  > 0          No        See [#]_      EnergyGuide label efficiency [#]_
   ``AttachedToWaterHeatingSystem``                                idref                 See [#]_     See [#]_                ID of attached water heater
   ``extension/UsageMultiplier``                                   double                >= 0         No        1.0           Multiplier on energy & hot water usage
+  ``extension/WeekdayScheduleFractions``                          array                              No        See [#]_      24 comma-separated weekday fractions
+  ``extension/WeekendScheduleFractions``                          array                              No                      24 comma-separated weekend fractions
+  ``extension/MonthlyScheduleMultipliers``                        array                              No        See [#]_      12 comma-separated monthly multipliers
   ==============================================================  =======  ===========  ===========  ========  ============  ==============================================
 
   .. [#] For example, a clothes washer in a shared laundry room of a MF building.
@@ -1913,6 +2020,8 @@ If not entered, the simulation will not include a clothes washer.
          IMEF = (MEF - 0.503) / 0.95.
   .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``.
   .. [#] AttachedToWaterHeatingSystem only required if IsSharedAppliance is true.
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 17 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.052, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.011, 1.002, 1.022, 1.020, 1.022, 0.996, 0.999, 0.999, 0.996, 0.964, 0.959, 1.011".
 
 If IntegratedModifiedEnergyFactor or ModifiedEnergyFactor is provided, a complete set of EnergyGuide label information is entered in ``ClothesWasher``.
 
@@ -1946,6 +2055,9 @@ If not entered, the simulation will not include a clothes dryer.
   ``Vented``                                    boolean                       No        true          Whether dryer is vented
   ``VentedFlowRate``                            double   cfm     >= 0         No        100 [#]_      Exhaust flow rate during operation
   ``extension/UsageMultiplier``                 double           >= 0         No        1.0           Multiplier on energy use
+  ``extension/WeekdayScheduleFractions``        array                         No        See [#]_      24 comma-separated weekday fractions
+  ``extension/WeekendScheduleFractions``        array                         No                      24 comma-separated weekend fractions
+  ``extension/MonthlyScheduleMultipliers``      array                         No        See [#]_      12 comma-separated monthly multipliers
   ============================================  =======  ======  ===========  ========  ============  ==============================================
 
   .. [#] For example, a clothes dryer in a shared laundry room of a MF building.
@@ -1957,6 +2069,8 @@ If not entered, the simulation will not include a clothes dryer.
   .. [#] If EnergyFactor (EF) provided instead of CombinedEnergyFactor (CEF), it will be converted using the following equation based on the `Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF <https://www.resnet.us/wp-content/uploads/No.-301-2014-10-Section-4.2.2.5.2.8-Clothes-Dryer-CEF-Rating.pdf>`_:
          CEF = EF / 1.15.
   .. [#] VentedFlowRate default based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 18 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 Clothes dryer energy use is calculated per the Energy Rating Rated Home in `ANSI/RESNET/ICC 301-2019 Addendum A <https://www.resnet.us/wp-content/uploads/ANSI_RESNET_ICC-301-2019-Addendum-A-2019_7.16.20-1.pdf>`_.
 
@@ -1975,6 +2089,9 @@ If not entered, the simulation will not include a dishwasher.
   ``RatedAnnualkWh`` or ``EnergyFactor``        double   kWh/yr or #  > 0          No        See [#]_      EnergyGuide label consumption/efficiency [#]_
   ``AttachedToWaterHeatingSystem``              idref                 See [#]_     See [#]_                ID of attached water heater
   ``extension/UsageMultiplier``                 double                >= 0         No        1.0           Multiplier on energy & hot water usage
+  ``extension/WeekdayScheduleFractions``        array                              No        See [#]_      24 comma-separated weekday fractions
+  ``extension/WeekendScheduleFractions``        array                              No                      24 comma-separated weekend fractions
+  ``extension/MonthlyScheduleMultipliers``      array                              No        See [#]_      12 comma-separated monthly multipliers
   ============================================  =======  ===========  ===========  ========  ============  ==============================================
 
   .. [#] For example, a dishwasher in a shared mechanical room of a MF building.
@@ -1991,6 +2108,8 @@ If not entered, the simulation will not include a dishwasher.
          RatedAnnualkWh = 215.0 / EF.
   .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``.
   .. [#] AttachedToWaterHeatingSystem only required if IsSharedAppliance is true.
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 21 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097".
 
 If the RatedAnnualkWh or EnergyFactor is provided, a complete set of EnergyGuide label information is entered in ``Dishwasher``.
 
@@ -2032,8 +2151,8 @@ If not entered, the simulation will not include a refrigerator.
   .. [#] If neither RatedAnnualkWh nor AdjustedAnnualkWh provided, it will be defaulted to represent a standard refrigerator from 2006 using the following equation based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_:
          RatedAnnualkWh = 637.0 + 18.0 * NumberofBedrooms.
   .. [#] If multiple refrigerators are specified, there must be exactly one refrigerator described with PrimaryIndicator=true.
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 16 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041".
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837".
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 16 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837".
 
 HPXML Freezers
 **************
@@ -2057,8 +2176,8 @@ If not entered, the simulation will not include a standalone freezer.
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If Location not provided, defaults to "garage" if present, otherwise "basement - unconditioned" if present, otherwise "basement - conditioned" if present, otherwise "living space".
   .. [#] RatedAnnualkWh default based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 16 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041".
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837".
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 16 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.040, 0.039, 0.038, 0.037, 0.036, 0.036, 0.038, 0.040, 0.041, 0.041, 0.040, 0.040, 0.042, 0.042, 0.042, 0.041, 0.044, 0.048, 0.050, 0.048, 0.047, 0.046, 0.044, 0.041".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837".
 
 HPXML Dehumidifier
 ******************
@@ -2110,8 +2229,8 @@ If not entered, the simulation will not include a cooking range/oven.
   .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "garage", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] FuelType choices are "natural gas", "fuel oil", "fuel oil 1", "fuel oil 2", "fuel oil 4", "fuel oil 5/6", "diesel", "propane", "kerosene", "coal", "coke", "bituminous coal", "anthracite coal", "electricity", "wood", or "wood pellets".
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 22 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011".
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097".
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 22 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.007, 0.007, 0.004, 0.004, 0.007, 0.011, 0.025, 0.042, 0.046, 0.048, 0.042, 0.050, 0.057, 0.046, 0.057, 0.044, 0.092, 0.150, 0.117, 0.060, 0.035, 0.025, 0.016, 0.011".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097".
 
 If a cooking range is specified, a single oven is also entered as a ``/HPXML/Building/BuildingDetails/Appliances/Oven``.
 
@@ -2174,9 +2293,9 @@ Additional information is entered in ``Lighting``.
   ``extension/ExteriorHolidayLighting``             element          0 - 1        No        <none>    Presence of additional holiday lighting?
   ================================================  =======  ======  ===========  ========  ========  ===============================================
 
-  .. [#] If *interior* schedule values not provided, they will be calculated using Lighting Calculation Option 2 (location-dependent lighting profile) of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
-  .. [#] If *garage* schedule values not provided, they will be defaulted using Appendix C Table 8 of the `Title 24 2016 Res. ACM Manual <https://ww2.energy.ca.gov/2015publications/CEC-400-2015-024/CEC-400-2015-024-CMF-REV2.pdf>`_.
-  .. [#] If *exterior* schedule values not provided, they will be defaulted using Appendix C Table 8 of the `Title 24 2016 Res. ACM Manual <https://ww2.energy.ca.gov/2015publications/CEC-400-2015-024/CEC-400-2015-024-CMF-REV2.pdf>`_.
+  .. [#] If *interior* schedule values not provided (and :ref:`detailedschedules` not used), they will be calculated using Lighting Calculation Option 2 (location-dependent lighting profile) of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
+  .. [#] If *garage* schedule values not provided (and :ref:`detailedschedules` not used), they will be defaulted using Appendix C Table 8 of the `Title 24 2016 Res. ACM Manual <https://ww2.energy.ca.gov/2015publications/CEC-400-2015-024/CEC-400-2015-024-CMF-REV2.pdf>`_.
+  .. [#] If *exterior* schedule values not provided (and :ref:`detailedschedules` not used), they will be defaulted using Appendix C Table 8 of the `Title 24 2016 Res. ACM Manual <https://ww2.energy.ca.gov/2015publications/CEC-400-2015-024/CEC-400-2015-024-CMF-REV2.pdf>`_.
 
 If exterior holiday lighting is specified, additional information is entered in ``extension/ExteriorHolidayLighting``.
 
@@ -2193,7 +2312,7 @@ If exterior holiday lighting is specified, additional information is entered in 
   ===============================  =======  =======  ===========  ========  =============  ============================================
 
   .. [#] If Value not provided, defaults to 1.1 for single-family detached and 0.55 for others.
-  .. [#] If WeekdayScheduleFractions not provided, defaults to "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.008, 0.098, 0.168, 0.194, 0.284, 0.192, 0.037, 0.019".
+  .. [#] If WeekdayScheduleFractions not provided (and :ref:`detailedschedules` not used), defaults to "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.008, 0.098, 0.168, 0.194, 0.284, 0.192, 0.037, 0.019".
 
 Interior, exterior, and garage lighting energy use is calculated per the Energy Rating Rated Home in `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_.
 
@@ -2209,10 +2328,15 @@ If not entered, the simulation will not include a ceiling fan.
   ``SystemIdentifier``                       id                             Yes                 Unique identifier
   ``Airflow[FanSpeed="medium"]/Efficiency``  double   cfm/W    > 0          No        See [#]_  Efficiency at medium speed
   ``Quantity``                               integer           > 0          No        See [#]_  Number of similar ceiling fans
+  ``extension/WeekdayScheduleFractions``     array                          No        See [#]_  24 comma-separated weekday fractions
+  ``extension/WeekendScheduleFractions``     array                          No                  24 comma-separated weekend fractions
+  ``extension/MonthlyScheduleMultipliers``   array                          No                  12 comma-separated monthly multipliers
   =========================================  =======  =======  ===========  ========  ========  ==============================
 
   .. [#] If Efficiency not provided, defaults to 3000 / 42.6 based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_.
   .. [#] If Quantity not provided, defaults to NumberofBedrooms + 1 based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_.
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), defaults based on monthly average outdoor temperatures per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_
 
 Ceiling fan energy use is calculated per the Energy Rating Rated Home in `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNETICC3012019>`_.
 
@@ -2261,8 +2385,8 @@ If not entered, the simulation will not include a pool heater.
   .. [#] Type choices are "single speed", "multi speed", "variable speed", "variable flow", "other", "unknown", or "none".
          If "none" is entered, the simulation will not include a pool pump.
   .. [#] If Value not provided, defaults based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_: 158.5 / 0.070 * (0.5 + 0.25 * NumberofBedrooms / 3 + 0.35 * ConditionedFloorArea / 1920).
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003".
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154".
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154".
 
 Pool Heater
 ~~~~~~~~~~~
@@ -2290,8 +2414,8 @@ If not entered, the simulation will not include a pool heater.
          - **electric resistance**: 8.3 / 0.004 * (0.5 + 0.25 * NumberofBedrooms / 3 + 0.35 * ConditionedFloorArea / 1920) (based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
          - **heat pump**: (electric resistance) / 5.0 (based on an average COP of 5 from `Energy Saver <https://www.energy.gov/energysaver/heat-pump-swimming-pool-heaters>`_)
 
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003".
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154".
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.003, 0.003, 0.003, 0.004, 0.008, 0.015, 0.026, 0.044, 0.084, 0.121, 0.127, 0.121, 0.120, 0.090, 0.075, 0.061, 0.037, 0.023, 0.013, 0.008, 0.004, 0.003, 0.003, 0.003".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154".
 
 HPXML Hot Tubs
 **************
@@ -2330,8 +2454,8 @@ If not entered, the simulation will not include a hot tub pump.
   .. [#] Type choices are "single speed", "multi speed", "variable speed", "variable flow", "other", "unknown", or "none".
          If "none" is entered, the simulation will not include a hot tub pump.
   .. [#] If Value not provided, defaults based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_: 59.5 / 0.059 * (0.5 + 0.25 * NumberofBedrooms / 3 + 0.35 * ConditionedFloorArea / 1920).
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024".
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.921, 0.928, 0.921, 0.915, 0.921, 1.160, 1.158, 1.158, 1.160, 0.921, 0.915, 0.921".
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.921, 0.928, 0.921, 0.915, 0.921, 1.160, 1.158, 1.158, 1.160, 0.921, 0.915, 0.921".
 
 Hot Tub Heater
 ~~~~~~~~~~~~~~
@@ -2359,8 +2483,8 @@ If not entered, the simulation will not include a hot tub heater.
          - **electric resistance [kWh/year]**: 49.0 / 0.048 * (0.5 + 0.25 * NumberofBedrooms / 3 + 0.35 * ConditionedFloorArea / 1920) (based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
          - **heat pump [kWh/year]** = (electric resistance) / 5.0 (based on an average COP of 5 from `Energy Saver <https://www.energy.gov/energysaver/heat-pump-swimming-pool-heaters>`_)
 
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024".
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837".
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.024, 0.029, 0.024, 0.029, 0.047, 0.067, 0.057, 0.024, 0.024, 0.019, 0.015, 0.014, 0.014, 0.014, 0.024, 0.058, 0.126, 0.122, 0.068, 0.061, 0.051, 0.043, 0.024, 0.024".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.837, 0.835, 1.084, 1.084, 1.084, 1.096, 1.096, 1.096, 1.096, 0.931, 0.925, 0.837".
 
 HPXML Misc Loads
 ----------------
@@ -2414,21 +2538,21 @@ If not entered, the simulation will not include that type of plug load.
          - **well pump**: 0.0
          - **electric vehicle charging**: 0.0
 
-  .. [#] If WeekdayScheduleFractions not provided, defaults as:
+  .. [#] If WeekdayScheduleFractions not provided (and :ref:`detailedschedules` not used), defaults as:
          
          - **other**: "0.035, 0.033, 0.032, 0.031, 0.032, 0.033, 0.037, 0.042, 0.043, 0.043, 0.043, 0.044, 0.045, 0.045, 0.044, 0.046, 0.048, 0.052, 0.053, 0.05, 0.047, 0.045, 0.04, 0.036" (based on Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
          - **TV other**: "0.037, 0.018, 0.009, 0.007, 0.011, 0.018, 0.029, 0.040, 0.049, 0.058, 0.065, 0.072, 0.076, 0.086, 0.091, 0.102, 0.127, 0.156, 0.210, 0.294, 0.363, 0.344, 0.208, 0.090" (based on the `American Time Use Survey <https://www.bls.gov/tus>`_)
          - **well pump**: "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065" (based on Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
          - **electric vehicle charging**: "0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042"
 
-  .. [#] If WeekdendScheduleFractions not provided, defaults as:
+  .. [#] If WeekdendScheduleFractions not provided (and :ref:`detailedschedules` not used), defaults as:
 
          - **other**: "0.035, 0.033, 0.032, 0.031, 0.032, 0.033, 0.037, 0.042, 0.043, 0.043, 0.043, 0.044, 0.045, 0.045, 0.044, 0.046, 0.048, 0.052, 0.053, 0.05, 0.047, 0.045, 0.04, 0.036" (based on Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
          - **TV other**: "0.044, 0.022, 0.012, 0.008, 0.011, 0.014, 0.024, 0.043, 0.071, 0.094, 0.112, 0.123, 0.132, 0.156, 0.178, 0.196, 0.206, 0.213, 0.251, 0.330, 0.388, 0.358, 0.226, 0.103" (based on the `American Time Use Survey <https://www.bls.gov/tus>`_)
          - **well pump**: "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065" (based on Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
          - **electric vehicle charging**: "0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042"
 
-  .. [#] If MonthlyScheduleMultipliers not provided, defaults as:
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), defaults as:
 
          - **other**: "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248" (based on Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
          - **TV other**: "1.137, 1.129, 0.961, 0.969, 0.961, 0.993, 0.996, 0.96, 0.993, 0.867, 0.86, 1.137" (based on the `American Time Use Survey <https://www.bls.gov/tus>`_)
@@ -2469,13 +2593,13 @@ If not entered, the simulation will not include that type of fuel load.
   .. [#] If FracSensible not provided, defaults to 0.5 for fireplace and 0.0 for all other types.
   .. [#] The remaining fraction (i.e., 1.0 - FracSensible - FracLatent) must be > 0 and is assumed to be heat gain outside conditioned space and thus lost.
   .. [#] If FracLatent not provided, defaults to 0.1 for fireplace and 0.0 for all other types.
-  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided, default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used:
+  .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 23 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used:
 
          - **grill**: "0.004, 0.001, 0.001, 0.002, 0.007, 0.012, 0.029, 0.046, 0.044, 0.041, 0.044, 0.046, 0.042, 0.038, 0.049, 0.059, 0.110, 0.161, 0.115, 0.070, 0.044, 0.019, 0.013, 0.007";
          - **fireplace**: "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065";
          - **lighting**: "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065".
 
-  .. [#] If MonthlyScheduleMultipliers not provided, default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used:
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used:
 
          - **grill**: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097";
          - **fireplace**: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154";
