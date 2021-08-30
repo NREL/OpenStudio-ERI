@@ -7,9 +7,14 @@ __New Features__
 - Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
 - Allows CEER (Combined Energy Efficiency Ratio) efficiency unit for room AC.
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
+- Introduces a small amount of infiltration for unvented spaces.
 
 __Bugfixes__
 - Improves ground reflectance for window interior shading.
+- Improves HVAC fan power for central forced air systems.
+- Fixes mechanical ventilation compartmentalization area calculation for SFA/MF homes with surfaces with InteriorAdjacentTo==ExteriorAdjacentTo.
+- Negative `DistanceToTopOfInsulation` values are now disallowed.
+- Fixes workflow errors if a `VentilationFan` has zero airflow rate or zero hours of operation.
 
 ## OpenStudio-ERI v1.2.1
 
