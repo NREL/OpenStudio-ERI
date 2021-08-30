@@ -231,7 +231,6 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infil_volume = get_infiltration_volume(orig_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
@@ -243,7 +242,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
     new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
-    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
     new_hpxml.building_construction.residential_facility_type = @bldg_type
     new_hpxml.building_construction.has_flue_or_chimney = false
   end
@@ -255,7 +253,6 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infil_volume = get_infiltration_volume(orig_hpxml)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
@@ -267,7 +264,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
     new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
-    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
     new_hpxml.building_construction.residential_facility_type = @bldg_type
     new_hpxml.building_construction.has_flue_or_chimney = false
   end
@@ -279,7 +275,6 @@ class EnergyRatingIndex301Ruleset
     @nbeds = 3
     @ncfl = 2.0
     @ncfl_ag = 2.0
-    @cvolume = 20400.0
     @infil_volume = 20400.0
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
@@ -291,7 +286,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.number_of_conditioned_floors_above_grade = @ncfl_ag
     new_hpxml.building_construction.number_of_bedrooms = @nbeds
     new_hpxml.building_construction.conditioned_floor_area = @cfa
-    new_hpxml.building_construction.conditioned_building_volume = @cvolume
     new_hpxml.building_construction.residential_facility_type = @bldg_type
     new_hpxml.building_construction.has_flue_or_chimney = false
   end

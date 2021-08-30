@@ -8,6 +8,7 @@ __New Features__
 - Allows CEER (Combined Energy Efficiency Ratio) efficiency unit for room AC.
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
 - Introduces a small amount of infiltration for unvented spaces.
+- `ConditionedBuildingVolume` input is no longer needed.
 
 __Bugfixes__
 - Improves ground reflectance for window interior shading.

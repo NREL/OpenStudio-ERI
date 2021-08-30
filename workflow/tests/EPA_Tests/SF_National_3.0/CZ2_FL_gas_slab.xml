@@ -38,7 +38,6 @@
           <NumberofConditionedFloorsAboveGrade>2.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>2376.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>20196.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -63,7 +62,7 @@
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>6.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>20196.0</InfiltrationVolume>
+            <InfiltrationVolume>19008.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>

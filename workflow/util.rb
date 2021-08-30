@@ -14,7 +14,7 @@ def setup_resultsdir(options)
 end
 
 def process_arguments(calling_rb, args, basedir)
-  hourly_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'unmetloads', 'temperatures', 'airflows', 'weather']
+  timeseries_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'unmetloads', 'temperatures', 'airflows', 'weather']
 
   options = {}
   OptionParser.new do |opts|
@@ -29,8 +29,18 @@ def process_arguments(calling_rb, args, basedir)
     end
 
     options[:hourly_outputs] = []
-    opts.on('--hourly TYPE', hourly_types, "Request hourly output type (#{hourly_types[0..4].join(', ')},", "#{hourly_types[5..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
       options[:hourly_outputs] << t
+    end
+
+    options[:daily_outputs] = []
+    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+      options[:daily_outputs] << t
+    end
+
+    options[:monthly_outputs] = []
+    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+      options[:monthly_outputs] << t
     end
 
     opts.on('-w', '--download-weather', 'Downloads all US TMY3 weather files') do |t|
@@ -62,10 +72,32 @@ def process_arguments(calling_rb, args, basedir)
     end
   end.parse!(args)
 
-  if options[:hourly_outputs].include? 'ALL'
-    options[:hourly_outputs] = hourly_types[1..-1]
+  options[:timeseries_output_freq] = 'none'
+  options[:timeseries_outputs] = []
+  n_freq = 0
+  if not options[:hourly_outputs].empty?
+    n_freq += 1
+    options[:timeseries_output_freq] = 'hourly'
+    options[:timeseries_outputs] = options[:hourly_outputs]
+  end
+  if not options[:daily_outputs].empty?
+    n_freq += 1
+    options[:timeseries_output_freq] = 'daily'
+    options[:timeseries_outputs] = options[:daily_outputs]
+  end
+  if not options[:monthly_outputs].empty?
+    n_freq += 1
+    options[:timeseries_output_freq] = 'monthly'
+    options[:timeseries_outputs] = options[:monthly_outputs]
   end
 
+  if n_freq > 1
+    fail 'Multiple timeseries frequencies (hourly, daily, monthly) are not supported.'
+  end
+
+  if options[:timeseries_outputs].include? 'ALL'
+    options[:timeseries_outputs] = timeseries_types[1..-1]
+  end
   if options[:version]
     workflow_version = '1.2.0'
     puts "OpenStudio-ERI v#{workflow_version}"
@@ -114,7 +146,9 @@ def run_simulations(runs, options, basedir)
     end
 
     Parallel.map(runs, in_processes: runs.size) do |run|
-      output_hpxml_path, designdir = run_design_direct(basedir, run, options[:hpxml], options[:debug], options[:hourly_outputs], options[:add_comp_loads])
+      output_hpxml_path, designdir = run_design_direct(basedir, run, options[:hpxml], options[:debug],
+                                                       options[:timeseries_output_freq], options[:timeseries_outputs],
+                                                       options[:add_comp_loads])
       kill unless File.exist? File.join(designdir, 'eplusout.end')
     end
 
@@ -134,7 +168,9 @@ def run_simulations(runs, options, basedir)
 
     pids = {}
     Parallel.map(runs, in_threads: runs.size) do |run|
-      output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, run, options[:hpxml], options[:debug], options[:hourly_outputs], options[:add_comp_loads])
+      output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, run, options[:hpxml], options[:debug],
+                                                                 options[:timeseries_output_freq], options[:timeseries_outputs],
+                                                                 options[:add_comp_loads])
       Process.wait pids[run]
       if not File.exist? File.join(designdir, 'eplusout.end')
         kill(pids)
@@ -145,18 +181,18 @@ def run_simulations(runs, options, basedir)
   end
 end
 
-def run_design_direct(basedir, run, hpxml, debug, hourly_outputs, add_comp_loads)
+def run_design_direct(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_design_dir(run)
-  hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
+  timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
 
-  output_hpxml_path = run_design(basedir, run, hpxml, debug, hourly_outputs, add_comp_loads)
+  output_hpxml_path = run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, run, hpxml, debug, hourly_outputs, add_comp_loads)
+def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -164,20 +200,20 @@ def run_design_spawn(basedir, run, hpxml, debug, hourly_outputs, add_comp_loads)
   # 2. There is overhead to spawning processes vs using forked processes
   designdir = get_design_dir(run)
   output_hpxml_path = get_output_filename(run)
-  hourly_outputs = hourly_outputs_for_run(run, hourly_outputs)
+  timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{run.join('|')}\" \"#{hpxml}\" #{debug} \"#{hourly_outputs.join('|')}\" \"#{add_comp_loads}\"")
+  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{run.join('|')}\" \"#{hpxml}\" #{debug} \"#{timeseries_output_freq}\" \"#{timeseries_outputs.join('|')}\" \"#{add_comp_loads}\"")
 
   return output_hpxml_path, designdir, pid
 end
 
-def hourly_outputs_for_run(run, hourly_outputs)
+def timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
   if [Constants.CalcTypeERIRatedHome, Constants.CalcTypeERIReferenceHome].include? run[0]
-    return hourly_outputs
+    return timeseries_output_freq, timeseries_outputs
   end
 
-  return []
+  return 'none', []
 end
 
 def retrieve_outputs(runs, options)

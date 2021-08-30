@@ -203,24 +203,32 @@ class EnergyRatingIndexTest < Minitest::Test
     FileUtils.mv("#{cache_csv}.bak", cache_csv)
   end
 
-  def test_hourly_output
-    test_name = 'hourly_output'
+  def test_timeseries_output
+    { 'hourly' => 8760,
+      'daily' => 365,
+      'monthly' => 12 }.each do |timeseries_frequency, n_lines|
+      test_name = "#{timeseries_frequency}_output"
 
-    # Run ERI workflow
-    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name, hourly_output: true)
+      # Run ERI workflow
+      xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+      rundir, hpxmls, csvs = _run_workflow(xml, test_name, timeseries_frequency: timeseries_frequency)
 
-    # Check for hourly output files
-    assert(File.exist?(csvs[:rated_hourly_results]))
-    assert(File.exist?(csvs[:ref_hourly_results]))
+      # Check for timeseries output files
+      assert(File.exist?(csvs[:rated_timeseries_results]))
+      assert(File.exist?(csvs[:ref_timeseries_results]))
+      assert_equal(n_lines + 2, File.read(csvs[:rated_timeseries_results]).each_line.count)
+      assert_equal(n_lines + 2, File.read(csvs[:ref_timeseries_results]).each_line.count)
 
-    # Run ENERGY STAR workflow
-    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name, hourly_output: true, run_energystar: true)
+      # Run ENERGY STAR workflow
+      xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+      rundir, hpxmls, csvs = _run_workflow(xml, test_name, timeseries_frequency: timeseries_frequency, run_energystar: true)
 
-    # Check for hourly output files
-    assert(File.exist?(csvs[:rated_hourly_results]))
-    assert(File.exist?(csvs[:ref_hourly_results]))
+      # Check for timeseries output files
+      assert(File.exist?(csvs[:rated_timeseries_results]))
+      assert(File.exist?(csvs[:ref_timeseries_results]))
+      assert_equal(n_lines + 2, File.read(csvs[:rated_timeseries_results]).each_line.count)
+      assert_equal(n_lines + 2, File.read(csvs[:ref_timeseries_results]).each_line.count)
+    end
   end
 
   def test_component_loads
@@ -729,14 +737,14 @@ class EnergyRatingIndexTest < Minitest::Test
     XMLHelper.write_file(hpxml, out_xml)
   end
 
-  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, hourly_output: false, run_energystar: false, component_loads: false)
+  def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none', run_energystar: false, component_loads: false)
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
-    hourly = ''
-    if hourly_output
-      hourly = ' --hourly ALL'
+    timeseries = ''
+    if timeseries_frequency != 'none'
+      timeseries = " --#{timeseries_frequency} ALL"
     end
     comploads = ''
     if component_loads
@@ -749,7 +757,7 @@ class EnergyRatingIndexTest < Minitest::Test
     else
       workflow_rb = 'energy_rating_index.rb'
     end
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{hourly}#{comploads} -o #{rundir} --debug"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads} -o #{rundir} --debug"
     start_time = Time.now
     system(command)
     runtime = (Time.now - start_time).round(2)
@@ -763,9 +771,9 @@ class EnergyRatingIndexTest < Minitest::Test
       csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
       csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
       csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
-      if hourly_output
-        csvs[:rated_hourly_results] = File.join(rundir, 'results', 'ERIRatedHome_Hourly.csv')
-        csvs[:ref_hourly_results] = File.join(rundir, 'results', 'ERIReferenceHome_Hourly.csv')
+      if timeseries_frequency != 'none'
+        csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
       log_dirs = [Constants.CalcTypeERIRatedHome,
                   Constants.CalcTypeERIReferenceHome,
@@ -795,9 +803,9 @@ class EnergyRatingIndexTest < Minitest::Test
       csvs[:rated_ref_results] = File.join(rundir, 'ESRated', 'results', 'ERIReferenceHome.csv')
       csvs[:rated_iad_results] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentDesign.csv')
       csvs[:rated_iadref_results] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentReferenceHome.csv')
-      if hourly_output
-        csvs[:rated_hourly_results] = File.join(rundir, 'ESRated', 'results', 'ERIRatedHome_Hourly.csv')
-        csvs[:ref_hourly_results] = File.join(rundir, 'ESReference', 'results', 'ERIReferenceHome_Hourly.csv')
+      if timeseries_frequency != 'none'
+        csvs[:rated_timeseries_results] = File.join(rundir, 'ESRated', 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:ref_timeseries_results] = File.join(rundir, 'ESReference', 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
       log_dirs = [File.join('ESRated', Constants.CalcTypeERIRatedHome),
                   File.join('ESRated', Constants.CalcTypeERIReferenceHome),

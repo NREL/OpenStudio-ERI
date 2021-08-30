@@ -48,7 +48,6 @@
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1900.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>15200.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
