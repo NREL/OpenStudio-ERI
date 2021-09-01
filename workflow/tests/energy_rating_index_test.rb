@@ -1844,8 +1844,10 @@ class EnergyRatingIndexTest < Minitest::Test
     CSV.foreach(csv) do |row|
       next if row.nil? || (row.size < 2)
 
-      if row[1].include?(',') || (row[0] == 'ENERGY STAR Certification') # String outputs
+      if row[0] == 'ENERGY STAR Certification' # String outputs
         results[row[0]] = row[1]
+      elsif row[1].include? ',' # Sum values for visualization on CI
+        results[row[0]] = row[1].split(',').map(&:to_f).sum
       else
         results[row[0]] = Float(row[1])
       end
