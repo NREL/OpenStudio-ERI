@@ -44,7 +44,7 @@ See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/m
 Annual Energy Consumption by Fuel Type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Current fuel uses are listed below.
+Fuel uses are listed below.
 
    ========================== ===========================
    Type                       Notes
@@ -61,7 +61,7 @@ Current fuel uses are listed below.
 Annual Energy Consumption By End Use
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Current end uses are listed below.
+End uses are listed below.
 
 Note that all end uses are mutually exclusive -- the "Electricity: Heating" end use, for example, excludes energy reported in the "Electricity: Heating Fans/Pumps" end use.
 So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural Gas: \*") equal the above reported fuel use (e.g., "Fuel Use: Natural Gas: Total").
@@ -126,7 +126,7 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
 Annual Building Loads
 ^^^^^^^^^^^^^^^^^^^^^
 
-Current annual building loads are listed below.
+Annual building loads are listed below.
 
    ===================================== ==================================================================
    Type                                  Notes
@@ -139,25 +139,24 @@ Current annual building loads are listed below.
    Load: Hot Water: Solar Thermal (MBtu) Load served by the solar thermal system.
    ===================================== ==================================================================
 
-Annual Unmet Building Loads
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Annual Unmet Hours
+^^^^^^^^^^^^^^^^^^
 
-Current annual unmet building loads are listed below.
+Annual unmet hours are listed below.
 
    ========================== =====
    Type                       Notes
    ========================== =====
-   Unmet Load: Heating (MBtu)
-   Unmet Load: Cooling (MBtu)
+   Unmet Hours: Heating (hr)  Number of hours where the heating setpoint is not maintained.
+   Unmet Hours: Cooling (hr)  Number of hours where the cooling setpoint is not maintained.
    ========================== =====
 
-These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
-An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
+These numbers reflect the number of hours of the year when the conditioned space temperature is more than 0.2 deg-C (0.36 deg-F) from the setpoint during heating/cooling.
 
 Peak Building Electricity
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Current peak building electricity outputs are listed below.
+Peak building electricity outputs are listed below.
 
    ================================== =========================================================
    Type                               Notes
@@ -169,7 +168,7 @@ Current peak building electricity outputs are listed below.
 Peak Building Loads
 ^^^^^^^^^^^^^^^^^^^
 
-Current peak building loads are listed below.
+Peak building loads are listed below.
 
    ========================== ==================================
    Type                       Notes
@@ -187,7 +186,7 @@ The argument is not used by default for faster performance.
 Component loads represent the estimated contribution of different building components to the annual heating/cooling building loads.
 The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
 
-Current component loads disaggregated by Heating/Cooling are listed below.
+Component loads disaggregated by Heating/Cooling are listed below.
    
    ================================================= =========================================================================================================
    Type                                              Notes
@@ -214,7 +213,7 @@ Current component loads disaggregated by Heating/Cooling are listed below.
 Annual Hot Water Uses
 ^^^^^^^^^^^^^^^^^^^^^
 
-Current annual hot water uses are listed below.
+Annual hot water uses are listed below.
 
    =================================== =====
    Type                                Notes
