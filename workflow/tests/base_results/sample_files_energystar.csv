@@ -141,14 +141,14 @@
 [SF_National_3.1] base-mechvent-exhaust.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_National_3.1] base-mechvent-hrv-asre.xml,67.0,1.0,67.0,71.0,71.0,FAIL
 [SF_National_3.1] base-mechvent-hrv.xml,67.0,1.0,67.0,71.0,71.0,FAIL
-[SF_National_3.1] base-mechvent-multiple.xml,67.0,1.0,67.0,87.0,87.0,FAIL
+[SF_National_3.1] base-mechvent-multiple.xml,67.0,1.0,67.0,86.0,86.0,FAIL
 [SF_National_3.1] base-mechvent-supply.xml,67.0,1.0,67.0,78.0,78.0,FAIL
 [SF_National_3.1] base-mechvent-whole-house-fan.xml,67.0,1.0,67.0,77.0,77.0,FAIL
 [SF_National_3.1] base-misc-generators.xml,67.0,1.0,67.0,84.0,84.0,FAIL
 [SF_National_3.1] base-pv.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_National_3.1] base.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_Pacific_3.0] base-location-honolulu-hi.xml,61.0,1.0,61.0,74.0,74.0,FAIL
-[SF_Florida_3.1] base-location-miami-fl.xml,66.0,1.0,66.0,72.0,72.0,FAIL
+[SF_Florida_3.1] base-location-miami-fl.xml,65.0,1.0,65.0,72.0,72.0,FAIL
 [SF_OregonWashington_3.2] base-location-portland-or.xml,67.0,1.0,67.0,76.0,76.0,FAIL
 [MF_National_1.0] base-bldgtype-multifamily.xml,73.0,1.0,73.0,64.0,64.0,PASS
 [MF_National_1.0] base-bldgtype-single-family-attached.xml,74.0,1.0,74.0,73.0,73.0,PASS
