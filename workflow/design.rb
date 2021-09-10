@@ -46,7 +46,6 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
   args['include_timeseries_hot_water_uses'] = timeseries_outputs.include? 'hotwater'
   args['include_timeseries_total_loads'] = timeseries_outputs.include? 'loads'
   args['include_timeseries_component_loads'] = timeseries_outputs.include? 'componentloads'
-  args['include_timeseries_unmet_loads'] = timeseries_outputs.include? 'unmetloads'
   args['include_timeseries_zone_temperatures'] = timeseries_outputs.include? 'temperatures'
   args['include_timeseries_airflows'] = timeseries_outputs.include? 'airflows'
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'

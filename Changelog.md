@@ -3,6 +3,8 @@
 __New Features__
 - Updates to OpenStudio 3.2.1/EnergyPlus 9.5.0.
 - **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeDefectRatio` are no longer accepted.
+- **Breaking change**: Replaces "Unmet Load" outputs with "Unmet Hours".
+- **Breaking change**: Renames "Load: Heating" and "Peak Load: Heating" (and Cooling) outputs to include "Delivered".
 - Allows additional fuel types for generators.
 - Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
 - Allows CEER (Combined Energy Efficiency Ratio) efficiency unit for room AC.

@@ -14,7 +14,7 @@ def setup_resultsdir(options)
 end
 
 def process_arguments(calling_rb, args, basedir)
-  timeseries_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'unmetloads', 'temperatures', 'airflows', 'weather']
+  timeseries_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
 
   options = {}
   OptionParser.new do |opts|
