@@ -931,8 +931,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _get_simulation_load_results(csv_path)
     results = _get_csv_results(csv_path)
-    htg_load = results['Load: Heating (MBtu)'].round(2)
-    clg_load = results['Load: Cooling (MBtu)'].round(2)
+    htg_load = results['Load: Heating: Delivered (MBtu)'].round(2)
+    clg_load = results['Load: Cooling: Delivered (MBtu)'].round(2)
 
     return htg_load, clg_load
   end

@@ -348,7 +348,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
     ref_idx = ref_output[:hpxml_heat_sys_ids].index(sys_id)
     fail 'Data not in sync.' if ref_idx.nil?
 
-    reul_heat = ref_output[:loadHeating][ref_idx]
+    reul_heat = ref_output[:loadHeatingDelivered][ref_idx]
 
     if (ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity) != (rated_output[:hpxml_heat_fuels][rated_idx] == HPXML::FuelTypeElectricity)
       fail 'Data not in sync.'
@@ -401,12 +401,12 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   results[:nec_x_cool] = []
   results[:nmeul_cool] = []
 
-  tot_reul_cool = ref_output[:loadCooling].sum(0.0)
+  tot_reul_cool = ref_output[:loadCoolingDelivered].sum(0.0)
   rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_cool_sys_ids].index(sys_id)
     fail 'Data not in sync.' if ref_idx.nil?
 
-    reul_cool = ref_output[:loadCooling][ref_idx]
+    reul_cool = ref_output[:loadCoolingDelivered][ref_idx]
 
     coeff_cool_a, coeff_cool_b = get_cooling_coefficients()
 
