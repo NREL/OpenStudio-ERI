@@ -149,15 +149,8 @@ class EnergyRatingIndexTest < Minitest::Test
     test_name = 'invalid_files'
 
     # Test against ERI workflow
-    expected_error_msgs = { 'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
-                            'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
-                            'missing-elements.xml' => ['Expected 1 element(s) for xpath: NumberofConditionedFloors [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]',
-                                                       'Expected 1 element(s) for xpath: ConditionedFloorArea [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
-                            'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
-                                                            'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
-                            'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
-                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'],
-                            'enclosure-floor-area-exceeds-cfa.xml' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas. [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'] }
+    expected_error_msgs = { 'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
+                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
 
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next if xml.include? 'energy-star'
@@ -884,7 +877,7 @@ class EnergyRatingIndexTest < Minitest::Test
     update_args_hash(measures, measure_subdir, args)
 
     # Add reporting measure to workflow
-    measure_subdir = 'hpxml-measures/SimulationOutputReport'
+    measure_subdir = 'hpxml-measures/ReportSimulationOutput'
     args = {}
     args['timeseries_frequency'] = 'none'
     args['include_timeseries_fuel_consumptions'] = false

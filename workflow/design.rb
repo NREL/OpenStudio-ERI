@@ -38,7 +38,7 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
   update_args_hash(measures, measure_subdir, args)
 
   # Add reporting measure to workflow
-  measure_subdir = 'hpxml-measures/SimulationOutputReport'
+  measure_subdir = 'hpxml-measures/ReportSimulationOutput'
   args = {}
   args['timeseries_frequency'] = timeseries_output_freq
   args['include_timeseries_fuel_consumptions'] = timeseries_outputs.include? 'fuels'

@@ -92,7 +92,7 @@
         </Foundations>
         <Roofs>
           <Roof>
-            <SystemIdentifier id='AtticRoofNorth'/>
+            <SystemIdentifier id='Roof1'/>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>0</Azimuth>
@@ -102,12 +102,12 @@
             <Pitch>4.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
-              <SystemIdentifier id='AtticRoofNorthInsulation'/>
+              <SystemIdentifier id='Roof1Insulation'/>
               <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
             </Insulation>
           </Roof>
           <Roof>
-            <SystemIdentifier id='AtticRoofSouth'/>
+            <SystemIdentifier id='Roof2'/>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>180</Azimuth>
@@ -117,14 +117,14 @@
             <Pitch>4.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
-              <SystemIdentifier id='AtticRoofSouthInsulation'/>
+              <SystemIdentifier id='Roof2Insulation'/>
               <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
             </Insulation>
           </Roof>
         </Roofs>
         <Walls>
           <Wall>
-            <SystemIdentifier id='WallNorth'/>
+            <SystemIdentifier id='Wall1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -140,12 +140,12 @@
               <Thickness>0.5</Thickness>
             </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='WallNorthInsulation'/>
+              <SystemIdentifier id='Wall1Insulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='WallEast'/>
+            <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -161,12 +161,12 @@
               <Thickness>0.5</Thickness>
             </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='WallEastInsulation'/>
+              <SystemIdentifier id='Wall2Insulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='WallSouth'/>
+            <SystemIdentifier id='Wall3'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -182,12 +182,12 @@
               <Thickness>0.5</Thickness>
             </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='WallSouthInsulation'/>
+              <SystemIdentifier id='Wall3Insulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='WallWest'/>
+            <SystemIdentifier id='Wall4'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
@@ -203,41 +203,43 @@
               <Thickness>0.5</Thickness>
             </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='WallWestInsulation'/>
+              <SystemIdentifier id='Wall4Insulation'/>
               <AssemblyEffectiveRValue>11.76</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='WallAtticGableEast'/>
+            <SystemIdentifier id='Wall5'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
+            <AtticWallType>gable</AtticWallType>
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>60.75</Area>
+            <Area>60.7</Area>
             <Azimuth>90</Azimuth>
             <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallAtticGableEastInsulation'/>
+              <SystemIdentifier id='Wall5Insulation'/>
               <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='WallAtticGableWest'/>
+            <SystemIdentifier id='Wall6'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
+            <AtticWallType>gable</AtticWallType>
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>60.75</Area>
+            <Area>60.7</Area>
             <Azimuth>270</Azimuth>
             <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='WallAtticGableWestInsulation'/>
+              <SystemIdentifier id='Wall6Insulation'/>
               <AssemblyEffectiveRValue>2.15</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
@@ -362,7 +364,7 @@
         </FoundationWalls>
         <FrameFloors>
           <FrameFloor>
-            <SystemIdentifier id='CeilingBelowAttic'/>
+            <SystemIdentifier id='FrameFloor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1539.0</Area>
@@ -371,17 +373,17 @@
               <Thickness>0.5</Thickness>
             </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='CeilingBelowAtticInsulation'/>
+              <SystemIdentifier id='FrameFloor1Insulation'/>
               <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
           <FrameFloor>
-            <SystemIdentifier id='FloorAboveFoundation'/>
+            <SystemIdentifier id='FrameFloor2'/>
             <ExteriorAdjacentTo>crawlspace - unvented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1539.0</Area>
             <Insulation>
-              <SystemIdentifier id='FloorAboveFoundationInsulation'/>
+              <SystemIdentifier id='FrameFloor2Insulation'/>
               <AssemblyEffectiveRValue>4.24</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
@@ -415,57 +417,57 @@
         </Slabs>
         <Windows>
           <Window>
-            <SystemIdentifier id='WindowNorth'/>
+            <SystemIdentifier id='Window1'/>
             <Area>90.0</Area>
             <Azimuth>0</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='WallNorth'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
-            <SystemIdentifier id='WindowEast'/>
+            <SystemIdentifier id='Window2'/>
             <Area>45.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='WallEast'/>
+            <AttachedToWall idref='Wall2'/>
           </Window>
           <Window>
-            <SystemIdentifier id='WindowSouth'/>
+            <SystemIdentifier id='Window3'/>
             <Area>90.0</Area>
             <Azimuth>180</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='WallSouth'/>
+            <AttachedToWall idref='Wall3'/>
           </Window>
           <Window>
-            <SystemIdentifier id='WindowWest'/>
+            <SystemIdentifier id='Window4'/>
             <Area>45.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>1.039</UFactor>
             <SHGC>0.67</SHGC>
             <FractionOperable>0.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='WallWest'/>
+            <AttachedToWall idref='Wall4'/>
           </Window>
         </Windows>
         <Doors>
           <Door>
-            <SystemIdentifier id='DoorSouth'/>
-            <AttachedToWall idref='WallSouth'/>
+            <SystemIdentifier id='Door1'/>
+            <AttachedToWall idref='Wall3'/>
             <Area>20.0</Area>
             <Azimuth>180</Azimuth>
             <RValue>3.04</RValue>
           </Door>
           <Door>
-            <SystemIdentifier id='DoorNorth'/>
-            <AttachedToWall idref='WallNorth'/>
+            <SystemIdentifier id='Door2'/>
+            <AttachedToWall idref='Wall3'/>
             <Area>20.0</Area>
             <Azimuth>0</Azimuth>
             <RValue>3.04</RValue>

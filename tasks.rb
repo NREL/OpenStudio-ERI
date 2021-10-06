@@ -706,6 +706,25 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
                                insulation_exterior_r_value: 0,
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
+    hpxml.foundation_walls.each do |fwall|
+      fwall.insulation_interior_distance_to_top = 0 if fwall.insulation_interior_distance_to_top.nil?
+      if fwall.insulation_interior_distance_to_bottom.nil?
+        if fwall.insulation_interior_r_value.to_f > 0
+          fwall.insulation_interior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_interior_distance_to_bottom = 0
+        end
+      end
+      fwall.insulation_exterior_distance_to_top = 0 if fwall.insulation_exterior_distance_to_top.nil?
+      if fwall.insulation_exterior_distance_to_bottom.nil?
+        if fwall.insulation_exterior_r_value.to_f > 0
+          fwall.insulation_exterior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_exterior_distance_to_bottom = 0
+        end
+      end
+    end
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     for i in 0..hpxml.foundation_walls.size - 1
       hpxml.foundation_walls[i].interior_adjacent_to = HPXML::LocationBasementUnconditioned
@@ -2035,12 +2054,7 @@ def create_sample_hpxmls
   FileUtils.rm_f(Dir.glob('workflow/sample_files/invalid_files/*.xml'))
 
   # Copy files we're interested in
-  include_list = ['invalid_files/dhw-frac-load-served.xml',
-                  'invalid_files/enclosure-floor-area-exceeds-cfa.xml',
-                  'invalid_files/hvac-frac-load-served.xml',
-                  'invalid_files/invalid-epw-filepath.xml',
-                  'invalid_files/missing-elements.xml',
-                  'base.xml',
+  include_list = ['base.xml',
                   'base-appliances-dehumidifier.xml',
                   'base-appliances-dehumidifier-ief-portable.xml',
                   'base-appliances-dehumidifier-ief-whole-home.xml',
@@ -2209,6 +2223,37 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = 'latest'
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
+    hpxml.attics.each do |attic|
+      if [HPXML::AtticTypeVented,
+          HPXML::AtticTypeUnvented].include? attic.attic_type
+        attic.within_infiltration_volume = false if attic.within_infiltration_volume.nil?
+      end
+    end
+    hpxml.foundations.each do |foundation|
+      next unless [HPXML::FoundationTypeBasementUnconditioned,
+                   HPXML::FoundationTypeCrawlspaceUnvented,
+                   HPXML::FoundationTypeCrawlspaceVented].include? foundation.foundation_type
+
+      foundation.within_infiltration_volume = false if foundation.within_infiltration_volume.nil?
+    end
+    hpxml.foundation_walls.each do |fwall|
+      fwall.insulation_interior_distance_to_top = 0 if fwall.insulation_interior_distance_to_top.nil?
+      if fwall.insulation_interior_distance_to_bottom.nil?
+        if fwall.insulation_interior_r_value.to_f > 0
+          fwall.insulation_interior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_interior_distance_to_bottom = 0
+        end
+      end
+      fwall.insulation_exterior_distance_to_top = 0 if fwall.insulation_exterior_distance_to_top.nil?
+      if fwall.insulation_exterior_distance_to_bottom.nil?
+        if fwall.insulation_exterior_r_value.to_f > 0
+          fwall.insulation_exterior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_exterior_distance_to_bottom = 0
+        end
+      end
+    end
     hpxml.heating_systems.each do |heating_system|
       next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
       next unless heating_system.is_shared_system.nil?
@@ -2250,9 +2295,9 @@ def create_sample_hpxmls
     end
     hpxml.ventilation_fans.each do |ventilation_fan|
       next unless ventilation_fan.used_for_whole_building_ventilation
-      next unless ventilation_fan.is_shared_system.nil?
 
-      ventilation_fan.is_shared_system = false
+      ventilation_fan.is_shared_system = false if ventilation_fan.is_shared_system.nil?
+      ventilation_fan.tested_flow_rate = ventilation_fan.rated_flow_rate.to_f + ventilation_fan.delivered_ventilation.to_f if ventilation_fan.tested_flow_rate.nil?
     end
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type

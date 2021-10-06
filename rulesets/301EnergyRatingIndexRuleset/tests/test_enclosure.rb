@@ -196,9 +196,9 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml, area: 1490, rvalue: (23.0 * 1200 + 4.0 * 290) / 1490, sabs: 0.7, emit: 0.92)
+    _check_walls(hpxml, area: 1425, rvalue: (23.0 * 1200 + 4.0 * 225) / 1425, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml, area: 1490, rvalue: (16.67 * 1200 + 4.0 * 290) / 1490, sabs: 0.75, emit: 0.9)
+    _check_walls(hpxml, area: 1425, rvalue: (16.67 * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -240,9 +240,9 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-enclosure-garage.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_walls(hpxml, area: 1873, rvalue: (23.0 * 1200 + 4.0 * 673) / 1873, sabs: 0.7, emit: 0.92)
+    _check_walls(hpxml, area: 2098, rvalue: (23.0 * 1200 + 4.0 * 898) / 2098, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_walls(hpxml, area: 1873, rvalue: (16.67 * 1200 + 4.0 * 673) / 1873, sabs: 0.75, emit: 0.9)
+    _check_walls(hpxml, area: 2098, rvalue: (16.67 * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
@@ -491,6 +491,19 @@ class ERIEnclosureTest < MiniTest::Test
     end
 
     hpxml_name = 'base-atticroof-cathedral.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.windows[1].area -= 12.0
+    hpxml.windows[3].area -= 12.0
+    hpxml.windows << hpxml.windows[-1].dup
+    hpxml.windows[-1].id = "Window#{hpxml.windows.size + 1}"
+    hpxml.windows[-1].area = 12.0
+    hpxml.windows[-1].fraction_operable = 0.0
+    hpxml.windows[-1].azimuth = 90
+    hpxml.windows << hpxml.windows[-1].dup
+    hpxml.windows[-1].id = "Window#{hpxml.windows.size + 1}"
+    hpxml.windows[-1].azimuth = 270
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     frac_operable = (432.0 * 0.67) / (432.0 + 24.0)
@@ -649,12 +662,12 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                                 180 => { area: 15, ufactor: 0.35, shgc: 0.47 } })
+                                                 180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_skylights(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                                 180 => { area: 15, ufactor: 0.35, shgc: 0.47 } })
+                                                 180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
     _check_skylights(hpxml)
 
@@ -669,12 +682,12 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 700, ufactor: 0.33, shgc: 0.45 },
-                                                 180 => { area: 700, ufactor: 0.35, shgc: 0.47 } })
+                                                 180 => { area: 700, ufactor: 0.33, shgc: 0.45 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_skylights(hpxml)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
     _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 643.5, ufactor: 0.33, shgc: 0.45 },
-                                                 180 => { area: 643.5, ufactor: 0.35, shgc: 0.47 } })
+                                                 180 => { area: 643.5, ufactor: 0.33, shgc: 0.45 } })
   end
 
   def test_enclosure_overhangs
@@ -693,8 +706,8 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_overhangs(hpxml, [{ depth: 2.5, top: 0, bottom: 4 },
-                             { depth: 0.0, top: 1, bottom: 5 },
                              { depth: 1.5, top: 2, bottom: 6 },
+                             { depth: 0.0, top: 1, bottom: 5 },
                              { depth: 1.5, top: 2, bottom: 7 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_overhangs(hpxml)
@@ -708,8 +721,7 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 },
-                                             180 => { area: 20, rvalue: 4.4 } })
+    _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
@@ -732,7 +744,7 @@ class ERIEnclosureTest < MiniTest::Test
     # Test MF unit w/ interior door
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.doors.each do |door|
-      door.wall_idref = 'WallOther'
+      door.wall_idref = hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -900,22 +912,22 @@ class ERIEnclosureTest < MiniTest::Test
     if area.nil?
       assert(area_values.empty?)
     else
-      assert_in_epsilon(area, area_values.inject(:+), 0.001)
+      assert_in_epsilon(area, area_values.inject(:+), 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
   end
 
@@ -930,10 +942,10 @@ class ERIEnclosureTest < MiniTest::Test
       sabs_x_area_values << wall.solar_absorptance * wall.area
       emit_x_area_values << wall.emittance * wall.area
     end
-    assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
   end
 
   def _check_rim_joists(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil)
@@ -951,22 +963,22 @@ class ERIEnclosureTest < MiniTest::Test
     if area.nil?
       assert(area_values.empty?)
     else
-      assert_in_epsilon(area, area_values.inject(:+), 0.001)
+      assert_in_epsilon(area, area_values.inject(:+), 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
   end
 
@@ -998,12 +1010,12 @@ class ERIEnclosureTest < MiniTest::Test
       depth_bg_x_area_values << foundation_wall.depth_below_grade * foundation_wall.area
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(ins_top, ins_top_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(depth_bg, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(ins_top, ins_top_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(depth_bg, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
   end
 
   def _check_floors(hpxml, area:, rvalue:)
@@ -1014,8 +1026,8 @@ class ERIEnclosureTest < MiniTest::Test
       rvalue_x_area_values << frame_floor.insulation_assembly_r_value * frame_floor.area
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
   end
 
   def _check_slabs(hpxml, area:, exp_perim:, perim_ins_depth: 0, perim_ins_r: 0, under_ins_width: 0,
@@ -1043,16 +1055,16 @@ class ERIEnclosureTest < MiniTest::Test
       end
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(exp_perim, exp_perim_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(exp_perim, exp_perim_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     if depth_below_grade.nil?
       assert(depth_bg_x_area_values.empty?)
     else
-      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
   end
 
@@ -1081,12 +1093,12 @@ class ERIEnclosureTest < MiniTest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_shgc_x_area_values.size)
 
-    assert_in_epsilon(frac_operable, area_operable / area_total, 0.001)
+    assert_in_epsilon(frac_operable, area_operable / area_total, 0.01)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
     end
   end
 
@@ -1125,9 +1137,9 @@ class ERIEnclosureTest < MiniTest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_shgc_x_area_values.size)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
     end
   end
 
@@ -1148,7 +1160,7 @@ class ERIEnclosureTest < MiniTest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_rvalue_x_area_values.size)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
       assert_in_epsilon(values[:rvalue], azimuth_rvalue_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
     end
   end
@@ -1163,7 +1175,7 @@ class ERIEnclosureTest < MiniTest::Test
     if sla.nil?
       assert_nil(attic_sla)
     else
-      assert_in_epsilon(sla, attic_sla, 0.001)
+      assert_in_epsilon(sla, attic_sla, 0.01)
     end
   end
 
@@ -1177,7 +1189,7 @@ class ERIEnclosureTest < MiniTest::Test
     if sla.nil?
       assert_nil(crawl_sla)
     else
-      assert_in_epsilon(sla, crawl_sla, 0.001)
+      assert_in_epsilon(sla, crawl_sla, 0.01)
     end
   end
 end
