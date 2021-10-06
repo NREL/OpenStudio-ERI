@@ -327,8 +327,8 @@
         <HVAC>
           <HVACPlant>
             <HeatPump>
-              <SystemIdentifier id='HeatPump'/>
-              <DistributionSystem idref='HVACDistribution'/>
+              <SystemIdentifier id='HeatPump1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>56100.0</HeatingCapacity>
@@ -360,7 +360,7 @@
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
-            <SystemIdentifier id='HVACDistribution'/>
+            <SystemIdentifier id='HVACDistribution1'/>
             <DistributionSystemType>
               <Other>DSE</Other>
             </DistributionSystemType>
