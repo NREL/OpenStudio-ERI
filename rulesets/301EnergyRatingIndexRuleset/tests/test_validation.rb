@@ -5,6 +5,7 @@ require 'openstudio'
 require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
+require_relative '../../EnergyStarRuleset/resources/constants.rb'
 
 class ERI301ValidationTest < MiniTest::Test
   def setup
@@ -12,6 +13,15 @@ class ERI301ValidationTest < MiniTest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @eri_validator_stron_path = File.join(@root_path, 'rulesets', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
     @hpxml_stron_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml')
+
+    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
+    @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
+    FileUtils.mkdir_p(@tmp_output_path)
+  end
+
+  def teardown
+    File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
+    FileUtils.rm_rf(@tmp_output_path)
   end
 
   def test_validation_of_sample_files
@@ -79,6 +89,101 @@ class ERI301ValidationTest < MiniTest::Test
     end
   end
 
+  def test_schematron_error_messages
+    # Test case => Error message
+    all_expected_errors = { 'dhw-frac-load-served' => ['Expected sum(FractionDHWLoadServed) to be 1 [context: /HPXML/Building/BuildingDetails]'],
+                            'hvac-frac-load-served' => ['Expected sum(FractionHeatLoadServed) to be less than or equal to 1 [context: /HPXML/Building/BuildingDetails]',
+                                                        'Expected sum(FractionCoolLoadServed) to be less than or equal to 1 [context: /HPXML/Building/BuildingDetails]'],
+                            'enclosure-floor-area-exceeds-cfa' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas. [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
+                            'energy-star-SF_Florida_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Florida")]]'],
+                            'energy-star-SF_National_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
+                            'energy-star-SF_National_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
+                            'energy-star-SF_OregonWashington_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_OregonWashington")]]'],
+                            'energy-star-SF_Pacific_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Pacific")]]'],
+                            'energy-star-MF_National_1.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_National_1.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_OregonWashington")]]',
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
+
+    all_expected_errors.each_with_index do |(error_case, expected_errors), i|
+      puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
+      # Create HPXML object
+      if ['dhw-frac-load-served'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-dhw-multiple.xml'))
+        hpxml.water_heating_systems[0].fraction_dhw_load_served = 0.35
+      elsif ['hvac-frac-load-served'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-multiple.xml'))
+        hpxml.heating_systems[0].fraction_heat_load_served += 0.1
+        hpxml.cooling_systems[0].fraction_cool_load_served += 0.2
+        hpxml.heating_systems[0].primary_system = true
+        hpxml.cooling_systems[0].primary_system = true
+        hpxml.heat_pumps[-1].primary_heating_system = false
+        hpxml.heat_pumps[-1].primary_cooling_system = false
+      elsif ['enclosure-floor-area-exceeds-cfa'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
+        hpxml.building_construction.conditioned_floor_area = 1348.8
+      elsif error_case.include? 'energy-star'
+        es_props = { 'energy-star-SF_Florida_3.1' => [ESConstants.SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_National_3.0' => [ESConstants.SFNationalVer3_0, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_National_3.1' => [ESConstants.SFNationalVer3_1, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_OregonWashington_3.2' => [ESConstants.SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_Pacific_3.0' => [ESConstants.SFPacificVer3_0, HPXML::ResidentialTypeApartment],
+                     'energy-star-MF_National_1.0' => [ESConstants.MFNationalVer1_0, HPXML::ResidentialTypeSFD],
+                     'energy-star-MF_National_1.1' => [ESConstants.MFNationalVer1_1, HPXML::ResidentialTypeSFD],
+                     'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
+        es_version, bldg_type = es_props[error_case]
+        hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+        hpxml.header.energystar_calculation_version = es_version
+        hpxml.building_construction.residential_facility_type = bldg_type
+        hpxml.header.state_code = 'CO'
+      else
+        fail "Unhandled case: #{error_case}."
+      end
+
+      hpxml_doc = hpxml.to_oga()
+
+      # Test against schematron
+      _test_schematron_validation(hpxml_doc, expected_errors)
+    end
+  end
+
+  def test_measure_error_messages
+    # Test case => Error message
+    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."],
+                            'hvac-ducts-lto-exemption-pre-addendum-d' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
+                            'hvac-ducts-leakage-total-pre-addendum-l' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
+
+    all_expected_errors.each_with_index do |(error_case, expected_errors), i|
+      puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
+      # Create HPXML object
+      if ['invalid-epw-filepath'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
+        hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'foo.epw'
+      elsif ['dhw-frac-load-served'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-dhw-multiple.xml'))
+        hpxml.water_heating_systems[0].fraction_dhw_load_served = 0.35
+      elsif ['hvac-ducts-lto-exemption-pre-addendum-d'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-ducts-leakage-to-outside-exemption.xml'))
+        hpxml.header.eri_calculation_version = '2014A'
+        hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
+      elsif ['hvac-ducts-leakage-total-pre-addendum-l'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-ducts-leakage-total.xml'))
+        hpxml.header.eri_calculation_version = '2014ADEG'
+        hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
+      else
+        fail "Unhandled case: #{error_case}."
+      end
+
+      hpxml_doc = hpxml.to_oga()
+
+      XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+      model, hpxml = _test_measure(error_case, expected_errors)
+    end
+  end
+
   private
 
   def _test_schematron_validation(hpxml_doc, expected_errors = [])
@@ -95,6 +200,43 @@ class ERI301ValidationTest < MiniTest::Test
       puts "#{xml}: #{errors}"
     end
     assert_equal(0, errors.size)
+  end
+
+  def _test_measure(error_case, expected_errors)
+    # create an instance of the measure
+    measure = EnergyRatingIndex301Measure.new
+
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    model = OpenStudio::Model::Model.new
+
+    # get arguments
+    args_hash = {}
+    args_hash['calc_type'] = Constants.CalcTypeERIRatedHome
+    args_hash['hpxml_input_path'] = File.absolute_path(@tmp_hpxml_path)
+    args_hash['hpxml_output_path'] = File.absolute_path(@tmp_output_path)
+    arguments = measure.arguments(model)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # populate argument with specified hash value if specified
+    arguments.each do |arg|
+      temp_arg_var = arg.clone
+      if args_hash.has_key?(arg.name)
+        assert(temp_arg_var.setValue(args_hash[arg.name]))
+      end
+      argument_map[arg.name] = temp_arg_var
+    end
+
+    # run the measure
+    measure.run(model, runner, argument_map)
+    result = runner.result
+
+    assert_equal('Fail', result.value.valueName)
+
+    errors = []
+    result.stepErrors.each do |s|
+      errors << s
+    end
+    _compare_errors(errors, expected_errors)
   end
 
   def _compare_errors(actual_errors, expected_errors)

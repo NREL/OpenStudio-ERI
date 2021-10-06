@@ -2048,7 +2048,6 @@ def create_sample_hpxmls
   # Copy sample files from hpxml-measures subtree
   puts 'Copying sample files...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
-  FileUtils.rm_f(Dir.glob('workflow/sample_files/invalid_files/*.xml'))
 
   # Copy files we're interested in
   include_list = ['base.xml',
@@ -2207,9 +2206,6 @@ def create_sample_hpxmls
   puts 'Updating HPXML inputs for ERI/ENERGY STAR...'
   hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
-    hpxml_paths << hpxml_path
-  end
-  Dir['workflow/sample_files/invalid_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
   end
   hpxml_paths.each do |hpxml_path|
@@ -2416,12 +2412,6 @@ def create_sample_hpxmls
   hpxml.hvac_distributions[0].duct_leakage_to_outside_testing_exemption = true
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
 
-  # ... and invalid test file (pre-Addendum L)
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
-  hpxml.header.eri_calculation_version = '2014A'
-  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml')
-
   # Duct leakage total
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
   # Add total duct leakage
@@ -2441,12 +2431,6 @@ def create_sample_hpxmls
                                         duct_surface_area: 35)
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
 
-  # ... and invalid test file (pre-Addendum L)
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
-  hpxml.header.eri_calculation_version = '2014ADEG'
-  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
-
   # Older versions
   Constants.ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
@@ -2459,23 +2443,6 @@ def create_sample_hpxmls
     end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
-  end
-
-  # Invalid ENERGY STAR version test files
-  es_files = { ESConstants.SFNationalVer3_0 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFNationalVer3_1 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFFloridaVer3_1 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFOregonWashingtonVer3_2 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFPacificVer3_0 => HPXML::ResidentialTypeApartment,
-               ESConstants.MFNationalVer1_0 => HPXML::ResidentialTypeSFD,
-               ESConstants.MFNationalVer1_1 => HPXML::ResidentialTypeSFD,
-               ESConstants.MFOregonWashingtonVer1_2 => HPXML::ResidentialTypeSFD }
-  es_files.each do |es_version, bldg_type|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml.header.energystar_calculation_version = es_version
-    hpxml.building_construction.residential_facility_type = bldg_type
-    hpxml.header.state_code = 'CO'
-    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/invalid_files/energy-star-#{es_version.gsub(' ', '_').gsub(',', '')}.xml")
   end
 
   # ENERGY STAR Oregon/Washington MF file

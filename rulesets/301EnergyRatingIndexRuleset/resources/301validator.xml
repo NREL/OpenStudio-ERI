@@ -122,6 +122,11 @@
       <sch:assert role='ERROR' test='count(h:Appliances/h:Oven) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Appliances/Oven</sch:assert> <!-- See [Oven] -->
       <sch:assert role='ERROR' test='count(h:Lighting) = 1'>Expected 1 element(s) for xpath: Lighting</sch:assert> <!-- See [Lighting] -->
       <sch:assert role='ERROR' test='count(h:Lighting/h:CeilingFan) &gt;= 0'>Expected 0 or more element(s) for xpath: Lighting/CeilingFan</sch:assert> <!-- See [CeilingFan] -->
+      <!-- Sum Checks -->
+      <sch:assert role='ERROR' test='sum(h:Systems/h:HVAC/h:HVACPlant/h:HeatingSystem/h:FractionHeatLoadServed) + sum(h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:FractionHeatLoadServed) &lt;= 1.01'>Expected sum(FractionHeatLoadServed) to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='sum(h:Systems/h:HVAC/h:HVACPlant/h:CoolingSystem/h:FractionCoolLoadServed) + sum(h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:FractionCoolLoadServed) &lt;= 1.01'>Expected sum(FractionCoolLoadServed) to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='sum(h:Appliances/h:Dehumidifier/h:FractionDehumidificationLoadServed) &lt;= 1.01'>Expected sum(FractionDehumidificationLoadServed) to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='(sum(h:Systems/h:WaterHeating/h:WaterHeatingSystem/h:FractionDHWLoadServed) &lt;= 1.01 and sum(h:Systems/h:WaterHeating/h:WaterHeatingSystem/h:FractionDHWLoadServed) &gt;= 0.99) or count(h:Systems/h:WaterHeating/h:WaterHeatingSystem/h:FractionDHWLoadServed) = 0'>Expected sum(FractionDHWLoadServed) to be 1</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -1317,6 +1322,10 @@
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
+      <!-- Sum Checks -->
+      <sch:assert role='ERROR' test='sum(h:LightingGroup[h:Location="interior"]/h:FractionofUnitsInLocation) &lt;= 1.01'>Expected sum(LightingGroup/FractionofUnitsInLocation) for Location="interior" to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='sum(h:LightingGroup[h:Location="exterior"]/h:FractionofUnitsInLocation) &lt;= 1.01'>Expected sum(LightingGroup/FractionofUnitsInLocation) for Location="exterior" to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='sum(h:LightingGroup[h:Location="garage"]/h:FractionofUnitsInLocation) &lt;= 1.01'>Expected sum(LightingGroup/FractionofUnitsInLocation) for Location="garage" to be less than or equal to 1</sch:assert>
     </sch:rule>
   </sch:pattern>
 

@@ -94,47 +94,52 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml'),
-                   File.join(File.dirname(__FILE__), 'resources', '301validator.xml')]
-    @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
-    @orig_hpxml.errors.each do |error|
-      runner.registerError(error)
-    end
-    @orig_hpxml.warnings.each do |warning|
-      runner.registerWarning(warning)
-    end
-    return false unless @orig_hpxml.errors.empty?
+    begin
+      stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml'),
+                     File.join(File.dirname(__FILE__), 'resources', '301validator.xml')]
+      @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
+      @orig_hpxml.errors.each do |error|
+        runner.registerError(error)
+      end
+      @orig_hpxml.warnings.each do |warning|
+        runner.registerWarning(warning)
+      end
+      return false unless @orig_hpxml.errors.empty?
 
-    # Weather file
-    epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-    if not File.exist? epw_path
-      test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
-      epw_path = test_epw_path if File.exist? test_epw_path
-    end
-    if not File.exist? epw_path
-      test_epw_path = File.join(File.dirname(__FILE__), '..', '..', 'weather', epw_path)
-      epw_path = test_epw_path if File.exist? test_epw_path
-    end
-    if not File.exist?(epw_path)
-      fail "'#{epw_path}' could not be found."
-    end
+      # Weather file
+      epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
+      if not File.exist? epw_path
+        test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
+        epw_path = test_epw_path if File.exist? test_epw_path
+      end
+      if not File.exist? epw_path
+        test_epw_path = File.join(File.dirname(__FILE__), '..', '..', 'weather', epw_path)
+        epw_path = test_epw_path if File.exist? test_epw_path
+      end
+      if not File.exist?(epw_path)
+        fail "'#{epw_path}' could not be found."
+      end
 
-    cache_path = epw_path.gsub('.epw', '-cache.csv')
-    if not File.exist?(cache_path)
-      runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
+      cache_path = epw_path.gsub('.epw', '-cache.csv')
+      if not File.exist?(cache_path)
+        runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
+        return false
+      end
+
+      # Obtain weather object
+      weather = WeatherProcess.new(nil, nil, cache_path)
+
+      # Apply 301 ruleset on HPXML object
+      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather)
+
+      # Write new HPXML file
+      if hpxml_output_path.is_initialized
+        XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
+        runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
+      end
+    rescue Exception => e
+      runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
       return false
-    end
-
-    # Obtain weather object
-    weather = WeatherProcess.new(nil, nil, cache_path)
-
-    # Apply 301 ruleset on HPXML object
-    @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather)
-
-    # Write new HPXML file
-    if hpxml_output_path.is_initialized
-      XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
-      runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
     end
 
     return true
