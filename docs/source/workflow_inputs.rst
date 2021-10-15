@@ -384,13 +384,15 @@ Other walls (e.g., wood framed walls) that are connected to a below-grade space 
 
 If insulation layers are provided, additional information is entered in each ``FoundationWall/Insulation/Layer``.
 
-  ==========================================  ========  ============  ==================================  ========  =======  =====================================================================
-  Element                                     Type      Units         Constraints                         Required  Default  Notes
-  ==========================================  ========  ============  ==================================  ========  =======  =====================================================================
-  ``NominalRValue``                           double    F-ft2-hr/Btu  >= 0                                Yes                R-value of the foundation wall insulation; use zero if no insulation
-  ``extension/DistanceToTopOfInsulation``     double    ft            >= 0                                Yes                Vertical distance from top of foundation wall to top of insulation
-  ``extension/DistanceToBottomOfInsulation``  double    ft            DistanceToTopOfInsulation - Height  Yes                Vertical distance from top of foundation wall to bottom of insulation
-  ==========================================  ========  ============  ==================================  ========  =======  =====================================================================
+  ==========================================  ========  ============  ===========  ========  =======  =====================================================================
+  Element                                     Type      Units         Constraints  Required  Default  Notes
+  ==========================================  ========  ============  ===========  ========  =======  =====================================================================
+  ``NominalRValue``                           double    F-ft2-hr/Btu  >= 0         Yes                R-value of the foundation wall insulation; use zero if no insulation
+  ``extension/DistanceToTopOfInsulation``     double    ft            >= 0         Yes                Vertical distance from top of foundation wall to top of insulation
+  ``extension/DistanceToBottomOfInsulation``  double    ft            See [#]_     Yes                Vertical distance from top of foundation wall to bottom of insulation
+  ==========================================  ========  ============  ===========  ========  =======  =====================================================================
+
+  .. [#] When NominalRValue is non-zero, DistanceToBottomOfInsulation must be greater than DistanceToTopOfInsulation and less than or equal to FoundationWall/Height.
 
 HPXML Frame Floors
 ******************
@@ -486,15 +488,16 @@ Each window or glass door area is entered as an ``/HPXML/Building/BuildingDetail
 
 If overhangs are specified, additional information is entered in ``Overhangs``.
 
-  ============================  ========  ======  =======================  ========  =======  ========================================================
-  Element                       Type      Units   Constraints              Required  Default  Notes
-  ============================  ========  ======  =======================  ========  =======  ========================================================
-  ``Depth``                     double    inches  >= 0                     Yes                Depth of overhang
-  ``DistanceToTopOfWindow``     double    ft      >= 0                     Yes                Vertical distance from overhang to top of window
-  ``DistanceToBottomOfWindow``  double    ft      > DistanceToTopOfWindow  Yes                Vertical distance from overhang to bottom of window [#]_
-  ============================  ========  ======  =======================  ========  =======  ========================================================
+  ============================  ========  ======  ===========  ========  =======  ========================================================
+  Element                       Type      Units   Constraints  Required  Default  Notes
+  ============================  ========  ======  ===========  ========  =======  ========================================================
+  ``Depth``                     double    inches  >= 0         Yes                Depth of overhang
+  ``DistanceToTopOfWindow``     double    ft      >= 0         Yes                Vertical distance from overhang to top of window
+  ``DistanceToBottomOfWindow``  double    ft      See [#]_     Yes                Vertical distance from overhang to bottom of window [#]_
+  ============================  ========  ======  ===========  ========  =======  ========================================================
 
   .. [#] The difference between DistanceToBottomOfWindow and DistanceToTopOfWindow defines the height of the window.
+  .. [#] When Depth is non-zero, DistanceToBottomOfWindow must be greater than DistanceToTopOfWindow.
 
 HPXML Skylights
 ***************

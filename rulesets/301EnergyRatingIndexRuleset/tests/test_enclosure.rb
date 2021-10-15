@@ -707,7 +707,7 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
     _check_overhangs(hpxml, [{ depth: 2.5, top: 0, bottom: 4 },
                              { depth: 1.5, top: 2, bottom: 6 },
-                             { depth: 0.0, top: 1, bottom: 5 },
+                             { depth: 0.0, top: 0, bottom: 0 },
                              { depth: 1.5, top: 2, bottom: 7 }])
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_overhangs(hpxml)
