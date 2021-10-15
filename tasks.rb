@@ -1706,15 +1706,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.92)
   elsif hpxml_file.include?('EPA_Tests')
-    if hpxml_file.include?('EPA_Tests/MF')
-      location = HPXML::LocationLivingSpace
-    elsif hpxml_file.include?('slab')
-      location = HPXML::LocationAtticVented
-    elsif hpxml_file.include?('vented_crawl')
-      location = HPXML::LocationCrawlspaceVented
-    elsif hpxml_file.include?('cond_bsmt')
-      location = HPXML::LocationBasementConditioned
-    end
     hpxml.water_heating_systems.clear
     if hpxml_file.include?('_gas_')
       if hpxml_file.include?('EPA_Tests/MF')
@@ -1726,7 +1717,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                       is_shared_system: false,
                                       fuel_type: HPXML::FuelTypeNaturalGas,
                                       water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                      location: location,
+                                      location: HPXML::LocationLivingSpace,
                                       tank_volume: 40,
                                       fraction_dhw_load_served: 1,
                                       energy_factor: energy_factor,
@@ -1741,7 +1732,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                       is_shared_system: false,
                                       fuel_type: HPXML::FuelTypeElectricity,
                                       water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                      location: location,
+                                      location: HPXML::LocationLivingSpace,
                                       tank_volume: 40,
                                       fraction_dhw_load_served: 1,
                                       energy_factor: energy_factor)
