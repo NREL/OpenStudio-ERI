@@ -1,10 +1,10 @@
 [Version] XML,Reference Home ERI,Rated Home ERI
-[MF_National_1.0] MFNCv1_CZ2_FL_gas_ground_corner_slab.xml,66.37,66.37
-[MF_National_1.0] MFNCv1_CZ4_MO_gas_top_corner.xml,72.75,72.75
+[MF_National_1.0] MFNCv1_CZ2_FL_gas_ground_corner_slab.xml,66.9,66.9
+[MF_National_1.0] MFNCv1_CZ4_MO_gas_top_corner.xml,72.63,72.63
 [MF_National_1.0] MFNCv1_CZ6_VT_elec_middle_interior.xml,67.62,67.62
 [MF_National_1.1] MFNCv11_CZ2_FL_elec_top_corner.xml,60.19,60.19
 [MF_National_1.1] MFNCv11_CZ4_MO_elec_ground_corner_vented_crawl.xml,61.09,61.09
-[MF_National_1.1] MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml,58.83,58.83
+[MF_National_1.1] MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml,58.62,58.62
 [SF_National_3.0] SFNHv3_CZ2_FL_gas_slab.xml,74.21,74.21
 [SF_National_3.0] SFNHv3_CZ4_MO_gas_vented_crawl.xml,79.77,79.77
 [SF_National_3.0] SFNHv3_CZ6_VT_elec_cond_bsmt.xml,70.23,70.23
