@@ -556,9 +556,10 @@ Each heating system (other than a heat pump) is entered as an ``/HPXML/Building/
   ``FractionHeatLoadServed``         double    frac    0 - 1 [#]_   Yes                  Fraction of heating load served
   =================================  ========  ======  ===========  ========  =========  ===============================
 
-  .. [#] HeatingSystemType child element choices are ``ElectricResistance``, ``Furnace``, ``WallFurnace``, ``FloorFurnace``, ``Boiler``, ``Stove``, ``PortableHeater``, ``FixedHeater``, or ``Fireplace``.
+  .. [#] HeatingSystemType child element choices are ``ElectricResistance``, ``Furnace``, ``WallFurnace``, ``FloorFurnace``, ``Boiler``, ``Stove``, ``PortableHeater``, ``FixedHeater``, ``Fireplace``, or ``PackagedTerminalAirConditionerHeating``.
   .. [#] HeatingSystemFuel choices are  "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
          For ``ElectricResistance``, "electricity" is required.
+         For ``PackagedTerminalAirConditionerHeating``, "electricity" is currently the only choice.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
 
 Electric Resistance
@@ -690,6 +691,19 @@ If a fireplace is specified, additional information is entered in ``HeatingSyste
   ``extension/FanPowerWatts``                         double  W      >= 0         No        0          Fan power
   ==================================================  ======  =====  ===========  ========  =========  ===================
 
+PTAC Heating
+~~~~~~~~~~~~
+
+If a PTAC with non-heat pump (e.g., electric resistance) heating is specified, additional information is entered in ``HeatingSystem``.
+
+  ==================================================  ======  =========  ===========  ========  =======  ==================================
+  Element                                             Type    Units      Constraints  Required  Default  Notes
+  ==================================================  ======  =========  ===========  ========  =======  ==================================
+  ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac       0 - 1        No        1.0      Efficiency
+  ==================================================  ======  =========  ===========  ========  =======  ==================================
+
+  .. [#] A cooling system of type "packaged terminal air conditioner" must be specified in ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem``.
+
 .. _hvac_cooling:
 
 HPXML Cooling Systems
@@ -706,7 +720,7 @@ Each cooling system (other than a heat pump) is entered as an ``/HPXML/Building/
   ``FractionCoolLoadServed``  double    frac    0 - 1 [#]_   Yes                Fraction of cooling load served
   ==========================  ========  ======  ===========  ========  =======  ===============================
 
-  .. [#] CoolingSystemType choices are "central air conditioner", "room air conditioner", "evaporative cooler", "mini-split", "chiller", or "cooling tower".
+  .. [#] CoolingSystemType choices are "central air conditioner", "room air conditioner", "evaporative cooler", "mini-split", "chiller", "cooling tower", or "packaged terminal air conditioner".
   .. [#] CoolingSystemFuel only choice is "electricity".
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
 
@@ -756,6 +770,19 @@ If a room air conditioner is specified, additional information is entered in ``C
   ``CoolingCapacity``                                             double    Btu/hr  >= 0         Yes                  Cooling output capacity
   ``SensibleHeatFraction``                                        double    frac    0 - 1        No                   Sensible heat fraction
   ==============================================================  ========  ======  ===========  ========  =========  ======================
+
+Packaged Terminal Air Conditioner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If a PTAC is specified, additional information is entered in ``CoolingSystem``.
+
+  ===================================================================  =================  ===========  ===============  ========  =========  ==================================
+  Element                                                              Type               Units        Constraints      Required  Default    Notes
+  ===================================================================  =================  ===========  ===============  ========  =========  ==================================
+  ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``       integer or double  # or Btu/Wh  > 1600 or > 0    Yes                  Rated cooling efficiency
+  ``CoolingCapacity``                                                  double             Btu/hr       >= 0             Yes                  Cooling output capacity
+  ``SensibleHeatFraction``                                             double             frac         0 - 1            No                   Sensible heat fraction
+  ===================================================================  =================  ===========  ===============  ========  =========  ==================================
 
 Evaporative Cooler
 ~~~~~~~~~~~~~~~~~~
@@ -861,7 +888,7 @@ Each heat pump is entered as an ``/HPXML/Building/BuildingDetails/Systems/HVAC/H
   ``BackupSystemFuel``               string            See [#]_     No                   Fuel type of backup heating, if present
   =================================  ========  ======  ===========  ========  =========  ===============================================
 
-  .. [#] HeatPumpType choices are "air-to-air", "mini-split", "ground-to-air", or "water-loop-to-air".
+  .. [#] HeatPumpType choices are "air-to-air", "mini-split", "ground-to-air", "water-loop-to-air", or "packaged terminal heat pump".
   .. [#] HeatPumpFuel only choice is "electricity".
   .. [#] BackupSystemFuel choices are "electricity", "natural gas", "fuel oil", "propane", "wood", or "wood pellets".
 
@@ -954,6 +981,26 @@ If a mini-split heat pump is specified, additional information is entered in ``H
 
   HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
+
+Packaged Terminal Heat Pump
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If a packaged terminal heat pump is specified, additional information is entered in ``HeatPump``.
+
+  ===============================================================  ========  ======  ===========  ========  =========  ==============================================
+  Element                                                          Type      Units   Constraints  Required  Default    Notes
+  ===============================================================  ========  ======  ===========  ========  =========  ==============================================
+  ``HeatingCapacity``                                              double    Btu/hr  >= 0         Yes                  Heating output capacity (excluding any backup heating)
+  ``CoolingCapacity``                                              double    Btu/hr  >= 0         Yes                  Cooling output capacity
+  ``CoolingSensibleHeatFraction``                                  double    frac    0 - 1        No                   Sensible heat fraction
+  ``FractionHeatLoadServed``                                       double    frac    0 - 1 [#]_   Yes                  Fraction of heating load served
+  ``FractionCoolLoadServed``                                       double    frac    0 - 1 [#]_   Yes                  Fraction of cooling load served
+  ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``   double    Btu/Wh  > 0          Yes                  Rated cooling efficiency
+  ``AnnualHeatingEfficiency[Units="COP"]/Value``                   double    Btu/Wh  > 0          Yes                  Rated heating efficiency
+  ===============================================================  ========  ======  ===========  ========  =========  ==============================================
+
+  .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
+  .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
 
 Ground-to-Air Heat Pump
 ~~~~~~~~~~~~~~~~~~~~~~~
