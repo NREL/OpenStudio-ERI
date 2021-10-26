@@ -78,7 +78,7 @@
 [SF_National_3.1] base-foundation-unconditioned-basement-assembly-r.xml,67.0,1.0,67.0,69.0,69.0,FAIL
 [SF_National_3.1] base-foundation-unconditioned-basement-wall-insulation.xml,67.0,1.0,67.0,74.0,74.0,FAIL
 [SF_National_3.1] base-foundation-unconditioned-basement.xml,67.0,1.0,67.0,72.0,72.0,FAIL
-[SF_National_3.1] base-foundation-unvented-crawlspace.xml,68.0,1.0,68.0,69.0,69.0,FAIL
+[SF_National_3.1] base-foundation-unvented-crawlspace.xml,68.0,1.0,68.0,68.0,68.0,PASS
 [SF_National_3.1] base-foundation-vented-crawlspace.xml,68.0,1.0,68.0,74.0,74.0,FAIL
 [SF_National_3.1] base-foundation-walkout-basement.xml,67.0,1.0,67.0,80.0,80.0,FAIL
 [SF_National_3.1] base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml,75.0,1.0,75.0,81.0,81.0,FAIL
@@ -116,10 +116,13 @@
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ducted-heating-only.xml,70.0,1.0,70.0,72.0,72.0,FAIL
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ducted.xml,67.0,1.0,67.0,67.0,67.0,PASS
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ductless.xml,67.0,1.0,67.0,62.0,62.0,PASS
-[SF_National_3.1] base-hvac-multiple.xml,69.0,1.0,69.0,110.0,110.0,FAIL
+[SF_National_3.1] base-hvac-multiple.xml,69.0,1.0,69.0,112.0,112.0,FAIL
 [SF_National_3.1] base-hvac-none.xml,79.0,1.0,79.0,83.0,83.0,FAIL
 [SF_National_3.1] base-hvac-portable-heater-gas-only.xml,69.0,1.0,69.0,70.0,70.0,FAIL
 [SF_National_3.1] base-hvac-programmable-thermostat.xml,67.0,1.0,67.0,76.0,76.0,FAIL
+[SF_National_3.1] base-hvac-ptac-with-heating.xml,68.0,1.0,68.0,89.0,89.0,FAIL
+[SF_National_3.1] base-hvac-ptac.xml,77.0,1.0,77.0,79.0,79.0,FAIL
+[SF_National_3.1] base-hvac-pthp.xml,67.0,1.0,67.0,67.0,67.0,PASS
 [SF_National_3.1] base-hvac-room-ac-only-ceer.xml,77.0,1.0,77.0,81.0,81.0,FAIL
 [SF_National_3.1] base-hvac-room-ac-only.xml,77.0,1.0,77.0,81.0,81.0,FAIL
 [SF_National_3.1] base-hvac-stove-wood-pellets-only.xml,69.0,1.0,69.0,76.0,76.0,FAIL
