@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.3.0 (Pending)
 
 __New Features__
-- Updates to OpenStudio 3.2.1/EnergyPlus 9.5.0.
+- Updates to OpenStudio 3.3.0/EnergyPlus 9.6.0.
 - **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeDefectRatio` are no longer accepted.
 - **Breaking change**: Replaces "Unmet Load" outputs with "Unmet Hours".
 - **Breaking change**: Renames "Load: Heating" and "Peak Load: Heating" (and Cooling) outputs to include "Delivered".
@@ -12,6 +12,7 @@ __New Features__
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
 - Introduces a small amount of infiltration for unvented spaces.
 - `ConditionedBuildingVolume` input is no longer needed.
+- Improves consistency of installation quality calculations for two/variable-speed air source heat pumps and ground source heat pumps.
 
 __Bugfixes__
 - Improves ground reflectance for window interior shading.

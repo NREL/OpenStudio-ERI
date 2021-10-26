@@ -12,7 +12,7 @@ OpenStudio-ERI documentation
 
    intro
    capabilities
-   getting_started
+   usage_instructions
    workflow_inputs
    workflow_outputs
    testing_framework
