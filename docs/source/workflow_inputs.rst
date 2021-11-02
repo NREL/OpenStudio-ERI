@@ -83,16 +83,15 @@ High-level building summary information is entered in ``/HPXML/Building/Building
 HPXML Site
 **********
 
-Site information is entered in ``/HPXML/Building/Site``.
+If running ENERGY STAR calculations (i.e., if ``/HPXML/SoftwareInfo/extension/EnergyStarCalculation`` is provided), site information is entered in ``/HPXML/Building/Site``.
 
   =====================  ========  =======  ===========  ========  =======  ============================
   Element                Type      Units    Constraints  Required  Default  Description
   =====================  ========  =======  ===========  ========  =======  ============================
   ``SiteID``             id                              Yes                Unique identifier
-  ``Address/StateCode``  string             See [#]_     See [#]_           State/territory where the home is located
+  ``Address/StateCode``  string             See [#]_     Yes                State/territory where the home is located
   =====================  ========  =======  ===========  ========  =======  ============================
 
-  .. [#] StateCode only required for ENERGY STAR calculations (i.e., if ``/HPXML/SoftwareInfo/extension/EnergyStarCalculation`` is provided).
   .. [#] StateCode choices are only used for the ENERGY STAR calculation and depend on the ENERGY STAR version:
          
          - **National**: AA, AE, AK, AL, AP, AR, AS, AZ, CA, CO, CT, DC, DE, FL, FM, GA, GU, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MH, MI, MN, MO, MP, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, PR, PW, RI, SC, SD, TN, TX, UT, VA, VI, VT, WA, WI, WV, WY

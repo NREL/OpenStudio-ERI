@@ -733,8 +733,7 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-location-capetown-zaf.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 4.4 },
-                                             180 => { area: 40, rvalue: 4.4 } })
+    _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 1.54 } })
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
