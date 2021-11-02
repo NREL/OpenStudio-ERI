@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <measure>
   <schema_version>3.0</schema_version>
+  <error>Unable to extract OpenStudio::Measure::OSMeasure object from /mnt/c/git/openstudio-eri/rulesets/EnergyStarRuleset/measure.rb. The script should contain a class that derives from OpenStudio::Measure::OSMeasure and should close with a line stating the class name followed by .new.registerWithApplication.</error>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>d2e3f455-e2b0-4ea7-abad-fe1c5303e1b2</version_id>
-  <version_modified>20211025T235409Z</version_modified>
+  <version_id>4d48f691-ccad-46bd-9842-fdb7d252de72</version_id>
+  <version_modified>20211102T005917Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -14,7 +15,9 @@
     <argument>
       <name>calc_type</name>
       <display_name>Calculation Type</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>ES Reference</default_value>
@@ -28,22 +31,32 @@
           <display_name>ES Reference</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>hpxml_input_path</name>
       <display_name>HPXML Input File Path</display_name>
       <description>Absolute (or relative) path of the input HPXML file.</description>
       <type>String</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value></default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>hpxml_output_path</name>
       <display_name>HPXML Output File Path</display_name>
       <description>Absolute (or relative) path of the output HPXML file.</description>
       <type>String</type>
+      <units></units>
       <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value></default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
   </arguments>
   <outputs />
@@ -167,22 +180,22 @@
       <checksum>95EC34B2</checksum>
     </file>
     <file>
+      <filename>test_es_hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>FAA6BDC2</checksum>
+    </file>
+    <file>
       <filename>EnergyStarRuleset.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>38EDD34F</checksum>
+      <checksum>5CDED364</checksum>
     </file>
     <file>
       <filename>test_es_enclosure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>0C378151</checksum>
-    </file>
-    <file>
-      <filename>test_es_hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>FAA6BDC2</checksum>
+      <checksum>5E838091</checksum>
     </file>
   </files>
 </measure>

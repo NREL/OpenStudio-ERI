@@ -2169,6 +2169,7 @@ def create_sample_hpxmls
                   'base-hvac-wall-furnace-elec-only.xml',
                   'base-lighting-ceiling-fans.xml',
                   'base-location-baltimore-md.xml',
+                  'base-location-capetown-zaf.xml',
                   'base-location-dallas-tx.xml',
                   'base-location-duluth-mn.xml',
                   'base-location-helena-mt.xml',

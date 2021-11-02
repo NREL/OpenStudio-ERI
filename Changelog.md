@@ -9,6 +9,7 @@ __New Features__
 - Allows additional fuel types for generators.
 - Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
 - Allows CEER (Combined Energy Efficiency Ratio) efficiency unit for room AC.
+- Allows specifying the foundation wall type (e.g., solid concrete, concrete block, wood, etc.).
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
 - Introduces a small amount of infiltration for unvented spaces.
 - `ConditionedBuildingVolume` input is no longer needed.
@@ -20,6 +21,7 @@ __Bugfixes__
 - Fixes mechanical ventilation compartmentalization area calculation for SFA/MF homes with surfaces with InteriorAdjacentTo==ExteriorAdjacentTo.
 - Negative `DistanceToTopOfInsulation` values are now disallowed.
 - Fixes workflow errors if a `VentilationFan` has zero airflow rate or zero hours of operation.
+- Fixes heating/cooling seasons (used for e.g. summer vs winter window shading) for the southern hemisphere.
 
 ## OpenStudio-ERI v1.2.1
 

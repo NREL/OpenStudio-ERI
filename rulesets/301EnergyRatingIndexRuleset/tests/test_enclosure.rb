@@ -277,48 +277,48 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml, area: 1200, rvalue: 8.9, ins_bottom: 8, height: 8, depth_bg: 7)
+    _check_foundation_walls(hpxml, area: 1200, rvalue: 8.9, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7)
+    _check_foundation_walls(hpxml, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml, area: 277.12, height: 2)
+    _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml, area: 277.12, height: 2)
+    _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
 
     hpxml_name = 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml, area: 1200, rvalue: 18.9, ins_top: 1, ins_bottom: 16, height: 8, depth_bg: 7)
+    _check_foundation_walls(hpxml, area: 1200, rvalue: 18.9, ins_top: 1, ins_bottom: 16, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7)
+    _check_foundation_walls(hpxml, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml, area: 277.12, height: 2)
+    _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml, area: 277.12, height: 2)
+    _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
 
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7)
+    _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7)
+    _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_foundation_walls(hpxml, area: 277.12, height: 2)
+    _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_foundation_walls(hpxml, area: 277.12, height: 2)
+    _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
 
     hpxml_names = ['base-foundation-unvented-crawlspace.xml',
                    'base-foundation-vented-crawlspace.xml']
 
     hpxml_names.each do |hpxml_name|
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-      _check_foundation_walls(hpxml, area: 600, rvalue: 8.9, ins_bottom: 4, height: 4, depth_bg: 3)
+      _check_foundation_walls(hpxml, area: 600, rvalue: 8.9, ins_bottom: 4, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-      _check_foundation_walls(hpxml, area: 600, height: 4, depth_bg: 3)
+      _check_foundation_walls(hpxml, area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-      _check_foundation_walls(hpxml, area: 277.12, height: 2)
+      _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      _check_foundation_walls(hpxml, area: 277.12, height: 2)
+      _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
     end
   end
 
@@ -982,7 +982,7 @@ class ERIEnclosureTest < MiniTest::Test
     end
   end
 
-  def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0)
+  def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
     ins_top_x_area_values = [] # Area-weighted
@@ -1008,6 +1008,11 @@ class ERIEnclosureTest < MiniTest::Test
       end
       height_x_area_values << foundation_wall.height * foundation_wall.area
       depth_bg_x_area_values << foundation_wall.depth_below_grade * foundation_wall.area
+      if type.nil?
+        assert_nil(foundation_wall.type)
+      else
+        assert_equal(type, foundation_wall.type)
+      end
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.01)

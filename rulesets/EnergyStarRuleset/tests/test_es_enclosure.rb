@@ -241,9 +241,18 @@ class EnergyStarEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.360
       end
 
-      _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
-      _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7)
+      hpxml_names = ['base.xml',
+                     'base-foundation-conditioned-basement-wall-interior-insulation.xml']
+      hpxml_names.each do |hpxml_name|
+        _convert_to_es(hpxml_name, es_version)
+        hpxml = _test_measure()
+        if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
+          type = HPXML::FoundationWallTypeConcreteBlockFoamCore
+        else
+          type = nil
+        end
+        _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+      end
     end
 
     ESConstants.NationalVersions.each do |es_version|
@@ -253,14 +262,23 @@ class EnergyStarEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.360
       end
 
-      _convert_to_es('base.xml', es_version)
-      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
-      hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-      hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
-      _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7)
+      hpxml_names = ['base.xml',
+                     'base-foundation-conditioned-basement-wall-interior-insulation.xml']
+      hpxml_names.each do |hpxml_name|
+        _convert_to_es(hpxml_name, es_version)
+        hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+        hpxml.climate_and_risk_zones.iecc_zone = '1A'
+        hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+        hpxml.climate_and_risk_zones.weather_station_wmo = 722020
+        XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+        hpxml = _test_measure()
+        if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
+          type = HPXML::FoundationWallTypeConcreteBlockFoamCore
+        else
+          type = nil
+        end
+        _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+      end
     end
 
     ESConstants.AllVersions.each do |es_version|
@@ -741,7 +759,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
     end
   end
 
-  def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0)
+  def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
     ins_top_x_area_values = [] # Area-weighted
@@ -767,6 +785,11 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
       height_x_area_values << foundation_wall.height * foundation_wall.area
       depth_bg_x_area_values << foundation_wall.depth_below_grade * foundation_wall.area
+      if type.nil?
+        assert_nil(foundation_wall.type)
+      else
+        assert_equal(type, foundation_wall.type)
+      end
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.01)

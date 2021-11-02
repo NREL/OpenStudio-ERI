@@ -399,6 +399,7 @@ class EnergyStarRuleset
       new_hpxml.foundation_walls.add(id: orig_foundation_wall.id,
                                      exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
                                      interior_adjacent_to: orig_foundation_wall.interior_adjacent_to.gsub('unvented', 'vented'),
+                                     type: orig_foundation_wall.type,
                                      height: orig_foundation_wall.height,
                                      area: orig_foundation_wall.area,
                                      azimuth: orig_foundation_wall.azimuth,
