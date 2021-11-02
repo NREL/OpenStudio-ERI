@@ -11,7 +11,7 @@
       <sch:assert role='ERROR' test='count(h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_National_3.0" or text()="SF_National_3.1" or text()="SF_Pacific_3.0" or text()="SF_Florida_3.1" or text()="SF_OregonWashington_3.2" or text()="MF_National_1.0" or text()="MF_National_1.1" or text()="MF_OregonWashington_1.2"]) &lt;= 1'>Expected 0 or 1 element(s) for xpath: SoftwareInfo/extension/EnergyStarCalculation/Version["SF_National_3.0" or text()="SF_National_3.1" or text()="SF_Pacific_3.0" or text()="SF_Florida_3.1" or text()="SF_OregonWashington_3.2" or text()="MF_National_1.0" or text()="MF_National_1.1" or text()="MF_OregonWashington_1.2"]</sch:assert> <!-- Required if running ENERGY STAR calculation; See [EnergyStar=SFNational] or [EnergyStar=SFPacific] or [EnergyStar=SFFlorida] or [EnergyStar=SFOregonWashington] or [EnergyStar=MFNational] or [EnergyStar=MFOregonWashington] -->
       <sch:assert role='ERROR' test='count(h:Building) = 1'>Expected 1 element(s) for xpath: Building</sch:assert>
       <sch:assert role='ERROR' test='count(h:Building/h:BuildingID) = 1'>Expected 1 element(s) for xpath: Building/BuildingID</sch:assert>
-      <sch:assert role='ERROR' test='count(h:Building/h:Site) = 1'>Expected 1 element(s) for xpath: Building/Site]</sch:assert> <!-- See [Site] -->
+      <sch:assert role='ERROR' test='count(h:Building/h:Site) = 1'>Expected 1 element(s) for xpath: Building/Site]</sch:assert> <!-- See [Site] and [SiteForEnergyStar] -->
       <sch:assert role='ERROR' test='count(h:Building/h:ProjectStatus/h:EventType) = 1'>Expected 1 element(s) for xpath: Building/ProjectStatus/EventType</sch:assert>
       <sch:assert role='ERROR' test='count(h:Building/h:BuildingDetails) = 1'>Expected 1 element(s) for xpath: Building/BuildingDetails</sch:assert> <!-- See [BuildingDetails] -->
     </sch:rule>
@@ -77,6 +77,12 @@
     <sch:title>[Site]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:Site'>
       <sch:assert role='ERROR' test='count(h:SiteID) = 1'>Expected 1 element(s) for xpath: SiteID</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[SiteForEnergyStar]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:Site[//h:SoftwareInfo/h:extension/h:EnergyStarCalculation]'>
       <sch:assert role='ERROR' test='count(h:Address/h:StateCode[text()="AA" or text()="AE" or text()="AK" or text()="AL" or text()="AP" or text()="AR" or text()="AS" or text()="AZ" or text()="CA" or text()="CO" or text()="CT" or text()="DC" or text()="DE" or text()="FL" or text()="FM" or text()="GA" or text()="GU" or text()="HI" or text()="IA" or text()="ID" or text()="IL" or text()="IN" or text()="KS" or text()="KY" or text()="LA" or text()="MA" or text()="MD" or text()="ME" or text()="MH" or text()="MI" or text()="MN" or text()="MO" or text()="MP" or text()="MS" or text()="MT" or text()="NC" or text()="ND" or text()="NE" or text()="NH" or text()="NJ" or text()="NM" or text()="NV" or text()="NY" or text()="OH" or text()="OK" or text()="OR" or text()="PA" or text()="PR" or text()="PW" or text()="RI" or text()="SC" or text()="SD" or text()="TN" or text()="TX" or text()="UT" or text()="VA" or text()="VI" or text()="VT" or text()="WA" or text()="WI" or text()="WV" or text()="WY"]) = 1'>Expected 1 element(s) for xpath: Address/StateCode[text()="AA" or text()="AE" or text()="AK" or text()="AL" or text()="AP" or text()="AR" or text()="AS" or text()="AZ" or text()="CA" or text()="CO" or text()="CT" or text()="DC" or text()="DE" or text()="FL" or text()="FM" or text()="GA" or text()="GU" or text()="HI" or text()="IA" or text()="ID" or text()="IL" or text()="IN" or text()="KS" or text()="KY" or text()="LA" or text()="MA" or text()="MD" or text()="ME" or text()="MH" or text()="MI" or text()="MN" or text()="MO" or text()="MP" or text()="MS" or text()="MT" or text()="NC" or text()="ND" or text()="NE" or text()="NH" or text()="NJ" or text()="NM" or text()="NV" or text()="NY" or text()="OH" or text()="OK" or text()="OR" or text()="PA" or text()="PR" or text()="PW" or text()="RI" or text()="SC" or text()="SD" or text()="TN" or text()="TX" or text()="UT" or text()="VA" or text()="VI" or text()="VT" or text()="WA" or text()="WI" or text()="WV" or text()="WY"]</sch:assert>
     </sch:rule>
   </sch:pattern>
