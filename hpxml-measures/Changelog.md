@@ -34,6 +34,7 @@ __New Features__
 - Expands choices allowed for `Siding` (Wall/RimJoist) and `RoofType` (Roof) elements.
 - Allows "none" for wall/rim joist siding.
 - Allows interior finish inputs (e.g., 0.5" drywall) for walls, ceilings, and roofs.
+- Allows specifying the foundation wall type (e.g., solid concrete, concrete block, wood, etc.).
 - Allows additional fuel types for generators.
 - Switches to the EnergyPlus Fan:SystemModel object for all HVAC systems.
 - Introduces a small amount of infiltration for unvented spaces.
@@ -60,6 +61,7 @@ __Bugfixes__
 - Relaxes `Overhangs` DistanceToBottomOfWindow vs DistanceToBottomOfWindow validation when Depth is zero.
 - Fixes possibility of double-counting HVAC distribution losses if an `HVACDistribution` element has both AirDistribution properties and DSE values
 - Fixes possibility of incorrect "Peak Electricity: Winter Total (W)" and "Peak Electricity: Summer Total (W)" outputs for homes with duct losses.
+- Fixes heating/cooling seasons (used for e.g. summer vs winter window shading) for the southern hemisphere.
 
 ## OpenStudio-HPXML v1.2.0
 

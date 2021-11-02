@@ -307,6 +307,7 @@ def create_hpxmls
     'base-lighting-none.xml' => 'base.xml',
     'base-location-AMY-2012.xml' => 'base.xml',
     'base-location-baltimore-md.xml' => 'base-foundation-unvented-crawlspace.xml',
+    'base-location-capetown-zaf.xml' => 'base-foundation-vented-crawlspace.xml',
     'base-location-dallas-tx.xml' => 'base-foundation-slab.xml',
     'base-location-duluth-mn.xml' => 'base-foundation-unconditioned-basement.xml',
     'base-location-helena-mt.xml' => 'base.xml',
@@ -508,10 +509,11 @@ def set_measure_argument_values(hpxml_file, args)
     args['geometry_has_flue_or_chimney'] = Constants.Auto
     args['floor_over_foundation_assembly_r'] = 0
     args['floor_over_garage_assembly_r'] = 0
+    args['foundation_wall_type'] = Constants.Auto
+    args['foundation_wall_thickness'] = 8.0
     args['foundation_wall_insulation_r'] = 8.9
     args['foundation_wall_insulation_distance_to_top'] = 0.0
     args['foundation_wall_insulation_distance_to_bottom'] = 8.0
-    args['foundation_wall_thickness'] = 8.0
     args['rim_joist_assembly_r'] = 23.0
     args['slab_perimeter_insulation_r'] = 0
     args['slab_perimeter_depth'] = 0
@@ -829,10 +831,11 @@ def set_measure_argument_values(hpxml_file, args)
     args['geometry_has_flue_or_chimney'] = Constants.Auto
     args['floor_over_foundation_assembly_r'] = 14.15
     args['floor_over_garage_assembly_r'] = 0
+    args['foundation_wall_type'] = Constants.Auto
+    args['foundation_wall_thickness'] = 6.0
     args['foundation_wall_insulation_r'] = 0
     args['foundation_wall_insulation_distance_to_top'] = 0
     args['foundation_wall_insulation_distance_to_bottom'] = 0
-    args['foundation_wall_thickness'] = 6.0
     args['rim_joist_assembly_r'] = 5.01
     args['slab_perimeter_insulation_r'] = 0
     args['slab_perimeter_depth'] = 0
@@ -1645,6 +1648,7 @@ def set_measure_argument_values(hpxml_file, args)
     args['slab_under_insulation_r'] = 10
     args['slab_under_width'] = 4
   elsif ['base-foundation-conditioned-basement-wall-interior-insulation.xml'].include? hpxml_file
+    args['foundation_wall_type'] = HPXML::FoundationWallTypeConcreteBlockFoamCore
     args['foundation_wall_insulation_r'] = 18.9
     args['foundation_wall_insulation_distance_to_top'] = 1.0
   elsif ['base-foundation-slab.xml'].include? hpxml_file
@@ -2078,6 +2082,9 @@ def set_measure_argument_values(hpxml_file, args)
     args['heating_system_heating_capacity'] = 24000.0
   elsif ['base-location-portland-or.xml'].include? hpxml_file
     args['weather_station_epw_filepath'] = 'USA_OR_Portland.Intl.AP.726980_TMY3.epw'
+    args['heating_system_heating_capacity'] = 24000.0
+  elsif ['base-location-capetown-zaf.xml'].include? hpxml_file
+    args['weather_station_epw_filepath'] = 'ZAF_Cape.Town.688160_IWEC.epw'
     args['heating_system_heating_capacity'] = 24000.0
   end
 
