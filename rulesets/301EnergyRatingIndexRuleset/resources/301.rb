@@ -1229,6 +1229,7 @@ class EnergyRatingIndex301Ruleset
       end
       if orig_heat_pump.backup_heating_capacity.to_f == 0 && orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
         # Force some backup heating to prevent unmet loads
+        orig_heat_pump.backup_type = HPXML::HeatPumpBackupTypeIntegrated
         orig_heat_pump.backup_heating_fuel = HPXML::FuelTypeElectricity
         orig_heat_pump.backup_heating_efficiency_percent = 1.0
         orig_heat_pump.backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
@@ -1244,6 +1245,7 @@ class EnergyRatingIndex301Ruleset
                                heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
                                cooling_capacity: orig_heat_pump.cooling_capacity,
                                cooling_shr: orig_heat_pump.cooling_shr,
+                               backup_type: orig_heat_pump.backup_type,
                                backup_heating_fuel: orig_heat_pump.backup_heating_fuel,
                                backup_heating_capacity: orig_heat_pump.backup_heating_capacity,
                                backup_heating_efficiency_percent: orig_heat_pump.backup_heating_efficiency_percent,
@@ -2563,6 +2565,7 @@ class EnergyRatingIndex301Ruleset
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
       # Dual-fuel HP
       if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity
+        backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_fuel = orig_system.backup_heating_fuel
         backup_efficiency_afue = 0.78
         backup_capacity = -1
@@ -2572,6 +2575,7 @@ class EnergyRatingIndex301Ruleset
       end
     else
       # Normal heat pump
+      backup_type = HPXML::HeatPumpBackupTypeIntegrated
       backup_fuel = HPXML::FuelTypeElectricity
       backup_efficiency_percent = 1.0
       backup_capacity = -1
@@ -2588,6 +2592,7 @@ class EnergyRatingIndex301Ruleset
                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
                              cooling_capacity: -1, # Use auto-sizing
                              heating_capacity: -1, # Use auto-sizing
+                             backup_type: backup_type,
                              backup_heating_fuel: backup_fuel,
                              backup_heating_capacity: backup_capacity,
                              backup_heating_efficiency_percent: backup_efficiency_percent,

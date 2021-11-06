@@ -627,7 +627,7 @@ If a boiler is specified, additional information is entered in ``HeatingSystem``
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``                             double    frac    0 - 1        Yes                 Rated efficiency
   ==========================================================================  ========  ======  ===========  ========  ========  =========================================
 
-  .. [#] For in-unit boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or DSE.
+  .. [#] For in-unit boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", or "radiant ceiling") or DSE.
          For shared boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or AirDistribution (type: "fan coil").
          If the shared boiler has "water loop" distribution, a :ref:`hvac_heatpump_wlhp` must also be specified.
 
@@ -887,48 +887,51 @@ Each heat pump is entered as an ``/HPXML/Building/BuildingDetails/Systems/HVAC/H
   ``SystemIdentifier``               id                             Yes                  Unique identifier
   ``HeatPumpType``                   string            See [#]_     Yes                  Type of heat pump
   ``HeatPumpFuel``                   string            See [#]_     Yes                  Fuel type
-  ``BackupSystemFuel``               string            See [#]_     No                   Fuel type of backup heating, if present
+  ``BackupType``                     string            See [#]_     No        <none>     Type of backup heating
   =================================  ========  ======  ===========  ========  =========  ===============================================
 
   .. [#] HeatPumpType choices are "air-to-air", "mini-split", "ground-to-air", "water-loop-to-air", or "packaged terminal heat pump".
   .. [#] HeatPumpFuel only choice is "electricity".
-  .. [#] BackupSystemFuel choices are "electricity", "natural gas", "fuel oil", "propane", "wood", or "wood pellets".
+  .. [#] BackupType only choice is "integrated".
+         Use "integrated" if the heat pump's distribution system and blower fan power applies to the backup heating (e.g., built-in electric strip heat or an integrated backup furnace, i.e., a dual-fuel heat pump).
 
-If a backup system fuel is provided, additional information is entered in ``HeatPump``.
+If a backup type of "integrated" is provided, additional information is entered in ``HeatPump``.
 
   ========================================================================  ========  ======  ===========  ========  =========  ==========================================
   Element                                                                   Type      Units   Constraints  Required  Default    Notes
   ========================================================================  ========  ======  ===========  ========  =========  ==========================================
-  ``BackupAnnualHeatingEfficiency[Units="Percent" or Units="AFUE"]/Value``  double    frac    0 - 1        Yes                  Backup heating efficiency
-  ``BackupHeatingCapacity``                                                 double    Btu/hr  >= 0         Yes                  Backup heating output capacity
-  ``BackupHeatingSwitchoverTemperature``                                    double    F                    No        <none>     Backup heating switchover temperature [#]_
+  ``BackupSystemFuel``                                                      string            See [#]_     Yes                  Integrated backup heating fuel type
+  ``BackupAnnualHeatingEfficiency[Units="Percent" or Units="AFUE"]/Value``  double    frac    0 - 1        Yes                  Integrated backup heating efficiency
+  ``BackupHeatingCapacity``                                                 double    Btu/hr  >= 0         Yes                  Integrated backup heating output capacity
+  ``BackupHeatingSwitchoverTemperature``                                    double    F                    No        <none>     Integrated backup heating switchover temperature [#]_
   ========================================================================  ========  ======  ===========  ========  =========  ==========================================
 
-  .. [#] Provide BackupHeatingSwitchoverTemperature for, e.g., a dual-fuel heat pump, in which there is a discrete outdoor temperature when the heat pump stops operating and the backup heating system starts operating.
-         If not provided, the backup heating system will operate as needed when the heat pump has insufficient capacity.
+  .. [#] BackupSystemFuel choices are "electricity", "natural gas", "fuel oil", "propane", "wood", or "wood pellets".
+  .. [#] Provide BackupHeatingSwitchoverTemperature for a situation in which there is a discrete outdoor temperature when the heat pump stops operating and the backup heating system starts operating.
+         If not provided, the backup heating system will operate as needed for hours when the heat pump has insufficient capacity.
 
 Air-to-Air Heat Pump
 ~~~~~~~~~~~~~~~~~~~~
 
 If an air-to-air heat pump is specified, additional information is entered in ``HeatPump``.
 
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
-  Element                                          Type    Units   Constraints     Required  Default    Notes
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
-  ``DistributionSystem``                           idref           See [#]_        Yes                  ID of attached distribution system
-  ``CompressorType``                               string          See [#]_        No        See [#]_   Type of compressor
-  ``HeatingCapacity``                              double  Btu/hr  >= 0            Yes                  Heating output capacity (excluding any backup heating)
-  ``HeatingCapacity17F``                           double  Btu/hr  >= 0            No                   Heating output capacity at 17F, if available
-  ``CoolingCapacity``                              double  Btu/hr  >= 0            Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                  double  frac    0 - 1           No                   Sensible heat fraction
-  ``FractionHeatLoadServed``                       double  frac    0 - 1 [#]_      Yes                  Fraction of heating load served
-  ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_      Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0             Yes                  Rated cooling efficiency
-  ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0             Yes                  Rated heating efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0            Yes                  Fan power
-  ``extension/AirflowDefectRatio``                 double  frac    > -1            Yes                  Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
+  ===============================================  ======  ======  ========================  ========  =========  ================================================
+  Element                                          Type    Units   Constraints               Required  Default    Notes
+  ===============================================  ======  ======  ========================  ========  =========  ================================================
+  ``DistributionSystem``                           idref           See [#]_                  Yes                  ID of attached distribution system
+  ``CompressorType``                               string          See [#]_                  No        See [#]_   Type of compressor
+  ``HeatingCapacity``                              double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
+  ``HeatingCapacity17F``                           double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
+  ``CoolingCapacity``                              double  Btu/hr  >= 0                      Yes                  Cooling output capacity
+  ``CoolingSensibleHeatFraction``                  double  frac    0 - 1                     No                   Sensible heat fraction
+  ``FractionHeatLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
+  ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
+  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
+  ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power
+  ``extension/AirflowDefectRatio``                 double  frac    > -1                      Yes                  Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
+  ===============================================  ======  ======  ========================  ========  =========  ================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
@@ -952,22 +955,22 @@ Mini-Split Heat Pump
 
 If a mini-split heat pump is specified, additional information is entered in ``HeatPump``.
 
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
-  Element                                          Type    Units   Constraints     Required  Default    Notes
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
-  ``DistributionSystem``                           idref           See [#]_        No                   ID of attached distribution system, if present
-  ``HeatingCapacity``                              double  Btu/hr  >= 0            Yes                  Heating output capacity (excluding any backup heating)
-  ``HeatingCapacity17F``                           double  Btu/hr  >= 0            No                   Heating output capacity at 17F, if available
-  ``CoolingCapacity``                              double  Btu/hr  >= 0            Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                  double  frac    0 - 1           No                   Sensible heat fraction
-  ``FractionHeatLoadServed``                       double  frac    0 - 1 [#]_      Yes                  Fraction of heating load served
-  ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_      Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0             Yes                  Rated cooling efficiency
-  ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0             Yes                  Rated heating efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0            Yes                  Fan power
-  ``extension/AirflowDefectRatio``                 double  frac    > -1            Yes                  Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
+  ===============================================  ======  ======  ========================  ========  =========  ================================================
+  Element                                          Type    Units   Constraints               Required  Default    Notes
+  ===============================================  ======  ======  ========================  ========  =========  ================================================
+  ``DistributionSystem``                           idref           See [#]_                  No                   ID of attached distribution system, if present
+  ``HeatingCapacity``                              double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
+  ``HeatingCapacity17F``                           double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
+  ``CoolingCapacity``                              double  Btu/hr  >= 0                      Yes                  Cooling output capacity
+  ``CoolingSensibleHeatFraction``                  double  frac    0 - 1                     No                   Sensible heat fraction
+  ``FractionHeatLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
+  ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
+  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
+  ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power
+  ``extension/AirflowDefectRatio``                 double  frac    > -1                      Yes                  Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
+  ===============================================  ======  ======  ========================  ========  =========  ================================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.

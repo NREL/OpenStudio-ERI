@@ -1354,8 +1354,10 @@ class ERIHVACtest < MiniTest::Test
       if expected_values[:backup_eff].nil?
         assert_nil(heat_pump.backup_heating_efficiency_percent)
         assert_nil(heat_pump.backup_heating_efficiency_afue)
+        assert_nil(heat_pump.backup_type)
       else
         assert_equal(expected_values[:backup_eff], heat_pump.backup_heating_efficiency_percent.to_f + heat_pump.backup_heating_efficiency_afue.to_f)
+        assert_equal(HPXML::HeatPumpBackupTypeIntegrated, heat_pump.backup_type)
       end
       if expected_values[:backup_temp].nil?
         assert_nil(heat_pump.backup_heating_switchover_temp)
