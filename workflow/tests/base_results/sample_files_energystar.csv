@@ -82,7 +82,7 @@
 [SF_National_3.1] base-foundation-vented-crawlspace.xml,68.0,1.0,68.0,74.0,74.0,FAIL
 [SF_National_3.1] base-foundation-walkout-basement.xml,67.0,1.0,67.0,80.0,80.0,FAIL
 [SF_National_3.1] base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml,75.0,1.0,75.0,81.0,81.0,FAIL
-[SF_National_3.1] base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml,70.0,1.0,70.0,85.0,85.0,FAIL
+[SF_National_3.1] base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml,70.0,1.0,70.0,86.0,86.0,FAIL
 [SF_National_3.1] base-hvac-air-to-air-heat-pump-1-speed.xml,67.0,1.0,67.0,83.0,83.0,FAIL
 [SF_National_3.1] base-hvac-boiler-elec-only.xml,90.0,1.0,90.0,97.0,97.0,FAIL
 [SF_National_3.1] base-hvac-boiler-gas-only.xml,70.0,1.0,70.0,72.0,72.0,FAIL
@@ -91,7 +91,7 @@
 [SF_National_3.1] base-hvac-central-ac-only-1-speed.xml,77.0,1.0,77.0,84.0,84.0,FAIL
 [SF_National_3.1] base-hvac-dse.xml,67.0,1.0,67.0,78.0,78.0,FAIL
 [SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml,67.0,1.0,67.0,95.0,95.0,FAIL
-[SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml,67.0,1.0,67.0,80.0,80.0,FAIL
+[SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml,67.0,1.0,67.0,81.0,81.0,FAIL
 [SF_National_3.1] base-hvac-ducts-leakage-to-outside-exemption.xml,67.0,1.0,67.0,74.0,74.0,FAIL
 [SF_National_3.1] base-hvac-ducts-leakage-total.xml,67.0,1.0,67.0,76.0,76.0,FAIL
 [SF_National_3.1] base-hvac-elec-resistance-only.xml,70.0,1.0,70.0,93.0,93.0,FAIL
@@ -114,7 +114,7 @@
 [SF_National_3.1] base-hvac-mini-split-air-conditioner-only-ductless.xml,77.0,1.0,77.0,76.0,76.0,PASS
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ducted-cooling-only.xml,75.0,1.0,75.0,78.0,78.0,FAIL
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ducted-heating-only.xml,70.0,1.0,70.0,73.0,73.0,FAIL
-[SF_National_3.1] base-hvac-mini-split-heat-pump-ducted.xml,67.0,1.0,67.0,68.0,68.0,FAIL
+[SF_National_3.1] base-hvac-mini-split-heat-pump-ducted.xml,67.0,1.0,67.0,69.0,69.0,FAIL
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ductless.xml,67.0,1.0,67.0,62.0,62.0,PASS
 [SF_National_3.1] base-hvac-multiple.xml,69.0,1.0,69.0,110.0,110.0,FAIL
 [SF_National_3.1] base-hvac-none.xml,79.0,1.0,79.0,83.0,83.0,FAIL
