@@ -2583,13 +2583,13 @@ if ARGV[0].to_sym == :create_release_zips
     end
   end
   files = ['hpxml-measures/HPXMLtoOpenStudio/measure.*',
-           'hpxml-measures/HPXMLtoOpenStudio/resources/*.*',
+           'hpxml-measures/HPXMLtoOpenStudio/resources/**/*.*',
            'hpxml-measures/ReportSimulationOutput/measure.*',
-           'hpxml-measures/ReportSimulationOutput/resources/*.*',
+           'hpxml-measures/ReportSimulationOutput/resources/**/*.*',
            'rulesets/301EnergyRatingIndexRuleset/measure.*',
-           'rulesets/301EnergyRatingIndexRuleset/resources/*.*',
+           'rulesets/301EnergyRatingIndexRuleset/resources/**/*.*',
            'rulesets/EnergyStarRuleset/measure.*',
-           'rulesets/EnergyStarRuleset/resources/*.*',
+           'rulesets/EnergyStarRuleset/resources/**/*.*',
            'weather/*.*',
            'workflow/*.*',
            'workflow/sample_files/*.*',

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='3.0'>
+<HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='4.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2021-04-27T09:33:34-06:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2021-11-10T08:59:59-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
@@ -52,6 +52,11 @@
         </Site>
         <BuildingOccupancy>
           <NumberofResidents>3.0</NumberofResidents>
+          <extension>
+            <WeekdayScheduleFractions dataSource='software'>0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.053, 0.025, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.018, 0.033, 0.054, 0.054, 0.054, 0.061, 0.061, 0.061</WeekdayScheduleFractions>
+            <WeekendScheduleFractions dataSource='software'>0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.061, 0.053, 0.025, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.015, 0.018, 0.033, 0.054, 0.054, 0.054, 0.061, 0.061, 0.061</WeekendScheduleFractions>
+            <MonthlyScheduleMultipliers dataSource='software'>1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0</MonthlyScheduleMultipliers>
+          </extension>
         </BuildingOccupancy>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
@@ -61,7 +66,7 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <NumberofBathrooms dataSource='software'>2</NumberofBathrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
+          <ConditionedBuildingVolume dataSource='software'>21600.0</ConditionedBuildingVolume>
           <extension>
             <HasFlueOrChimney>false</HasFlueOrChimney>
           </extension>
@@ -74,7 +79,7 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Denver, CO</Name>
+          <Name>USA_CO_Denver.Intl.AP.725650_TMY3</Name>
           <extension>
             <EPWFilePath>USA_CO_Denver.Intl.AP.725650_TMY3.epw</EPWFilePath>
           </extension>
@@ -112,17 +117,20 @@
         </Attics>
         <Roofs>
           <Roof>
-            <SystemIdentifier id='Roof'/>
+            <SystemIdentifier id='Roof1'/>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
-            <Area>1510.0</Area>
+            <Area>1509.4</Area>
             <RoofType dataSource='software'>asphalt or fiberglass shingles</RoofType>
             <RoofColor dataSource='software'>light</RoofColor>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
+            <InteriorFinish>
+              <Type dataSource='software'>none</Type>
+            </InteriorFinish>
             <Pitch>6.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
-              <SystemIdentifier id='RoofInsulation'/>
+              <SystemIdentifier id='Roof1Insulation'/>
               <AssemblyEffectiveRValue>2.3</AssemblyEffectiveRValue>
             </Insulation>
           </Roof>
@@ -132,7 +140,7 @@
             <SystemIdentifier id='RimJoistAreaBasement'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
-            <Area>116.0</Area>
+            <Area>115.6</Area>
             <Siding dataSource='software'>wood siding</Siding>
             <Color dataSource='software'>medium</Color>
             <SolarAbsorptance>0.75</SolarAbsorptance>
@@ -156,90 +164,102 @@
             <Color dataSource='software'>medium</Color>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
+            <InteriorFinish>
+              <Type dataSource='software'>gypsum board</Type>
+              <Thickness dataSource='software'>0.5</Thickness>
+            </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='WallAreaInsulation'/>
               <AssemblyEffectiveRValue>16.667</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='WallAtticGable'/>
+            <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>290.0</Area>
+            <Area>225.0</Area>
             <Siding dataSource='software'>wood siding</Siding>
             <Color dataSource='software'>medium</Color>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
+            <InteriorFinish>
+              <Type dataSource='software'>none</Type>
+            </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='WallAtticGableInsulation'/>
+              <SystemIdentifier id='Wall2Insulation'/>
               <AssemblyEffectiveRValue>4.0</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
         </Walls>
         <FoundationWalls>
           <FoundationWall>
-            <SystemIdentifier id='FoundationWall'/>
+            <SystemIdentifier id='FoundationWall1'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
+            <Type dataSource='software'>solid concrete</Type>
             <Height>8.0</Height>
             <Area>1200.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
+            <InteriorFinish>
+              <Type dataSource='software'>gypsum board</Type>
+              <Thickness dataSource='software'>0.5</Thickness>
+            </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='FoundationWallInsulation'/>
+              <SystemIdentifier id='FoundationWall1Insulation'/>
               <Layer>
                 <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>0.0</NominalRValue>
-                <extension>
-                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                  <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
-                </extension>
+                <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
               </Layer>
               <Layer>
                 <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>10.0</NominalRValue>
-                <extension>
-                  <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                  <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
-                </extension>
+                <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
               </Layer>
             </Insulation>
           </FoundationWall>
         </FoundationWalls>
         <FrameFloors>
           <FrameFloor>
-            <SystemIdentifier id='FloorBelowAttic'/>
+            <SystemIdentifier id='FrameFloor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1350.0</Area>
+            <InteriorFinish>
+              <Type dataSource='software'>gypsum board</Type>
+              <Thickness dataSource='software'>0.5</Thickness>
+            </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='FloorBelowAtticInsulation'/>
+              <SystemIdentifier id='FrameFloor1Insulation'/>
               <AssemblyEffectiveRValue>33.333</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
         </FrameFloors>
         <Slabs>
           <Slab>
-            <SystemIdentifier id='Slab'/>
+            <SystemIdentifier id='Slab1'/>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Area>1350.0</Area>
             <Thickness>4.0</Thickness>
             <ExposedPerimeter>150.0</ExposedPerimeter>
-            <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
-            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
             <PerimeterInsulation>
-              <SystemIdentifier id='SlabPerimeterInsulation'/>
+              <SystemIdentifier id='Slab1PerimeterInsulation'/>
               <Layer>
                 <NominalRValue>0.0</NominalRValue>
+                <InsulationDepth>0.0</InsulationDepth>
               </Layer>
             </PerimeterInsulation>
             <UnderSlabInsulation>
-              <SystemIdentifier id='SlabUnderSlabInsulation'/>
+              <SystemIdentifier id='Slab1UnderSlabInsulation'/>
               <Layer>
                 <NominalRValue>0.0</NominalRValue>
+                <InsulationWidth>0.0</InsulationWidth>
               </Layer>
             </UnderSlabInsulation>
             <extension>
@@ -253,6 +273,7 @@
             <SystemIdentifier id='WindowAreaNorth'/>
             <Area>89.46</Area>
             <Azimuth>0</Azimuth>
+            <Orientation dataSource='software'>north</Orientation>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <ExteriorShading>
@@ -273,6 +294,7 @@
             <SystemIdentifier id='WindowAreaSouth'/>
             <Area>89.46</Area>
             <Azimuth>180</Azimuth>
+            <Orientation dataSource='software'>south</Orientation>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <ExteriorShading>
@@ -293,6 +315,7 @@
             <SystemIdentifier id='WindowAreaEast'/>
             <Area>89.46</Area>
             <Azimuth>90</Azimuth>
+            <Orientation dataSource='software'>east</Orientation>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <ExteriorShading>
@@ -313,6 +336,7 @@
             <SystemIdentifier id='WindowAreaWest'/>
             <Area>89.46</Area>
             <Azimuth>270</Azimuth>
+            <Orientation dataSource='software'>west</Orientation>
             <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <ExteriorShading>
@@ -336,9 +360,23 @@
             <AttachedToWall idref='WallArea'/>
             <Area>40.0</Area>
             <Azimuth>0</Azimuth>
+            <Orientation dataSource='software'>north</Orientation>
             <RValue>2.857</RValue>
           </Door>
         </Doors>
+        <extension>
+          <PartitionWallMass>
+            <AreaFraction dataSource='software'>1.0</AreaFraction>
+            <InteriorFinish>
+              <Type dataSource='software'>gypsum board</Type>
+              <Thickness dataSource='software'>0.5</Thickness>
+            </InteriorFinish>
+          </PartitionWallMass>
+          <FurnitureMass>
+            <AreaFraction dataSource='software'>0.4</AreaFraction>
+            <Type dataSource='software'>light-weight</Type>
+          </FurnitureMass>
+        </extension>
       </Enclosure>
       <Systems>
         <HVAC>
@@ -350,7 +388,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity dataSource='software'>33328.0</HeatingCapacity>
+              <HeatingCapacity dataSource='software'>33326.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.78</Value>
@@ -368,7 +406,7 @@
               <DistributionSystem idref='HVACDistributionDSE_2'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity dataSource='software'>15483.0</CoolingCapacity>
+              <CoolingCapacity dataSource='software'>15482.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
@@ -387,12 +425,12 @@
             <extension>
               <DesignLoads dataSource='software'>
                 <Heating>
-                  <Total>33328.0</Total>
+                  <Total>33326.0</Total>
                   <Ducts>0.0</Ducts>
                   <Windows>7915.0</Windows>
                   <Skylights>0.0</Skylights>
                   <Doors>885.0</Doors>
-                  <Walls>7122.0</Walls>
+                  <Walls>7120.0</Walls>
                   <Roofs>0.0</Roofs>
                   <Floors>0.0</Floors>
                   <Slabs>2446.0</Slabs>
@@ -405,7 +443,7 @@
                   <Windows>7352.0</Windows>
                   <Skylights>0.0</Skylights>
                   <Doors>319.0</Doors>
-                  <Walls>461.0</Walls>
+                  <Walls>460.0</Walls>
                   <Roofs>0.0</Roofs>
                   <Floors>0.0</Floors>
                   <Slabs>0.0</Slabs>
@@ -427,6 +465,18 @@
             <ControlType>manual thermostat</ControlType>
             <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
+            <HeatingSeason>
+              <BeginMonth dataSource='software'>1</BeginMonth>
+              <BeginDayOfMonth dataSource='software'>1</BeginDayOfMonth>
+              <EndMonth dataSource='software'>12</EndMonth>
+              <EndDayOfMonth dataSource='software'>31</EndDayOfMonth>
+            </HeatingSeason>
+            <CoolingSeason>
+              <BeginMonth dataSource='software'>1</BeginMonth>
+              <BeginDayOfMonth dataSource='software'>1</BeginDayOfMonth>
+              <EndMonth dataSource='software'>12</EndMonth>
+              <EndDayOfMonth dataSource='software'>31</EndDayOfMonth>
+            </CoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistributionDSE_1'/>
@@ -460,7 +510,7 @@
         </MechanicalVentilation>
         <WaterHeating>
           <WaterHeatingSystem>
-            <SystemIdentifier id='WaterHeater'/>
+            <SystemIdentifier id='WaterHeatingSystem1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
@@ -497,12 +547,15 @@
           </WaterFixture>
           <extension>
             <WaterFixturesUsageMultiplier dataSource='software'>1.0</WaterFixturesUsageMultiplier>
+            <WaterFixturesWeekdayScheduleFractions dataSource='software'>0.012, 0.006, 0.004, 0.005, 0.010, 0.034, 0.078, 0.087, 0.080, 0.067, 0.056, 0.047, 0.040, 0.035, 0.033, 0.031, 0.039, 0.051, 0.060, 0.060, 0.055, 0.048, 0.038, 0.026</WaterFixturesWeekdayScheduleFractions>
+            <WaterFixturesWeekendScheduleFractions dataSource='software'>0.012, 0.006, 0.004, 0.005, 0.010, 0.034, 0.078, 0.087, 0.080, 0.067, 0.056, 0.047, 0.040, 0.035, 0.033, 0.031, 0.039, 0.051, 0.060, 0.060, 0.055, 0.048, 0.038, 0.026</WaterFixturesWeekendScheduleFractions>
+            <WaterFixturesMonthlyScheduleMultipliers dataSource='software'>1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0</WaterFixturesMonthlyScheduleMultipliers>
           </extension>
         </WaterHeating>
       </Systems>
       <Appliances>
         <ClothesWasher>
-          <SystemIdentifier id='ClothesWasher'/>
+          <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
@@ -514,22 +567,28 @@
           <Capacity>3.0</Capacity>
           <extension>
             <UsageMultiplier dataSource='software'>1.0</UsageMultiplier>
+            <WeekdayScheduleFractions dataSource='software'>0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.052, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017</WeekdayScheduleFractions>
+            <WeekendScheduleFractions dataSource='software'>0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.052, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017</WeekendScheduleFractions>
+            <MonthlyScheduleMultipliers dataSource='software'>1.011, 1.002, 1.022, 1.020, 1.022, 0.996, 0.999, 0.999, 0.996, 0.964, 0.959, 1.011</MonthlyScheduleMultipliers>
           </extension>
         </ClothesWasher>
         <ClothesDryer>
-          <SystemIdentifier id='ClothesDryer'/>
+          <SystemIdentifier id='ClothesDryer1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
+          <Vented>true</Vented>
+          <VentedFlowRate>0.0</VentedFlowRate>
           <extension>
             <UsageMultiplier dataSource='software'>1.0</UsageMultiplier>
-            <IsVented>true</IsVented>
-            <VentedFlowRate>0.0</VentedFlowRate>
+            <WeekdayScheduleFractions dataSource='software'>0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024</WeekdayScheduleFractions>
+            <WeekendScheduleFractions dataSource='software'>0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.057, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024</WeekendScheduleFractions>
+            <MonthlyScheduleMultipliers dataSource='software'>1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0</MonthlyScheduleMultipliers>
           </extension>
         </ClothesDryer>
         <Dishwasher>
-          <SystemIdentifier id='Dishwasher'/>
+          <SystemIdentifier id='Dishwasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>467.0</RatedAnnualkWh>
@@ -540,10 +599,13 @@
           <LabelUsage>4.0</LabelUsage>
           <extension>
             <UsageMultiplier dataSource='software'>1.0</UsageMultiplier>
+            <WeekdayScheduleFractions dataSource='software'>0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031</WeekdayScheduleFractions>
+            <WeekendScheduleFractions dataSource='software'>0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031</WeekendScheduleFractions>
+            <MonthlyScheduleMultipliers dataSource='software'>1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097</MonthlyScheduleMultipliers>
           </extension>
         </Dishwasher>
         <Refrigerator>
-          <SystemIdentifier id='Refrigerator'/>
+          <SystemIdentifier id='Refrigerator1'/>
           <Location>living space</Location>
           <RatedAnnualkWh>691.0</RatedAnnualkWh>
           <PrimaryIndicator dataSource='software'>true</PrimaryIndicator>
@@ -555,7 +617,7 @@
           </extension>
         </Refrigerator>
         <CookingRange>
-          <SystemIdentifier id='Range'/>
+          <SystemIdentifier id='CookingRange1'/>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <IsInduction>false</IsInduction>
@@ -567,7 +629,7 @@
           </extension>
         </CookingRange>
         <Oven>
-          <SystemIdentifier id='Oven'/>
+          <SystemIdentifier id='Oven1'/>
           <IsConvection>false</IsConvection>
         </Oven>
       </Appliances>

@@ -1,4 +1,4 @@
-## OpenStudio-ERI v1.3.0 (Pending)
+## OpenStudio-ERI v1.3.0
 
 __New Features__
 - Updates to OpenStudio 3.3.0/EnergyPlus 9.6.0.
