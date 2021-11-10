@@ -29,6 +29,8 @@ __Bugfixes__
 - Negative `DistanceToTopOfInsulation` values are now disallowed.
 - Fixes workflow errors if a `VentilationFan` has zero airflow rate or zero hours of operation.
 - Fixes heating/cooling seasons (used for e.g. summer vs winter window shading) for the southern hemisphere.
+- Relaxes `Overhangs` DistanceToBottomOfWindow vs DistanceToBottomOfWindow validation when Depth is zero.
+- Fixes possibility of "Construction R-value ... does not match Assembly R-value" error.
 
 ## OpenStudio-ERI v1.2.1
 
