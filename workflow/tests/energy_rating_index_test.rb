@@ -105,6 +105,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
         # Create derivative files for ES testing
         hpxml = HPXML.new(hpxml_path: xml)
+        next if hpxml.header.state_code.nil? # Skip
+
         hpxml.header.energystar_calculation_version = program_version
         if program_version == ESConstants.MFOregonWashingtonVer1_2
           hpxml.header.state_code = 'OR'
@@ -149,15 +151,8 @@ class EnergyRatingIndexTest < Minitest::Test
     test_name = 'invalid_files'
 
     # Test against ERI workflow
-    expected_error_msgs = { 'invalid-epw-filepath.xml' => ["foo.epw' could not be found."],
-                            'dhw-frac-load-served.xml' => ['Expected FractionDHWLoadServed to sum to 1, but calculated sum is 1.15.'],
-                            'missing-elements.xml' => ['Expected 1 element(s) for xpath: NumberofConditionedFloors [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]',
-                                                       'Expected 1 element(s) for xpath: ConditionedFloorArea [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
-                            'hvac-frac-load-served.xml' => ['Expected FractionCoolLoadServed to sum to <= 1, but calculated sum is 1.2.',
-                                                            'Expected FractionHeatLoadServed to sum to <= 1, but calculated sum is 1.1.'],
-                            'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
-                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'],
-                            'enclosure-floor-area-exceeds-cfa.xml' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas. [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'] }
+    expected_error_msgs = { 'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
+                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
 
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next if xml.include? 'energy-star'
@@ -884,7 +879,7 @@ class EnergyRatingIndexTest < Minitest::Test
     update_args_hash(measures, measure_subdir, args)
 
     # Add reporting measure to workflow
-    measure_subdir = 'hpxml-measures/SimulationOutputReport'
+    measure_subdir = 'hpxml-measures/ReportSimulationOutput'
     args = {}
     args['timeseries_frequency'] = 'none'
     args['include_timeseries_fuel_consumptions'] = false
@@ -892,7 +887,6 @@ class EnergyRatingIndexTest < Minitest::Test
     args['include_timeseries_hot_water_uses'] = false
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
-    args['include_timeseries_unmet_loads'] = false
     args['include_timeseries_zone_temperatures'] = false
     args['include_timeseries_airflows'] = false
     args['include_timeseries_weather'] = false
@@ -932,8 +926,8 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _get_simulation_load_results(csv_path)
     results = _get_csv_results(csv_path)
-    htg_load = results['Load: Heating (MBtu)'].round(2)
-    clg_load = results['Load: Cooling (MBtu)'].round(2)
+    htg_load = results['Load: Heating: Delivered (MBtu)'].round(2)
+    clg_load = results['Load: Cooling: Delivered (MBtu)'].round(2)
 
     return htg_load, clg_load
   end
@@ -1831,7 +1825,7 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _get_dhw(hpxml)
-    has_uncond_bsmnt = hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
+    has_uncond_bsmnt = hpxml.has_location(HPXML::LocationBasementUnconditioned)
     cfa = hpxml.building_construction.conditioned_floor_area
     ncfl = hpxml.building_construction.number_of_conditioned_floors
     ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
@@ -2126,7 +2120,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # FL Delta cases
     assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :>, -24.54)
-    assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.47)
+    assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.44)
     assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :>, 16.65)
     assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :<, 18.12)
     assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-04']) / energy['L100AM-HW-02'] * 100, :>, 2.20)

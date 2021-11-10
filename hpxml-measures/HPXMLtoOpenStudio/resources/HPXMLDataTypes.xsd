@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hpxmlonline.com/2019/10" targetNamespace="http://hpxmlonline.com/2019/10" elementFormDefault="qualified" version="3.0">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hpxmlonline.com/2019/10" targetNamespace="http://hpxmlonline.com/2019/10" elementFormDefault="qualified" version="4.0">
 	<xs:simpleType name="DataSource">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="user"/>
@@ -57,7 +57,7 @@
 	</xs:complexType>
 	<xs:simpleType name="schemaVersionType">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="3.0"/>
+			<xs:enumeration value="4.0"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<!--Address Information Below-->
@@ -458,6 +458,9 @@
 	</xs:complexType>
 	<xs:simpleType name="IECCYear_simple">
 		<xs:restriction base="xs:integer">
+			<xs:enumeration value="2021"/>
+			<xs:enumeration value="2018"/>
+			<xs:enumeration value="2015"/>
 			<xs:enumeration value="2012"/>
 			<xs:enumeration value="2009"/>
 			<xs:enumeration value="2006"/>
@@ -1132,6 +1135,8 @@
 			<xs:enumeration value="concrete block"/>
 			<xs:enumeration value="concrete block foam core"/>
 			<xs:enumeration value="concrete block vermiculite core"/>
+			<xs:enumeration value="concrete block perlite core"/>
+			<xs:enumeration value="concrete block solid core"/>
 			<xs:enumeration value="double brick"/>
 			<xs:enumeration value="wood"/>
 		</xs:restriction>
@@ -1143,37 +1148,7 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:simpleType name="InteriorAdjacentTo_simple">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="attic"/>
-			<xs:enumeration value="attic - conditioned"/>
-			<xs:enumeration value="attic - unconditioned"/>
-			<xs:enumeration value="attic - unvented"/>
-			<xs:enumeration value="attic - vented"/>
-			<xs:enumeration value="basement"/>
-			<xs:enumeration value="basement - conditioned"/>
-			<xs:enumeration value="basement - unconditioned"/>
-			<xs:enumeration value="crawlspace"/>
-			<xs:enumeration value="crawlspace - conditioned"/>
-			<xs:enumeration value="crawlspace - unconditioned"/>
-			<xs:enumeration value="crawlspace - unvented"/>
-			<xs:enumeration value="crawlspace - vented"/>
-			<xs:enumeration value="garage"/>
-			<xs:enumeration value="garage - conditioned"/>
-			<xs:enumeration value="garage - unconditioned"/>
-			<xs:enumeration value="living space"/>
-			<xs:enumeration value="other"/>
-			<xs:enumeration value="unconditioned space"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:complexType name="InteriorAdjacentTo">
-		<xs:simpleContent>
-			<xs:extension base="InteriorAdjacentTo_simple">
-				<xs:attribute name="dataSource" type="DataSource"/>
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
-	<xs:simpleType name="ExteriorAdjacentTo_simple">
+	<xs:simpleType name="AdjacentTo_simple">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="attic"/>
 			<xs:enumeration value="attic - conditioned"/>
@@ -1192,6 +1167,7 @@
 			<xs:enumeration value="garage - conditioned"/>
 			<xs:enumeration value="garage - unconditioned"/>
 			<xs:enumeration value="ground"/>
+			<xs:enumeration value="living space"/>
 			<xs:enumeration value="other"/>
 			<xs:enumeration value="other heated space"/>
 			<xs:enumeration value="other housing unit"/>
@@ -1203,12 +1179,12 @@
 			<xs:enumeration value="unconditioned space"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="ExteriorAdjacentTo">
+	<xs:complexType name="AdjacentTo">
 		<xs:annotation>
 			<xs:documentation>DEPRECATION WARNING: Choices "other housing unit above" and "other housing unit below" will be deprecated in the future. Use Ceiling vs FrameFloor to describe whether "other housing unit" is above or below the given surface.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="ExteriorAdjacentTo_simple">
+			<xs:extension base="AdjacentTo_simple">
 				<xs:attribute name="dataSource" type="DataSource"/>
 			</xs:extension>
 		</xs:simpleContent>
@@ -1677,6 +1653,7 @@
 			<xs:enumeration value="double-pane"/>
 			<xs:enumeration value="triple-pane"/>
 			<xs:enumeration value="multi-layered"/>
+			<xs:enumeration value="glass block"/>
 			<xs:enumeration value="other"/>
 		</xs:restriction>
 	</xs:simpleType>
@@ -1847,6 +1824,7 @@
 	<xs:simpleType name="CoolingEfficiencyUnits_simple">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="SEER"/>
+			<xs:enumeration value="CEER"/>
 			<xs:enumeration value="EER"/>
 			<xs:enumeration value="COP"/>
 			<xs:enumeration value="kW/ton"/>
@@ -2914,6 +2892,9 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="air"/>
 			<xs:enumeration value="argon"/>
+			<xs:enumeration value="krypton"/>
+			<xs:enumeration value="xenon"/>
+			<xs:enumeration value="nitrogen"/>
 			<xs:enumeration value="other"/>
 		</xs:restriction>
 	</xs:simpleType>
@@ -2926,6 +2907,7 @@
 	</xs:complexType>
 	<xs:simpleType name="GlassType_simple">
 		<xs:restriction base="xs:string">
+			<xs:enumeration value="clear"/>
 			<xs:enumeration value="low-e"/>
 			<xs:enumeration value="tinted"/>
 			<xs:enumeration value="reflective"/>
@@ -3476,11 +3458,29 @@
 			<xs:enumeration value="composite shingle siding"/>
 			<xs:enumeration value="masonite siding"/>
 			<xs:enumeration value="other"/>
+			<xs:enumeration value="none"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="Siding">
 		<xs:simpleContent>
 			<xs:extension base="Siding_simple">
+				<xs:attribute name="dataSource" type="DataSource"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="InteriorFinish_simple">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="gypsum board"/>
+			<xs:enumeration value="gypsum composite board"/>
+			<xs:enumeration value="plaster"/>
+			<xs:enumeration value="wood"/>
+			<xs:enumeration value="other"/>
+			<xs:enumeration value="none"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="InteriorFinish">
+		<xs:simpleContent>
+			<xs:extension base="InteriorFinish_simple">
 				<xs:attribute name="dataSource" type="DataSource"/>
 			</xs:extension>
 		</xs:simpleContent>
@@ -4293,6 +4293,7 @@
 			<xs:enumeration value="platform"/>
 			<xs:enumeration value="balloon"/>
 			<xs:enumeration value="timber"/>
+			<xs:enumeration value="other"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="FramingType">
@@ -4325,6 +4326,21 @@
 	<xs:complexType name="MinutesPerDay">
 		<xs:simpleContent>
 			<xs:extension base="MinutesPerDay_simple">
+				<xs:attribute name="dataSource" type="DataSource"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="UsageBin_simple">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="very small"/>
+			<xs:enumeration value="low"/>
+			<xs:enumeration value="medium"/>
+			<xs:enumeration value="high"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="UsageBin">
+		<xs:simpleContent>
+			<xs:extension base="UsageBin_simple">
 				<xs:attribute name="dataSource" type="DataSource"/>
 			</xs:extension>
 		</xs:simpleContent>
@@ -4706,15 +4722,6 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:complexType name="Season">
-		<xs:sequence>
-			<xs:element maxOccurs="1" minOccurs="0" name="BeginMonth" type="Month"/>
-			<xs:element maxOccurs="1" minOccurs="0" name="BeginDayOfMonth" type="DayOfMonth"/>
-			<xs:element maxOccurs="1" minOccurs="0" name="EndMonth" type="Month"/>
-			<xs:element maxOccurs="1" minOccurs="0" name="EndDayOfMonth" type="DayOfMonth"/>
-		</xs:sequence>
-		<xs:attribute name="dataSource" type="DataSource"/>
-	</xs:complexType>
 	<xs:simpleType name="Month_simple">
 		<xs:restriction base="xs:integer">
 			<xs:minInclusive value="1"/>
@@ -4737,6 +4744,32 @@
 	<xs:complexType name="DayOfMonth">
 		<xs:simpleContent>
 			<xs:extension base="DayOfMonth_simple">
+				<xs:attribute name="dataSource" type="DataSource"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="StormLocation_simple">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="interior"/>
+			<xs:enumeration value="exterior"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="StormLocation">
+		<xs:simpleContent>
+			<xs:extension base="StormLocation_simple">
+				<xs:attribute name="dataSource" type="DataSource"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="BatteryCapacityUnits_simple">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="kWh"/>
+			<xs:enumeration value="Ah"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="BatteryCapacityUnits">
+		<xs:simpleContent>
+			<xs:extension base="BatteryCapacityUnits_simple">
 				<xs:attribute name="dataSource" type="DataSource"/>
 			</xs:extension>
 		</xs:simpleContent>

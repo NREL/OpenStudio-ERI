@@ -110,10 +110,10 @@ class EnergyStarRuleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
-    @has_cond_bsmnt = get_has_space_type(orig_hpxml, HPXML::LocationBasementConditioned)
-    @has_uncond_bsmnt = get_has_space_type(orig_hpxml, HPXML::LocationBasementUnconditioned)
-    @has_crawlspace = (get_has_space_type(orig_hpxml, HPXML::LocationCrawlspaceVented) || get_has_space_type(orig_hpxml, HPXML::LocationCrawlspaceUnvented))
-    @has_attic = (get_has_space_type(orig_hpxml, HPXML::LocationAtticVented) || get_has_space_type(orig_hpxml, HPXML::LocationAtticUnvented))
+    @has_cond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementConditioned)
+    @has_uncond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementUnconditioned)
+    @has_crawlspace = (orig_hpxml.has_location(HPXML::LocationCrawlspaceVented) || orig_hpxml.has_location(HPXML::LocationCrawlspaceUnvented))
+    @has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
     @has_auto_generated_attic = false
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
@@ -399,6 +399,7 @@ class EnergyStarRuleset
       new_hpxml.foundation_walls.add(id: orig_foundation_wall.id,
                                      exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
                                      interior_adjacent_to: orig_foundation_wall.interior_adjacent_to.gsub('unvented', 'vented'),
+                                     type: orig_foundation_wall.type,
                                      height: orig_foundation_wall.height,
                                      area: orig_foundation_wall.area,
                                      azimuth: orig_foundation_wall.azimuth,
@@ -761,7 +762,7 @@ class EnergyStarRuleset
   def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Whole-House Mechanical ventilation
     # mechanical vent fan cfm
-    q_tot = Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, nil)
+    q_tot = 0.01 * @cfa + 7.5 * (@nbeds + 1)
 
     # mechanical vent fan type
     fan_type = get_systems_mechanical_ventilation_default_fan_type()
@@ -1895,14 +1896,6 @@ class EnergyStarRuleset
     fail 'Unexpected case.'
   end
 
-  def self.get_has_space_type(hpxml, adjacent_to)
-    (hpxml.roofs + hpxml.rim_joists + hpxml.walls + hpxml.foundation_walls + hpxml.frame_floors + hpxml.slabs).each do |surface|
-      return true if surface.interior_adjacent_to == adjacent_to
-      return true if surface.exterior_adjacent_to == adjacent_to
-    end
-    return false
-  end
-
   def self.add_air_distribution(orig_hpxml, orig_system)
     i = 0
     while true
@@ -2066,6 +2059,7 @@ class EnergyStarRuleset
 
     if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
       heat_pump_backup_fuel = get_default_heat_pump_backup_fuel()
+      heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated unless heat_pump_backup_fuel.nil?
       heat_pump_backup_eff = 1.0 unless heat_pump_backup_fuel.nil?
       heating_capacity_17F = -1 if heating_capacity_17F.nil? # Use auto-sizing
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
@@ -2080,11 +2074,7 @@ class EnergyStarRuleset
     end
 
     if heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
-      if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
-        charge_defect_ratio = 0.0 # FIXME: Temporary until we can model -0.25 w/ EnergyPlus
-      else
-        charge_defect_ratio = -0.25
-      end
+      charge_defect_ratio = -0.25
       airflow_defect_ratio = -0.25
       fan_watts_per_cfm = 0.58
     end
@@ -2098,6 +2088,7 @@ class EnergyStarRuleset
                              cooling_capacity: cooling_capacity,
                              heating_capacity: heating_capacity,
                              heating_capacity_17F: heating_capacity_17F,
+                             backup_type: heat_pump_backup_type,
                              backup_heating_fuel: heat_pump_backup_fuel,
                              backup_heating_capacity: backup_heating_capacity,
                              backup_heating_efficiency_percent: heat_pump_backup_eff,

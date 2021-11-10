@@ -285,7 +285,6 @@ class EnergyStarHVACtest < MiniTest::Test
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
-      hvac_iq_values[:charge_defect_ratio] = 0 # FIXME: Temporary
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 30, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
@@ -338,7 +337,6 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
-      hvac_iq_values[:charge_defect_ratio] = 0 # FIXME: Temporary
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 30, **hvac_iq_values }])
@@ -409,6 +407,31 @@ class EnergyStarHVACtest < MiniTest::Test
     end
   end
 
+  def test_pthp
+    ESConstants.AllVersions.each do |es_version|
+      _convert_to_es('base-hvac-pthp.xml', es_version)
+      hpxml = _test_measure()
+      hvac_iq_values = get_default_hvac_iq_values(es_version)
+      _check_heating_system(hpxml)
+      _check_cooling_system(hpxml)
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.65, **hvac_iq_values }])
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationBasementConditioned }])
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? es_version
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+      elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? es_version
+        return_r = (es_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
+      end
+      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+    end
+  end
+
   def test_ground_source_heat_pump
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-ground-to-air-heat-pump.xml', es_version)
@@ -443,7 +466,6 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
-      hvac_iq_values[:charge_defect_ratio] = 0 # FIXME: Temporary
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_gshp_cop_cz7(es_version), eer: get_es_gshp_eer_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 30, **hvac_iq_values }])
@@ -540,8 +562,35 @@ class EnergyStarHVACtest < MiniTest::Test
   end
 
   def test_room_air_conditioner
+    ['base-hvac-room-ac-only.xml', 'base-hvac-room-ac-only-ceer.xml'].each do |hpxml_name|
+      ESConstants.AllVersions.each do |es_version|
+        _convert_to_es(hpxml_name, es_version)
+        hpxml = _test_measure()
+        hvac_iq_values = get_default_hvac_iq_values(es_version)
+        _check_heating_system(hpxml)
+        _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
+        _check_heat_pump(hpxml)
+        _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+        if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationBasementConditioned }])
+        elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? es_version
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? es_version
+          return_r = (es_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
+        end
+        _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                    { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      end
+    end
+  end
+
+  def test_ptac
     ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-hvac-room-ac-only.xml', es_version)
+      _convert_to_es('base-hvac-ptac.xml', es_version)
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
       _check_heating_system(hpxml)
@@ -561,6 +610,31 @@ class EnergyStarHVACtest < MiniTest::Test
       end
       _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+    end
+  end
+
+  def test_ptac_with_heating
+    ESConstants.AllVersions.each do |es_version|
+      _convert_to_es('base-hvac-ptac-with-heating.xml', es_version)
+      hpxml = _test_measure()
+      hvac_iq_values = get_default_hvac_iq_values(es_version)
+      _check_heating_system(hpxml)
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
+      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationBasementConditioned }] * 2)
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? es_version
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }] * 2)
+      elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? es_version
+        return_r = (es_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }] * 2)
+      end
+      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }] * 2)
     end
   end
 
@@ -801,91 +875,15 @@ class EnergyStarHVACtest < MiniTest::Test
                                     { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_boiler_afue_cz5(es_version), frac_load: 0.1 },
                                     { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeOil, eff: get_es_oil_furnace_afue_cz5(es_version), frac_load: 0.1, **hvac_iq_values },
                                     { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypePropane, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 0.1, **hvac_iq_values }])
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.2, shr: 0.73, **hvac_iq_values },
-                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.2, shr: 0.65, **hvac_iq_values }])
+      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.1333, shr: 0.73, **hvac_iq_values },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.1333, shr: 0.65, **hvac_iq_values },
+                                    { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.1333, shr: 0.65, **hvac_iq_values }])
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
                                { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
                                { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
                                { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
                                { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_ashp_hspf_cz5(es_version), seer: get_es_ashp_seer_cz5(es_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? es_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 255.15, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 47.25, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationBasementConditioned }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? es_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 72.9, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 27.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 255.15, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 47.25, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 109.35, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 20.25, duct_location: HPXML::LocationLivingSpace }])
-      elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? es_version
-        return_r = (es_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 72.9, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 27.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 72.9, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 27.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 72.9, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 27.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 72.9, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 27.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 109.35, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 20.25, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 109.35, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 20.25, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 109.35, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 20.25, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 255.15, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 47.25, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 109.35, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 20.25, duct_location: HPXML::LocationAtticVented }])
-      end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1240,7 +1238,6 @@ class EnergyStarHVACtest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       hvac_iq_values = get_default_hvac_iq_values(es_version)
-      hvac_iq_values[:charge_defect_ratio] = 0.0 # Can't currently handle non-zero GSHP charge defect
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_gshp_eer_cz7(es_version), cop: get_es_gshp_cop_cz7(es_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 30, is_shared_system: true, **hvac_iq_values }])
@@ -1432,8 +1429,10 @@ class EnergyStarHVACtest < MiniTest::Test
       if expected_values[:backup_eff].nil?
         assert_nil(heat_pump.backup_heating_efficiency_percent)
         assert_nil(heat_pump.backup_heating_efficiency_afue)
+        assert_nil(heat_pump.backup_type)
       else
         assert_equal(expected_values[:backup_eff], heat_pump.backup_heating_efficiency_percent.to_f + heat_pump.backup_heating_efficiency_afue.to_f)
+        assert_equal(HPXML::HeatPumpBackupTypeIntegrated, heat_pump.backup_type)
       end
       if expected_values[:backup_temp].nil?
         assert_nil(heat_pump.backup_heating_switchover_temp)

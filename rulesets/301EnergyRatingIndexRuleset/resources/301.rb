@@ -297,6 +297,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
     @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
@@ -662,6 +663,7 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.foundation_walls.add(id: orig_foundation_wall.id,
                                      exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
                                      interior_adjacent_to: orig_foundation_wall.interior_adjacent_to.gsub('unvented', 'vented'),
+                                     type: orig_foundation_wall.type,
                                      height: orig_foundation_wall.height,
                                      area: orig_foundation_wall.area,
                                      azimuth: orig_foundation_wall.azimuth,
@@ -683,6 +685,7 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.foundation_walls.add(id: orig_foundation_wall.id,
                                      exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to,
                                      interior_adjacent_to: orig_foundation_wall.interior_adjacent_to,
+                                     type: orig_foundation_wall.type,
                                      height: orig_foundation_wall.height,
                                      area: orig_foundation_wall.area,
                                      azimuth: orig_foundation_wall.azimuth,
@@ -704,6 +707,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.foundation_walls.add(id: 'FoundationWall',
                                    interior_adjacent_to: HPXML::LocationCrawlspaceVented,
                                    exterior_adjacent_to: HPXML::LocationGround,
+                                   type: HPXML::FoundationWallTypeSolidConcrete,
                                    height: 2,
                                    area: 2 * 34.64 * 4,
                                    thickness: 8,
@@ -1021,10 +1025,15 @@ class EnergyRatingIndex301Ruleset
 
     # Create new exterior door
     if exterior_area > 0
+      if @is_southern_hemisphere
+        azimuth = 180
+      else
+        azimuth = 0
+      end
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
                           wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
-                          azimuth: 0,
+                          azimuth: azimuth,
                           r_value: (1.0 / ufactor).round(3))
     end
     # TODO: Create adiabatic wall/door?
@@ -1050,10 +1059,15 @@ class EnergyRatingIndex301Ruleset
 
     # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
     if exterior_area > 0
+      if @is_southern_hemisphere
+        azimuth = 180
+      else
+        azimuth = 0
+      end
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
                           wall_idref: new_hpxml.walls[0].id,
                           area: exterior_area,
-                          azimuth: 0,
+                          azimuth: azimuth,
                           r_value: avg_r_value.round(3))
     end
     # TODO: Create adiabatic wall/door?
@@ -1149,15 +1163,8 @@ class EnergyRatingIndex301Ruleset
         orig_heating_system.electric_auxiliary_energy = HVAC.get_default_boiler_eae(orig_heating_system)
       end
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-        if [HPXML::HVACTypeFurnace].include? orig_heating_system.heating_system_type
-          if not orig_heating_system.distribution_system_idref.nil?
-            fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
-            fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
-
-            airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
-            airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
-          end
-        end
+        fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
+        airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
       end
       new_hpxml.heating_systems.add(id: orig_heating_system.id,
                                     is_shared_system: orig_heating_system.is_shared_system,
@@ -1183,18 +1190,9 @@ class EnergyRatingIndex301Ruleset
     # Retain cooling system(s)
     orig_hpxml.cooling_systems.each do |orig_cooling_system|
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-        if [HPXML::HVACTypeCentralAirConditioner, HPXML::HVACTypeMiniSplitAirConditioner].include? orig_cooling_system.cooling_system_type
-          if not orig_cooling_system.distribution_system_idref.nil?
-            fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
-            fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
-
-            airflow_defect_ratio = orig_cooling_system.airflow_defect_ratio
-            airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
-          end
-
-          charge_defect_ratio = orig_cooling_system.charge_defect_ratio
-          charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
-        end
+        fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
+        airflow_defect_ratio = orig_cooling_system.airflow_defect_ratio
+        charge_defect_ratio = orig_cooling_system.charge_defect_ratio
       end
       new_hpxml.cooling_systems.add(id: orig_cooling_system.id,
                                     is_shared_system: orig_cooling_system.is_shared_system,
@@ -1207,6 +1205,7 @@ class EnergyRatingIndex301Ruleset
                                     fraction_cool_load_served: orig_cooling_system.fraction_cool_load_served,
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
+                                    cooling_efficiency_ceer: orig_cooling_system.cooling_efficiency_ceer,
                                     cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
                                     cooling_shr: orig_cooling_system.cooling_shr,
                                     shared_loop_watts: orig_cooling_system.shared_loop_watts,
@@ -1224,21 +1223,13 @@ class EnergyRatingIndex301Ruleset
     # Retain heat pump(s)
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
-        if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpGroundToAir, HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
-          if not orig_heat_pump.distribution_system_idref.nil? # Ducted, these inputs apply
-            fan_watts_per_cfm = orig_heat_pump.fan_watts_per_cfm
-            fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm() if fan_watts_per_cfm.nil?
-
-            airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
-            airflow_defect_ratio = get_reference_hvac_airflow_defect_ratio() if airflow_defect_ratio.nil?
-          end
-
-          charge_defect_ratio = orig_heat_pump.charge_defect_ratio
-          charge_defect_ratio = get_reference_hvac_charge_defect_ratio() if charge_defect_ratio.nil?
-        end
+        fan_watts_per_cfm = orig_heat_pump.fan_watts_per_cfm
+        airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
+        charge_defect_ratio = orig_heat_pump.charge_defect_ratio
       end
       if orig_heat_pump.backup_heating_capacity.to_f == 0 && orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
         # Force some backup heating to prevent unmet loads
+        orig_heat_pump.backup_type = HPXML::HeatPumpBackupTypeIntegrated
         orig_heat_pump.backup_heating_fuel = HPXML::FuelTypeElectricity
         orig_heat_pump.backup_heating_efficiency_percent = 1.0
         orig_heat_pump.backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
@@ -1254,6 +1245,7 @@ class EnergyRatingIndex301Ruleset
                                heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
                                cooling_capacity: orig_heat_pump.cooling_capacity,
                                cooling_shr: orig_heat_pump.cooling_shr,
+                               backup_type: orig_heat_pump.backup_type,
                                backup_heating_fuel: orig_heat_pump.backup_heating_fuel,
                                backup_heating_capacity: orig_heat_pump.backup_heating_capacity,
                                backup_heating_efficiency_percent: orig_heat_pump.backup_heating_efficiency_percent,
@@ -1426,7 +1418,7 @@ class EnergyRatingIndex301Ruleset
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
-    q_tot = calc_mech_vent_q_tot()
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
 
     mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1478,7 +1470,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_rated(orig_hpxml, new_hpxml)
-    mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
+    mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.hours_in_operation > 0 && (f.flow_rate_not_tested || f.flow_rate > 0) }
 
     q_fans = calc_rated_home_q_fans_by_system(orig_hpxml, mech_vent_fans)
 
@@ -1583,7 +1575,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
-    q_tot = calc_mech_vent_q_tot()
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
 
     # Calculate fan cfm
     sla = nil
@@ -1734,7 +1726,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
-    has_uncond_bsmnt = new_hpxml.has_space_type(HPXML::LocationBasementUnconditioned)
+    has_uncond_bsmnt = new_hpxml.has_location(HPXML::LocationBasementUnconditioned)
     standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
 
     # New hot water distribution
@@ -2459,13 +2451,9 @@ class EnergyRatingIndex301Ruleset
   def self.calc_rated_home_qfan(orig_hpxml, is_balanced)
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
-    q_tot = calc_mech_vent_q_tot()
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
     q_fan_power = calc_mech_vent_q_fan(q_tot, sla, is_balanced)
     return q_fan_power
-  end
-
-  def self.calc_mech_vent_q_tot()
-    return Airflow.get_mech_vent_whole_house_cfm(1.0, @nbeds, @cfa, '2013')
   end
 
   def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)
@@ -2577,6 +2565,7 @@ class EnergyRatingIndex301Ruleset
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
       # Dual-fuel HP
       if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity
+        backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_fuel = orig_system.backup_heating_fuel
         backup_efficiency_afue = 0.78
         backup_capacity = -1
@@ -2586,6 +2575,7 @@ class EnergyRatingIndex301Ruleset
       end
     else
       # Normal heat pump
+      backup_type = HPXML::HeatPumpBackupTypeIntegrated
       backup_fuel = HPXML::FuelTypeElectricity
       backup_efficiency_percent = 1.0
       backup_capacity = -1
@@ -2602,6 +2592,7 @@ class EnergyRatingIndex301Ruleset
                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
                              cooling_capacity: -1, # Use auto-sizing
                              heating_capacity: -1, # Use auto-sizing
+                             backup_type: backup_type,
                              backup_heating_fuel: backup_fuel,
                              backup_heating_capacity: backup_capacity,
                              backup_heating_efficiency_percent: backup_efficiency_percent,

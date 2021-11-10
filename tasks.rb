@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-$VERBOSE = nil # Prevents ruby warnings, see https://github.com/NREL/OpenStudio/issues/4301
-
 def create_test_hpxmls
   this_dir = File.dirname(__FILE__)
   tests_dir = File.join(this_dir, 'workflow/tests')
@@ -406,7 +404,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/04-L324.xml'].include?(hpxml_file)
     # 3 ACH50
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
+    hpxml.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml.air_infiltration_measurements.size + 1}",
                                             house_pressure: 50,
                                             unit_of_measure: HPXML::UnitsACH,
                                             air_leakage: 3,
@@ -414,7 +412,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA/03-L304.xml'].include? hpxml_file
     # 5 ACH50
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
+    hpxml.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml.air_infiltration_measurements.size + 1}",
                                             unit_of_measure: HPXML::UnitsACH,
                                             house_pressure: 50,
                                             air_leakage: 5,
@@ -435,7 +433,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
       ach50 = 3
     end
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
+    hpxml.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml.air_infiltration_measurements.size + 1}",
                                             unit_of_measure: HPXML::UnitsACH,
                                             house_pressure: 50,
                                             air_leakage: ach50,
@@ -443,7 +441,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
   elsif hpxml_file.include?('EPA_Tests/MF')
     tot_cb_area, ext_cb_area = hpxml.compartmentalization_boundary_areas()
     hpxml.air_infiltration_measurements.clear
-    hpxml.air_infiltration_measurements.add(id: 'InfiltrationMeasurement',
+    hpxml.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml.air_infiltration_measurements.size + 1}",
                                             unit_of_measure: HPXML::UnitsCFM,
                                             house_pressure: 50,
                                             air_leakage: 0.3 * tot_cb_area,
@@ -454,12 +452,12 @@ end
 def set_hpxml_attics(hpxml_file, hpxml)
   if hpxml_file.include?('EPA_Tests/SF') || hpxml_file.include?('top_corner')
     hpxml.attics.clear
-    hpxml.attics.add(id: 'VentedAttic',
+    hpxml.attics.add(id: "Attic#{hpxml.attics.size + 1}",
                      attic_type: HPXML::AtticTypeVented,
                      vented_attic_sla: (1.0 / 300.0).round(6))
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.attics.clear
-    hpxml.attics.add(id: 'VentedAttic',
+    hpxml.attics.add(id: "Attic#{hpxml.attics.size + 1}",
                      attic_type: HPXML::AtticTypeVented,
                      vented_attic_sla: (1.0 / 300.0).round(6))
   end
@@ -468,12 +466,12 @@ end
 def set_hpxml_foundations(hpxml_file, hpxml)
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     hpxml.foundations.clear
-    hpxml.foundations.add(id: 'UnventedCrawlspace',
+    hpxml.foundations.add(id: "Foundation#{hpxml.foundations.size + 1}",
                           foundation_type: HPXML::FoundationTypeCrawlspaceUnvented,
                           within_infiltration_volume: false)
   elsif hpxml_file.include?('vented_crawl')
     hpxml.foundations.clear
-    hpxml.foundations.add(id: 'VentedCrawlspace',
+    hpxml.foundations.add(id: "Foundation#{hpxml.foundations.size + 1}",
                           foundation_type: HPXML::FoundationTypeCrawlspaceVented,
                           vented_crawlspace_sla: (1.0 / 150.0).round(6))
   end
@@ -493,7 +491,7 @@ def set_hpxml_roofs(hpxml_file, hpxml)
       area = 1500
     end
     hpxml.roofs.clear
-    hpxml.roofs.add(id: 'Roof',
+    hpxml.roofs.add(id: "Roof#{hpxml.roofs.size + 1}",
                     interior_adjacent_to: HPXML::LocationAtticVented,
                     area: area,
                     solar_absorptance: 0.92,
@@ -522,7 +520,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
       assembly_r = (1.0 / 0.048).round(3)
     end
     hpxml.rim_joists.clear
-    hpxml.rim_joists.add(id: 'RimJoist',
+    hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationLivingSpace,
                          area: 152,
@@ -538,7 +536,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
       interior_adjacent_to = nil
     end
     if not interior_adjacent_to.nil?
-      hpxml.rim_joists.add(id: 'RimJoistFoundation',
+      hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                            exterior_adjacent_to: HPXML::LocationOutside,
                            interior_adjacent_to: interior_adjacent_to,
                            area: 152,
@@ -563,7 +561,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
       exterior_area = 80
     end
     hpxml.rim_joists.clear
-    hpxml.rim_joists.add(id: 'RimJoist',
+    hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationLivingSpace,
                          area: exterior_area,
@@ -579,7 +577,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
       interior_adjacent_to = nil
     end
     if not interior_adjacent_to.nil?
-      hpxml.rim_joists.add(id: 'RimJoistFoundation',
+      hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                            exterior_adjacent_to: HPXML::LocationOutside,
                            interior_adjacent_to: interior_adjacent_to,
                            area: exterior_area,
@@ -603,7 +601,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
       assembly_r = (1.0 / 0.048).round(3)
     end
     hpxml.walls.clear
-    hpxml.walls.add(id: 'Wall',
+    hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOutside,
                     interior_adjacent_to: HPXML::LocationLivingSpace,
                     wall_type: HPXML::WallTypeWoodStud,
@@ -630,7 +628,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
       common_area = 510
     end
     hpxml.walls.clear
-    hpxml.walls.add(id: 'Wall',
+    hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOutside,
                     interior_adjacent_to: HPXML::LocationLivingSpace,
                     wall_type: HPXML::WallTypeWoodStud,
@@ -638,7 +636,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
                     solar_absorptance: 0.75,
                     emittance: 0.9,
                     insulation_assembly_r_value: assembly_r)
-    hpxml.walls.add(id: 'WallAdiabatic',
+    hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                     interior_adjacent_to: HPXML::LocationLivingSpace,
                     wall_type: HPXML::WallTypeWoodStud,
@@ -652,7 +650,7 @@ end
 def set_hpxml_foundation_walls(hpxml_file, hpxml)
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Unvented crawlspace with R-7 crawlspace wall insulation
-    hpxml.foundation_walls.add(id: 'FoundationWallNorth',
+    hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
@@ -666,7 +664,7 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
                                insulation_exterior_r_value: 0,
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
-    hpxml.foundation_walls.add(id: 'FoundationWallEast',
+    hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
@@ -680,7 +678,7 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
                                insulation_exterior_r_value: 0,
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
-    hpxml.foundation_walls.add(id: 'FoundationWallSouth',
+    hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
@@ -694,7 +692,7 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
                                insulation_exterior_r_value: 0,
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
-    hpxml.foundation_walls.add(id: 'FoundationWallWest',
+    hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                exterior_adjacent_to: HPXML::LocationGround,
                                interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                                height: 4,
@@ -708,6 +706,25 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
                                insulation_exterior_r_value: 0,
                                insulation_exterior_distance_to_top: 0,
                                insulation_exterior_distance_to_bottom: 0)
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
+    hpxml.foundation_walls.each do |fwall|
+      fwall.insulation_interior_distance_to_top = 0 if fwall.insulation_interior_distance_to_top.nil?
+      if fwall.insulation_interior_distance_to_bottom.nil?
+        if fwall.insulation_interior_r_value.to_f > 0
+          fwall.insulation_interior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_interior_distance_to_bottom = 0
+        end
+      end
+      fwall.insulation_exterior_distance_to_top = 0 if fwall.insulation_exterior_distance_to_top.nil?
+      if fwall.insulation_exterior_distance_to_bottom.nil?
+        if fwall.insulation_exterior_r_value.to_f > 0
+          fwall.insulation_exterior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_exterior_distance_to_bottom = 0
+        end
+      end
+    end
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     for i in 0..hpxml.foundation_walls.size - 1
       hpxml.foundation_walls[i].interior_adjacent_to = HPXML::LocationBasementUnconditioned
@@ -720,7 +737,7 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
     end
     if hpxml_file.include?('vented_crawl')
       hpxml.foundation_walls.clear
-      hpxml.foundation_walls.add(id: 'FoundationWall',
+      hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                  exterior_adjacent_to: HPXML::LocationGround,
                                  interior_adjacent_to: HPXML::LocationCrawlspaceVented,
                                  height: 4.0,
@@ -745,7 +762,7 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
         assembly_r = (1.0 / 0.05).round(3)
       end
       hpxml.foundation_walls.clear
-      hpxml.foundation_walls.add(id: 'FoundationWall',
+      hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                  exterior_adjacent_to: HPXML::LocationGround,
                                  interior_adjacent_to: HPXML::LocationBasementConditioned,
                                  height: 8.0,
@@ -766,7 +783,7 @@ end
 def set_hpxml_frame_floors(hpxml_file, hpxml)
   if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # R-11 floor from ASHRAE 140 but with 13% framing factor instead of 10%
-    hpxml.frame_floors.add(id: 'FloorOverFoundation',
+    hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
                            exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
                            interior_adjacent_to: HPXML::LocationLivingSpace,
                            area: 1539,
@@ -804,7 +821,7 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
         ceiling_assembly_r = (1.0 / 0.026).round(3)
       end
     end
-    hpxml.frame_floors.add(id: 'Ceiling',
+    hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
                            exterior_adjacent_to: exterior_adjacent_to,
                            interior_adjacent_to: HPXML::LocationLivingSpace,
                            area: area,
@@ -817,13 +834,13 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
       elsif hpxml_file.include?('EPA_Tests/MF')
         floor_assembly_r = (1.0 / 0.033).round(3)
       end
-      hpxml.frame_floors.add(id: 'Floor',
+      hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
                              exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
                              interior_adjacent_to: HPXML::LocationLivingSpace,
                              area: area,
                              insulation_assembly_r_value: floor_assembly_r)
     elsif hpxml_file.include?('top_corner') || hpxml_file.include?('middle_interior')
-      hpxml.frame_floors.add(id: 'Floor',
+      hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
                              exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                              interior_adjacent_to: HPXML::LocationLivingSpace,
                              area: area,
@@ -836,7 +853,7 @@ end
 def set_hpxml_slabs(hpxml_file, hpxml)
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Unvented crawlspace
-    hpxml.slabs.add(id: 'Slab',
+    hpxml.slabs.add(id: "Slab#{hpxml.slabs.size + 1}",
                     interior_adjacent_to: HPXML::LocationCrawlspaceUnvented,
                     area: 1539,
                     thickness: 0,
@@ -856,19 +873,16 @@ def set_hpxml_slabs(hpxml_file, hpxml)
       depth_below_grade = 0
       carpet_fraction = 0.8
       thickness = 4
-      name = 'Slab'
     elsif hpxml_file.include?('vented_crawl')
       interior_adjacent_to = HPXML::LocationCrawlspaceVented
       depth_below_grade = nil
       carpet_fraction = 0.0
       thickness = 0
-      name = 'DirtFloor'
     elsif hpxml_file.include?('cond_bsmt')
       interior_adjacent_to = HPXML::LocationBasementConditioned
       depth_below_grade = nil
       carpet_fraction = 0.8
       thickness = 4
-      name = 'Slab'
     else
       return
     end
@@ -880,7 +894,7 @@ def set_hpxml_slabs(hpxml_file, hpxml)
       area = 1200
     end
     hpxml.slabs.clear
-    hpxml.slabs.add(id: name,
+    hpxml.slabs.add(id: "Slab#{hpxml.slabs.size + 1}",
                     interior_adjacent_to: interior_adjacent_to,
                     depth_below_grade: depth_below_grade,
                     area: area,
@@ -936,23 +950,23 @@ def set_hpxml_windows(hpxml_file, hpxml)
     tot_window_area = 0.15 * cfa * fa * f
 
     if hpxml_file.include?('EPA_Tests/SF')
-      windows = { 'WindowsNorth' => [0, (tot_window_area / 4.0).round(2), 'Wall'],
-                  'WindowsEast' => [90, (tot_window_area / 4.0).round(2), 'Wall'],
-                  'WindowsSouth' => [180, (tot_window_area / 4.0).round(2), 'Wall'],
-                  'WindowsWest' => [270, (tot_window_area / 4.0).round(2), 'Wall'] }
+      windows = [[0, (tot_window_area / 4.0).round(2), 'Wall1'],
+                 [90, (tot_window_area / 4.0).round(2), 'Wall1'],
+                 [180, (tot_window_area / 4.0).round(2), 'Wall1'],
+                 [270, (tot_window_area / 4.0).round(2), 'Wall1']]
     elsif hpxml_file.include?('EPA_Tests/MF')
       if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
-        windows = { 'WindowsEast' => [90, (0.571 * tot_window_area).round(2), 'Wall'],
-                    'WindowsSouth' => [180, (0.429 * tot_window_area).round(2), 'Wall'] }
+        windows = [[90, (0.571 * tot_window_area).round(2), 'Wall1'],
+                   [180, (0.429 * tot_window_area).round(2), 'Wall1']]
       elsif hpxml_file.include?('middle_interior')
-        windows = { 'WindowsEast' => [90, tot_window_area.round(2), 'Wall'] }
+        windows = [[90, tot_window_area.round(2), 'Wall1']]
       end
     end
 
     hpxml.windows.clear
-    windows.each do |window_name, window_values|
+    windows.each do |window_values|
       azimuth, area, wall = window_values
-      hpxml.windows.add(id: window_name,
+      hpxml.windows.add(id: "Window#{hpxml.windows.size + 1}",
                         area: area,
                         azimuth: azimuth,
                         ufactor: ufactor,
@@ -974,12 +988,12 @@ def set_hpxml_doors(hpxml_file, hpxml)
     elsif hpxml_file.include?('SF_National_3.0')
       r_value = (1.0 / 0.21).round(3)
     end
-    doors = { 'Door1' => [0, 21, 'Wall'],
-              'Door2' => [0, 21, 'Wall'] }
+    doors = [[0, 21, 'Wall1'],
+             [0, 21, 'Wall1']]
     hpxml.doors.clear
-    doors.each do |door_name, door_values|
+    doors.each do |door_values|
       azimuth, area, wall = door_values
-      hpxml.doors.add(id: door_name,
+      hpxml.doors.add(id: "Door#{hpxml.doors.size + 1}",
                       wall_idref: wall,
                       area: area,
                       azimuth: azimuth,
@@ -991,11 +1005,11 @@ def set_hpxml_doors(hpxml_file, hpxml)
     elsif hpxml_file.include?('MF_National_1.1')
       r_value = (1.0 / 0.17).round(3)
     end
-    doors = { 'Door1' => [0, 21, 'Wall'] }
+    doors = [[0, 21, 'Wall1']]
     hpxml.doors.clear
-    doors.each do |door_name, door_values|
+    doors.each do |door_values|
       azimuth, area, wall = door_values
-      hpxml.doors.add(id: door_name,
+      hpxml.doors.add(id: "Door#{hpxml.doors.size + 1}",
                       wall_idref: wall,
                       area: area,
                       azimuth: azimuth,
@@ -1011,19 +1025,19 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Gas furnace with AFUE = 82%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.82,
                               fraction_heat_load_served: 1,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Electric strip heating with COP = 1.0
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
                               heating_system_type: HPXML::HVACTypeElectricResistance,
                               heating_system_fuel: HPXML::FuelTypeElectricity,
                               heating_capacity: -1,
@@ -1032,45 +1046,45 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     # Gas furnace with AFUE = 95%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.95,
                               fraction_heat_load_served: 1,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 78%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.78,
                               fraction_heat_load_served: 1,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
     # Natural gas furnace with AFUE = 96%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.96,
                               fraction_heat_load_served: 1,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC1a.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 78%; 0.0005 kW/cfm
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 56100,
@@ -1080,8 +1094,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2b.xml'].include? hpxml_file
     # Gas Furnace; 56.1 kBtu/h; AFUE = 90%; 0.000375 kW/cfm
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 56100,
@@ -1091,8 +1105,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2e.xml'].include? hpxml_file
     # Electric Furnace; 56.1 kBtu/h; COP =1.0
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeElectricity,
                               heating_capacity: 56100,
@@ -1103,8 +1117,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/4.5_DSE/HVAC3e.xml'].include? hpxml_file
     # Gas Furnace; 46.6 kBtu/h
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: 46600,
@@ -1123,15 +1137,15 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
   elsif hpxml_file.include? 'Hot_Water'
     # Natural gas furnace with AFUE = 78%
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
                               heating_efficiency_afue: 0.78,
                               fraction_heat_load_served: 1,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25)
   elsif hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('_elec_')
       return
@@ -1144,8 +1158,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
     end
 
     hpxml.heating_systems.clear
-    hpxml.heating_systems.add(id: 'HeatingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               heating_system_type: HPXML::HVACTypeFurnace,
                               heating_system_fuel: HPXML::FuelTypeNaturalGas,
                               heating_capacity: -1,
@@ -1163,49 +1177,49 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Central air conditioner with SEER = 11.0
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.cooling_systems.add(id: "CoolingSystem#{hpxml.cooling_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 11,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true,
-                              charge_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25,
+                              charge_defect_ratio: -0.25)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Central air conditioner with SEER = 15.0
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.cooling_systems.add(id: "CoolingSystem#{hpxml.cooling_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 15,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true,
-                              charge_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25,
+                              charge_defect_ratio: -0.25)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-03.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-05.xml'].include? hpxml_file
     # Cooling system – electric A/C with SEER = 10.0
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.cooling_systems.add(id: "CoolingSystem#{hpxml.cooling_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 10,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true,
-                              charge_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25,
+                              charge_defect_ratio: -0.25)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     # Air cooled air conditioner; 38.3 kBtu/h; SEER = 10
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.cooling_systems.add(id: "CoolingSystem#{hpxml.cooling_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: 38300,
@@ -1219,8 +1233,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
          'RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # Air Conditioner; 38.4 kBtu/h; SEER 10
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.cooling_systems.add(id: "CoolingSystem#{hpxml.cooling_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: 38400,
@@ -1239,16 +1253,16 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif hpxml_file.include? 'Hot_Water'
     # Central air conditioner with SEER = 13.0
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.cooling_systems.add(id: "CoolingSystem#{hpxml.cooling_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: 13,
-                              fan_power_not_tested: true,
-                              airflow_not_tested: true,
-                              charge_not_tested: true)
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25,
+                              charge_defect_ratio: -0.25)
   elsif hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('_elec_')
       return
@@ -1259,8 +1273,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
     end
 
     hpxml.cooling_systems.clear
-    hpxml.cooling_systems.add(id: 'CoolingSystem',
-                              distribution_system_idref: 'HVACDistribution',
+    hpxml.cooling_systems.add(id: "CoolingSystem#{hpxml.cooling_systems.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
                               cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                               cooling_system_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
@@ -1279,12 +1293,13 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Electric heat pump with HSPF = 7.5 and SEER = 12.0
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
+    hpxml.heat_pumps.add(id: "HeatPump#{hpxml.heat_pumps.size + 1}",
+                         distribution_system_idref: 'HVACDistribution1',
                          heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                          heat_pump_fuel: HPXML::FuelTypeElectricity,
                          cooling_capacity: -1,
                          heating_capacity: -1,
+                         backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                          backup_heating_fuel: HPXML::FuelTypeElectricity,
                          backup_heating_capacity: -1,
                          backup_heating_efficiency_percent: 1.0,
@@ -1292,19 +1307,20 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 7.5,
                          cooling_efficiency_seer: 12,
-                         fan_power_not_tested: true,
-                         airflow_not_tested: true,
-                         charge_not_tested: true)
+                         fan_watts_per_cfm: 0.58,
+                         airflow_defect_ratio: -0.25,
+                         charge_defect_ratio: -0.25)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
     # Heating system – electric HP with HSPF = 6.8
     # Cooling system – electric A/C with SEER
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
+    hpxml.heat_pumps.add(id: "HeatPump#{hpxml.heat_pumps.size + 1}",
+                         distribution_system_idref: 'HVACDistribution1',
                          heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                          heat_pump_fuel: HPXML::FuelTypeElectricity,
                          cooling_capacity: -1,
                          heating_capacity: -1,
+                         backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                          backup_heating_fuel: HPXML::FuelTypeElectricity,
                          backup_heating_capacity: -1,
                          backup_heating_efficiency_percent: 1.0,
@@ -1312,21 +1328,22 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: 6.8,
                          cooling_efficiency_seer: 10,
-                         fan_power_not_tested: true,
-                         airflow_not_tested: true,
-                         charge_not_tested: true)
+                         fan_watts_per_cfm: 0.58,
+                         airflow_defect_ratio: -0.25,
+                         charge_defect_ratio: -0.25)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-04.xml'].include? hpxml_file
     # Change to a high efficiency HP with HSPF = 9.85
     hpxml.heat_pumps[0].heating_efficiency_hspf = 9.85
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2c.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 6.8
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
+    hpxml.heat_pumps.add(id: "HeatPump#{hpxml.heat_pumps.size + 1}",
+                         distribution_system_idref: 'HVACDistribution1',
                          heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                          heat_pump_fuel: HPXML::FuelTypeElectricity,
                          cooling_capacity: 56100,
                          heating_capacity: 56100,
+                         backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                          backup_heating_fuel: HPXML::FuelTypeElectricity,
                          backup_heating_capacity: 34121,
                          backup_heating_efficiency_percent: 1.0,
@@ -1338,12 +1355,13 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC2d.xml'].include? hpxml_file
     # Air Source Heat Pump; 56.1 kBtu/h; HSPF = 9.85
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
+    hpxml.heat_pumps.add(id: "HeatPump#{hpxml.heat_pumps.size + 1}",
+                         distribution_system_idref: 'HVACDistribution1',
                          heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                          heat_pump_fuel: HPXML::FuelTypeElectricity,
                          cooling_capacity: 56100,
                          heating_capacity: 56100,
+                         backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                          backup_heating_fuel: HPXML::FuelTypeElectricity,
                          backup_heating_capacity: 34121,
                          backup_heating_efficiency_percent: 1.0,
@@ -1367,12 +1385,13 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
     end
 
     hpxml.heat_pumps.clear
-    hpxml.heat_pumps.add(id: 'HeatPump',
-                         distribution_system_idref: 'HVACDistribution',
+    hpxml.heat_pumps.add(id: "HeatPump#{hpxml.heat_pumps.size + 1}",
+                         distribution_system_idref: 'HVACDistribution1',
                          heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                          heat_pump_fuel: HPXML::FuelTypeElectricity,
                          cooling_capacity: -1,
                          heating_capacity: -1,
+                         backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                          backup_heating_fuel: HPXML::FuelTypeElectricity,
                          backup_heating_capacity: -1,
                          backup_heating_efficiency_percent: 1.0,
@@ -1390,12 +1409,12 @@ def set_hpxml_hvac_controls(hpxml_file, hpxml)
   if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.hvac_controls.clear
     if hpxml.heating_systems.size + hpxml.cooling_systems.size + hpxml.heat_pumps.size > 0
-      hpxml.hvac_controls.add(id: 'HVACControl',
+      hpxml.hvac_controls.add(id: "HVACControl#{hpxml.hvac_controls.size + 1}",
                               control_type: HPXML::HVACControlTypeManual)
     end
   elsif hpxml_file.include?('EPA_Tests')
     hpxml.hvac_controls.clear
-    hpxml.hvac_controls.add(id: 'HVACControl',
+    hpxml.hvac_controls.add(id: "HVACControl#{hpxml.hvac_controls.size + 1}",
                             control_type: HPXML::HVACControlTypeProgrammable)
   end
 end
@@ -1412,13 +1431,13 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
      hpxml_file.include?('Hot_Water') ||
      hpxml_file.include?('EPA_Tests')
     hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add(id: 'HVACDistribution',
+    hpxml.hvac_distributions.add(id: "HVACDistribution#{hpxml.hvac_distributions.size + 1}",
                                  distribution_system_type: HPXML::HVACDistributionTypeAir,
                                  air_type: HPXML::AirTypeRegularVelocity)
   elsif ['RESNET_Tests/4.4_HVAC/HVAC1a.xml',
          'RESNET_Tests/4.4_HVAC/HVAC2a.xml'].include? hpxml_file
     hpxml.hvac_distributions.clear
-    hpxml.hvac_distributions.add(id: 'HVACDistribution',
+    hpxml.hvac_distributions.add(id: "HVACDistribution#{hpxml.hvac_distributions.size + 1}",
                                  distribution_system_type: HPXML::HVACDistributionTypeDSE,
                                  annual_heating_dse: 1,
                                  annual_cooling_dse: 1)
@@ -1452,15 +1471,15 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 125
     end
   elsif hpxml_file.include?('EPA_Tests')
-    tot_cfm25 = (4.0 * hpxml.building_construction.conditioned_floor_area / 100.0).round
+    tot_cfm25 = 4.0 * hpxml.building_construction.conditioned_floor_area / 100.0
     hpxml.hvac_distributions[0].duct_leakage_measurements.clear
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: tot_cfm25 * 0.5,
+                                                              duct_leakage_value: (tot_cfm25 * 0.5).round(2),
                                                               duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
     hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
                                                               duct_leakage_units: HPXML::UnitsCFM25,
-                                                              duct_leakage_value: tot_cfm25 * 0.5,
+                                                              duct_leakage_value: (tot_cfm25 * 0.5).round(2),
                                                               duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
   end
 
@@ -1502,8 +1521,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts[i].duct_insulation_r_value = 6
     end
   elsif hpxml_file.include?('EPA_Tests')
-    supply_area = (0.27 * hpxml.building_construction.conditioned_floor_area).round
-    return_area = (0.05 * hpxml.building_construction.conditioned_floor_area).round
+    supply_area = 0.27 * hpxml.building_construction.conditioned_floor_area
+    return_area = 0.05 * hpxml.building_construction.conditioned_floor_area
     if hpxml_file.include?('SF_National_3.1') || hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.0')
       if hpxml_file.include?('MF_National_1.0') && hpxml_file.include?('top_corner')
         location = HPXML::LocationAtticVented
@@ -1518,11 +1537,11 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: supply_r,
                                             duct_location: location,
-                                            duct_surface_area: supply_area)
+                                            duct_surface_area: supply_area.round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: return_r,
                                             duct_location: location,
-                                            duct_surface_area: return_area)
+                                            duct_surface_area: return_area.round(2))
     elsif hpxml_file.include?('SF_National_3.0')
       if hpxml_file.include?('slab')
         non_attic_location = HPXML::LocationLivingSpace
@@ -1543,19 +1562,19 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: 8,
                                             duct_location: HPXML::LocationAtticVented,
-                                            duct_surface_area: supply_area * (1.0 - non_attic_frac))
+                                            duct_surface_area: (supply_area * (1.0 - non_attic_frac)).round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: 6,
                                             duct_location: HPXML::LocationAtticVented,
-                                            duct_surface_area: return_area * (1.0 - non_attic_frac))
+                                            duct_surface_area: (return_area * (1.0 - non_attic_frac)).round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: non_attic_rvalue,
                                             duct_location: non_attic_location,
-                                            duct_surface_area: supply_area * non_attic_frac)
+                                            duct_surface_area: (supply_area * non_attic_frac).round(2))
       hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: non_attic_rvalue,
                                             duct_location: non_attic_location,
-                                            duct_surface_area: return_area * non_attic_frac)
+                                            duct_surface_area: (return_area * non_attic_frac).round(2))
     end
   end
 
@@ -1580,7 +1599,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Exhaust-only whole-dwelling mechanical ventilation
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
+    hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
                                fan_type: HPXML::MechVentTypeExhaust,
                                tested_flow_rate: 56.2,
                                hours_in_operation: 24,
@@ -1590,7 +1609,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation without energy recovery
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
+    hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
                                fan_type: HPXML::MechVentTypeBalanced,
                                tested_flow_rate: 56.2,
                                hours_in_operation: 24,
@@ -1600,7 +1619,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     # Balanced whole-dwelling mechanical ventilation with a 60% energy recovery system
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
+    hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
                                fan_type: HPXML::MechVentTypeERV,
                                tested_flow_rate: 56.2,
                                hours_in_operation: 24,
@@ -1622,7 +1641,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
       cfm_per_w = 2.2
     end
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
+    hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
                                fan_type: fan_type,
                                tested_flow_rate: tested_flow_rate,
                                hours_in_operation: 24,
@@ -1636,7 +1655,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
   if ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include? hpxml_file
     # 40 gal electric with EF = 0.88
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
+    hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -1647,7 +1666,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
   elsif ['RESNET_Tests/4.3_HERS_Method/L100A-02.xml'].include? hpxml_file
     # Tankless natural gas with EF = 0.82
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
+    hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeTankless,
@@ -1658,7 +1677,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # 40 gallon storage; gas; EF = 0.56; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
+    hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -1671,7 +1690,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-03.xml'].include? hpxml_file
     # 40 gallon storage; gas; EF = 0.62; RE = 0.78; conditioned space
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
+    hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -1683,7 +1702,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
   elsif hpxml_file.include?('HERS_AutoGen')
     # 40 gal electric with EF = 0.92
     hpxml.water_heating_systems.clear
-    hpxml.water_heating_systems.add(id: 'WaterHeater',
+    hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -1699,7 +1718,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
       else
         energy_factor = 0.61
       end
-      hpxml.water_heating_systems.add(id: 'WaterHeater',
+      hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
                                       is_shared_system: false,
                                       fuel_type: HPXML::FuelTypeNaturalGas,
                                       water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -1714,7 +1733,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
       else
         energy_factor = 0.93
       end
-      hpxml.water_heating_systems.add(id: 'WaterHeater',
+      hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
                                       is_shared_system: false,
                                       fuel_type: HPXML::FuelTypeElectricity,
                                       water_heater_type: HPXML::WaterHeaterTypeStorage,
@@ -1733,7 +1752,7 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
      hpxml_file.include?('EPA_Tests')
     # Standard
     hpxml.hot_water_distributions.clear
-    hpxml.hot_water_distributions.add(id: 'HotWaterDstribution',
+    hpxml.hot_water_distributions.add(id: "HotWaterDstribution#{hpxml.hot_water_distributions.size + 1}",
                                       system_type: HPXML::DHWDistTypeStandard,
                                       pipe_r_value: 0.0)
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-05.xml',
@@ -1757,7 +1776,7 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml)
   elsif hpxml_file.include?('HERS_AutoGen')
     # Standard
     hpxml.hot_water_distributions.clear
-    hpxml.hot_water_distributions.add(id: 'HotWaterDstribution',
+    hpxml.hot_water_distributions.add(id: "HotWaterDstribution#{hpxml.hot_water_distributions.size + 1}",
                                       system_type: HPXML::DHWDistTypeStandard,
                                       pipe_r_value: 0.0)
   end
@@ -1788,10 +1807,10 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
      hpxml_file.include?('EPA_Tests/SF')
     # Standard
     hpxml.water_fixtures.clear
-    hpxml.water_fixtures.add(id: 'WaterFixture',
+    hpxml.water_fixtures.add(id: "WaterFixture#{hpxml.water_fixtures.size + 1}",
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: false)
-    hpxml.water_fixtures.add(id: 'WaterFixture2',
+    hpxml.water_fixtures.add(id: "WaterFixture#{hpxml.water_fixtures.size + 1}",
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: false)
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-04.xml',
@@ -1799,19 +1818,19 @@ def set_hpxml_water_fixtures(hpxml_file, hpxml)
         hpxml_file.include?('EPA_Tests/MF')
     # Low-flow
     hpxml.water_fixtures.clear
-    hpxml.water_fixtures.add(id: 'WaterFixture',
+    hpxml.water_fixtures.add(id: "WaterFixture#{hpxml.water_fixtures.size + 1}",
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: true)
-    hpxml.water_fixtures.add(id: 'WaterFixture2',
+    hpxml.water_fixtures.add(id: "WaterFixture#{hpxml.water_fixtures.size + 1}",
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: true)
   elsif hpxml_file.include?('HERS_AutoGen')
     # Standard
     hpxml.water_fixtures.clear
-    hpxml.water_fixtures.add(id: 'WaterFixture',
+    hpxml.water_fixtures.add(id: "WaterFixture#{hpxml.water_fixtures.size + 1}",
                              water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                              low_flow: false)
-    hpxml.water_fixtures.add(id: 'WaterFixture2',
+    hpxml.water_fixtures.add(id: "WaterFixture#{hpxml.water_fixtures.size + 1}",
                              water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                              low_flow: false)
   end
@@ -1822,7 +1841,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
 
   default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   hpxml.clothes_washers.clear
-  hpxml.clothes_washers.add(id: 'ClothesWasher',
+  hpxml.clothes_washers.add(id: "ClothesWasher#{hpxml.clothes_washers.size + 1}",
                             is_shared_appliance: false,
                             location: HPXML::LocationLivingSpace,
                             integrated_modified_energy_factor: default_values[:integrated_modified_energy_factor],
@@ -1852,7 +1871,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     # Standard gas
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear
-    hpxml.clothes_dryers.add(id: 'ClothesDryer',
+    hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
                              is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
@@ -1871,7 +1890,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     # Standard electric
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeElectricity)
     hpxml.clothes_dryers.clear
-    hpxml.clothes_dryers.add(id: 'ClothesDryer',
+    hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
                              is_shared_appliance: false,
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
@@ -1883,7 +1902,7 @@ end
 def set_hpxml_dishwasher(hpxml_file, hpxml)
   if hpxml_file.include?('EPA_Tests')
     hpxml.dishwashers.clear
-    hpxml.dishwashers.add(id: 'Dishwasher',
+    hpxml.dishwashers.add(id: "Dishwasher#{hpxml.dishwashers.size + 1}",
                           is_shared_appliance: false,
                           location: HPXML::LocationLivingSpace,
                           place_setting_capacity: 12,
@@ -1895,7 +1914,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     default_values = HotWaterAndAppliances.get_dishwasher_default_values(get_eri_version(hpxml))
     hpxml.dishwashers.clear
-    hpxml.dishwashers.add(id: 'Dishwasher',
+    hpxml.dishwashers.add(id: "Dishwasher#{hpxml.dishwashers.size + 1}",
                           is_shared_appliance: false,
                           location: HPXML::LocationLivingSpace,
                           place_setting_capacity: default_values[:place_setting_capacity],
@@ -1910,14 +1929,14 @@ end
 def set_hpxml_refrigerator(hpxml_file, hpxml)
   if hpxml_file.include?('EPA_Tests')
     hpxml.refrigerators.clear
-    hpxml.refrigerators.add(id: 'Refrigerator',
+    hpxml.refrigerators.add(id: "Refrigerator#{hpxml.refrigerators.size + 1}",
                             location: HPXML::LocationLivingSpace,
                             rated_annual_kwh: 423.0)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     # Standard
     default_values = HotWaterAndAppliances.get_refrigerator_default_values(hpxml.building_construction.number_of_bedrooms)
     hpxml.refrigerators.clear
-    hpxml.refrigerators.add(id: 'Refrigerator',
+    hpxml.refrigerators.add(id: "Refrigerator#{hpxml.refrigerators.size + 1}",
                             location: HPXML::LocationLivingSpace,
                             rated_annual_kwh: default_values[:rated_annual_kwh])
   end
@@ -1941,7 +1960,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     # Standard gas
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
-    hpxml.cooking_ranges.add(id: 'Range',
+    hpxml.cooking_ranges.add(id: "CookingRange#{hpxml.cooking_ranges.size + 1}",
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              is_induction: default_values[:is_induction])
@@ -1956,7 +1975,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     # Standard electric
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
-    hpxml.cooking_ranges.add(id: 'Range',
+    hpxml.cooking_ranges.add(id: "CookingRange#{hpxml.cooking_ranges.size + 1}",
                              location: HPXML::LocationLivingSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              is_induction: default_values[:is_induction])
@@ -1968,7 +1987,7 @@ def set_hpxml_oven(hpxml_file, hpxml)
 
   default_values = HotWaterAndAppliances.get_range_oven_default_values()
   hpxml.ovens.clear
-  hpxml.ovens.add(id: 'Oven',
+  hpxml.ovens.add(id: "Oven#{hpxml.ovens.size + 1}",
                   is_convection: default_values[:is_convection])
 end
 
@@ -2000,9 +2019,9 @@ def set_hpxml_lighting(hpxml_file, hpxml)
   end
 
   hpxml.lighting_groups.clear
-  ltg_fracs.each_with_index do |(key, fraction), i|
+  ltg_fracs.each do |key, fraction|
     location, lighting_type = key
-    hpxml.lighting_groups.add(id: "LightingGroup#{i + 1}",
+    hpxml.lighting_groups.add(id: "LightingGroup#{hpxml.lighting_groups.size + 1}",
                               location: location,
                               fraction_of_units_in_location: fraction,
                               lighting_type: lighting_type)
@@ -2025,15 +2044,9 @@ def create_sample_hpxmls
   # Copy sample files from hpxml-measures subtree
   puts 'Copying sample files...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
-  FileUtils.rm_f(Dir.glob('workflow/sample_files/invalid_files/*.xml'))
 
   # Copy files we're interested in
-  include_list = ['invalid_files/dhw-frac-load-served.xml',
-                  'invalid_files/enclosure-floor-area-exceeds-cfa.xml',
-                  'invalid_files/hvac-frac-load-served.xml',
-                  'invalid_files/invalid-epw-filepath.xml',
-                  'invalid_files/missing-elements.xml',
-                  'base.xml',
+  include_list = ['base.xml',
                   'base-appliances-dehumidifier.xml',
                   'base-appliances-dehumidifier-ief-portable.xml',
                   'base-appliances-dehumidifier-ief-whole-home.xml',
@@ -2136,11 +2149,11 @@ def create_sample_hpxmls
                   'base-hvac-ground-to-air-heat-pump.xml',
                   'base-hvac-ground-to-air-heat-pump-cooling-only.xml',
                   'base-hvac-ground-to-air-heat-pump-heating-only.xml',
-                  'base-hvac-install-quality-all-air-to-air-heat-pump-1-speed.xml',
-                  'base-hvac-install-quality-all-furnace-gas-central-ac-1-speed.xml',
-                  'base-hvac-install-quality-all-ground-to-air-heat-pump.xml',
-                  'base-hvac-install-quality-all-mini-split-air-conditioner-only-ducted.xml',
-                  'base-hvac-install-quality-all-mini-split-heat-pump-ducted.xml',
+                  'base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml',
+                  'base-hvac-install-quality-furnace-gas-central-ac-1-speed.xml',
+                  'base-hvac-install-quality-ground-to-air-heat-pump.xml',
+                  'base-hvac-install-quality-mini-split-air-conditioner-only-ducted.xml',
+                  'base-hvac-install-quality-mini-split-heat-pump-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ductless.xml',
                   'base-hvac-mini-split-heat-pump-ducted.xml',
@@ -2151,12 +2164,17 @@ def create_sample_hpxmls
                   'base-hvac-none.xml',
                   'base-hvac-portable-heater-gas-only.xml',
                   'base-hvac-programmable-thermostat.xml',
+                  'base-hvac-ptac.xml',
+                  'base-hvac-ptac-with-heating.xml',
+                  'base-hvac-pthp.xml',
                   'base-hvac-room-ac-only.xml',
+                  'base-hvac-room-ac-only-ceer.xml',
                   'base-hvac-stove-wood-pellets-only.xml',
                   'base-hvac-undersized.xml',
                   'base-hvac-wall-furnace-elec-only.xml',
                   'base-lighting-ceiling-fans.xml',
                   'base-location-baltimore-md.xml',
+                  'base-location-capetown-zaf.xml',
                   'base-location-dallas-tx.xml',
                   'base-location-duluth-mn.xml',
                   'base-location-helena-mt.xml',
@@ -2190,9 +2208,6 @@ def create_sample_hpxmls
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
   end
-  Dir['workflow/sample_files/invalid_files/*.xml'].each do |hpxml_path|
-    hpxml_paths << hpxml_path
-  end
   hpxml_paths.each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
 
@@ -2201,6 +2216,37 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = 'latest'
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
+    hpxml.attics.each do |attic|
+      if [HPXML::AtticTypeVented,
+          HPXML::AtticTypeUnvented].include? attic.attic_type
+        attic.within_infiltration_volume = false if attic.within_infiltration_volume.nil?
+      end
+    end
+    hpxml.foundations.each do |foundation|
+      next unless [HPXML::FoundationTypeBasementUnconditioned,
+                   HPXML::FoundationTypeCrawlspaceUnvented,
+                   HPXML::FoundationTypeCrawlspaceVented].include? foundation.foundation_type
+
+      foundation.within_infiltration_volume = false if foundation.within_infiltration_volume.nil?
+    end
+    hpxml.foundation_walls.each do |fwall|
+      fwall.insulation_interior_distance_to_top = 0 if fwall.insulation_interior_distance_to_top.nil?
+      if fwall.insulation_interior_distance_to_bottom.nil?
+        if fwall.insulation_interior_r_value.to_f > 0
+          fwall.insulation_interior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_interior_distance_to_bottom = 0
+        end
+      end
+      fwall.insulation_exterior_distance_to_top = 0 if fwall.insulation_exterior_distance_to_top.nil?
+      if fwall.insulation_exterior_distance_to_bottom.nil?
+        if fwall.insulation_exterior_r_value.to_f > 0
+          fwall.insulation_exterior_distance_to_bottom = fwall.height
+        else
+          fwall.insulation_exterior_distance_to_bottom = 0
+        end
+      end
+    end
     hpxml.heating_systems.each do |heating_system|
       next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
       next unless heating_system.is_shared_system.nil?
@@ -2242,18 +2288,18 @@ def create_sample_hpxmls
     end
     hpxml.ventilation_fans.each do |ventilation_fan|
       next unless ventilation_fan.used_for_whole_building_ventilation
-      next unless ventilation_fan.is_shared_system.nil?
 
-      ventilation_fan.is_shared_system = false
+      ventilation_fan.is_shared_system = false if ventilation_fan.is_shared_system.nil?
+      ventilation_fan.tested_flow_rate = ventilation_fan.rated_flow_rate.to_f + ventilation_fan.delivered_ventilation.to_f if ventilation_fan.tested_flow_rate.nil?
     end
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
 
       if heating_system.fan_watts_per_cfm.nil?
-        heating_system.fan_power_not_tested = true
+        heating_system.fan_watts_per_cfm = 0.58
       end
       if heating_system.airflow_defect_ratio.nil?
-        heating_system.airflow_not_tested = true
+        heating_system.airflow_defect_ratio = -0.25
       end
     end
     hpxml.cooling_systems.each do |cooling_system|
@@ -2261,13 +2307,17 @@ def create_sample_hpxmls
                    HPXML::HVACTypeMiniSplitAirConditioner].include? cooling_system.cooling_system_type
 
       if cooling_system.fan_watts_per_cfm.nil?
-        cooling_system.fan_power_not_tested = true
+        cooling_system.fan_watts_per_cfm = 0.58
       end
       if cooling_system.airflow_defect_ratio.nil?
-        cooling_system.airflow_not_tested = true
+        if not cooling_system.distribution_system_idref.nil?
+          cooling_system.airflow_defect_ratio = -0.25
+        else
+          cooling_system.airflow_defect_ratio = 0.0
+        end
       end
       if cooling_system.charge_defect_ratio.nil?
-        cooling_system.charge_not_tested = true
+        cooling_system.charge_defect_ratio = -0.25
       end
     end
     hpxml.heat_pumps.each do |heat_pump|
@@ -2275,21 +2325,18 @@ def create_sample_hpxmls
                    HPXML::HVACTypeHeatPumpGroundToAir,
                    HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
 
-      if not heat_pump.distribution_system_idref.nil? # Ducted, these inputs apply
-        if heat_pump.fan_watts_per_cfm.nil?
-          heat_pump.fan_power_not_tested = true
-        end
-        if heat_pump.airflow_defect_ratio.nil?
-          heat_pump.airflow_not_tested = true
+      if heat_pump.fan_watts_per_cfm.nil?
+        heat_pump.fan_watts_per_cfm = 0.58
+      end
+      if heat_pump.airflow_defect_ratio.nil?
+        if not heat_pump.distribution_system_idref.nil?
+          heat_pump.airflow_defect_ratio = -0.25
+        else
+          heat_pump.airflow_defect_ratio = 0.0
         end
       end
       if heat_pump.charge_defect_ratio.nil?
-        if heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
-          # TODO: GSHP can't be untested, since that ends up grade 3 and is currently unsupported by E+
-          heat_pump.charge_defect_ratio = 0.0
-        else
-          heat_pump.charge_not_tested = true
-        end
+        heat_pump.charge_defect_ratio = -0.25
       end
     end
     hpxml.heating_systems.each do |heating_system|
@@ -2308,6 +2355,22 @@ def create_sample_hpxmls
       next unless generator.is_shared_system.nil?
 
       generator.is_shared_system = false
+    end
+    # TODO: Allow UsageBin in 301validator and remove code below
+    hpxml.water_heating_systems.each do |dhw_system|
+      next if dhw_system.uniform_energy_factor.nil?
+      next unless [HPXML::WaterHeaterTypeStorage, HPXML::WaterHeaterTypeHeatPump].include? dhw_system.water_heater_type
+      next unless dhw_system.first_hour_rating.nil?
+
+      if dhw_system.usage_bin == HPXML::WaterHeaterUsageBinLow
+        dhw_system.usage_bin = nil
+        dhw_system.first_hour_rating = 46.0
+      elsif dhw_system.usage_bin == HPXML::WaterHeaterUsageBinMedium
+        dhw_system.usage_bin = nil
+        dhw_system.first_hour_rating = 56.0
+      else
+        fail hpxml_path
+      end
     end
 
     # Handle different inputs for ENERGY STAR
@@ -2349,12 +2412,6 @@ def create_sample_hpxmls
   hpxml.hvac_distributions[0].duct_leakage_to_outside_testing_exemption = true
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
 
-  # ... and invalid test file (pre-Addendum L)
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
-  hpxml.header.eri_calculation_version = '2014A'
-  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml')
-
   # Duct leakage total
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
   # Add total duct leakage
@@ -2374,12 +2431,6 @@ def create_sample_hpxmls
                                         duct_surface_area: 35)
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
 
-  # ... and invalid test file (pre-Addendum L)
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
-  hpxml.header.eri_calculation_version = '2014ADEG'
-  hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/invalid_files/hvac-ducts-leakage-total-pre-addendum-l.xml')
-
   # Older versions
   Constants.ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
@@ -2392,23 +2443,6 @@ def create_sample_hpxmls
     end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
-  end
-
-  # Invalid ENERGY STAR version test files
-  es_files = { ESConstants.SFNationalVer3_0 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFNationalVer3_1 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFFloridaVer3_1 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFOregonWashingtonVer3_2 => HPXML::ResidentialTypeApartment,
-               ESConstants.SFPacificVer3_0 => HPXML::ResidentialTypeApartment,
-               ESConstants.MFNationalVer1_0 => HPXML::ResidentialTypeSFD,
-               ESConstants.MFNationalVer1_1 => HPXML::ResidentialTypeSFD,
-               ESConstants.MFOregonWashingtonVer1_2 => HPXML::ResidentialTypeSFD }
-  es_files.each do |es_version, bldg_type|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml.header.energystar_calculation_version = es_version
-    hpxml.building_construction.residential_facility_type = bldg_type
-    hpxml.header.state_code = 'CO'
-    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/invalid_files/energy-star-#{es_version.gsub(' ', '_').gsub(',', '')}.xml")
   end
 
   # ENERGY STAR Oregon/Washington MF file
@@ -2550,8 +2584,8 @@ if ARGV[0].to_sym == :create_release_zips
   end
   files = ['hpxml-measures/HPXMLtoOpenStudio/measure.*',
            'hpxml-measures/HPXMLtoOpenStudio/resources/*.*',
-           'hpxml-measures/SimulationOutputReport/measure.*',
-           'hpxml-measures/SimulationOutputReport/resources/*.*',
+           'hpxml-measures/ReportSimulationOutput/measure.*',
+           'hpxml-measures/ReportSimulationOutput/resources/*.*',
            'rulesets/301EnergyRatingIndexRuleset/measure.*',
            'rulesets/301EnergyRatingIndexRuleset/resources/*.*',
            'rulesets/EnergyStarRuleset/measure.*',

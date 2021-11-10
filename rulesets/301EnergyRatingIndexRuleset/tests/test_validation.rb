@@ -5,62 +5,69 @@ require 'openstudio'
 require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
+require_relative '../../EnergyStarRuleset/resources/constants.rb'
 
 class ERI301ValidationTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
+    @eri_validator_stron_path = File.join(@root_path, 'rulesets', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
+    @hpxml_stron_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml')
 
-    # load the Schematron xml
-    @stron_path = File.join(@root_path, 'rulesets', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
-    @stron_doc = XMLHelper.parse_file(@stron_path)
+    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
+    @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
+    FileUtils.mkdir_p(@tmp_output_path)
+  end
 
-    # Load all HPXMLs
-    hpxml_file_dirs = [File.absolute_path(File.join(@root_path, 'workflow', 'sample_files')),
-                       File.absolute_path(File.join(@root_path, 'workflow', 'tests', 'RESNET_Tests', '4.1_Standard_140'))]
-    @hpxml_docs = {}
-    hpxml_file_dirs.each do |hpxml_file_dir|
-      Dir["#{hpxml_file_dir}/*.xml"].sort.each do |xml|
-        @hpxml_docs[File.basename(xml)] = HPXML.new(hpxml_path: File.join(hpxml_file_dir, File.basename(xml))).to_oga()
-      end
+  def teardown
+    File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
+    FileUtils.rm_rf(@tmp_output_path)
+  end
+
+  def test_validation_of_sample_files
+    xmls = []
+    Dir["#{@root_path}/workflow/sample_files/*.xml"].sort.each do |xml|
+      next if xml.split('/').include? 'run'
+
+      xmls << xml
     end
 
-    # Build up expected error messages hashes by parsing 301validator.xml
-    @expected_assertions_by_addition = {}
-    @expected_assertions_by_deletion = {}
-    @expected_assertions_by_alteration = {}
-    XMLHelper.get_elements(@stron_doc, '/sch:schema/sch:pattern/sch:rule').each do |rule|
-      rule_context = XMLHelper.get_attribute_value(rule, 'context')
-      context_xpath = rule_context.gsub('h:', '')
+    xmls.each_with_index do |xml, i|
+      puts "[#{i + 1}/#{xmls.size}] Testing #{File.basename(xml)}..."
 
-      XMLHelper.get_elements(rule, 'sch:assert').each do |assertion|
-        assertion_message = assertion.inner_text
-        element_name = _get_element_name_for_assertion_test(assertion)
-        key = [context_xpath, element_name]
+      # Test validation
+      hpxml_doc = HPXML.new(hpxml_path: xml, building_id: 'MyBuilding').to_oga()
+      _test_schema_validation(hpxml_doc, xml)
+      _test_schematron_validation(hpxml_doc)
+    end
+    puts
+  end
 
-        if assertion_message.start_with?('Expected 0 element')
-          # Skipping for now
-        elsif assertion_message.start_with?('Expected 0 or ')
-          @expected_assertions_by_addition[key] = _get_expected_error_msg(context_xpath, assertion_message, 'addition')
-        elsif assertion_message.start_with?('Expected 1 ')
-          @expected_assertions_by_deletion[key] = _get_expected_error_msg(context_xpath, assertion_message, 'deletion')
-          @expected_assertions_by_addition[key] = _get_expected_error_msg(context_xpath, assertion_message, 'addition')
-        elsif assertion_message.include?("Expected #{element_name} to be")
-          @expected_assertions_by_alteration[key] = _get_expected_error_msg(context_xpath, assertion_message, 'alteration')
-        elsif assertion_message.include?('There must be at least one') || assertion_message.include?('A location is specified as') || assertion_message.include?('sum of')
-          # Skip these complex rules
-        else
-          fail "Unexpected assertion: '#{assertion_message}'."
+  def test_validation_of_schematron_doc
+    # Check that the schematron file is valid
+
+    begin
+      require 'schematron-nokogiri'
+
+      [@eri_validator_stron_path, @hpxml_stron_path].each do |s_path|
+        xml_doc = Nokogiri::XML(File.open(s_path)) do |config|
+          config.options = Nokogiri::XML::ParseOptions::STRICT
         end
+        stron_doc = SchematronNokogiri::Schema.new(xml_doc)
       end
+    rescue LoadError
     end
   end
 
-  def test_role_attributes
+  def test_role_attributes_in_schematron_doc
+    # Test for consistent use of errors/warnings
     puts
     puts 'Checking for correct role attributes...'
 
+    epvalidator_stron_doc = XMLHelper.parse_file(@eri_validator_stron_path)
+
     # check that every assert element has a role attribute
-    XMLHelper.get_elements(@stron_doc, '/sch:schema/sch:pattern/sch:rule/sch:assert').each do |assert_element|
+    XMLHelper.get_elements(epvalidator_stron_doc, '/sch:schema/sch:pattern/sch:rule/sch:assert').each do |assert_element|
       assert_test = XMLHelper.get_attribute_value(assert_element, 'test').gsub('h:', '')
       role_attribute = XMLHelper.get_attribute_value(assert_element, 'role')
       if role_attribute.nil?
@@ -71,7 +78,7 @@ class ERI301ValidationTest < MiniTest::Test
     end
 
     # check that every report element has a role attribute
-    XMLHelper.get_elements(@stron_doc, '/sch:schema/sch:pattern/sch:rule/sch:report').each do |report_element|
+    XMLHelper.get_elements(epvalidator_stron_doc, '/sch:schema/sch:pattern/sch:rule/sch:report').each do |report_element|
       report_test = XMLHelper.get_attribute_value(report_element, 'test').gsub('h:', '')
       role_attribute = XMLHelper.get_attribute_value(report_element, 'role')
       if role_attribute.nil?
@@ -82,111 +89,107 @@ class ERI301ValidationTest < MiniTest::Test
     end
   end
 
-  def test_sample_files
-    puts
-    puts "Testing #{@hpxml_docs.size} HPXML files..."
-    @hpxml_docs.each do |xml, hpxml_doc|
-      print '.'
+  def test_schematron_error_messages
+    # Test case => Error message
+    all_expected_errors = { 'dhw-frac-load-served' => ['Expected sum(FractionDHWLoadServed) to be 1 [context: /HPXML/Building/BuildingDetails]'],
+                            'hvac-frac-load-served' => ['Expected sum(FractionHeatLoadServed) to be less than or equal to 1 [context: /HPXML/Building/BuildingDetails]',
+                                                        'Expected sum(FractionCoolLoadServed) to be less than or equal to 1 [context: /HPXML/Building/BuildingDetails]'],
+                            'enclosure-floor-area-exceeds-cfa' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas. [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
+                            'energy-star-SF_Florida_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Florida")]]'],
+                            'energy-star-SF_National_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
+                            'energy-star-SF_National_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
+                            'energy-star-SF_OregonWashington_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_OregonWashington")]]'],
+                            'energy-star-SF_Pacific_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Pacific")]]'],
+                            'energy-star-MF_National_1.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_National_1.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
+                            'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_OregonWashington")]]',
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
 
-      # Test validation
-      _test_schema_validation(hpxml_doc, xml)
-      _test_schematron_validation(hpxml_doc)
-    end
-    puts
-  end
-
-  def test_schematron_asserts_by_deletion
-    puts
-    puts "Testing #{@expected_assertions_by_deletion.size} Schematron asserts by deletion..."
-
-    # Tests by element deletion
-    @expected_assertions_by_deletion.each do |key, expected_error_msg|
-      print '.'
-      hpxml_doc, parent_element = _get_hpxml_doc_and_parent_element(key)
-      child_element_name = key[1]
-      XMLHelper.delete_element(parent_element, child_element_name)
-
-      # Test validation
-      _test_schematron_validation(hpxml_doc, expected_error_msg)
-    end
-    puts
-  end
-
-  def test_schematron_asserts_by_addition
-    puts
-    puts "Testing #{@expected_assertions_by_addition.size} Schematron asserts by addition..."
-
-    # Tests by element addition (i.e. zero_or_one, zero_or_two, etc.)
-    @expected_assertions_by_addition.each do |key, expected_error_msg|
-      print '.'
-      hpxml_doc, parent_element = _get_hpxml_doc_and_parent_element(key)
-      child_element_name = key[1]
-
-      # modify parent element
-      additional_parent_element_name = child_element_name.gsub(/\[text().*?\]/, '').split('/')[0...-1].reject(&:empty?).join('/').chomp('/') # remove text that starts with 'text()' within brackets (e.g. [text()=foo or ...]) and select elements from the first to the second last
-      _balance_brackets(additional_parent_element_name)
-      mod_parent_element = additional_parent_element_name.empty? ? parent_element : XMLHelper.get_element(parent_element, additional_parent_element_name)
-
-      if not expected_error_msg.nil?
-        max_number_of_elements_allowed = 1
-      else # handles cases where expected error message starts with "Expected 0 or more" or "Expected 1 or more". In these cases, 2 elements will be added for the element addition test.
-        max_number_of_elements_allowed = 2 # arbitrary number
+    all_expected_errors.each_with_index do |(error_case, expected_errors), i|
+      puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
+      # Create HPXML object
+      if ['dhw-frac-load-served'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-dhw-multiple.xml'))
+        hpxml.water_heating_systems[0].fraction_dhw_load_served = 0.35
+      elsif ['hvac-frac-load-served'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-multiple.xml'))
+        hpxml.heating_systems[0].fraction_heat_load_served += 0.1
+        hpxml.cooling_systems[0].fraction_cool_load_served += 0.2
+        hpxml.heating_systems[0].primary_system = true
+        hpxml.cooling_systems[0].primary_system = true
+        hpxml.heat_pumps[-1].primary_heating_system = false
+        hpxml.heat_pumps[-1].primary_cooling_system = false
+      elsif ['enclosure-floor-area-exceeds-cfa'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
+        hpxml.building_construction.conditioned_floor_area = 1348.8
+      elsif error_case.include? 'energy-star'
+        es_props = { 'energy-star-SF_Florida_3.1' => [ESConstants.SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_National_3.0' => [ESConstants.SFNationalVer3_0, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_National_3.1' => [ESConstants.SFNationalVer3_1, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_OregonWashington_3.2' => [ESConstants.SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_Pacific_3.0' => [ESConstants.SFPacificVer3_0, HPXML::ResidentialTypeApartment],
+                     'energy-star-MF_National_1.0' => [ESConstants.MFNationalVer1_0, HPXML::ResidentialTypeSFD],
+                     'energy-star-MF_National_1.1' => [ESConstants.MFNationalVer1_1, HPXML::ResidentialTypeSFD],
+                     'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
+        es_version, bldg_type = es_props[error_case]
+        hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+        hpxml.header.energystar_calculation_version = es_version
+        hpxml.building_construction.residential_facility_type = bldg_type
+        hpxml.header.state_code = 'CO'
+      else
+        fail "Unhandled case: #{error_case}."
       end
 
-      # Copy the child_element by the maximum allowed number.
-      duplicated = _deep_copy_object(XMLHelper.get_element(parent_element, child_element_name))
-      (max_number_of_elements_allowed + 1).times { mod_parent_element.children << duplicated }
+      hpxml_doc = hpxml.to_oga()
 
-      # Test validation
-      _test_schematron_validation(hpxml_doc, expected_error_msg)
+      # Test against schematron
+      _test_schematron_validation(hpxml_doc, expected_errors)
     end
-    puts
   end
 
-  def test_schematron_asserts_by_alteration
-    puts "Testing #{@expected_assertions_by_alteration.size} Schematron asserts by alteration..."
+  def test_measure_error_messages
+    # Test case => Error message
+    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."],
+                            'hvac-ducts-lto-exemption-pre-addendum-d' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
+                            'hvac-ducts-leakage-total-pre-addendum-l' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
 
-    # Tests by element alteration
-    @expected_assertions_by_alteration.each do |key, expected_error_msg|
-      print '.'
-      hpxml_doc, parent_element = _get_hpxml_doc_and_parent_element(key)
-      child_element_name = key[1]
-      element_to_be_altered = XMLHelper.get_element(parent_element, child_element_name)
-      element_to_be_altered.inner_text = element_to_be_altered.inner_text + 'foo' # add arbitrary string to make the value invalid
-
-      # Test validation
-      _test_schematron_validation(hpxml_doc, expected_error_msg)
-    end
-    puts
-  end
-
-  def test_schematron_validation
-    # Check that the schematron file is valid
-    begin
-      require 'schematron-nokogiri'
-
-      xml_doc = Nokogiri::XML(File.open(@stron_path)) do |config|
-        config.options = Nokogiri::XML::ParseOptions::STRICT
+    all_expected_errors.each_with_index do |(error_case, expected_errors), i|
+      puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
+      # Create HPXML object
+      if ['invalid-epw-filepath'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
+        hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'foo.epw'
+      elsif ['dhw-frac-load-served'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-dhw-multiple.xml'))
+        hpxml.water_heating_systems[0].fraction_dhw_load_served = 0.35
+      elsif ['hvac-ducts-lto-exemption-pre-addendum-d'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-ducts-leakage-to-outside-exemption.xml'))
+        hpxml.header.eri_calculation_version = '2014A'
+        hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
+      elsif ['hvac-ducts-leakage-total-pre-addendum-l'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-ducts-leakage-total.xml'))
+        hpxml.header.eri_calculation_version = '2014ADEG'
+        hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
+      else
+        fail "Unhandled case: #{error_case}."
       end
-      stron_doc = SchematronNokogiri::Schema.new(xml_doc)
-    rescue LoadError
+
+      hpxml_doc = hpxml.to_oga()
+
+      XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+      model, hpxml = _test_measure(error_case, expected_errors)
     end
   end
 
   private
 
-  def _test_schematron_validation(hpxml_doc, expected_error_msg = nil)
+  def _test_schematron_validation(hpxml_doc, expected_errors = [])
     # Validate via validator.rb
-    errors, warnings = Validator.run_validators(hpxml_doc, [@stron_path], include_id: false)
-    idx_of_msg = errors.index { |i| i == expected_error_msg }
-    if expected_error_msg.nil?
-      assert_nil(idx_of_msg)
-    else
-      if idx_of_msg.nil?
-        puts "Did not find expected error message '#{expected_error_msg}' in #{errors}."
-      end
-      refute_nil(idx_of_msg)
-    end
+    errors, warnings = Validator.run_validators(hpxml_doc, [@eri_validator_stron_path, @hpxml_stron_path])
+    _compare_errors(errors, expected_errors)
   end
 
   def _test_schema_validation(hpxml_doc, xml)
@@ -199,67 +202,65 @@ class ERI301ValidationTest < MiniTest::Test
     assert_equal(0, errors.size)
   end
 
-  def _get_hpxml_doc_and_parent_element(key)
-    context_xpath, element_name = key
+  def _test_measure(error_case, expected_errors)
+    # create an instance of the measure
+    measure = EnergyRatingIndex301Measure.new
 
-    # Find a HPXML file that contains the specified elements.
-    @hpxml_docs.each do |xml, hpxml_doc|
-      if context_xpath.include? 'HeatPump[HeatPumpType="water-loop-to-air"]'
-        next unless xml.include? 'boiler-only'
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    model = OpenStudio::Model::Model.new
+
+    # get arguments
+    args_hash = {}
+    args_hash['calc_type'] = Constants.CalcTypeERIRatedHome
+    args_hash['hpxml_input_path'] = File.absolute_path(@tmp_hpxml_path)
+    args_hash['hpxml_output_path'] = File.absolute_path(@tmp_output_path)
+    arguments = measure.arguments(model)
+    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
+
+    # populate argument with specified hash value if specified
+    arguments.each do |arg|
+      temp_arg_var = arg.clone
+      if args_hash.has_key?(arg.name)
+        assert(temp_arg_var.setValue(args_hash[arg.name]))
       end
+      argument_map[arg.name] = temp_arg_var
+    end
 
-      parent_elements = XMLHelper.get_elements(hpxml_doc, context_xpath)
-      next if parent_elements.nil?
+    # run the measure
+    measure.run(model, runner, argument_map)
+    result = runner.result
 
-      parent_elements.each do |parent_element|
-        next unless XMLHelper.has_element(parent_element, element_name)
+    assert_equal('Fail', result.value.valueName)
 
-        # Return copies so we don't modify the original object and affect subsequent tests.
-        hpxml_doc = _deep_copy_object(hpxml_doc)
-        parent_element = XMLHelper.get_elements(hpxml_doc, context_xpath).select { |el| el.text == parent_element.text }[0]
-        return hpxml_doc, parent_element
+    errors = []
+    result.stepErrors.each do |s|
+      errors << s
+    end
+    _compare_errors(errors, expected_errors)
+  end
+
+  def _compare_errors(actual_errors, expected_errors)
+    if expected_errors.empty?
+      if actual_errors.size > 0
+        puts "Found unexpected error messages:\n#{actual_errors}"
       end
-    end
-
-    fail "Could not find an HPXML file with #{element_name} in #{context_xpath}. Add this to a HPXML file so that it's tested."
-  end
-
-  def _get_expected_error_msg(parent_xpath, assertion_message, mode)
-    if assertion_message.start_with?('Expected 0 or more')
-      return
-    elsif assertion_message.start_with?('Expected 1 or more') && (mode == 'addition')
-      return
+      assert(actual_errors.size == 0)
     else
-      return [assertion_message, "[context: #{parent_xpath}]"].join(' ') # return "Expected x element(s) for xpath: foo... [context: bar/baz/...]"
+      expected_errors.each do |expected_error|
+        found_error = false
+        actual_errors.each do |actual_error|
+          found_error = true if actual_error.include? expected_error
+        end
+
+        if not found_error
+          puts "Did not find expected error message\n'#{expected_error}'\nin\n#{actual_errors}"
+        end
+        assert(found_error)
+      end
+      if expected_errors.size != actual_errors.size
+        puts "Found extra error messages:\n#{actual_errors}"
+      end
+      assert_equal(expected_errors.size, actual_errors.size)
     end
-  end
-
-  def _get_element_name_for_assertion_test(assertion)
-    # From the assertion, get the element name to be added or deleted for the assertion test.
-    if assertion.inner_text.start_with?('Expected') && assertion.inner_text.include?('to be')
-      test_attr = assertion.get('test')
-      element_name = test_attr[/not\((.*?)\)/m, 1].gsub('h:', '') # pull text between "not(" and ")" (i.e. "foo" from "not(h:foo)")
-
-      return element_name
-    else
-      test_attr = assertion.get('test')
-      element_name = test_attr[/(?<=\().*(?=\))/].gsub('h:', '').partition(') + count').first # pull text between the first opening and the last closing parenthesis. (i.e. "foo" from "count(foo) + count(bar)...")
-      _balance_brackets(element_name)
-
-      return element_name
-    end
-  end
-
-  def _balance_brackets(element_name)
-    if element_name.count('[') != element_name.count(']')
-      diff = element_name.count('[') - element_name.count(']')
-      diff.times { element_name.concat(']') }
-    end
-
-    return element_name
-  end
-
-  def _deep_copy_object(obj)
-    return Marshal.load(Marshal.dump(obj))
   end
 end

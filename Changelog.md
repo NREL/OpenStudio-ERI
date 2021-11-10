@@ -1,14 +1,36 @@
 ## OpenStudio-ERI v1.3.0 (Pending)
 
 __New Features__
-- Updates to OpenStudio 3.2.0/EnergyPlus 9.5.0.
-- Allows monthly or daily timeseries outputs instead of hourly.
+- Updates to OpenStudio 3.3.0/EnergyPlus 9.6.0.
+- **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeDefectRatio` are no longer accepted.
+- **Breaking change**: Replaces "Unmet Load" outputs with "Unmet Hours".
+- **Breaking change**: Renames "Load: Heating" and "Peak Load: Heating" (and Cooling) outputs to include "Delivered".
+- **Breaking change**: Any heat pump backup heating requires `HeatPump/BackupType="integrated"` to be specified.
+- **Breaking change**: HPXML schema version must now be '4.0' (proposed).
+  - Moves `FoundationWall/Insulation/Layer/extension/DistanceToTopOfInsulation` to `FoundationWall/Insulation/Layer/DistanceToTopOfInsulation`.
+  - Moves `FoundationWall/Insulation/Layer/extension/DistanceToBottomOfInsulation` to `FoundationWall/Insulation/Layer/DistanceToBottomOfInsulation`.
+  - Moves `Slab/PerimeterInsulationDepth` to `Slab/PerimeterInsulation/Layer/InsulationDepth`.
+  - Moves `Slab/UnderSlabInsulationWidth` to `Slab/UnderSlabInsulation/Layer/InsulationWidth`.
+  - Moves `Slab/UnderSlabInsulationSpansEntireSlab` to `Slab/UnderSlabInsulation/Layer/InsulationSpansEntireSlab`.
+- Allows modeling PTAC and PTHP HVAC systems. 
 - Allows additional fuel types for generators.
+- Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
+- Allows CEER (Combined Energy Efficiency Ratio) efficiency unit for room AC.
+- Allows specifying the foundation wall type (e.g., solid concrete, concrete block, wood, etc.).
 - Removes error-check for number of bedrooms based on conditioned floor area, per RESNET guidance.
-- `ConditionedBuildingVolume` input is not longer needed.
+- Introduces a small amount of infiltration for unvented spaces.
+- `ConditionedBuildingVolume` input is no longer needed.
+- Improves consistency of installation quality calculations for two/variable-speed air source heat pumps and ground source heat pumps.
 
 __Bugfixes__
 - Improves ground reflectance for window interior shading.
+- Improves HVAC fan power for central forced air systems.
+- Fixes mechanical ventilation compartmentalization area calculation for SFA/MF homes with surfaces with InteriorAdjacentTo==ExteriorAdjacentTo.
+- Negative `DistanceToTopOfInsulation` values are now disallowed.
+- Fixes workflow errors if a `VentilationFan` has zero airflow rate or zero hours of operation.
+- Fixes heating/cooling seasons (used for e.g. summer vs winter window shading) for the southern hemisphere.
+- Relaxes `Overhangs` DistanceToBottomOfWindow vs DistanceToBottomOfWindow validation when Depth is zero.
+- Fixes possibility of "Construction R-value ... does not match Assembly R-value" error.
 
 ## OpenStudio-ERI v1.2.1
 

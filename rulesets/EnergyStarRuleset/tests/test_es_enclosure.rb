@@ -150,7 +150,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base.xml', es_version)
       hpxml = _test_measure()
-      _check_walls(hpxml, area: 1490, rvalue: (rvalue * 1200 + 4.0 * 290) / 1490, sabs: 0.75, emit: 0.9)
+      _check_walls(hpxml, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
       _convert_to_es('base-atticroof-conditioned.xml', es_version)
       hpxml = _test_measure()
@@ -162,7 +162,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base-enclosure-garage.xml', es_version)
       hpxml = _test_measure()
-      _check_walls(hpxml, area: 1873, rvalue: (rvalue * 1200 + 4.0 * 673) / 1873, sabs: 0.75, emit: 0.9)
+      _check_walls(hpxml, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
 
     ESConstants.MFVersions.each do |es_version|
@@ -191,7 +191,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base.xml', ESConstants.SFPacificVer3_0, state_code)
       hpxml = _test_measure()
-      _check_walls(hpxml, area: 1490, rvalue: (rvalue * 1200 + 4.0 * 290) / 1490, sabs: 0.75, emit: 0.9)
+      _check_walls(hpxml, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
       _convert_to_es('base-atticroof-conditioned.xml', ESConstants.SFPacificVer3_0, state_code)
       hpxml = _test_measure()
@@ -199,7 +199,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base-enclosure-garage.xml', ESConstants.SFPacificVer3_0, state_code)
       hpxml = _test_measure()
-      _check_walls(hpxml, area: 1873, rvalue: (rvalue * 1200 + 4.0 * 673) / 1873, sabs: 0.75, emit: 0.9)
+      _check_walls(hpxml, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
   end
 
@@ -221,7 +221,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base-foundation-multiple.xml', es_version)
       hpxml = _test_measure()
-      _check_rim_joists(hpxml, area: 197, rvalue: 2.3, sabs: 0.75, emit: 0.90)
+      _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.90)
     end
   end
 
@@ -241,9 +241,18 @@ class EnergyStarEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.360
       end
 
-      _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
-      _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7)
+      hpxml_names = ['base.xml',
+                     'base-foundation-conditioned-basement-wall-interior-insulation.xml']
+      hpxml_names.each do |hpxml_name|
+        _convert_to_es(hpxml_name, es_version)
+        hpxml = _test_measure()
+        if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
+          type = HPXML::FoundationWallTypeConcreteBlockFoamCore
+        else
+          type = nil
+        end
+        _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+      end
     end
 
     ESConstants.NationalVersions.each do |es_version|
@@ -253,14 +262,23 @@ class EnergyStarEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.360
       end
 
-      _convert_to_es('base.xml', es_version)
-      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
-      hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-      hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
-      _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7)
+      hpxml_names = ['base.xml',
+                     'base-foundation-conditioned-basement-wall-interior-insulation.xml']
+      hpxml_names.each do |hpxml_name|
+        _convert_to_es(hpxml_name, es_version)
+        hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+        hpxml.climate_and_risk_zones.iecc_zone = '1A'
+        hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+        hpxml.climate_and_risk_zones.weather_station_wmo = 722020
+        XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+        hpxml = _test_measure()
+        if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
+          type = HPXML::FoundationWallTypeConcreteBlockFoamCore
+        else
+          type = nil
+        end
+        _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+      end
     end
 
     ESConstants.AllVersions.each do |es_version|
@@ -597,8 +615,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base.xml', es_version)
       hpxml = _test_measure()
-      _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: rvalue },
-                                               180 => { area: 40, rvalue: rvalue } })
+      _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: rvalue } })
     end
   end
 
@@ -672,22 +689,22 @@ class EnergyStarEnclosureTest < MiniTest::Test
     if area.nil?
       assert(area_values.empty?)
     else
-      assert_in_epsilon(area, area_values.inject(:+), 0.001)
+      assert_in_epsilon(area, area_values.inject(:+), 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
   end
 
@@ -702,10 +719,10 @@ class EnergyStarEnclosureTest < MiniTest::Test
       sabs_x_area_values << wall.solar_absorptance * wall.area
       emit_x_area_values << wall.emittance * wall.area
     end
-    assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
   end
 
   def _check_rim_joists(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil)
@@ -723,26 +740,26 @@ class EnergyStarEnclosureTest < MiniTest::Test
     if area.nil?
       assert(area_values.empty?)
     else
-      assert_in_epsilon(area, area_values.inject(:+), 0.001)
+      assert_in_epsilon(area, area_values.inject(:+), 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
   end
 
-  def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0)
+  def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
     ins_top_x_area_values = [] # Area-weighted
@@ -768,14 +785,19 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
       height_x_area_values << foundation_wall.height * foundation_wall.area
       depth_bg_x_area_values << foundation_wall.depth_below_grade * foundation_wall.area
+      if type.nil?
+        assert_nil(foundation_wall.type)
+      else
+        assert_equal(type, foundation_wall.type)
+      end
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(ins_top, ins_top_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(depth_bg, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(ins_top, ins_top_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(depth_bg, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
   end
 
   def _check_floors(hpxml, area: nil, rvalue: nil)
@@ -789,12 +811,12 @@ class EnergyStarEnclosureTest < MiniTest::Test
     if area.nil?
       assert(area_values.empty?)
     else
-      assert_in_epsilon(area, area_values.inject(:+), 0.001)
+      assert_in_epsilon(area, area_values.inject(:+), 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
   end
 
@@ -823,16 +845,16 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.001)
-    assert_in_epsilon(exp_perim, exp_perim_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
-    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(exp_perim, exp_perim_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     if depth_below_grade.nil?
       assert(depth_bg_x_area_values.empty?)
     else
-      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.001)
+      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     end
   end
 
@@ -861,12 +883,12 @@ class EnergyStarEnclosureTest < MiniTest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_shgc_x_area_values.size)
 
-    assert_in_epsilon(frac_operable, area_operable / area_total, 0.001)
+    assert_in_epsilon(frac_operable, area_operable / area_total, 0.01)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
     end
   end
 
@@ -901,8 +923,8 @@ class EnergyStarEnclosureTest < MiniTest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_rvalue_x_area_values.size)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.001)
-      assert_in_epsilon(values[:rvalue], azimuth_rvalue_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.001)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:rvalue], azimuth_rvalue_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
     end
   end
 

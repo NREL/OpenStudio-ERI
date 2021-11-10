@@ -44,44 +44,44 @@ See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/m
 Annual Energy Consumption by Fuel Type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Current fuel uses are listed below.
+Fuel uses are listed below.
 
-   ========================== ===========================
-   Type                       Notes
-   ========================== ===========================
+   ==========================  ===========================
+   Type                        Notes
+   ==========================  ===========================
    Electricity: Total (MBtu)
-   Electricity: Net (MBtu)    Subtracts any power produced by PV or generators.
+   Electricity: Net (MBtu)     Subtracts any power produced by PV or generators.
    Natural Gas: Total (MBtu)
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)
    Wood Cord: Total (MBtu)         
    Wood Pellets: Total (MBtu) 
-   ========================== ===========================
+   ==========================  ===========================
 
 Annual Energy Consumption By End Use
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Current end uses are listed below.
+End uses are listed below.
 
 Note that all end uses are mutually exclusive -- the "Electricity: Heating" end use, for example, excludes energy reported in the "Electricity: Heating Fans/Pumps" end use.
 So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural Gas: \*") equal the above reported fuel use (e.g., "Fuel Use: Natural Gas: Total").
 
-   ========================================================== ====================================================
-   Type                                                       Notes
-   ========================================================== ====================================================
-   Electricity: Heating (MBtu)                                Excludes fans/pumps
+   ==========================================================  ====================================================
+   Type                                                        Notes
+   ==========================================================  ====================================================
+   Electricity: Heating (MBtu)                                 Excludes fans/pumps
    Electricity: Heating Fans/Pumps (MBtu)
-   Electricity: Cooling (MBtu)                                Excludes fans/pumps
+   Electricity: Cooling (MBtu)                                 Excludes fans/pumps
    Electricity: Cooling Fans/Pumps (MBtu)
-   Electricity: Hot Water (MBtu)                              Excludes recirc pump and solar thermal pump
+   Electricity: Hot Water (MBtu)                               Excludes recirc pump and solar thermal pump
    Electricity: Hot Water Recirc Pump (MBtu)
-   Electricity: Hot Water Solar Thermal Pump (MBtu)           Non-zero only when using detailed (not simple) solar thermal inputs
+   Electricity: Hot Water Solar Thermal Pump (MBtu)            Non-zero only when using detailed (not simple) solar thermal inputs
    Electricity: Lighting Interior (MBtu)
    Electricity: Lighting Garage (MBtu)
    Electricity: Lighting Exterior (MBtu)
-   Electricity: Mech Vent (MBtu)                              Excludes preheating/precooling
-   Electricity: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
-   Electricity: Mech Vent Precooling (MBtu)                   Shared ventilation preconditioning system
+   Electricity: Mech Vent (MBtu)                               Excludes preheating/precooling
+   Electricity: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
+   Electricity: Mech Vent Precooling (MBtu)                    Shared ventilation preconditioning system
    Electricity: Whole House Fan (MBtu)
    Electricity: Refrigerator (MBtu)
    Electricity: Dehumidifier (MBtu)
@@ -91,92 +91,95 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    Electricity: Range/Oven (MBtu)
    Electricity: Ceiling Fan (MBtu)
    Electricity: Television (MBtu)
-   Electricity: Plug Loads (MBtu)                             Excludes independently reported plug loads (e.g., well pump)
-   Electricity: PV (MBtu)                                     Negative value for any power produced
-   Electricity: Generator (MBtu)                              Negative value for any power produced
+   Electricity: Plug Loads (MBtu)                              Excludes independently reported plug loads (e.g., well pump)
+   Electricity: PV (MBtu)                                      Negative value for any power produced
+   Electricity: Generator (MBtu)                               Negative value for any power produced
    Natural Gas: Heating (MBtu)
    Natural Gas: Hot Water (MBtu)
    Natural Gas: Clothes Dryer (MBtu)
    Natural Gas: Range/Oven (MBtu)
-   Natural Gas: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
-   Natural Gas: Generator (MBtu)                              Positive value for any fuel consumed
+   Natural Gas: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
+   Natural Gas: Generator (MBtu)                               Positive value for any fuel consumed
    Fuel Oil: Heating (MBtu)
    Fuel Oil: Hot Water (MBtu)
    Fuel Oil: Clothes Dryer (MBtu)
    Fuel Oil: Range/Oven (MBtu)
-   Fuel Oil: Mech Vent Preheating (MBtu)                      Shared ventilation preconditioning system
+   Fuel Oil: Mech Vent Preheating (MBtu)                       Shared ventilation preconditioning system
    Propane: Heating (MBtu)
    Propane: Hot Water (MBtu)
    Propane: Clothes Dryer (MBtu)
    Propane: Range/Oven (MBtu)
-   Propane: Mech Vent Preheating (MBtu)                       Shared ventilation preconditioning system
-   Propane: Generator (MBtu)                                  Positive value for any fuel consumed
+   Propane: Mech Vent Preheating (MBtu)                        Shared ventilation preconditioning system
+   Propane: Generator (MBtu)                                   Positive value for any fuel consumed
    Wood Cord: Heating (MBtu)
    Wood Cord: Hot Water (MBtu)
    Wood Cord: Clothes Dryer (MBtu)
    Wood Cord: Range/Oven (MBtu)
-   Wood Cord: Mech Vent Preheating (MBtu)                     Shared ventilation preconditioning system
+   Wood Cord: Mech Vent Preheating (MBtu)                      Shared ventilation preconditioning system
    Wood Pellets: Heating (MBtu)
    Wood Pellets: Hot Water (MBtu)
    Wood Pellets: Clothes Dryer (MBtu)
    Wood Pellets: Range/Oven (MBtu)
-   Wood Pellets: Mech Vent Preheating (MBtu)                  Shared ventilation preconditioning system
-   ========================================================== ====================================================
+   Wood Pellets: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   ==========================================================  ====================================================
 
 Annual Building Loads
 ^^^^^^^^^^^^^^^^^^^^^
 
-Current annual building loads are listed below.
+Annual building loads are listed below.
 
-   ===================================== ==================================================================
-   Type                                  Notes
-   ===================================== ==================================================================
-   Load: Heating (MBtu)                  Includes HVAC distribution losses.
-   Load: Cooling (MBtu)                  Includes HVAC distribution losses.
-   Load: Hot Water: Delivered (MBtu)     Includes contributions by desuperheaters or solar thermal systems.
+   =====================================  ==================================================================
+   Type                                   Notes
+   =====================================  ==================================================================
+   Load: Heating: Delivered (MBtu)        Includes HVAC distribution losses.
+   Load: Cooling: Delivered (MBtu)        Includes HVAC distribution losses.
+   Load: Hot Water: Delivered (MBtu)      Includes contributions by desuperheaters or solar thermal systems.
    Load: Hot Water: Tank Losses (MBtu)
-   Load: Hot Water: Desuperheater (MBtu) Load served by the desuperheater.
-   Load: Hot Water: Solar Thermal (MBtu) Load served by the solar thermal system.
-   ===================================== ==================================================================
+   Load: Hot Water: Desuperheater (MBtu)  Load served by the desuperheater.
+   Load: Hot Water: Solar Thermal (MBtu)  Load served by the solar thermal system.
+   =====================================  ==================================================================
 
-Annual Unmet Building Loads
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note that the "Delivered" loads represent the energy delivered by the HVAC/DHW system; if a system is significantly undersized, there will be unmet load not reflected by these values.
 
-Current annual unmet building loads are listed below.
+Annual Unmet Hours
+^^^^^^^^^^^^^^^^^^
 
-   ========================== =====
-   Type                       Notes
-   ========================== =====
-   Unmet Load: Heating (MBtu)
-   Unmet Load: Cooling (MBtu)
-   ========================== =====
+Annual unmet hours are listed below.
 
-These numbers reflect the amount of heating/cooling load that is not met by the HVAC system, indicating the degree to which the HVAC system is undersized.
-An HVAC system with sufficient capacity to perfectly maintain the thermostat setpoints will report an unmet load of zero.
+   ==========================  =====
+   Type                        Notes
+   ==========================  =====
+   Unmet Hours: Heating (hr)   Number of hours where the heating setpoint is not maintained.
+   Unmet Hours: Cooling (hr)   Number of hours where the cooling setpoint is not maintained.
+   ==========================  =====
+
+These numbers reflect the number of hours of the year when the conditioned space temperature is more than 0.2 deg-C (0.36 deg-F) from the setpoint during heating/cooling.
 
 Peak Building Electricity
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Current peak building electricity outputs are listed below.
+Peak building electricity outputs are listed below.
 
-   ================================== =========================================================
-   Type                               Notes
-   ================================== =========================================================
-   Peak Electricity: Winter Total (W) Winter season defined by operation of the heating system.
-   Peak Electricity: Summer Total (W) Summer season defined by operation of the cooling system.
-   ================================== =========================================================
+   ==================================  =========================================================
+   Type                                Notes
+   ==================================  =========================================================
+   Peak Electricity: Winter Total (W)  Winter season defined by operation of the heating system.
+   Peak Electricity: Summer Total (W)  Summer season defined by operation of the cooling system.
+   ==================================  =========================================================
 
 Peak Building Loads
 ^^^^^^^^^^^^^^^^^^^
 
-Current peak building loads are listed below.
+Peak building loads are listed below.
 
-   ========================== ==================================
-   Type                       Notes
-   ========================== ==================================
-   Peak Load: Heating (kBtu)  Includes HVAC distribution losses.
-   Peak Load: Cooling (kBtu)  Includes HVAC distribution losses.
-   ========================== ==================================
+   ====================================  ==================================
+   Type                                  Notes
+   ====================================  ==================================
+   Peak Load: Heating: Delivered (kBtu)  Includes HVAC distribution losses.
+   Peak Load: Cooling: Delivered (kBtu)  Includes HVAC distribution losses.
+   ====================================  ==================================
+
+Note that the "Delivered" peak loads represent the energy delivered by the HVAC system; if a system is significantly undersized, there will be unmet peak load not reflected by these values.
 
 Annual Component Building Loads
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -187,43 +190,43 @@ The argument is not used by default for faster performance.
 Component loads represent the estimated contribution of different building components to the annual heating/cooling building loads.
 The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
 
-Current component loads disaggregated by Heating/Cooling are listed below.
+Component loads disaggregated by Heating/Cooling are listed below.
    
-   ================================================= =========================================================================================================
-   Type                                              Notes
-   ================================================= =========================================================================================================
-   Component Load: \*: Roofs (MBtu)                  Heat gain/loss through HPXML ``Roof`` elements adjacent to conditioned space
-   Component Load: \*: Ceilings (MBtu)               Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be ceilings) adjacent to conditioned space
-   Component Load: \*: Walls (MBtu)                  Heat gain/loss through HPXML ``Wall`` elements adjacent to conditioned space
-   Component Load: \*: Rim Joists (MBtu)             Heat gain/loss through HPXML ``RimJoist`` elements adjacent to conditioned space
-   Component Load: \*: Foundation Walls (MBtu)       Heat gain/loss through HPXML ``FoundationWall`` elements adjacent to conditioned space
-   Component Load: \*: Doors (MBtu)                  Heat gain/loss through HPXML ``Door`` elements adjacent to conditioned space
-   Component Load: \*: Windows (MBtu)                Heat gain/loss through HPXML ``Window`` elements adjacent to conditioned space, including solar
-   Component Load: \*: Skylights (MBtu)              Heat gain/loss through HPXML ``Skylight`` elements adjacent to conditioned space, including solar
-   Component Load: \*: Floors (MBtu)                 Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be floors) adjacent to conditioned space
-   Component Load: \*: Slabs (MBtu)                  Heat gain/loss through HPXML ``Slab`` elements adjacent to conditioned space
-   Component Load: \*: Internal Mass (MBtu)          Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
-   Component Load: \*: Infiltration (MBtu)           Heat gain/loss from airflow induced by stack and wind effects
-   Component Load: \*: Natural Ventilation (MBtu)    Heat gain/loss from airflow through operable windows
-   Component Load: \*: Mechanical Ventilation (MBtu) Heat gain/loss from airflow/fan energy from a whole house mechanical ventilation system
-   Component Load: \*: Whole House Fan (MBtu)        Heat gain/loss from airflow due to a whole house fan
-   Component Load: \*: Ducts (MBtu)                  Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
-   Component Load: \*: Internal Gains (MBtu)         Heat gain/loss from appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
-   ================================================= =========================================================================================================
+   =================================================  =========================================================================================================
+   Type                                               Notes
+   =================================================  =========================================================================================================
+   Component Load: \*: Roofs (MBtu)                   Heat gain/loss through HPXML ``Roof`` elements adjacent to conditioned space
+   Component Load: \*: Ceilings (MBtu)                Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be ceilings) adjacent to conditioned space
+   Component Load: \*: Walls (MBtu)                   Heat gain/loss through HPXML ``Wall`` elements adjacent to conditioned space
+   Component Load: \*: Rim Joists (MBtu)              Heat gain/loss through HPXML ``RimJoist`` elements adjacent to conditioned space
+   Component Load: \*: Foundation Walls (MBtu)        Heat gain/loss through HPXML ``FoundationWall`` elements adjacent to conditioned space
+   Component Load: \*: Doors (MBtu)                   Heat gain/loss through HPXML ``Door`` elements adjacent to conditioned space
+   Component Load: \*: Windows (MBtu)                 Heat gain/loss through HPXML ``Window`` elements adjacent to conditioned space, including solar
+   Component Load: \*: Skylights (MBtu)               Heat gain/loss through HPXML ``Skylight`` elements adjacent to conditioned space, including solar
+   Component Load: \*: Floors (MBtu)                  Heat gain/loss through HPXML ``FrameFloor`` elements (inferred to be floors) adjacent to conditioned space
+   Component Load: \*: Slabs (MBtu)                   Heat gain/loss through HPXML ``Slab`` elements adjacent to conditioned space
+   Component Load: \*: Internal Mass (MBtu)           Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
+   Component Load: \*: Infiltration (MBtu)            Heat gain/loss from airflow induced by stack and wind effects
+   Component Load: \*: Natural Ventilation (MBtu)     Heat gain/loss from airflow through operable windows
+   Component Load: \*: Mechanical Ventilation (MBtu)  Heat gain/loss from airflow/fan energy from a whole house mechanical ventilation system
+   Component Load: \*: Whole House Fan (MBtu)         Heat gain/loss from airflow due to a whole house fan
+   Component Load: \*: Ducts (MBtu)                   Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
+   Component Load: \*: Internal Gains (MBtu)          Heat gain/loss from appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
+   =================================================  =========================================================================================================
 
 Annual Hot Water Uses
 ^^^^^^^^^^^^^^^^^^^^^
 
-Current annual hot water uses are listed below.
+Annual hot water uses are listed below.
 
-   =================================== =====
-   Type                                Notes
-   =================================== =====
+   ===================================  =====
+   Type                                 Notes
+   ===================================  =====
    Hot Water: Clothes Washer (gal)
    Hot Water: Dishwasher (gal)
-   Hot Water: Fixtures (gal)           Showers and faucets.
+   Hot Water: Fixtures (gal)            Showers and faucets.
    Hot Water: Distribution Waste (gal) 
-   =================================== =====
+   ===================================  =====
 
 Timeseries Outputs
 ~~~~~~~~~~~~~~~~~~
@@ -233,19 +236,19 @@ When requested, a CSV file of timeseries outputs is written for the Reference/Ra
 
 Depending on the outputs requested, CSV files may include:
 
-   =================================== =====
-   Type                                Notes
-   =================================== =====
-   Fuel Consumptions                   Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
-   End Use Consumptions                Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
-   Hot Water Uses                      Water use for each end use type (in gallons).
-   Total Loads                         Heating, cooling, and hot water loads (in kBtu) for the building.
-   Component Loads                     Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
-   Unmet Loads                         Unmet heating and cooling loads (in kBtu) for the building.
-   Zone Temperatures                   Average temperatures (in deg-F) for each space modeled (e.g., living space, attic, garage, basement, crawlspace, etc.).
-   Airflows                            Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
-   Weather                             Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
-   =================================== =====
+   ===================================  =====
+   Type                                 Notes
+   ===================================  =====
+   Fuel Consumptions                    Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
+   End Use Consumptions                 Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
+   Hot Water Uses                       Water use for each end use type (in gallons).
+   Total Loads                          Heating, cooling, and hot water loads (in kBtu) for the building.
+   Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
+   Unmet Loads                          Unmet heating and cooling loads (in kBtu) for the building.
+   Zone Temperatures                    Average temperatures (in deg-F) for each space modeled (e.g., living space, attic, garage, basement, crawlspace, etc.).
+   Airflows                             Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
+   Weather                              Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
+   ===================================  =====
 
 Timeseries outputs can be one of the following frequencies: hourly, daily, or monthly.
 
@@ -297,16 +300,16 @@ ES_Results.csv
 
 The ``ES_Results.csv`` file includes the following:
 
-   =================================== =====
-   Output                              Notes
-   =================================== =====
-   Reference Home ERI                  ERI of the ES Reference Home
-   SAF (Size Adjustment Factor)        Can only be less than 1 for some ES programs/versions
-   SAF Adjusted ERI Target             Reference Home ERI multiplied by SAF
-   Rated Home ERI                      ERI of the Rated Home including OPP as allowed by the ES program/version
-   Rated Home ERI w/o OPP              ERI of the Rated Home excluding any on-site power production (OPP)
-   ENERGY STAR Certification           PASS or FAIL
-   =================================== =====
+   ===================================  =====
+   Output                               Notes
+   ===================================  =====
+   Reference Home ERI                   ERI of the ES Reference Home
+   SAF (Size Adjustment Factor)         Can only be less than 1 for some ES programs/versions
+   SAF Adjusted ERI Target              Reference Home ERI multiplied by SAF
+   Rated Home ERI                       ERI of the Rated Home including OPP as allowed by the ES program/version
+   Rated Home ERI w/o OPP               ERI of the Rated Home excluding any on-site power production (OPP)
+   ENERGY STAR Certification            PASS or FAIL
+   ===================================  =====
 
 See the `example ES_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_energystar/results/ES_Results.csv>`_.
 
