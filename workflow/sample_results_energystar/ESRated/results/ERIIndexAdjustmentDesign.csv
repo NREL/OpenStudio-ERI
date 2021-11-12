@@ -1,6 +1,6 @@
-Fuel Use: Electricity: Total (MBtu),39.38
-Fuel Use: Electricity: Net (MBtu),39.38
-Fuel Use: Natural Gas: Total (MBtu),27.49
+Fuel Use: Electricity: Total (MBtu),39.43
+Fuel Use: Electricity: Net (MBtu),39.43
+Fuel Use: Natural Gas: Total (MBtu),27.25
 Fuel Use: Fuel Oil: Total (MBtu),0.0
 Fuel Use: Propane: Total (MBtu),0.0
 Fuel Use: Wood Cord: Total (MBtu),0.0
@@ -9,9 +9,9 @@ Fuel Use: Coal: Total (MBtu),0.0
 
 End Use: Electricity: Heating (MBtu),0.0
 End Use: Electricity: Heating Fans/Pumps (MBtu),0.7
-End Use: Electricity: Cooling (MBtu),3.73
-End Use: Electricity: Cooling Fans/Pumps (MBtu),0.88
-End Use: Electricity: Hot Water (MBtu),11.48
+End Use: Electricity: Cooling (MBtu),3.75
+End Use: Electricity: Cooling Fans/Pumps (MBtu),0.89
+End Use: Electricity: Hot Water (MBtu),11.52
 End Use: Electricity: Hot Water Recirc Pump (MBtu),0.0
 End Use: Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
 End Use: Electricity: Lighting Interior (MBtu),4.26
@@ -22,7 +22,7 @@ End Use: Electricity: Mech Vent Preheating (MBtu),0.0
 End Use: Electricity: Mech Vent Precooling (MBtu),0.0
 End Use: Electricity: Whole House Fan (MBtu),0.0
 End Use: Electricity: Refrigerator (MBtu),2.36
-End Use: Electricity: Dehumidifier (MBtu),0
+End Use: Electricity: Dehumidifier (MBtu),0.0
 End Use: Electricity: Dishwasher (MBtu),0.45
 End Use: Electricity: Clothes Washer (MBtu),0.34
 End Use: Electricity: Clothes Dryer (MBtu),2.51
@@ -32,7 +32,7 @@ End Use: Electricity: Television (MBtu),2.11
 End Use: Electricity: Plug Loads (MBtu),7.44
 End Use: Electricity: PV (MBtu),0.0
 End Use: Electricity: Generator (MBtu),0.0
-End Use: Natural Gas: Heating (MBtu),27.49
+End Use: Natural Gas: Heating (MBtu),27.25
 End Use: Natural Gas: Hot Water (MBtu),0.0
 End Use: Natural Gas: Clothes Dryer (MBtu),0.0
 End Use: Natural Gas: Range/Oven (MBtu),0.0
@@ -43,6 +43,7 @@ End Use: Fuel Oil: Hot Water (MBtu),0.0
 End Use: Fuel Oil: Clothes Dryer (MBtu),0.0
 End Use: Fuel Oil: Range/Oven (MBtu),0.0
 End Use: Fuel Oil: Mech Vent Preheating (MBtu),0.0
+End Use: Fuel Oil: Generator (MBtu),0.0
 End Use: Propane: Heating (MBtu),0.0
 End Use: Propane: Hot Water (MBtu),0.0
 End Use: Propane: Clothes Dryer (MBtu),0.0
@@ -54,34 +55,37 @@ End Use: Wood Cord: Hot Water (MBtu),0.0
 End Use: Wood Cord: Clothes Dryer (MBtu),0.0
 End Use: Wood Cord: Range/Oven (MBtu),0.0
 End Use: Wood Cord: Mech Vent Preheating (MBtu),0.0
+End Use: Wood Cord: Generator (MBtu),0.0
 End Use: Wood Pellets: Heating (MBtu),0.0
 End Use: Wood Pellets: Hot Water (MBtu),0.0
 End Use: Wood Pellets: Clothes Dryer (MBtu),0.0
 End Use: Wood Pellets: Range/Oven (MBtu),0.0
 End Use: Wood Pellets: Mech Vent Preheating (MBtu),0.0
+End Use: Wood Pellets: Generator (MBtu),0.0
 End Use: Coal: Heating (MBtu),0.0
 End Use: Coal: Hot Water (MBtu),0.0
 End Use: Coal: Clothes Dryer (MBtu),0.0
 End Use: Coal: Range/Oven (MBtu),0.0
 End Use: Coal: Mech Vent Preheating (MBtu),0.0
+End Use: Coal: Generator (MBtu),0.0
 
-Load: Heating (MBtu),22.13
-Load: Cooling (MBtu),10.14
-Load: Hot Water: Delivered (MBtu),10.46
+Load: Heating: Delivered (MBtu),21.94
+Load: Cooling: Delivered (MBtu),10.1
+Load: Hot Water: Delivered (MBtu),10.49
 Load: Hot Water: Tank Losses (MBtu),1.02
 Load: Hot Water: Desuperheater (MBtu),0.0
 Load: Hot Water: Solar Thermal (MBtu),0.0
 
-Unmet Load: Heating (MBtu),0.0
-Unmet Load: Cooling (MBtu),0.13
+Unmet Hours: Heating (hr),0.0
+Unmet Hours: Cooling (hr),41.0
 
-Peak Electricity: Winter Total (W),6970
-Peak Electricity: Summer Total (W),6997
+Peak Electricity: Winter Total (W),2268
+Peak Electricity: Summer Total (W),3371
 
-Peak Load: Heating (kBtu),22.3
-Peak Load: Cooling (kBtu),18.32
+Peak Load: Heating: Delivered (kBtu),22.32
+Peak Load: Cooling: Delivered (kBtu),13.77
 
-Hot Water: Clothes Washer (gal),1609
+Hot Water: Clothes Washer (gal),1611
 Hot Water: Dishwasher (gal),1575
-Hot Water: Fixtures (gal),11677
-Hot Water: Distribution Waste (gal),4115
+Hot Water: Fixtures (gal),11400
+Hot Water: Distribution Waste (gal),4017

@@ -1,12 +1,10 @@
-Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.27 09:33,
+Program Version,EnergyPlus, Version 9.6.0-4b123cf80f, YMD=2021.11.10 08:59,
    ** Warning ** Timestep: Requested number (1) is less than the suggested minimum of 4.
    **   ~~~   ** Please see entry for Timestep in Input/Output Reference for discussion of considerations.
    ************* Note that the following warning(s) may/will occur if you have not enclosed your zone completely.
    ** Warning ** Entered Zone Volumes differ from calculated zone volume(s).
    **   ~~~   ** ...use Output:Diagnostics,DisplayExtraWarnings; to show more details on individual zones.
    ** Warning ** CalculateZoneVolume: 3 zones are not fully enclosed. For more details use:  Output:Diagnostics,DisplayExtrawarnings; 
-   ** Warning ** CheckUsedConstructions: There are 1 nominally unused constructions in input.
-   **   ~~~   ** For explicit details on each unused construction, use Output:Diagnostics,DisplayExtraWarnings;
    ** Warning ** Surfaces in Zone/Enclosure="CRAWLSPACE - VENTED" do not define an enclosure.
    **   ~~~   ** Number of surfaces <= 3, view factors are set to force reciprocity but may not fulfill completeness.
    **   ~~~   ** Reciprocity means that radiant exchange between two surfaces will match and not lead to an energy loss.
@@ -19,61 +17,7 @@ Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.27 09:33,
    **   ~~~   ** Completeness means that all of the view factors between a surface and the other surfaces in a zone add up to unity.
    **   ~~~   ** So, when there are three or less surfaces in a zone, EnergyPlus will make sure there are no losses of energy but
    **   ~~~   ** it will not exchange the full amount of radiation with the rest of the zone as it would if there was a completed enclosure.
-   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = CENTRAL AC CLG COIL but not at the AHRI test condition due to curve out of bound.
-   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
    ** Warning ** Check input. Pump nominal power or motor efficiency is set to 0, for pump=PUMP VARIABLE SPEED 1
-   ** Warning ** Output:Meter: invalid Key Name="ELECTRICITYPRODUCED:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="FUELOILNO2:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="PROPANE:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="OTHERFUEL1:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="OTHERFUEL2:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COAL:FACILITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="GARAGE LIGHTING:INTERIORLIGHTS:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="FREEZER:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CEILING FAN:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC ELECTRIC VEHICLE CHARGING:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC WELL PUMP:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC POOL HEATER:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC POOL PUMP:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC HOT TUB HEATER:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC HOT TUB PUMP:INTERIOREQUIPMENT:ELECTRICITY" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="PHOTOVOLTAIC:ELECTRICITYPRODUCED" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="POWERCONVERSION:ELECTRICITYPRODUCED" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COGENERATION:ELECTRICITYPRODUCED" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC POOL HEATER:INTERIOREQUIPMENT:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC HOT TUB HEATER:INTERIOREQUIPMENT:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COGENERATION:NATURALGAS" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:FUELOILNO2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:FUELOILNO2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:FUELOILNO2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:FUELOILNO2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:FUELOILNO2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:PROPANE" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COGENERATION:PROPANE" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:OTHERFUEL1" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:OTHERFUEL2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:OTHERFUEL2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:OTHERFUEL2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:OTHERFUEL2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:OTHERFUEL2" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="CLOTHES DRYER:INTERIOREQUIPMENT:COAL" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="COOKING RANGE:INTERIOREQUIPMENT:COAL" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC GRILL:INTERIOREQUIPMENT:COAL" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC LIGHTING:INTERIOREQUIPMENT:COAL" - not found.
-   ** Warning ** Output:Meter: invalid Key Name="MISC FIREPLACE:INTERIOREQUIPMENT:COAL" - not found.
    ************* Testing Individual Branch Integrity
    ************* All Branches passed integrity testing
    ************* Testing Individual Supply Air Path Integrity
@@ -82,68 +26,38 @@ Program Version,EnergyPlus, Version 9.4.0-998c4b761e, YMD=2021.04.27 09:33,
    ************* All Return Air Paths passed integrity testing
    ************* No node connection errors were found.
    ************* Beginning Simulation
-   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =3.730 vs Max Allowed Temp Diff [C] =2.000E-003
+   ** Warning ** WetBulb not converged after 101 iterations(PsyTwbFnTdbWPb)
+   **   ~~~   **  Routine=Unknown, Environment=RUN PERIOD 1, at Simulation time=03/14 12:00 - 13:00
+   **   ~~~   **  Input Temperature = 6.69
+   **   ~~~   **  Input Humidity Ratio= 1.927576E-003
+   **   ~~~   **  Input Pressure = 82600.00
+   **   ~~~   **  Resultant Temperature= 5.56E-003
+   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =2.283 vs Max Allowed Temp Diff [C] =2.000E-003
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/13 14:00 - 15:00
+   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =2.322E-003 vs Max Allowed Temp Diff [C] =2.000E-003
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/13 15:00 - 16:00
+   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =11.693 vs Max Allowed Temp Diff [C] =2.000E-003
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/26 15:00 - 16:00
+   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =0.926 vs Max Allowed Temp Diff [C] =2.000E-003
    **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=06/26 16:00 - 17:00
-   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =0.355 vs Max Allowed Temp Diff [C] =2.000E-003
+   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =0.951 vs Max Allowed Temp Diff [C] =2.000E-003
    **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=07/04 15:00 - 16:00
-   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =4.129 vs Max Allowed Temp Diff [C] =2.000E-003
+   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =6.758 vs Max Allowed Temp Diff [C] =2.000E-003
    **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=07/17 14:00 - 15:00
+   ** Warning ** Inside surface heat balance did not converge with Max Temp Difference [C] =0.290 vs Max Allowed Temp Diff [C] =2.000E-003
+   **   ~~~   **  Environment=RUN PERIOD 1, at Simulation time=07/31 15:00 - 16:00
    ************* Simulation Error Summary *************
-   ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
-   **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
-   **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
-   ************* Key=ideal, VarName=ZONE IDEAL LOADS ZONE SENSIBLE HEATING ENERGY, Frequency=
-   ************* Key=ideal, VarName=ZONE IDEAL LOADS ZONE SENSIBLE COOLING ENERGY, Frequency=
-   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY ELECTRICITY ENERGY, Frequency=
-   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY NATURALGAS ENERGY, Frequency=
-   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY FUELOILNO2 ENERGY, Frequency=
-   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY PROPANE ENERGY, Frequency=
-   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL2 ENERGY, Frequency=
-   ************* Key=central ac unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY COAL ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL FUELOILNO2 ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL PROPANE ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL OTHERFUEL2 ENERGY, Frequency=
-   ************* Key=furnace htg coil, VarName=HEATING COIL COAL ENERGY, Frequency=
-   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY NATURALGAS ENERGY, Frequency=
-   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY FUELOILNO2 ENERGY, Frequency=
-   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY PROPANE ENERGY, Frequency=
-   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY OTHERFUEL2 ENERGY, Frequency=
-   ************* Key=furnace unitary system, VarName=UNITARY SYSTEM HEATING ANCILLARY COAL ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER NATURALGAS ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC NATURALGAS ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC NATURALGAS ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER FUELOILNO2 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC FUELOILNO2 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC FUELOILNO2 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER PROPANE ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC PROPANE ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC PROPANE ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC OTHERFUEL1 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OTHERFUEL2 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC OTHERFUEL2 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC OTHERFUEL2 ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER COAL ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER OFF CYCLE PARASITIC COAL ENERGY, Frequency=
-   ************* Key=water heater, VarName=WATER HEATER ON CYCLE PARASITIC COAL ENERGY, Frequency=
-   ************* There are 2 unused objects in input.
+   ************* There are 1 unused objects in input.
    ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
-   ************* There are 2 unused schedules in input.
-   ************* There are 2 unused week schedules in input.
-   ************* There are 4 unused day schedules in input.
-   ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
    *************
-   ************* ===== Final Error Summary =====
-   ************* The following error categories occurred.  Consider correcting or noting.
-   ************* Nominally Unused Constructions
-   ************* ..The nominally unused constructions warning is provided to alert you to potential conditions that can cause
-   ************* ..extra time during simulation. Each construction is calculated by the algorithm indicated in the HeatBalanceAlgorithm
-   ************* ..object. You may remove the constructions indicated (when you use the DisplayExtraWarnings option).
+   ************* ===== Recurring Error Summary =====
+   ************* The following recurring error messages occurred.
+   *************
+   *************  ** Warning ** WetBulb not converged after max iterations(PsyTwbFnTdbWPb)
+   *************  **   ~~~   **   This error occurred 1 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
    *************
    ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
    ************* EnergyPlus Sizing Error Summary. During Sizing: 0 Warning; 0 Severe Errors.
-   ************* EnergyPlus Completed Successfully-- 64 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  3.68sec
+   ************* EnergyPlus Completed Successfully-- 14 Warning; 0 Severe Errors; Elapsed Time=00hr 00min  3.28sec

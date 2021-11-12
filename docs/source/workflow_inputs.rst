@@ -585,15 +585,17 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
   ===============================================  ======  =====  ===========  ========  =========  ================================================
   ``DistributionSystem``                           idref          See [#]_     Yes                  ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double  frac   0 - 1        Yes                  Rated efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm  >= 0 [#]_    Yes                  Fan power
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm  >= 0 [#]_    Yes                  Fan power [#]_
   ``extension/AirflowDefectRatio``                 double  frac   > -1         Yes                  Deviation between design/installed airflows [#]_
   ===============================================  ======  =====  ===========  ========  =========  ================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity" or "gravity") or DSE.
   .. [#] If there is a cooling system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect should typically only be applied for systems attached to ducts.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   
 .. warning::
 
@@ -704,7 +706,9 @@ If a PTAC with non-heat pump (e.g., electric resistance) heating is specified, a
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac       0 - 1        No        1.0      Efficiency
   ==================================================  ======  =========  ===========  ========  =======  ==================================
 
-  .. [#] A cooling system of type "packaged terminal air conditioner" must be specified in ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem``.
+.. note::
+
+  A cooling system of type "packaged terminal air conditioner" must be specified in ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem``.
 
 .. _hvac_cooling:
 
@@ -739,7 +743,7 @@ If a central air conditioner is specified, additional information is entered in 
   ``CoolingCapacity``                              double  Btu/hr  >= 0            Yes                  Cooling output capacity
   ``SensibleHeatFraction``                         double  frac    0 - 1           No                   Sensible heat fraction
   ``CompressorType``                               string          See [#]_        No        See [#]_   Type of compressor
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0 [#]_       Yes                  Fan power
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0 [#]_       Yes                  Fan power [#]_
   ``extension/AirflowDefectRatio``                 double  frac    > -1            Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ==============  ========  =========  ================================================
@@ -748,12 +752,15 @@ If a central air conditioner is specified, additional information is entered in 
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect should typically only be applied for systems attached to ducts.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are pre-charged on site.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
 
 .. warning::
 
@@ -812,18 +819,21 @@ If a mini-split is specified, additional information is entered in ``CoolingSyst
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0             Yes                Rated cooling efficiency
   ``CoolingCapacity``                              double  Btu/hr  >= 0            Yes                Cooling output capacity
   ``SensibleHeatFraction``                         double  frac    0 - 1           No                 Sensible heat fraction
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0            Yes                Fan power
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0            Yes                Fan power [#]_
   ``extension/AirflowDefectRatio``                 double  frac    > -1            Yes                Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ==============  ========  =======  ================================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect should typically only be applied for systems attached to ducts.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are pre-charged on site.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
 
 .. warning::
 
@@ -928,7 +938,7 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power [#]_
   ``extension/AirflowDefectRatio``                 double  frac    > -1                      Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ========================  ========  =========  ================================================
@@ -938,12 +948,15 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect should typically only be applied for systems attached to ducts.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are pre-charged on site.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
 
 .. warning::
 
@@ -967,7 +980,7 @@ If a mini-split heat pump is specified, additional information is entered in ``H
   ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power
+  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power [#]_
   ``extension/AirflowDefectRatio``                 double  frac    > -1                      Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ========================  ========  =========  ================================================
@@ -975,12 +988,15 @@ If a mini-split heat pump is specified, additional information is entered in ``H
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
   .. [#] The sum of all ``FractionCoolLoadServed`` (across both CoolingSystems and HeatPumps) must be less than or equal to 1.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect should typically only be applied for systems attached to ducts.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are pre-charged on site.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
 
 .. warning::
 
@@ -1028,7 +1044,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``extension/PumpPowerWattsPerTon``              double   W/ton   >= 0            Yes                  Pump power [#]_
   ``extension/SharedLoopWatts``                   double   W       >= 0            See [#]_             Shared pump power [#]_
   ``extension/SharedLoopMotorEfficiency``         double   frac    0 - 1           No        0.85 [#]_  Shared loop motor efficiency
-  ``extension/FanPowerWattsPerCFM``               double   W/cfm   >= 0            Yes                  Fan power
+  ``extension/FanPowerWattsPerCFM``               double   W/cfm   >= 0            Yes                  Fan power [#]_
   ``extension/AirflowDefectRatio``                double   frac    > -1            Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                 double   frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
   ==============================================  =======  ======  ==============  ========  =========  ================================================
@@ -1043,12 +1059,15 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   .. [#] SharedLoopWatts only required if IsSharedSystem is true.
   .. [#] Shared loop pump power attributed to the dwelling unit is calculated as SharedLoopWatts / NumberofUnitsServed.
   .. [#] SharedLoopMotorEfficiency only used if IsSharedSystem is true.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect should typically only be applied for systems attached to ducts.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are pre-charged on site.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
 
 .. warning::
 
