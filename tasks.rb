@@ -2637,24 +2637,25 @@ if ARGV[0].to_sym == :create_release_zips
   end
 
   # Create zip files
+  require 'zip'
   release_map.each do |zip_path, include_all_epws|
     puts "Creating #{zip_path}..."
-    zip = OpenStudio::ZipFile.new(zip_path, false)
-    files.each do |f|
-      Dir[f].each do |file|
-        if file.start_with? 'documentation'
-          # always include
-        elsif include_all_epws
-          if (not git_files.include? file) && (not file.start_with? 'weather')
-            next
+    Zip::File.open(zip_path, create: true) do |zipfile|
+      files.each do |f|
+        Dir[f].each do |file|
+          if file.start_with? 'documentation'
+            # always include
+          elsif include_all_epws
+            if (not git_files.include? file) && (not file.start_with? 'weather')
+              next
+            end
+          else
+            if not git_files.include? file
+              next
+            end
           end
-        else
-          if not git_files.include? file
-            next
-          end
+          zipfile.add(File.join('OpenStudio-ERI', file), file)
         end
-
-        zip.addFile(file, File.join('OpenStudio-ERI', file))
       end
     end
     puts "Wrote file at #{zip_path}."

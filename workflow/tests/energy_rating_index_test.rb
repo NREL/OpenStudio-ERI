@@ -571,13 +571,22 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_equal(2, Dir["#{top_dir}/*.zip"].size)
 
     # Check successful running of ERI calculation from release zips
-    Dir["#{top_dir}/OpenStudio-ERI*.zip"].each do |zip|
-      unzip_file = OpenStudio::UnzipFile.new(zip)
-      unzip_file.extractAllFiles(OpenStudio::toPath(top_dir))
+    require 'zip'
+    Zip.on_exists_proc = true
+    Dir["#{top_dir}/OpenStudio-ERI*.zip"].each do |zip_path|
+      Zip::File.open(zip_path) do |zip_file|
+        zip_file.each do |f|
+          FileUtils.mkdir_p(File.dirname(f.name)) unless File.exist?(File.dirname(f.name))
+          zip_file.extract(f, f.name)
+        end
+      end
+
+      # Test energy_rating_index.rb
       command = "\"#{OpenStudio.getOpenStudioCLI}\" OpenStudio-ERI/workflow/energy_rating_index.rb -x OpenStudio-ERI/workflow/sample_files/base.xml"
       system(command)
       assert(File.exist? 'OpenStudio-ERI/workflow/results/ERI_Results.csv')
-      File.delete(zip)
+
+      File.delete(zip_path)
       rm_path('OpenStudio-ERI')
     end
   end
