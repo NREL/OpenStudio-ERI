@@ -2406,31 +2406,6 @@ def create_sample_hpxmls
   # Create additional files
   puts 'Creating additional HPXML files for ERI...'
 
-  # Duct leakage exemption
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-  hpxml.hvac_distributions[0].duct_leakage_measurements.clear
-  hpxml.hvac_distributions[0].duct_leakage_to_outside_testing_exemption = true
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
-
-  # Duct leakage total
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-  # Add total duct leakage
-  hpxml.hvac_distributions[0].duct_leakage_measurements.clear
-  hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_leakage_units: HPXML::UnitsCFM25,
-                                                            duct_leakage_value: 150,
-                                                            duct_leakage_total_or_to_outside: HPXML::DuctLeakageTotal)
-  # Add supply duct in conditioned space
-  hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
-                                        duct_insulation_r_value: 4,
-                                        duct_location: HPXML::LocationLivingSpace,
-                                        duct_surface_area: 105)
-  # Add return duct in conditioned space
-  hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
-                                        duct_insulation_r_value: 4,
-                                        duct_location: HPXML::LocationLivingSpace,
-                                        duct_surface_area: 35)
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
-
   # Older versions
   Constants.ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')

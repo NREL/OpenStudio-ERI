@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2014ADEGL</Version>
+        <Version>2014AE</Version>
       </ERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>

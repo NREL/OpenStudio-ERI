@@ -1132,56 +1132,6 @@ class ERIHVACtest < MiniTest::Test
     _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
   end
 
-  def test_duct_leakage_exemption
-    # Addendum L
-    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-to-outside-exemption.xml', '2014ADEGL')
-
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      hvac_iq_values = _get_default_hvac_iq_values('2014ADEGL', 0.5)
-      _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.78, frac_load: 1.0, dse: _dse(calc_type), **hvac_iq_values }])
-      _check_heat_pump(hpxml)
-      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
-    end
-    calc_type = Constants.CalcTypeERIRatedHome
-    hpxml = _test_measure(hpxml_name, calc_type)
-    hvac_iq_values = _get_default_hvac_iq_values('2014ADEGL', 0.375)
-    _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: 0.88, shr: 0.73, **hvac_iq_values }])
-    _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, dse: 0.88, **hvac_iq_values }])
-    _check_heat_pump(hpxml)
-    _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
-
-    # Addendum D
-    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-to-outside-exemption.xml', '2014AD')
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 0.0)
-  end
-
-  def test_duct_leakage_total
-    # Addendum L
-    hpxml_name = _change_eri_version('base-hvac-ducts-leakage-total.xml', '2014ADEGL')
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 75.0)
-
-    # Addendum L - Apartments
-    # Create derivative file for testing
-    hpxml_name = 'base-hvac-ducts-leakage-total.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
-    hpxml.header.energystar_calculation_version = nil
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_duct_leakage(hpxml, total_or_outside: HPXML::DuctLeakageToOutside, leakage_sum: 108.2)
-  end
-
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)

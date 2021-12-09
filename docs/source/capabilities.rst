@@ -7,10 +7,8 @@ The following ERI Standards and Addenda are currently available:
 
 - ANSI/RESNET/ICC 301-2014© Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index
 - ANSI/RESNET/ICC 301-2014 Addendum A-2015, Domestic Hot Water Systems
-- ANSI/RESNET/ICC 301-2014 Addendum D-2017, Duct Leakage to Outside Test Exception
 - ANSI/RESNET/ICC 301-2014 Addendum E-2018, House Size Index Adjustment Factors
 - ANSI/RESNET/ICC 301-2014 Addendum G-2018, Solid State Lighting
-- ANSI/RESNET/ICC 301-2014 Addendum L-2018, Duct Leakage to Outside Test Exception
 - ANSI/RESNET/ICC 301-2019 Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
 - ANSI/RESNET/ICC 301-2019 Addendum A-2019, Clothes Washers and Dryers and Dishwashers
 - ANSI/RESNET/ICC 301-2019 Addendum B-2020, Clarifications, HVAC Quality Installation Grading, and Dehumidification

@@ -46,7 +46,7 @@ eri_version = get_eri_version(options[:hpxml])
 runs = []
 runs << [Constants.CalcTypeERIRatedHome, options[:hpxml], options[:output_dir], resultsdir]
 runs << [Constants.CalcTypeERIReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
-if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014ADE'))
+if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
   runs << [Constants.CalcTypeERIIndexAdjustmentDesign, options[:hpxml], options[:output_dir], resultsdir]
   runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
 end
