@@ -1315,13 +1315,14 @@ class EnergyRatingIndex301Ruleset
                                                             duct_leakage_units: orig_leakage_measurement.duct_leakage_units,
                                                             duct_leakage_value: orig_leakage_measurement.duct_leakage_value,
                                                             duct_leakage_total_or_to_outside: orig_leakage_measurement.duct_leakage_total_or_to_outside)
-        # Ducts
-        orig_hvac_distribution.ducts.each do |orig_duct|
-          new_hvac_distribution.ducts.add(duct_type: orig_duct.duct_type,
-                                          duct_insulation_r_value: orig_duct.duct_insulation_r_value,
-                                          duct_location: orig_duct.duct_location,
-                                          duct_surface_area: orig_duct.duct_surface_area)
-        end
+      end
+
+      # Ducts
+      orig_hvac_distribution.ducts.each do |orig_duct|
+        new_hvac_distribution.ducts.add(duct_type: orig_duct.duct_type,
+                                        duct_insulation_r_value: orig_duct.duct_insulation_r_value,
+                                        duct_location: orig_duct.duct_location,
+                                        duct_surface_area: orig_duct.duct_surface_area)
       end
     end
 
