@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.4.0
+
+__New Features__
+- **Breaking change**: Deprecates duct leakage to outside exemptions; software tools must provide duct leakage to outside or DSE. `SoftwareInfo/extension/ERICalculation/Version` enumerations "2014ADEGL", "2014ADEG", "2014ADE" are replaced by "2014AEG" and "2014AE".
+
 ## OpenStudio-ERI v1.3.0
 
 __New Features__
