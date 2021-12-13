@@ -329,19 +329,22 @@ HPXML Air Infiltration
 
 Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
 
-  ====================================  ======  =====  =================================  =========  =========================  ===============================================
-  Element                               Type    Units  Constraints                        Required   Default                    Notes
-  ====================================  ======  =====  =================================  =========  =========================  ===============================================
-  ``SystemIdentifier``                  id                                                Yes                                   Unique identifier
-  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_                           Yes                                   Units for air leakage
-  ``HousePressure``                     double  Pa     > 0                                See [#]_                              House pressure with respect to outside [#]_
-  ``BuildingAirLeakage/AirLeakage``     double         > 0                                Yes                                   Value for air leakage
-  ``InfiltrationVolume``                double  ft3    > 0, >= ConditionedBuildingVolume  No         ConditionedBuildingVolume  Volume associated with infiltration measurement
-  ====================================  ======  =====  =================================  =========  =========================  ===============================================
+  ====================================  ======  =====  ============================  =========  =========================  ===============================================
+  Element                               Type    Units  Constraints                   Required   Default                    Notes
+  ====================================  ======  =====  ============================  =========  =========================  ===============================================
+  ``SystemIdentifier``                  id                                           Yes                                   Unique identifier
+  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_                      Yes                                   Units for air leakage
+  ``HousePressure``                     double  Pa     > 0                           See [#]_                              House pressure with respect to outside [#]_
+  ``BuildingAirLeakage/AirLeakage``     double         > 0                           Yes                                   Value for air leakage
+  ``InfiltrationVolume``                double  ft3    >= ConditionedBuildingVolume  No         ConditionedBuildingVolume  Volume associated with infiltration measurement
+  ``InfiltrationHeight``                double  ft     > 0                           No         See [#]_                   Height associated with infiltration measurement [#]_
+  ====================================  ======  =====  ============================  =========  =========================  ===============================================
 
   .. [#] UnitofMeasure choices are "ACH" (air changes per hour at user-specified pressure), "CFM" (cubic feet per minute at user-specified pressure), or "ACHnatural" (natural air changes per hour).
   .. [#] HousePressure only required if BuildingAirLeakage/UnitofMeasure is not "ACHnatural".
   .. [#] HousePressure typical value is 50 Pa.
+  .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
+  .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.
 
 HPXML Attics
 ************
@@ -906,7 +909,9 @@ If a PTAC with non-heat pump (e.g., electric resistance) heating is specified, a
   ``AnnualHeatingEfficiency[Units="Percent"]/Value``  double  frac       0 - 1        No        1.0      Efficiency
   ==================================================  ======  =========  ===========  ========  =======  ==================================
 
-  .. [#] A cooling system of type "packaged terminal air conditioner" must be specified in ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem``.
+.. note::
+
+  A cooling system of type "packaged terminal air conditioner" must be specified in ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/CoolingSystem``.
 
 Furnace
 ~~~~~~~
@@ -1841,10 +1846,10 @@ If a conventional storage water heater is specified, additional information is e
   ================================================================  =================  =============  ===============  ========  ========  ====================================================
   ``FuelType``                                                      string                            See [#]_         Yes                 Fuel type
   ``TankVolume``                                                    double             gal            > 0              No        See [#]_  Tank volume
-  ``HeatingCapacity``                                               double             Btuh           > 0              No        See [#]_  Heating capacity
+  ``HeatingCapacity``                                               double             Btu/hr         > 0              No        See [#]_  Heating capacity
   ``UniformEnergyFactor`` or ``EnergyFactor`` or ``YearInstalled``  double or integer  frac or #      < 1 or > 1600    Yes       See [#]_  EnergyGuide label rated efficiency or Year installed
   ``UsageBin`` or ``FirstHourRating``                               string or double   str or gal/hr  See [#]_ or > 0  No        See [#]_  EnergyGuide label usage bin/first hour rating
-  ``RecoveryEfficiency``                                            double             frac           0 - 1            No        See [#]_  Recovery efficiency
+  ``RecoveryEfficiency``                                            double             frac           0 - 1 [#]_       No        See [#]_  Recovery efficiency
   ``WaterHeaterInsulation/Jacket/JacketRValue``                     double             F-ft2-hr/Btu   >= 0             No        0         R-value of additional tank insulation wrap
   ================================================================  =================  =============  ===============  ========  ========  ====================================================
   
@@ -1856,6 +1861,7 @@ If a conventional storage water heater is specified, additional information is e
   .. [#] UsageBin/FirstHourRating are only used for water heaters that use UniformEnergyFactor.
          If neither UsageBin nor FirstHourRating provided, UsageBin defaults to "medium".
          If FirstHourRating provided and UsageBin not provided, UsageBin is determined based on the FirstHourRating value.
+  .. [#] RecoveryEfficiency must also be greater than the EnergyFactor (or UniformEnergyFactor).
   .. [#] If RecoveryEfficiency not provided, defaults as follows based on a regression analysis of `AHRI certified water heaters <https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3>`_:
   
          - **Electric**: 0.98
