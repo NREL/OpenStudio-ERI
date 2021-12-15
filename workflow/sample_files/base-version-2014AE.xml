@@ -8,6 +8,9 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
+      <ERICalculation>
+        <Version>2014AE</Version>
+      </ERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -45,9 +48,7 @@
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <AverageCeilingHeight>8.0</AverageCeilingHeight>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -194,6 +195,8 @@
               <Layer>
                 <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>0.0</NominalRValue>
+                <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -253,6 +256,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
@@ -267,6 +271,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
@@ -281,6 +286,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
@@ -295,6 +301,7 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
         </Windows>
@@ -328,6 +335,10 @@
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <extension>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
@@ -342,17 +353,18 @@
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
+              <extension>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
+              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl1'/>
-            <ControlType>programmable thermostat</ControlType>
-            <extension>
-              <WeekdaySetpointTempsHeatingSeason>64, 64, 64, 64, 64, 64, 64, 70, 70, 66, 66, 66, 66, 66, 66, 66, 66, 68, 68, 68, 68, 68, 64, 64</WeekdaySetpointTempsHeatingSeason>
-              <WeekendSetpointTempsHeatingSeason>68, 68, 68, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70</WeekendSetpointTempsHeatingSeason>
-              <WeekdaySetpointTempsCoolingSeason>80, 80, 80, 80, 80, 80, 80, 75, 75, 80, 80, 80, 80, 80, 80, 80, 80, 78, 78, 78, 78, 78, 80, 80</WeekdaySetpointTempsCoolingSeason>
-              <WeekendSetpointTempsCoolingSeason>78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78</WeekendSetpointTempsCoolingSeason>
-            </extension>
+            <ControlType>manual thermostat</ControlType>
+            <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
+            <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution1'/>
@@ -399,6 +411,7 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
+            <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
@@ -431,6 +444,7 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -442,14 +456,17 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
+          <ControlType>timer</ControlType>
           <Vented>true</Vented>
           <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
+          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

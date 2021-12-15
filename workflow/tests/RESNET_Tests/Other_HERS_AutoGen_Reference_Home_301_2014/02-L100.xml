@@ -350,6 +350,16 @@
         <FrameFloors>
           <FrameFloor>
             <SystemIdentifier id='FrameFloor1'/>
+            <ExteriorAdjacentTo>crawlspace - unvented</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>1539.0</Area>
+            <Insulation>
+              <SystemIdentifier id='FrameFloor1Insulation'/>
+              <AssemblyEffectiveRValue>4.24</AssemblyEffectiveRValue>
+            </Insulation>
+          </FrameFloor>
+          <FrameFloor>
+            <SystemIdentifier id='FrameFloor2'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1539.0</Area>
@@ -358,18 +368,8 @@
               <Thickness>0.5</Thickness>
             </InteriorFinish>
             <Insulation>
-              <SystemIdentifier id='FrameFloor1Insulation'/>
-              <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
-            </Insulation>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor2'/>
-            <ExteriorAdjacentTo>crawlspace - unvented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>1539.0</Area>
-            <Insulation>
               <SystemIdentifier id='FrameFloor2Insulation'/>
-              <AssemblyEffectiveRValue>4.24</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
         </FrameFloors>

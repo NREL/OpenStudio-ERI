@@ -59,7 +59,7 @@ The version of the ERI calculation is entered in ``/HPXML/SoftwareInfo/extension
   ``Version``  string             See [#]_     No [#]_            Version of 301 Standard w/ addenda
   ===========  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] Version choices are "latest", "2019AB", "2019A", "2019", "2014ADEGL", "2014ADEG", "2014ADE", "2014AD", "2014A", or "2014".
+  .. [#] Version choices are "latest", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
   .. [#] Version only required to run ERI calculation.
@@ -1156,11 +1156,7 @@ To define an air distribution system, additional information is entered in ``HVA
 
 For the air distribution system, duct leakage inputs are required if AirDistributionType is "regular velocity" or "gravity" and optional if AirDistributionType is "fan coil".
 
-When provided, duct leakage must be entered in one of three ways:
-
-1. **Leakage to the Outside**
-
-  Supply and return leakage to the outside are each entered as a ``HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement``:
+When provided, supply and return leakage to the outside are each entered as a ``HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement``:
   
   ================================  =======  =======  ===========  ========  =========  =========================================================
   Element                           Type     Units    Constraints  Required  Default    Notes
@@ -1174,43 +1170,11 @@ When provided, duct leakage must be entered in one of three ways:
   .. [#] DuctType choices are "supply" or "return".
   .. [#] If the HVAC system has no return ducts (e.g., a ducted evaporative cooler), use zero for the Value.
 
-2. **Total Leakage** (Version 2014ADEGL or newer)
+.. note::
 
-  Total leakage is entered as a ``HVACDistribution/DistributionSystemType/AirDistribution/DuctLeakageMeasurement``:
-
-  ================================  =======  =======  ===========  ========  =========  =========================================================
-  Element                           Type     Units    Constraints  Required  Default    Notes
-  ================================  =======  =======  ===========  ========  =========  =========================================================
-  ``DuctLeakage/Units``             string            CFM25        Yes                  Duct leakage units
-  ``DuctLeakage/Value``             double            >= 0         Yes                  Duct leakage value
-  ``DuctLeakage/TotalOrToOutside``  string            total        Yes                  Type of duct leakage (outside conditioned space vs total)
-  ================================  =======  =======  ===========  ========  =========  =========================================================
-  
-  If the ResidentialFacilityType is "apartment unit", OS-ERI will calculate leakage to outside for the given distribution system as half the total leakage.
-  
-  If the ResidentialFacilityType is anything else, OS-ERI will calculate leakage to outside for the given distribution system based on total leakage, the fraction of duct surface area outside conditioned space, and HVAC capacities.
-  OS-ERI currently assumes the air handler is located outside conditioned space; future inputs will be available to describe when the air handler is within conditioned space.
-  
-  .. warning::
-
-    Total leakage should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
-    OS-ERI does not check that, for example, the total duct leakage or infiltration requirements for dwellings and townhouses have been met per ANSI 301; that is currently the responsibility of the software developer.
-
-3. **Leakage to Outside Testing Exemption** (Version 2014AD or newer)
-
-   A duct leakage to outside testing exemption is entered in ``HVACDistribution/DistributionSystemType/AirDistribution``:
-   
-  =======================================================  =======  =======  ===========  ========  =========  =============================
-  Element                                                  Type     Units    Constraints  Required  Default    Notes
-  =======================================================  =======  =======  ===========  ========  =========  =============================
-  ``extension/DuctLeakageToOutsideTestingExemption=true``  boolean           true         Yes                  Leakage to outside exemption?
-  =======================================================  =======  =======  ===========  ========  =========  =============================
-
-  OS-ERI will use a DSE of 0.88 for the given distribution system.
-
-  .. warning::
-
-    The duct leakage to outside testing exemption should only be used if the conditions specified in ANSI/RESNET/ICC 301 have been appropriately met.
+  ANSI/RESNET/ICC 301 allows for various duct leakage exemptions, including not testing a distribution system or measuring total duct leakage in lieu of leakage to the outside.
+  OS-ERI does not automatically handle these exemptions.
+  Any software tool that offers these options to their end users must incorporate the necessary logic and pass the appropriate inputs to OS-ERI (i.e., leakage to the outside or distribution system efficiency (DSE)).
 
 Additionally, each supply/return duct present is entered in a ``HVACDistribution/DistributionSystemType/AirDistribution/Ducts``.
 

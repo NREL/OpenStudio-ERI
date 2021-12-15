@@ -150,17 +150,6 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = "#{File.dirname(__FILE__)}/../sample_files/invalid_files"
     test_name = 'invalid_files'
 
-    # Test against ERI workflow
-    expected_error_msgs = { 'hvac-ducts-leakage-to-outside-exemption-pre-addendum-d.xml' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
-                            'hvac-ducts-leakage-total-pre-addendum-l.xml' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
-
-    Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      next if xml.include? 'energy-star'
-
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)])
-      _rm_path(rundir)
-    end
-
     # Test against ES workflow
     expected_error_msgs = { 'energy-star-SF_Florida_3.1.xml' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
                                                                  'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Florida")]]'],
@@ -963,7 +952,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def _test_schema_validation(xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
+    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
     hpxml_doc = XMLHelper.parse_file(xml)
     errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
     if errors.size > 0

@@ -12,7 +12,7 @@ class ERI301ValidationTest < MiniTest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @eri_validator_stron_path = File.join(@root_path, 'rulesets', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
-    @hpxml_stron_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml')
+    @hpxml_stron_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
 
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
@@ -152,9 +152,7 @@ class ERI301ValidationTest < MiniTest::Test
 
   def test_measure_error_messages
     # Test case => Error message
-    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."],
-                            'hvac-ducts-lto-exemption-pre-addendum-d' => ['ERI Version 2014A does not support duct leakage testing exemption.'],
-                            'hvac-ducts-leakage-total-pre-addendum-l' => ['ERI Version 2014ADEG does not support total duct leakage testing.'] }
+    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."] }
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
@@ -165,14 +163,6 @@ class ERI301ValidationTest < MiniTest::Test
       elsif ['dhw-frac-load-served'].include? error_case
         hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-dhw-multiple.xml'))
         hpxml.water_heating_systems[0].fraction_dhw_load_served = 0.35
-      elsif ['hvac-ducts-lto-exemption-pre-addendum-d'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-ducts-leakage-to-outside-exemption.xml'))
-        hpxml.header.eri_calculation_version = '2014A'
-        hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-      elsif ['hvac-ducts-leakage-total-pre-addendum-l'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-ducts-leakage-total.xml'))
-        hpxml.header.eri_calculation_version = '2014ADEG'
-        hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
       else
         fail "Unhandled case: #{error_case}."
       end
@@ -194,7 +184,7 @@ class ERI301ValidationTest < MiniTest::Test
 
   def _test_schema_validation(hpxml_doc, xml)
     # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
+    schemas_dir = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
     errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
     if errors.size > 0
       puts "#{xml}: #{errors}"

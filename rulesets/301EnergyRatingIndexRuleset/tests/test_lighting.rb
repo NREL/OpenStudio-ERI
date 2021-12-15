@@ -31,7 +31,7 @@ class ERILightingTest < MiniTest::Test
   end
 
   def test_lighting_pre_addendum_g
-    hpxml_name = 'base-version-2014ADE.xml'
+    hpxml_name = 'base-version-2014AE.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
     _check_lighting(hpxml, f_int_cfl: 0.1)

@@ -92,8 +92,6 @@
 [SF_National_3.1] base-hvac-dse.xml,67.0,1.0,67.0,78.0,78.0,FAIL
 [SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml,67.0,1.0,67.0,95.0,95.0,FAIL
 [SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml,67.0,1.0,67.0,81.0,81.0,FAIL
-[SF_National_3.1] base-hvac-ducts-leakage-to-outside-exemption.xml,67.0,1.0,67.0,74.0,74.0,FAIL
-[SF_National_3.1] base-hvac-ducts-leakage-total.xml,67.0,1.0,67.0,76.0,76.0,FAIL
 [SF_National_3.1] base-hvac-elec-resistance-only.xml,70.0,1.0,70.0,93.0,93.0,FAIL
 [SF_National_3.1] base-hvac-evap-cooler-only-ducted.xml,77.0,1.0,77.0,74.0,74.0,PASS
 [SF_National_3.1] base-hvac-evap-cooler-only.xml,77.0,1.0,77.0,73.0,73.0,PASS

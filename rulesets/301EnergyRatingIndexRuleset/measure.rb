@@ -96,7 +96,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     end
 
     begin
-      stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'HPXMLvalidator.xml'),
+      stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml'),
                      File.join(File.dirname(__FILE__), 'resources', '301validator.xml')]
       @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
       @orig_hpxml.errors.each do |error|

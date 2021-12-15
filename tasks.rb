@@ -203,7 +203,7 @@ def create_test_hpxmls
       XMLHelper.write_file(hpxml_doc, hpxml_path)
 
       # Validate file against HPXML schema
-      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
+      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
       errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
       if errors.size > 0
         fail errors.to_s
@@ -790,8 +790,8 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
                            insulation_assembly_r_value: 13.85)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Uninsulated
-    hpxml.frame_floors[1].insulation_assembly_r_value = 4.24
-    hpxml.frame_floors[1].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
+    hpxml.frame_floors[0].insulation_assembly_r_value = 4.24
+    hpxml.frame_floors[0].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     hpxml.frame_floors.delete_at(1)
   elsif hpxml_file.include?('EPA_Tests')
@@ -2163,7 +2163,6 @@ def create_sample_hpxmls
                   'base-hvac-multiple.xml',
                   'base-hvac-none.xml',
                   'base-hvac-portable-heater-gas-only.xml',
-                  'base-hvac-programmable-thermostat.xml',
                   'base-hvac-ptac.xml',
                   'base-hvac-ptac-with-heating.xml',
                   'base-hvac-pthp.xml',
@@ -2399,6 +2398,11 @@ def create_sample_hpxmls
 
       dhw_dist.shared_recirculation_motor_efficiency = 0.9
     end
+    hpxml.hvac_controls.each do |hvac_control|
+      next unless hvac_control.control_type.nil?
+
+      hvac_control.control_type = HPXML::HVACControlTypeManual
+    end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
   end
@@ -2406,30 +2410,10 @@ def create_sample_hpxmls
   # Create additional files
   puts 'Creating additional HPXML files for ERI...'
 
-  # Duct leakage exemption
+  # base-hvac-programmable-thermostat.xml
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-  hpxml.hvac_distributions[0].duct_leakage_measurements.clear
-  hpxml.hvac_distributions[0].duct_leakage_to_outside_testing_exemption = true
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-to-outside-exemption.xml')
-
-  # Duct leakage total
-  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-  # Add total duct leakage
-  hpxml.hvac_distributions[0].duct_leakage_measurements.clear
-  hpxml.hvac_distributions[0].duct_leakage_measurements.add(duct_leakage_units: HPXML::UnitsCFM25,
-                                                            duct_leakage_value: 150,
-                                                            duct_leakage_total_or_to_outside: HPXML::DuctLeakageTotal)
-  # Add supply duct in conditioned space
-  hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
-                                        duct_insulation_r_value: 4,
-                                        duct_location: HPXML::LocationLivingSpace,
-                                        duct_surface_area: 105)
-  # Add return duct in conditioned space
-  hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
-                                        duct_insulation_r_value: 4,
-                                        duct_location: HPXML::LocationLivingSpace,
-                                        duct_surface_area: 35)
-  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-ducts-leakage-total.xml')
+  hpxml.hvac_controls[0].control_type = HPXML::HVACControlTypeProgrammable
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
   # Older versions
   Constants.ERIVersions.each do |eri_version|

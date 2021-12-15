@@ -8,21 +8,29 @@ require 'pathname'
 require 'csv'
 require 'oga'
 require_relative 'resources/geometry'
+require_relative '../HPXMLtoOpenStudio/resources/airflow'
 require_relative '../HPXMLtoOpenStudio/resources/battery'
 require_relative '../HPXMLtoOpenStudio/resources/constants'
 require_relative '../HPXMLtoOpenStudio/resources/constructions'
 require_relative '../HPXMLtoOpenStudio/resources/geometry'
+require_relative '../HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative '../HPXMLtoOpenStudio/resources/hpxml_defaults'
 require_relative '../HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../HPXMLtoOpenStudio/resources/hvac'
+require_relative '../HPXMLtoOpenStudio/resources/hvac_sizing'
 require_relative '../HPXMLtoOpenStudio/resources/lighting'
 require_relative '../HPXMLtoOpenStudio/resources/location'
 require_relative '../HPXMLtoOpenStudio/resources/materials'
+require_relative '../HPXMLtoOpenStudio/resources/misc_loads'
 require_relative '../HPXMLtoOpenStudio/resources/meta_measure'
 require_relative '../HPXMLtoOpenStudio/resources/psychrometrics'
+require_relative '../HPXMLtoOpenStudio/resources/pv'
 require_relative '../HPXMLtoOpenStudio/resources/schedules'
 require_relative '../HPXMLtoOpenStudio/resources/unit_conversions'
+require_relative '../HPXMLtoOpenStudio/resources/util'
 require_relative '../HPXMLtoOpenStudio/resources/validator'
 require_relative '../HPXMLtoOpenStudio/resources/version'
+require_relative '../HPXMLtoOpenStudio/resources/waterheater'
 require_relative '../HPXMLtoOpenStudio/resources/xmlhelper'
 
 # start the measure
@@ -1278,16 +1286,6 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDescription('The heat load served fraction of the second heating system. Ignored if this heating system serves as a backup system for a heat pump.')
     arg.setUnits('Frac')
     arg.setDefaultValue(0.25)
-    args << arg
-
-    hvac_control_type_choices = OpenStudio::StringVector.new
-    hvac_control_type_choices << HPXML::HVACControlTypeManual
-    hvac_control_type_choices << HPXML::HVACControlTypeProgrammable
-
-    arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('hvac_control_type', hvac_control_type_choices, false)
-    arg.setDisplayName('HVAC Control: Type')
-    arg.setDescription('The type of thermostat.')
-    arg.setDefaultValue(HPXML::HVACControlTypeManual)
     args << arg
 
     arg = OpenStudio::Measure::OSArgument::makeStringArgument('hvac_control_heating_weekday_setpoint', true)
@@ -2878,6 +2876,12 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDefaultValue(1.0)
     args << arg
 
+    arg = OpenStudio::Measure::OSArgument::makeBoolArgument('apply_defaults', false)
+    arg.setDisplayName('Apply default values')
+    arg.setDescription('Sets OS-HPXML default values in the HPXML output file')
+    arg.setDefaultValue(false)
+    args << arg
+
     return args
   end
 
@@ -3127,7 +3131,8 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
   end
 
   def validate_hpxml(runner, hpxml_path, hpxml_doc)
-    schemas_dir = File.join(File.dirname(__FILE__), '../HPXMLtoOpenStudio/resources')
+    schemas_dir = File.join(File.dirname(__FILE__), '../HPXMLtoOpenStudio/resources/hpxml_schema')
+    schematron_dir = File.join(File.dirname(__FILE__), '../HPXMLtoOpenStudio/resources/hpxml_schematron')
 
     is_valid = true
 
@@ -3138,8 +3143,8 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     end
 
     # Validate input HPXML against schematron docs
-    stron_paths = [File.join(schemas_dir, 'HPXMLvalidator.xml'),
-                   File.join(schemas_dir, 'EPvalidator.xml')]
+    stron_paths = [File.join(schematron_dir, 'HPXMLvalidator.xml'),
+                   File.join(schematron_dir, 'EPvalidator.xml')]
     errors, warnings = Validator.run_validators(hpxml_doc, stron_paths)
     errors.each do |error|
       runner.registerError("#{hpxml_path}: #{error}")
@@ -3167,40 +3172,8 @@ class HPXMLFile
     @surface_ids = {}
 
     # Sorting of objects to make the measure deterministic
-    def self.surface_order(s)
-      order_map = { HPXML::LocationLivingSpace => 0,
-                    HPXML::LocationAtticUnvented => 1,
-                    HPXML::LocationAtticVented => 1,
-                    HPXML::LocationBasementConditioned => 2,
-                    HPXML::LocationBasementUnconditioned => 2,
-                    HPXML::LocationCrawlspaceUnvented => 2,
-                    HPXML::LocationCrawlspaceVented => 2,
-                    HPXML::LocationCrawlspaceConditioned => 2,
-                    HPXML::LocationGarage => 3 }
-      location = Geometry.get_adjacent_to(surface: s)
-      if location == HPXML::LocationLivingSpace && s.adjacentSurface.is_initialized
-        location2 = Geometry.get_adjacent_to(surface: s.adjacentSurface.get)
-        order = order_map[location2]
-      else
-        order = order_map[location]
-      end
-      order = order_map.values.max + 1 if order.nil?
-
-      order = order * 10 + s.azimuth / 1000.0
-      if s.outsideBoundaryCondition.downcase == 'adiabatic'
-        if s.surfaceType != 'RoofCeiling' # Ensure adiabatic ceiling before adiabatic floor
-          order += 0.5
-        else
-          order += 0.4
-        end
-      elsif (not location2.nil?) && location == HPXML::LocationLivingSpace
-        order -= 0.5
-      end
-      return order
-    end
-
-    sorted_surfaces = model.getSurfaces.sort_by { |s| surface_order(s) }
-    sorted_subsurfaces = model.getSubSurfaces.sort_by { |s| surface_order(s.surface.get) } # Sorted by azimuth
+    sorted_surfaces = model.getSurfaces.sort_by { |s| s.additionalProperties.getFeatureAsInteger('Index').get }
+    sorted_subsurfaces = model.getSubSurfaces.sort_by { |ss| ss.additionalProperties.getFeatureAsInteger('Index').get }
 
     hpxml = HPXML.new
 
@@ -3280,6 +3253,18 @@ class HPXMLFile
       if errors.size > 0
         fail "ERROR: Invalid HPXML object produced.\n#{errors}"
       end
+    end
+
+    if args[:apply_defaults].is_initialized
+      apply_defaults = args[:apply_defaults].get
+    else
+      apply_defaults = false
+    end
+
+    if apply_defaults
+      eri_version = Constants.ERIVersions[-1]
+      weather = WeatherProcess.new(model, runner)
+      HPXMLDefaults.apply(hpxml, eri_version, weather, epw_file: epw_file)
     end
 
     hpxml_doc = hpxml.to_oga()
@@ -4572,12 +4557,7 @@ class HPXMLFile
 
     end
 
-    if args[:hvac_control_type].is_initialized
-      hvac_control_type = args[:hvac_control_type].get
-    end
-
     hpxml.hvac_controls.add(id: "HVACControl#{hpxml.hvac_controls.size + 1}",
-                            control_type: hvac_control_type,
                             heating_setpoint_temp: heating_setpoint_temp,
                             cooling_setpoint_temp: cooling_setpoint_temp,
                             weekday_heating_setpoints: weekday_heating_setpoints,
