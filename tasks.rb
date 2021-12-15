@@ -2398,6 +2398,11 @@ def create_sample_hpxmls
 
       dhw_dist.shared_recirculation_motor_efficiency = 0.9
     end
+    hpxml.hvac_controls.each do |hvac_control|
+      next unless hvac_control.control_type.nil?
+
+      hvac_control.control_type = HPXML::HVACControlTypeProgrammable
+    end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
   end
