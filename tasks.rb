@@ -2401,7 +2401,7 @@ def create_sample_hpxmls
     hpxml.hvac_controls.each do |hvac_control|
       next unless hvac_control.control_type.nil?
 
-      hvac_control.control_type = HPXML::HVACControlTypeProgrammable
+      hvac_control.control_type = HPXML::HVACControlTypeManual
     end
 
     XMLHelper.write_file(hpxml.to_oga, hpxml_path)
