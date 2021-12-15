@@ -790,8 +790,8 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
                            insulation_assembly_r_value: 13.85)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Uninsulated
-    hpxml.frame_floors[1].insulation_assembly_r_value = 4.24
-    hpxml.frame_floors[1].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
+    hpxml.frame_floors[0].insulation_assembly_r_value = 4.24
+    hpxml.frame_floors[0].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
     hpxml.frame_floors.delete_at(1)
   elsif hpxml_file.include?('EPA_Tests')
