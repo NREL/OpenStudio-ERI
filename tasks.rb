@@ -203,7 +203,7 @@ def create_test_hpxmls
       XMLHelper.write_file(hpxml_doc, hpxml_path)
 
       # Validate file against HPXML schema
-      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources'))
+      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
       errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
       if errors.size > 0
         fail errors.to_s
@@ -2163,7 +2163,6 @@ def create_sample_hpxmls
                   'base-hvac-multiple.xml',
                   'base-hvac-none.xml',
                   'base-hvac-portable-heater-gas-only.xml',
-                  'base-hvac-programmable-thermostat.xml',
                   'base-hvac-ptac.xml',
                   'base-hvac-ptac-with-heating.xml',
                   'base-hvac-pthp.xml',
@@ -2405,6 +2404,11 @@ def create_sample_hpxmls
 
   # Create additional files
   puts 'Creating additional HPXML files for ERI...'
+
+  # base-hvac-programmable-thermostat.xml
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+  hpxml.hvac_controls[0].control_type = HPXML::HVACControlTypeProgrammable
+  XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
   # Older versions
   Constants.ERIVersions.each do |eri_version|
