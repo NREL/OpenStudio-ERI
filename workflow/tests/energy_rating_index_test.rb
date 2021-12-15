@@ -25,7 +25,6 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_sample_files
-    skip
     test_name = 'sample_files'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exist? test_results_csv
@@ -67,7 +66,6 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def test_sample_files_energystar
-    skip
     test_name = 'sample_files_energystar'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exist? test_results_csv
