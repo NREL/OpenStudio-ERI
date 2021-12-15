@@ -1399,16 +1399,17 @@ If a conventional storage water heater is specified, additional information is e
   =============================================  =======  ============  ===========  ========  ========  ==========================================
   ``FuelType``                                   string                 See [#]_     Yes                 Fuel type
   ``TankVolume``                                 double   gal           > 0          Yes                 Tank volume
-  ``HeatingCapacity``                            double   Btuh          > 0          No        See [#]_  Heating output capacity
+  ``HeatingCapacity``                            double   Btu/hr        > 0          No        See [#]_  Heating output capacity
   ``UniformEnergyFactor`` or ``EnergyFactor``    double   frac          < 1          Yes                 EnergyGuide label rated efficiency
   ``FirstHourRating``                            double   gal/hr        > 0          See [#]_            EnergyGuide label first hour rating
-  ``RecoveryEfficiency``                         double   frac          0 - 1        See [#]_            Recovery efficiency
+  ``RecoveryEfficiency``                         double   frac          0 - 1 [#]_   See [#]_            Recovery efficiency
   ``WaterHeaterInsulation/Jacket/JacketRValue``  double   F-ft2-hr/Btu  >= 0         No        0         R-value of additional tank insulation wrap
   =============================================  =======  ============  ===========  ========  ========  ==========================================
   
   .. [#] FuelType choices are "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
   .. [#] If HeatingCapacity not provided, defaults based on Table 8 in the `2014 BAHSP <https://www.energy.gov/sites/prod/files/2014/03/f13/house_simulation_protocols_2014.pdf>`_.
   .. [#] FirstHourRating only required if UniformEnergyFactor provided.
+  .. [#] RecoveryEfficiency must also be greater than the EnergyFactor (or UniformEnergyFactor).
   .. [#] RecoveryEfficiency only required if FuelType is not electricity.
 
 Tankless
