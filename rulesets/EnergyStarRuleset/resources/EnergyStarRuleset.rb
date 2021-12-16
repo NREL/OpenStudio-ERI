@@ -110,6 +110,7 @@ class EnergyStarRuleset
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     @cvolume = orig_hpxml.building_construction.conditioned_building_volume
     @infilvolume = get_infiltration_volume(orig_hpxml)
+    @infilheight = get_infiltration_height(orig_hpxml)
     @has_cond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementConditioned)
     @has_uncond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementUnconditioned)
     @has_crawlspace = (orig_hpxml.has_location(HPXML::LocationCrawlspaceVented) || orig_hpxml.has_location(HPXML::LocationCrawlspaceUnvented))
@@ -145,7 +146,8 @@ class EnergyStarRuleset
                                                 house_pressure: 50,
                                                 unit_of_measure: infil_unit_of_measure,
                                                 air_leakage: infil_air_leakage.round(1),
-                                                infiltration_volume: @infilvolume)
+                                                infiltration_volume: @infilvolume,
+                                                infiltration_height: @infilheight)
   end
 
   def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
@@ -1099,6 +1101,15 @@ class EnergyStarRuleset
 
       return air_infiltration_measurement.infiltration_volume
     end
+  end
+
+  def self.get_infiltration_height(hpxml)
+    hpxml.air_infiltration_measurements.each do |air_infiltration_measurement|
+      next if air_infiltration_measurement.infiltration_height.nil?
+
+      return air_infiltration_measurement.infiltration_height
+    end
+    return
   end
 
   def self.get_hvac_configurations(orig_hpxml)
