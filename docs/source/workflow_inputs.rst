@@ -20,7 +20,7 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
 
 1. Validation against the HPXML Schema
 
-  The HPXML XSD Schema can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/HPXML.xsd``.
+  The HPXML XSD Schema can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/hpxml_schema/HPXML.xsd``.
   It should be used by the software developer to validate their HPXML file prior to running the workflow.
   XSD Schemas are used to validate what elements/attributes/enumerations are available, data types for elements/attributes, the number/order of children elements, etc.
 
