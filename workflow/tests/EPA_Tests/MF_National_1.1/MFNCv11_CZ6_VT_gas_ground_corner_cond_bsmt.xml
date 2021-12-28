@@ -60,7 +60,7 @@
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>CFM</UnitofMeasure>
-              <AirLeakage>1474.2</AirLeakage>
+              <AirLeakage>1457.4</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>19200.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
@@ -80,14 +80,38 @@
           </RimJoist>
           <RimJoist>
             <SystemIdentifier id='RimJoist2'/>
+            <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>28.0</Area>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='RimJoist2Insulation'/>
+              <AssemblyEffectiveRValue>3.75</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist3'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Area>110.0</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='RimJoist2Insulation'/>
+              <SystemIdentifier id='RimJoist3Insulation'/>
               <AssemblyEffectiveRValue>19.608</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist4'/>
+            <ExteriorAdjacentTo>basement - conditioned</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
+            <Area>28.0</Area>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='RimJoist4Insulation'/>
+              <AssemblyEffectiveRValue>3.75</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
         </RimJoists>
@@ -129,7 +153,7 @@
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Height>8.0</Height>
-            <Area>1104.0</Area>
+            <Area>880.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>6.0</DepthBelowGrade>
             <Insulation>
@@ -145,6 +169,30 @@
                 <NominalRValue>7.5</NominalRValue>
                 <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
                 <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+              </Layer>
+            </Insulation>
+          </FoundationWall>
+          <FoundationWall>
+            <SystemIdentifier id='FoundationWall2'/>
+            <ExteriorAdjacentTo>basement - conditioned</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
+            <Height>4.0</Height>
+            <Area>112.0</Area>
+            <Thickness>8.0</Thickness>
+            <DepthBelowGrade>2.0</DepthBelowGrade>
+            <Insulation>
+              <SystemIdentifier id='FoundationWall2Insulation'/>
+              <Layer>
+                <InstallationType>continuous - exterior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+              </Layer>
+              <Layer>
+                <InstallationType>continuous - interior</InstallationType>
+                <NominalRValue>0.0</NominalRValue>
+                <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -194,7 +242,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
-            <Area>148.82</Area>
+            <Area>153.32</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
@@ -204,7 +252,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window2'/>
-            <Area>111.81</Area>
+            <Area>115.19</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
