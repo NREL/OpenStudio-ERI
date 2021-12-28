@@ -301,7 +301,10 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
-    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+    @infil_height = get_infiltration_height(orig_hpxml)
+    if @infil_height.nil?
+      @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+    end
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     sla = 0.00036
@@ -316,7 +319,10 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
-    @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+    @infil_height = get_infiltration_height(orig_hpxml)
+    if @infil_height.nil?
+      @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
+    end
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
@@ -2629,6 +2635,15 @@ class EnergyRatingIndex301Ruleset
 
       return air_infiltration_measurement.infiltration_volume
     end
+  end
+
+  def self.get_infiltration_height(hpxml)
+    hpxml.air_infiltration_measurements.each do |air_infiltration_measurement|
+      next if air_infiltration_measurement.infiltration_height.nil?
+
+      return air_infiltration_measurement.infiltration_height
+    end
+    return
   end
 
   def self.get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)

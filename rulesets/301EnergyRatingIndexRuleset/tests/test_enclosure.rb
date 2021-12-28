@@ -22,25 +22,43 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, ach50: 9.3)
+    _check_infiltration(hpxml, ach50: 9.3, height: 9.75, volume: 21600.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_infiltration(hpxml, ach50: 7.09)
+    _check_infiltration(hpxml, ach50: 7.09, height: 9.75, volume: 21600.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_infiltration(hpxml, ach50: 3.0)
+    _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_infiltration(hpxml, ach50: 6.67)
+    _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
 
     # Test w/ mech vent
     hpxml_name = 'base-mechvent-exhaust.xml'
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, ach50: 3.0)
+    _check_infiltration(hpxml, ach50: 3.0, height: 9.75, volume: 21600.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_infiltration(hpxml, ach50: 7.09)
+    _check_infiltration(hpxml, ach50: 7.09, height: 9.75, volume: 21600.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_infiltration(hpxml, ach50: 3.0)
+    _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_infiltration(hpxml, ach50: 6.67)
+    _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
+
+    # Test w/ InfiltrationHeight input provided
+    hpxml_name = 'base-mechvent-exhaust.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.air_infiltration_measurements.each do |m|
+      m.infiltration_height = 10.5
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
+    _check_infiltration(hpxml, ach50: 3.0, height: 10.5, volume: 21600.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
+    _check_infiltration(hpxml, ach50: 7.09, height: 10.5, volume: 21600.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
+    _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
+    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+    _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
 
     # Test w/ unmeasured mech vent
     # Create derivative file for testing
@@ -55,13 +73,13 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, ach50: 9.3) # 0.3 nACH
+    _check_infiltration(hpxml, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_infiltration(hpxml, ach50: 7.09)
+    _check_infiltration(hpxml, ach50: 7.09, height: 9.75, volume: 21600.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_infiltration(hpxml, ach50: 3.0)
+    _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_infiltration(hpxml, ach50: 6.67)
+    _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
 
     # Test attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
     # Create derivative file for testing
@@ -78,13 +96,13 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, ach50: 0.74)
+    _check_infiltration(hpxml, ach50: 0.74, height: 8.0, volume: 7200.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_infiltration(hpxml, ach50: 7.09)
+    _check_infiltration(hpxml, ach50: 7.09, height: 8.0, volume: 7200.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_infiltration(hpxml, ach50: 3.0)
+    _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_infiltration(hpxml, ach50: 6.67)
+    _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
 
     # Test attached dwelling where Aext < 0.5 and exhaust mech vent
     # Create derivative file for testing
@@ -101,16 +119,13 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_infiltration(hpxml, ach50: 10.1)
+    _check_infiltration(hpxml, ach50: 10.1, height: 8.0, volume: 7200.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_infiltration(hpxml, ach50: 7.09)
+    _check_infiltration(hpxml, ach50: 7.09, height: 8.0, volume: 7200.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_infiltration(hpxml, ach50: 3.0)
+    _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
     hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_infiltration(hpxml, ach50: 6.67)
-
-    # TODO: Add 301-2014 tests
-    # TODO: Add tests for new 301-2019 space types HPXML file
+    _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
   end
 
   def test_enclosure_roofs
@@ -894,12 +909,14 @@ class ERIEnclosureTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _check_infiltration(hpxml, ach50:)
+  def _check_infiltration(hpxml, ach50:, height:, volume:)
     assert_equal(1, hpxml.air_infiltration_measurements.size)
     air_infiltration_measurement = hpxml.air_infiltration_measurements[0]
     assert_equal(HPXML::UnitsACH, air_infiltration_measurement.unit_of_measure)
     assert_equal(50.0, air_infiltration_measurement.house_pressure)
     assert_in_epsilon(ach50, air_infiltration_measurement.air_leakage, 0.01)
+    assert_in_epsilon(height, air_infiltration_measurement.infiltration_height, 0.01)
+    assert_in_epsilon(volume, air_infiltration_measurement.infiltration_volume, 0.01)
   end
 
   def _check_roofs(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil, rb_grade: nil)
