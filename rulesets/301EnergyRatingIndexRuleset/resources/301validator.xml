@@ -989,7 +989,7 @@
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true" and h:IsSharedSystem="true"]/h:extension/h:PreHeating'>
       <sch:assert role='ERROR' test='count(../../h:FanType[text()="exhaust only"]) = 0'>Expected 0 element(s) for xpath: ../../FanType[text()="exhaust only"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:Fuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]) = 1'>Expected 1 element(s) for xpath: Fuel[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"]</sch:assert>
-      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[Units="COP"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="COP"]/Value</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="COP"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualHeatingEfficiency[Units="COP"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:FractionVentilationHeatLoadServed) = 1'>Expected 1 element(s) for xpath: FractionVentilationHeatLoadServed</sch:assert>
       <sch:assert role='ERROR' test='number(h:FractionVentilationHeatLoadServed) &gt;= 0 or not(h:FractionVentilationHeatLoadServed)'>Expected FractionVentilationHeatLoadServed to be greater than or equal to 0</sch:assert>
       <sch:assert role='ERROR' test='number(h:FractionVentilationHeatLoadServed) &lt;= 1 or not(h:FractionVentilationHeatLoadServed)'>Expected FractionVentilationHeatLoadServed to be less than or equal to 1</sch:assert>
@@ -1001,7 +1001,7 @@
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true" and h:IsSharedSystem="true"]/h:extension/h:PreCooling'>
       <sch:assert role='ERROR' test='count(../../h:FanType[text()="exhaust only"]) = 0'>Expected 0 element(s) for xpath: ../../FanType[text()="exhaust only"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:Fuel[text()="electricity"]) = 1'>Expected 1 element(s) for xpath: Fuel[text()="electricity"]</sch:assert>
-      <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[Units="COP"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="COP"]/Value</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AnnualCoolingEfficiency[h:Units="COP"]/h:Value) = 1'>Expected 1 element(s) for xpath: AnnualCoolingEfficiency[Units="COP"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:FractionVentilationCoolLoadServed) = 1'>Expected 1 element(s) for xpath: FractionVentilationCoolLoadServed</sch:assert>
       <sch:assert role='ERROR' test='number(h:FractionVentilationCoolLoadServed) &gt;= 0 or not(h:FractionVentilationCoolLoadServed)'>Expected FractionVentilationCoolLoadServed to be greater than or equal to 0</sch:assert>
       <sch:assert role='ERROR' test='number(h:FractionVentilationCoolLoadServed) &lt;= 1 or not(h:FractionVentilationCoolLoadServed)'>Expected FractionVentilationCoolLoadServed to be less than or equal to 1</sch:assert>
@@ -1212,8 +1212,8 @@
       <sch:assert role='ERROR' test='count(h:ArrayAzimuth) = 1'>Expected 1 element(s) for xpath: ArrayAzimuth</sch:assert>
       <sch:assert role='ERROR' test='count(h:ArrayTilt) = 1'>Expected 1 element(s) for xpath: ArrayTilt</sch:assert>
       <sch:assert role='ERROR' test='count(h:MaxPowerOutput) = 1'>Expected 1 element(s) for xpath: MaxPowerOutput</sch:assert>
-      <sch:assert role='ERROR' test='count(h:InverterEfficiency) = 1'>Expected 1 element(s) for xpath: InverterEfficiency</sch:assert> <!-- PVWatts default is 0.96 -->
-      <sch:assert role='ERROR' test='count(h:SystemLossesFraction) = 1'>Expected 1 element(s) for xpath: SystemLossesFraction</sch:assert> <!-- PVWatts default is 0.14 -->
+      <sch:assert role='ERROR' test='count(h:InverterEfficiency) = 1'>Expected 1 element(s) for xpath: InverterEfficiency</sch:assert>
+      <sch:assert role='ERROR' test='count(h:SystemLossesFraction) = 1'>Expected 1 element(s) for xpath: SystemLossesFraction</sch:assert>
     </sch:rule>
   </sch:pattern>
 
