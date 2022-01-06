@@ -21,8 +21,8 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = { f_int_cfl: 0.1 }
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -41,8 +41,8 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = 'base-version-2014AE.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = { f_int_cfl: 0.1 }
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -65,8 +65,8 @@ class ERILightingTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -88,8 +88,8 @@ class ERILightingTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         _check_ceiling_fans(hpxml)
       end
     end
@@ -102,8 +102,8 @@ class ERILightingTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -126,8 +126,8 @@ class ERILightingTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = { cfm_per_w: 3000.0 / 42.6, quantity: 6 }
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -142,11 +142,11 @@ class ERILightingTest < MiniTest::Test
     end
   end
 
-  def _test_measure(hpxml_name, calc_type, is_co2_calc)
+  def _test_measure(hpxml_name, calc_type, is_co2_index_calc)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['calc_type'] = calc_type
-    args_hash['is_co2_calc'] = is_co2_calc
+    args_hash['is_co2_index_calc'] = is_co2_index_calc
 
     # create an instance of the measure
     measure = EnergyRatingIndex301Measure.new

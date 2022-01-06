@@ -70,7 +70,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     arg.setDescription('Absolute (or relative) path of the output HPXML file.')
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeBoolArgument('is_co2_calc', true)
+    arg = OpenStudio::Measure::OSArgument.makeBoolArgument('is_co2_index_calc', true)
     arg.setDisplayName('Is this a CO2 Rating Index calculation?')
     arg.setDescription('If true, the CO2 Index Reference Home will be an all-electric version of the ERI Reference Home.')
     arg.setDefaultValue(false)
@@ -92,7 +92,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     calc_type = runner.getStringArgumentValue('calc_type', user_arguments)
     hpxml_input_path = runner.getStringArgumentValue('hpxml_input_path', user_arguments)
     hpxml_output_path = runner.getOptionalStringArgumentValue('hpxml_output_path', user_arguments)
-    is_co2_calc = runner.getBoolArgumentValue('is_co2_calc', user_arguments)
+    is_co2_index_calc = runner.getBoolArgumentValue('is_co2_index_calc', user_arguments)
 
     unless (Pathname.new hpxml_input_path).absolute?
       hpxml_input_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_input_path))
@@ -138,7 +138,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       weather = WeatherProcess.new(nil, nil, cache_path)
 
       # Apply 301 ruleset on HPXML object
-      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather, is_co2_calc)
+      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather, is_co2_index_calc)
 
       # Write new HPXML file
       if hpxml_output_path.is_initialized

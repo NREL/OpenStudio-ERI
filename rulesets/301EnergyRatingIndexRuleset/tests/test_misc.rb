@@ -18,26 +18,26 @@ class ERIMiscTest < MiniTest::Test
     calc_types = [Constants.CalcTypeERIReferenceHome,
                   Constants.CalcTypeERIRatedHome]
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         _check_misc(hpxml, misc_kwh: 2457, misc_sens: 0.855, misc_lat: 0.045, tv_kwh: 620, tv_sens: 1, tv_lat: 0)
       end
     end
     calc_types = [Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         _check_misc(hpxml, misc_kwh: 2184, misc_sens: 0.855, misc_lat: 0.045, tv_kwh: 620, tv_sens: 1, tv_lat: 0)
       end
     end
   end
 
-  def _test_measure(hpxml_name, calc_type, is_co2_calc)
+  def _test_measure(hpxml_name, calc_type, is_co2_index_calc)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['calc_type'] = calc_type
-    args_hash['is_co2_calc'] = is_co2_calc
+    args_hash['is_co2_index_calc'] = is_co2_index_calc
 
     # create an instance of the measure
     measure = EnergyRatingIndex301Measure.new

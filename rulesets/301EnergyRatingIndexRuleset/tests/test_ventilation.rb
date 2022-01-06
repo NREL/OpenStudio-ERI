@@ -21,8 +21,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.0 }] # Should have airflow but not fan energy
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -39,8 +39,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 0.0 }] # Should have airflow but not fan energy
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -59,8 +59,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 0.0 }] # Should have airflow but not fan energy
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -78,8 +78,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 57.0, hours: 24, power: 0.0 }] # Should have airflow but not fan energy
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -98,8 +98,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-exhaust.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -116,8 +116,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -147,8 +147,8 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -165,8 +165,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -194,8 +194,8 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -212,8 +212,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -240,8 +240,8 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -258,8 +258,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -288,8 +288,8 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -306,8 +306,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -326,8 +326,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-supply.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -344,8 +344,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -364,8 +364,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-balanced.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 52.8 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -382,8 +382,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 52.8 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -402,8 +402,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-erv.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -420,8 +420,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -440,8 +440,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-erv-atre-asre.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -458,8 +458,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -478,8 +478,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-hrv.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -496,8 +496,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -516,8 +516,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-hrv-asre.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -534,8 +534,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -554,8 +554,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-cfis.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -572,8 +572,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -602,8 +602,8 @@ class ERIMechVentTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -623,8 +623,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version('base-enclosure-infil-cfm50.xml', '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 0.0 }] # Should have airflow but not fan energy
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -666,8 +666,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -706,8 +706,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -742,8 +742,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -777,8 +777,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 39.6 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -843,8 +843,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 36.5 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -914,8 +914,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014') # Avoid min nACH for unmeasured systems
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 31.5 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -935,8 +935,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-mechvent-preconditioning.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 19.7 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -966,8 +966,8 @@ class ERIMechVentTest < MiniTest::Test
                   Constants.CalcTypeERIReferenceHome]
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 19.7 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -993,8 +993,8 @@ class ERIMechVentTest < MiniTest::Test
                   Constants.CalcTypeERIReferenceHome]
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 17.9 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -1022,8 +1022,8 @@ class ERIMechVentTest < MiniTest::Test
                   Constants.CalcTypeERIReferenceHome]
 
     calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIReferenceHome
           values = [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 50.6, hours: 24, power: 17.9 }]
         elsif calc_type == Constants.CalcTypeERIRatedHome
@@ -1039,8 +1039,8 @@ class ERIMechVentTest < MiniTest::Test
     hpxml_name = 'base-mechvent-whole-house-fan.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
         if calc_type == Constants.CalcTypeERIRatedHome
           values = { flowrate: 4500, power: 300 }
         else
@@ -1051,11 +1051,11 @@ class ERIMechVentTest < MiniTest::Test
     end
   end
 
-  def _test_measure(hpxml_name, calc_type, is_co2_calc)
+  def _test_measure(hpxml_name, calc_type, is_co2_index_calc)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['calc_type'] = calc_type
-    args_hash['is_co2_calc'] = is_co2_calc
+    args_hash['is_co2_index_calc'] = is_co2_index_calc
 
     # create an instance of the measure
     measure = EnergyRatingIndex301Measure.new
