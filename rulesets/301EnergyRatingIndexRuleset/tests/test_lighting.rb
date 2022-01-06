@@ -20,27 +20,41 @@ class ERILightingTest < MiniTest::Test
   def test_lighting
     hpxml_name = 'base.xml'
 
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml, f_int_cfl: 0.1)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml, f_int_cfl: 0.1)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        if calc_type == Constants.CalcTypeERIReferenceHome
+          values = { f_int_cfl: 0.1 }
+        elsif calc_type == Constants.CalcTypeERIRatedHome
+          values = { f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+          values = { f_int_cfl: 0.75, f_ext_cfl: 0.75 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+          values = { f_int_cfl: 0.1 }
+        end
+        _check_lighting(hpxml, **values)
+      end
+    end
   end
 
   def test_lighting_pre_addendum_g
     hpxml_name = 'base-version-2014AE.xml'
 
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_lighting(hpxml, f_int_cfl: 0.1)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_lighting(hpxml, f_int_cfl: 0.1)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        if calc_type == Constants.CalcTypeERIReferenceHome
+          values = { f_int_cfl: 0.1 }
+        elsif calc_type == Constants.CalcTypeERIRatedHome
+          values = { f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+          values = { f_int_cfl: 0.75, f_ext_cfl: 0.75 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+          values = { f_int_cfl: 0.1 }
+        end
+        _check_lighting(hpxml, **values)
+      end
+    end
   end
 
   def test_ceiling_fans
@@ -50,14 +64,21 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        if calc_type == Constants.CalcTypeERIReferenceHome
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        elsif calc_type == Constants.CalcTypeERIRatedHome
+          values = { cfm_per_w: 3000.0 / 30.0, quantity: 4 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        end
+        _check_ceiling_fans(hpxml, **values)
+      end
+    end
 
     # Test w/ 301-2019 and Nfans < Nbr + 1
     hpxml_name = 'base-lighting-ceiling-fans.xml'
@@ -66,14 +87,12 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_ceiling_fans(hpxml)
+      end
+    end
 
     # Test w/ 301-2014 and Nfans < Nbr + 1
     hpxml_name = _change_eri_version('base-lighting-ceiling-fans.xml', '2014')
@@ -82,14 +101,21 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        if calc_type == Constants.CalcTypeERIReferenceHome
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        elsif calc_type == Constants.CalcTypeERIRatedHome
+          values = { cfm_per_w: 3000.0 / 30.0, quantity: 4 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        end
+        _check_ceiling_fans(hpxml, **values)
+      end
+    end
 
     # Test w/ different Nbr
     hpxml_name = 'base-lighting-ceiling-fans.xml'
@@ -99,20 +125,28 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 42.6, quantity: 6)
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 30.0, quantity: 6)
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 42.6, quantity: 4)
-    hpxml_doc = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_ceiling_fans(hpxml_doc, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        if calc_type == Constants.CalcTypeERIReferenceHome
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 6 }
+        elsif calc_type == Constants.CalcTypeERIRatedHome
+          values = { cfm_per_w: 3000.0 / 30.0, quantity: 6 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+          values = { cfm_per_w: 3000.0 / 42.6, quantity: 4 }
+        end
+        _check_ceiling_fans(hpxml, **values)
+      end
+    end
   end
 
-  def _test_measure(hpxml_name, calc_type)
+  def _test_measure(hpxml_name, calc_type, is_co2_calc)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['calc_type'] = calc_type
+    args_hash['is_co2_calc'] = is_co2_calc
 
     # create an instance of the measure
     measure = EnergyRatingIndex301Measure.new

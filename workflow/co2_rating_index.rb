@@ -46,19 +46,15 @@ eri_version = get_eri_version(options[:hpxml])
 runs = []
 runs << [Constants.CalcTypeERIRatedHome, options[:hpxml], options[:output_dir], resultsdir]
 runs << [Constants.CalcTypeERIReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
-if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
-  runs << [Constants.CalcTypeERIIndexAdjustmentDesign, options[:hpxml], options[:output_dir], resultsdir]
-  runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
-end
 
-run_simulations(runs, options, basedir, false)
+run_simulations(runs, options, basedir, true)
 
 design_outputs = retrieve_outputs(runs, options)
 
 # Calculate and write results
-puts 'Calculating ERI...'
-results = calculate_eri(design_outputs, resultsdir)
-puts "ERI: #{results[:eri].round(2)}"
+puts 'Calculating CO2 Rating Index...'
+results = calculate_co2_index(design_outputs, resultsdir)
+puts "CO2 Rating Index: #{results[:co2index].round(2)}"
 
 puts "Output files written to #{resultsdir}"
 puts "Completed in #{(Time.now - start_time).round(1)}s."

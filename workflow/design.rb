@@ -12,7 +12,7 @@ def get_output_filename(run, file_suffix = '.xml')
   return File.join(run[3], run[0].gsub(' ', '') + file_suffix)
 end
 
-def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_calc)
   measures_dir = File.join(File.dirname(__FILE__), '..')
   designdir = get_design_dir(run)
   output_hpxml = get_output_filename(run)
@@ -25,6 +25,7 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
   args['calc_type'] = run[0]
   args['hpxml_input_path'] = run[1]
   args['hpxml_output_path'] = output_hpxml
+  args['is_co2_calc'] = is_co2_calc
   update_args_hash(measures, measure_subdir, args)
 
   # Add HPXML translator measure to workflow
@@ -49,6 +50,7 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
   args['include_timeseries_zone_temperatures'] = timeseries_outputs.include? 'temperatures'
   args['include_timeseries_airflows'] = timeseries_outputs.include? 'airflows'
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
+  args['include_timeseries_co2_emissions'] = false # FIXME: We should probably allow this
   update_args_hash(measures, measure_subdir, args)
 
   print_prefix = "[#{run[0]}] "
@@ -58,7 +60,7 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
   return output_hpxml
 end
 
-if ARGV.size == 7
+if ARGV.size == 8
   basedir = ARGV[0]
   run = ARGV[1].split('|').map { |x| (x.length == 0 ? nil : x) }
   hpxml = ARGV[2]
@@ -66,5 +68,6 @@ if ARGV.size == 7
   timeseries_output_freq = ARGV[4]
   timeseries_outputs = ARGV[5].split('|')
   add_comp_loads = (ARGV[6].downcase.to_s == 'true')
-  run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+  is_co2_calc = (ARGV[7].downcase.to_s == 'true')
+  run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_calc)
 end

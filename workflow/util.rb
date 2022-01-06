@@ -133,7 +133,7 @@ def process_arguments(calling_rb, args, basedir)
   return options
 end
 
-def run_simulations(runs, options, basedir)
+def run_simulations(runs, options, basedir, is_co2_calc)
   # Run simulations
   puts "HPXML: #{options[:hpxml]}"
   if Process.respond_to?(:fork) # e.g., most Unix systems
@@ -148,7 +148,7 @@ def run_simulations(runs, options, basedir)
     Parallel.map(runs, in_processes: runs.size) do |run|
       output_hpxml_path, designdir = run_design_direct(basedir, run, options[:hpxml], options[:debug],
                                                        options[:timeseries_output_freq], options[:timeseries_outputs],
-                                                       options[:add_comp_loads])
+                                                       options[:add_comp_loads], is_co2_calc)
       kill unless File.exist? File.join(designdir, 'eplusout.end')
     end
 
@@ -170,7 +170,7 @@ def run_simulations(runs, options, basedir)
     Parallel.map(runs, in_threads: runs.size) do |run|
       output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, run, options[:hpxml], options[:debug],
                                                                  options[:timeseries_output_freq], options[:timeseries_outputs],
-                                                                 options[:add_comp_loads])
+                                                                 options[:add_comp_loads], is_co2_calc)
       Process.wait pids[run]
       if not File.exist? File.join(designdir, 'eplusout.end')
         kill(pids)
@@ -181,18 +181,18 @@ def run_simulations(runs, options, basedir)
   end
 end
 
-def run_design_direct(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+def run_design_direct(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_calc)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_design_dir(run)
   timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
 
-  output_hpxml_path = run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+  output_hpxml_path = run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_calc)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_calc)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -203,7 +203,7 @@ def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeser
   timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{run.join('|')}\" \"#{hpxml}\" #{debug} \"#{timeseries_output_freq}\" \"#{timeseries_outputs.join('|')}\" \"#{add_comp_loads}\"")
+  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{run.join('|')}\" \"#{hpxml}\" #{debug} \"#{timeseries_output_freq}\" \"#{timeseries_outputs.join('|')}\" \"#{add_comp_loads}\" \"#{is_co2_calc}\"")
 
   return output_hpxml_path, designdir, pid
 end
@@ -584,6 +584,30 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   return results
 end
 
+def calculate_co2_index(design_outputs, resultsdir)
+  results = {}
+
+  # FIXME: Retrieve from design_outputs
+  results[:aco2] = 1.0
+  results[:arco2] = 1.0
+
+  results[:co2index] = results[:aco2] / results[:arco2] * 100.0
+
+  write_co2_index_results(results, resultsdir)
+
+  return results
+end
+
+def write_co2_index_results(results, resultsdir)
+  # Results file
+  results_csv = File.join(resultsdir, 'CO2_Results.csv')
+  results_out = []
+  results_out << ['CO2 Rating Index', results[:co2index].round(2)]
+  results_out << ['ACO2 (lb CO2)', results[:aco2].round(2)]
+  results_out << ['ARCO2 (lb CO2)', results[:arco2].round(2)]
+  CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+end
+
 def calculate_eri(design_outputs, resultsdir, opp_reduction_limit: nil)
   if design_outputs.size == 4
     results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
@@ -598,12 +622,12 @@ def calculate_eri(design_outputs, resultsdir, opp_reduction_limit: nil)
                            results_iad: results_iad,
                            opp_reduction_limit: opp_reduction_limit)
 
-  write_results(results, resultsdir, design_outputs, results_iad)
+  write_eri_results(results, resultsdir, design_outputs, results_iad)
 
   return results
 end
 
-def write_results(results, resultsdir, design_outputs, results_iad)
+def write_eri_results(results, resultsdir, design_outputs, results_iad)
   ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
 
   # Results file

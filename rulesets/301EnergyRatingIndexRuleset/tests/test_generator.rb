@@ -19,12 +19,17 @@ class ERIGeneratorTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_generator(hpxml)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_generator(hpxml)
+      end
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_generator(hpxml, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 500, is_shared: false },
-                             { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 500, is_shared: false }])
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_generator(hpxml, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 500, is_shared: false },
+                               { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 500, is_shared: false }])
+    end
   end
 
   def test_generator_shared
@@ -34,11 +39,16 @@ class ERIGeneratorTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_generator(hpxml)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_generator(hpxml)
+      end
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_generator(hpxml, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 5000, is_shared: true, nbeds_served: 18 }])
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_generator(hpxml, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 5000, is_shared: true, nbeds_served: 18 }])
+    end
   end
 
   def _test_measure(hpxml_name, calc_type)

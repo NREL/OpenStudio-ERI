@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class EnergyRatingIndex301Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather)
+  def self.apply_ruleset(hpxml, calc_type, weather, is_co2_calc)
     # Global variables
     @weather = weather
     @calc_type = calc_type
+    @is_co2_calc = is_co2_calc
 
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
@@ -200,6 +201,22 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.state_code = orig_hpxml.header.state_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.use_max_load_for_heat_pumps = true
+
+    # CO2 scenario for CO2 Rating Index
+    if @is_co2_calc
+      # FIXME: Need to fix schedule path
+      new_hpxml.header.co2_emissions_scenarios.add(name: 'CO2 Rating Index',
+                                                   elec_units: HPXML::CO2EmissionsScenario::UnitsKgPerMWh,
+                                                   elec_schedule_filepath: '../../rulesets/301EnergyRatingIndexRuleset/resources/data/cambium/AZNMc.csv',
+                                                   natural_gas_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
+                                                   natural_gas_value: 117.6,
+                                                   propane_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
+                                                   propane_value: 136.6,
+                                                   fuel_oil_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
+                                                   fuel_oil_value: 161.0,
+                                                   coal_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
+                                                   coal_value: 211.1)
+    end
 
     return new_hpxml
   end
@@ -1089,6 +1106,7 @@ class EnergyRatingIndex301Ruleset
 
     # Heating
     orig_hpxml.heating_systems.each do |orig_heating_system|
+      next if @is_co2_calc
       next unless orig_heating_system.fraction_heat_load_served > 0
       next unless orig_heating_system.heating_system_fuel != HPXML::FuelTypeElectricity
 
@@ -1107,7 +1125,7 @@ class EnergyRatingIndex301Ruleset
         add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
       end
     end
-    if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if has_fuel && (sum_frac_heat_load < 0.99) && (not @is_co2_calc) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1130,7 +1148,7 @@ class EnergyRatingIndex301Ruleset
     # HeatPump
     orig_hpxml.heating_systems.each do |orig_heating_system|
       next unless orig_heating_system.fraction_heat_load_served > 0
-      next unless orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
+      next unless ((orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity) || @is_co2_calc)
 
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
     end
@@ -1140,7 +1158,7 @@ class EnergyRatingIndex301Ruleset
 
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
     end
-    if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if ((not has_fuel) || @is_co2_calc) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1189,7 +1207,7 @@ class EnergyRatingIndex301Ruleset
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
     # Add reference heating system for residual load
-    if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if has_fuel && (sum_frac_heat_load < 0.99) && (not @is_co2_calc) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1271,7 +1289,7 @@ class EnergyRatingIndex301Ruleset
                                seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)
     end
     # Add reference heat pump for residual load
-    if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if ((not has_fuel) || @is_co2_calc) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1574,7 +1592,9 @@ class EnergyRatingIndex301Ruleset
 
       # Set fuel type for combi systems
       fuel_type = orig_water_heater.fuel_type
-      if has_multiple_water_heaters
+      if @is_co2_calc
+        fuel_type = HPXML::FuelTypeElectricity
+      elsif has_multiple_water_heaters
         fuel_type = orig_hpxml.predominant_water_heating_fuel()
       elsif [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
@@ -2503,18 +2523,17 @@ class EnergyRatingIndex301Ruleset
 
     # Handle backup
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
-      # Dual-fuel HP
-      if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity
+      if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity && (not @is_co2_calc)
+        # Dual-fuel HP
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_fuel = orig_system.backup_heating_fuel
         backup_efficiency_afue = 0.78
         backup_capacity = -1
         backup_switchover_temp = orig_system.backup_heating_switchover_temp
-      else
-        # nop; backup is also 7.7 HSPF, so just model as normal heat pump w/o backup
       end
-    else
-      # Normal heat pump
+    end
+    if backup_type.nil?
+      # Standard electric backup
       backup_type = HPXML::HeatPumpBackupTypeIntegrated
       backup_fuel = HPXML::FuelTypeElectricity
       backup_efficiency_percent = 1.0
@@ -2593,7 +2612,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.add_reference_water_heater(orig_hpxml, new_hpxml)
-    wh_fuel_type = orig_hpxml.predominant_heating_fuel()
+    if @is_co2_calc
+      wh_fuel_type = HPXML::FuelTypeElectricity
+    else
+      wh_fuel_type = orig_hpxml.predominant_heating_fuel()
+    end
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)

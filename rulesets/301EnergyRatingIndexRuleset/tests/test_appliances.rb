@@ -24,19 +24,24 @@ class ERIApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
-      _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
-      _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
+        _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      end
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationLivingSpace)
+      _check_dishwasher(hpxml, ef: nil, annual_kwh: 307, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
+      _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
-    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationLivingSpace)
-    _check_dishwasher(hpxml, ef: nil, annual_kwh: 307, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
-    _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
-    _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
 
     # Test w/ 301-2019 pre-Addendum A
     hpxml_name = _change_eri_version(hpxml_name, '2019')
@@ -45,15 +50,24 @@ class ERIApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml, mef: nil, imef: 0.331, annual_kwh: 704, elec_rate: 0.08, gas_rate: 0.58, agc: 23, cap: 2.874, label_usage: 999, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 2.62, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
-      _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 999, gas_rate: 999, agc: 999, label_usage: 999, location: HPXML::LocationLivingSpace)
-      _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_clothes_washer(hpxml, mef: nil, imef: 0.331, annual_kwh: 704, elec_rate: 0.08, gas_rate: 0.58, agc: 23, cap: 2.874, label_usage: 999, location: HPXML::LocationLivingSpace)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 2.62, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 999, gas_rate: 999, agc: 999, label_usage: 999, location: HPXML::LocationLivingSpace)
+        _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      end
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      _check_dishwasher(hpxml, ef: nil, annual_kwh: 307, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
+      _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    # Same results as previous test, no need to re-check
   end
 
   def test_appliances_modified
@@ -63,19 +77,24 @@ class ERIApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
-      _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
-      _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
+        _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      end
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, location: HPXML::LocationLivingSpace)
+      _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 6, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
+      _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
-    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, location: HPXML::LocationLivingSpace)
-    _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 6, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
-    _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
-    _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
 
     # Test w/ 301-2019 pre-Addendum A
     hpxml_name = _change_eri_version(hpxml_name, '2019')
@@ -84,15 +103,24 @@ class ERIApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml, mef: nil, imef: 0.331, annual_kwh: 704, elec_rate: 0.08, gas_rate: 0.58, agc: 23, cap: 2.874, label_usage: 999, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 2.62, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
-      _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 999, gas_rate: 999, agc: 999, label_usage: 999, location: HPXML::LocationLivingSpace)
-      _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_clothes_washer(hpxml, mef: nil, imef: 0.331, annual_kwh: 704, elec_rate: 0.08, gas_rate: 0.58, agc: 23, cap: 2.874, label_usage: 999, location: HPXML::LocationLivingSpace)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 2.62, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 999, gas_rate: 999, agc: 999, label_usage: 999, location: HPXML::LocationLivingSpace)
+        _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      end
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      _check_dishwasher(hpxml, ef: 0.7, annual_kwh: nil, cap: 6, elec_rate: 0.12, gas_rate: 1.09, agc: 22.32, label_usage: 4, location: HPXML::LocationLivingSpace)
+      _check_refrigerator(hpxml, annual_kwh: 650.0, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    # Same results as previous test, no need to re-check
   end
 
   def test_appliances_gas
@@ -102,13 +130,18 @@ class ERIApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      end
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, location: HPXML::LocationLivingSpace)
-    _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
 
     # Test w/ 301-2019 pre-Addendum A
     hpxml_name = _change_eri_version(hpxml_name, '2019')
@@ -117,78 +150,90 @@ class ERIApplianceTest < MiniTest::Test
                   Constants.CalcTypeERIIndexAdjustmentDesign,
                   Constants.CalcTypeERIIndexAdjustmentReferenceHome]
     calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 2.32, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 2.32, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      end
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
       _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    # Same results as previous test, no need to re-check
   end
 
   def test_appliances_basement
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIRatedHome].include? calc_type
-        location = HPXML::LocationBasementUnconditioned
-      else
-        location = HPXML::LocationLivingSpace
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIRatedHome].include? calc_type
+          location = HPXML::LocationBasementUnconditioned
+        else
+          location = HPXML::LocationLivingSpace
+        end
+        assert_equal(location, hpxml.clothes_washers[0].location)
+        assert_equal(location, hpxml.clothes_dryers[0].location)
+        assert_equal(location, hpxml.dishwashers[0].location)
+        assert_equal(location, hpxml.refrigerators[0].location)
+        assert_equal(location, hpxml.cooking_ranges[0].location)
       end
-      assert_equal(location, hpxml.clothes_washers[0].location)
-      assert_equal(location, hpxml.clothes_dryers[0].location)
-      assert_equal(location, hpxml.dishwashers[0].location)
-      assert_equal(location, hpxml.refrigerators[0].location)
-      assert_equal(location, hpxml.cooking_ranges[0].location)
     end
   end
 
   def test_appliances_none
     hpxml_name = 'base-appliances-none.xml'
 
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-      _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
-      _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
-      _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
-      _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
+        _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
+        _check_refrigerator(hpxml, annual_kwh: 691.0, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      end
     end
   end
 
   def test_appliances_dehumidifier
     hpxml_name = 'base-appliances-dehumidifier-multiple.xml'
 
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIReferenceHome)
-    _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace },
-                                 { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 0.95, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationLivingSpace }])
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace },
-                                 { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ef: 1.6, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationLivingSpace }])
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentDesign)
-    _check_dehumidifiers(hpxml)
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    _check_dehumidifiers(hpxml)
+    calc_type = Constants.CalcTypeERIReferenceHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace },
+                                   { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 0.95, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationLivingSpace }])
+    end
+    calc_type = Constants.CalcTypeERIRatedHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ef: 1.8, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace },
+                                   { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ef: 1.6, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationLivingSpace }])
+    end
+    calc_type = Constants.CalcTypeERIIndexAdjustmentDesign
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_dehumidifiers(hpxml)
+    end
+    calc_type = Constants.CalcTypeERIIndexAdjustmentReferenceHome
+    _get_co2_calcs(calc_type).each do |is_co2_calc|
+      hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+      _check_dehumidifiers(hpxml)
+    end
 
     # Test w/ 301-2019 pre-Addendum B
     # No credit/penalty for dehumidifiers
     hpxml_name = _change_eri_version(hpxml_name, '2019A')
 
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
-      _check_dehumidifiers(hpxml)
+    _all_calc_types.each do |calc_type|
+      _get_co2_calcs(calc_type).each do |is_co2_calc|
+        hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+        _check_dehumidifiers(hpxml)
+      end
     end
   end
 
@@ -201,39 +246,38 @@ class ERIApplianceTest < MiniTest::Test
       hpxml_name = File.basename(@tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
-      calc_types = [Constants.CalcTypeERIReferenceHome,
-                    Constants.CalcTypeERIRatedHome,
-                    Constants.CalcTypeERIIndexAdjustmentDesign,
-                    Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-      calc_types.each do |calc_type|
-        hpxml = _test_measure(hpxml_name, calc_type)
-        if ratio_of_units_to_appliance > 14
-          # Reference appliances
-          _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
-          _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
-        else
-          # Business as usual
-          if calc_type == Constants.CalcTypeERIRatedHome
-            _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
-            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationOtherHeatedSpace)
+      _all_calc_types.each do |calc_type|
+        _get_co2_calcs(calc_type).each do |is_co2_calc|
+          hpxml = _test_measure(hpxml_name, calc_type, is_co2_calc)
+          if ratio_of_units_to_appliance > 14
+            # Reference appliances
+            _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
+            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
           else
-            if calc_type == Constants.CalcTypeERIReferenceHome
-              location = HPXML::LocationOtherHeatedSpace
+            # Business as usual
+            if calc_type == Constants.CalcTypeERIRatedHome
+              _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
+              _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationOtherHeatedSpace)
             else
-              location = HPXML::LocationLivingSpace
+              if calc_type == Constants.CalcTypeERIReferenceHome
+                location = HPXML::LocationOtherHeatedSpace
+              else
+                location = HPXML::LocationLivingSpace
+              end
+              _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: location)
+              _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: location)
             end
-            _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: location)
-            _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: location)
           end
         end
       end
     end
   end
 
-  def _test_measure(hpxml_name, calc_type)
+  def _test_measure(hpxml_name, calc_type, is_co2_calc)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['calc_type'] = calc_type
+    args_hash['is_co2_calc'] = is_co2_calc
 
     # create an instance of the measure
     measure = EnergyRatingIndex301Measure.new
