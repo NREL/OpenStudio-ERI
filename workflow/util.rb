@@ -133,7 +133,7 @@ def process_arguments(calling_rb, args, basedir)
   return options
 end
 
-def run_simulations(runs, options, basedir, is_co2_index_calc)
+def run_simulations(runs, options, basedir)
   # Run simulations
   puts "HPXML: #{options[:hpxml]}"
   if Process.respond_to?(:fork) # e.g., most Unix systems
@@ -148,7 +148,7 @@ def run_simulations(runs, options, basedir, is_co2_index_calc)
     Parallel.map(runs, in_processes: runs.size) do |run|
       output_hpxml_path, designdir = run_design_direct(basedir, run, options[:hpxml], options[:debug],
                                                        options[:timeseries_output_freq], options[:timeseries_outputs],
-                                                       options[:add_comp_loads], is_co2_index_calc)
+                                                       options[:add_comp_loads])
       kill unless File.exist? File.join(designdir, 'eplusout.end')
     end
 
@@ -170,7 +170,7 @@ def run_simulations(runs, options, basedir, is_co2_index_calc)
     Parallel.map(runs, in_threads: runs.size) do |run|
       output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, run, options[:hpxml], options[:debug],
                                                                  options[:timeseries_output_freq], options[:timeseries_outputs],
-                                                                 options[:add_comp_loads], is_co2_index_calc)
+                                                                 options[:add_comp_loads])
       Process.wait pids[run]
       if not File.exist? File.join(designdir, 'eplusout.end')
         kill(pids)
@@ -181,18 +181,18 @@ def run_simulations(runs, options, basedir, is_co2_index_calc)
   end
 end
 
-def run_design_direct(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_index_calc)
+def run_design_direct(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_design_dir(run)
   timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
 
-  output_hpxml_path = run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_index_calc)
+  output_hpxml_path = run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, is_co2_index_calc)
+def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -203,7 +203,7 @@ def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeser
   timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{run.join('|')}\" \"#{hpxml}\" #{debug} \"#{timeseries_output_freq}\" \"#{timeseries_outputs.join('|')}\" \"#{add_comp_loads}\" \"#{is_co2_index_calc}\"")
+  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{run.join('|')}\" \"#{hpxml}\" #{debug} \"#{timeseries_output_freq}\" \"#{timeseries_outputs.join('|')}\" \"#{add_comp_loads}\"")
 
   return output_hpxml_path, designdir, pid
 end
@@ -346,13 +346,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
 
   rated_output[:hpxml_heat_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_heat_sys_ids].index(sys_id)
-    fail 'Data not in sync.' if ref_idx.nil?
 
     reul_heat = ref_output[:loadHeatingDelivered][ref_idx]
-
-    if (ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity) != (rated_output[:hpxml_heat_fuels][rated_idx] == HPXML::FuelTypeElectricity)
-      fail 'Data not in sync.'
-    end
 
     coeff_heat_a, coeff_heat_b = get_heating_coefficients(ref_output[:hpxml_heat_fuels][ref_idx])
 
@@ -404,7 +399,6 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   tot_reul_cool = ref_output[:loadCoolingDelivered].sum(0.0)
   rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_cool_sys_ids].index(sys_id)
-    fail 'Data not in sync.' if ref_idx.nil?
 
     reul_cool = ref_output[:loadCoolingDelivered][ref_idx]
 
@@ -584,29 +578,15 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   return results
 end
 
-def calculate_co2_index(design_outputs, resultsdir)
-  results = {}
-  results[:aco2] = design_outputs[Constants.CalcTypeERIRatedHome][:co2EmissionsforRatingIndex]
-  results[:arco2] = design_outputs[Constants.CalcTypeERIReferenceHome][:co2EmissionsforRatingIndex]
+def _calculate_co2_index(rated_output, ref_output, results)
+  results[:aco2] = rated_output[:co2EmissionsforRatingIndex]
+  results[:arco2] = ref_output[:co2EmissionsforRatingIndex]
   results[:co2index] = results[:aco2] / results[:arco2] * 100.0
-
-  write_co2_index_results(results, resultsdir)
-
   return results
 end
 
-def write_co2_index_results(results, resultsdir)
-  # Results file
-  results_csv = File.join(resultsdir, 'CO2_Results.csv')
-  results_out = []
-  results_out << ['CO2 Rating Index', results[:co2index].round(2)]
-  results_out << ['ACO2 (lb CO2)', results[:aco2].round(2)]
-  results_out << ['ARCO2 (lb CO2)', results[:arco2].round(2)]
-  CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
-end
-
 def calculate_eri(design_outputs, resultsdir, opp_reduction_limit: nil)
-  if design_outputs.size == 4
+  if design_outputs.keys.include? Constants.CalcTypeERIIndexAdjustmentDesign
     results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
                                  design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome],
                                  opp_reduction_limit: opp_reduction_limit)
@@ -619,6 +599,12 @@ def calculate_eri(design_outputs, resultsdir, opp_reduction_limit: nil)
                            results_iad: results_iad,
                            opp_reduction_limit: opp_reduction_limit)
 
+  if design_outputs.keys.include? Constants.CalcTypeCO2RatedHome
+    results = _calculate_co2_index(design_outputs[Constants.CalcTypeCO2RatedHome],
+                                   design_outputs[Constants.CalcTypeCO2ReferenceHome],
+                                   results)
+  end
+
   write_eri_results(results, resultsdir, design_outputs, results_iad)
 
   return results
@@ -627,7 +613,7 @@ end
 def write_eri_results(results, resultsdir, design_outputs, results_iad)
   ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
 
-  # Results file
+  # ERI Results file
   results_csv = File.join(resultsdir, 'ERI_Results.csv')
   results_out = []
   results_out << ['ERI', results[:eri].round(2)]
@@ -648,7 +634,7 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad)
   # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 
-  # Worksheet file
+  # ERI Worksheet file
   worksheet_csv = File.join(resultsdir, 'ERI_Worksheet.csv')
   worksheet_out = []
   worksheet_out << ['Coeff Heating a', results[:coeff_heat_a].map { |x| x.round(4) }.join(',')]
@@ -714,6 +700,16 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad)
   worksheet_out << ['Ref L&A ceilFan', ref_output[:elecCeilingFan].round(2)]
   worksheet_out << ['Ref L&A total', results[:reul_la].round(2)]
   CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
+
+  # CO2 Results file
+  if not results[:co2index].nil?
+    results_csv = File.join(resultsdir, 'CO2_Results.csv')
+    results_out = []
+    results_out << ['CO2 Rating Index', results[:co2index].round(2)]
+    results_out << ['ACO2 (lb CO2)', results[:aco2].round(2)]
+    results_out << ['ARCO2 (lb CO2)', results[:arco2].round(2)]
+    CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+  end
 end
 
 def download_epws

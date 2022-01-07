@@ -135,7 +135,7 @@ runs << [Constants.CalcTypeERIIndexAdjustmentDesign, rated_hpxml, esrated_dir, e
 runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome, rated_hpxml, esrated_dir, esrated_resultsdir]
 
 # Run simulations
-run_simulations(runs, options, basedir, false)
+run_simulations(runs, options, basedir)
 
 puts 'Calculating ENERGY STAR...'
 

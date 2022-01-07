@@ -22,18 +22,15 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { ach50: 9.3, height: 9.75, volume: 21600.0 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { ach50: 7.09, height: 9.75, volume: 21600.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { ach50: 3.0, height: 17.0, volume: 20400.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { ach50: 6.67, height: 17.0, volume: 20400.0 }
-        end
-        _check_infiltration(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 9.3, height: 9.75, volume: 21600.0)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 7.09, height: 9.75, volume: 21600.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
 
@@ -41,18 +38,15 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-mechvent-exhaust.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { ach50: 3.0, height: 9.75, volume: 21600.0 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { ach50: 7.09, height: 9.75, volume: 21600.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { ach50: 3.0, height: 17.0, volume: 20400.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { ach50: 6.67, height: 17.0, volume: 20400.0 }
-        end
-        _check_infiltration(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 9.75, volume: 21600.0)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 7.09, height: 9.75, volume: 21600.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
 
@@ -66,18 +60,15 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { ach50: 3.0, height: 10.5, volume: 21600.0 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { ach50: 7.09, height: 10.5, volume: 21600.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { ach50: 3.0, height: 17.0, volume: 20400.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { ach50: 6.67, height: 17.0, volume: 20400.0 }
-        end
-        _check_infiltration(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 10.5, volume: 21600.0)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 7.09, height: 10.5, volume: 21600.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
 
@@ -94,18 +85,15 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { ach50: 9.3, height: 9.75, volume: 21600.0 } # 0.3 nACH
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { ach50: 7.09, height: 9.75, volume: 21600.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { ach50: 3.0, height: 17.0, volume: 20400.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { ach50: 6.67, height: 17.0, volume: 20400.0 }
-        end
-        _check_infiltration(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 7.09, height: 9.75, volume: 21600.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
 
@@ -124,18 +112,15 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { ach50: 0.74, height: 8.0, volume: 7200.0 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { ach50: 7.09, height: 8.0, volume: 7200.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { ach50: 3.0, height: 17.0, volume: 20400.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { ach50: 6.67, height: 17.0, volume: 20400.0 }
-        end
-        _check_infiltration(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 0.74, height: 8.0, volume: 7200.0)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 7.09, height: 8.0, volume: 7200.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
 
@@ -154,18 +139,15 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { ach50: 10.1, height: 8.0, volume: 7200.0 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { ach50: 7.09, height: 8.0, volume: 7200.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { ach50: 3.0, height: 17.0, volume: 20400.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { ach50: 6.67, height: 17.0, volume: 20400.0 }
-        end
-        _check_infiltration(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 10.1, height: 8.0, volume: 7200.0)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 7.09, height: 8.0, volume: 7200.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
   end
@@ -174,117 +156,97 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1510, rvalue: 2.3, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1300, rvalue: 2.3, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9 }
-        end
-        _check_roofs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 2.3, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-atticroof-cathedral.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1510, rvalue: 25.8, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1510, rvalue: 33.33, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1300, rvalue: 33.33, sabs: 0.75, emit: 0.9 }
-        end
-        _check_roofs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_roofs(hpxml,  area: 1510, rvalue: 25.8, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_roofs(hpxml,  area: 1510, rvalue: 33.33, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_roofs(hpxml,  area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_roofs(hpxml,  area: 1300, rvalue: 33.33, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-atticroof-conditioned.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1510, rvalue: (25.8 * 1006 + 2.3 * 504) / 1510, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1510, rvalue: (33.33 * 1006 + 2.3 * 504) / 1510, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1300, rvalue: (25.8 * 1006 + 2.3 * 504) / 1510, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1300, rvalue: (33.33 * 1006 + 2.3 * 504) / 1510, sabs: 0.75, emit: 0.9 }
-        end
-        _check_roofs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_roofs(hpxml,  area: 1510, rvalue: (25.8 * 1006 + 2.3 * 504) / 1510, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_roofs(hpxml,  area: 1510, rvalue: (33.33 * 1006 + 2.3 * 504) / 1510, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_roofs(hpxml,  area: 1300, rvalue: (25.8 * 1006 + 2.3 * 504) / 1510, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_roofs(hpxml,  area: 1300, rvalue: (33.33 * 1006 + 2.3 * 504) / 1510, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-atticroof-unvented-insulated-roof.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1510, rvalue: 25.8, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9 }
-        end
-        _check_roofs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_roofs(hpxml, area: 1510, rvalue: 25.8, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-atticroof-flat.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1350, rvalue: 25.8, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1350, rvalue: 33.33, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1300, rvalue: 33.33, sabs: 0.75, emit: 0.9 }
-        end
-        _check_roofs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_roofs(hpxml, area: 1350, rvalue: 25.8, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1350, rvalue: 33.33, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 33.33, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        _check_roofs(hpxml)
-      end
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_roofs(hpxml)
     end
 
     hpxml_name = 'base-atticroof-radiant-barrier.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1510, rvalue: 2.3, sabs: 0.7, emit: 0.92, rb_grade: 2 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1300, rvalue: 2.3, sabs: 0.7, emit: 0.92, rb_grade: 2 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9 }
-        end
-        _check_roofs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.7, emit: 0.92, rb_grade: 2)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 2.3, sabs: 0.7, emit: 0.92, rb_grade: 2)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_roofs(hpxml, area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9)
       end
     end
   end
@@ -293,90 +255,75 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1425, rvalue: (23.0 * 1200 + 4.0 * 225) / 1425, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1425, rvalue: (16.67 * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9 }
-        end
-        _check_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_walls(hpxml, area: 1425, rvalue: (23.0 * 1200 + 4.0 * 225) / 1425, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 1425, rvalue: (16.67 * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-atticroof-conditioned.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1806, rvalue: (23.0 * 1516 + 22.3 * 240 + 4.0 * 50) / 1806, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1806, rvalue: (16.67 * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2355.52, rvalue: (23.0 * 1200 + 22.3 * 240) / 1440, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9 }
-        end
-        _check_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_walls(hpxml, area: 1806, rvalue: (23.0 * 1516 + 22.3 * 240 + 4.0 * 50) / 1806, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 1806, rvalue: (16.67 * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: (23.0 * 1200 + 22.3 * 240) / 1440, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 980, rvalue: (23.0 * 686 + 4.0 * 294) / 980, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 980, rvalue: (16.67 * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9 }
-        end
-        _check_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_walls(hpxml, area: 980, rvalue: (23.0 * 686 + 4.0 * 294) / 980, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 980, rvalue: (16.67 * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-bldgtype-multifamily-adjacent-to-multiple.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1086, rvalue: (23.0 * 986 + 4.0 * 100) / 1086, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1086, rvalue: (16.67 * 986 + 4.0 * 100) / 1086, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9 }
-        end
-        _check_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_walls(hpxml, area: 1086, rvalue: (23.0 * 986 + 4.0 * 100) / 1086, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 1086, rvalue: (16.67 * 986 + 4.0 * 100) / 1086, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
 
     hpxml_name = 'base-enclosure-garage.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 2098, rvalue: (23.0 * 1200 + 4.0 * 898) / 2098, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 2098, rvalue: (16.67 * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9 }
-        end
-        _check_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_walls(hpxml, area: 2098, rvalue: (23.0 * 1200 + 4.0 * 898) / 2098, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 2098, rvalue: (16.67 * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_walls(hpxml, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
   end
@@ -385,32 +332,26 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 116, rvalue: 23.0, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 116, rvalue: 16.67, sabs: 0.75, emit: 0.9 }
-        else
-          values = {}
-        end
-        _check_rim_joists(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_rim_joists(hpxml, area: 116, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_rim_joists(hpxml, area: 116, rvalue: 16.67, sabs: 0.75, emit: 0.9)
+      else
+        _check_rim_joists(hpxml)
       end
     end
 
     hpxml_name = 'base-foundation-multiple.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 197, rvalue: 4.0, sabs: 0.7, emit: 0.92 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.9 }
-        else
-          values = {}
-        end
-        _check_rim_joists(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.9)
+      else
+        _check_rim_joists(hpxml)
       end
     end
   end
@@ -419,54 +360,45 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1200, rvalue: 8.9, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-        end
-        _check_foundation_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 1200, rvalue: 8.9, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
 
     hpxml_name = 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1200, rvalue: 18.9, ins_top: 1, ins_bottom: 16, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-        end
-        _check_foundation_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 1200, rvalue: 18.9, ins_top: 1, ins_bottom: 16, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
 
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-        end
-        _check_foundation_walls(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
 
@@ -475,18 +407,15 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
-        _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-          hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-          if calc_type == Constants.CalcTypeERIRatedHome
-            values = { area: 600, rvalue: 8.9, ins_bottom: 4, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete }
-          elsif calc_type == Constants.CalcTypeERIReferenceHome
-            values = { area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete }
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-            values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-            values = { area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete }
-          end
-          _check_foundation_walls(hpxml, **values)
+        hpxml = _test_measure(hpxml_name, calc_type)
+        if [Constants.CalcTypeERIRatedHome].include? calc_type
+          _check_foundation_walls(hpxml, area: 600, rvalue: 8.9, ins_bottom: 4, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
+        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+          _check_foundation_walls(hpxml, area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
+        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+          _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
+        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+          _check_foundation_walls(hpxml, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
         end
       end
     end
@@ -496,108 +425,90 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1350, rvalue: 39.3 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1350, rvalue: 33.33 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400 }
-        end
-        _check_floors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 1350, rvalue: 39.3)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1350, rvalue: 33.33)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
       end
     end
 
     hpxml_name = 'base-foundation-ambient.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 2700, rvalue: (39.3 * 1350 + 18.7 * 1350) / 2700 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400 }
-        end
-        _check_floors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 2700, rvalue: (39.3 * 1350 + 18.7 * 1350) / 2700)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
       end
     end
 
     hpxml_name = 'base-enclosure-garage.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1950, rvalue: (39.3 * 1350 + 2.1 * 600) / 1950 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1950, rvalue: (33.33 * 1350 + 2.1 * 600) / 1950 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400 }
-        end
-        _check_floors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 1950, rvalue: (39.3 * 1350 + 2.1 * 600) / 1950)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1950, rvalue: (33.33 * 1350 + 2.1 * 600) / 1950)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
       end
     end
 
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 2700, rvalue: (39.3 * 1350 + 18.7 * 1350) / 2700 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400 }
-        end
-        _check_floors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 2700, rvalue: (39.3 * 1350 + 18.7 * 1350) / 2700)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
       end
     end
 
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1800, rvalue: 2.1 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1800, rvalue: 2.1 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400 }
-        end
-        _check_floors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 1800, rvalue: 2.1)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1800, rvalue: 2.1)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
       end
     end
 
     hpxml_name = ['base-bldgtype-multifamily-adjacent-to-multiple.xml']
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1800, rvalue: (18.7 * 750 + 2.1 * 1050) / 1800 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1800, rvalue: (30.3 * 900 + 2.1 * 900) / 1800 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400 }
-        end
-        _check_floors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 1800, rvalue: (18.7 * 750 + 2.1 * 1050) / 1800)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1800, rvalue: (30.3 * 900 + 2.1 * 900) / 1800)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
       end
     end
   end
@@ -606,54 +517,45 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1350, exp_perim: 150 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1350, exp_perim: 150 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1200, exp_perim: 138.6 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1200, exp_perim: 138.6 }
-        end
-        _check_slabs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_slabs(hpxml, area: 1350, exp_perim: 150)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_slabs(hpxml, area: 1350, exp_perim: 150)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_slabs(hpxml, area: 1200, exp_perim: 138.6)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_slabs(hpxml, area: 1200, exp_perim: 138.6)
       end
     end
 
     hpxml_name = 'base-foundation-slab.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1350, exp_perim: 150, under_ins_width: 999, under_ins_r: 5, depth_below_grade: 0 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1350, exp_perim: 150, perim_ins_depth: 2, perim_ins_r: 10, depth_below_grade: 0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1200, exp_perim: 138.6 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1200, exp_perim: 138.6 }
-        end
-        _check_slabs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_slabs(hpxml, area: 1350, exp_perim: 150, under_ins_width: 999, under_ins_r: 5, depth_below_grade: 0)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_slabs(hpxml, area: 1350, exp_perim: 150, perim_ins_depth: 2, perim_ins_r: 10, depth_below_grade: 0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_slabs(hpxml, area: 1200, exp_perim: 138.6)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_slabs(hpxml, area: 1200, exp_perim: 138.6)
       end
     end
 
     hpxml_name = 'base-foundation-conditioned-basement-slab-insulation.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { area: 1350, exp_perim: 150, under_ins_width: 4, under_ins_r: 10 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { area: 1350, exp_perim: 150 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { area: 1200, exp_perim: 138.6 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { area: 1200, exp_perim: 138.6 }
-        end
-        _check_slabs(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_slabs(hpxml, area: 1350, exp_perim: 150, under_ins_width: 4, under_ins_r: 10)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_slabs(hpxml, area: 1350, exp_perim: 150)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_slabs(hpxml, area: 1200, exp_perim: 138.6)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_slabs(hpxml, area: 1200, exp_perim: 138.6)
       end
     end
   end
@@ -665,34 +567,31 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
-        _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-          hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-          if calc_type == Constants.CalcTypeERIRatedHome
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            90 => { area: 72, ufactor: 0.33, shgc: 0.45 },
-                                            270 => { area: 72, ufactor: 0.33, shgc: 0.45 } } }
-          elsif calc_type == Constants.CalcTypeERIReferenceHome
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
-                                            180 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
-                                            90 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
-                                            270 => { area: 89.5, ufactor: 0.35, shgc: 0.40 } } }
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            270 => { area: 108, ufactor: 0.33, shgc: 0.45 } } }
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                            180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                            90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                            270 => { area: 108, ufactor: 0.35, shgc: 0.40 } } }
-          end
-          _check_windows(hpxml, **values)
+        hpxml = _test_measure(hpxml_name, calc_type)
+        if [Constants.CalcTypeERIRatedHome].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     90 => { area: 72, ufactor: 0.33, shgc: 0.45 },
+                                                     270 => { area: 72, ufactor: 0.33, shgc: 0.45 } })
+        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
+                                                     180 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
+                                                     90 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
+                                                     270 => { area: 89.5, ufactor: 0.35, shgc: 0.40 } })
+        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                     180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                     90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                     270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
         end
       end
     end
@@ -705,34 +604,31 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
-        _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-          hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-          if calc_type == Constants.CalcTypeERIRatedHome
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            90 => { area: 72, ufactor: 0.33, shgc: 0.45 },
-                                            270 => { area: 72, ufactor: 0.33, shgc: 0.45 } } }
-          elsif calc_type == Constants.CalcTypeERIReferenceHome
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
-                                            180 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
-                                            90 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
-                                            270 => { area: 60.75, ufactor: 0.35, shgc: 0.40 } } }
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                            270 => { area: 108, ufactor: 0.33, shgc: 0.45 } } }
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-            values = { frac_operable: 0.67,
-                       values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                            180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                            90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                            270 => { area: 108, ufactor: 0.35, shgc: 0.40 } } }
-          end
-          _check_windows(hpxml, **values)
+        hpxml = _test_measure(hpxml_name, calc_type)
+        if [Constants.CalcTypeERIRatedHome].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     90 => { area: 72, ufactor: 0.33, shgc: 0.45 },
+                                                     270 => { area: 72, ufactor: 0.33, shgc: 0.45 } })
+        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
+                                                     180 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
+                                                     90 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
+                                                     270 => { area: 60.75, ufactor: 0.35, shgc: 0.40 } })
+        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                     270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+          _check_windows(hpxml, frac_operable: 0.67,
+                                values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                     180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                     90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                     270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
         end
       end
     end
@@ -753,101 +649,92 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { frac_operable: (432.0 * 0.67) / (432.0 + 24.0),
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          90 => { area: 120, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 120, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 93.5, ufactor: 0.35, shgc: 0.40 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40 } } }
-        end
-        _check_windows(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_windows(hpxml, frac_operable: (432.0 * 0.67) / (432.0 + 24.0),
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   90 => { area: 120, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 120, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 93.5, ufactor: 0.35, shgc: 0.40 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
       end
     end
 
     hpxml_name = 'base-atticroof-conditioned.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { frac_operable: (432.0 * 0.67) / (432.0 + 74.0),
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          90 => { area: 120, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 170, ufactor: (0.3 * 62 + 0.33 * 108) / 170, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 128.6, ufactor: 0.35, shgc: 0.40 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
-                                          180 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
-                                          90 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
-                                          270 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40 } } }
-        end
-        _check_windows(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_windows(hpxml, frac_operable: (432.0 * 0.67) / (432.0 + 74.0),
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   90 => { area: 120, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 170, ufactor: (0.3 * 62 + 0.33 * 108) / 170, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 128.6, ufactor: 0.35, shgc: 0.40 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
+                                                   180 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
+                                                   90 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
+                                                   270 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
       end
     end
 
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40 } } }
-        end
-        _check_windows(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
       end
     end
 
@@ -861,33 +748,30 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { frac_operable: 0.0,
-                     values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { frac_operable: 0.0,
-                     values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40 } } }
-        end
-        _check_windows(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.0,
+                              values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.0,
+                              values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
       end
     end
 
@@ -895,33 +779,30 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2014')
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { frac_operable: 0.0,
-                     values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { frac_operable: 0.67,
-                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40 } } }
-        end
-        _check_windows(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.0,
+                              values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
+                                                   270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_windows(hpxml, frac_operable: 0.67,
+                              values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
+                                                   270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
       end
     end
   end
@@ -930,29 +811,22 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        _check_skylights(hpxml)
-      end
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_skylights(hpxml)
     end
 
     hpxml_name = 'base-enclosure-skylights.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = {}
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = {}
-        end
-        _check_skylights(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+      else
+        _check_skylights(hpxml)
       end
     end
 
@@ -966,20 +840,15 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { values_by_azimuth: { 0 => { area: 700, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 700, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = {}
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { values_by_azimuth: { 0 => { area: 643.5, ufactor: 0.33, shgc: 0.45 },
-                                          180 => { area: 643.5, ufactor: 0.33, shgc: 0.45 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = {}
-        end
-        _check_skylights(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 700, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 700, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_skylights(hpxml, values_by_azimuth: { 0 => { area: 643.5, ufactor: 0.33, shgc: 0.45 },
+                                                     180 => { area: 643.5, ufactor: 0.33, shgc: 0.45 } })
+      else
+        _check_skylights(hpxml)
       end
     end
   end
@@ -988,30 +857,21 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        _check_overhangs(hpxml)
-      end
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_overhangs(hpxml)
     end
 
     hpxml_name = 'base-enclosure-overhangs.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = [{ depth: 2.5, top: 0, bottom: 4 },
-                    { depth: 1.5, top: 2, bottom: 6 },
-                    { depth: 0.0, top: 0, bottom: 0 },
-                    { depth: 1.5, top: 2, bottom: 7 }]
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = []
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = []
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = []
-        end
-        _check_overhangs(hpxml, values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_overhangs(hpxml, [{ depth: 2.5, top: 0, bottom: 4 },
+                                 { depth: 1.5, top: 2, bottom: 6 },
+                                 { depth: 0.0, top: 0, bottom: 0 },
+                                 { depth: 1.5, top: 2, bottom: 7 }])
+      else
+        _check_overhangs(hpxml)
       end
     end
   end
@@ -1020,18 +880,15 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { values_by_azimuth: { 0 => { area: 40, rvalue: 4.4 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } } }
-        end
-        _check_doors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 4.4 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } })
       end
     end
 
@@ -1039,18 +896,15 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-location-capetown-zaf.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { values_by_azimuth: { 180 => { area: 40, rvalue: 1.54 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { values_by_azimuth: { 180 => { area: 40, rvalue: 1.54 } } }
-        end
-        _check_doors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 1.54 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: 1.54 } })
       end
     end
 
@@ -1058,18 +912,15 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { values_by_azimuth: { 180 => { area: 20, rvalue: 4.4 } } }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 } } }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } } }
-        end
-        _check_doors(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 180 => { area: 20, rvalue: 4.4 } })
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
       end
     end
 
@@ -1082,10 +933,8 @@ class ERIEnclosureTest < MiniTest::Test
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        _check_doors(hpxml)
-      end
+      hpxml = _test_measure(hpxml_name, calc_type)
+      _check_doors(hpxml)
     end
   end
 
@@ -1095,18 +944,15 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
-        _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-          hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-          if calc_type == Constants.CalcTypeERIRatedHome
-            values = {}
-          elsif calc_type == Constants.CalcTypeERIReferenceHome
-            values = { sla: 1.0 / 300.0 }
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-            values = {}
-          elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-            values = { sla: 1.0 / 300.0 }
-          end
-          _check_attic_ventilation(hpxml, **values)
+        hpxml = _test_measure(hpxml_name, calc_type)
+        if [Constants.CalcTypeERIRatedHome].include? calc_type
+          _check_attic_ventilation(hpxml)
+        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+          _check_attic_ventilation(hpxml, sla: 1.0 / 300.0)
+        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+          _check_attic_ventilation(hpxml)
+        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+          _check_attic_ventilation(hpxml, sla: 1.0 / 300.0)
         end
       end
     end
@@ -1116,28 +962,23 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
-        _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-          hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-          _check_attic_ventilation(hpxml)
-        end
+        hpxml = _test_measure(hpxml_name, calc_type)
+        _check_attic_ventilation(hpxml)
       end
     end
 
     hpxml_name = 'base-atticroof-vented.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { sla: 0.003 }
-        elsif calc_type == Constants.CalcTypeERIReferenceHome
-          values = { sla: 1.0 / 300.0 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-          values = { sla: 0.003 }
-        elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-          values = { sla: 1.0 / 300.0 }
-        end
-        _check_attic_ventilation(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_attic_ventilation(hpxml, sla: 0.003)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
+        _check_attic_ventilation(hpxml, sla: 1.0 / 300.0)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_attic_ventilation(hpxml, sla: 0.003)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_attic_ventilation(hpxml, sla: 1.0 / 300.0)
       end
     end
   end
@@ -1148,14 +989,11 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
-        _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-          hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-          if calc_type == Constants.CalcTypeERIRatedHome
-            values = {}
-          else
-            values = { sla: 1.0 / 150.0 }
-          end
-          _check_crawlspace_ventilation(hpxml, **values)
+        hpxml = _test_measure(hpxml_name, calc_type)
+        if [Constants.CalcTypeERIRatedHome].include? calc_type
+          _check_crawlspace_ventilation(hpxml)
+        else
+          _check_crawlspace_ventilation(hpxml, sla: 1.0 / 150.0)
         end
       end
     end
@@ -1167,14 +1005,13 @@ class ERIEnclosureTest < MiniTest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
-        _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-          hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-          if calc_type == Constants.CalcTypeERIRatedHome || calc_type == Constants.CalcTypeERIReferenceHome
-            values = {}
-          else
-            values = { sla: 1.0 / 150.0 }
-          end
-          _check_crawlspace_ventilation(hpxml, **values)
+        hpxml = _test_measure(hpxml_name, calc_type)
+        if [Constants.CalcTypeERIRatedHome,
+            Constants.CalcTypeERIReferenceHome,
+            Constants.CalcTypeCO2ReferenceHome].include? calc_type
+          _check_crawlspace_ventilation(hpxml)
+        else
+          _check_crawlspace_ventilation(hpxml, sla: 1.0 / 150.0)
         end
       end
     end
@@ -1182,23 +1019,19 @@ class ERIEnclosureTest < MiniTest::Test
     hpxml_name = 'base-foundation-vented-crawlspace.xml'
 
     _all_calc_types.each do |calc_type|
-      _get_co2_calcs(calc_type).each do |is_co2_index_calc|
-        hpxml = _test_measure(hpxml_name, calc_type, is_co2_index_calc)
-        if calc_type == Constants.CalcTypeERIRatedHome
-          values = { sla: 0.00667 }
-        else
-          values = { sla: 1.0 / 150.0 }
-        end
-        _check_crawlspace_ventilation(hpxml, **values)
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_crawlspace_ventilation(hpxml, sla: 0.00667)
+      else
+        _check_crawlspace_ventilation(hpxml, sla: 1.0 / 150.0)
       end
     end
   end
 
-  def _test_measure(hpxml_name, calc_type, is_co2_index_calc)
+  def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     args_hash['calc_type'] = calc_type
-    args_hash['is_co2_index_calc'] = is_co2_index_calc
 
     # create an instance of the measure
     measure = EnergyRatingIndex301Measure.new

@@ -15,18 +15,10 @@ def _change_eri_version(hpxml_name, version)
   return hpxml_name
 end
 
-def _get_co2_calcs(calc_type)
-  if [Constants.CalcTypeERIReferenceHome,
-      Constants.CalcTypeERIRatedHome].include? calc_type
-    return [false, true]
-  else
-    return [false] # IAF currently doesn't apply to CO2 Index
-  end
-end
-
 def _all_calc_types()
   return [Constants.CalcTypeERIReferenceHome,
           Constants.CalcTypeERIRatedHome,
           Constants.CalcTypeERIIndexAdjustmentDesign,
-          Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+          Constants.CalcTypeERIIndexAdjustmentReferenceHome,
+          Constants.CalcTypeCO2ReferenceHome]
 end

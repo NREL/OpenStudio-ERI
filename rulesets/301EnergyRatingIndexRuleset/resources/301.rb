@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class EnergyRatingIndex301Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather, is_co2_index_calc)
+  def self.apply_ruleset(hpxml, calc_type, weather)
     # Global variables
     @weather = weather
     @calc_type = calc_type
-    @is_co2_index_calc = is_co2_index_calc
 
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
@@ -17,6 +16,9 @@ class EnergyRatingIndex301Ruleset
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
+    elsif calc_type == Constants.CalcTypeCO2ReferenceHome
+      calc_type = Constants.CalcTypeERIReferenceHome
+      hpxml = apply_reference_home_ruleset(hpxml, true)
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
@@ -25,7 +27,7 @@ class EnergyRatingIndex301Ruleset
     return hpxml
   end
 
-  def self.apply_reference_home_ruleset(orig_hpxml)
+  def self.apply_reference_home_ruleset(orig_hpxml, is_all_electric = false)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
     # BuildingSummary
@@ -50,11 +52,11 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
 
     # Systems
-    set_systems_hvac_reference(orig_hpxml, new_hpxml)
+    set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
-    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
+    set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
     set_systems_generators_reference(orig_hpxml, new_hpxml)
@@ -203,7 +205,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.use_max_load_for_heat_pumps = true
 
     # CO2 scenario for CO2 Rating Index
-    if @is_co2_index_calc
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
       # FIXME: Need to choose schedule path based on zip code
       new_hpxml.header.co2_emissions_scenarios.add(name: 'Emissions for Rating Index',
                                                    elec_units: HPXML::CO2EmissionsScenario::UnitsKgPerMWh,
@@ -944,7 +946,7 @@ class EnergyRatingIndex301Ruleset
 
     fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-      if (orig_hpxml.fraction_of_windows_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+      if (orig_hpxml.fraction_of_windows_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
         # Disable natural ventilation
         fraction_operable = 0.0
       end
@@ -1097,7 +1099,7 @@ class EnergyRatingIndex301Ruleset
     # TODO: Create adiabatic wall/door?
   end
 
-  def self.set_systems_hvac_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
@@ -1107,7 +1109,7 @@ class EnergyRatingIndex301Ruleset
 
     # Heating
     orig_hpxml.heating_systems.each do |orig_heating_system|
-      next if @is_co2_index_calc
+      next if is_all_electric
       next unless orig_heating_system.fraction_heat_load_served > 0
       next unless orig_heating_system.heating_system_fuel != HPXML::FuelTypeElectricity
 
@@ -1126,7 +1128,7 @@ class EnergyRatingIndex301Ruleset
         add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
       end
     end
-    if has_fuel && (sum_frac_heat_load < 0.99) && (not @is_co2_index_calc) # Accommodate systems that don't quite sum to 1 due to rounding
+    if has_fuel && (sum_frac_heat_load < 0.99) && (not is_all_electric) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1149,7 +1151,7 @@ class EnergyRatingIndex301Ruleset
     # HeatPump
     orig_hpxml.heating_systems.each do |orig_heating_system|
       next unless orig_heating_system.fraction_heat_load_served > 0
-      next unless ((orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity) || @is_co2_index_calc)
+      next unless ((orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity) || is_all_electric)
 
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
     end
@@ -1157,9 +1159,9 @@ class EnergyRatingIndex301Ruleset
       next if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
       next unless orig_heat_pump.fraction_heat_load_served > 0
 
-      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
+      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump, is_all_electric)
     end
-    if ((not has_fuel) || @is_co2_index_calc) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if ((not has_fuel) || is_all_electric) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1208,7 +1210,7 @@ class EnergyRatingIndex301Ruleset
                                     seed_id: orig_heating_system.seed_id.nil? ? orig_heating_system.id : orig_heating_system.seed_id)
     end
     # Add reference heating system for residual load
-    if has_fuel && (sum_frac_heat_load < 0.99) && (not @is_co2_index_calc) # Accommodate systems that don't quite sum to 1 due to rounding
+    if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1290,7 +1292,7 @@ class EnergyRatingIndex301Ruleset
                                seed_id: orig_heat_pump.seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.seed_id)
     end
     # Add reference heat pump for residual load
-    if ((not has_fuel) || @is_co2_index_calc) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1576,7 +1578,7 @@ class EnergyRatingIndex301Ruleset
     # nop
   end
 
-  def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Table 4.2.2(1) - Service water heating systems
 
     has_multiple_water_heaters = (orig_hpxml.water_heating_systems.size > 1)
@@ -1593,7 +1595,7 @@ class EnergyRatingIndex301Ruleset
 
       # Set fuel type for combi systems
       fuel_type = orig_water_heater.fuel_type
-      if @is_co2_index_calc
+      if is_all_electric
         fuel_type = HPXML::FuelTypeElectricity
       elsif has_multiple_water_heaters
         fuel_type = orig_hpxml.predominant_water_heating_fuel()
@@ -1630,7 +1632,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     if orig_hpxml.water_heating_systems.size == 0
-      add_reference_water_heater(orig_hpxml, new_hpxml)
+      add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric)
     end
   end
 
@@ -2333,7 +2335,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-      if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+      if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
         cfm50 = ach50 * @infil_volume / 60.0
         tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
         if cfm50 / tot_cb_area <= 0.30
@@ -2347,7 +2349,7 @@ class EnergyRatingIndex301Ruleset
     mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
     if mech_vent_fans.empty?
       min_nach = 0.30
-    elsif Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
+    elsif Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       has_non_exhaust_systems = (mech_vent_fans.select { |f| f.fan_type != HPXML::MechVentTypeExhaust }.size > 0)
       mech_vent_fans.each do |orig_vent_fan|
         if orig_vent_fan.flow_rate_not_tested || ((@infil_a_ext < 0.5) && !has_non_exhaust_systems)
@@ -2420,7 +2422,7 @@ class EnergyRatingIndex301Ruleset
   def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       if is_balanced
         phi = 1.0
       else
@@ -2513,7 +2515,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_boiler_eae(new_hpxml.heating_systems[-1])
   end
 
-  def self.add_reference_heating_heat_pump(orig_hpxml, new_hpxml, load_frac, orig_system = nil)
+  def self.add_reference_heating_heat_pump(orig_hpxml, new_hpxml, load_frac, orig_system = nil, is_all_electric = false)
     # 7.7 HSPF air source heat pump
     if not orig_system.nil?
       seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
@@ -2524,7 +2526,7 @@ class EnergyRatingIndex301Ruleset
 
     # Handle backup
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
-      if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity && (not @is_co2_index_calc)
+      if (orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity) && (not is_all_electric)
         # Dual-fuel HP
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_fuel = orig_system.backup_heating_fuel
@@ -2612,8 +2614,8 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_water_heater(orig_hpxml, new_hpxml)
-    if @is_co2_index_calc
+  def self.add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric = false)
+    if is_all_electric
       wh_fuel_type = HPXML::FuelTypeElectricity
     else
       wh_fuel_type = orig_hpxml.predominant_heating_fuel()
