@@ -15,30 +15,28 @@ class ERIGeneratorTest < MiniTest::Test
   def test_generator
     hpxml_name = 'base-misc-generators.xml'
 
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
+    _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_generator(hpxml)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_generator(hpxml, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 500, is_shared: false },
+                                 { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 500, is_shared: false }])
+      else
+        _check_generator(hpxml)
+      end
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_generator(hpxml, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 500, is_shared: false },
-                             { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 500, is_shared: false }])
   end
 
   def test_generator_shared
     hpxml_name = 'base-bldgtype-multifamily-shared-generator.xml'
 
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
+    _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_generator(hpxml)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_generator(hpxml, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 5000, is_shared: true, nbeds_served: 18 }])
+      else
+        _check_generator(hpxml)
+      end
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_generator(hpxml, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 5000, is_shared: true, nbeds_served: 18 }])
   end
 
   def _test_measure(hpxml_name, calc_type)

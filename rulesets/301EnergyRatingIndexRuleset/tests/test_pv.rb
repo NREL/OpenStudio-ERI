@@ -15,30 +15,28 @@ class ERIPVTest < MiniTest::Test
   def test_pv
     hpxml_name = 'base-pv.xml'
 
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
+    _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_pv(hpxml)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_pv(hpxml, [{ location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 180, tilt: 20, power: 4000, inv_eff: 0.96, losses: 0.14, is_shared: false },
+                          { location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypePremium, tracking: HPXML::PVTrackingTypeFixed, azimuth: 90, tilt: 20, power: 1500, inv_eff: 0.96, losses: 0.14, is_shared: false }])
+      else
+        _check_pv(hpxml)
+      end
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_pv(hpxml, [{ location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 180, tilt: 20, power: 4000, inv_eff: 0.96, losses: 0.14, is_shared: false },
-                      { location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypePremium, tracking: HPXML::PVTrackingTypeFixed, azimuth: 90, tilt: 20, power: 1500, inv_eff: 0.96, losses: 0.14, is_shared: false }])
   end
 
   def test_pv_shared
     hpxml_name = 'base-bldgtype-multifamily-shared-pv.xml'
 
-    calc_types = [Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome]
-    calc_types.each do |calc_type|
+    _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      _check_pv(hpxml)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_pv(hpxml, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 18 }])
+      else
+        _check_pv(hpxml)
+      end
     end
-    hpxml = _test_measure(hpxml_name, Constants.CalcTypeERIRatedHome)
-    _check_pv(hpxml, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 18 }])
   end
 
   def _test_measure(hpxml_name, calc_type)

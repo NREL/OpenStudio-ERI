@@ -14,3 +14,10 @@ def _change_eri_version(hpxml_name, version)
   XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
   return hpxml_name
 end
+
+def _all_calc_types()
+  return [Constants.CalcTypeERIReferenceHome,
+          Constants.CalcTypeERIRatedHome,
+          Constants.CalcTypeERIIndexAdjustmentDesign,
+          Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+end
