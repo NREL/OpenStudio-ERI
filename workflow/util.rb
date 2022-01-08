@@ -579,8 +579,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
 end
 
 def _calculate_co2_index(rated_output, ref_output, results)
-  results[:aco2] = rated_output[:co2EmissionsforRatingIndex]
-  results[:arco2] = ref_output[:co2EmissionsforRatingIndex]
+  results[:aco2] = rated_output[:co2EmissionsforRatingIndexTotal]
+  results[:arco2] = ref_output[:co2EmissionsforRatingIndexTotal]
   results[:co2index] = results[:aco2] / results[:arco2] * 100.0
   return results
 end
