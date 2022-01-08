@@ -49,7 +49,7 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
   args['include_timeseries_zone_temperatures'] = timeseries_outputs.include? 'temperatures'
   args['include_timeseries_airflows'] = timeseries_outputs.include? 'airflows'
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
-  args['include_timeseries_co2_emissions'] = false # FIXME: We should probably allow this
+  args['include_timeseries_emissions'] = false # FIXME: We should probably allow this
   update_args_hash(measures, measure_subdir, args)
 
   print_prefix = "[#{run[0]}] "

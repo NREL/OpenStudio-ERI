@@ -204,22 +204,22 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.use_max_load_for_heat_pumps = true
 
-    # CO2 scenario for CO2 Rating Index
+    # Emissions scenario for CO2 Rating Index
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
       # FIXME: Need to choose schedule path based on zip code
-      new_hpxml.header.co2_emissions_scenarios.add(name: 'Emissions for Rating Index',
-                                                   elec_units: HPXML::CO2EmissionsScenario::UnitsKgPerMWh,
-                                                   elec_schedule_filepath: '../../rulesets/301EnergyRatingIndexRuleset/resources/data/cambium/AZNMc.csv',
-                                                   natural_gas_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
-                                                   natural_gas_value: 117.6,
-                                                   propane_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
-                                                   propane_value: 136.6,
-                                                   fuel_oil_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
-                                                   fuel_oil_value: 161.0,
-                                                   coal_units: HPXML::CO2EmissionsScenario::UnitsLbPerMBtu,
-                                                   coal_value: 211.1)
-      # TODO: Add scenario for CO2 emissions calculation
+      # FIXME: What about coal and wood?
+      new_hpxml.header.emissions_scenarios.add(name: 'Emissions for Rating Index',
+                                               emissions_type: 'CO2',
+                                               elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
+                                               elec_schedule_filepath: '../../rulesets/301EnergyRatingIndexRuleset/resources/data/cambium/AZNMc.csv',
+                                               natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               natural_gas_value: 117.6,
+                                               propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               propane_value: 136.6,
+                                               fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               fuel_oil_value: 161.0)
     end
+    # TODO: Emissions scenarios for CO2, NOx, SO2 calculations
 
     return new_hpxml
   end
