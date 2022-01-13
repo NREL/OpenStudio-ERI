@@ -2404,6 +2404,24 @@ def create_sample_hpxmls
 
       generator.is_shared_system = false
     end
+    n_htg_systems = (hpxml.heating_systems + hpxml.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.size
+    n_clg_systems = (hpxml.cooling_systems + hpxml.heat_pumps).select { |h| h.fraction_cool_load_served.to_f > 0 }.size
+    hpxml.hvac_distributions.each do |hvac_distribution|
+      next unless hvac_distribution.conditioned_floor_area_served.nil?
+      next unless hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
+      next unless hvac_distribution.ducts.size > 0
+
+      n_hvac_systems = [n_htg_systems, n_clg_systems].max
+      hvac_distribution.conditioned_floor_area_served = hpxml.building_construction.conditioned_floor_area / n_hvac_systems
+    end
+
+    hpxml.hvac_distributions.each do |hvac_distribution|
+      next unless hvac_distribution.number_of_return_registers.nil?
+      next unless hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
+      next unless hvac_distribution.ducts.select { |d| d.duct_type == HPXML::DuctTypeReturn }.size > 0
+
+      hvac_distribution.number_of_return_registers = hpxml.building_construction.number_of_conditioned_floors.ceil
+    end
     # TODO: Allow UsageBin in 301validator and remove code below
     hpxml.water_heating_systems.each do |dhw_system|
       next if dhw_system.uniform_energy_factor.nil?
