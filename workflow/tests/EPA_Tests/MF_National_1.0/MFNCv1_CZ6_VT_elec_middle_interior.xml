@@ -59,9 +59,9 @@
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>CFM</UnitofMeasure>
-              <AirLeakage>1118.4</AirLeakage>
+              <AirLeakage>1119.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>9600.0</InfiltrationVolume>
+            <InfiltrationVolume>10200.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <RimJoists>
@@ -81,7 +81,7 @@
             <SystemIdentifier id='RimJoist2'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>58.0</Area>
+            <Area>60.0</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -153,7 +153,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
-            <Area>146.13</Area>
+            <Area>146.06</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.3</UFactor>
             <SHGC>0.4</SHGC>

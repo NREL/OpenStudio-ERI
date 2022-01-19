@@ -437,7 +437,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             unit_of_measure: HPXML::UnitsACH,
                                             house_pressure: 50,
                                             air_leakage: ach50,
-                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.0)
+                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
     tot_cb_area, ext_cb_area = hpxml.compartmentalization_boundary_areas()
     hpxml.air_infiltration_measurements.clear
@@ -445,7 +445,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             unit_of_measure: HPXML::UnitsCFM,
                                             house_pressure: 50,
                                             air_leakage: (0.3 * tot_cb_area).round(3),
-                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.0)
+                                            infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.5)
   end
 end
 
@@ -557,10 +557,11 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
       exterior_area = 110
+      common_area = 30
     elsif hpxml_file.include?('middle_interior')
       exterior_area = 80
+      common_area = 60
     end
-    common_area = 1104 / 8 - exterior_area
     hpxml.rim_joists.clear
     hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                          exterior_adjacent_to: HPXML::LocationOutside,
@@ -788,7 +789,7 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
       if hpxml_file.include?('MF') && hpxml_file.include?('CZ6')
         insulation_interior_r_value = 7.5
         insulation_interior_distance_to_top = 0
-        insulation_interior_distance_to_bottom = 8
+        insulation_interior_distance_to_bottom = 8.5
         insulation_exterior_r_value = 0
         insulation_exterior_distance_to_top = 0
         insulation_exterior_distance_to_bottom = 0
@@ -799,8 +800,8 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
       hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                  exterior_adjacent_to: HPXML::LocationGround,
                                  interior_adjacent_to: HPXML::LocationBasementConditioned,
-                                 height: 8.0,
-                                 area: exterior_perimeter * 8.0,
+                                 height: 8.5,
+                                 area: exterior_perimeter * 8.5,
                                  thickness: 8,
                                  depth_below_grade: 6.0,
                                  insulation_interior_r_value: insulation_interior_r_value,
@@ -814,10 +815,10 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
         hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
                                    exterior_adjacent_to: HPXML::LocationBasementConditioned,
                                    interior_adjacent_to: HPXML::LocationBasementConditioned,
-                                   height: 4.0,
-                                   area: common_perimeter * 4.0,
+                                   height: 8.5,
+                                   area: common_perimeter * 8.5,
                                    thickness: 8,
-                                   depth_below_grade: 2.0,
+                                   depth_below_grade: 6.0,
                                    insulation_interior_r_value: 0,
                                    insulation_interior_distance_to_top: 0,
                                    insulation_interior_distance_to_bottom: 0,

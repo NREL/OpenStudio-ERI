@@ -60,9 +60,9 @@
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>CFM</UnitofMeasure>
-              <AirLeakage>1457.4</AirLeakage>
+              <AirLeakage>1512.9</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>19200.0</InfiltrationVolume>
+            <InfiltrationVolume>20400.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <RimJoists>
@@ -82,7 +82,7 @@
             <SystemIdentifier id='RimJoist2'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>28.0</Area>
+            <Area>30.0</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -106,7 +106,7 @@
             <SystemIdentifier id='RimJoist4'/>
             <ExteriorAdjacentTo>basement - conditioned</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
-            <Area>28.0</Area>
+            <Area>30.0</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -152,8 +152,8 @@
             <SystemIdentifier id='FoundationWall1'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
-            <Height>8.0</Height>
-            <Area>880.0</Area>
+            <Height>8.5</Height>
+            <Area>935.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>6.0</DepthBelowGrade>
             <Insulation>
@@ -168,7 +168,7 @@
                 <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>7.5</NominalRValue>
                 <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                <DistanceToBottomOfInsulation>8.5</DistanceToBottomOfInsulation>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -176,10 +176,10 @@
             <SystemIdentifier id='FoundationWall2'/>
             <ExteriorAdjacentTo>basement - conditioned</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
-            <Height>4.0</Height>
-            <Area>112.0</Area>
+            <Height>8.5</Height>
+            <Area>238.0</Area>
             <Thickness>8.0</Thickness>
-            <DepthBelowGrade>2.0</DepthBelowGrade>
+            <DepthBelowGrade>6.0</DepthBelowGrade>
             <Insulation>
               <SystemIdentifier id='FoundationWall2Insulation'/>
               <Layer>
@@ -242,7 +242,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
-            <Area>153.32</Area>
+            <Area>154.81</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
@@ -252,7 +252,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window2'/>
-            <Area>115.19</Area>
+            <Area>116.31</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
