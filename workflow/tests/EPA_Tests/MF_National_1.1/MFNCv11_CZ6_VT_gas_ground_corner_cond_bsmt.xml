@@ -60,7 +60,7 @@
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>CFM</UnitofMeasure>
-              <AirLeakage>1512.9</AirLeakage>
+              <AirLeakage>1518.0</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>20400.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
@@ -177,7 +177,7 @@
             <ExteriorAdjacentTo>basement - conditioned</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Height>8.5</Height>
-            <Area>238.0</Area>
+            <Area>255.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>6.0</DepthBelowGrade>
             <Insulation>

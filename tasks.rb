@@ -747,13 +747,11 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
     end
   elsif hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('EPA_Tests/SF')
-      total_perimeter = 1216 / 8
-      exterior_perimeter = total_perimeter
+      exterior_perimeter = 152
       common_perimeter = 0
     elsif hpxml_file.include?('EPA_Tests/MF')
-      total_perimeter = 1104 / 8
-      exterior_perimeter = 110 / 138.0 * total_perimeter
-      common_perimeter = total_perimeter - exterior_perimeter
+      exterior_perimeter = 110
+      common_perimeter = 30
     end
     if hpxml_file.include?('vented_crawl')
       hpxml.foundation_walls.clear
