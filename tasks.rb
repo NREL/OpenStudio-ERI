@@ -280,6 +280,7 @@ def set_hpxml_header(hpxml_file, hpxml)
     end
     hpxml.header.state_code = File.basename(hpxml_file)[11..12]
   end
+  hpxml.header.zip_code = '00000'
 end
 
 def set_hpxml_site(hpxml_file, hpxml)

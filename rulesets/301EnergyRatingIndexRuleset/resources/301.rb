@@ -2827,7 +2827,7 @@ class EnergyRatingIndex301Ruleset
       zip_code = zip_code.split('-')[0]
     end
     zip_code = zip_code.rjust(5, '0')
-    
+
     return if zip_code.size != 5
 
     begin

@@ -19,6 +19,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>MO</StateCode>
+        <ZipCode>00000</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
