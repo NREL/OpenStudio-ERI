@@ -80,6 +80,7 @@ class EnergyStarRuleset
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
+    new_hpxml.header.zip_code = orig_hpxml.header.zip_code
 
     @program_version = orig_hpxml.header.energystar_calculation_version
     bldg_type = orig_hpxml.building_construction.residential_facility_type
