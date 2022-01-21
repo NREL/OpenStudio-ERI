@@ -169,7 +169,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
-            <Area>93.09</Area>
+            <Area>93.16</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.6</UFactor>
             <SHGC>0.27</SHGC>
@@ -179,7 +179,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window2'/>
-            <Area>69.94</Area>
+            <Area>69.87</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.6</UFactor>
             <SHGC>0.27</SHGC>

@@ -996,6 +996,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
     tot_window_area = 0.15 * cfa * fa * f
+    puts "#{hpxml_file} #{cfa} #{ag_bndry_wall_area} #{bg_bndry_wall_area} #{common_wall_area} #{fa} #{f}"
 
     if hpxml_file.include?('EPA_Tests/SF')
       windows = [[0, (tot_window_area / 4.0).round(2), 'Wall1'],
@@ -1004,8 +1005,8 @@ def set_hpxml_windows(hpxml_file, hpxml)
                  [270, (tot_window_area / 4.0).round(2), 'Wall1']]
     elsif hpxml_file.include?('EPA_Tests/MF')
       if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
-        windows = [[90, (0.571 * tot_window_area).round(2), 'Wall1'],
-                   [180, (0.429 * tot_window_area).round(2), 'Wall1']]
+        windows = [[90, (40 / 70.0 * tot_window_area).round(2), 'Wall1'],
+                   [180, (30 / 70.0 * tot_window_area).round(2), 'Wall1']]
       elsif hpxml_file.include?('middle_interior')
         windows = [[90, tot_window_area.round(2), 'Wall1']]
       end
