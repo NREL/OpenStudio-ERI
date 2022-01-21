@@ -59,7 +59,7 @@ The version of the ERI calculation is entered in ``/HPXML/SoftwareInfo/extension
   ``Version``  string             See [#]_     No [#]_            Version of 301 Standard w/ addenda
   ===========  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] Version choices are "latest", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
+  .. [#] Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
   .. [#] Version only required to run ERI calculation.

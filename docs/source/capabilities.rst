@@ -12,6 +12,7 @@ The following ERI Standards and Addenda are currently available:
 - ANSI/RESNET/ICC 301-2019 Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
 - ANSI/RESNET/ICC 301-2019 Addendum A-2019, Clothes Washers and Dryers and Dishwashers
 - ANSI/RESNET/ICC 301-2019 Addendum B-2020, Clarifications, HVAC Quality Installation Grading, and Dehumidification
+- ANSI/RESNET/ICC 301-2019 Addendum D-2022, CO2 Rating Index
 
 The following ENERGY STAR programs/versions are supported:
 

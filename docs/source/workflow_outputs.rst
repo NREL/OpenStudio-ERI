@@ -16,8 +16,10 @@ See the `sample_results_eri <https://github.com/NREL/OpenStudio-ERI/tree/master/
 CO2_Results.csv
 ~~~~~~~~~~~~~~~
 
-A ``CO2_Results.csv`` file will be produced for homes using ANSI/RESNET/ICC 301-2019 Addendum D or newer (i.e., such that a CO2 Index is calculated in addition to the Energy Rating Index).
+A ``CO2_Results.csv`` file will be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 The file includes all of the outputs that are used in the CO2 Index calculation.
+
+See the `example CO2_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/CO2_Results.csv>`_.
 
 ERI_Results.csv
 ~~~~~~~~~~~~~~~
@@ -46,6 +48,8 @@ A CSV file is written for each of the homes simulated (e.g., ``ERIReferenceHome.
 The CSV file includes the following sections of output.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome.csv>`_.
+
+A ``CO2ReferenceHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
 Annual Energy Consumption by Fuel Type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -128,6 +132,61 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    Wood Pellets: Range/Oven (MBtu)
    Wood Pellets: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
    ==========================================================  ====================================================
+
+Annual Projected Emissions
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Annual projected emissions are listed below.
+
+Project emissions (CO2, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2 Reference Home.
+These values are calculated according to ANSI/RESNET/ICC 301-2019 Section 5.
+
+   ============================================  ========
+   Type                                          Notes
+   ============================================  ========
+   Emissions: CO2: Projected: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: CO2: Projected: Electricity (lb)
+   Emissions: CO2: Projected: Natural Gas (lb)
+   Emissions: CO2: Projected: Fuel Oil (lb)
+   Emissions: CO2: Projected: Propane (lb)
+   Emissions: CO2: Projected: Wood Cord (lb)
+   Emissions: CO2: Projected: Wood Pellets (lb)
+   Emissions: NOx: Projected: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: NOx: Projected: Electricity (lb)
+   Emissions: NOx: Projected: Natural Gas (lb)
+   Emissions: NOx: Projected: Fuel Oil (lb)
+   Emissions: NOx: Projected: Propane (lb)
+   Emissions: NOx: Projected: Wood Cord (lb)
+   Emissions: NOx: Projected: Wood Pellets (lb)
+   Emissions: SO2: Projected: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: SO2: Projected: Electricity (lb)
+   Emissions: SO2: Projected: Natural Gas (lb)
+   Emissions: SO2: Projected: Fuel Oil (lb)
+   Emissions: SO2: Projected: Propane (lb)
+   Emissions: SO2: Projected: Wood Cord (lb)
+   Emissions: SO2: Projected: Wood Pellets (lb)
+   ============================================  ========
+
+Annual CO2 Index Emissions
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Annual CO2 Index Emissions are listed below.
+
+Annual CO2 Index Emissions used for calculating the CO2 Index are provided for the Rated Home and CO2 Reference Home.
+These values are calculated according to ANSI/RESNET/ICC 301-2019 Section 6.
+These outputs are only available when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+
+   ============================================  ========
+   Type                                          Notes
+   ============================================  ========
+   Emissions: CO2: CO2 Index: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: CO2: CO2 Index: Electricity (lb)
+   Emissions: CO2: CO2 Index: Natural Gas (lb)
+   Emissions: CO2: CO2 Index: Fuel Oil (lb)
+   Emissions: CO2: CO2 Index: Propane (lb)
+   Emissions: CO2: CO2 Index: Wood Cord (lb)
+   Emissions: CO2: CO2 Index: Wood Pellets (lb)
+   ============================================  ========
 
 Annual Building Loads
 ^^^^^^^^^^^^^^^^^^^^^
@@ -278,6 +337,8 @@ Defaults will be applied for a few different reasons:
 Any HPXML-defaulted values will include the ``dataSource='software'`` attribute.
 
 See the `example ERIRatedHome.xml <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome.xml>`_.
+
+A ``CO2ReferenceHome.xml`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
 .. _eri_simulation_files:
 

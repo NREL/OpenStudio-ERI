@@ -205,29 +205,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.use_max_load_for_heat_pumps = true
 
-    # Emissions scenario for CO2 Index
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
-      if [Constants.CalcTypeCO2ReferenceHome, Constants.CalcTypeERIRatedHome].include? @calc_type
-        cambium_gea = lookup_cambium_gea_from_zip(new_hpxml.header.zip_code)
-        if cambium_gea.nil?
-          @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{new_hpxml.header.zip_code}'. CO2 Index will not be calculated.")
-        else
-          # FIXME: What about coal and wood?
-          cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'low_cost_re_case', "#{cambium_gea}.csv")
-          new_hpxml.header.emissions_scenarios.add(name: 'Emissions for Rating Index',
-                                                   emissions_type: 'CO2',
-                                                   elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
-                                                   elec_schedule_filepath: cambium_filepath,
-                                                   natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                   natural_gas_value: 117.6,
-                                                   propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                   propane_value: 136.6,
-                                                   fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                   fuel_oil_value: 161.0)
-        end
-      end
-    end
-    # FIXME: Emissions scenarios for CO2, NOx, SO2 calculations
+    add_emissions_scenarios(new_hpxml)
 
     return new_hpxml
   end
@@ -2820,7 +2798,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.lookup_cambium_gea_from_zip(zip_code)
+  def self.lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
     return if zip_code.nil?
 
     if zip_code.include? '-'
@@ -2836,15 +2814,157 @@ class EnergyRatingIndex301Ruleset
       return
     end
 
-    # FIXME: Use nearest zip using zip3_of_interest
-    CSV.foreach(File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv'), headers: true) do |row|
-      next if row['zip_code'].nil?
-      next unless row['zip_code'].rjust(5, '0') == zip_code
+    # TODO: Use nearest zip using zip3_of_interest?
+    CSV.foreach(zip_filepath) do |row|
+      fail "Zip code in #{zip_filepath} needs to be 5 digits." if zip_code.size != 5
+      next unless row[zip_column_index] == zip_code
 
-      return row['cambium_gea']
+      return row[output_column_index]
     end
 
     return
+  end
+
+  def self.lookup_egrid_value(egrid_subregion, zip_column_index, output_column_index)
+    zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'egrid2019_summary_tables.csv')
+    CSV.foreach(zip_filepath) do |row|
+      next unless row[zip_column_index] == egrid_subregion
+
+      return row[output_column_index]
+    end
+
+    return
+  end
+
+  def self.get_cambium_gea(new_hpxml)
+    # Get Cambium GEA region
+    cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
+    cambium_gea = lookup_region_from_zip(new_hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
+    if cambium_gea.nil?
+      @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{new_hpxml.header.zip_code}'. CO2 Index and Emissions will not be calculated.")
+    end
+    return cambium_gea
+  end
+
+  def self.get_egrid_subregion(new_hpxml)
+    # Get eGRID subregion
+    egrid_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'ZIP_mappings.csv')
+    egrid_subregion = lookup_region_from_zip(new_hpxml.header.zip_code, egrid_zip_filepath, 0, 1)
+    if egrid_subregion.nil?
+      @runner.registerWarning("Could not look up eGRID subregion for zip code: '#{new_hpxml.header.zip_code}'. Emissions will not be calculated.")
+    end
+    return egrid_subregion
+  end
+
+  def self.add_emissions_scenarios(new_hpxml)
+    # Add emissions scenarios
+    cambium_gea = add_co2_index_emissions_scenario(new_hpxml)
+    add_projected_emissions_scenarios(new_hpxml, cambium_gea)
+  end
+
+  def self.add_co2_index_emissions_scenario(new_hpxml)
+    if not [Constants.CalcTypeCO2ReferenceHome,
+            Constants.CalcTypeERIRatedHome].include? @calc_type
+      return
+    end
+    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019ABCD')
+      return
+    end
+
+    cambium_gea = get_cambium_gea(new_hpxml)
+    if cambium_gea.nil?
+      return
+    end
+
+    # Emissions scenario for CO2 Index (ANSI 301 Section 6)
+
+    # Use 2021 Cambium database for electricity
+    # FIXME: What about coal and wood?
+    cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'low_cost_re_case', "#{cambium_gea}.csv")
+    new_hpxml.header.emissions_scenarios.add(name: 'CO2 Index',
+                                             emissions_type: 'CO2',
+                                             elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
+                                             elec_schedule_filepath: cambium_filepath,
+                                             natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                             natural_gas_value: 117.6,
+                                             propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                             propane_value: 136.6,
+                                             fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                             fuel_oil_value: 161.0)
+    return cambium_gea
+  end
+
+  def self.add_projected_emissions_scenarios(new_hpxml, cambium_gea)
+    if not [Constants.CalcTypeCO2ReferenceHome,
+            Constants.CalcTypeERIRatedHome,
+            Constants.CalcTypeERIReferenceHome].include? @calc_type
+      return
+    end
+
+    # Emissions scenarios for CO2, NOx, SO2 calculations for Rated Home (ANSI 301 Section 5)
+
+    egrid_subregion = get_egrid_subregion(new_hpxml)
+
+    # CO2 Projected Emissions
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+      if not cambium_gea.nil?
+        # Use 2021 Cambium database for electricity
+        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'mid_case_2025', "#{cambium_gea}.csv")
+        new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+                                                 emissions_type: 'CO2',
+                                                 elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
+                                                 elec_schedule_filepath: cambium_filepath,
+                                                 natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 natural_gas_value: 117.6,
+                                                 propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 propane_value: 136.6,
+                                                 fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 fuel_oil_value: 161.0)
+      end
+    else
+      if not egrid_subregion.nil?
+        # Use EPA's 2019 eGrid database for electricity
+        elec_co2_value = lookup_egrid_value(egrid_subregion, 0, 1)
+        new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+                                                 emissions_type: 'CO2',
+                                                 elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
+                                                 elec_value: elec_co2_value,
+                                                 natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 natural_gas_value: 117.6,
+                                                 propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 propane_value: 136.6,
+                                                 fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 fuel_oil_value: 161.0)
+      end
+    end
+
+    if not egrid_subregion.nil?
+      # NOx Projected Emissions
+      elec_nox_value = lookup_egrid_value(egrid_subregion, 0, 5)
+      new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+                                               emissions_type: 'NOx',
+                                               elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
+                                               elec_value: elec_nox_value,
+                                               natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               natural_gas_value: 0.0922,
+                                               propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               propane_value: 0.1300,
+                                               fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               fuel_oil_value: 0.1421)
+
+      # SO2 Projected Emissions
+      elec_so2_value = lookup_egrid_value(egrid_subregion, 0, 7)
+      new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+                                               emissions_type: 'SO2',
+                                               elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
+                                               elec_value: elec_so2_value,
+                                               natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               natural_gas_value: 0.0006,
+                                               propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               propane_value: 0.0002,
+                                               fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               fuel_oil_value: 0.0015)
+    end
   end
 end
 
