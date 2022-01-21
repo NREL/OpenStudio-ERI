@@ -2438,6 +2438,27 @@ def create_sample_hpxmls
         fail hpxml_path
       end
     end
+    zip_map = { 'USA_CO_Denver.Intl.AP.725650_TMY3.epw' => '80206',
+                'USA_OR_Portland.Intl.AP.726980_TMY3.epw' => '97214',
+                'US_CO_Boulder_AMY_2012.epw' => '80305-3447',
+                'USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw' => '21221',
+                'USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw' => '75229',
+                'USA_MN_Duluth.Intl.AP.727450_TMY3.epw' => '55807',
+                'USA_MT_Helena.Rgnl.AP.727720_TMY3.epw' => '59602',
+                'USA_HI_Honolulu.Intl.AP.911820_TMY3.epw' => '96817',
+                'USA_FL_Miami.Intl.AP.722020_TMY3.epw' => '33134',
+                'USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3.epw' => '85023',
+                'ZAF_Cape.Town.688160_IWEC.epw' => '00000' }
+    hpxml.header.zip_code = zip_map[hpxml.climate_and_risk_zones.weather_station_epw_filepath]
+    if hpxml.header.zip_code.nil?
+      fail "#{hpxml_path}: EPW location (#{hpxml.climate_and_risk_zones.weather_station_epw_filepath}) not handled. Need to update zip_map."
+    end
+
+    if hpxml.header.state_code.nil?
+      if hpxml.climate_and_risk_zones.weather_station_epw_filepath == 'ZAF_Cape.Town.688160_IWEC.epw'
+        hpxml.header.state_code = 'NA'
+      end
+    end
 
     # Handle different inputs for ENERGY STAR
 

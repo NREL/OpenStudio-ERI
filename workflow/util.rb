@@ -581,7 +581,9 @@ end
 def _calculate_co2_index(rated_output, ref_output, results)
   results[:aco2] = rated_output[:co2EmissionsforRatingIndexTotal]
   results[:arco2] = ref_output[:co2EmissionsforRatingIndexTotal]
-  results[:co2index] = results[:aco2] / results[:arco2] * 100.0
+  if (not results[:aco2].nil?) && (not results[:arco2].nil?)
+    results[:co2index] = results[:aco2] / (results[:arco2] * results[:iaf_rh]) * 100.0
+  end
   return results
 end
 

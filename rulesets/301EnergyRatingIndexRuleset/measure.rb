@@ -132,7 +132,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       weather = WeatherProcess.new(nil, nil, cache_path)
 
       # Apply 301 ruleset on HPXML object
-      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather)
+      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, @orig_hpxml, calc_type, weather)
 
       # Write new HPXML file
       if hpxml_output_path.is_initialized

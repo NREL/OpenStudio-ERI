@@ -81,7 +81,11 @@ end
 results = calculate_eri(design_outputs, resultsdir)
 puts "ERI: #{results[:eri].round(2)}"
 if calc_co2_index
-  puts "CO2 Index: #{results[:co2index].round(2)}"
+  if not results[:co2index].nil?
+    puts "CO2 Index: #{results[:co2index].round(2)}"
+  else
+    puts 'CO2 Index: N/A'
+  end
 end
 
 puts "Output files written to #{resultsdir}"

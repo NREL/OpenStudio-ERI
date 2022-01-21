@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class EnergyRatingIndex301Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather)
+  def self.apply_ruleset(runner, hpxml, calc_type, weather)
     # Global variables
+    @runner = runner
     @weather = weather
     @calc_type = calc_type
 
@@ -17,7 +18,6 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeCO2ReferenceHome
-      calc_type = Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, true)
     end
 
@@ -201,25 +201,33 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
+    new_hpxml.header.zip_code = orig_hpxml.header.zip_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.use_max_load_for_heat_pumps = true
 
-    # Emissions scenario for CO2 Rating Index
+    # Emissions scenario for CO2 Index
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
-      # FIXME: Need to choose schedule path based on zip code
-      # FIXME: What about coal and wood?
-      new_hpxml.header.emissions_scenarios.add(name: 'Emissions for Rating Index',
-                                               emissions_type: 'CO2',
-                                               elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
-                                               elec_schedule_filepath: '../../rulesets/301EnergyRatingIndexRuleset/resources/data/cambium/AZNMc.csv',
-                                               natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                               natural_gas_value: 117.6,
-                                               propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                               propane_value: 136.6,
-                                               fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                               fuel_oil_value: 161.0)
+      if [Constants.CalcTypeCO2ReferenceHome, Constants.CalcTypeERIRatedHome].include? @calc_type
+        cambium_gea = lookup_cambium_gea_from_zip(new_hpxml.header.zip_code)
+        if cambium_gea.nil?
+          @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{new_hpxml.header.zip_code}'. CO2 Index will not be calculated.")
+        else
+          # FIXME: What about coal and wood?
+          cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'low_cost_re_case', "#{cambium_gea}.csv")
+          new_hpxml.header.emissions_scenarios.add(name: 'Emissions for Rating Index',
+                                                   emissions_type: 'CO2',
+                                                   elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
+                                                   elec_schedule_filepath: cambium_filepath,
+                                                   natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                   natural_gas_value: 117.6,
+                                                   propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                   propane_value: 136.6,
+                                                   fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                   fuel_oil_value: 161.0)
+        end
+      end
     end
-    # TODO: Emissions scenarios for CO2, NOx, SO2 calculations
+    # FIXME: Emissions scenarios for CO2, NOx, SO2 calculations
 
     return new_hpxml
   end
@@ -2810,6 +2818,33 @@ class EnergyRatingIndex301Ruleset
     else
       return 0.0
     end
+  end
+
+  def self.lookup_cambium_gea_from_zip(zip_code)
+    return if zip_code.nil?
+
+    if zip_code.include? '-'
+      zip_code = zip_code.split('-')[0]
+    end
+    zip_code = zip_code.rjust(5, '0')
+    
+    return if zip_code.size != 5
+
+    begin
+      test_int = Integer(zip_code)
+    rescue
+      return
+    end
+
+    # FIXME: Use nearest zip using zip3_of_interest
+    CSV.foreach(File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv'), headers: true) do |row|
+      next if row['zip_code'].nil?
+      next unless row['zip_code'].rjust(5, '0') == zip_code
+
+      return row['cambium_gea']
+    end
+
+    return
   end
 end
 
