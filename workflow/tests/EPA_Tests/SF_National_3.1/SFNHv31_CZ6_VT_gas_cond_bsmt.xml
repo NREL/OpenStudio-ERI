@@ -62,7 +62,7 @@
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>28512.0</InfiltrationVolume>
+            <InfiltrationVolume>30294.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -142,8 +142,8 @@
             <SystemIdentifier id='FoundationWall1'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
-            <Height>8.0</Height>
-            <Area>1216.0</Area>
+            <Height>8.5</Height>
+            <Area>1292.0</Area>
             <Thickness>8.0</Thickness>
             <DepthBelowGrade>6.0</DepthBelowGrade>
             <Insulation>
@@ -194,7 +194,7 @@
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
-            <Area>116.94</Area>
+            <Area>117.28</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
@@ -204,7 +204,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window2'/>
-            <Area>116.94</Area>
+            <Area>117.28</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
@@ -214,7 +214,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window3'/>
-            <Area>116.94</Area>
+            <Area>117.28</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
@@ -224,7 +224,7 @@
           </Window>
           <Window>
             <SystemIdentifier id='Window4'/>
-            <Area>116.94</Area>
+            <Area>117.28</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.4</SHGC>
