@@ -35,14 +35,21 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       rundir, hpxmls, csvs = _run_workflow(xml, test_name)
-      all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
+      all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results], csvs[:co2_results])
 
       _rm_path(rundir)
     end
     assert(all_results.size > 0)
 
     # Write results to csv
-    keys = all_results.values[0].keys
+    keys = []
+    all_results.each do |xml, xml_results|
+      xml_results.keys.each do |key|
+        next if keys.include? key
+
+        keys << key
+      end
+    end
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['XML'] + keys
       all_results.each_with_index do |(xml, results), i|
@@ -54,15 +61,6 @@ class EnergyRatingIndexTest < Minitest::Test
       end
     end
     puts "Wrote results to #{test_results_csv}."
-
-    # Cross-simulation tests
-
-    # Verify that REUL Hot Water is identical across water heater types
-    _test_reul(all_results, 'base.xml', 'base-dhw', 'REUL Hot Water (MBtu)')
-
-    # Verify that REUL Heating/Cooling are identical across HVAC types
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Cooling (MBtu)')
   end
 
   def test_sample_files_energystar
@@ -731,6 +729,18 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none', run_energystar: false, component_loads: false)
+    has_co2_index = true
+    if ['base-version-2014.xml',
+        'base-version-2014A.xml',
+        'base-version-2014AE.xml',
+        'base-version-2014AEG.xml',
+        'base-version-2019.xml',
+        'base-version-2019A.xml',
+        'base-version-2019AB.xml',
+        'base-version-2019ABC.xml'].include? File.basename(xml)
+      has_co2_index = false
+    end
+
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -760,6 +770,9 @@ class EnergyRatingIndexTest < Minitest::Test
     if not run_energystar
       hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
       hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
+      if has_co2_index
+        csvs[:co2_results] = File.join(rundir, 'results', 'CO2_Results.csv')
+      end
       csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
       csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
       csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
@@ -902,25 +915,6 @@ class EnergyRatingIndexTest < Minitest::Test
     assert(File.exist?(csv_path))
 
     return sql_path, csv_path, results[:sim_time]
-  end
-
-  def _test_reul(all_results, base_xml, files_include, result_name)
-    base_results = all_results[base_xml]
-    return if base_results.nil?
-
-    puts "Checking for consistent #{result_name} compared to #{base_xml}..."
-    base_reul = base_results[result_name]
-    all_results.each do |compare_xml, compare_results|
-      next unless compare_xml.include? files_include
-
-      if compare_results[result_name].to_s.include? ','
-        compare_reul = compare_results[result_name].split(',').map(&:to_f).inject(0, :+) # sum values
-      else
-        compare_reul = compare_results[result_name]
-      end
-
-      assert_in_delta(base_reul, compare_reul, 0.15)
-    end
   end
 
   def _get_simulation_load_results(csv_path)
@@ -1832,17 +1826,22 @@ class EnergyRatingIndexTest < Minitest::Test
     return ref_pipe_l, ref_loop_l
   end
 
-  def _get_csv_results(csv)
+  def _get_csv_results(csv1, csv2)
     results = {}
-    CSV.foreach(csv) do |row|
-      next if row.nil? || (row.size < 2)
+    [csv1, csv2].each do |csv|
+      next if csv.nil?
+      next unless File.exist? csv
 
-      if row[0] == 'ENERGY STAR Certification' # String outputs
-        results[row[0]] = row[1]
-      elsif row[1].include? ',' # Sum values for visualization on CI
-        results[row[0]] = row[1].split(',').map(&:to_f).sum
-      else
-        results[row[0]] = Float(row[1])
+      CSV.foreach(csv) do |row|
+        next if row.nil? || (row.size < 2)
+
+        if row[0] == 'ENERGY STAR Certification' # String outputs
+          results[row[0]] = row[1]
+        elsif row[1].include? ',' # Sum values for visualization on CI
+          results[row[0]] = row[1].split(',').map(&:to_f).sum
+        else
+          results[row[0]] = Float(row[1])
+        end
       end
     end
 
