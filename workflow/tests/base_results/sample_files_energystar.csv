@@ -90,7 +90,7 @@
 [SF_National_3.1] base-hvac-boiler-propane-only.xml,70.0,1.0,70.0,72.0,72.0,FAIL
 [SF_National_3.1] base-hvac-central-ac-only-1-speed.xml,77.0,1.0,77.0,84.0,84.0,FAIL
 [SF_National_3.1] base-hvac-dse.xml,67.0,1.0,67.0,78.0,78.0,FAIL
-[SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml,67.0,1.0,67.0,95.0,95.0,FAIL
+[SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml,67.0,1.0,67.0,94.0,94.0,FAIL
 [SF_National_3.1] base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml,67.0,1.0,67.0,81.0,81.0,FAIL
 [SF_National_3.1] base-hvac-elec-resistance-only.xml,70.0,1.0,70.0,93.0,93.0,FAIL
 [SF_National_3.1] base-hvac-evap-cooler-only-ducted.xml,77.0,1.0,77.0,74.0,74.0,PASS
@@ -128,6 +128,7 @@
 [SF_National_3.1] base-hvac-wall-furnace-elec-only.xml,70.0,1.0,70.0,94.0,94.0,FAIL
 [SF_National_3.1] base-lighting-ceiling-fans.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_National_3.1] base-location-baltimore-md.xml,64.0,1.0,64.0,65.0,65.0,FAIL
+[SF_National_3.1] base-location-capetown-zaf.xml,71.0,1.0,71.0,75.0,75.0,FAIL
 [SF_National_3.1] base-location-dallas-tx.xml,64.0,1.0,64.0,66.0,66.0,FAIL
 [SF_National_3.1] base-location-duluth-mn.xml,61.0,1.0,61.0,70.0,70.0,FAIL
 [SF_National_3.1] base-location-helena-mt.xml,65.0,1.0,65.0,77.0,77.0,FAIL
