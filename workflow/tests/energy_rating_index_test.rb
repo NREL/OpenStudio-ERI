@@ -729,18 +729,6 @@ class EnergyRatingIndexTest < Minitest::Test
   end
 
   def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none', run_energystar: false, component_loads: false)
-    has_co2_index = true
-    if ['base-version-2014.xml',
-        'base-version-2014A.xml',
-        'base-version-2014AE.xml',
-        'base-version-2014AEG.xml',
-        'base-version-2019.xml',
-        'base-version-2019A.xml',
-        'base-version-2019AB.xml',
-        'base-version-2019ABC.xml'].include? File.basename(xml)
-      has_co2_index = false
-    end
-
     xml = File.absolute_path(xml)
 
     rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -770,7 +758,7 @@ class EnergyRatingIndexTest < Minitest::Test
     if not run_energystar
       hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
       hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-      if has_co2_index
+      if File.exist? File.join(rundir, 'results', 'CO2_Results.csv')
         csvs[:co2_results] = File.join(rundir, 'results', 'CO2_Results.csv')
       end
       csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
@@ -1826,7 +1814,7 @@ class EnergyRatingIndexTest < Minitest::Test
     return ref_pipe_l, ref_loop_l
   end
 
-  def _get_csv_results(csv1, csv2)
+  def _get_csv_results(csv1, csv2 = nil)
     results = {}
     [csv1, csv2].each do |csv|
       next if csv.nil?
