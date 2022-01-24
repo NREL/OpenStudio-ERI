@@ -75,13 +75,8 @@ The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/e
   .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
   .. [#] Version only required to run ENERGY STAR calculation.
 
-HPXML Building Summary
-----------------------
-
-High-level building summary information is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary``. 
-
-HPXML Site
-**********
+HPXML Building Site
+-------------------
 
 Site information is entered in ``/HPXML/Building/Site``.
 
@@ -102,8 +97,13 @@ Site information is entered in ``/HPXML/Building/Site``.
 
   .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
 
-HPXML Building Fuels
-********************
+HPXML Building Summary
+----------------------
+
+High-level building summary information is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary``. 
+
+HPXML Fuels Available
+*********************
 
 Each fuel type available to the building is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable``.
 
