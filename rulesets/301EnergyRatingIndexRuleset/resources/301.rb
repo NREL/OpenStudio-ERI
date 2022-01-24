@@ -2836,81 +2836,35 @@ class EnergyRatingIndex301Ruleset
     return
   end
 
-  def self.get_cambium_gea(new_hpxml)
-    # Get Cambium GEA region
-    cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
-    cambium_gea = lookup_region_from_zip(new_hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
-    if cambium_gea.nil?
-      @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{new_hpxml.header.zip_code}'. CO2 Index and Emissions will not be calculated.")
+  def self.add_emissions_scenarios(new_hpxml)
+    if not [Constants.CalcTypeCO2ReferenceHome,
+            Constants.CalcTypeERIReferenceHome,
+            Constants.CalcTypeERIRatedHome].include? @calc_type
+      return
     end
-    return cambium_gea
-  end
 
-  def self.get_egrid_subregion(new_hpxml)
     # Get eGRID subregion
     egrid_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'ZIP_mappings.csv')
     egrid_subregion = lookup_region_from_zip(new_hpxml.header.zip_code, egrid_zip_filepath, 0, 1)
     if egrid_subregion.nil?
       @runner.registerWarning("Could not look up eGRID subregion for zip code: '#{new_hpxml.header.zip_code}'. Emissions will not be calculated.")
     end
-    return egrid_subregion
-  end
 
-  def self.add_emissions_scenarios(new_hpxml)
-    # Add emissions scenarios
-    cambium_gea = add_co2_index_emissions_scenario(new_hpxml)
-    add_projected_emissions_scenarios(new_hpxml, cambium_gea)
-  end
-
-  def self.add_co2_index_emissions_scenario(new_hpxml)
-    if not [Constants.CalcTypeCO2ReferenceHome,
-            Constants.CalcTypeERIRatedHome].include? @calc_type
-      return
-    end
-    if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019ABCD')
-      return
-    end
-
-    cambium_gea = get_cambium_gea(new_hpxml)
-    if cambium_gea.nil?
-      return
-    end
-
-    # Emissions scenario for CO2 Index (ANSI 301 Section 6)
-
-    # Use 2021 Cambium database for electricity
-    # FIXME: What about coal and wood?
-    cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'low_cost_re_case', "#{cambium_gea}.csv")
-    new_hpxml.header.emissions_scenarios.add(name: 'CO2 Index',
-                                             emissions_type: 'CO2',
-                                             elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
-                                             elec_schedule_filepath: cambium_filepath,
-                                             natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                             natural_gas_value: 117.6,
-                                             propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                             propane_value: 136.6,
-                                             fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                             fuel_oil_value: 161.0)
-    return cambium_gea
-  end
-
-  def self.add_projected_emissions_scenarios(new_hpxml, cambium_gea)
-    if not [Constants.CalcTypeCO2ReferenceHome,
-            Constants.CalcTypeERIRatedHome,
-            Constants.CalcTypeERIReferenceHome].include? @calc_type
-      return
-    end
-
-    # Emissions scenarios for CO2, NOx, SO2 calculations for Rated Home (ANSI 301 Section 5)
-
-    egrid_subregion = get_egrid_subregion(new_hpxml)
-
-    # CO2 Projected Emissions
+    # CO2 Emissions Scenario
+    # FIXME: What about wood?
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+      # Use 2021 Cambium database for electricity
+
+      # Get Cambium GEA region
+      cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
+      cambium_gea = lookup_region_from_zip(new_hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
+      if cambium_gea.nil?
+        @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{new_hpxml.header.zip_code}'. CO2 emissions will not be calculated.")
+      end
+
       if not cambium_gea.nil?
-        # Use 2021 Cambium database for electricity
-        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'mid_case_2025', "#{cambium_gea}.csv")
-        new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', "#{cambium_gea}.csv")
+        new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2',
                                                  elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
                                                  elec_schedule_filepath: cambium_filepath,
@@ -2922,13 +2876,13 @@ class EnergyRatingIndex301Ruleset
                                                  fuel_oil_value: 161.0)
       end
     else
+      # Use EPA's 2019 eGrid database for electricity
       if not egrid_subregion.nil?
-        # Use EPA's 2019 eGrid database for electricity
-        elec_co2_value = lookup_egrid_value(egrid_subregion, 0, 1)
-        new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+        annual_elec_co2_value = lookup_egrid_value(egrid_subregion, 0, 1)
+        new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2',
                                                  elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
-                                                 elec_value: elec_co2_value,
+                                                 elec_value: annual_elec_co2_value,
                                                  natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
                                                  natural_gas_value: 117.6,
                                                  propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
@@ -2939,9 +2893,9 @@ class EnergyRatingIndex301Ruleset
     end
 
     if not egrid_subregion.nil?
-      # NOx Projected Emissions
+      # NOx Emissions Scenario
       elec_nox_value = lookup_egrid_value(egrid_subregion, 0, 5)
-      new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+      new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                emissions_type: 'NOx',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
                                                elec_value: elec_nox_value,
@@ -2952,9 +2906,9 @@ class EnergyRatingIndex301Ruleset
                                                fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
                                                fuel_oil_value: 0.1421)
 
-      # SO2 Projected Emissions
+      # SO2 Emissions Scenario
       elec_so2_value = lookup_egrid_value(egrid_subregion, 0, 7)
-      new_hpxml.header.emissions_scenarios.add(name: 'Projected',
+      new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                emissions_type: 'SO2',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
                                                elec_value: elec_so2_value,

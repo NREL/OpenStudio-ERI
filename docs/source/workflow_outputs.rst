@@ -133,59 +133,37 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    Wood Pellets: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
    ==========================================================  ====================================================
 
-Annual Projected Emissions
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Annual Emissions
+^^^^^^^^^^^^^^^^
 
-Annual projected emissions are listed below.
+Annual emissions are listed below.
 
-Project emissions (CO2, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2 Reference Home.
-These values are calculated according to ANSI/RESNET/ICC 301-2019 Section 5.
-
-   ============================================  ========
-   Type                                          Notes
-   ============================================  ========
-   Emissions: CO2: Projected: Total (lb)         Sum of the diseggregated fuel values
-   Emissions: CO2: Projected: Electricity (lb)
-   Emissions: CO2: Projected: Natural Gas (lb)
-   Emissions: CO2: Projected: Fuel Oil (lb)
-   Emissions: CO2: Projected: Propane (lb)
-   Emissions: CO2: Projected: Wood Cord (lb)
-   Emissions: CO2: Projected: Wood Pellets (lb)
-   Emissions: NOx: Projected: Total (lb)         Sum of the diseggregated fuel values
-   Emissions: NOx: Projected: Electricity (lb)
-   Emissions: NOx: Projected: Natural Gas (lb)
-   Emissions: NOx: Projected: Fuel Oil (lb)
-   Emissions: NOx: Projected: Propane (lb)
-   Emissions: NOx: Projected: Wood Cord (lb)
-   Emissions: NOx: Projected: Wood Pellets (lb)
-   Emissions: SO2: Projected: Total (lb)         Sum of the diseggregated fuel values
-   Emissions: SO2: Projected: Electricity (lb)
-   Emissions: SO2: Projected: Natural Gas (lb)
-   Emissions: SO2: Projected: Fuel Oil (lb)
-   Emissions: SO2: Projected: Propane (lb)
-   Emissions: SO2: Projected: Wood Cord (lb)
-   Emissions: SO2: Projected: Wood Pellets (lb)
-   ============================================  ========
-
-Annual CO2 Index Emissions
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Annual CO2 Index Emissions are listed below.
-
-Annual CO2 Index Emissions used for calculating the CO2 Index are provided for the Rated Home and CO2 Reference Home.
-These values are calculated according to ANSI/RESNET/ICC 301-2019 Section 6.
-These outputs are only available when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+Emissions (CO2, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2 Reference Home.
 
    ============================================  ========
    Type                                          Notes
    ============================================  ========
-   Emissions: CO2: CO2 Index: Total (lb)         Sum of the diseggregated fuel values
-   Emissions: CO2: CO2 Index: Electricity (lb)
-   Emissions: CO2: CO2 Index: Natural Gas (lb)
-   Emissions: CO2: CO2 Index: Fuel Oil (lb)
-   Emissions: CO2: CO2 Index: Propane (lb)
-   Emissions: CO2: CO2 Index: Wood Cord (lb)
-   Emissions: CO2: CO2 Index: Wood Pellets (lb)
+   Emissions: CO2: RESNET: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: CO2: RESNET: Electricity (lb)
+   Emissions: CO2: RESNET: Natural Gas (lb)
+   Emissions: CO2: RESNET: Fuel Oil (lb)
+   Emissions: CO2: RESNET: Propane (lb)
+   Emissions: CO2: RESNET: Wood Cord (lb)
+   Emissions: CO2: RESNET: Wood Pellets (lb)
+   Emissions: NOx: RESNET: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: NOx: RESNET: Electricity (lb)
+   Emissions: NOx: RESNET: Natural Gas (lb)
+   Emissions: NOx: RESNET: Fuel Oil (lb)
+   Emissions: NOx: RESNET: Propane (lb)
+   Emissions: NOx: RESNET: Wood Cord (lb)
+   Emissions: NOx: RESNET: Wood Pellets (lb)
+   Emissions: SO2: RESNET: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: SO2: RESNET: Electricity (lb)
+   Emissions: SO2: RESNET: Natural Gas (lb)
+   Emissions: SO2: RESNET: Fuel Oil (lb)
+   Emissions: SO2: RESNET: Propane (lb)
+   Emissions: SO2: RESNET: Wood Cord (lb)
+   Emissions: SO2: RESNET: Wood Pellets (lb)
    ============================================  ========
 
 Annual Building Loads
