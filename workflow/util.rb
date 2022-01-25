@@ -14,7 +14,7 @@ def setup_resultsdir(options)
 end
 
 def process_arguments(calling_rb, args, basedir)
-  timeseries_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
+  timeseries_types = ['ALL', 'fuels', 'enduses', 'emissions', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
 
   options = {}
   OptionParser.new do |opts|
@@ -29,17 +29,17 @@ def process_arguments(calling_rb, args, basedir)
     end
 
     options[:hourly_outputs] = []
-    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
       options[:hourly_outputs] << t
     end
 
     options[:daily_outputs] = []
-    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
       options[:daily_outputs] << t
     end
 
     options[:monthly_outputs] = []
-    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
       options[:monthly_outputs] << t
     end
 
@@ -209,7 +209,10 @@ def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeser
 end
 
 def timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
-  if [Constants.CalcTypeERIRatedHome, Constants.CalcTypeERIReferenceHome].include? run[0]
+  if [Constants.CalcTypeERIRatedHome,
+      Constants.CalcTypeERIReferenceHome,
+      Constants.CalcTypeCO2RatedHome,
+      Constants.CalcTypeCO2ReferenceHome].include? run[0]
     return timeseries_output_freq, timeseries_outputs
   end
 
