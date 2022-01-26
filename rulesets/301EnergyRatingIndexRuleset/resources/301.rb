@@ -2848,6 +2848,9 @@ class EnergyRatingIndex301Ruleset
     egrid_subregion = lookup_region_from_zip(new_hpxml.header.zip_code, egrid_zip_filepath, 0, 1)
     if egrid_subregion.nil?
       @runner.registerWarning("Could not look up eGRID subregion for zip code: '#{new_hpxml.header.zip_code}'. Emissions will not be calculated.")
+    else
+      new_hpxml.header.egrid_region = egrid_subregion
+      new_hpxml.header.egrid_region_isdefaulted = true
     end
 
     # CO2 Emissions Scenario
@@ -2860,6 +2863,9 @@ class EnergyRatingIndex301Ruleset
       cambium_gea = lookup_region_from_zip(new_hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
       if cambium_gea.nil?
         @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{new_hpxml.header.zip_code}'. CO2 emissions will not be calculated.")
+      else
+        new_hpxml.header.cambium_region_gea = cambium_gea
+        new_hpxml.header.cambium_region_gea_isdefaulted = true
       end
 
       if not cambium_gea.nil?
