@@ -2849,8 +2849,8 @@ class EnergyRatingIndex301Ruleset
     if egrid_subregion.nil?
       @runner.registerWarning("Could not look up eGRID subregion for zip code: '#{new_hpxml.header.zip_code}'. Emissions will not be calculated.")
     else
-      new_hpxml.header.egrid_region = egrid_subregion
-      new_hpxml.header.egrid_region_isdefaulted = true
+      new_hpxml.header.egrid_subregion = egrid_subregion
+      new_hpxml.header.egrid_subregion_isdefaulted = true
     end
 
     # CO2 Emissions Scenario
