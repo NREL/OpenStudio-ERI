@@ -4,6 +4,7 @@ __New Features__
 - Adds CO2 Index (ANSI/RESNET/ICC Standard 301-2019 Addendum D) and emissions (CO2, NOx, SO2) calculations. Annual/hourly outputs available.
   - **Breaking change**: `/HPXML/Building/Site` is now required with `SiteID`, `Address/StateCode`, and `Address/ZipCode` child elements.
 - **Breaking change**: Deprecates duct leakage to outside exemptions; software tools must provide duct leakage to outside or DSE. `SoftwareInfo/extension/ERICalculation/Version` enumerations "2014ADEGL", "2014ADEG", "2014ADE" are replaced by "2014AEG" and "2014AE".
+- Allows modeling an electric storage battery.
 - Allows `AirInfiltrationMeasurement/InfiltrationHeight` as an optional input; if not provided, it is inferred from other inputs as before. 
 
 ## OpenStudio-ERI v1.3.0

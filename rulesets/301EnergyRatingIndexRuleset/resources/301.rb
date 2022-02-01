@@ -59,6 +59,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
+    set_systems_batteries_reference(orig_hpxml, new_hpxml)
     set_systems_generators_reference(orig_hpxml, new_hpxml)
 
     # Appliances
@@ -111,6 +112,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_water_heater_rated(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_rated(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_rated(orig_hpxml, new_hpxml)
+    set_systems_batteries_rated(orig_hpxml, new_hpxml)
     set_systems_generators_rated(orig_hpxml, new_hpxml)
 
     # Appliances
@@ -165,6 +167,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_iad(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
+    set_systems_batteries_iad(orig_hpxml, new_hpxml)
     set_systems_generators_iad(orig_hpxml, new_hpxml)
 
     # Appliances
@@ -1785,6 +1788,23 @@ class EnergyRatingIndex301Ruleset
   def self.set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
     # 4.3.1 Index Adjustment Design (IAD)
     # Renewable Energy Systems that offset the energy consumption requirements of the Rated Home shall not be included in the IAD.
+    # nop
+  end
+
+  def self.set_systems_batteries_reference(orig_hpxml, new_hpxml)
+    # nop
+  end
+
+  def self.set_systems_batteries_rated(orig_hpxml, new_hpxml)
+    orig_hpxml.batteries.each do |orig_battery|
+      new_hpxml.batteries.add(id: orig_battery.id,
+                              type: orig_battery.type,
+                              location: orig_battery.location,
+                              nominal_capacity_kwh: orig_battery.nominal_capacity_kwh)
+    end
+  end
+
+  def self.set_systems_batteries_iad(orig_hpxml, new_hpxml)
     # nop
   end
 

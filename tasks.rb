@@ -2112,6 +2112,7 @@ def create_sample_hpxmls
                   'base-atticroof-radiant-barrier.xml',
                   'base-atticroof-unvented-insulated-roof.xml',
                   'base-atticroof-vented.xml',
+                  'base-battery.xml',
                   'base-bldgtype-multifamily.xml',
                   'base-bldgtype-multifamily-adjacent-to-multiple.xml',
                   'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml',
@@ -2241,7 +2242,8 @@ def create_sample_hpxmls
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
                   'base-misc-generators.xml',
-                  'base-pv.xml']
+                  'base-pv.xml',
+                  'base-pv-battery.xml']
   include_list.each do |include_file|
     if File.exist? "hpxml-measures/workflow/sample_files/#{include_file}"
       FileUtils.cp("hpxml-measures/workflow/sample_files/#{include_file}", "workflow/sample_files/#{include_file}")

@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>0e4dc775-d548-4efb-8143-22e992f4e8d9</version_id>
-  <version_modified>20220121T182256Z</version_modified>
+  <version_id>1477066c-8c90-49f2-8a37-cd62bde269eb</version_id>
+  <version_modified>20220201T190643Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -96,12 +96,6 @@
       <checksum>567A39AD</checksum>
     </file>
     <file>
-      <filename>test_es_pv.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>D30B16F7</checksum>
-    </file>
-    <file>
       <filename>test_es_generator.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -179,10 +173,16 @@
       <checksum>D729FDF6</checksum>
     </file>
     <file>
+      <filename>test_es_pv_batteries.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>8762C2E4</checksum>
+    </file>
+    <file>
       <filename>EnergyStarRuleset.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A9FB75A7</checksum>
+      <checksum>B4A78FBE</checksum>
     </file>
   </files>
 </measure>
