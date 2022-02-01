@@ -251,7 +251,7 @@ class HPXMLTest < MiniTest::Test
     # Check that simulation works using template2.osw
     require 'json'
 
-    osw_path = File.join(File.dirname(__FILE__), '..', 'template-build-hpxml-and-stocastic-schedules.osw')
+    osw_path = File.join(File.dirname(__FILE__), '..', 'template-build-hpxml-and-stochastic-schedules.osw')
 
     # Create derivative OSW for testing
     osw_path_test = osw_path.gsub('.osw', '_test.osw')
@@ -1200,8 +1200,13 @@ class HPXMLTest < MiniTest::Test
       energy_dhw = results.fetch("End Use: #{fuel_name}: Hot Water (MBtu)", 0)
       energy_cd = results.fetch("End Use: #{fuel_name}: Clothes Dryer (MBtu)", 0)
       energy_cr = results.fetch("End Use: #{fuel_name}: Range/Oven (MBtu)", 0)
-      if htg_fuels.include?(fuel) && (not hpxml_path.include? 'location-miami') && (not hpxml_path.include? 'location-honolulu') && (not hpxml_path.include? 'location-phoenix')
-        assert_operator(energy_htg, :>, 0)
+      if htg_fuels.include? fuel
+        if (not hpxml_path.include? 'location-miami') && \
+           (not hpxml_path.include? 'location-honolulu') && \
+           (not hpxml_path.include? 'location-phoenix') && \
+           (not (hpxml_path.include?('autosize') && hpxml_path.include?('backup')))
+          assert_operator(energy_htg, :>, 0)
+        end
       else
         assert_equal(0, energy_htg)
       end
@@ -1241,8 +1246,11 @@ class HPXMLTest < MiniTest::Test
 
     output_keys = []
     results.each do |xml, xml_results|
-      output_keys = xml_results.keys
-      break
+      xml_results.keys.each do |key|
+        next if output_keys.include? key
+
+        output_keys << key
+      end
     end
 
     column_headers = ['HPXML']
