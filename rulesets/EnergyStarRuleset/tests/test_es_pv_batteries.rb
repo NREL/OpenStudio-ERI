@@ -25,9 +25,9 @@ class EnergyStarPVTest < MiniTest::Test
     end
   end
 
-  def test_batteries
+  def test_pv_batteries
     ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-pv-battery-outside.xml', es_version)
+      _convert_to_es('base-pv-battery.xml', es_version)
       hpxml = _test_measure()
       _check_battery(hpxml)
     end

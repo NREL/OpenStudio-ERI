@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>34c87714-e63f-40b8-bb8c-f330ece57189</version_id>
-  <version_modified>20220201T003717Z</version_modified>
+  <version_id>66cd35e5-98e5-4363-a980-e51c505cbb8a</version_id>
+  <version_modified>20220201T155851Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -182,7 +182,7 @@
       <filename>test_es_pv_batteries.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>0AE04101</checksum>
+      <checksum>8762C2E4</checksum>
     </file>
   </files>
 </measure>

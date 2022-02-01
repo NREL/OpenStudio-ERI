@@ -39,8 +39,8 @@ class ERIPVTest < MiniTest::Test
     end
   end
 
-  def test_batteries
-    hpxml_name = 'base-pv-battery-outside.xml'
+  def test_pv_batteries
+    hpxml_name = 'base-pv-battery.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
