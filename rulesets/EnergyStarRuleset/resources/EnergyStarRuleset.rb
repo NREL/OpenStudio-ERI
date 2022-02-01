@@ -46,6 +46,7 @@ class EnergyStarRuleset
     set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
+    set_systems_batteries_reference(orig_hpxml, new_hpxml)
     set_systems_generators_reference(orig_hpxml, new_hpxml)
 
     # Appliances
@@ -878,6 +879,10 @@ class EnergyStarRuleset
   end
 
   def self.set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
+    # nop
+  end
+
+  def self.set_systems_batteries_reference(orig_hpxml, new_hpxml)
     # nop
   end
 

@@ -996,7 +996,6 @@ def set_hpxml_windows(hpxml_file, hpxml)
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
     tot_window_area = 0.15 * cfa * fa * f
-    puts "#{hpxml_file} #{cfa} #{ag_bndry_wall_area} #{bg_bndry_wall_area} #{common_wall_area} #{fa} #{f}"
 
     if hpxml_file.include?('EPA_Tests/SF')
       windows = [[0, (tot_window_area / 4.0).round(2), 'Wall1'],
@@ -2241,7 +2240,8 @@ def create_sample_hpxmls
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
                   'base-misc-generators.xml',
-                  'base-pv.xml']
+                  'base-pv.xml',
+                  'base-pv-battery-outside.xml']
   include_list.each do |include_file|
     if File.exist? "hpxml-measures/workflow/sample_files/#{include_file}"
       FileUtils.cp("hpxml-measures/workflow/sample_files/#{include_file}", "workflow/sample_files/#{include_file}")

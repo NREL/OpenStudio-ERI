@@ -39,6 +39,19 @@ class ERIPVTest < MiniTest::Test
     end
   end
 
+  def test_batteries
+    hpxml_name = 'base-pv-battery-outside.xml'
+
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_battery(hpxml, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0 }])
+      else
+        _check_battery(hpxml)
+      end
+    end
+  end
+
   def _test_measure(hpxml_name, calc_type)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
@@ -96,6 +109,16 @@ class ERIPVTest < MiniTest::Test
       else
         assert_equal(expected_values[:nbeds_served], pv_system.number_of_bedrooms_served)
       end
+    end
+  end
+
+  def _check_battery(hpxml, all_expected_values = [])
+    assert_equal(all_expected_values.size, hpxml.batteries.size)
+    hpxml.batteries.each_with_index do |battery, idx|
+      expected_values = all_expected_values[idx]
+      assert_equal(expected_values[:type], battery.type)
+      assert_equal(expected_values[:location], battery.location)
+      assert_equal(expected_values[:nominal_capacity_kwh], battery.nominal_capacity_kwh)
     end
   end
 end
