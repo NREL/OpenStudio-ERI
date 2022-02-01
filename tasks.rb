@@ -996,7 +996,6 @@ def set_hpxml_windows(hpxml_file, hpxml)
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
     tot_window_area = 0.15 * cfa * fa * f
-    puts "#{hpxml_file} #{cfa} #{ag_bndry_wall_area} #{bg_bndry_wall_area} #{common_wall_area} #{fa} #{f}"
 
     if hpxml_file.include?('EPA_Tests/SF')
       windows = [[0, (tot_window_area / 4.0).round(2), 'Wall1'],
@@ -2112,6 +2111,7 @@ def create_sample_hpxmls
                   'base-atticroof-radiant-barrier.xml',
                   'base-atticroof-unvented-insulated-roof.xml',
                   'base-atticroof-vented.xml',
+                  'base-battery.xml',
                   'base-bldgtype-multifamily.xml',
                   'base-bldgtype-multifamily-adjacent-to-multiple.xml',
                   'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml',
@@ -2241,7 +2241,8 @@ def create_sample_hpxmls
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
                   'base-misc-generators.xml',
-                  'base-pv.xml']
+                  'base-pv.xml',
+                  'base-pv-battery.xml']
   include_list.each do |include_file|
     if File.exist? "hpxml-measures/workflow/sample_files/#{include_file}"
       FileUtils.cp("hpxml-measures/workflow/sample_files/#{include_file}", "workflow/sample_files/#{include_file}")
@@ -2436,6 +2437,12 @@ def create_sample_hpxmls
         dhw_system.first_hour_rating = 56.0
       else
         fail hpxml_path
+      end
+    end
+    if hpxml.climate_and_risk_zones.weather_station_epw_filepath == 'ZAF_Cape.Town.688160_IWEC.epw'
+      if hpxml.climate_and_risk_zones.iecc_zone.nil?
+        hpxml.climate_and_risk_zones.iecc_zone = '3A'
+        hpxml.climate_and_risk_zones.iecc_year = 2006
       end
     end
 

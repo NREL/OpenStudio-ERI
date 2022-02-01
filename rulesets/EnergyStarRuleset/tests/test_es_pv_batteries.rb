@@ -25,6 +25,14 @@ class EnergyStarPVTest < MiniTest::Test
     end
   end
 
+  def test_pv_batteries
+    ESConstants.AllVersions.each do |es_version|
+      _convert_to_es('base-pv-battery.xml', es_version)
+      hpxml = _test_measure()
+      _check_battery(hpxml)
+    end
+  end
+
   def _test_measure()
     args_hash = {}
     args_hash['hpxml_input_path'] = @tmp_hpxml_path
@@ -66,6 +74,10 @@ class EnergyStarPVTest < MiniTest::Test
 
   def _check_pv(hpxml)
     assert_equal(0, hpxml.pv_systems.size)
+  end
+
+  def _check_battery(hpxml)
+    assert_equal(0, hpxml.batteries.size)
   end
 
   def _convert_to_es(hpxml_name, program_version, state_code = nil)

@@ -1686,6 +1686,29 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system.
 
+HPXML Batteries
+***************
+
+A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/Batteries/Battery``.
+
+  ====================================================  =======  =========  ===========  ========  ========  ============================================
+  Element                                               Type     Units      Constraints  Required  Default   Notes
+  ====================================================  =======  =========  ===========  ========  ========  ============================================
+  ``SystemIdentifier``                                  id                               Yes                 Unique identifier
+  ``Location``                                          string              See [#]_     Yes                 Location
+  ``BatteryType``                                       string              See [#]_     Yes                 Battery type
+  ``NominalCapacity[Units="kWh"]/Value``                double   kWh        >= 0         Yes                 Nominal (not usable) capacity
+  ====================================================  =======  =========  ===========  ========  ========  ============================================
+
+  .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
+  .. [#] BatteryType only choice is "Li-ion".
+
+
+.. note::
+
+  For homes w/ PV + batteries will result in slightly higher ERI scores due to round-trip battery efficiency.
+  For homes w/ batteries but no PV, it is assumed that the batteries are only used for backup power during power outages and therefore have no effect on ERI scores.
+
 HPXML Generators
 ****************
 
