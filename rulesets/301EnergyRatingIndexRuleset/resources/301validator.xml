@@ -1232,7 +1232,7 @@
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:Batteries/h:Battery'>
       <sch:assert role='ERROR' test='count(h:BatteryType[text()="Li-ion"]) = 1'>Expected 1 element(s) for xpath: BatteryType[text()="Li-ion"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="outside"]) = 1'>Expected 1 element(s) for xpath: Location[text()="living space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="outside"]</sch:assert>
-      <sch:assert role='ERROR' test='count(h:NominalCapacity[h:Units="kWh"]/Value) = 1'>Expected 1 element(s) for xpath: NominalCapacity[Units="kWh"]/Value</sch:assert>
+      <sch:assert role='ERROR' test='count(h:NominalCapacity[h:Units="kWh"]/h:Value) = 1'>Expected 1 element(s) for xpath: NominalCapacity[Units="kWh"]/Value</sch:assert>
     </sch:rule>
   </sch:pattern>
 

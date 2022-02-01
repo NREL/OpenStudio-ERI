@@ -882,6 +882,7 @@ class EnergyRatingIndexTest < Minitest::Test
     args['timeseries_frequency'] = 'none'
     args['include_timeseries_fuel_consumptions'] = false
     args['include_timeseries_end_use_consumptions'] = false
+    args['include_timeseries_emissions'] = false
     args['include_timeseries_hot_water_uses'] = false
     args['include_timeseries_total_loads'] = false
     args['include_timeseries_component_loads'] = false
