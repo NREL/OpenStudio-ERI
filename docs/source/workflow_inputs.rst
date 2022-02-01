@@ -1709,8 +1709,8 @@ A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/B
 
 .. note::
 
-  For homes w/ PV + batteries will result in slightly higher ERI scores due to round-trip battery efficiency.
-  For homes w/ batteries but no PV, it is assumed that the batteries are only used for backup power during power outages and therefore have no effect on ERI scores.
+  For homes w/ PV + batteries will result in slightly higher ERI scores due to round-trip battery efficiency while CO2 scores generally decrease due to the timing of battery charging/discharging events.
+  For homes w/ batteries but no PV, it is assumed that the batteries are only used for backup power during power outages and therefore have no effect on ERI/CO2 scores.
 
 HPXML Generators
 ****************
