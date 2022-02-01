@@ -1703,6 +1703,12 @@ A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/B
   .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
   .. [#] BatteryType only choice is "Li-ion".
 
+
+.. note::
+
+  For homes w/ PV + batteries will result in slightly higher ERI scores due to round-trip battery efficiency.
+  For homes w/ batteries but no PV, it is assumed that the batteries are only used for backup power during power outages and therefore have no effect on ERI scores.
+
 HPXML Generators
 ****************
 
