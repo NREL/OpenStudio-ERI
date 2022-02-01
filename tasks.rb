@@ -2438,6 +2438,12 @@ def create_sample_hpxmls
         fail hpxml_path
       end
     end
+    if hpxml.climate_and_risk_zones.weather_station_epw_filepath == 'ZAF_Cape.Town.688160_IWEC.epw'
+      if hpxml.climate_and_risk_zones.iecc_zone.nil?
+        hpxml.climate_and_risk_zones.iecc_zone = '3A'
+        hpxml.climate_and_risk_zones.iecc_year = 2006
+      end
+    end
 
     # Handle different inputs for ENERGY STAR
 
