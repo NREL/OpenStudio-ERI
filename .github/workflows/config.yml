@@ -160,12 +160,19 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Download feature results
+      - name: Download ERI feature results
         uses: actions/download-artifact@v2
         with:
           path: |
             results
-          name: test_results
+          name: test_results_eri
+
+      - name: Download ENERGY STAR feature results
+        uses: actions/download-artifact@v2
+        with:
+          path: |
+            results
+          name: test_results_energystar
 
       - name: Commit latest results
         shell: bash        
