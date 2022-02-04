@@ -2889,11 +2889,17 @@ class EnergyRatingIndex301Ruleset
       end
 
       if not cambium_gea.nil?
-        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', "#{cambium_gea}.csv")
+        col_num = { 'AZNMc' => 5, 'CAMXc' => 6, 'ERCTc' => 7, 'FRCCc' => 8, 'MROEc' => 9,
+                    'MROWc' => 10, 'NEWEc' => 11, 'NWPPc' => 12, 'NYSTc' => 13, 'RFCEc' => 14,
+                    'RFCMc' => 15, 'RFCWc' => 16, 'RMPAc' => 17, 'SPNOc' => 18, 'SPSOc' => 19,
+                    'SRMVc' => 20, 'SRMWc' => 21, 'SRSOc' => 22, 'SRTVc' => 23, 'SRVCc' => 24 }[cambium_gea]
+        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', '2021_CO2e_GEAdata_RESNET_2022-01-25.csv')
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2',
                                                  elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
                                                  elec_schedule_filepath: cambium_filepath,
+                                                 elec_schedule_number_of_header_rows: 4,
+                                                 elec_schedule_column_number: col_num,
                                                  natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
                                                  natural_gas_value: 117.6,
                                                  propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
