@@ -64,11 +64,11 @@ class EnergyRatingIndex301Ruleset
 
     # Appliances
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
-    set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+    set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
-    set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+    set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric)
 
     # Lighting
     set_lighting_reference(orig_hpxml, new_hpxml)
@@ -1888,7 +1888,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.clothes_washers[0].location = HPXML::LocationLivingSpace
   end
 
-  def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Default values
     id = 'ClothesDryer'
     location = HPXML::LocationLivingSpace
@@ -1902,6 +1902,10 @@ class EnergyRatingIndex301Ruleset
         location = clothes_dryer.location.gsub('unvented', 'vented')
         fuel_type = clothes_dryer.fuel_type
       end
+    end
+
+    if is_all_electric
+      fuel_type = HPXML::FuelTypeElectricity
     end
 
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, fuel_type)
@@ -2066,7 +2070,7 @@ class EnergyRatingIndex301Ruleset
     # nop
   end
 
-  def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Default values
     range_id = 'CookingRange'
     location = HPXML::LocationLivingSpace
@@ -2081,6 +2085,10 @@ class EnergyRatingIndex301Ruleset
       fuel_type = cooking_range.fuel_type
       oven = orig_hpxml.ovens[0]
       oven_id = oven.id
+    end
+
+    if is_all_electric
+      fuel_type = HPXML::FuelTypeElectricity
     end
 
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
