@@ -1165,12 +1165,13 @@ When provided, supply and return leakage to the outside are each entered as a ``
   Element                           Type     Units    Constraints  Required  Default    Notes
   ================================  =======  =======  ===========  ========  =========  =========================================================
   ``DuctType``                      string            See [#]_     Yes                  Supply or return ducts
-  ``DuctLeakage/Units``             string            CFM25        Yes                  Duct leakage units
+  ``DuctLeakage/Units``             string            See [#]_     Yes                  Duct leakage units
   ``DuctLeakage/Value``             double            >= 0         Yes                  Duct leakage value [#]_
   ``DuctLeakage/TotalOrToOutside``  string            to outside   Yes                  Type of duct leakage (outside conditioned space vs total)
   ================================  =======  =======  ===========  ========  =========  =========================================================
   
   .. [#] DuctType choices are "supply" or "return".
+  .. [#] Units choices are "CFM25" or "CFM50".
   .. [#] If the HVAC system has no return ducts (e.g., a ducted evaporative cooler), use zero for the Value.
 
 .. note::

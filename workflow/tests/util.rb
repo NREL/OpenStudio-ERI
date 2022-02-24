@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def _run_ruleset(design, xml, out_xml)
   model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
