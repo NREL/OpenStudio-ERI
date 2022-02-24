@@ -810,7 +810,8 @@ class ERIHVACtest < MiniTest::Test
         _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 75.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                     { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 25.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       else
-        _check_duct_leakage(hpxml) # DSE
+        _check_ducts(hpxml)
+        _check_duct_leakage(hpxml)
       end
     end
   end
@@ -826,7 +827,8 @@ class ERIHVACtest < MiniTest::Test
         _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 100.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                     { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 125.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       else
-        _check_duct_leakage(hpxml) # DSE
+        _check_ducts(hpxml)
+        _check_duct_leakage(hpxml)
       end
     end
   end
