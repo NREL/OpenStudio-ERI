@@ -799,6 +799,38 @@ class ERIHVACtest < MiniTest::Test
     end
   end
 
+  def test_ducts
+    hpxml_name = 'base.xml'
+
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented }])
+        _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 75.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                    { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 25.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      else
+        _check_duct_leakage(hpxml) # DSE
+      end
+    end
+  end
+
+  def test_ducts_cfm50
+    hpxml_name = 'base-hvac-ducts-leakage-cfm50.xml'
+
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_measure(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented }])
+        _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 100.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                    { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 125.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      else
+        _check_duct_leakage(hpxml) # DSE
+      end
+    end
+  end
+
   def test_dse
     hpxml_name = 'base-hvac-dse.xml'
 
@@ -1157,16 +1189,63 @@ class ERIHVACtest < MiniTest::Test
     end
   end
 
-  def _check_duct_leakage(hpxml, total_or_outside:, leakage_sum:)
-    actual_sum = nil
+  def _check_duct_leakage(hpxml, duct_leakage_measurements = [])
+    assert_equal(duct_leakage_measurements.size, hpxml.hvac_distributions.map { |x| x.duct_leakage_measurements.size }.inject(0, :+))
+    idx = 0
     hpxml.hvac_distributions.each do |hvac_distribution|
-      hvac_distribution.duct_leakage_measurements.each do |duct_leakage|
-        actual_sum = 0.0 if actual_sum.nil?
-        actual_sum += duct_leakage.duct_leakage_value
-        assert_equal(HPXML::UnitsCFM25, duct_leakage.duct_leakage_units)
-        assert_equal(total_or_outside, duct_leakage.duct_leakage_total_or_to_outside)
+      hvac_distribution.duct_leakage_measurements.each do |duct_leakage_measurement|
+        if duct_leakage_measurements[idx][:duct_type].nil?
+          assert_nil(duct_leakage_measurement.duct_type)
+        else
+          assert_equal(duct_leakage_measurement.duct_type, duct_leakage_measurements[idx][:duct_type])
+        end
+        if duct_leakage_measurements[idx][:duct_leakage_units].nil?
+          assert_nil(duct_leakage_measurement.duct_leakage_units)
+        else
+          assert_equal(duct_leakage_measurement.duct_leakage_units, duct_leakage_measurements[idx][:duct_leakage_units])
+        end
+        if duct_leakage_measurements[idx][:duct_leakage_value].nil?
+          assert_nil(duct_leakage_measurement.duct_leakage_value)
+        else
+          assert_equal(duct_leakage_measurement.duct_leakage_value, duct_leakage_measurements[idx][:duct_leakage_value])
+        end
+        if duct_leakage_measurements[idx][:duct_leakage_total_or_to_outside].nil?
+          assert_nil(duct_leakage_measurement.duct_leakage_total_or_to_outside)
+        else
+          assert_equal(duct_leakage_measurement.duct_leakage_total_or_to_outside, duct_leakage_measurements[idx][:duct_leakage_total_or_to_outside])
+        end
+        idx += 1
       end
     end
-    assert_in_epsilon(leakage_sum, actual_sum, 0.01)
+  end
+
+  def _check_ducts(hpxml, ducts = [])
+    assert_equal(ducts.size, hpxml.hvac_distributions.map { |x| x.ducts.size }.inject(0, :+))
+    idx = 0
+    hpxml.hvac_distributions.each do |hvac_distribution|
+      hvac_distribution.ducts.each do |duct|
+        if ducts[idx][:duct_type].nil?
+          assert_nil(duct.duct_type)
+        else
+          assert_equal(duct.duct_type, ducts[idx][:duct_type])
+        end
+        if ducts[idx][:duct_area].nil?
+          assert_nil(duct.duct_surface_area)
+        else
+          assert_in_epsilon(Float(duct.duct_surface_area), ducts[idx][:duct_area], 0.01)
+        end
+        if ducts[idx][:duct_rvalue].nil?
+          assert_nil(duct.duct_insulation_r_value)
+        else
+          assert_equal(Float(duct.duct_insulation_r_value), ducts[idx][:duct_rvalue])
+        end
+        if ducts[idx][:duct_location].nil?
+          assert_nil(duct.duct_location)
+        else
+          assert_equal(duct.duct_location, ducts[idx][:duct_location])
+        end
+        idx += 1
+      end
+    end
   end
 end
