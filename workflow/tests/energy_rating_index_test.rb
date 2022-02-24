@@ -545,5 +545,4 @@ class EnergyRatingIndexTest < Minitest::Test
 
     return all_results
   end
-
 end

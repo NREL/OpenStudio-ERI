@@ -2185,6 +2185,7 @@ def create_sample_hpxmls
                   'base-hvac-boiler-propane-only.xml',
                   'base-hvac-central-ac-only-1-speed.xml',
                   'base-hvac-dse.xml',
+                  'base-hvac-ducts-leakage-cfm50.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml',
                   'base-hvac-elec-resistance-only.xml',
