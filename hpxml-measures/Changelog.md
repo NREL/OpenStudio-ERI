@@ -10,13 +10,15 @@ __New Features__
   - **Breaking change**: Changes the zip code argument name to `site_zip_code`.
   - Adds support for ambient foundations for single-family attached and apartment units.
   - Adds support for unconditioned attics for apartment units.
-  - Adds an optional argument to allow the HPXML file to be written with default values applied.
+  - Adds an optional argument for whether the HPXML file is written with default values applied; defaults to false.
+  - Adds an optional argument for whether the HPXML file is validated; defaults to false.
 - ReportSimulationOutput measure:
   - Add ability to include `TimeDST` and/or `TimeUTC` timestamp column(s) in results_timeseries.csv.
   - Timestamps in results_timeseries.csv are output in ISO 8601 standard format.
   - Allows user-specified annual/timeseries output file names.
 
 __Bugfixes__
+- Catches case where leap year is specified but weather file does not contain 8784 hours.
 - Fixes possible HVAC sizing error if design temperature difference (TD) is negative.
 - Fixes an error if there is a pool or hot tub, but the pump `Type` is set to "none".
 - Adds more decimal places in output files as needed for simulations with shorter timesteps and/or abbreviated run periods.
