@@ -362,11 +362,11 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
     ec_x_heat = rated_output[:elecHeating][rated_idx] + rated_output[:elecHeatingFansPumps][rated_idx] + rated_output[:gasHeating][rated_idx] + rated_output[:oilHeating][rated_idx] + rated_output[:propaneHeating][rated_idx] + rated_output[:woodcordHeating][rated_idx] + rated_output[:woodpelletsHeating][rated_idx]
     ec_r_heat = ref_output[:elecHeating][ref_idx] + ref_output[:elecHeatingFansPumps][ref_idx] + ref_output[:gasHeating][ref_idx] + ref_output[:oilHeating][ref_idx] + ref_output[:propaneHeating][ref_idx] + ref_output[:woodcordHeating][ref_idx] + ref_output[:woodpelletsHeating][ref_idx]
 
-    dse_r_heat = 0 # No longer used in ERI calculation
+    dse_r_heat = reul_heat / ec_r_heat * eec_r_heat
 
     nec_x_heat = 0
-    if eec_x_heat > 0
-      nec_x_heat = (coeff_heat_a * eec_x_heat - coeff_heat_b) * (ec_x_heat * eec_r_heat) / eec_x_heat
+    if eec_x_heat * reul_heat > 0
+      nec_x_heat = (coeff_heat_a * eec_x_heat - coeff_heat_b) * (ec_x_heat * ec_r_heat * dse_r_heat) / (eec_x_heat * reul_heat)
     end
 
     nmeul_heat = 0
@@ -416,11 +416,11 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
     ec_x_cool = rated_output[:elecCooling][rated_idx] + rated_output[:elecCoolingFansPumps][rated_idx]
     ec_r_cool = ref_output[:elecCooling][ref_idx] + ref_output[:elecCoolingFansPumps][ref_idx]
 
-    dse_r_cool = 0 # No longer used in ERI calculation
+    dse_r_cool = reul_cool / ec_r_cool * eec_r_cool
 
     nec_x_cool = 0
-    if eec_x_cool > 0
-      nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * eec_r_cool) / eec_x_cool
+    if eec_x_cool * reul_cool > 0
+      nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
     end
     # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and excluded from eul_la
     nec_x_cool += (rated_output[:elecWholeHouseFan] * reul_cool / tot_reul_cool)
@@ -473,11 +473,11 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   ec_x_dhw = rated_output[:elecHotWater].sum(0.0) + rated_output[:gasHotWater].sum(0.0) + rated_output[:oilHotWater].sum(0.0) + rated_output[:propaneHotWater].sum(0.0) + rated_output[:woodcordHotWater].sum(0.0) + rated_output[:woodpelletsHotWater].sum(0.0) + rated_output[:elecHotWaterRecircPump].sum(0.0) + rated_output[:elecHotWaterSolarThermalPump].sum(0.0)
   ec_r_dhw = ref_output[:elecHotWater][0] + ref_output[:gasHotWater][0] + ref_output[:oilHotWater][0] + ref_output[:propaneHotWater][0] + ref_output[:woodcordHotWater][0] + ref_output[:woodpelletsHotWater][0] + ref_output[:elecHotWaterRecircPump][0] + ref_output[:elecHotWaterSolarThermalPump][0]
 
-  dse_r_dhw = 0 # No longer used in ERI calculation
+  dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
 
   nec_x_dhw = 0
-  if eec_x_dhw > 0
-    nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * eec_r_dhw) / eec_x_dhw
+  if eec_x_dhw * reul_dhw > 0
+    nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * ec_r_dhw * dse_r_dhw) / (eec_x_dhw * reul_dhw)
   end
 
   nmeul_dhw = 0
