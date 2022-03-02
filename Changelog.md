@@ -7,7 +7,7 @@ __New Features__
 - Allows duct leakage to be entered in units of CFM50 as an alternative to CFM25.
 
 __Bugfixes__
-- **Breaking change**: Adds more stringent limits for `AirflowDefectRatio` (now allows values from 1/10th to 10x the design value).
+- Adds more stringent limits for `AirflowDefectRatio` (now allows values from 1/10th to 10x the design value).
 
 ## OpenStudio-ERI v1.3.0
 
