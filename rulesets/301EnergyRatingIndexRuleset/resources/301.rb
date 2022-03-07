@@ -2837,8 +2837,12 @@ class EnergyRatingIndex301Ruleset
     return if zip_code.size != 5
 
     begin
-      test_int = Integer(zip_code)
+      float_zip = Float(zip_code)
     rescue
+      return
+    end
+
+    if float_zip % 1 != 0
       return
     end
 
