@@ -155,9 +155,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
       run_log.each do |log_line|
         next unless log_line.include? 'OS Message:'
 
-        if xml.include? 'base-location-capetown-zaf.xml'
-          next if log_line.include?('OS Message: Minutes field (60) on line 9 of EPW file')
-        end
+        next if log_line.include?('OS Message: Minutes field (60) on line 9 of EPW file') # base-location-capetown-zaf.xml
 
         flunk "Unexpected warning found in #{log_dir} run.log: #{log_line}"
       end
