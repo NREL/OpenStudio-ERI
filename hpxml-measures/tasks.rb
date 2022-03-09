@@ -401,7 +401,7 @@ def create_hpxmls
       # Apply measure
       success = apply_measures(measures_dir, measures, runner, model)
 
-      # Report warnings/errors
+      # Report errors
       runner.result.stepErrors.each do |s|
         puts "Error: #{s}"
       end
@@ -444,19 +444,6 @@ def create_hpxmls
 
       XMLHelper.write_file(hpxml_doc, hpxml_path)
       hpxml_docs[File.basename(hpxml_file)] = deep_copy_object(hpxml_doc)
-
-      # Validate file against HPXML schema
-      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'HPXMLtoOpenStudio/resources/hpxml_schema'))
-      errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
-      if errors.size > 0
-        fail "ERRORS: #{errors}"
-      end
-
-      # Check for errors
-      errors = hpxml.check_for_errors()
-      if errors.size > 0
-        fail "ERRORS: #{errors}"
-      end
     rescue Exception => e
       puts "\n#{e}\n#{e.backtrace.join('\n')}"
       puts "\nError: Did not successfully generate #{hpxml_file}."
@@ -496,6 +483,7 @@ def set_measure_argument_values(hpxml_file, args, sch_args)
   else
     args['hpxml_path'] = "../workflow/sample_files/#{hpxml_file}"
   end
+  args['apply_validation'] = true
 
   if ['base.xml'].include? hpxml_file
     args['simulation_control_timestep'] = 60
@@ -2253,7 +2241,7 @@ def set_measure_argument_values(hpxml_file, args, sch_args)
     args['whole_house_fan_power'] = Constants.Auto
   elsif ['base-misc-emissions.xml'].include? hpxml_file
     args['emissions_scenario_names'] = 'Cambium Hourly MidCase LRMER RMPA, Cambium Hourly LowRECosts LRMER RMPA, Cambium Annual MidCase AER National, eGRID RMPA, eGRID RMPA'
-    args['emissions_types'] = 'CO2, CO2, CO2, SO2, NOx'
+    args['emissions_types'] = 'CO2e, CO2e, CO2e, SO2, NOx'
     args['emissions_electricity_units'] = 'kg/MWh, kg/MWh, kg/MWh, lb/MWh, lb/MWh'
     args['emissions_electricity_values_or_filepaths'] = '../../HPXMLtoOpenStudio/resources/data/cambium/LRMER_MidCase.csv, ../../HPXMLtoOpenStudio/resources/data/cambium/LRMER_LowRECosts.csv, 392.6, 0.384, 0.67'
     args['emissions_electricity_number_of_header_rows'] = '1, 1, , , '
@@ -2389,7 +2377,7 @@ def set_measure_argument_values(hpxml_file, args, sch_args)
 
   # Simulation Control
   if ['base-simcontrol-calendar-year-custom.xml'].include? hpxml_file
-    args['simulation_control_run_period_calendar_year'] = 2008
+    args['simulation_control_run_period_calendar_year'] = 2010
   elsif ['base-simcontrol-daylight-saving-custom.xml'].include? hpxml_file
     args['simulation_control_daylight_saving_enabled'] = true
     args['simulation_control_daylight_saving_period'] = 'Mar 10 - Nov 6'

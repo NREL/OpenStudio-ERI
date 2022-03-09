@@ -148,8 +148,11 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
                             'invalid-foundation-wall-properties' => ['Expected DepthBelowGrade to be less than or equal to Height [context: /HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall, id: "FoundationWall1"]',
                                                                      'Expected DistanceToBottomOfInsulation to be greater than or equal to DistanceToTopOfInsulation [context: /HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall/Insulation/Layer[InstallationType="continuous - exterior" or InstallationType="continuous - interior"], id: "FoundationWall1Insulation"]',
                                                                      'Expected DistanceToBottomOfInsulation to be less than or equal to ../../Height [context: /HPXML/Building/BuildingDetails/Enclosure/FoundationWalls/FoundationWall/Insulation/Layer[InstallationType="continuous - exterior" or InstallationType="continuous - interior"], id: "FoundationWall1Insulation"]'],
+                            'invalid-hvac-installation-quality' => ['Expected extension/AirflowDefectRatio to be greater than or equal to -0.9 [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"], id: "HeatPump1"]',
+                                                                    'Expected extension/ChargeDefectRatio to be greater than or equal to -0.9 [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"], id: "HeatPump1"]'],
+                            'invalid-hvac-installation-quality2' => ['Expected extension/AirflowDefectRatio to be less than or equal to 9 [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"], id: "HeatPump1"]',
+                                                                     'Expected extension/ChargeDefectRatio to be less than or equal to 9 [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatPump[HeatPumpType="air-to-air"], id: "HeatPump1"]'],
                             'invalid-id2' => ['Expected SystemIdentifier with id attribute [context: /HPXML/Building/BuildingDetails/Enclosure/Skylights/Skylight]'],
-                            'invalid-infiltration-volume' => ['Expected InfiltrationVolume to be greater than or equal to ../../../BuildingSummary/BuildingConstruction/ConditionedBuildingVolume [context: /HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM"]], id: "AirInfiltrationMeasurement1"]'],
                             'invalid-input-parameters' => ["Expected Transaction to be 'create' or 'update' [context: /HPXML/XMLTransactionHeaderInformation]",
                                                            "Expected SiteType to be 'rural' or 'suburban' or 'urban' [context: /HPXML/Building/BuildingDetails/BuildingSummary/Site]",
                                                            "Expected Year to be '2021' or '2018' or '2015' or '2012' or '2009' or '2006' or '2003' [context: /HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC]",
@@ -366,11 +369,16 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
         hpxml.foundation_walls[0].depth_below_grade = 9.0
         hpxml.foundation_walls[0].insulation_interior_distance_to_top = 12.0
         hpxml.foundation_walls[0].insulation_interior_distance_to_bottom = 10.0
+      elsif ['invalid-hvac-installation-quality'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-air-to-air-heat-pump-1-speed.xml'))
+        hpxml.heat_pumps[0].airflow_defect_ratio = -99
+        hpxml.heat_pumps[0].charge_defect_ratio = -99
+      elsif ['invalid-hvac-installation-quality2'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-air-to-air-heat-pump-1-speed.xml'))
+        hpxml.heat_pumps[0].airflow_defect_ratio = 99
+        hpxml.heat_pumps[0].charge_defect_ratio = 99
       elsif ['invalid-id2'].include? error_case
         hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-enclosure-skylights.xml'))
-      elsif ['invalid-infiltration-volume'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
-        hpxml.air_infiltration_measurements[0].infiltration_volume = 5400
       elsif ['invalid-input-parameters'].include? error_case
         hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
         hpxml.header.transaction = 'modify'
@@ -661,6 +669,7 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
                             'invalid-timestep' => ['Timestep (45) must be one of: 60, 30, 20, 15, 12, 10, 6, 5, 4, 3, 2, 1.'],
                             'invalid-runperiod' => ['Run Period End Day of Month (31) must be one of: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30.'],
                             'invalid-windows-physical-properties' => ["Could not lookup UFactor and SHGC for window 'Window3'."],
+                            'leap-year-TMY' => ['Specified a leap year (2008) but weather data has 8760 hours.'],
                             'net-area-negative-wall' => ["Calculated a negative net surface area for surface 'Wall1'."],
                             'net-area-negative-roof' => ["Calculated a negative net surface area for surface 'Roof1'."],
                             'orphaned-hvac-distribution' => ["Distribution system 'HVACDistribution1' found but no HVAC system attached to it."],
@@ -835,6 +844,9 @@ class HPXMLtoOpenStudioValidationTest < MiniTest::Test
       elsif ['invalid-windows-physical-properties'].include? error_case
         hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-enclosure-windows-physical-properties.xml'))
         hpxml.windows[2].thermal_break = false
+      elsif ['leap-year-TMY'].include? error_case
+        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-simcontrol-calendar-year-custom.xml'))
+        hpxml.header.sim_calendar_year = 2008
       elsif ['net-area-negative-roof'].include? error_case
         hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-enclosure-skylights.xml'))
         hpxml.skylights[0].area = 4000

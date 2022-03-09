@@ -99,11 +99,12 @@ EnergyPlus simulation controls are entered in ``/HPXML/SoftwareInfo/extension/Si
   ``BeginDayOfMonth``                 integer            1 - 31         No        1                            Run period start date
   ``EndMonth``                        integer            1 - 12         No        12 (December)                Run period end date
   ``EndDayOfMonth``                   integer            1 - 31         No        31                           Run period end date
-  ``CalendarYear``                    integer            > 1600         No        2007 (for TMY weather) [#]_  Calendar year (for start day of week)
+  ``CalendarYear``                    integer            > 1600 [#]_    No        2007 (for TMY weather) [#]_  Calendar year (for start day of week)
   ``DaylightSaving/Enabled``          boolean                           No        true                         Daylight savings enabled?
   ==================================  ========  =======  =============  ========  ===========================  =====================================
 
   .. [#] BeginMonth/BeginDayOfMonth date must occur before EndMonth/EndDayOfMonth date (e.g., a run period from 10/1 to 3/31 is invalid).
+  .. [#] If a leap year is specified (e.g., 2008), the EPW weather file must contain 8784 hours.
   .. [#] CalendarYear only applies to TMY (Typical Meteorological Year) weather. For AMY (Actual Meteorological Year) weather, the AMY year will be used regardless of what is specified.
 
 If daylight saving is enabled, additional information is specified in ``DaylightSaving``.
@@ -211,11 +212,11 @@ One or more emissions scenarios can be entered as an ``/HPXML/SoftwareInfo/exten
   Element                           Type      Units  Constraints  Required  Default   Notes
   ================================  ========  =====  ===========  ========  ========  ============================================================
   ``Name``                          string                        Yes                 Name of the scenario (which shows up in the output file)
-  ``EmissionsType``                 string           See [#]_     Yes                 Type of emissions (e.g., CO2)
+  ``EmissionsType``                 string           See [#]_     Yes                 Type of emissions (e.g., CO2e)
   ``EmissionsFactor``               element          >= 1         See [#]_            Emissions factor(s) for a given fuel type
   ================================  ========  =====  ===========  ========  ========  ============================================================
 
-  .. [#] EmissionsType can be anything. But if certain values are provided (e.g., "CO2"), then some emissions factors can be defaulted as described further below.
+  .. [#] EmissionsType can be anything. But if certain values are provided (e.g., "CO2e"), then some emissions factors can be defaulted as described further below.
   .. [#] EmissionsFactor is required for electricity and optional for all non-electric fuel types.
 
 See :ref:`annual_outputs` and :ref:`timeseries_outputs` for descriptions of how the calculated emissions appear in the output files.
@@ -265,20 +266,20 @@ For each scenario, fuel emissions factors can be optionally entered as an ``/HPX
 Default Values
 ~~~~~~~~~~~~~~
 
-If EmissionsType is "CO2", "NOx" or "SO2" and a given fuel's emissions factor is not entered, they will be defaulted as follows.
-Values are based on `EPA data <https://www.epa.gov/air-emissions-factors-and-quantification/ap-42-fifth-edition-volume-i-chapter-1-external-0>`_ and `EIA data <https://www.eia.gov/environment/emissions/co2_vol_mass.php>`_.
+If EmissionsType is "CO2e", "NOx" or "SO2" and a given fuel's emissions factor is not entered, they will be defaulted as follows.
+Values are based on ANSI/RESNET/ICC 301 and include both combustion and pre-combustion (e.g., methane leakage for natural gas) emissions.
 If no default value is available, a warning will be issued.
 
-  ============  =============  =============  =============
-  Fuel Type     CO2 [lb/MBtu]  NOx [lb/MBtu]  SO2 [lb/MBtu]
-  ============  =============  =============  =============
-  natural gas   117.6          0.0922         0.0006
-  propane       136.6          0.1421         0.0002
-  fuel oil      161.0          0.1300         0.0015
-  coal          211.1          --             --
-  wood          --             --             --
-  wood pellets  --             --             --
-  ============  =============  =============  =============
+  ============  ==============  =============  =============
+  Fuel Type     CO2e [lb/MBtu]  NOx [lb/MBtu]  SO2 [lb/MBtu]
+  ============  ==============  =============  =============
+  natural gas   147.3           0.0922         0.0006
+  propane       177.8           0.1421         0.0002
+  fuel oil      195.9           0.1300         0.0015
+  coal          --              --             --
+  wood          --              --             --
+  wood pellets  --              --             --
+  ============  ==============  =============  =============
 
 .. _buildingsite:
 
@@ -448,16 +449,16 @@ HPXML Air Infiltration
 
 Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
 
-  ====================================  ======  =====  ============================  =========  =========================  ===============================================
-  Element                               Type    Units  Constraints                   Required   Default                    Notes
-  ====================================  ======  =====  ============================  =========  =========================  ===============================================
-  ``SystemIdentifier``                  id                                           Yes                                   Unique identifier
-  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_                      Yes                                   Units for air leakage
-  ``HousePressure``                     double  Pa     > 0                           See [#]_                              House pressure with respect to outside [#]_
-  ``BuildingAirLeakage/AirLeakage``     double         > 0                           Yes                                   Value for air leakage
-  ``InfiltrationVolume``                double  ft3    >= ConditionedBuildingVolume  No         ConditionedBuildingVolume  Volume associated with infiltration measurement
-  ``InfiltrationHeight``                double  ft     > 0                           No         See [#]_                   Height associated with infiltration measurement [#]_
-  ====================================  ======  =====  ============================  =========  =========================  ===============================================
+  ====================================  ======  =====  ===========  =========  =========================  ===============================================
+  Element                               Type    Units  Constraints  Required   Default                    Notes
+  ====================================  ======  =====  ===========  =========  =========================  ===============================================
+  ``SystemIdentifier``                  id                          Yes                                   Unique identifier
+  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                                   Units for air leakage
+  ``HousePressure``                     double  Pa     > 0          See [#]_                              House pressure with respect to outside [#]_
+  ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                                   Value for air leakage
+  ``InfiltrationVolume``                double  ft3    > 0          No         ConditionedBuildingVolume  Volume associated with infiltration measurement
+  ``InfiltrationHeight``                double  ft     > 0          No         See [#]_                   Height associated with infiltration measurement [#]_
+  ====================================  ======  =====  ===========  =========  =========================  ===============================================
 
   .. [#] UnitofMeasure choices are "ACH" (air changes per hour at user-specified pressure), "CFM" (cubic feet per minute at user-specified pressure), or "ACHnatural" (natural air changes per hour).
   .. [#] HousePressure only required if BuildingAirLeakage/UnitofMeasure is not "ACHnatural".
@@ -1042,7 +1043,7 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
   ``DistributionSystem``                                                idref              See [#]_                    Yes                 ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value`` or ``YearInstalled``  double or integer  frac or #  0 - 1 or > 1600  Yes       See [#]_  Rated efficiency or Year installed
   ``extension/FanPowerWattsPerCFM``                                     double             W/cfm      >= 0             No        See [#]_  Fan efficiency at maximum airflow rate [#]_
-  ``extension/AirflowDefectRatio``                                      double             frac       > -1             No        0.0       Deviation between design/installed airflows [#]_
+  ``extension/AirflowDefectRatio``                                      double             frac       -0.9 - 9         No        0.0       Deviation between design/installed airflows [#]_
   ====================================================================  =================  =========  ===============  ========  ========  ================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity" or "gravity") or DSE.
@@ -1194,8 +1195,8 @@ If a central air conditioner is specified, additional information is entered in 
   ``SensibleHeatFraction``                                              double             frac         0 - 1            No                   Sensible heat fraction
   ``CompressorType``                                                    string                          See [#]_         No        See [#]_   Type of compressor
   ``extension/FanPowerWattsPerCFM``                                     double             W/cfm        >= 0             No        See [#]_   Fan efficiency at maximum airflow rate [#]_
-  ``extension/AirflowDefectRatio``                                      double             frac         > -1             No        0.0        Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                                       double             frac         > -1             No        0.0        Deviation between design/installed charges [#]_
+  ``extension/AirflowDefectRatio``                                      double             frac         -0.9 - 9         No        0.0        Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                                       double             frac         -0.9 - 9         No        0.0        Deviation between design/installed charges [#]_
   ====================================================================  =================  ===========  ===============  ========  =========  ================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
@@ -1265,8 +1266,8 @@ If a mini-split is specified, additional information is entered in ``CoolingSyst
   ``CoolingCapacity``                              double    Btu/hr  >= 0         No        autosized  Cooling output capacity
   ``SensibleHeatFraction``                         double    frac    0 - 1        No                   Sensible heat fraction
   ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Fan efficiency at maximum airflow rate
-  ``extension/AirflowDefectRatio``                 double    frac    > -1         No        0.0        Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double    frac    > -1         No        0.0        Deviation between design/installed charges [#]_
+  ``extension/AirflowDefectRatio``                 double    frac    -0.9 - 9     No        0.0        Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                  double    frac    -0.9 - 9     No        0.0        Deviation between design/installed charges [#]_
   ===============================================  ========  ======  ===========  ========  =========  ===============================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
@@ -1404,8 +1405,8 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   ``AnnualCoolingEfficiency[Units="SEER"]/Value`` or ``YearInstalled``  double or integer  Btu/Wh or #  > 0 or > 1600             Yes       See [#]_   Rated cooling efficiency or Year installed
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value`` or ``YearInstalled``  double or integer  Btu/Wh or #  > 0 or > 1600             Yes       See [#]_   Rated heating efficiency or Year installed
   ``extension/FanPowerWattsPerCFM``                                     double             W/cfm        >= 0                      No        See [#]_   Fan efficiency at maximum airflow rate
-  ``extension/AirflowDefectRatio``                                      double             frac         > -1                      No        0.0        Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                                       double             frac         > -1                      No        0.0        Deviation between design/installed charges [#]_
+  ``extension/AirflowDefectRatio``                                      double             frac         -0.9 - 9                  No        0.0        Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                                       double             frac         -0.9 - 9                  No        0.0        Deviation between design/installed charges [#]_
   ====================================================================  =================  ===========  ========================  ========  =========  =================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
@@ -1440,8 +1441,8 @@ If a mini-split heat pump is specified, additional information is entered in ``H
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double    Btu/Wh  > 0                       Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double    Btu/Wh  > 0                       Yes                  Rated heating efficiency
   ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0                      No        See [#]_   Fan efficiency at maximum airflow rate
-  ``extension/AirflowDefectRatio``                 double    frac    > -1                      No        0.0        Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double    frac    > -1                      No        0.0        Deviation between design/installed charges [#]_
+  ``extension/AirflowDefectRatio``                 double    frac    -0.9 - 9                  No        0.0        Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                  double    frac    -0.9 - 9                  No        0.0        Deviation between design/installed charges [#]_
   ===============================================  ========  ======  ========================  ========  =========  ==============================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
@@ -1496,8 +1497,8 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``extension/PumpPowerWattsPerTon``               double    W/ton   >= 0         No        See [#]_   Pump power [#]_
   ``extension/SharedLoopWatts``                    double    W       >= 0         See [#]_             Shared pump power [#]_
   ``extension/FanPowerWattsPerCFM``                double    W/cfm   >= 0         No        See [#]_   Fan efficiency at maximum airflow rate
-  ``extension/AirflowDefectRatio``                 double    frac    > -1         No        0.0        Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double    frac    > -1         No        0.0        Deviation between design/installed charges [#]_
+  ``extension/AirflowDefectRatio``                 double    frac    -0.9 - 9     No        0.0        Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                  double    frac    -0.9 - 9     No        0.0        Deviation between design/installed charges [#]_
   ===============================================  ========  ======  ===========  ========  =========  ==============================================
 
   .. [#] IsSharedSystem should be true if the SFA/MF building has multiple ground source heat pumps connected to a shared hydronic circulation loop.
