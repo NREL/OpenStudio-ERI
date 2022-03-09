@@ -2887,6 +2887,12 @@ class EnergyRatingIndex301Ruleset
 
     # CO2 Emissions Scenario
     # FIXME: What about wood?
+
+    # FIXME: Different values for 2019 vs 2022?
+    natural_gas_value = 147.3
+    propane_value = 177.8
+    fuel_oil_value = 195.9
+
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
       # Use 2021 Cambium database for electricity
 
@@ -2913,11 +2919,11 @@ class EnergyRatingIndex301Ruleset
                                                  elec_schedule_number_of_header_rows: 4,
                                                  elec_schedule_column_number: col_num,
                                                  natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 natural_gas_value: 117.6,
+                                                 natural_gas_value: natural_gas_value,
                                                  propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 propane_value: 136.6,
+                                                 propane_value: propane_value,
                                                  fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 fuel_oil_value: 161.0)
+                                                 fuel_oil_value: fuel_oil_value)
       end
     else
       # Use EPA's 2019 eGrid database for electricity
@@ -2928,11 +2934,11 @@ class EnergyRatingIndex301Ruleset
                                                  elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
                                                  elec_value: annual_elec_co2_value,
                                                  natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 natural_gas_value: 117.6,
+                                                 natural_gas_value: natural_gas_value,
                                                  propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 propane_value: 136.6,
+                                                 propane_value: propane_value,
                                                  fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 fuel_oil_value: 161.0)
+                                                 fuel_oil_value: fuel_oil_value)
       end
     end
 
