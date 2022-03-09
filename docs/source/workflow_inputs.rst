@@ -592,7 +592,7 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
   ``DistributionSystem``                           idref          See [#]_     Yes                  ID of attached distribution system
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double  frac   0 - 1        Yes                  Rated efficiency
   ``extension/FanPowerWattsPerCFM``                double  W/cfm  >= 0 [#]_    Yes                  Fan power [#]_
-  ``extension/AirflowDefectRatio``                 double  frac   > -1         Yes                  Deviation between design/installed airflows [#]_
+  ``extension/AirflowDefectRatio``                 double  frac   -0.9 - 9     Yes                  Deviation between design/installed airflows [#]_
   ===============================================  ======  =====  ===========  ========  =========  ================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity" or "gravity") or DSE.
@@ -750,7 +750,7 @@ If a central air conditioner is specified, additional information is entered in 
   ``SensibleHeatFraction``                         double  frac    0 - 1           No                   Sensible heat fraction
   ``CompressorType``                               string          See [#]_        No        See [#]_   Type of compressor
   ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0 [#]_       Yes                  Fan power [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    > -1            Yes                  Deviation between design/installed airflows [#]_
+  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9        Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ==============  ========  =========  ================================================
 
@@ -826,7 +826,7 @@ If a mini-split is specified, additional information is entered in ``CoolingSyst
   ``CoolingCapacity``                              double  Btu/hr  >= 0            Yes                Cooling output capacity
   ``SensibleHeatFraction``                         double  frac    0 - 1           No                 Sensible heat fraction
   ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0            Yes                Fan power [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    > -1            Yes                Deviation between design/installed airflows [#]_
+  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9        Yes                Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ==============  ========  =======  ================================================
 
@@ -945,7 +945,7 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
   ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    > -1                      Yes                  Deviation between design/installed airflows [#]_
+  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9                  Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ========================  ========  =========  ================================================
 
@@ -987,7 +987,7 @@ If a mini-split heat pump is specified, additional information is entered in ``H
   ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
   ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Fan power [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    > -1                      Yes                  Deviation between design/installed airflows [#]_
+  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9                  Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
   ===============================================  ======  ======  ========================  ========  =========  ================================================
 
@@ -1051,7 +1051,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``extension/SharedLoopWatts``                   double   W       >= 0            See [#]_             Shared pump power [#]_
   ``extension/SharedLoopMotorEfficiency``         double   frac    0 - 1           No        0.85 [#]_  Shared loop motor efficiency
   ``extension/FanPowerWattsPerCFM``               double   W/cfm   >= 0            Yes                  Fan power [#]_
-  ``extension/AirflowDefectRatio``                double   frac    > -1            Yes                  Deviation between design/installed airflows [#]_
+  ``extension/AirflowDefectRatio``                double   frac    -0.9 - 9        Yes                  Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                 double   frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
   ==============================================  =======  ======  ==============  ========  =========  ================================================
 
@@ -1168,12 +1168,13 @@ When provided, supply and return leakage to the outside are each entered as a ``
   Element                           Type     Units    Constraints  Required  Default    Notes
   ================================  =======  =======  ===========  ========  =========  =========================================================
   ``DuctType``                      string            See [#]_     Yes                  Supply or return ducts
-  ``DuctLeakage/Units``             string            CFM25        Yes                  Duct leakage units
+  ``DuctLeakage/Units``             string            See [#]_     Yes                  Duct leakage units
   ``DuctLeakage/Value``             double            >= 0         Yes                  Duct leakage value [#]_
   ``DuctLeakage/TotalOrToOutside``  string            to outside   Yes                  Type of duct leakage (outside conditioned space vs total)
   ================================  =======  =======  ===========  ========  =========  =========================================================
   
   .. [#] DuctType choices are "supply" or "return".
+  .. [#] Units choices are "CFM25" or "CFM50".
   .. [#] If the HVAC system has no return ducts (e.g., a ducted evaporative cooler), use zero for the Value.
 
 .. note::

@@ -169,8 +169,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -194,8 +194,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -219,8 +219,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -244,8 +244,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -269,8 +269,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       next unless ESConstants.NationalVersions.include?(es_version)
 
@@ -298,8 +298,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -323,8 +323,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       next unless ESConstants.NationalVersions.include?(es_version)
 
@@ -352,8 +352,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -377,8 +377,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -402,8 +402,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -427,8 +427,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -452,8 +452,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       next unless ESConstants.NationalVersions.include?(es_version)
 
@@ -481,8 +481,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -506,8 +506,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -531,8 +531,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -556,8 +556,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -582,8 +582,8 @@ class EnergyStarHVACtest < MiniTest::Test
           _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                                { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
         end
-        _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                    { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                    { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       end
     end
   end
@@ -608,8 +608,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -633,8 +633,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }] * 2)
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }] * 2)
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }] * 2)
     end
   end
 
@@ -658,8 +658,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -683,8 +683,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -708,8 +708,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 135.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -733,8 +733,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       _convert_to_es('base-foundation-multiple.xml', es_version)
       hpxml = _test_measure()
@@ -755,8 +755,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 364.5, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 67.5, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       _convert_to_es('base-foundation-ambient.xml', es_version)
       hpxml = _test_measure()
@@ -777,8 +777,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 364.5, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 67.5, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # Test w/ 2 stories
       _convert_to_es('base-enclosure-2stories.xml', es_version)
@@ -802,8 +802,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 1093.51, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 607.51, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # Test w/ 2 stories
       _convert_to_es('base-foundation-multiple.xml', es_version)
@@ -831,8 +831,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.51, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # Test w/ 2 stories
       _convert_to_es('base-foundation-ambient.xml', es_version)
@@ -860,8 +860,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.51, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -911,8 +911,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -970,8 +970,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # test with heating capacity less than 300,000 Btuh
       _convert_to_es(hpxml_name, es_version)
@@ -997,8 +997,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1021,8 +1021,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # test with heating capacity less than 300,000 Btuh
       _convert_to_es(hpxml_name, es_version)
@@ -1048,8 +1048,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1072,8 +1072,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # test w/ heating capacity less than 300,000 Btuh
       _convert_to_es(hpxml_name, es_version)
@@ -1099,8 +1099,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1135,8 +1135,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1157,8 +1157,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1179,8 +1179,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1201,8 +1201,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1224,8 +1224,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       next unless ESConstants.NationalVersions.include?(es_version)
 
@@ -1250,8 +1250,8 @@ class EnergyStarHVACtest < MiniTest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       end
-      _check_duct_leakage(hpxml, [{ duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1593,6 +1593,11 @@ class EnergyStarHVACtest < MiniTest::Test
     idx = 0
     hpxml.hvac_distributions.each do |hvac_distribution|
       hvac_distribution.duct_leakage_measurements.each do |duct_leakage_measurement|
+        if duct_leakage_measurements[idx][:duct_type].nil?
+          assert_nil(duct_leakage_measurement.duct_type)
+        else
+          assert_equal(duct_leakage_measurement.duct_type, duct_leakage_measurements[idx][:duct_type])
+        end
         if duct_leakage_measurements[idx][:duct_leakage_units].nil?
           assert_nil(duct_leakage_measurement.duct_leakage_units)
         else

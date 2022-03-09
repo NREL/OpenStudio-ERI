@@ -388,7 +388,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.absolute_path(__FILE__)} --name=foo"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.absolute_path(__FILE__)} --name=test_weather_cache"
     success = system(command)
     assert(success)
   end

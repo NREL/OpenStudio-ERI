@@ -13,6 +13,8 @@ The project supports:
 - ANSI/RESNET/ICC 301© Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
 - ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path
 
+For more information on running simulations, generating HPXML files, etc., please visit the [documentation](https://openstudio-eri.readthedocs.io/en/latest).
+
 ## License
 
 This workflow is available under a BSD-3-like license, which is a free, open-source, and permissive license.
