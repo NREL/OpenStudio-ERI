@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2019AB</Version>
+        <Version>2019ABCDE</Version>
       </ERICalculation>
       <EnergyStarCalculation>
         <Version>SF_National_3.1</Version>
@@ -25,6 +25,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
+        <ZipCode>80206</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>

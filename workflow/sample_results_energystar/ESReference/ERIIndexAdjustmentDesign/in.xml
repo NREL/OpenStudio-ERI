@@ -3,13 +3,13 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2021-11-10T08:59:59-07:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2022-03-11T11:43:44-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2019AB</Version>
+        <Version>2019ABCDE</Version>
         <Design>ERI Index Adjustment Design</Design>
       </ERICalculation>
       <SimulationControl>
@@ -39,7 +39,11 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
+        <ZipCode>80206</ZipCode>
       </Address>
+      <TimeZone>
+        <UTCOffset dataSource='software'>-7.0</UTCOffset>
+      </TimeZone>
     </Site>
     <ProjectStatus>
       <EventType>proposed workscope</EventType>
@@ -99,8 +103,8 @@
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>20400.0</InfiltrationVolume>
+            <InfiltrationHeight>17.0</InfiltrationHeight>
             <extension>
-              <InfiltrationHeight>17.0</InfiltrationHeight>
               <Aext>1.0</Aext>
             </extension>
           </AirInfiltrationMeasurement>

@@ -8639,14 +8639,19 @@ ScheduleTypeLimits,
   availability;                           !- Unit Type
 
 Schedule:Constant,
-  Always Off Discrete,                    !- Name
-  OnOff 1,                                !- Schedule Type Limits Name
+  central ac auto fan schedule,           !- Name
+  OnOff,                                  !- Schedule Type Limits Name
   0;                                      !- Hourly Value
 
 Schedule:Constant,
   dhw temp,                               !- Name
   Temperature,                            !- Schedule Type Limits Name
   52.6666666666667;                       !- Hourly Value
+
+Schedule:Constant,
+  furnace auto fan schedule,              !- Name
+  OnOff,                                  !- Schedule Type Limits Name
+  0;                                      !- Hourly Value
 
 Schedule:Constant,
   mixed water temperature schedule,       !- Name
@@ -11937,7 +11942,7 @@ AirLoopHVAC:UnitarySystem,
   Fan:SystemModel,                        !- Supply Fan Object Type
   central ac supply fan,                  !- Supply Fan Name
   BlowThrough,                            !- Fan Placement
-  Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
+  central ac auto fan schedule,           !- Supply Air Fan Operating Mode Schedule Name
   ,                                       !- Heating Coil Object Type
   ,                                       !- Heating Coil Name
   1,                                      !- DX Heating Coil Sizing Ratio
@@ -12204,7 +12209,7 @@ AirLoopHVAC:UnitarySystem,
   Fan:SystemModel,                        !- Supply Fan Object Type
   furnace supply fan,                     !- Supply Fan Name
   BlowThrough,                            !- Fan Placement
-  Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
+  furnace auto fan schedule,              !- Supply Air Fan Operating Mode Schedule Name
   Coil:Heating:Fuel,                      !- Heating Coil Object Type
   furnace htg coil,                       !- Heating Coil Name
   1,                                      !- DX Heating Coil Sizing Ratio
@@ -14553,6 +14558,11 @@ Output:Variable,
   hourly;                                 !- Reporting Frequency
 
 Output:Variable,
+  EMS,                                    !- Key Value
+  furnace supply fan htg primary disaggregate, !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
   CENTRAL AC CLG COIL,                    !- Key Value
   Cooling Coil Electricity Energy,        !- Variable Name
   runperiod;                              !- Reporting Frequency
@@ -14564,8 +14574,18 @@ Output:Variable,
 
 Output:Variable,
   CENTRAL AC CLG COIL,                    !- Key Value
+  Cooling Coil Electricity Energy,        !- Variable Name
+  hourly;                                 !- Reporting Frequency
+
+Output:Variable,
+  CENTRAL AC CLG COIL,                    !- Key Value
   Cooling Coil Crankcase Heater Electricity Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  CENTRAL AC CLG COIL,                    !- Key Value
+  Cooling Coil Crankcase Heater Electricity Energy, !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   CENTRAL AC CLG COIL,                    !- Key Value
@@ -14576,6 +14596,11 @@ Output:Variable,
   EMS,                                    !- Key Value
   central ac supply fan clg disaggregate, !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  EMS,                                    !- Key Value
+  central ac supply fan clg disaggregate, !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   EMS,                                    !- Key Value
@@ -14586,6 +14611,11 @@ Output:Variable,
   EMS,                                    !- Key Value
   water heater EC adjustment outvar,      !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  EMS,                                    !- Key Value
+  water heater EC adjustment outvar,      !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   EMS,                                    !- Key Value
@@ -14596,6 +14626,11 @@ Output:Variable,
   WATER HEATER,                           !- Key Value
   Water Heater Electricity Energy,        !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  WATER HEATER,                           !- Key Value
+  Water Heater Electricity Energy,        !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   WATER HEATER,                           !- Key Value
@@ -14606,6 +14641,11 @@ Output:Variable,
   WATER HEATER,                           !- Key Value
   Water Heater Off Cycle Parasitic Electricity Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  WATER HEATER,                           !- Key Value
+  Water Heater Off Cycle Parasitic Electricity Energy, !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   WATER HEATER,                           !- Key Value
@@ -14616,6 +14656,11 @@ Output:Variable,
   WATER HEATER,                           !- Key Value
   Water Heater On Cycle Parasitic Electricity Energy, !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  WATER HEATER,                           !- Key Value
+  Water Heater On Cycle Parasitic Electricity Energy, !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   WATER HEATER,                           !- Key Value
@@ -14626,6 +14671,11 @@ Output:Variable,
   INTERIOR LIGHTING,                      !- Key Value
   Lights Electricity Energy,              !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  INTERIOR LIGHTING,                      !- Key Value
+  Lights Electricity Energy,              !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   INTERIOR LIGHTING,                      !- Key Value
@@ -14636,6 +14686,11 @@ Output:Variable,
   EXTERIOR LIGHTING,                      !- Key Value
   Exterior Lights Electricity Energy,     !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  EXTERIOR LIGHTING,                      !- Key Value
+  Exterior Lights Electricity Energy,     !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   EXTERIOR LIGHTING,                      !- Key Value
@@ -14646,6 +14701,11 @@ Output:Variable,
   MECH VENT HOUSE FAN CFIS,               !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  MECH VENT HOUSE FAN CFIS,               !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   MECH VENT HOUSE FAN CFIS,               !- Key Value
@@ -14656,6 +14716,11 @@ Output:Variable,
   MECH VENT HOUSE FAN,                    !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  MECH VENT HOUSE FAN,                    !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   MECH VENT HOUSE FAN,                    !- Key Value
@@ -14666,6 +14731,11 @@ Output:Variable,
   WHOLE HOUSE FAN,                        !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  WHOLE HOUSE FAN,                        !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   WHOLE HOUSE FAN,                        !- Key Value
@@ -14676,6 +14746,11 @@ Output:Variable,
   FRIDGE,                                 !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  FRIDGE,                                 !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   FRIDGE,                                 !- Key Value
@@ -14686,6 +14761,11 @@ Output:Variable,
   DISHWASHER,                             !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  DISHWASHER,                             !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   DISHWASHER,                             !- Key Value
@@ -14696,6 +14776,11 @@ Output:Variable,
   CLOTHES WASHER,                         !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  CLOTHES WASHER,                         !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   CLOTHES WASHER,                         !- Key Value
@@ -14706,6 +14791,11 @@ Output:Variable,
   CLOTHES DRYER,                          !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  CLOTHES DRYER,                          !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   CLOTHES DRYER,                          !- Key Value
@@ -14716,6 +14806,11 @@ Output:Variable,
   COOKING RANGE,                          !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  COOKING RANGE,                          !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   COOKING RANGE,                          !- Key Value
@@ -14726,6 +14821,11 @@ Output:Variable,
   MISC TV,                                !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  MISC TV,                                !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   MISC TV,                                !- Key Value
@@ -14736,6 +14836,11 @@ Output:Variable,
   MISC PLUG LOADS,                        !- Key Value
   Electric Equipment Electricity Energy,  !- Variable Name
   runperiod;                              !- Reporting Frequency
+
+Output:Variable,
+  MISC PLUG LOADS,                        !- Key Value
+  Electric Equipment Electricity Energy,  !- Variable Name
+  hourly;                                 !- Reporting Frequency
 
 Output:Variable,
   MISC PLUG LOADS,                        !- Key Value

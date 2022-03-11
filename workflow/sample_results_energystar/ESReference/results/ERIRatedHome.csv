@@ -69,6 +69,31 @@ End Use: Coal: Range/Oven (MBtu),0.0
 End Use: Coal: Mech Vent Preheating (MBtu),0.0
 End Use: Coal: Generator (MBtu),0.0
 
+Emissions: CO2: RESNET: Total (lb),9577.77
+Emissions: CO2: RESNET: Electricity (lb),7360.82
+Emissions: CO2: RESNET: Natural Gas (lb),2216.95
+Emissions: CO2: RESNET: Fuel Oil (lb),0.0
+Emissions: CO2: RESNET: Propane (lb),0.0
+Emissions: CO2: RESNET: Wood Cord (lb),0.0
+Emissions: CO2: RESNET: Wood Pellets (lb),0.0
+Emissions: CO2: RESNET: Coal (lb),0.0
+Emissions: NOx: RESNET: Total (lb),9.28
+Emissions: NOx: RESNET: Electricity (lb),7.54
+Emissions: NOx: RESNET: Natural Gas (lb),1.74
+Emissions: NOx: RESNET: Fuel Oil (lb),0.0
+Emissions: NOx: RESNET: Propane (lb),0.0
+Emissions: NOx: RESNET: Wood Cord (lb),0.0
+Emissions: NOx: RESNET: Wood Pellets (lb),0.0
+Emissions: NOx: RESNET: Coal (lb),0.0
+Emissions: SO2: RESNET: Total (lb),4.32
+Emissions: SO2: RESNET: Electricity (lb),4.31
+Emissions: SO2: RESNET: Natural Gas (lb),0.01
+Emissions: SO2: RESNET: Fuel Oil (lb),0.0
+Emissions: SO2: RESNET: Propane (lb),0.0
+Emissions: SO2: RESNET: Wood Cord (lb),0.0
+Emissions: SO2: RESNET: Wood Pellets (lb),0.0
+Emissions: SO2: RESNET: Coal (lb),0.0
+
 Load: Heating: Delivered (MBtu),18.43
 Load: Cooling: Delivered (MBtu),5.85
 Load: Hot Water: Delivered (MBtu),10.0

@@ -8386,14 +8386,19 @@ ScheduleTypeLimits,
   availability;                           !- Unit Type
 
 Schedule:Constant,
-  Always Off Discrete,                    !- Name
-  OnOff 1,                                !- Schedule Type Limits Name
+  central ac auto fan schedule,           !- Name
+  OnOff,                                  !- Schedule Type Limits Name
   0;                                      !- Hourly Value
 
 Schedule:Constant,
   dhw temp,                               !- Name
   Temperature,                            !- Schedule Type Limits Name
   52.6666666666667;                       !- Hourly Value
+
+Schedule:Constant,
+  furnace auto fan schedule,              !- Name
+  OnOff,                                  !- Schedule Type Limits Name
+  0;                                      !- Hourly Value
 
 Schedule:Constant,
   mixed water temperature schedule,       !- Name
@@ -11684,7 +11689,7 @@ AirLoopHVAC:UnitarySystem,
   Fan:SystemModel,                        !- Supply Fan Object Type
   central ac supply fan,                  !- Supply Fan Name
   BlowThrough,                            !- Fan Placement
-  Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
+  central ac auto fan schedule,           !- Supply Air Fan Operating Mode Schedule Name
   ,                                       !- Heating Coil Object Type
   ,                                       !- Heating Coil Name
   1,                                      !- DX Heating Coil Sizing Ratio
@@ -11951,7 +11956,7 @@ AirLoopHVAC:UnitarySystem,
   Fan:SystemModel,                        !- Supply Fan Object Type
   furnace supply fan,                     !- Supply Fan Name
   BlowThrough,                            !- Fan Placement
-  Always Off Discrete,                    !- Supply Air Fan Operating Mode Schedule Name
+  furnace auto fan schedule,              !- Supply Air Fan Operating Mode Schedule Name
   Coil:Heating:Fuel,                      !- Heating Coil Object Type
   furnace htg coil,                       !- Heating Coil Name
   1,                                      !- DX Heating Coil Sizing Ratio
