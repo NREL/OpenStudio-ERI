@@ -2922,9 +2922,9 @@ class EnergyRatingIndex301Ruleset
       co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
                      HPXML::FuelTypeOil => 159.4,
                      HPXML::FuelTypePropane => 136.4 }
-      nox_values = { HPXML::FuelTypeNaturalGas => 93.0,
-                     HPXML::FuelTypeOil => 127.8,
-                     HPXML::FuelTypePropane => 153.4 }
+      nox_values = { HPXML::FuelTypeNaturalGas => 0.093,
+                     HPXML::FuelTypeOil => 0.1278,
+                     HPXML::FuelTypePropane => 0.1534 }
       so2_values = { HPXML::FuelTypeNaturalGas => 0.0000,
                      HPXML::FuelTypeOil => 0.5066,
                      HPXML::FuelTypePropane => 0.0163 }
@@ -2954,7 +2954,7 @@ class EnergyRatingIndex301Ruleset
     else # Before 301-2019 Addendum D
       # Use EPA's eGrid database for electricity
       if not egrid_subregion.nil?
-        annual_elec_co2_value = lookup_egrid_value(egrid_subregion, 0, 1)
+        annual_elec_co2_value = lookup_egrid_value(egrid_subregion, 0, 1) # lb/mWh
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2',
                                                  elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
@@ -2970,7 +2970,7 @@ class EnergyRatingIndex301Ruleset
 
     # NOx Emissions Scenario
     if not egrid_subregion.nil?
-      elec_nox_value = lookup_egrid_value(egrid_subregion, 0, 5)
+      elec_nox_value = lookup_egrid_value(egrid_subregion, 0, 5) # lb/mWh
       new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                emissions_type: 'NOx',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
@@ -2985,7 +2985,7 @@ class EnergyRatingIndex301Ruleset
 
     # SO2 Emissions Scenario
     if not egrid_subregion.nil?
-      elec_so2_value = lookup_egrid_value(egrid_subregion, 0, 7)
+      elec_so2_value = lookup_egrid_value(egrid_subregion, 0, 7) # lb/mWh
       new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                emissions_type: 'SO2',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
