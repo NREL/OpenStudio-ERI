@@ -25,6 +25,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>FL</StateCode>
+        <ZipCode>33134</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>

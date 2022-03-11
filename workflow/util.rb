@@ -14,7 +14,7 @@ def setup_resultsdir(options)
 end
 
 def process_arguments(calling_rb, args, basedir)
-  timeseries_types = ['ALL', 'fuels', 'enduses', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
+  timeseries_types = ['ALL', 'fuels', 'enduses', 'emissions', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
 
   options = {}
   OptionParser.new do |opts|
@@ -29,17 +29,17 @@ def process_arguments(calling_rb, args, basedir)
     end
 
     options[:hourly_outputs] = []
-    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
       options[:hourly_outputs] << t
     end
 
     options[:daily_outputs] = []
-    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
       options[:daily_outputs] << t
     end
 
     options[:monthly_outputs] = []
-    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types[0..4].join(', ')},", "#{timeseries_types[5..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
       options[:monthly_outputs] << t
     end
 
@@ -209,7 +209,10 @@ def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeser
 end
 
 def timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
-  if [Constants.CalcTypeERIRatedHome, Constants.CalcTypeERIReferenceHome].include? run[0]
+  if [Constants.CalcTypeERIRatedHome,
+      Constants.CalcTypeERIReferenceHome,
+      Constants.CalcTypeCO2RatedHome,
+      Constants.CalcTypeCO2ReferenceHome].include? run[0]
     return timeseries_output_freq, timeseries_outputs
   end
 
@@ -346,13 +349,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
 
   rated_output[:hpxml_heat_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_heat_sys_ids].index(sys_id)
-    fail 'Data not in sync.' if ref_idx.nil?
 
     reul_heat = ref_output[:loadHeatingDelivered][ref_idx]
-
-    if (ref_output[:hpxml_heat_fuels][ref_idx] == HPXML::FuelTypeElectricity) != (rated_output[:hpxml_heat_fuels][rated_idx] == HPXML::FuelTypeElectricity)
-      fail 'Data not in sync.'
-    end
 
     coeff_heat_a, coeff_heat_b = get_heating_coefficients(ref_output[:hpxml_heat_fuels][ref_idx])
 
@@ -404,7 +402,6 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   tot_reul_cool = ref_output[:loadCoolingDelivered].sum(0.0)
   rated_output[:hpxml_cool_sys_ids].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output[:hpxml_cool_sys_ids].index(sys_id)
-    fail 'Data not in sync.' if ref_idx.nil?
 
     reul_cool = ref_output[:loadCoolingDelivered][ref_idx]
 
@@ -584,8 +581,22 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   return results
 end
 
-def calculate_eri(design_outputs, resultsdir, opp_reduction_limit: nil)
-  if design_outputs.size == 4
+def _calculate_co2_index(eri_version, rated_output, ref_output, results)
+  results[:aco2] = rated_output[:co2RESNETTotal]
+  results[:arco2] = ref_output[:co2RESNETTotal]
+  if (not results[:aco2].nil?) && (not results[:arco2].nil?)
+    # FIXME: Uncomment for 301-2022 Addendum ?
+    # if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022XX'))
+    #   results[:co2index] = results[:aco2] / (results[:arco2] * results[:iaf_rh]) * 100.0
+    # else # 301-2019 Addendum D or newer, IAF not applied
+    results[:co2index] = results[:aco2] / (results[:arco2]) * 100.0
+    # end
+  end
+  return results
+end
+
+def calculate_eri(design_outputs, resultsdir, eri_version: nil, opp_reduction_limit: nil)
+  if design_outputs.keys.include? Constants.CalcTypeERIIndexAdjustmentDesign
     results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
                                  design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome],
                                  opp_reduction_limit: opp_reduction_limit)
@@ -598,15 +609,22 @@ def calculate_eri(design_outputs, resultsdir, opp_reduction_limit: nil)
                            results_iad: results_iad,
                            opp_reduction_limit: opp_reduction_limit)
 
-  write_results(results, resultsdir, design_outputs, results_iad)
+  if design_outputs.keys.include? Constants.CalcTypeCO2RatedHome
+    results = _calculate_co2_index(eri_version,
+                                   design_outputs[Constants.CalcTypeCO2RatedHome],
+                                   design_outputs[Constants.CalcTypeCO2ReferenceHome],
+                                   results)
+  end
+
+  write_eri_results(results, resultsdir, design_outputs, results_iad, eri_version)
 
   return results
 end
 
-def write_results(results, resultsdir, design_outputs, results_iad)
+def write_eri_results(results, resultsdir, design_outputs, results_iad, eri_version)
   ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
 
-  # Results file
+  # ERI Results file
   results_csv = File.join(resultsdir, 'ERI_Results.csv')
   results_out = []
   results_out << ['ERI', results[:eri].round(2)]
@@ -627,7 +645,7 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 
-  # Worksheet file
+  # ERI Worksheet file
   worksheet_csv = File.join(resultsdir, 'ERI_Worksheet.csv')
   worksheet_out = []
   worksheet_out << ['Coeff Heating a', results[:coeff_heat_a].map { |x| x.round(4) }.join(',')]
@@ -693,6 +711,20 @@ def write_results(results, resultsdir, design_outputs, results_iad)
   worksheet_out << ['Ref L&A ceilFan', ref_output[:elecCeilingFan].round(2)]
   worksheet_out << ['Ref L&A total', results[:reul_la].round(2)]
   CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
+
+  # CO2 Results file
+  if not results[:co2index].nil?
+    results_csv = File.join(resultsdir, 'CO2_Results.csv')
+    results_out = []
+    results_out << ['CO2 Rating Index', results[:co2index].round(2)]
+    results_out << ['ACO2 (lb CO2)', results[:aco2].round(2)]
+    results_out << ['ARCO2 (lb CO2)', results[:arco2].round(2)]
+    # FIXME: Uncomment for 301-2022 Addendum ?
+    # if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022XX'))
+    #  results_out << ['IAF RH', results[:iaf_rh].round(4)]
+    # end
+    CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+  end
 end
 
 def download_epws

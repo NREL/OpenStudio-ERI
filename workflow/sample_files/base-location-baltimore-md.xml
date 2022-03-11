@@ -25,6 +25,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>MD</StateCode>
+        <ZipCode>21221</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>

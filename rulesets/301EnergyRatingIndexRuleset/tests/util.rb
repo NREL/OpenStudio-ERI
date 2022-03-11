@@ -19,5 +19,6 @@ def _all_calc_types()
   return [Constants.CalcTypeERIReferenceHome,
           Constants.CalcTypeERIRatedHome,
           Constants.CalcTypeERIIndexAdjustmentDesign,
-          Constants.CalcTypeERIIndexAdjustmentReferenceHome]
+          Constants.CalcTypeERIIndexAdjustmentReferenceHome,
+          Constants.CalcTypeCO2ReferenceHome]
 end

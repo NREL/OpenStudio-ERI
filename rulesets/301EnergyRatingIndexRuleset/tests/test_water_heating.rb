@@ -22,7 +22,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
@@ -40,7 +40,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.93, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 30, uef: 0.93, fhr: 46.0, n_units_served: 1 }])
@@ -81,7 +81,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementUnconditioned, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 88.5)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
@@ -99,7 +99,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_fixtures(hpxml, low_flow_shower: false, low_flow_faucet: false)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_fixtures(hpxml, low_flow_shower: true, low_flow_faucet: true)
@@ -114,7 +114,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeRecirc, pipe_r: 3.0, recirc_control: HPXML::DHWRecirControlTypeSensor, recirc_loop_l: 50, recirc_branch_l: 50, recirc_pump_power: 50)
@@ -137,7 +137,9 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.9, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.59, n_units_served: 1 }])
@@ -152,7 +154,9 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.93, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.61, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 30, uef: 0.59, fhr: 56, n_units_served: 1 }])
@@ -167,7 +171,9 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.9, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.59, n_units_served: 1, jacket_r: 10 }])
@@ -190,7 +196,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 80, ef: 0.8644, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 80, ef: 2.3, n_units_served: 1 }])
@@ -205,7 +211,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.9, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, uef: 3.75, fhr: 56, n_units_served: 1 }])
@@ -226,7 +232,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, ef: 0.99, n_units_served: 1 }])
@@ -241,7 +247,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, uef: 0.98, n_units_served: 1 }])
@@ -262,7 +268,9 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.92, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, ef: 0.82, n_units_served: 1 }])
@@ -277,7 +285,9 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.92, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, uef: 0.93, n_units_served: 1 }])
@@ -292,7 +302,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.95, n_units_served: 1 },
@@ -326,7 +336,9 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.9, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeCombiStorage, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss: 1.0 }])
@@ -341,7 +353,9 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.92, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeCombiTankless, setpoint: 125.0, location: HPXML::LocationLivingSpace, n_units_served: 1 }])
@@ -356,14 +370,16 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.92, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       else
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.594, n_units_served: 1 }])
       end
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
@@ -396,7 +412,7 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 120.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 120.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.95, n_units_served: 1 }])
@@ -411,14 +427,16 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.92, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.59, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 120, ef: 0.59, n_units_served: 6 }])
       else
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.59, n_units_served: 1 }])
       end
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 70.0)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 50, shared_recirc_power: 220, shared_recirc_num_units_served: 6, shared_recirc_control_type: HPXML::DHWRecirControlTypeTimer)
@@ -433,14 +451,16 @@ class ERIWaterHeatingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.92, n_units_served: 1 }])
+      elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.59, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 120, ef: 0.59, n_units_served: 6 }])
       else
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.59, n_units_served: 1 }])
       end
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 70.0)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 50)

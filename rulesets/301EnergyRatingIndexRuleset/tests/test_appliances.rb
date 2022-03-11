@@ -107,6 +107,9 @@ class ERIApplianceTest < MiniTest::Test
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      elsif [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
       else
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -121,6 +124,9 @@ class ERIApplianceTest < MiniTest::Test
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
+      elsif [Constants.CalcTypeCO2ReferenceHome].include? calc_type # All-electric
+        _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 2.62, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
+        _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
       else
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 2.32, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -133,7 +139,7 @@ class ERIApplianceTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIRatedHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         location = HPXML::LocationBasementUnconditioned
       else
         location = HPXML::LocationLivingSpace
@@ -164,7 +170,7 @@ class ERIApplianceTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace },
                                      { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 0.95, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationLivingSpace }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
@@ -206,7 +212,7 @@ class ERIApplianceTest < MiniTest::Test
             _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
             _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationOtherHeatedSpace)
           else
-            if [Constants.CalcTypeERIReferenceHome].include? calc_type
+            if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
               location = HPXML::LocationOtherHeatedSpace
             else
               location = HPXML::LocationLivingSpace

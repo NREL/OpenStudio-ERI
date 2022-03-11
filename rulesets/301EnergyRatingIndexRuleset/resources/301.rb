@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class EnergyRatingIndex301Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather)
+  def self.apply_ruleset(runner, hpxml, calc_type, weather)
     # Global variables
+    @runner = runner
     @weather = weather
     @calc_type = calc_type
 
@@ -16,6 +17,8 @@ class EnergyRatingIndex301Ruleset
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
+    elsif calc_type == Constants.CalcTypeCO2ReferenceHome
+      hpxml = apply_reference_home_ruleset(hpxml, true)
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
@@ -24,7 +27,7 @@ class EnergyRatingIndex301Ruleset
     return hpxml
   end
 
-  def self.apply_reference_home_ruleset(orig_hpxml)
+  def self.apply_reference_home_ruleset(orig_hpxml, is_all_electric = false)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
     # BuildingSummary
@@ -49,11 +52,11 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
 
     # Systems
-    set_systems_hvac_reference(orig_hpxml, new_hpxml)
+    set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
-    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
+    set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
     set_systems_batteries_reference(orig_hpxml, new_hpxml)
@@ -61,11 +64,11 @@ class EnergyRatingIndex301Ruleset
 
     # Appliances
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
-    set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+    set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
-    set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+    set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric)
 
     # Lighting
     set_lighting_reference(orig_hpxml, new_hpxml)
@@ -201,8 +204,11 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
+    new_hpxml.header.zip_code = orig_hpxml.header.zip_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.use_max_load_for_heat_pumps = true
+
+    add_emissions_scenarios(new_hpxml)
 
     return new_hpxml
   end
@@ -929,7 +935,7 @@ class EnergyRatingIndex301Ruleset
 
     fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-      if (orig_hpxml.fraction_of_windows_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+      if (orig_hpxml.fraction_of_windows_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
         # Disable natural ventilation
         fraction_operable = 0.0
       end
@@ -1082,7 +1088,7 @@ class EnergyRatingIndex301Ruleset
     # TODO: Create adiabatic wall/door?
   end
 
-  def self.set_systems_hvac_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
@@ -1092,6 +1098,7 @@ class EnergyRatingIndex301Ruleset
 
     # Heating
     orig_hpxml.heating_systems.each do |orig_heating_system|
+      next if is_all_electric
       next unless orig_heating_system.fraction_heat_load_served > 0
       next unless orig_heating_system.heating_system_fuel != HPXML::FuelTypeElectricity
 
@@ -1110,7 +1117,7 @@ class EnergyRatingIndex301Ruleset
         add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
       end
     end
-    if has_fuel && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if has_fuel && (sum_frac_heat_load < 0.99) && (not is_all_electric) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_gas_furnace(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1133,7 +1140,7 @@ class EnergyRatingIndex301Ruleset
     # HeatPump
     orig_hpxml.heating_systems.each do |orig_heating_system|
       next unless orig_heating_system.fraction_heat_load_served > 0
-      next unless orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
+      next unless ((orig_heating_system.heating_system_fuel == HPXML::FuelTypeElectricity) || is_all_electric)
 
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heating_system.fraction_heat_load_served, orig_heating_system)
     end
@@ -1141,9 +1148,9 @@ class EnergyRatingIndex301Ruleset
       next if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
       next unless orig_heat_pump.fraction_heat_load_served > 0
 
-      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump)
+      add_reference_heating_heat_pump(orig_hpxml, new_hpxml, orig_heat_pump.fraction_heat_load_served, orig_heat_pump, is_all_electric)
     end
-    if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
+    if ((not has_fuel) || is_all_electric) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
       add_reference_heating_heat_pump(orig_hpxml, new_hpxml, (1.0 - sum_frac_heat_load).round(3))
     end
 
@@ -1560,7 +1567,7 @@ class EnergyRatingIndex301Ruleset
     # nop
   end
 
-  def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Table 4.2.2(1) - Service water heating systems
 
     has_multiple_water_heaters = (orig_hpxml.water_heating_systems.size > 1)
@@ -1577,7 +1584,9 @@ class EnergyRatingIndex301Ruleset
 
       # Set fuel type for combi systems
       fuel_type = orig_water_heater.fuel_type
-      if has_multiple_water_heaters
+      if is_all_electric
+        fuel_type = HPXML::FuelTypeElectricity
+      elsif has_multiple_water_heaters
         fuel_type = orig_hpxml.predominant_water_heating_fuel()
       elsif [HPXML::WaterHeaterTypeCombiTankless, HPXML::WaterHeaterTypeCombiStorage].include? orig_water_heater.water_heater_type
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
@@ -1612,7 +1621,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     if orig_hpxml.water_heating_systems.size == 0
-      add_reference_water_heater(orig_hpxml, new_hpxml)
+      add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric)
     end
   end
 
@@ -1879,7 +1888,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.clothes_washers[0].location = HPXML::LocationLivingSpace
   end
 
-  def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Default values
     id = 'ClothesDryer'
     location = HPXML::LocationLivingSpace
@@ -1893,6 +1902,10 @@ class EnergyRatingIndex301Ruleset
         location = clothes_dryer.location.gsub('unvented', 'vented')
         fuel_type = clothes_dryer.fuel_type
       end
+    end
+
+    if is_all_electric
+      fuel_type = HPXML::FuelTypeElectricity
     end
 
     reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, fuel_type)
@@ -2057,7 +2070,7 @@ class EnergyRatingIndex301Ruleset
     # nop
   end
 
-  def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric = false)
     # Default values
     range_id = 'CookingRange'
     location = HPXML::LocationLivingSpace
@@ -2072,6 +2085,10 @@ class EnergyRatingIndex301Ruleset
       fuel_type = cooking_range.fuel_type
       oven = orig_hpxml.ovens[0]
       oven_id = oven.id
+    end
+
+    if is_all_electric
+      fuel_type = HPXML::FuelTypeElectricity
     end
 
     reference_values = HotWaterAndAppliances.get_range_oven_default_values()
@@ -2332,7 +2349,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-      if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) # 2019 or newer
+      if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
         cfm50 = ach50 * @infil_volume / 60.0
         tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
         if cfm50 / tot_cb_area <= 0.30
@@ -2346,7 +2363,7 @@ class EnergyRatingIndex301Ruleset
     mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
     if mech_vent_fans.empty?
       min_nach = 0.30
-    elsif Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
+    elsif Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       has_non_exhaust_systems = (mech_vent_fans.select { |f| f.fan_type != HPXML::MechVentTypeExhaust }.size > 0)
       mech_vent_fans.each do |orig_vent_fan|
         if orig_vent_fan.flow_rate_not_tested || ((@infil_a_ext < 0.5) && !has_non_exhaust_systems)
@@ -2419,7 +2436,7 @@ class EnergyRatingIndex301Ruleset
   def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
     q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019') # 2019 or newer
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       if is_balanced
         phi = 1.0
       else
@@ -2512,7 +2529,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_boiler_eae(new_hpxml.heating_systems[-1])
   end
 
-  def self.add_reference_heating_heat_pump(orig_hpxml, new_hpxml, load_frac, orig_system = nil)
+  def self.add_reference_heating_heat_pump(orig_hpxml, new_hpxml, load_frac, orig_system = nil, is_all_electric = false)
     # 7.7 HSPF air source heat pump
     if not orig_system.nil?
       seed_id = orig_system.seed_id.nil? ? orig_system.id : orig_system.seed_id
@@ -2523,18 +2540,17 @@ class EnergyRatingIndex301Ruleset
 
     # Handle backup
     if (not orig_system.nil?) && orig_system.respond_to?(:backup_heating_switchover_temp) && (not orig_system.backup_heating_switchover_temp.nil?)
-      # Dual-fuel HP
-      if orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity
+      if (orig_system.backup_heating_fuel != HPXML::FuelTypeElectricity) && (not is_all_electric)
+        # Dual-fuel HP
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_fuel = orig_system.backup_heating_fuel
         backup_efficiency_afue = 0.78
         backup_capacity = -1
         backup_switchover_temp = orig_system.backup_heating_switchover_temp
-      else
-        # nop; backup is also 7.7 HSPF, so just model as normal heat pump w/o backup
       end
-    else
-      # Normal heat pump
+    end
+    if backup_type.nil?
+      # Standard electric backup
       backup_type = HPXML::HeatPumpBackupTypeIntegrated
       backup_fuel = HPXML::FuelTypeElectricity
       backup_efficiency_percent = 1.0
@@ -2612,8 +2628,12 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_water_heater(orig_hpxml, new_hpxml)
-    wh_fuel_type = orig_hpxml.predominant_heating_fuel()
+  def self.add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric = false)
+    if is_all_electric
+      wh_fuel_type = HPXML::FuelTypeElectricity
+    else
+      wh_fuel_type = orig_hpxml.predominant_heating_fuel()
+    end
     wh_tank_vol = 40.0
 
     wh_ef, wh_re = get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
@@ -2803,6 +2823,179 @@ class EnergyRatingIndex301Ruleset
       return -0.25
     else
       return 0.0
+    end
+  end
+
+  def self.lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
+    return if zip_code.nil?
+
+    if zip_code.include? '-'
+      zip_code = zip_code.split('-')[0]
+    end
+    zip_code = zip_code.rjust(5, '0')
+
+    return if zip_code.size != 5
+
+    begin
+      test_int = Integer(zip_code)
+    rescue
+      return
+    end
+
+    CSV.foreach(zip_filepath) do |row|
+      fail "Zip code in #{zip_filepath} needs to be 5 digits." if zip_code.size != 5
+      next unless row[zip_column_index] == zip_code
+
+      return row[output_column_index]
+    end
+
+    return
+  end
+
+  def self.lookup_egrid_value(egrid_subregion, zip_column_index, output_column_index)
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+      zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'egrid2019_summary_tables.csv')
+    else
+      zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'egrid2012_summary_tables.csv')
+    end
+    CSV.foreach(zip_filepath) do |row|
+      next unless row[zip_column_index] == egrid_subregion
+
+      return row[output_column_index]
+    end
+
+    return
+  end
+
+  def self.get_cambium_gea_region(hpxml)
+    # Get Cambium GEA region
+    cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
+    cambium_gea = lookup_region_from_zip(hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
+    if cambium_gea.nil?
+      @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{hpxml.header.zip_code}'. CO2 emissions will not be calculated.")
+    else
+      hpxml.header.cambium_region_gea = cambium_gea
+      hpxml.header.cambium_region_gea_isdefaulted = true
+    end
+    return cambium_gea
+  end
+
+  def self.get_epa_egrid_subregion(hpxml)
+    # Get eGRID subregion
+    egrid_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'ZIP_mappings.csv')
+    egrid_subregion = lookup_region_from_zip(hpxml.header.zip_code, egrid_zip_filepath, 0, 1)
+    if egrid_subregion.nil?
+      @runner.registerWarning("Could not look up eGRID subregion for zip code: '#{hpxml.header.zip_code}'. Emissions will not be calculated.")
+    else
+      hpxml.header.egrid_subregion = egrid_subregion
+      hpxml.header.egrid_subregion_isdefaulted = true
+    end
+    return egrid_subregion
+  end
+
+  def self.add_emissions_scenarios(new_hpxml)
+    if not [Constants.CalcTypeCO2ReferenceHome,
+            Constants.CalcTypeERIReferenceHome,
+            Constants.CalcTypeERIRatedHome].include? @calc_type
+      return
+    end
+
+    egrid_subregion = get_epa_egrid_subregion(new_hpxml)
+
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+      cambium_gea = get_cambium_gea_region(new_hpxml)
+    end
+
+    # Fossil fuel values
+    # FIXME: What about wood?
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABC')
+      co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
+                     HPXML::FuelTypeOil => 161.0,
+                     HPXML::FuelTypePropane => 136.6 }
+      nox_values = { HPXML::FuelTypeNaturalGas => 0.0922,
+                     HPXML::FuelTypeOil => 0.1300,
+                     HPXML::FuelTypePropane => 0.1421 }
+      so2_values = { HPXML::FuelTypeNaturalGas => 0.0006,
+                     HPXML::FuelTypeOil => 0.0015,
+                     HPXML::FuelTypePropane => 0.0002 }
+    else # Before 301-2019 Addendum C
+      co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
+                     HPXML::FuelTypeOil => 159.4,
+                     HPXML::FuelTypePropane => 136.4 }
+      nox_values = { HPXML::FuelTypeNaturalGas => 93.0,
+                     HPXML::FuelTypeOil => 127.8,
+                     HPXML::FuelTypePropane => 153.4 }
+      so2_values = { HPXML::FuelTypeNaturalGas => 0.0000,
+                     HPXML::FuelTypeOil => 0.5066,
+                     HPXML::FuelTypePropane => 0.0163 }
+    end
+
+    # CO2 Emissions Scenario
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+      # Use Cambium database for electricity
+      if not cambium_gea.nil?
+        cambium_geas = ['AZNMc', 'CAMXc', 'ERCTc', 'FRCCc', 'MROEc', 'MROWc', 'NEWEc', 'NWPPc', 'NYSTc', 'RFCEc',
+                        'RFCMc', 'RFCWc', 'RMPAc', 'SPNOc', 'SPSOc', 'SRMVc', 'SRMWc', 'SRSOc', 'SRTVc', 'SRVCc']
+        col_num = cambium_geas.index(cambium_gea) + 1
+        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', '301_2019_Addendum_D_data.csv')
+        new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+                                                 emissions_type: 'CO2',
+                                                 elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
+                                                 elec_schedule_filepath: cambium_filepath,
+                                                 elec_schedule_number_of_header_rows: 1,
+                                                 elec_schedule_column_number: col_num,
+                                                 natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 natural_gas_value: co2_values[HPXML::FuelTypeNaturalGas],
+                                                 propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 propane_value: co2_values[HPXML::FuelTypePropane],
+                                                 fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 fuel_oil_value: co2_values[HPXML::FuelTypeOil])
+      end
+    else # Before 301-2019 Addendum D
+      # Use EPA's eGrid database for electricity
+      if not egrid_subregion.nil?
+        annual_elec_co2_value = lookup_egrid_value(egrid_subregion, 0, 1)
+        new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+                                                 emissions_type: 'CO2',
+                                                 elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
+                                                 elec_value: annual_elec_co2_value,
+                                                 natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 natural_gas_value: co2_values[HPXML::FuelTypeNaturalGas],
+                                                 propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 propane_value: co2_values[HPXML::FuelTypePropane],
+                                                 fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                                 fuel_oil_value: co2_values[HPXML::FuelTypeOil])
+      end
+    end
+
+    # NOx Emissions Scenario
+    if not egrid_subregion.nil?
+      elec_nox_value = lookup_egrid_value(egrid_subregion, 0, 5)
+      new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+                                               emissions_type: 'NOx',
+                                               elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
+                                               elec_value: elec_nox_value,
+                                               natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               natural_gas_value: nox_values[HPXML::FuelTypeNaturalGas],
+                                               propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               propane_value: nox_values[HPXML::FuelTypePropane],
+                                               fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               fuel_oil_value: nox_values[HPXML::FuelTypeOil])
+    end
+
+    # SO2 Emissions Scenario
+    if not egrid_subregion.nil?
+      elec_so2_value = lookup_egrid_value(egrid_subregion, 0, 7)
+      new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+                                               emissions_type: 'SO2',
+                                               elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
+                                               elec_value: elec_so2_value,
+                                               natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               natural_gas_value: so2_values[HPXML::FuelTypeNaturalGas],
+                                               propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               propane_value: so2_values[HPXML::FuelTypePropane],
+                                               fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
+                                               fuel_oil_value: so2_values[HPXML::FuelTypeOil])
     end
   end
 end

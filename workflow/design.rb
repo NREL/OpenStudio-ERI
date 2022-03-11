@@ -43,7 +43,7 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
   args['timeseries_frequency'] = timeseries_output_freq
   args['include_timeseries_fuel_consumptions'] = timeseries_outputs.include? 'fuels'
   args['include_timeseries_end_use_consumptions'] = timeseries_outputs.include? 'enduses'
-  args['include_timeseries_emissions'] = false # TODO: Enable in the future
+  args['include_timeseries_emissions'] = timeseries_outputs.include? 'emissions'
   args['include_timeseries_hot_water_uses'] = timeseries_outputs.include? 'hotwater'
   args['include_timeseries_total_loads'] = timeseries_outputs.include? 'loads'
   args['include_timeseries_component_loads'] = timeseries_outputs.include? 'componentloads'
