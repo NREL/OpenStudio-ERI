@@ -1161,7 +1161,7 @@
       <sch:assert role='ERROR' test='number(h:MotorEfficiency) &gt; 0 or not(h:MotorEfficiency)'>Expected MotorEfficiency to be greater than 0</sch:assert>
       <sch:assert role='ERROR' test='number(h:MotorEfficiency) &lt; 1 or not(h:MotorEfficiency)'>Expected MotorEfficiency to be less than 1</sch:assert>
       <sch:assert role='ERROR' test='count(h:ControlType) = 1'>Expected 1 element(s) for xpath: ControlType</sch:assert>
-      <sch:assert role='ERROR' test='h:ControlType[text()="manual demand control" or text()="presence sensor demand control" or text()="timer" or text()="no control"] or not(h:ControlType)'>Expected ControlType to be 'manual demand control' or 'presence sensor demand control' or 'timer' or 'no control'</sch:assert>
+      <sch:assert role='ERROR' test='h:ControlType[text()="manual demand control" or text()="presence sensor demand control" or text()="temperature" or text()="timer" or text()="no control"] or not(h:ControlType)'>Expected ControlType to be 'manual demand control' or 'presence sensor demand control' or 'temperature' or 'timer' or 'no control'</sch:assert>
     </sch:rule>
   </sch:pattern>
 

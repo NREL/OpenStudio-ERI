@@ -1560,7 +1560,7 @@ If a shared recirculation system is specified, additional information is entered
   ``ControlType``          string          See [#]_     Yes                 Shared recirculation control type
   =======================  =======  =====  ===========  ========  ========  =================================
 
-  .. [#] ControlType choices are "manual demand control", "presence sensor demand control", "timer", or "no control".
+  .. [#] ControlType choices are "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
 
 Drain Water Heat Recovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1703,12 +1703,6 @@ A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/B
 
   .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
   .. [#] BatteryType only choice is "Li-ion".
-
-
-.. note::
-
-  For homes w/ PV + batteries will result in slightly higher ERI scores due to round-trip battery efficiency.
-  For homes w/ batteries but no PV, it is assumed that the batteries are only used for backup power during power outages and therefore have no effect on ERI scores.
 
 HPXML Generators
 ****************
