@@ -208,7 +208,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.use_max_load_for_heat_pumps = true
 
-    add_emissions_scenarios(new_hpxml)
+    add_emissions_scenarios(orig_hpxml, new_hpxml)
 
     return new_hpxml
   end
@@ -2893,11 +2893,20 @@ class EnergyRatingIndex301Ruleset
     return egrid_subregion
   end
 
-  def self.add_emissions_scenarios(new_hpxml)
+  def self.add_emissions_scenarios(orig_hpxml, new_hpxml)
     if not [Constants.CalcTypeCO2ReferenceHome,
             Constants.CalcTypeERIReferenceHome,
             Constants.CalcTypeERIRatedHome].include? @calc_type
       return
+    end
+
+    # Exclude homes that have a fuel type not covered by 301 (currently just wood)
+    [HPXML::FuelTypeWoodCord,
+     HPXML::FuelTypeWoodPellets].each do |fuel_type|
+      if orig_hpxml.has_fuel(fuel_type)
+        @runner.registerWarning("The home has a fuel type of '#{fuel_type}', which is not covered by ANSI/RESNET/ICC 301. Emissions will not be calculated.")
+        return
+      end
     end
 
     egrid_subregion = get_epa_egrid_subregion(new_hpxml)
@@ -2907,7 +2916,6 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Fossil fuel values
-    # FIXME: What about wood?
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABC')
       co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
                      HPXML::FuelTypeOil => 161.0,
