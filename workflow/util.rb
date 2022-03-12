@@ -584,7 +584,18 @@ end
 def _calculate_co2_index(eri_version, rated_output, ref_output, results)
   results[:aco2] = rated_output[:co2RESNETTotal]
   results[:arco2] = ref_output[:co2RESNETTotal]
+
   if (not results[:aco2].nil?) && (not results[:arco2].nil?)
+    # Check if any fuel consumption without corresponding CO2
+    # This would represent a fuel type (e.g., wood) not covered by 301
+    ['Electricity', 'NaturalGas', 'FuelOil',
+     'Propane', 'WoodCord', 'WoodPellets'].each do |fuel|
+      next unless rated_output["fuel#{fuel}".to_sym] > 0
+      next unless rated_output["co2RESNET#{fuel}".to_sym] == 0
+
+      return results
+    end
+
     # FIXME: Uncomment for 301-2022 Addendum ?
     # if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022XX'))
     #   results[:co2index] = results[:aco2] / (results[:arco2] * results[:iaf_rh]) * 100.0

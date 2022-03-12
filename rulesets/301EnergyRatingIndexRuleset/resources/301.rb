@@ -2900,15 +2900,6 @@ class EnergyRatingIndex301Ruleset
       return
     end
 
-    # Exclude homes that have a fuel type not covered by 301 (currently just wood)
-    [HPXML::FuelTypeWoodCord,
-     HPXML::FuelTypeWoodPellets].each do |fuel_type|
-      if orig_hpxml.has_fuel(fuel_type)
-        @runner.registerWarning("The home has a fuel type of '#{fuel_type}', which is not covered by ANSI/RESNET/ICC 301. Emissions will not be calculated.")
-        return
-      end
-    end
-
     egrid_subregion = get_epa_egrid_subregion(new_hpxml)
 
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
