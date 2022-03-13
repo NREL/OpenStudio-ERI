@@ -1266,11 +1266,11 @@ def _get_hot_water(results_csv)
     next if row.nil? || row[0].nil?
 
     if ['End Use: Electricity: Hot Water (MBtu)', 'End Use: Natural Gas: Hot Water (MBtu)'].include? row[0]
-      rated_dhw = Float(row[1])
+      rated_dhw = Float(row[1]).round(2)
     elsif row[0] == 'End Use: Electricity: Hot Water Recirc Pump (MBtu)'
-      rated_recirc = Float(row[1])
+      rated_recirc = Float(row[1]).round(2)
     elsif row[0].start_with?('Hot Water:') && row[0].include?('(gal)')
-      rated_gpd += (Float(row[1]) / 365.0)
+      rated_gpd += (Float(row[1]) / 365.0).round
     end
   end
   return rated_dhw, rated_recirc, rated_gpd
