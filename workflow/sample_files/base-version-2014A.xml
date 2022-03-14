@@ -22,6 +22,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
+        <ZipCode>80206</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>

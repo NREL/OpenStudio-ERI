@@ -22,7 +22,7 @@ class ERILightingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_lighting(hpxml, f_int_cfl: 0.1)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
@@ -39,7 +39,7 @@ class ERILightingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_lighting(hpxml, f_int_cfl: 0.1)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
@@ -105,7 +105,7 @@ class ERILightingTest < MiniTest::Test
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIReferenceHome].include? calc_type
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2ReferenceHome].include? calc_type
         _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 6)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 6)

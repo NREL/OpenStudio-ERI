@@ -59,7 +59,7 @@ The version of the ERI calculation is entered in ``/HPXML/SoftwareInfo/extension
   ``Version``  string             See [#]_     No [#]_            Version of 301 Standard w/ addenda
   ===========  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] Version choices are "latest", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
+  .. [#] Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
   .. [#] Version only required to run ERI calculation.
@@ -75,29 +75,31 @@ The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/e
   .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
   .. [#] Version only required to run ENERGY STAR calculation.
 
-HPXML Building Summary
-----------------------
+PXML Building Site
+-------------------
 
-High-level building summary information is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary``. 
-
-HPXML Site
-**********
-
-If running ENERGY STAR calculations (i.e., if ``/HPXML/SoftwareInfo/extension/EnergyStarCalculation`` is provided), site information is entered in ``/HPXML/Building/Site``.
+Site information is entered in ``/HPXML/Building/Site``.
 
   =====================  ========  =======  ===========  ========  =======  ============================
   Element                Type      Units    Constraints  Required  Default  Description
   =====================  ========  =======  ===========  ========  =======  ============================
-  ``SiteID``             id                              Yes                Unique identifier
   ``Address/StateCode``  string             See [#]_     Yes                State/territory where the home is located
+  ``Address/ZipCode``    string             See [#]_     Yes                ZIP Code where the home is located
   =====================  ========  =======  ===========  ========  =======  ============================
 
-  .. [#] StateCode choices are only used for the ENERGY STAR calculation and depend on the ENERGY STAR version:
+  .. [#] For ENERGY STAR calculations, allowed StateCode choices depend on the ENERGY STAR version:
          
-         - **National**: AA, AE, AK, AL, AP, AR, AS, AZ, CA, CO, CT, DC, DE, FL, FM, GA, GU, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MH, MI, MN, MO, MP, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, PR, PW, RI, SC, SD, TN, TX, UT, VA, VI, VT, WA, WI, WV, WY
+         - **National**: <anything>
          - **Pacific**: HI, GU, MP
          - **Florida**: FL
          - **OregonWashington**: OR, WA
+
+  .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
+
+HPXML Building Summary
+----------------------
+
+High-level building summary information is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary``. 
 
 HPXML Building Fuels
 ********************
@@ -1564,7 +1566,7 @@ If a shared recirculation system is specified, additional information is entered
   ``ControlType``          string          See [#]_     Yes                 Shared recirculation control type
   =======================  =======  =====  ===========  ========  ========  =================================
 
-  .. [#] ControlType choices are "manual demand control", "presence sensor demand control", "timer", or "no control".
+  .. [#] ControlType choices are "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
 
 Drain Water Heat Recovery
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1707,12 +1709,6 @@ A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/B
 
   .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
   .. [#] BatteryType only choice is "Li-ion".
-
-
-.. note::
-
-  For homes w/ PV + batteries will result in slightly higher ERI scores due to round-trip battery efficiency.
-  For homes w/ batteries but no PV, it is assumed that the batteries are only used for backup power during power outages and therefore have no effect on ERI scores.
 
 HPXML Generators
 ****************

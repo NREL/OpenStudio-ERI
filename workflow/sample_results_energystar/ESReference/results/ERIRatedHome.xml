@@ -3,13 +3,13 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2021-11-10T08:59:59-07:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2022-03-11T11:43:44-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2019AB</Version>
+        <Version>2019ABCDE</Version>
         <Design>ERI Rated Home</Design>
       </ERICalculation>
       <SimulationControl>
@@ -27,6 +27,82 @@
         <UseMaxLoadForHeatPumps>true</UseMaxLoadForHeatPumps>
         <AllowIncreasedFixedCapacities>true</AllowIncreasedFixedCapacities>
       </HVACSizingControl>
+      <EmissionsScenarios>
+        <EmissionsScenario>
+          <Name>RESNET</Name>
+          <EmissionsType>CO2</EmissionsType>
+          <EmissionsFactor>
+            <FuelType>electricity</FuelType>
+            <Units>kg/MWh</Units>
+            <ScheduleFilePath>/mnt/c/git/openstudio-eri/rulesets/301EnergyRatingIndexRuleset/resources/data/cambium/301_2019_Addendum_D_data.csv</ScheduleFilePath>
+            <NumberofHeaderRows>1</NumberofHeaderRows>
+            <ColumnNumber>13</ColumnNumber>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>natural gas</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>117.6</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>propane</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>136.6</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>fuel oil</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>161.0</Value>
+          </EmissionsFactor>
+        </EmissionsScenario>
+        <EmissionsScenario>
+          <Name>RESNET</Name>
+          <EmissionsType>NOx</EmissionsType>
+          <EmissionsFactor>
+            <FuelType>electricity</FuelType>
+            <Units>lb/MWh</Units>
+            <Value>0.7</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>natural gas</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>0.0922</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>propane</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>0.1421</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>fuel oil</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>0.13</Value>
+          </EmissionsFactor>
+        </EmissionsScenario>
+        <EmissionsScenario>
+          <Name>RESNET</Name>
+          <EmissionsType>SO2</EmissionsType>
+          <EmissionsFactor>
+            <FuelType>electricity</FuelType>
+            <Units>lb/MWh</Units>
+            <Value>0.4</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>natural gas</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>0.0006</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>propane</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>0.0002</Value>
+          </EmissionsFactor>
+          <EmissionsFactor>
+            <FuelType>fuel oil</FuelType>
+            <Units>lb/MBtu</Units>
+            <Value>0.0015</Value>
+          </EmissionsFactor>
+        </EmissionsScenario>
+      </EmissionsScenarios>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -35,7 +111,10 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
+        <ZipCode>80206</ZipCode>
       </Address>
+      <eGridSubregion dataSource='software'>RMPA</eGridSubregion>
+      <CambiumRegionGEA dataSource='software'>RMPAc</CambiumRegionGEA>
     </Site>
     <ProjectStatus>
       <EventType>proposed workscope</EventType>
@@ -95,8 +174,8 @@
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>21600.0</InfiltrationVolume>
+            <InfiltrationHeight>9.75</InfiltrationHeight>
             <extension>
-              <InfiltrationHeight>9.75</InfiltrationHeight>
               <Aext>1.0</Aext>
             </extension>
           </AirInfiltrationMeasurement>

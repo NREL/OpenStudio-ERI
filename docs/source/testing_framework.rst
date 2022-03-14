@@ -20,7 +20,7 @@ If you are seeking to develop RESNET Accredited Rating Software, you will need t
 Running Tests Locally
 ---------------------
 
-All current HERS tests can be run using as follows:
+HERS tests can be run using:
 
 | ``openstudio energy_rating_index_test.rb --name=test_resnet_ashrae_140``
 | ``openstudio energy_rating_index_test.rb --name=test_resnet_hers_reference_home_auto_generation``
@@ -30,7 +30,7 @@ All current HERS tests can be run using as follows:
 | ``openstudio energy_rating_index_test.rb --name=test_resnet_hot_water``
 | 
 
-EPA tests for ENERGY STAR can be run using:
+ENERGY STAR tests can be run using:
 
 | ``openstudio energy_star_test.rb --name=test_epa``
 | 

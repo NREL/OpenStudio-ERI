@@ -35,14 +35,21 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       rundir, hpxmls, csvs = _run_workflow(xml, test_name)
-      all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results])
+      all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results], csvs[:co2_results])
 
       _rm_path(rundir)
     end
     assert(all_results.size > 0)
 
     # Write results to csv
-    keys = all_results.values[0].keys
+    keys = []
+    all_results.each do |xml, xml_results|
+      xml_results.keys.each do |key|
+        next if keys.include? key
+
+        keys << key
+      end
+    end
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['XML'] + keys
       all_results.each_with_index do |(xml, results), i|
@@ -54,15 +61,6 @@ class EnergyRatingIndexTest < Minitest::Test
       end
     end
     puts "Wrote results to #{test_results_csv}."
-
-    # Cross-simulation tests
-
-    # Verify that REUL Hot Water is identical across water heater types
-    _test_reul(all_results, 'base.xml', 'base-dhw', 'REUL Hot Water (MBtu)')
-
-    # Verify that REUL Heating/Cooling are identical across HVAC types
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Heating (MBtu)')
-    _test_reul(all_results, 'base.xml', 'base-hvac', 'REUL Cooling (MBtu)')
   end
 
   def test_weather_cache
@@ -390,7 +388,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
   def test_running_with_cli
     # Test that these tests can be run from the OpenStudio CLI (and not just system ruby)
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.absolute_path(__FILE__)} --name=test_weather_cache"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.absolute_path(__FILE__)} --name=foo"
     success = system(command)
     assert(success)
   end

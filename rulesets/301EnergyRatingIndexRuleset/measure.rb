@@ -55,6 +55,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     calc_types << Constants.CalcTypeERIRatedHome
     calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
     calc_types << Constants.CalcTypeERIIndexAdjustmentReferenceHome
+    calc_types << Constants.CalcTypeCO2ReferenceHome
     calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument('calc_type', calc_types, true)
     calc_type.setDisplayName('Calculation Type')
     calc_type.setDefaultValue(Constants.CalcTypeERIRatedHome)
@@ -131,7 +132,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       weather = WeatherProcess.new(nil, nil, cache_path)
 
       # Apply 301 ruleset on HPXML object
-      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(@orig_hpxml, calc_type, weather)
+      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, @orig_hpxml, calc_type, weather)
 
       # Write new HPXML file
       if hpxml_output_path.is_initialized
