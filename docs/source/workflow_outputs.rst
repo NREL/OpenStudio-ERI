@@ -65,7 +65,8 @@ Fuel uses are listed below.
    Fuel Oil: Total (MBtu)
    Propane: Total (MBtu)
    Wood Cord: Total (MBtu)         
-   Wood Pellets: Total (MBtu) 
+   Wood Pellets: Total (MBtu)
+   Coal: Total (MBtu)          Not used by OS-ERI
    ==========================  ===========================
 
 Annual Energy Consumption By End Use
@@ -131,6 +132,12 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    Wood Pellets: Clothes Dryer (MBtu)
    Wood Pellets: Range/Oven (MBtu)
    Wood Pellets: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   Coal: Heating (MBtu)                                        Not used by OS-ERI
+   Coal: Hot Water (MBtu)                                      Not used by OS-ERI
+   Coal: Clothes Dryer (MBtu)                                  Not used by OS-ERI
+   Coal: Range/Oven (MBtu)                                     Not used by OS-ERI
+   Coal: Mech Vent Preheating (MBtu)                           Not used by OS-ERI
+   Coal: Generator (MBtu)                                      Not used by OS-ERI
    ==========================================================  ====================================================
 
 Annual Emissions
@@ -150,6 +157,7 @@ Emissions (CO2, NOx, and SO2) are provided for the Rated Home, ERI Reference Hom
    Emissions: CO2: RESNET: Propane (lb)
    Emissions: CO2: RESNET: Wood Cord (lb)
    Emissions: CO2: RESNET: Wood Pellets (lb)
+   Emissions: CO2: RESNET: Coal (lb)          Not used by OS-ERI
    Emissions: NOx: RESNET: Total (lb)         Sum of the diseggregated fuel values
    Emissions: NOx: RESNET: Electricity (lb)
    Emissions: NOx: RESNET: Natural Gas (lb)
@@ -157,6 +165,7 @@ Emissions (CO2, NOx, and SO2) are provided for the Rated Home, ERI Reference Hom
    Emissions: NOx: RESNET: Propane (lb)
    Emissions: NOx: RESNET: Wood Cord (lb)
    Emissions: NOx: RESNET: Wood Pellets (lb)
+   Emissions: NOx: RESNET: Coal (lb)          Not used by OS-ERI
    Emissions: SO2: RESNET: Total (lb)         Sum of the diseggregated fuel values
    Emissions: SO2: RESNET: Electricity (lb)
    Emissions: SO2: RESNET: Natural Gas (lb)
@@ -164,6 +173,7 @@ Emissions (CO2, NOx, and SO2) are provided for the Rated Home, ERI Reference Hom
    Emissions: SO2: RESNET: Propane (lb)
    Emissions: SO2: RESNET: Wood Cord (lb)
    Emissions: SO2: RESNET: Wood Pellets (lb)
+   Emissions: SO2: RESNET: Coal (lb)          Not used by OS-ERI
    =========================================  ========
 
 Annual Building Loads
