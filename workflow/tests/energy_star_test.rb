@@ -150,51 +150,6 @@ class EnergyStarTest < Minitest::Test
     end
   end
 
-  def test_resnet_hvac
-    test_name = 'RESNET_Test_4.4_HVAC'
-    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exist? test_results_csv
-
-    # Run simulations
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.4_HVAC')
-    all_results = {}
-    Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
-
-      is_heat = false
-      if xml.include? 'HVAC2'
-        is_heat = true
-      end
-      is_electric_heat = true
-      if xml.include?('HVAC2a') || xml.include?('HVAC2b')
-        is_electric_heat = false
-      end
-      hvac, hvac_fan = _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
-      all_results[File.basename(xml)] = [hvac, hvac_fan]
-    end
-    assert(all_results.size > 0)
-
-    # Write results to csv
-    hvac_energy = {}
-    CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Test Case', 'HVAC (kWh or therm)', 'HVAC Fan (kWh)']
-      all_results.each_with_index do |(xml, results), i|
-        csv << [xml, results[0], results[1]]
-        test_name = File.basename(xml, File.extname(xml))
-        if xml.include?('HVAC2a') || xml.include?('HVAC2b')
-          hvac_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
-        else
-          hvac_energy[test_name] = results[0] + results[1]
-        end
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-
-    # Check results
-    _check_hvac_test_results(hvac_energy)
-  end
-
   def test_epa
     test_name = 'EPA_Tests'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
