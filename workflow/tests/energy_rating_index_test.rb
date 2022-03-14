@@ -564,17 +564,6 @@ class EnergyRatingIndexTest < Minitest::Test
     return hvac.round(2), hvac_fan.round(2)
   end
 
-  def _test_schema_validation(xml)
-    # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
-    hpxml_doc = XMLHelper.parse_file(xml)
-    errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
-    if errors.size > 0
-      puts "#{xml}: #{errors}"
-    end
-    assert_equal(0, errors.size)
-  end
-
   def _check_ashrae_140_results(htg_loads, clg_loads)
     # Proposed acceptance criteria as of 10/1/2020
 

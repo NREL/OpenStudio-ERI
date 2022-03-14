@@ -236,6 +236,17 @@ def _get_csv_results(csv1, csv2 = nil)
   return results
 end
 
+def _test_schema_validation(xml)
+  # TODO: Remove this when schema validation is included with CLI calls
+  schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
+  hpxml_doc = XMLHelper.parse_file(xml)
+  errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
+  if errors.size > 0
+    puts "#{xml}: #{errors}"
+  end
+  assert_equal(0, errors.size)
+end
+
 def _rm_path(path)
   if Dir.exist?(path)
     FileUtils.rm_r(path)
