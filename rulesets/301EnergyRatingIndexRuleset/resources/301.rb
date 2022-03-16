@@ -2908,9 +2908,16 @@ class EnergyRatingIndex301Ruleset
 
     # Fossil fuel values
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABC')
-      co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
-                     HPXML::FuelTypeOil => 161.0,
-                     HPXML::FuelTypePropane => 136.6 }
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+        # Latest values include pre-combustion for fossil fuels
+        co2_values = { HPXML::FuelTypeNaturalGas => 147.3,
+                       HPXML::FuelTypeOil => 177.8,
+                       HPXML::FuelTypePropane => 195.9 }
+      else
+        co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
+                       HPXML::FuelTypeOil => 161.0,
+                       HPXML::FuelTypePropane => 136.6 }
+      end
       nox_values = { HPXML::FuelTypeNaturalGas => 0.0922,
                      HPXML::FuelTypeOil => 0.1300,
                      HPXML::FuelTypePropane => 0.1421 }
@@ -2935,13 +2942,13 @@ class EnergyRatingIndex301Ruleset
       if not cambium_gea.nil?
         cambium_geas = ['AZNMc', 'CAMXc', 'ERCTc', 'FRCCc', 'MROEc', 'MROWc', 'NEWEc', 'NWPPc', 'NYSTc', 'RFCEc',
                         'RFCMc', 'RFCWc', 'RMPAc', 'SPNOc', 'SPSOc', 'SRMVc', 'SRMWc', 'SRSOc', 'SRTVc', 'SRVCc']
-        col_num = cambium_geas.index(cambium_gea) + 1
-        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', '301_2019_Addendum_D_data.csv')
+        col_num = cambium_geas.index(cambium_gea) + 5
+        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', '2021_CO2e_GEAdata_RESNET_2022-01-25.csv')
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2',
                                                  elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
                                                  elec_schedule_filepath: cambium_filepath,
-                                                 elec_schedule_number_of_header_rows: 1,
+                                                 elec_schedule_number_of_header_rows: 4,
                                                  elec_schedule_column_number: col_num,
                                                  natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
                                                  natural_gas_value: co2_values[HPXML::FuelTypeNaturalGas],

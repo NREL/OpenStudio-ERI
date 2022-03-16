@@ -602,12 +602,8 @@ def _calculate_co2_index(eri_version, rated_output, ref_output, results)
       return results
     end
 
-    # FIXME: Uncomment for 301-2022 Addendum ?
-    # if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022XX'))
-    #   results[:co2index] = results[:aco2] / (results[:arco2] * results[:iaf_rh]) * 100.0
-    # else # 301-2019 Addendum D or newer, IAF not applied
-    results[:co2index] = results[:aco2] / (results[:arco2]) * 100.0
-    # end
+    # IAF was not in the initial calculation but has since been added
+    results[:co2index] = results[:aco2] / (results[:arco2] * results[:iaf_rh]) * 100.0
   end
   return results
 end
