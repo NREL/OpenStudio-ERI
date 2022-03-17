@@ -743,10 +743,7 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, eri_vers
     results_out << ['CO2 Rating Index', results[:co2index].round(2)]
     results_out << ['ACO2 (lb CO2)', results[:aco2].round(2)]
     results_out << ['ARCO2 (lb CO2)', results[:arco2].round(2)]
-    # FIXME: Uncomment for 301-2022 Addendum ?
-    # if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022XX'))
-    #  results_out << ['IAF RH', results[:iaf_rh].round(4)]
-    # end
+    results_out << ['IAF RH', results[:iaf_rh].round(4)]
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
   end
 end
