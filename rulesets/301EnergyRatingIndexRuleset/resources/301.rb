@@ -2943,7 +2943,7 @@ class EnergyRatingIndex301Ruleset
         cambium_geas = ['AZNMc', 'CAMXc', 'ERCTc', 'FRCCc', 'MROEc', 'MROWc', 'NEWEc', 'NWPPc', 'NYSTc', 'RFCEc',
                         'RFCMc', 'RFCWc', 'RMPAc', 'SPNOc', 'SPSOc', 'SRMVc', 'SRMWc', 'SRSOc', 'SRTVc', 'SRVCc']
         col_num = cambium_geas.index(cambium_gea) + 5
-        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', '2021_CO2e_GEAdata_RESNET_2022-01-25.csv')
+        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'RESNET_2021_CO2e_GEAdata.csv')
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2',
                                                  elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
