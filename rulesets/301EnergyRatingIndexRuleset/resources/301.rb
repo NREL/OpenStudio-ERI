@@ -2911,8 +2911,8 @@ class EnergyRatingIndex301Ruleset
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
         # Latest values include pre-combustion for fossil fuels
         co2_values = { HPXML::FuelTypeNaturalGas => 147.3,
-                       HPXML::FuelTypeOil => 177.8,
-                       HPXML::FuelTypePropane => 195.9 }
+                       HPXML::FuelTypeOil => 195.9,
+                       HPXML::FuelTypePropane => 177.8 }
       else
         co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
                        HPXML::FuelTypeOil => 161.0,
