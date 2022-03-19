@@ -206,10 +206,13 @@ class EnergyStarRuleset
 
     solar_absorptance = 0.92
     emittance = 0.90
+    default_roof_pitch = 5.0 # assume 5:12 pitch
 
     orig_hpxml.roofs.each do |orig_roof|
+      roof_pitch = orig_roof.pitch
       if orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace
         roof_interior_adjacent_to = HPXML::LocationAtticVented
+        roof_pitch = default_roof_pitch if roof_pitch == 0
       else
         roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
       end
@@ -222,7 +225,7 @@ class EnergyStarRuleset
                           azimuth: orig_roof.azimuth,
                           solar_absorptance: solar_absorptance,
                           emittance: emittance,
-                          pitch: orig_roof.pitch,
+                          pitch: roof_pitch,
                           radiant_barrier: radiant_barrier_bool,
                           radiant_barrier_grade: radiant_barrier_grade,
                           insulation_id: orig_roof.insulation_id,
@@ -235,9 +238,8 @@ class EnergyStarRuleset
       next unless [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace].include? orig_frame_floor.exterior_adjacent_to
       next unless @has_auto_generated_attic
 
-      # Estimate the area of the roof based on the frame floor area and pitch -- the pitch is assumed to be 5:12
-      pitch = 5.0
-      pitch_to_radians = Math.atan(pitch / 12.0)
+      # Estimate the area of the roof based on the frame floor area and pitch=
+      pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
       roof_area = orig_frame_floor.area / Math.cos(pitch_to_radians)
 
       new_hpxml.roofs.add(id: "Roof#{new_hpxml.roofs.size + 1}",
@@ -246,7 +248,7 @@ class EnergyStarRuleset
                           azimuth: nil,
                           solar_absorptance: solar_absorptance,
                           emittance: emittance,
-                          pitch: pitch,
+                          pitch: default_roof_pitch,
                           radiant_barrier: radiant_barrier_bool,
                           radiant_barrier_grade: radiant_barrier_grade,
                           insulation_id: "Roof_Insulation#{new_hpxml.roofs.size + 1}",

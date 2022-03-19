@@ -12,6 +12,7 @@ __New Features__
 
 __Bugfixes__
 - Adds more stringent limits for `AirflowDefectRatio` (now allows values from 1/10th to 10x the design value).
+- Fixes opaque door R-value in the Reference Home in IECC climate zone 1.
 
 ## OpenStudio-ERI v1.3.0
 
