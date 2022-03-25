@@ -55,7 +55,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     calc_types << Constants.CalcTypeERIRatedHome
     calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
     calc_types << Constants.CalcTypeERIIndexAdjustmentReferenceHome
-    calc_types << Constants.CalcTypeCO2ReferenceHome
+    calc_types << Constants.CalcTypeCO2eReferenceHome
     calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument('calc_type', calc_types, true)
     calc_type.setDisplayName('Calculation Type')
     calc_type.setDefaultValue(Constants.CalcTypeERIRatedHome)

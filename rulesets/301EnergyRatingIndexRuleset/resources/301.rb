@@ -17,7 +17,7 @@ class EnergyRatingIndex301Ruleset
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
-    elsif calc_type == Constants.CalcTypeCO2ReferenceHome
+    elsif calc_type == Constants.CalcTypeCO2eReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, true)
     end
 
@@ -2872,7 +2872,7 @@ class EnergyRatingIndex301Ruleset
     cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
     cambium_gea = lookup_region_from_zip(hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
     if cambium_gea.nil?
-      @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{hpxml.header.zip_code}'. CO2 emissions will not be calculated.")
+      @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{hpxml.header.zip_code}'. CO2e emissions will not be calculated.")
     else
       hpxml.header.cambium_region_gea = cambium_gea
       hpxml.header.cambium_region_gea_isdefaulted = true
@@ -2894,7 +2894,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.add_emissions_scenarios(orig_hpxml, new_hpxml)
-    if not [Constants.CalcTypeCO2ReferenceHome,
+    if not [Constants.CalcTypeCO2eReferenceHome,
             Constants.CalcTypeERIReferenceHome,
             Constants.CalcTypeERIRatedHome].include? @calc_type
       return
@@ -2910,13 +2910,13 @@ class EnergyRatingIndex301Ruleset
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABC')
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
         # Latest values include pre-combustion for fossil fuels
-        co2_values = { HPXML::FuelTypeNaturalGas => 147.3,
-                       HPXML::FuelTypeOil => 195.9,
-                       HPXML::FuelTypePropane => 177.8 }
+        co2e_values = { HPXML::FuelTypeNaturalGas => 147.3,
+                        HPXML::FuelTypeOil => 195.9,
+                        HPXML::FuelTypePropane => 177.8 }
       else
-        co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
-                       HPXML::FuelTypeOil => 161.0,
-                       HPXML::FuelTypePropane => 136.6 }
+        co2e_values = { HPXML::FuelTypeNaturalGas => 117.6,
+                        HPXML::FuelTypeOil => 161.0,
+                        HPXML::FuelTypePropane => 136.6 }
       end
       nox_values = { HPXML::FuelTypeNaturalGas => 0.0922,
                      HPXML::FuelTypeOil => 0.1300,
@@ -2925,9 +2925,9 @@ class EnergyRatingIndex301Ruleset
                      HPXML::FuelTypeOil => 0.0015,
                      HPXML::FuelTypePropane => 0.0002 }
     else # Before 301-2019 Addendum C
-      co2_values = { HPXML::FuelTypeNaturalGas => 117.6,
-                     HPXML::FuelTypeOil => 159.4,
-                     HPXML::FuelTypePropane => 136.4 }
+      co2e_values = { HPXML::FuelTypeNaturalGas => 117.6,
+                      HPXML::FuelTypeOil => 159.4,
+                      HPXML::FuelTypePropane => 136.4 }
       nox_values = { HPXML::FuelTypeNaturalGas => 0.093,
                      HPXML::FuelTypeOil => 0.1278,
                      HPXML::FuelTypePropane => 0.1534 }
@@ -2936,7 +2936,7 @@ class EnergyRatingIndex301Ruleset
                      HPXML::FuelTypePropane => 0.0163 }
     end
 
-    # CO2 Emissions Scenario
+    # CO2e Emissions Scenario
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
       # Use Cambium database for electricity
       if not cambium_gea.nil?
@@ -2945,32 +2945,32 @@ class EnergyRatingIndex301Ruleset
         col_num = cambium_geas.index(cambium_gea) + 5
         cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'RESNET_2021_CO2e_GEAdata.csv')
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
-                                                 emissions_type: 'CO2',
+                                                 emissions_type: 'CO2e',
                                                  elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
                                                  elec_schedule_filepath: cambium_filepath,
                                                  elec_schedule_number_of_header_rows: 4,
                                                  elec_schedule_column_number: col_num,
                                                  natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 natural_gas_value: co2_values[HPXML::FuelTypeNaturalGas],
+                                                 natural_gas_value: co2e_values[HPXML::FuelTypeNaturalGas],
                                                  propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 propane_value: co2_values[HPXML::FuelTypePropane],
+                                                 propane_value: co2e_values[HPXML::FuelTypePropane],
                                                  fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 fuel_oil_value: co2_values[HPXML::FuelTypeOil])
+                                                 fuel_oil_value: co2e_values[HPXML::FuelTypeOil])
       end
     else # Before 301-2019 Addendum D
       # Use EPA's eGrid database for electricity
       if not egrid_subregion.nil?
-        annual_elec_co2_value = lookup_egrid_value(egrid_subregion, 0, 1) # lb/mWh
+        annual_elec_co2e_value = lookup_egrid_value(egrid_subregion, 0, 1) # lb/mWh
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
-                                                 emissions_type: 'CO2',
+                                                 emissions_type: 'CO2e',
                                                  elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
-                                                 elec_value: annual_elec_co2_value,
+                                                 elec_value: annual_elec_co2e_value,
                                                  natural_gas_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 natural_gas_value: co2_values[HPXML::FuelTypeNaturalGas],
+                                                 natural_gas_value: co2e_values[HPXML::FuelTypeNaturalGas],
                                                  propane_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 propane_value: co2_values[HPXML::FuelTypePropane],
+                                                 propane_value: co2e_values[HPXML::FuelTypePropane],
                                                  fuel_oil_units: HPXML::EmissionsScenario::UnitsLbPerMBtu,
-                                                 fuel_oil_value: co2_values[HPXML::FuelTypeOil])
+                                                 fuel_oil_value: co2e_values[HPXML::FuelTypeOil])
       end
     end
 

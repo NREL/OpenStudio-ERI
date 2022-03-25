@@ -3,13 +3,13 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>EnergyStarRuleset.rb</XMLGeneratedBy>
-    <CreatedDateAndTime>2022-03-11T11:43:42-07:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2022-03-25T08:36:44-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2019ABCDE</Version>
+        <Version>2019ABCD</Version>
       </ERICalculation>
       <EnergyStarCalculation>
         <Version>SF_National_3.1</Version>

@@ -2,7 +2,7 @@
 
 __New Features__
 - Implements ANSI/RESNET/ICC Standard 301-2019 Addenda C & D. `ERICalculation/Version` can now be "2019ABC" or "2019ABCD" in the HPXML files.
-  - Adds calculation of CO2 Rating Index and CO2/NOx/SO2 emissions (annual and hourly).
+  - Adds calculation of CO2e Rating Index and CO2e/NOx/SO2 emissions (annual and hourly).
   - Adds support for shared hot water recirculation systems controlled by temperature.
   - **Breaking change**: `/HPXML/Building/Site` is now required with `Address/StateCode` and `Address/ZipCode` child elements.
 - **Breaking change**: Deprecates duct leakage to outside exemptions; software tools must provide duct leakage to outside or DSE. `SoftwareInfo/extension/ERICalculation/Version` enumerations "2014ADEGL", "2014ADEG", "2014ADE" are replaced by "2014AEG" and "2014AE".

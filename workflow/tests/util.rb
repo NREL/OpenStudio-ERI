@@ -69,9 +69,9 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
                 Constants.CalcTypeERIReferenceHome,
                 Constants.CalcTypeERIIndexAdjustmentDesign,
                 Constants.CalcTypeERIIndexAdjustmentReferenceHome].map { |d| d.gsub(' ', '') }
-    if File.exist? File.join(rundir, 'results', 'CO2_Results.csv')
-      csvs[:co2_results] = File.join(rundir, 'results', 'CO2_Results.csv')
-      log_dirs << Constants.CalcTypeCO2ReferenceHome.gsub(' ', '')
+    if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv')
+      csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
+      log_dirs << Constants.CalcTypeCO2eReferenceHome.gsub(' ', '')
     end
   else
     hpxmls[:ref] = File.join(rundir, 'results', 'ESReference.xml')

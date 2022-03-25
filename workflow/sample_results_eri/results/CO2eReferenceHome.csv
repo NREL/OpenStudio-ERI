@@ -1,0 +1,206 @@
+Fuel Use: Electricity: Total (MBtu),62.109
+Fuel Use: Electricity: Net (MBtu),62.109
+Fuel Use: Natural Gas: Total (MBtu),0.0
+Fuel Use: Fuel Oil: Total (MBtu),0.0
+Fuel Use: Propane: Total (MBtu),0.0
+Fuel Use: Wood Cord: Total (MBtu),0.0
+Fuel Use: Wood Pellets: Total (MBtu),0.0
+Fuel Use: Coal: Total (MBtu),0.0
+
+End Use: Electricity: Heating (MBtu),15.72
+End Use: Electricity: Heating Fans/Pumps (MBtu),2.525
+End Use: Electricity: Cooling (MBtu),4.029
+End Use: Electricity: Cooling Fans/Pumps (MBtu),0.915
+End Use: Electricity: Hot Water (MBtu),11.522
+End Use: Electricity: Hot Water Recirc Pump (MBtu),0.0
+End Use: Electricity: Hot Water Solar Thermal Pump (MBtu),0.0
+End Use: Electricity: Lighting Interior (MBtu),8.923
+End Use: Electricity: Lighting Garage (MBtu),0.0
+End Use: Electricity: Lighting Exterior (MBtu),0.801
+End Use: Electricity: Mech Vent (MBtu),0.0
+End Use: Electricity: Mech Vent Preheating (MBtu),0.0
+End Use: Electricity: Mech Vent Precooling (MBtu),0.0
+End Use: Electricity: Whole House Fan (MBtu),0.0
+End Use: Electricity: Refrigerator (MBtu),2.36
+End Use: Electricity: Freezer (MBtu),0.0
+End Use: Electricity: Dehumidifier (MBtu),0.0
+End Use: Electricity: Dishwasher (MBtu),0.447
+End Use: Electricity: Clothes Washer (MBtu),0.338
+End Use: Electricity: Clothes Dryer (MBtu),2.514
+End Use: Electricity: Range/Oven (MBtu),1.528
+End Use: Electricity: Ceiling Fan (MBtu),0.0
+End Use: Electricity: Television (MBtu),2.114
+End Use: Electricity: Plug Loads (MBtu),8.374
+End Use: Electricity: Electric Vehicle Charging (MBtu),0.0
+End Use: Electricity: Well Pump (MBtu),0.0
+End Use: Electricity: Pool Heater (MBtu),0.0
+End Use: Electricity: Pool Pump (MBtu),0.0
+End Use: Electricity: Hot Tub Heater (MBtu),0.0
+End Use: Electricity: Hot Tub Pump (MBtu),0.0
+End Use: Electricity: PV (MBtu),0.0
+End Use: Electricity: Generator (MBtu),0.0
+End Use: Natural Gas: Heating (MBtu),0.0
+End Use: Natural Gas: Hot Water (MBtu),0.0
+End Use: Natural Gas: Clothes Dryer (MBtu),0.0
+End Use: Natural Gas: Range/Oven (MBtu),0.0
+End Use: Natural Gas: Mech Vent Preheating (MBtu),0.0
+End Use: Natural Gas: Pool Heater (MBtu),0.0
+End Use: Natural Gas: Hot Tub Heater (MBtu),0.0
+End Use: Natural Gas: Grill (MBtu),0.0
+End Use: Natural Gas: Lighting (MBtu),0.0
+End Use: Natural Gas: Fireplace (MBtu),0.0
+End Use: Natural Gas: Generator (MBtu),0.0
+End Use: Fuel Oil: Heating (MBtu),0.0
+End Use: Fuel Oil: Hot Water (MBtu),0.0
+End Use: Fuel Oil: Clothes Dryer (MBtu),0.0
+End Use: Fuel Oil: Range/Oven (MBtu),0.0
+End Use: Fuel Oil: Mech Vent Preheating (MBtu),0.0
+End Use: Fuel Oil: Grill (MBtu),0.0
+End Use: Fuel Oil: Lighting (MBtu),0.0
+End Use: Fuel Oil: Fireplace (MBtu),0.0
+End Use: Fuel Oil: Generator (MBtu),0.0
+End Use: Propane: Heating (MBtu),0.0
+End Use: Propane: Hot Water (MBtu),0.0
+End Use: Propane: Clothes Dryer (MBtu),0.0
+End Use: Propane: Range/Oven (MBtu),0.0
+End Use: Propane: Mech Vent Preheating (MBtu),0.0
+End Use: Propane: Grill (MBtu),0.0
+End Use: Propane: Lighting (MBtu),0.0
+End Use: Propane: Fireplace (MBtu),0.0
+End Use: Propane: Generator (MBtu),0.0
+End Use: Wood Cord: Heating (MBtu),0.0
+End Use: Wood Cord: Hot Water (MBtu),0.0
+End Use: Wood Cord: Clothes Dryer (MBtu),0.0
+End Use: Wood Cord: Range/Oven (MBtu),0.0
+End Use: Wood Cord: Mech Vent Preheating (MBtu),0.0
+End Use: Wood Cord: Grill (MBtu),0.0
+End Use: Wood Cord: Lighting (MBtu),0.0
+End Use: Wood Cord: Fireplace (MBtu),0.0
+End Use: Wood Cord: Generator (MBtu),0.0
+End Use: Wood Pellets: Heating (MBtu),0.0
+End Use: Wood Pellets: Hot Water (MBtu),0.0
+End Use: Wood Pellets: Clothes Dryer (MBtu),0.0
+End Use: Wood Pellets: Range/Oven (MBtu),0.0
+End Use: Wood Pellets: Mech Vent Preheating (MBtu),0.0
+End Use: Wood Pellets: Grill (MBtu),0.0
+End Use: Wood Pellets: Lighting (MBtu),0.0
+End Use: Wood Pellets: Fireplace (MBtu),0.0
+End Use: Wood Pellets: Generator (MBtu),0.0
+End Use: Coal: Heating (MBtu),0.0
+End Use: Coal: Hot Water (MBtu),0.0
+End Use: Coal: Clothes Dryer (MBtu),0.0
+End Use: Coal: Range/Oven (MBtu),0.0
+End Use: Coal: Mech Vent Preheating (MBtu),0.0
+End Use: Coal: Grill (MBtu),0.0
+End Use: Coal: Lighting (MBtu),0.0
+End Use: Coal: Fireplace (MBtu),0.0
+End Use: Coal: Generator (MBtu),0.0
+
+Emissions: CO2e: RESNET: Total (lb),5228.14
+Emissions: CO2e: RESNET: Electricity (lb),5228.14
+Emissions: CO2e: RESNET: Natural Gas (lb),0.0
+Emissions: CO2e: RESNET: Fuel Oil (lb),0.0
+Emissions: CO2e: RESNET: Propane (lb),0.0
+Emissions: CO2e: RESNET: Wood Cord (lb),0.0
+Emissions: CO2e: RESNET: Wood Pellets (lb),0.0
+Emissions: CO2e: RESNET: Coal (lb),0.0
+Emissions: NOx: RESNET: Total (lb),12.74
+Emissions: NOx: RESNET: Electricity (lb),12.74
+Emissions: NOx: RESNET: Natural Gas (lb),0.0
+Emissions: NOx: RESNET: Fuel Oil (lb),0.0
+Emissions: NOx: RESNET: Propane (lb),0.0
+Emissions: NOx: RESNET: Wood Cord (lb),0.0
+Emissions: NOx: RESNET: Wood Pellets (lb),0.0
+Emissions: NOx: RESNET: Coal (lb),0.0
+Emissions: SO2: RESNET: Total (lb),7.28
+Emissions: SO2: RESNET: Electricity (lb),7.28
+Emissions: SO2: RESNET: Natural Gas (lb),0.0
+Emissions: SO2: RESNET: Fuel Oil (lb),0.0
+Emissions: SO2: RESNET: Propane (lb),0.0
+Emissions: SO2: RESNET: Wood Cord (lb),0.0
+Emissions: SO2: RESNET: Wood Pellets (lb),0.0
+Emissions: SO2: RESNET: Coal (lb),0.0
+
+Load: Heating: Delivered (MBtu),24.359
+Load: Cooling: Delivered (MBtu),8.328
+Load: Hot Water: Delivered (MBtu),10.495
+Load: Hot Water: Tank Losses (MBtu),1.023
+Load: Hot Water: Desuperheater (MBtu),0.0
+Load: Hot Water: Solar Thermal (MBtu),0.0
+
+Unmet Hours: Heating (hr),0.0
+Unmet Hours: Cooling (hr),62.0
+
+Peak Electricity: Winter Total (W),6411.0
+Peak Electricity: Summer Total (W),3269.9
+
+Peak Load: Heating: Delivered (kBtu),22.668
+Peak Load: Cooling: Delivered (kBtu),11.642
+
+Component Load: Heating: Roofs (MBtu),0.0
+Component Load: Heating: Ceilings (MBtu),5.002
+Component Load: Heating: Walls (MBtu),5.312
+Component Load: Heating: Rim Joists (MBtu),0.736
+Component Load: Heating: Foundation Walls (MBtu),3.275
+Component Load: Heating: Doors (MBtu),1.76
+Component Load: Heating: Windows (MBtu),2.729
+Component Load: Heating: Skylights (MBtu),0.0
+Component Load: Heating: Floors (MBtu),0.0
+Component Load: Heating: Slabs (MBtu),3.512
+Component Load: Heating: Internal Mass (MBtu),-0.411
+Component Load: Heating: Infiltration (MBtu),13.469
+Component Load: Heating: Natural Ventilation (MBtu),0.0
+Component Load: Heating: Mechanical Ventilation (MBtu),3.763
+Component Load: Heating: Whole House Fan (MBtu),0.0
+Component Load: Heating: Ducts (MBtu),0.0
+Component Load: Heating: Internal Gains (MBtu),-14.847
+Component Load: Cooling: Roofs (MBtu),0.0
+Component Load: Cooling: Ceilings (MBtu),-0.133
+Component Load: Cooling: Walls (MBtu),-0.077
+Component Load: Cooling: Rim Joists (MBtu),0.06
+Component Load: Cooling: Foundation Walls (MBtu),3.051
+Component Load: Cooling: Doors (MBtu),-0.304
+Component Load: Cooling: Windows (MBtu),8.104
+Component Load: Cooling: Skylights (MBtu),0.0
+Component Load: Cooling: Floors (MBtu),0.0
+Component Load: Cooling: Slabs (MBtu),-5.535
+Component Load: Cooling: Internal Mass (MBtu),-0.376
+Component Load: Cooling: Infiltration (MBtu),-1.989
+Component Load: Cooling: Natural Ventilation (MBtu),-5.213
+Component Load: Cooling: Mechanical Ventilation (MBtu),-0.813
+Component Load: Cooling: Whole House Fan (MBtu),0.0
+Component Load: Cooling: Ducts (MBtu),0.0
+Component Load: Cooling: Internal Gains (MBtu),11.57
+
+Hot Water: Clothes Washer (gal),1610.9
+Hot Water: Dishwasher (gal),1574.7
+Hot Water: Fixtures (gal),11399.6
+Hot Water: Distribution Waste (gal),4017.4
+
+ERI: Building: CFA,2700.0
+ERI: Building: NumBedrooms,3
+ERI: Building: NumStories,1.0
+ERI: Building: Type,single-family detached
+ERI: Heating: ID,HeatingSystem1
+ERI: Heating: FuelType,electricity
+ERI: Heating: EC,18.244
+ERI: Heating: EEC,0.443
+ERI: Heating: Load,24.359
+ERI: Cooling: ID,CoolingSystem1
+ERI: Cooling: FuelType,electricity
+ERI: Cooling: EC,4.944
+ERI: Cooling: EEC,0.263
+ERI: Cooling: Load,8.328
+ERI: Hot Water: ID,WaterHeatingSystem1
+ERI: Hot Water: FuelType,electricity
+ERI: Hot Water: EC,11.522
+ERI: Hot Water: EEC,1.087
+ERI: Hot Water: Load,10.495
+ERI: Mech Vent Preheating: ID,
+ERI: Mech Vent Preheating: FuelType,
+ERI: Mech Vent Preheating: EC,
+ERI: Mech Vent Preheating: EEC,
+ERI: Mech Vent Precooling: ID,
+ERI: Mech Vent Precooling: FuelType,
+ERI: Mech Vent Precooling: EC,
+ERI: Mech Vent Precooling: EEC,

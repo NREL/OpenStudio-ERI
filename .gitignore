@@ -4,7 +4,7 @@ coverage
 /.bundle
 /log
 /run
-/workflow/CO2ReferenceHome
+/workflow/CO2eReferenceHome
 /workflow/ERIRatedHome
 /workflow/ERIReferenceHome
 /workflow/ERIIndexAdjustmentDesign
