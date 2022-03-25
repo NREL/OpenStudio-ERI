@@ -1,4 +1,4 @@
-XML,ERI,REUL Heating (MBtu),REUL Cooling (MBtu),REUL Hot Water (MBtu),EC_r Heating (MBtu),EC_r Cooling (MBtu),EC_r Hot Water (MBtu),EC_x Heating (MBtu),EC_x Cooling (MBtu),EC_x Hot Water (MBtu),EC_x Dehumid (MBtu),EC_x L&A (MBtu),IAD_Save (%),CO2 Rating Index,ACO2 (lb CO2),ARCO2 (lb CO2),IAF RH
+XML,ERI,REUL Heating (MBtu),REUL Cooling (MBtu),REUL Hot Water (MBtu),EC_r Heating (MBtu),EC_r Cooling (MBtu),EC_r Hot Water (MBtu),EC_x Heating (MBtu),EC_x Cooling (MBtu),EC_x Hot Water (MBtu),EC_x Dehumid (MBtu),EC_x L&A (MBtu),IAD_Save (%),CO2e Rating Index,ACO2 (lb CO2e),ARCO2 (lb CO2e),IAF RH
 base-appliances-dehumidifier-ief-portable.xml,65.91,6.56,16.75,7.53,10.59,10.26,8.51,3.51,7.61,6.83,0.11,15.13,0.27522,70.19,4814.67,6389.39,1.0736
 base-appliances-dehumidifier-ief-whole-home.xml,65.88,6.57,16.76,7.53,10.59,10.26,8.51,3.51,7.61,6.83,0.12,15.13,0.27522,70.17,4815.43,6392.28,1.0736
 base-appliances-dehumidifier-multiple.xml,65.9,6.56,16.74,7.53,10.61,10.26,8.51,3.52,7.6,6.83,0.1,15.13,0.27522,70.18,4813.82,6388.53,1.0736

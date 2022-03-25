@@ -20,5 +20,5 @@ def _all_calc_types()
           Constants.CalcTypeERIRatedHome,
           Constants.CalcTypeERIIndexAdjustmentDesign,
           Constants.CalcTypeERIIndexAdjustmentReferenceHome,
-          Constants.CalcTypeCO2ReferenceHome]
+          Constants.CalcTypeCO2eReferenceHome]
 end

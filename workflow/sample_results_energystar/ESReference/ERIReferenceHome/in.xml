@@ -3,13 +3,13 @@
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>OpenStudio-ERI</XMLGeneratedBy>
-    <CreatedDateAndTime>2022-03-11T11:43:44-07:00</CreatedDateAndTime>
+    <CreatedDateAndTime>2022-03-25T08:36:45-06:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2019ABCDE</Version>
+        <Version>2019ABCD</Version>
         <Design>ERI Reference Home</Design>
       </ERICalculation>
       <SimulationControl>
@@ -34,28 +34,28 @@
       <EmissionsScenarios>
         <EmissionsScenario>
           <Name>RESNET</Name>
-          <EmissionsType>CO2</EmissionsType>
+          <EmissionsType>CO2e</EmissionsType>
           <EmissionsFactor>
             <FuelType>electricity</FuelType>
             <Units>kg/MWh</Units>
-            <ScheduleFilePath>/mnt/c/git/openstudio-eri/rulesets/301EnergyRatingIndexRuleset/resources/data/cambium/301_2019_Addendum_D_data.csv</ScheduleFilePath>
-            <NumberofHeaderRows>1</NumberofHeaderRows>
-            <ColumnNumber>13</ColumnNumber>
+            <ScheduleFilePath>/mnt/c/git/openstudio-eri-co2ref/rulesets/301EnergyRatingIndexRuleset/resources/data/cambium/RESNET_2021_CO2e_GEAdata.csv</ScheduleFilePath>
+            <NumberofHeaderRows>4</NumberofHeaderRows>
+            <ColumnNumber>17</ColumnNumber>
           </EmissionsFactor>
           <EmissionsFactor>
             <FuelType>natural gas</FuelType>
             <Units>lb/MBtu</Units>
-            <Value>117.6</Value>
+            <Value>147.3</Value>
           </EmissionsFactor>
           <EmissionsFactor>
             <FuelType>propane</FuelType>
             <Units>lb/MBtu</Units>
-            <Value>136.6</Value>
+            <Value>177.8</Value>
           </EmissionsFactor>
           <EmissionsFactor>
             <FuelType>fuel oil</FuelType>
             <Units>lb/MBtu</Units>
-            <Value>161.0</Value>
+            <Value>195.9</Value>
           </EmissionsFactor>
         </EmissionsScenario>
         <EmissionsScenario>

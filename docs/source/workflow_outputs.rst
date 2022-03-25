@@ -13,13 +13,13 @@ ERI Files
 ERI output files described below are found in the ``results`` directory.
 See the `sample_results_eri <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri>`_ directory for examples of these outputs.
 
-CO2_Results.csv
+CO2e_Results.csv
 ~~~~~~~~~~~~~~~
 
-A ``CO2_Results.csv`` file will be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
-The file includes all of the outputs that are used in the CO2 Index calculation.
+A ``CO2e_Results.csv`` file will be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+The file includes all of the outputs that are used in the CO2e Index calculation.
 
-See the `example CO2_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/CO2_Results.csv>`_.
+See the `example CO2e_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/CO2e_Results.csv>`_.
 
 ERI_Results.csv
 ~~~~~~~~~~~~~~~
@@ -49,7 +49,7 @@ The CSV file includes the following sections of output.
 
 See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome.csv>`_.
 
-A ``CO2ReferenceHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+A ``CO2eReferenceHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
 Annual Energy Consumption by Fuel Type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -145,19 +145,19 @@ Annual Emissions
 
 Annual emissions are listed below.
 
-Emissions (CO2, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2 Reference Home.
+Emissions (CO2e, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2e Reference Home.
 
    =========================================  ========
    Type                                       Notes
    =========================================  ========
-   Emissions: CO2: RESNET: Total (lb)         Sum of the diseggregated fuel values
-   Emissions: CO2: RESNET: Electricity (lb)
-   Emissions: CO2: RESNET: Natural Gas (lb)
-   Emissions: CO2: RESNET: Fuel Oil (lb)
-   Emissions: CO2: RESNET: Propane (lb)
-   Emissions: CO2: RESNET: Wood Cord (lb)
-   Emissions: CO2: RESNET: Wood Pellets (lb)
-   Emissions: CO2: RESNET: Coal (lb)          Not used by OS-ERI
+   Emissions: CO2e: RESNET: Total (lb)        Sum of the diseggregated fuel values
+   Emissions: CO2e: RESNET: Electricity (lb)
+   Emissions: CO2e: RESNET: Natural Gas (lb)
+   Emissions: CO2e: RESNET: Fuel Oil (lb)
+   Emissions: CO2e: RESNET: Propane (lb)
+   Emissions: CO2e: RESNET: Wood Cord (lb)
+   Emissions: CO2e: RESNET: Wood Pellets (lb)
+   Emissions: CO2e: RESNET: Coal (lb)         Not used by OS-ERI
    Emissions: NOx: RESNET: Total (lb)         Sum of the diseggregated fuel values
    Emissions: NOx: RESNET: Electricity (lb)
    Emissions: NOx: RESNET: Natural Gas (lb)
@@ -294,7 +294,7 @@ Depending on the outputs requested, CSV files may include:
    ===================================  =====
    Fuel Consumptions                    Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
    End Use Consumptions                 Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
-   Emissions                            Emissions (e.g., CO2, NOx, SO2), both total and disaggregated by fuel type.
+   Emissions                            Emissions (e.g., CO2e, NOx, SO2), both total and disaggregated by fuel type.
    Hot Water Uses                       Water use for each end use type (in gallons).
    Total Loads                          Heating, cooling, and hot water loads (in kBtu) for the building.
    Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
@@ -327,7 +327,7 @@ Any HPXML-defaulted values will include the ``dataSource='software'`` attribute.
 
 See the `example ERIRatedHome.xml <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome.xml>`_.
 
-A ``CO2ReferenceHome.xml`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+A ``CO22ReferenceHome.xml`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
 .. _eri_simulation_files:
 

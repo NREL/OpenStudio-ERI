@@ -211,8 +211,8 @@ end
 def timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
   if [Constants.CalcTypeERIRatedHome,
       Constants.CalcTypeERIReferenceHome,
-      Constants.CalcTypeCO2RatedHome,
-      Constants.CalcTypeCO2ReferenceHome].include? run[0]
+      Constants.CalcTypeCO2eRatedHome,
+      Constants.CalcTypeCO2eReferenceHome].include? run[0]
     return timeseries_output_freq, timeseries_outputs
   end
 
@@ -587,23 +587,32 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   return results
 end
 
-def _calculate_co2_index(eri_version, rated_output, ref_output, results)
-  results[:aco2] = rated_output['Emissions: CO2: RESNET: Total (lb)']
-  results[:arco2] = ref_output['Emissions: CO2: RESNET: Total (lb)']
+def _calculate_co2e_index(eri_version, rated_output, ref_output, results)
+  # Check that CO2e Reference Home doesn't have fossil fuel use.
+  ['Natural Gas', 'Fuel Oil', 'Propane',
+   'Wood Cord', 'Wood Pellets'].each do |fuel|
+    next if ref_output["Fuel Use: #{fuel}: Total (MBtu)"] == 0
 
-  if (not results[:aco2].nil?) && (not results[:arco2].nil?)
-    # Check if any fuel consumption without corresponding CO2 emissions.
-    # This would represent a fuel type (e.g., wood) not covered by 301.
+    fail 'CO2e Reference Home found with fossil fuel energy use.'
+  end
+
+  results[:aco2e] = rated_output['Emissions: CO2e: RESNET: Total (lb)']
+  results[:arco2e] = ref_output['Emissions: CO2e: RESNET: Total (lb)']
+
+  if (not results[:aco2e].nil?) && (not results[:arco2e].nil?)
+    # Check if any fuel consumption without corresponding CO2e emissions.
+    # This would represent a fuel type (e.g., wood) not covered by 301
+    # emissions factors.
     ['Electricity', 'Natural Gas', 'Fuel Oil',
      'Propane', 'Wood Cord', 'Wood Pellets'].each do |fuel|
       next unless rated_output["Fuel Use: #{fuel}: Total (MBtu)"] > 0
-      next unless rated_output["Emissions: CO2: RESNET: #{fuel} (lb)"] == 0
+      next unless rated_output["Emissions: CO2e: RESNET: #{fuel} (lb)"] == 0
 
       return results
     end
 
     # IAF was not in the initial calculation but has since been added
-    results[:co2index] = results[:aco2] / (results[:arco2] * results[:iaf_rh]) * 100.0
+    results[:co2eindex] = results[:aco2e] / (results[:arco2e] * results[:iaf_rh]) * 100.0
   end
   return results
 end
@@ -622,11 +631,11 @@ def calculate_eri(design_outputs, resultsdir, eri_version: nil, opp_reduction_li
                            results_iad: results_iad,
                            opp_reduction_limit: opp_reduction_limit)
 
-  if design_outputs.keys.include? Constants.CalcTypeCO2RatedHome
-    results = _calculate_co2_index(eri_version,
-                                   design_outputs[Constants.CalcTypeCO2RatedHome],
-                                   design_outputs[Constants.CalcTypeCO2ReferenceHome],
-                                   results)
+  if design_outputs.keys.include? Constants.CalcTypeCO2eRatedHome
+    results = _calculate_co2e_index(eri_version,
+                                    design_outputs[Constants.CalcTypeCO2eRatedHome],
+                                    design_outputs[Constants.CalcTypeCO2eReferenceHome],
+                                    results)
   end
 
   write_eri_results(results, resultsdir, design_outputs, results_iad, eri_version)
@@ -736,13 +745,13 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, eri_vers
   worksheet_out << ['Ref L&A total', results[:reul_la].round(2)]
   CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
 
-  # CO2 Results file
-  if not results[:co2index].nil?
-    results_csv = File.join(resultsdir, 'CO2_Results.csv')
+  # CO2e Results file
+  if not results[:co2eindex].nil?
+    results_csv = File.join(resultsdir, 'CO2e_Results.csv')
     results_out = []
-    results_out << ['CO2 Rating Index', results[:co2index].round(2)]
-    results_out << ['ACO2 (lb CO2)', results[:aco2].round(2)]
-    results_out << ['ARCO2 (lb CO2)', results[:arco2].round(2)]
+    results_out << ['CO2e Rating Index', results[:co2eindex].round(2)]
+    results_out << ['ACO2 (lb CO2e)', results[:aco2e].round(2)]
+    results_out << ['ARCO2 (lb CO2e)', results[:arco2e].round(2)]
     results_out << ['IAF RH', results[:iaf_rh].round(4)]
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
   end

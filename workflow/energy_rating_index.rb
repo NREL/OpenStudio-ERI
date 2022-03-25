@@ -50,41 +50,36 @@ if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Con
   runs << [Constants.CalcTypeERIIndexAdjustmentDesign, options[:hpxml], options[:output_dir], resultsdir]
   runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
 end
-calc_co2_index = false
+calc_co2e_index = false
 if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD'))
-  calc_co2_index = true
+  calc_co2e_index = true
 end
-if calc_co2_index
-  # Additional CO2 Reference Home (i.e., all-electric ERI Reference Home)
-  # FIXME: Only run this additional simulation if needed
-  runs << [Constants.CalcTypeCO2ReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
+if calc_co2e_index
+  # Additional CO2e Reference Home (i.e., all-electric ERI Reference Home)
+  runs << [Constants.CalcTypeCO2eReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
 end
 
 run_simulations(runs, options, basedir)
 
 design_outputs = retrieve_outputs(runs, options)
-if calc_co2_index
-  # CO2 Rated Home is same as ERI Rated Home
-  design_outputs[Constants.CalcTypeCO2RatedHome] = design_outputs[Constants.CalcTypeERIRatedHome].dup
-  # CO2 Reference Home is all-electric ERI Reference Home
-  if not design_outputs.keys.include? Constants.CalcTypeCO2ReferenceHome
-    design_outputs[Constants.CalcTypeCO2ReferenceHome] = design_outputs[Constants.CalcTypeERIReferenceHome].dup
-  end
+if calc_co2e_index
+  # CO2e Rated Home is same as ERI Rated Home
+  design_outputs[Constants.CalcTypeCO2eRatedHome] = design_outputs[Constants.CalcTypeERIRatedHome].dup
 end
 
 # Calculate and write results
-if calc_co2_index
-  puts 'Calculating ERI & CO2 Index...'
+if calc_co2e_index
+  puts 'Calculating ERI & CO2e Index...'
 else
   puts 'Calculating ERI...'
 end
 results = calculate_eri(design_outputs, resultsdir, eri_version: eri_version)
 puts "ERI: #{results[:eri].round(2)}"
-if calc_co2_index
-  if not results[:co2index].nil?
-    puts "CO2 Index: #{results[:co2index].round(2)}"
+if calc_co2e_index
+  if not results[:co2eindex].nil?
+    puts "CO2e Index: #{results[:co2eindex].round(2)}"
   else
-    puts 'CO2 Index: N/A'
+    puts 'CO2e Index: N/A'
   end
 end
 

@@ -5,33 +5,33 @@ Coeff Cooling b,0.0
 Coeff Hot Water a,0.92
 Coeff Hot Water b,0.0
 DSE_r Heating,0.8049
-DSE_r Cooling,0.4422
-DSE_r Hot Water,0.99
+DSE_r Cooling,0.443
+DSE_r Hot Water,0.9901
 EEC_x Heating,1.087
-EEC_x Cooling,0.2625
-EEC_x Hot Water,1.0526
-EEC_r Heating,1.2821
-EEC_r Cooling,0.2625
+EEC_x Cooling,0.263
+EEC_x Hot Water,1.053
+EEC_r Heating,1.282
+EEC_r Cooling,0.263
 EEC_r Hot Water,1.087
-nEC_x Heating,28.5605
-nEC_x Cooling,5.2143
+nEC_x Heating,28.5598
+nEC_x Cooling,5.2232
 nEC_x Hot Water,9.1674
-nMEUL Heating,17.9315
-nMEUL Cooling,8.7832
-nMEUL Hot Water,8.3501
+nMEUL Heating,17.9308
+nMEUL Cooling,8.7983
+nMEUL Hot Water,8.3502
 nMEUL Vent Preheat,0.0
 nMEUL Vent Precool,0.0
 IAF CFA,0.9921
 IAF NBR,1.0
 IAF NS,1.0186
-IAF RH,1.0106
-Total Loads TnML,56.341
-Total Loads TRL,70.5798
-Total Loads TRL*IAF,71.3245
-ERI,78.99
+IAF RH,1.0105
+Total Loads TnML,56.3563
+Total Loads TRL,70.58
+Total Loads TRL*IAF,71.3241
+ERI,79.01
 
 Ref Home CFA,2700.0
-Ref Home Nbr,3
+Ref Home Nbr,3.0
 Ref Home NS,1.0
 Ref dehumid,0.0
 Ref L&A resMELs,8.37
