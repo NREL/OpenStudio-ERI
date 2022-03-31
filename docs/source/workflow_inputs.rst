@@ -75,7 +75,7 @@ The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/e
   .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
   .. [#] Version only required to run ENERGY STAR calculation.
 
-PXML Building Site
+HPXML Building Site
 -------------------
 
 Site information is entered in ``/HPXML/Building/Site``.
@@ -201,7 +201,7 @@ Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/A
   ``SystemIdentifier``                  id                          Yes                  Unique identifier
   ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                  Units for air leakage
   ``HousePressure``                     double  Pa     > 0          See [#]_             House pressure with respect to outside [#]_
-  ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                  Value for air leakage
+  ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                  Value for air leakage [#]_
   ``InfiltrationVolume``                double  ft3    > 0          Yes                  Volume associated with infiltration measurement
   ``InfiltrationHeight``                double  ft     > 0          No         See [#]_  Height associated with infiltration measurement [#]_
   ====================================  ======  =====  ===========  =========  ========  ===============================================
@@ -209,6 +209,8 @@ Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/A
   .. [#] UnitofMeasure choices are "ACH" (air changes per hour at user-specified pressure), "CFM" (cubic feet per minute at user-specified pressure), or "ACHnatural" (natural air changes per hour).
   .. [#] HousePressure only required if BuildingAirLeakage/UnitofMeasure is not "ACHnatural".
   .. [#] HousePressure typical value is 50 Pa.
+  .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should *not* be adjusted by the Aext reduction factor specified in ANSI 301.
+         OpenStudio-ERI will automatically calculate and apply the Aext adjustment (and the Aext value can be found in, e.g., the ERIRatedHome.xml output file).
   .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
   .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.
 
