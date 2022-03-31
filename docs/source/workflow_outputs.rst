@@ -147,34 +147,34 @@ Annual emissions are listed below.
 
 Emissions (CO2e, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2e Reference Home.
 
-   =========================================  ========
-   Type                                       Notes
-   =========================================  ========
-   Emissions: CO2e: RESNET: Total (lb)        Sum of the diseggregated fuel values
+   ==========================================  ========
+   Type                                        Notes
+   ==========================================  ========
+   Emissions: CO2e: RESNET: Total (lb)         Sum of the diseggregated fuel values
    Emissions: CO2e: RESNET: Electricity (lb)
    Emissions: CO2e: RESNET: Natural Gas (lb)
    Emissions: CO2e: RESNET: Fuel Oil (lb)
    Emissions: CO2e: RESNET: Propane (lb)
    Emissions: CO2e: RESNET: Wood Cord (lb)
    Emissions: CO2e: RESNET: Wood Pellets (lb)
-   Emissions: CO2e: RESNET: Coal (lb)         Not used by OS-ERI
-   Emissions: NOx: RESNET: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: CO2e: RESNET: Coal (lb)          Not used by OS-ERI
+   Emissions: NOx: RESNET: Total (lb)          Sum of the diseggregated fuel values
    Emissions: NOx: RESNET: Electricity (lb)
    Emissions: NOx: RESNET: Natural Gas (lb)
    Emissions: NOx: RESNET: Fuel Oil (lb)
    Emissions: NOx: RESNET: Propane (lb)
    Emissions: NOx: RESNET: Wood Cord (lb)
    Emissions: NOx: RESNET: Wood Pellets (lb)
-   Emissions: NOx: RESNET: Coal (lb)          Not used by OS-ERI
-   Emissions: SO2: RESNET: Total (lb)         Sum of the diseggregated fuel values
+   Emissions: NOx: RESNET: Coal (lb)           Not used by OS-ERI
+   Emissions: SO2: RESNET: Total (lb)          Sum of the diseggregated fuel values
    Emissions: SO2: RESNET: Electricity (lb)
    Emissions: SO2: RESNET: Natural Gas (lb)
    Emissions: SO2: RESNET: Fuel Oil (lb)
    Emissions: SO2: RESNET: Propane (lb)
    Emissions: SO2: RESNET: Wood Cord (lb)
    Emissions: SO2: RESNET: Wood Pellets (lb)
-   Emissions: SO2: RESNET: Coal (lb)          Not used by OS-ERI
-   =========================================  ========
+   Emissions: SO2: RESNET: Coal (lb)           Not used by OS-ERI
+   ==========================================  ========
 
 Annual Building Loads
 ^^^^^^^^^^^^^^^^^^^^^

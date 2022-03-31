@@ -19,7 +19,7 @@ __Bugfixes__
 
 __New Features__
 - Updates to OpenStudio 3.3.0/EnergyPlus 9.6.0.
-- **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeDefectRatio` are no longer accepted.
+- **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeNotTested` are no longer accepted.
 - **Breaking change**: Replaces "Unmet Load" outputs with "Unmet Hours".
 - **Breaking change**: Renames "Load: Heating" and "Peak Load: Heating" (and Cooling) outputs to include "Delivered".
 - **Breaking change**: Any heat pump backup heating requires `HeatPump/BackupType="integrated"` to be specified.
