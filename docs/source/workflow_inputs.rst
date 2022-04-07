@@ -1700,14 +1700,15 @@ HPXML Batteries
 
 A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/Batteries/Battery``.
 
-  ====================================================  =======  =========  ===========  ========  ========  ============================================
-  Element                                               Type     Units      Constraints  Required  Default   Notes
-  ====================================================  =======  =========  ===========  ========  ========  ============================================
-  ``SystemIdentifier``                                  id                               Yes                 Unique identifier
-  ``Location``                                          string              See [#]_     Yes                 Location
-  ``BatteryType``                                       string              See [#]_     Yes                 Battery type
-  ``NominalCapacity[Units="kWh"]/Value``                double   kWh        >= 0         Yes                 Nominal (not usable) capacity
-  ====================================================  =======  =========  ===========  ========  ========  ============================================
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+  Element                                               Type     Units      Constraints              Required  Default   Notes
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+  ``SystemIdentifier``                                  id                                           Yes                 Unique identifier
+  ``Location``                                          string              See [#]_                 Yes                 Location
+  ``BatteryType``                                       string              See [#]_                 Yes                 Battery type
+  ``NominalCapacity[Units="kWh"]/Value``                double   kWh        >= 0                     Yes                 Nominal (total) capacity
+  ``UsableCapacity[Units="kWh"]/Value``                 double   kWh        >= 0, < NominalCapacity  Yes                 Usable capacity
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
 
   .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
   .. [#] BatteryType only choice is "Li-ion".
