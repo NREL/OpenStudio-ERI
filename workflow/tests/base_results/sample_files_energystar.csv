@@ -41,7 +41,7 @@
 [SF_National_3.1] base-dhw-combi-tankless.xml,70.0,1.0,70.0,65.0,65.0,PASS
 [SF_National_3.1] base-dhw-desuperheater.xml,77.0,1.0,77.0,82.0,82.0,FAIL
 [SF_National_3.1] base-dhw-dwhr.xml,67.0,1.0,67.0,76.0,76.0,FAIL
-[SF_National_3.1] base-dhw-indirect-standbyloss.xml,70.0,1.0,70.0,68.0,68.0,PASS
+[SF_National_3.1] base-dhw-indirect-standbyloss.xml,70.0,1.0,70.0,69.0,69.0,PASS
 [SF_National_3.1] base-dhw-jacket-gas.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_National_3.1] base-dhw-jacket-hpwh.xml,68.0,1.0,68.0,74.0,74.0,FAIL
 [SF_National_3.1] base-dhw-jacket-indirect.xml,70.0,1.0,70.0,67.0,67.0,PASS
@@ -71,14 +71,14 @@
 [SF_National_3.1] base-enclosure-overhangs.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_National_3.1] base-enclosure-skylights.xml,67.0,1.0,67.0,81.0,81.0,FAIL
 [SF_National_3.1] base-foundation-ambient.xml,67.0,1.0,67.0,81.0,81.0,FAIL
-[SF_National_3.1] base-foundation-basement-garage.xml,68.0,1.0,68.0,78.0,78.0,FAIL
+[SF_National_3.1] base-foundation-basement-garage.xml,67.0,1.0,67.0,78.0,78.0,FAIL
 [SF_National_3.1] base-foundation-conditioned-basement-slab-insulation.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_National_3.1] base-foundation-conditioned-basement-wall-interior-insulation.xml,68.0,1.0,68.0,78.0,78.0,FAIL
 [SF_National_3.1] base-foundation-multiple.xml,67.0,1.0,67.0,72.0,72.0,FAIL
 [SF_National_3.1] base-foundation-slab.xml,70.0,1.0,70.0,67.0,67.0,PASS
 [SF_National_3.1] base-foundation-unconditioned-basement-assembly-r.xml,67.0,1.0,67.0,70.0,70.0,FAIL
 [SF_National_3.1] base-foundation-unconditioned-basement-wall-insulation.xml,67.0,1.0,67.0,74.0,74.0,FAIL
-[SF_National_3.1] base-foundation-unconditioned-basement.xml,67.0,1.0,67.0,72.0,72.0,FAIL
+[SF_National_3.1] base-foundation-unconditioned-basement.xml,67.0,1.0,67.0,73.0,73.0,FAIL
 [SF_National_3.1] base-foundation-unvented-crawlspace.xml,68.0,1.0,68.0,69.0,69.0,FAIL
 [SF_National_3.1] base-foundation-vented-crawlspace.xml,68.0,1.0,68.0,74.0,74.0,FAIL
 [SF_National_3.1] base-foundation-walkout-basement.xml,67.0,1.0,67.0,80.0,80.0,FAIL
@@ -130,7 +130,7 @@
 [SF_National_3.1] base-hvac-wall-furnace-elec-only.xml,70.0,1.0,70.0,94.0,94.0,FAIL
 [SF_National_3.1] base-lighting-ceiling-fans.xml,67.0,1.0,67.0,79.0,79.0,FAIL
 [SF_National_3.1] base-location-baltimore-md.xml,64.0,1.0,64.0,65.0,65.0,FAIL
-[SF_National_3.1] base-location-capetown-zaf.xml,71.0,1.0,71.0,75.0,75.0,FAIL
+[SF_National_3.1] base-location-capetown-zaf.xml,70.0,1.0,70.0,76.0,76.0,FAIL
 [SF_National_3.1] base-location-dallas-tx.xml,64.0,1.0,64.0,66.0,66.0,FAIL
 [SF_National_3.1] base-location-duluth-mn.xml,61.0,1.0,61.0,70.0,70.0,FAIL
 [SF_National_3.1] base-location-helena-mt.xml,65.0,1.0,65.0,77.0,77.0,FAIL
@@ -157,7 +157,7 @@
 [SF_OregonWashington_3.2] base-location-portland-or.xml,67.0,1.0,67.0,76.0,76.0,FAIL
 [MF_National_1.0] base-bldgtype-multifamily.xml,73.0,1.0,73.0,63.0,63.0,PASS
 [MF_National_1.0] base-bldgtype-single-family-attached.xml,75.0,1.0,75.0,73.0,73.0,PASS
-[MF_National_1.1] base-bldgtype-multifamily-adjacent-to-multiple.xml,72.0,1.0,72.0,68.0,68.0,PASS
+[MF_National_1.1] base-bldgtype-multifamily-adjacent-to-multiple.xml,71.0,1.0,71.0,68.0,68.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-location-portland-or.xml,73.0,1.0,73.0,68.0,68.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-boiler-only-baseboard.xml,72.0,1.0,72.0,66.0,66.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-boiler-only-fan-coil-ducted.xml,72.0,1.0,72.0,66.0,66.0,PASS
