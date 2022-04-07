@@ -56,6 +56,11 @@ def process_arguments(calling_rb, args, basedir)
       options[:add_comp_loads] = true
     end
 
+    options[:skip_simulation] = false
+    opts.on('--skip-simulation', 'Skip the EnergyPlus simulations') do |t|
+      options[:skip_simulation] = true
+    end
+
     options[:debug] = false
     opts.on('-d', '--debug') do |t|
       options[:debug] = true
@@ -146,10 +151,10 @@ def run_simulations(runs, options, basedir)
     end
 
     Parallel.map(runs, in_processes: runs.size) do |run|
-      output_hpxml_path, designdir = run_design_direct(basedir, run, options[:hpxml], options[:debug],
-                                                       options[:timeseries_output_freq], options[:timeseries_outputs],
-                                                       options[:add_comp_loads])
-      kill unless File.exist? File.join(designdir, 'eplusout.end')
+      output_hpxml_path, designdir = run_design_direct(basedir, run, options)
+      if not options[:skip_simulation]
+        kill unless File.exist? File.join(designdir, 'eplusout.end')
+      end
     end
 
   else # e.g., Windows
@@ -168,10 +173,10 @@ def run_simulations(runs, options, basedir)
 
     pids = {}
     Parallel.map(runs, in_threads: runs.size) do |run|
-      output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, run, options[:hpxml], options[:debug],
-                                                                 options[:timeseries_output_freq], options[:timeseries_outputs],
-                                                                 options[:add_comp_loads])
+      output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, run, options)
       Process.wait pids[run]
+      next unless not options[:skip_simulation]
+
       if not File.exist? File.join(designdir, 'eplusout.end')
         kill(pids)
         next
@@ -181,18 +186,25 @@ def run_simulations(runs, options, basedir)
   end
 end
 
-def run_design_direct(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+def run_design_direct(basedir, run, options)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_design_dir(run)
-  timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
+  timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, options[:timeseries_output_freq], options[:timeseries_outputs])
 
-  output_hpxml_path = run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+  output_hpxml_path = run_design(basedir,
+                                 run,
+                                 options[:hpxml],
+                                 options[:debug],
+                                 timeseries_output_freq,
+                                 timeseries_outputs,
+                                 options[:add_comp_loads],
+                                 options[:skip_simulation])
 
   return output_hpxml_path, designdir
 end
 
-def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+def run_design_spawn(basedir, run, options)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -200,10 +212,20 @@ def run_design_spawn(basedir, run, hpxml, debug, timeseries_output_freq, timeser
   # 2. There is overhead to spawning processes vs using forked processes
   designdir = get_design_dir(run)
   output_hpxml_path = get_output_filename(run)
-  timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
+  timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, options[:timeseries_output_freq], options[:timeseries_outputs])
 
   cli_path = OpenStudio.getOpenStudioCLI
-  pid = Process.spawn("\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), 'design.rb')}\" \"#{basedir}\" \"#{run.join('|')}\" \"#{hpxml}\" #{debug} \"#{timeseries_output_freq}\" \"#{timeseries_outputs.join('|')}\" \"#{add_comp_loads}\"")
+  command = "\"#{cli_path}\" "
+  command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
+  command += "\"#{basedir}\" "
+  command += "\"#{run.join('|')}\" "
+  command += "\"#{options[:hpxml]}\" "
+  command += "\"#{options[:debug]}\" "
+  command += "\"#{timeseries_output_freq}\" "
+  command += "\"#{timeseries_outputs.join('|')}\" "
+  command += "\"#{options[:add_comp_loads]}\" "
+  command += "\"#{options[:skip_simulation]}\" "
+  pid = Process.spawn(command)
 
   return output_hpxml_path, designdir, pid
 end

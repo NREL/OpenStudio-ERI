@@ -61,25 +61,27 @@ end
 
 run_simulations(runs, options, basedir)
 
-design_outputs = retrieve_outputs(runs, options)
-if calc_co2e_index
-  # CO2e Rated Home is same as ERI Rated Home
-  design_outputs[Constants.CalcTypeCO2eRatedHome] = design_outputs[Constants.CalcTypeERIRatedHome].dup
-end
+if not options[:skip_simulation]
+  design_outputs = retrieve_outputs(runs, options)
+  if calc_co2e_index
+    # CO2e Rated Home is same as ERI Rated Home
+    design_outputs[Constants.CalcTypeCO2eRatedHome] = design_outputs[Constants.CalcTypeERIRatedHome].dup
+  end
 
-# Calculate and write results
-if calc_co2e_index
-  puts 'Calculating ERI & CO2e Index...'
-else
-  puts 'Calculating ERI...'
-end
-results = calculate_eri(design_outputs, resultsdir, eri_version: eri_version)
-puts "ERI: #{results[:eri].round(2)}"
-if calc_co2e_index
-  if not results[:co2eindex].nil?
-    puts "CO2e Index: #{results[:co2eindex].round(2)}"
+  # Calculate and write results
+  if calc_co2e_index
+    puts 'Calculating ERI & CO2e Index...'
   else
-    puts 'CO2e Index: N/A'
+    puts 'Calculating ERI...'
+  end
+  results = calculate_eri(design_outputs, resultsdir, eri_version: eri_version)
+  puts "ERI: #{results[:eri].round(2)}"
+  if calc_co2e_index
+    if not results[:co2eindex].nil?
+      puts "CO2e Index: #{results[:co2eindex].round(2)}"
+    else
+      puts 'CO2e Index: N/A'
+    end
   end
 end
 

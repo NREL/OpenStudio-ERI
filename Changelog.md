@@ -9,6 +9,7 @@ __New Features__
 - Allows modeling an electric storage battery.
 - Allows `AirInfiltrationMeasurement/InfiltrationHeight` as an optional input; if not provided, it is inferred from other inputs as before. 
 - Allows duct leakage to be entered in units of CFM50 as an alternative to CFM25.
+- Adds a `--skip-simulation` flag that can be used to just generate the ERI Rated/Reference Home HPXMLs and then stop.
 
 __Bugfixes__
 - Adds more stringent limits for `AirflowDefectRatio` (now allows values from 1/10th to 10x the design value).

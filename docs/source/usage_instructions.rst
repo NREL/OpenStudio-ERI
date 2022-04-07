@@ -36,6 +36,9 @@ For example, to request all possible hourly outputs:
 Or for example, one or more specific monthly output types can be requested, e.g.:
 ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --monthly fuels --monthly temperatures``
 
+You can also skip simulations (i.e., just generate the ERI Reference/Rated Home HPXMLs) by using, e.g.:
+``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --skip-simulation``
+
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 
 Running ENERGY STAR
