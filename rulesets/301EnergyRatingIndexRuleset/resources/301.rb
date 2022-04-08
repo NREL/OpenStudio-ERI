@@ -1800,7 +1800,8 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.batteries.add(id: orig_battery.id,
                               type: orig_battery.type,
                               location: orig_battery.location,
-                              nominal_capacity_kwh: orig_battery.nominal_capacity_kwh)
+                              nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
+                              usable_capacity_kwh: orig_battery.usable_capacity_kwh)
     end
   end
 

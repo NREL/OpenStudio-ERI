@@ -77,68 +77,75 @@ End uses are listed below.
 Note that all end uses are mutually exclusive -- the "Electricity: Heating" end use, for example, excludes energy reported in the "Electricity: Heating Fans/Pumps" end use.
 So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural Gas: \*") equal the above reported fuel use (e.g., "Fuel Use: Natural Gas: Total").
 
-   ==========================================================  ====================================================
-   Type                                                        Notes
-   ==========================================================  ====================================================
-   Electricity: Heating (MBtu)                                 Excludes fans/pumps
-   Electricity: Heating Fans/Pumps (MBtu)
-   Electricity: Cooling (MBtu)                                 Excludes fans/pumps
-   Electricity: Cooling Fans/Pumps (MBtu)
-   Electricity: Hot Water (MBtu)                               Excludes recirc pump and solar thermal pump
-   Electricity: Hot Water Recirc Pump (MBtu)
-   Electricity: Hot Water Solar Thermal Pump (MBtu)            Non-zero only when using detailed (not simple) solar thermal inputs
-   Electricity: Lighting Interior (MBtu)
-   Electricity: Lighting Garage (MBtu)
-   Electricity: Lighting Exterior (MBtu)
-   Electricity: Mech Vent (MBtu)                               Excludes preheating/precooling
-   Electricity: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
-   Electricity: Mech Vent Precooling (MBtu)                    Shared ventilation preconditioning system
-   Electricity: Whole House Fan (MBtu)
-   Electricity: Refrigerator (MBtu)
-   Electricity: Dehumidifier (MBtu)
-   Electricity: Dishwasher (MBtu)
-   Electricity: Clothes Washer (MBtu)
-   Electricity: Clothes Dryer (MBtu)
-   Electricity: Range/Oven (MBtu)
-   Electricity: Ceiling Fan (MBtu)
-   Electricity: Television (MBtu)
-   Electricity: Plug Loads (MBtu)                              Excludes independently reported plug loads (e.g., well pump)
-   Electricity: PV (MBtu)                                      Negative value for any power produced
-   Electricity: Generator (MBtu)                               Negative value for any power produced
-   Natural Gas: Heating (MBtu)
-   Natural Gas: Hot Water (MBtu)
-   Natural Gas: Clothes Dryer (MBtu)
-   Natural Gas: Range/Oven (MBtu)
-   Natural Gas: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
-   Natural Gas: Generator (MBtu)                               Positive value for any fuel consumed
-   Fuel Oil: Heating (MBtu)
-   Fuel Oil: Hot Water (MBtu)
-   Fuel Oil: Clothes Dryer (MBtu)
-   Fuel Oil: Range/Oven (MBtu)
-   Fuel Oil: Mech Vent Preheating (MBtu)                       Shared ventilation preconditioning system
-   Propane: Heating (MBtu)
-   Propane: Hot Water (MBtu)
-   Propane: Clothes Dryer (MBtu)
-   Propane: Range/Oven (MBtu)
-   Propane: Mech Vent Preheating (MBtu)                        Shared ventilation preconditioning system
-   Propane: Generator (MBtu)                                   Positive value for any fuel consumed
-   Wood Cord: Heating (MBtu)
-   Wood Cord: Hot Water (MBtu)
-   Wood Cord: Clothes Dryer (MBtu)
-   Wood Cord: Range/Oven (MBtu)
-   Wood Cord: Mech Vent Preheating (MBtu)                      Shared ventilation preconditioning system
-   Wood Pellets: Heating (MBtu)
-   Wood Pellets: Hot Water (MBtu)
-   Wood Pellets: Clothes Dryer (MBtu)
-   Wood Pellets: Range/Oven (MBtu)
-   Wood Pellets: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
-   Coal: Heating (MBtu)                                        Not used by OS-ERI
-   Coal: Hot Water (MBtu)                                      Not used by OS-ERI
-   Coal: Clothes Dryer (MBtu)                                  Not used by OS-ERI
-   Coal: Range/Oven (MBtu)                                     Not used by OS-ERI
-   Coal: Mech Vent Preheating (MBtu)                           Not used by OS-ERI
-   Coal: Generator (MBtu)                                      Not used by OS-ERI
-   ==========================================================  ====================================================
+   ===================================================================  ====================================================
+   Type                                                                 Notes
+   ===================================================================  ====================================================
+   End Use: Electricity: Heating (MBtu)                                 Excludes heat pump backup and fans/pumps
+   End Use: Electricity: Heating Heat Pump Backup (MBtu)
+   End Use: Electricity: Heating Fans/Pumps (MBtu)
+   End Use: Electricity: Cooling (MBtu)                                 Excludes fans/pumps
+   End Use: Electricity: Cooling Fans/Pumps (MBtu)
+   End Use: Electricity: Hot Water (MBtu)                               Excludes recirc pump and solar thermal pump
+   End Use: Electricity: Hot Water Recirc Pump (MBtu)
+   End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)            Non-zero only when using detailed (not simple) solar thermal inputs
+   End Use: Electricity: Lighting Interior (MBtu)
+   End Use: Electricity: Lighting Garage (MBtu)
+   End Use: Electricity: Lighting Exterior (MBtu)
+   End Use: Electricity: Mech Vent (MBtu)                               Excludes preheating/precooling
+   End Use: Electricity: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
+   End Use: Electricity: Mech Vent Precooling (MBtu)                    Shared ventilation preconditioning system
+   End Use: Electricity: Whole House Fan (MBtu)
+   End Use: Electricity: Refrigerator (MBtu)
+   End Use: Electricity: Dehumidifier (MBtu)
+   End Use: Electricity: Dishwasher (MBtu)
+   End Use: Electricity: Clothes Washer (MBtu)
+   End Use: Electricity: Clothes Dryer (MBtu)
+   End Use: Electricity: Range/Oven (MBtu)
+   End Use: Electricity: Ceiling Fan (MBtu)
+   End Use: Electricity: Television (MBtu)
+   End Use: Electricity: Plug Loads (MBtu)                              Excludes independently reported plug loads (e.g., well pump)
+   End Use: Electricity: PV (MBtu)                                      Negative value for any power produced
+   End Use: Electricity: Generator (MBtu)                               Negative value for any power produced
+   End Use: Natural Gas: Heating (MBtu)                                 Excludes heat pump backup
+   End Use: Natural Gas: Heating Heat Pump Backup (MBtu)
+   End Use: Natural Gas: Hot Water (MBtu)
+   End Use: Natural Gas: Clothes Dryer (MBtu)
+   End Use: Natural Gas: Range/Oven (MBtu)
+   End Use: Natural Gas: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
+   End Use: Natural Gas: Generator (MBtu)                               Positive value for any fuel consumed
+   End Use: Fuel Oil: Heating (MBtu)                                    Excludes heat pump backup
+   End Use: Fuel Oil: Heating Heat Pump Backup (MBtu)
+   End Use: Fuel Oil: Hot Water (MBtu)
+   End Use: Fuel Oil: Clothes Dryer (MBtu)
+   End Use: Fuel Oil: Range/Oven (MBtu)
+   End Use: Fuel Oil: Mech Vent Preheating (MBtu)                       Shared ventilation preconditioning system
+   End Use: Propane: Heating (MBtu)                                     Excludes heat pump backup
+   End Use: Propane: Heating Heat Pump Backup (MBtu)
+   End Use: Propane: Hot Water (MBtu)
+   End Use: Propane: Clothes Dryer (MBtu)
+   End Use: Propane: Range/Oven (MBtu)
+   End Use: Propane: Mech Vent Preheating (MBtu)                        Shared ventilation preconditioning system
+   End Use: Propane: Generator (MBtu)                                   Positive value for any fuel consumed
+   End Use: Wood Cord: Heating (MBtu)                                   Excludes heat pump backup
+   End Use: Wood Cord: Heating Heat Pump Backup (MBtu)
+   End Use: Wood Cord: Hot Water (MBtu)
+   End Use: Wood Cord: Clothes Dryer (MBtu)
+   End Use: Wood Cord: Range/Oven (MBtu)
+   End Use: Wood Cord: Mech Vent Preheating (MBtu)                      Shared ventilation preconditioning system
+   End Use: Wood Pellets: Heating (MBtu)                                Excludes heat pump backup
+   End Use: Wood Pellets: Heating Heat Pump Backup (MBtu)
+   End Use: Wood Pellets: Hot Water (MBtu)
+   End Use: Wood Pellets: Clothes Dryer (MBtu)
+   End Use: Wood Pellets: Range/Oven (MBtu)
+   End Use: Wood Pellets: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   End Use: Coal: Heating (MBtu)                                        Excludes heat pump backup
+   End Use: Coal: Heating Heat Pump Backup (MBtu)
+   End Use: Coal: Hot Water (MBtu)                                      Not used by OS-ERI
+   End Use: Coal: Clothes Dryer (MBtu)                                  Not used by OS-ERI
+   End Use: Coal: Range/Oven (MBtu)                                     Not used by OS-ERI
+   End Use: Coal: Mech Vent Preheating (MBtu)                           Not used by OS-ERI
+   End Use: Coal: Generator (MBtu)                                      Not used by OS-ERI
+   ===================================================================  ====================================================
 
 Annual Emissions
 ^^^^^^^^^^^^^^^^
@@ -292,6 +299,7 @@ Depending on the outputs requested, CSV files may include:
    ===================================  =====
    Type                                 Notes
    ===================================  =====
+   Total Consumptions                   Energy use for building total.
    Fuel Consumptions                    Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
    End Use Consumptions                 Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
    Emissions                            Emissions (e.g., CO2e, NOx, SO2), both total and disaggregated by fuel type.

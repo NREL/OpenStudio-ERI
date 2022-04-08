@@ -42,6 +42,7 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
     measure_subdir = 'hpxml-measures/ReportSimulationOutput'
     args = {}
     args['timeseries_frequency'] = timeseries_output_freq
+    args['include_timeseries_total_consumptions'] = timeseries_outputs.include? 'total'
     args['include_timeseries_fuel_consumptions'] = timeseries_outputs.include? 'fuels'
     args['include_timeseries_end_use_consumptions'] = timeseries_outputs.include? 'enduses'
     args['include_timeseries_emissions'] = timeseries_outputs.include? 'emissions'
