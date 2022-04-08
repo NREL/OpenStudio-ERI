@@ -45,7 +45,7 @@ class ERIPVTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_battery(hpxml, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0 }])
+        _check_battery(hpxml, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0, usable_capacity_kwh: 18.0 }])
       else
         _check_battery(hpxml)
       end
@@ -119,6 +119,7 @@ class ERIPVTest < MiniTest::Test
       assert_equal(expected_values[:type], battery.type)
       assert_equal(expected_values[:location], battery.location)
       assert_equal(expected_values[:nominal_capacity_kwh], battery.nominal_capacity_kwh)
+      assert_equal(expected_values[:usable_capacity_kwh], battery.usable_capacity_kwh)
     end
   end
 end

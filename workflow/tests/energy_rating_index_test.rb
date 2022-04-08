@@ -115,6 +115,14 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
+  def test_skip_simulation
+    test_name = 'skip_simulation'
+
+    # Run ERI workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name, skip_simulation: true)
+  end
+
   def test_resnet_ashrae_140
     test_name = 'RESNET_Test_4.1_Standard_140'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))

@@ -150,6 +150,14 @@ class EnergyStarTest < Minitest::Test
     end
   end
 
+  def test_skip_simulation
+    test_name = 'skip_simulation'
+
+    # Run ENERGY STAR workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name, run_energystar: true, skip_simulation: true)
+  end
+
   def test_epa
     test_name = 'EPA_Tests'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))

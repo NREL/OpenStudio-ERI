@@ -27,7 +27,8 @@ def _run_ruleset(design, xml, out_xml)
   XMLHelper.write_file(hpxml, out_xml)
 end
 
-def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none', run_energystar: false, component_loads: false)
+def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none',
+                  run_energystar: false, component_loads: false, skip_simulation: false)
   xml = File.absolute_path(xml)
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -40,6 +41,10 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
   if component_loads
     comploads = ' --add-component-loads'
   end
+  skipsim = ''
+  if skip_simulation
+    skipsim = ' --skip-simulation'
+  end
 
   # Run workflow
   if run_energystar
@@ -47,7 +52,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
   else
     workflow_rb = 'energy_rating_index.rb'
   end
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads} -o #{rundir} --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads}#{skipsim} -o #{rundir} --debug"
   start_time = Time.now
   system(command)
   runtime = (Time.now - start_time).round(2)
@@ -137,8 +142,10 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     hpxmls.keys.each do |k|
       assert(File.exist?(hpxmls[k]))
     end
-    csvs.keys.each do |k|
-      assert(File.exist?(csvs[k]))
+    if not skip_simulation
+      csvs.keys.each do |k|
+        assert(File.exist?(csvs[k]))
+      end
     end
 
     # Check HPXMLs are valid
