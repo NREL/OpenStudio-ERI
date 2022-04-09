@@ -33,3 +33,10 @@ Rake::TestTask.new('test_energystar_workflow') do |t|
   t.warning = false
   t.verbose = true
 end
+
+desc 'Run Real Homes workflow tests'
+Rake::TestTask.new('test_real_homes') do |t|
+  t.test_files = Dir['workflow/tests/real_homes_test.rb']
+  t.warning = false
+  t.verbose = true
+end

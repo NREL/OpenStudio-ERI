@@ -104,6 +104,29 @@ jobs:
           path: workflow/tests/test_results
           name: test_results_energystar
 
+  run-real-homes-workflow-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://nrel/openstudio:3.3.0
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install software
+        run: |
+          rm -f Gemfile.lock && bundle install
+
+      - name: Run Real Homes workflow tests
+        run: |
+          bundle exec rake test_real_homes
+
+      - name: Store results
+        uses: actions/upload-artifact@v2
+        with:
+          path: workflow/tests/test_results
+          name: test_results_energystar
+
   compare-results:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
