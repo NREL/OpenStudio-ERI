@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.4.0
 
 __New Features__
+- Updates to OpenStudio 3.4.0/EnergyPlus 22.1.
 - Implements ANSI/RESNET/ICC Standard 301-2019 Addenda C & D. `ERICalculation/Version` can now be "2019ABC" or "2019ABCD" in the HPXML files.
   - Adds calculation of CO2e Rating Index and CO2e/NOx/SO2 emissions (annual and hourly).
   - Adds support for shared hot water recirculation systems controlled by temperature.

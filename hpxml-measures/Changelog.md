@@ -1,5 +1,6 @@
 ## OpenStudio-HPXML v1.4.0
 __New Features__
+- Updates to OpenStudio 3.4.0/EnergyPlus 22.1.
 - Allows calculating one or more emissions scenarios (e.g., high renewable penetration vs business as usual) for different emissions types (e.g., CO2e).
 - Allows a heat pump separate backup system to be a central system (e.g., central furnace w/ ducts). Previously only non-central system types were allowed.
 - Allows specifying a `StormWindow` element for windows/skylights; U-factors and SHGCs are automatically adjusted.
@@ -17,7 +18,7 @@ __New Features__
   - Adds an optional argument for whether the HPXML file is written with default values applied; defaults to false.
   - Adds an optional argument for whether the HPXML file is validated; defaults to false.
 - ReportSimulationOutput measure:
-  **Breaking change**: New "End Use: <Fuel>: Heating Heat Pump Backup" output, disaggregated from "End Use: <Fuel>: Heating".
+  - **Breaking change**: New "End Use: \<Fuel\>: Heating Heat Pump Backup" output, disaggregated from "End Use: \<Fuel\>: Heating".
   - Adds "Energy Use: Total" and "Energy Use: Net" columns to the annual results output file; allows timeseries outputs.
   - Adds a "Fuel Use: Electricity: Net" timeseries output column for homes with electricity generation.
   - Adds optional argument for requesting timeseries EnergyPlus output variables.
