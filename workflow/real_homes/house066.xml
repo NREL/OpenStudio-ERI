@@ -428,7 +428,7 @@
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
               <FanPower>286.0</FanPower>
-              <AttachedToHVACDistributionSystem idref='HVACDIstribution1'/>
+              <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
