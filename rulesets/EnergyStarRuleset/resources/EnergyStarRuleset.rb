@@ -115,8 +115,6 @@ class EnergyStarRuleset
     @infilheight = get_infiltration_height(orig_hpxml)
     @has_cond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementConditioned)
     @has_uncond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementUnconditioned)
-    @has_crawlspace = (orig_hpxml.has_location(HPXML::LocationCrawlspaceVented) || orig_hpxml.has_location(HPXML::LocationCrawlspaceUnvented))
-    @has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
     @has_auto_generated_attic = false
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
@@ -144,7 +142,7 @@ class EnergyStarRuleset
     infil_air_leakage, infil_unit_of_measure = get_enclosure_air_infiltration_default(orig_hpxml)
 
     # Air Infiltration
-    new_hpxml.air_infiltration_measurements.add(id: "Infiltration_#{infil_unit_of_measure}50",
+    new_hpxml.air_infiltration_measurements.add(id: 'ESInfiltration',
                                                 house_pressure: 50,
                                                 unit_of_measure: infil_unit_of_measure,
                                                 air_leakage: infil_air_leakage.round(1),
@@ -153,6 +151,8 @@ class EnergyStarRuleset
   end
 
   def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
+    has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
+    set_vented_attic = false
     if ESConstants.MFVersions.include? @program_version
       ceiling_type = get_ceiling_type(orig_hpxml)
       if ceiling_type == 'adiabatic'
@@ -161,21 +161,21 @@ class EnergyStarRuleset
         if @program_version == ESConstants.MFNationalVer1_1
           # Attic shall only be modeled if exist. Because Duct Locations shall be configured to be 100% in conditioned space
           # Check if vented attic (or unvented attic, which will become a vented attic) exists
-          if @has_attic
-            new_hpxml.attics.add(id: 'VentedAttic',
-                                 attic_type: HPXML::AtticTypeVented)
+          if has_attic
+            set_vented_attic = true
           end
         elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
           # With or without an attic in orig_hpxml, there should be an attic in new_hpxml. Because duct Locations shall be configured to be either 100% or 75% in vented attic depending on the number of story of the unit
-          new_hpxml.attics.add(id: 'VentedAttic',
-                               attic_type: HPXML::AtticTypeVented)
-          @has_auto_generated_attic = true unless @has_attic
+          set_vented_attic = true
         end
       end
     else
-      new_hpxml.attics.add(id: 'VentedAttic',
+      set_vented_attic = true
+    end
+    if set_vented_attic
+      new_hpxml.attics.add(id: 'ESVentedAttic',
                            attic_type: HPXML::AtticTypeVented)
-      @has_auto_generated_attic = true unless @has_attic
+      @has_auto_generated_attic = true unless has_attic
     end
   end
 
@@ -184,7 +184,7 @@ class EnergyStarRuleset
     orig_hpxml.frame_floors.each do |orig_frame_floor|
       next unless orig_frame_floor.interior_adjacent_to.include?('crawlspace') || orig_frame_floor.exterior_adjacent_to.include?('crawlspace')
 
-      new_hpxml.foundations.add(id: 'VentedCrawlspace',
+      new_hpxml.foundations.add(id: 'ESVentedCrawlspace',
                                 foundation_type: HPXML::FoundationTypeCrawlspaceVented)
       break
     end
@@ -207,17 +207,20 @@ class EnergyStarRuleset
     solar_absorptance = 0.92
     emittance = 0.90
     default_roof_pitch = 5.0 # assume 5:12 pitch
+    has_vented_attic = (new_hpxml.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
 
     orig_hpxml.roofs.each do |orig_roof|
       roof_pitch = orig_roof.pitch
-      if orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace
+      roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
+      roof_insulation_assembly_r_value = orig_roof.insulation_assembly_r_value
+      if orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace && has_vented_attic
         roof_interior_adjacent_to = HPXML::LocationAtticVented
         roof_pitch = default_roof_pitch if roof_pitch == 0
-      else
-        roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
       end
-      # Roof surfaces are over unconditioned spaces and should not be insulated
-      roof_insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
+      if roof_interior_adjacent_to != HPXML::LocationLivingSpace
+        # Roof surfaces are over unconditioned spaces and should not be insulated
+        roof_insulation_assembly_r_value = [roof_insulation_assembly_r_value, 2.3].min # uninsulated
+      end
 
       new_hpxml.roofs.add(id: orig_roof.id,
                           interior_adjacent_to: roof_interior_adjacent_to,
@@ -242,7 +245,7 @@ class EnergyStarRuleset
       pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
       roof_area = orig_frame_floor.area / Math.cos(pitch_to_radians)
 
-      new_hpxml.roofs.add(id: "Roof#{new_hpxml.roofs.size + 1}",
+      new_hpxml.roofs.add(id: 'ESRoof',
                           interior_adjacent_to: HPXML::LocationAtticVented,
                           area: roof_area,
                           azimuth: nil,
@@ -251,7 +254,7 @@ class EnergyStarRuleset
                           pitch: default_roof_pitch,
                           radiant_barrier: radiant_barrier_bool,
                           radiant_barrier_grade: radiant_barrier_grade,
-                          insulation_id: "Roof_Insulation#{new_hpxml.roofs.size + 1}",
+                          insulation_id: 'ESRoofInsulation',
                           insulation_assembly_r_value: 2.3) # Assumes that the roof is uninsulated
     end
   end
@@ -274,7 +277,7 @@ class EnergyStarRuleset
     # Area is equally distributed to each direction to be consistent with walls.
     # Need to preserve above-grade vs below-grade for inferred infiltration height.
     if sum_gross_area_ag > 0
-      new_hpxml.rim_joists.add(id: 'RimJoistArea',
+      new_hpxml.rim_joists.add(id: 'ESRimJoist',
                                exterior_adjacent_to: HPXML::LocationOutside,
                                interior_adjacent_to: HPXML::LocationLivingSpace,
                                area: sum_gross_area_ag,
@@ -284,7 +287,7 @@ class EnergyStarRuleset
                                insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
     if sum_gross_area_bg > 0
-      new_hpxml.rim_joists.add(id: 'RimJoistAreaBasement',
+      new_hpxml.rim_joists.add(id: 'ESRimJoistBasement',
                                exterior_adjacent_to: HPXML::LocationOutside,
                                interior_adjacent_to: HPXML::LocationBasementConditioned,
                                area: sum_gross_area_bg,
@@ -328,7 +331,7 @@ class EnergyStarRuleset
 
     # Create thermal boundary wall area
     if sum_gross_area > 0
-      new_hpxml.walls.add(id: 'WallArea',
+      new_hpxml.walls.add(id: 'ESWall',
                           exterior_adjacent_to: HPXML::LocationOutside,
                           interior_adjacent_to: HPXML::LocationLivingSpace,
                           wall_type: HPXML::WallTypeWoodStud,
@@ -474,11 +477,11 @@ class EnergyStarRuleset
       pitch_to_radians = Math.atan(orig_roof.pitch / 12.0)
       frame_floor_area = orig_roof.area * Math.cos(pitch_to_radians)
 
-      new_hpxml.frame_floors.add(id: "FrameFloor#{new_hpxml.frame_floors.size + 1}",
+      new_hpxml.frame_floors.add(id: 'ESFrameFloor',
                                  exterior_adjacent_to: HPXML::LocationAtticVented,
                                  interior_adjacent_to: HPXML::LocationLivingSpace,
                                  area: frame_floor_area,
-                                 insulation_id: "FrameFloor_Insulation#{new_hpxml.frame_floors.size + 1}",
+                                 insulation_id: 'ESFrameFloorInsulation',
                                  insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
     end
   end
@@ -594,12 +597,12 @@ class EnergyStarRuleset
       for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
         next if each_win_area <= 0.1
 
-        new_hpxml.windows.add(id: "WindowArea#{orientation}",
+        new_hpxml.windows.add(id: "ESWindow#{orientation}",
                               area: each_win_area.round(2),
                               azimuth: azimuth,
                               ufactor: win_ufactor,
                               shgc: win_shgc,
-                              wall_idref: 'WallArea',
+                              wall_idref: 'ESWall',
                               performance_class: HPXML::WindowClassResidential,
                               fraction_operable: fraction_operable)
       end
@@ -618,7 +621,7 @@ class EnergyStarRuleset
                               azimuth: win.azimuth,
                               ufactor: win_ufactor,
                               shgc: win_shgc,
-                              wall_idref: 'WallArea',
+                              wall_idref: 'ESWall',
                               performance_class: win.performance_class,
                               fraction_operable: fraction_operable)
       end
@@ -637,7 +640,7 @@ class EnergyStarRuleset
 
     orig_hpxml.doors.each do |orig_door|
       new_hpxml.doors.add(id: orig_door.id,
-                          wall_idref: 'WallArea',
+                          wall_idref: 'ESWall',
                           area: orig_door.area,
                           azimuth: orig_door.azimuth,
                           r_value: (1.0 / door_ufactor).round(3))
@@ -681,7 +684,7 @@ class EnergyStarRuleset
     end
 
     # Exhibit 2 - Thermostat
-    new_hpxml.hvac_controls.add(id: 'HVACControl',
+    new_hpxml.hvac_controls.add(id: 'ESHVACControl',
                                 control_type: HPXML::HVACControlTypeProgrammable)
 
     # Exhibit 2 - Thermal distribution systems
@@ -722,15 +725,15 @@ class EnergyStarRuleset
       if new_hvac_dist.conditioned_floor_area_served.nil?
         # Estimate CFA served
         # This methodology tries to prevent the possibility of sum(CFAServed) > CFA in the ESRD,
-        # which would generate an error downstream in the ENERGY STAR calcultion.
+        # which would generate an error downstream in the ENERGY STAR calculation.
         estd_cfa_heated = @cfa
         estd_cfa_cooled = @cfa
         new_hvac_dist.hvac_systems.each do |h|
           if h.respond_to?(:fraction_heat_load_served) && h.fraction_heat_load_served.to_f > 0
-            estd_cfa_heated = remaining_cfa_served_heating * h.fraction_heat_load_served / remaining_fracload_served_heating
+            estd_cfa_heated = remaining_cfa_served_heating * [h.fraction_heat_load_served / remaining_fracload_served_heating, 1.0].min
           end
           if h.respond_to?(:fraction_cool_load_served) && h.fraction_cool_load_served.to_f > 0
-            estd_cfa_cooled = remaining_cfa_served_cooling * h.fraction_cool_load_served / remaining_fracload_served_cooling
+            estd_cfa_cooled = remaining_cfa_served_cooling * [h.fraction_cool_load_served / remaining_fracload_served_cooling, 1.0].min
           end
         end
         new_hvac_dist.conditioned_floor_area_served = [estd_cfa_heated.to_f, estd_cfa_cooled.to_f].min
@@ -778,7 +781,7 @@ class EnergyStarRuleset
     # mechanical vent fan Watts
     fan_power_w = q_tot / fan_cfm_per_w
 
-    new_hpxml.ventilation_fans.add(id: 'MechanicalVentilation',
+    new_hpxml.ventilation_fans.add(id: 'ESVentilationFan',
                                    is_shared_system: false,
                                    fan_type: fan_type,
                                    tested_flow_rate: q_tot.round(2),
@@ -852,12 +855,12 @@ class EnergyStarRuleset
     # New water fixtures
     if orig_hpxml.water_fixtures.size == 0
       # Shower Head
-      new_hpxml.water_fixtures.add(id: 'ShowerHead',
+      new_hpxml.water_fixtures.add(id: 'ESWaterFixture1',
                                    water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                                    low_flow: bool_low_flow)
 
       # Faucet
-      new_hpxml.water_fixtures.add(id: 'Faucet',
+      new_hpxml.water_fixtures.add(id: 'ESWaterFixture2',
                                    water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                                    low_flow: bool_low_flow)
     else
@@ -874,7 +877,7 @@ class EnergyStarRuleset
   def self.set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     if [ESConstants.SFPacificVer3_0].include? @program_version
       if orig_hpxml.water_heating_systems.any?  { |wh| (wh.fuel_type == HPXML::FuelTypeElectricity || orig_hpxml.solar_thermal_systems.size > 0) }
-        new_hpxml.solar_thermal_systems.add(id: 'SolarThermalSystem',
+        new_hpxml.solar_thermal_systems.add(id: 'ESSolarThermalSystem',
                                             system_type: 'hot water',
                                             solar_fraction: 0.90)
       end
@@ -1051,39 +1054,39 @@ class EnergyStarRuleset
     fFII_ext = 0.0
     fFII_grg = 0.0
 
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeLED}_Interior",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup1',
                                   location: HPXML::LocationInterior,
                                   fraction_of_units_in_location: fFII_int,
                                   lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeLED}_Exterior",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup2',
                                   location: HPXML::LocationExterior,
                                   fraction_of_units_in_location: fFII_ext,
                                   lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeLED}_Garage",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup3',
                                   location: HPXML::LocationGarage,
                                   fraction_of_units_in_location: fFII_grg,
                                   lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeCFL}_Interior",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup4',
                                   location: HPXML::LocationInterior,
                                   fraction_of_units_in_location: fFI_int,
                                   lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeCFL}_Exterior",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup5',
                                   location: HPXML::LocationExterior,
                                   fraction_of_units_in_location: fFI_ext,
                                   lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeCFL}_Garage",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup6',
                                   location: HPXML::LocationGarage,
                                   fraction_of_units_in_location: fFI_grg,
                                   lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeLFL}_Interior",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup7',
                                   location: HPXML::LocationInterior,
                                   fraction_of_units_in_location: 0,
                                   lighting_type: HPXML::LightingTypeLFL)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeLFL}_Exterior",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup8',
                                   location: HPXML::LocationExterior,
                                   fraction_of_units_in_location: 0,
                                   lighting_type: HPXML::LightingTypeLFL)
-    new_hpxml.lighting_groups.add(id: "Lighting_#{HPXML::LightingTypeLFL}_Garage",
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup9',
                                   location: HPXML::LocationGarage,
                                   fraction_of_units_in_location: 0,
                                   lighting_type: HPXML::LightingTypeLFL)
@@ -1092,7 +1095,7 @@ class EnergyStarRuleset
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
     return if orig_hpxml.ceiling_fans.size == 0
 
-    new_hpxml.ceiling_fans.add(id: 'CeilingFans',
+    new_hpxml.ceiling_fans.add(id: 'ESCeilingFan',
                                efficiency: get_default_ceiling_fan_cfm_per_w(),
                                quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
   end
@@ -1919,7 +1922,7 @@ class EnergyStarRuleset
     i = 0
     while true
       i += 1
-      dist_id = "HVACDistributionDucted_#{i}"
+      dist_id = "ESHVACDistribution#{i}"
       next if orig_hpxml.hvac_distributions.select { |d| d.id == dist_id }.size > 0
 
       orig_hpxml.hvac_distributions.add(id: dist_id,
@@ -1951,7 +1954,7 @@ class EnergyStarRuleset
 
     heating_capacity = -1 if heating_capacity.nil? # Use auto-sizing
 
-    new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
+    new_hpxml.heating_systems.add(id: "ESHeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   distribution_system_idref: orig_system.distribution_system.id,
                                   is_shared_system: orig_system.is_shared_system,
                                   number_of_units_served: number_of_units_served,
@@ -1973,7 +1976,7 @@ class EnergyStarRuleset
       dist_id = add_air_distribution(orig_hpxml, orig_system)
     end
 
-    new_hpxml.heating_systems.add(id: "HeatingSystem#{new_hpxml.heating_systems.size + 1}",
+    new_hpxml.heating_systems.add(id: "ESHeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeFurnace,
                                   heating_system_fuel: furnace_fuel_type,
@@ -1993,7 +1996,7 @@ class EnergyStarRuleset
       dist_id = add_air_distribution(orig_hpxml, orig_system)
     end
 
-    new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
+    new_hpxml.cooling_systems.add(id: "ESCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
                                   distribution_system_idref: dist_id,
                                   cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                                   cooling_system_fuel: HPXML::FuelTypeElectricity,
@@ -2017,7 +2020,7 @@ class EnergyStarRuleset
       shared_loop_watts *= orig_system.shared_loop_motor_efficiency / 0.85
     end
 
-    new_hpxml.cooling_systems.add(id: "CoolingSystem#{new_hpxml.cooling_systems.size + 1}",
+    new_hpxml.cooling_systems.add(id: "ESCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
                                   is_shared_system: orig_system.is_shared_system,
                                   number_of_units_served: orig_system.number_of_units_served,
                                   distribution_system_idref: orig_system.distribution_system.id,
@@ -2098,7 +2101,7 @@ class EnergyStarRuleset
       fan_watts_per_cfm = 0.58
     end
 
-    new_hpxml.heat_pumps.add(id: "HeatPump#{new_hpxml.heat_pumps.size + 1}",
+    new_hpxml.heat_pumps.add(id: "ESHeatPump#{new_hpxml.heat_pumps.size + 1}",
                              is_shared_system: is_shared_system,
                              number_of_units_served: number_of_units_served,
                              distribution_system_idref: dist_id,

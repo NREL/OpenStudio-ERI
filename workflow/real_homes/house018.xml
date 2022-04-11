@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -49,9 +52,9 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Riverhead, NY</Name>
+          <Name>New York, NY</Name>
           <extension>
-            <EPWFilePath>USA_NY_Westhampton-Suffolk.County.AP.744865_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_NY_New.York-J.F.Kennedy.Intl.AP.744860_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -430,7 +433,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem1'/>
-              <DistributionSystem idref='HVACDIstribution1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatingSystemType>
                 <Furnace/>
@@ -490,7 +493,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
-              <DistributionSystem idref='HVACDIstribution1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
               <IsSharedSystem>false</IsSharedSystem>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
@@ -551,7 +554,7 @@
             <ControlType>programmable thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
-            <SystemIdentifier id='HVACDIstribution1'/>
+            <SystemIdentifier id='HVACDistribution1'/>
             <DistributionSystemType>
               <AirDistribution>
                 <AirDistributionType>regular velocity</AirDistributionType>

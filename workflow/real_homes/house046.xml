@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -50,7 +53,7 @@
           <SystemIdentifier id='WeatherStation'/>
           <Name>Chicago, IL</Name>
           <extension>
-            <EPWFilePath>USA_IL_Chicago-Midway.AP.725340_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>

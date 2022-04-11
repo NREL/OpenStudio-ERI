@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -18,7 +21,7 @@
     <Site>
       <SiteID id='Site'/>
       <Address>
-        <StateCode>OH</StateCode>
+        <StateCode>MI</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -49,9 +52,9 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Delaware, OH</Name>
+          <Name>Detroit, MI</Name>
           <extension>
-            <EPWFilePath>USA_OH_Dayton.Intl.AP.724290_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_MI_Detroit.Metro.AP.725370_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -500,7 +503,7 @@
           <HVACPlant>
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem1'/>
-              <DistributionSystem idref='HVACDIstribution1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
               <HeatingSystemType>
                 <Furnace/>
               </HeatingSystemType>
@@ -519,7 +522,7 @@
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
-              <DistributionSystem idref='HVACDIstribution1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>22000.0</CoolingCapacity>
@@ -541,7 +544,7 @@
             <ControlType>programmable thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
-            <SystemIdentifier id='HVACDIstribution1'/>
+            <SystemIdentifier id='HVACDistribution1'/>
             <DistributionSystemType>
               <AirDistribution>
                 <AirDistributionType>regular velocity</AirDistributionType>

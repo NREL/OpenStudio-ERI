@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -18,7 +21,7 @@
     <Site>
       <SiteID id='Site'/>
       <Address>
-        <StateCode>NM</StateCode>
+        <StateCode>AZ</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -49,9 +52,9 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Santa Fe, NM</Name>
+          <Name>Phoenix, AZ</Name>
           <extension>
-            <EPWFilePath>USA_NM_Santa.Fe.County.Muni.AP.723656_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>

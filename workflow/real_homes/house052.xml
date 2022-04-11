@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -48,9 +51,9 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Olympia, WA</Name>
+          <Name>Seattle, WA</Name>
           <extension>
-            <EPWFilePath>USA_WA_Olympia.AP.727920_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>

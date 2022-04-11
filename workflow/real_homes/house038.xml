@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.1</Version>
+      </EnergyStarCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -18,7 +21,7 @@
     <Site>
       <SiteID id='Site'/>
       <Address>
-        <StateCode>AL</StateCode>
+        <StateCode>GA</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -49,9 +52,9 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Huntsville, AL</Name>
+          <Name>Atlanta, GA</Name>
           <extension>
-            <EPWFilePath>USA_AL_Huntsville.Intl.AP-Jones.Field.723230_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -569,7 +572,7 @@
           <HVACPlant>
             <HeatPump>
               <SystemIdentifier id='HeatPump1'/>
-              <DistributionSystem idref='HVACDIstribution1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
               <IsSharedSystem>false</IsSharedSystem>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
@@ -636,7 +639,7 @@
             <ControlType>programmable thermostat</ControlType>
           </HVACControl>
           <HVACDistribution>
-            <SystemIdentifier id='HVACDIstribution1'/>
+            <SystemIdentifier id='HVACDistribution1'/>
             <DistributionSystemType>
               <AirDistribution>
                 <AirDistributionType>regular velocity</AirDistributionType>
