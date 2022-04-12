@@ -2341,9 +2341,16 @@ def create_sample_hpxmls
       next unless ventilation_fan.used_for_whole_building_ventilation
 
       ventilation_fan.is_shared_system = false if ventilation_fan.is_shared_system.nil?
-      ventilation_fan.tested_flow_rate = ventilation_fan.rated_flow_rate.to_f + ventilation_fan.delivered_ventilation.to_f if ventilation_fan.tested_flow_rate.nil?
-      ventilation_fan.rated_flow_rate = nil
-      ventilation_fan.delivered_ventilation = nil
+
+      if ventilation_fan.is_shared_system
+        ventilation_fan.rated_flow_rate = ventilation_fan.rated_flow_rate.to_f + ventilation_fan.delivered_ventilation.to_f if ventilation_fan.tested_flow_rate.nil?
+        ventilation_fan.tested_flow_rate = nil
+        ventilation_fan.delivered_ventilation = nil
+      else
+        ventilation_fan.tested_flow_rate = ventilation_fan.rated_flow_rate.to_f + ventilation_fan.delivered_ventilation.to_f if ventilation_fan.tested_flow_rate.nil?
+        ventilation_fan.rated_flow_rate = nil
+        ventilation_fan.delivered_ventilation = nil
+      end
     end
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
