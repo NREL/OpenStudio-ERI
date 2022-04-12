@@ -26,7 +26,7 @@
       </Address>
     </Site>
     <ProjectStatus>
-      <EventType>audit</EventType>
+      <EventType>proposed workscope</EventType>
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
@@ -37,7 +37,6 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
-          <YearBuilt>2022</YearBuilt>
           <ResidentialFacilityType>apartment unit</ResidentialFacilityType>
           <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>

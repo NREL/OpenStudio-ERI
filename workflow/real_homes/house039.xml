@@ -26,7 +26,7 @@
       </Address>
     </Site>
     <ProjectStatus>
-      <EventType>audit</EventType>
+      <EventType>proposed workscope</EventType>
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
@@ -37,7 +37,6 @@
           </FuelTypesAvailable>
         </Site>
         <BuildingConstruction>
-          <YearBuilt>2019</YearBuilt>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>2.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2.0</NumberofConditionedFloorsAboveGrade>
@@ -1376,7 +1375,7 @@
           <RatedAnnualkWh>1000.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
-          <SystemIdentifier id='Range1'/>
+          <SystemIdentifier id='CookingRange1'/>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
           <IsInduction>false</IsInduction>

@@ -26,7 +26,7 @@
       </Address>
     </Site>
     <ProjectStatus>
-      <EventType>audit</EventType>
+      <EventType>proposed workscope</EventType>
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
@@ -618,7 +618,7 @@
           <RatedAnnualkWh>727.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
-          <SystemIdentifier id='Range1'/>
+          <SystemIdentifier id='CookingRange1'/>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <IsInduction>false</IsInduction>

@@ -26,7 +26,7 @@
       </Address>
     </Site>
     <ProjectStatus>
-      <EventType>audit</EventType>
+      <EventType>proposed workscope</EventType>
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
@@ -452,10 +452,10 @@
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>heat recovery ventilator</FanType>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <TestedFlowRate>68.0</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <IsSharedSystem>false</IsSharedSystem>
-              <AdjustedTotalRecoveryEfficiency>0.0</AdjustedTotalRecoveryEfficiency>
               <AdjustedSensibleRecoveryEfficiency>0.68</AdjustedSensibleRecoveryEfficiency>
               <FanPower>74.6</FanPower>
             </VentilationFan>
@@ -537,7 +537,7 @@
           <RatedAnnualkWh>691.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
-          <SystemIdentifier id='Range1'/>
+          <SystemIdentifier id='CookingRange1'/>
           <Location>living space</Location>
           <FuelType>natural gas</FuelType>
           <IsInduction>false</IsInduction>

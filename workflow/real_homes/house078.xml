@@ -21,7 +21,7 @@
     <Site>
       <SiteID id='Site'/>
       <Address>
-        <StateCode>OR</StateCode>
+        <StateCode>TX</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -41,20 +41,20 @@
           <NumberofConditionedFloors>2.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>4</NumberofBedrooms>
-          <ConditionedFloorArea>2521.0</ConditionedFloorArea>
-          <ConditionedBuildingVolume>23725.0</ConditionedBuildingVolume>
+          <ConditionedFloorArea>3522.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>33544.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
-          <Year>2006</Year>
-          <ClimateZone>4C</ClimateZone>
+          <Year>2018</Year>
+          <ClimateZone>2A</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Portland, OR</Name>
+          <Name>Dallas, TX</Name>
           <extension>
-            <EPWFilePath>USA_OR_Portland.Intl.AP.726980_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -64,65 +64,32 @@
             <SystemIdentifier id='AirInfiltrationMeasurement1'/>
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
-              <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>2.62</AirLeakage>
+              <UnitofMeasure>CFM</UnitofMeasure>
+              <AirLeakage>1572.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>23725.0</InfiltrationVolume>
+            <InfiltrationVolume>33544.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
-        <Attics>
-          <Attic>
-            <SystemIdentifier id='Attic1'/>
-            <AtticType>
-              <Attic>
-                <Vented>true</Vented>
-              </Attic>
-            </AtticType>
-            <VentilationRate>
-              <UnitofMeasure>SLA</UnitofMeasure>
-              <Value>0.00333</Value>
-            </VentilationRate>
-          </Attic>
-        </Attics>
         <Foundations>
           <Foundation>
             <SystemIdentifier id='Foundation1'/>
             <FoundationType>
-              <Crawlspace>
-                <Vented>true</Vented>
-              </Crawlspace>
+              <SlabOnGrade/>
             </FoundationType>
-            <VentilationRate>
-              <UnitofMeasure>SLA</UnitofMeasure>
-              <Value>0.00667</Value>
-            </VentilationRate>
           </Foundation>
         </Foundations>
         <Roofs>
           <Roof>
             <SystemIdentifier id='Roof1'/>
-            <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
-            <Area>2128.8</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
-            <Pitch>9.0</Pitch>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>3380.0</Area>
+            <SolarAbsorptance>0.9</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Pitch>0.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
               <SystemIdentifier id='Roof1Insulation'/>
-              <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
-            </Insulation>
-          </Roof>
-          <Roof>
-            <SystemIdentifier id='Roof2'/>
-            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
-            <Area>69.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
-            <Pitch>2.0</Pitch>
-            <RadiantBarrier>false</RadiantBarrier>
-            <Insulation>
-              <SystemIdentifier id='Roof2Insulation'/>
-              <AssemblyEffectiveRValue>2.56</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.183</AssemblyEffectiveRValue>
             </Insulation>
           </Roof>
         </Roofs>
@@ -131,12 +98,24 @@
             <SystemIdentifier id='RimJoist1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>161.3</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
+            <Area>74.0</Area>
+            <SolarAbsorptance>0.9</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation'/>
-              <AssemblyEffectiveRValue>21.49</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>13.0</AssemblyEffectiveRValue>
+            </Insulation>
+          </RimJoist>
+          <RimJoist>
+            <SystemIdentifier id='RimJoist2'/>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
+            <Area>10.0</Area>
+            <SolarAbsorptance>0.9</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
+            <Insulation>
+              <SystemIdentifier id='RimJoist2Insulation'/>
+              <AssemblyEffectiveRValue>1.78</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
         </RimJoists>
@@ -148,57 +127,42 @@
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>1194.8</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
+            <Area>3132.6</Area>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation'/>
-              <AssemblyEffectiveRValue>20.82</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>15.75</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
             <SystemIdentifier id='Wall2'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <WallType>
-              <WoodStud/>
-            </WallType>
-            <Area>1306.5</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
-            <Insulation>
-              <SystemIdentifier id='Wall2Insulation'/>
-              <AssemblyEffectiveRValue>20.82</AssemblyEffectiveRValue>
-            </Insulation>
-          </Wall>
-          <Wall>
-            <SystemIdentifier id='Wall3'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>330.3</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
+            <Area>359.8</Area>
+            <SolarAbsorptance>0.75</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='Wall3Insulation'/>
-              <AssemblyEffectiveRValue>20.82</AssemblyEffectiveRValue>
+              <SystemIdentifier id='Wall2Insulation'/>
+              <AssemblyEffectiveRValue>11.611</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
-            <SystemIdentifier id='Wall4'/>
+            <SystemIdentifier id='Wall3'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>garage</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
-            <Area>471.6</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
+            <Area>216.0</Area>
+            <SolarAbsorptance>0.9</SolarAbsorptance>
+            <Emittance>0.9</Emittance>
             <Insulation>
-              <SystemIdentifier id='Wall4Insulation'/>
-              <AssemblyEffectiveRValue>3.75</AssemblyEffectiveRValue>
+              <SystemIdentifier id='Wall3Insulation'/>
+              <AssemblyEffectiveRValue>1.78</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
         </Walls>
@@ -206,79 +170,46 @@
           <FoundationWall>
             <SystemIdentifier id='FoundationWall1'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
-            <Height>3.0</Height>
-            <Area>393.9</Area>
-            <Thickness>8.0</Thickness>
-            <DepthBelowGrade>2.0</DepthBelowGrade>
+            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
+            <Height>9.0</Height>
+            <Area>216.0</Area>
+            <Thickness>6.0</Thickness>
+            <DepthBelowGrade>4.0</DepthBelowGrade>
             <Insulation>
               <SystemIdentifier id='FoundationWall1Insulation'/>
-              <AssemblyEffectiveRValue>1.35</AssemblyEffectiveRValue>
-            </Insulation>
-          </FoundationWall>
-          <FoundationWall>
-            <SystemIdentifier id='FoundationWall2'/>
-            <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
-            <Height>3.0</Height>
-            <Area>108.75</Area>
-            <Thickness>8.0</Thickness>
-            <DepthBelowGrade>2.0</DepthBelowGrade>
-            <Insulation>
-              <SystemIdentifier id='FoundationWall2Insulation'/>
-              <AssemblyEffectiveRValue>1.35</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>1.0</AssemblyEffectiveRValue>
             </Insulation>
           </FoundationWall>
         </FoundationWalls>
         <FrameFloors>
           <FrameFloor>
             <SystemIdentifier id='FrameFloor1'/>
-            <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
+            <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>1703.0</Area>
+            <Area>543.0</Area>
             <Insulation>
               <SystemIdentifier id='FrameFloor1Insulation'/>
-              <AssemblyEffectiveRValue>44.95</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>16.565</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
           <FrameFloor>
             <SystemIdentifier id='FrameFloor2'/>
-            <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>1281.0</Area>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
+            <Area>216.0</Area>
             <Insulation>
               <SystemIdentifier id='FrameFloor2Insulation'/>
-              <AssemblyEffectiveRValue>34.7</AssemblyEffectiveRValue>
-            </Insulation>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor3'/>
-            <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>415.0</Area>
-            <Insulation>
-              <SystemIdentifier id='FrameFloor3Insulation'/>
-              <AssemblyEffectiveRValue>34.7</AssemblyEffectiveRValue>
-            </Insulation>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor4'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <Area>7.0</Area>
-            <Insulation>
-              <SystemIdentifier id='FrameFloor4Insulation'/>
-              <AssemblyEffectiveRValue>34.7</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>1.0</AssemblyEffectiveRValue>
             </Insulation>
           </FrameFloor>
         </FrameFloors>
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab1'/>
-            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
-            <Area>484.0</Area>
+            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <Area>1999.0</Area>
             <Thickness>4.0</Thickness>
-            <ExposedPerimeter>51.8</ExposedPerimeter>
+            <ExposedPerimeter>215.0</ExposedPerimeter>
             <DepthBelowGrade>0.0</DepthBelowGrade>
             <PerimeterInsulation>
               <SystemIdentifier id='Slab1PerimeterInsulation'/>
@@ -291,7 +222,7 @@
               <SystemIdentifier id='Slab1UnderSlabInsulation'/>
               <Layer>
                 <NominalRValue>0.0</NominalRValue>
-                <InsulationWidth>0.0</InsulationWidth>
+                <InsulationSpansEntireSlab>true</InsulationSpansEntireSlab>
               </Layer>
             </UnderSlabInsulation>
             <extension>
@@ -301,23 +232,23 @@
           </Slab>
           <Slab>
             <SystemIdentifier id='Slab2'/>
-            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
-            <Area>1281.0</Area>
-            <Thickness>0.0</Thickness>
-            <ExposedPerimeter>131.3</ExposedPerimeter>
-            <DepthBelowGrade>2.0</DepthBelowGrade>
+            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
+            <Area>900.0</Area>
+            <Thickness>4.0</Thickness>
+            <ExposedPerimeter>90.0</ExposedPerimeter>
+            <DepthBelowGrade>0.0</DepthBelowGrade>
             <PerimeterInsulation>
               <SystemIdentifier id='Slab2PerimeterInsulation'/>
               <Layer>
-                <NominalRValue>0.0</NominalRValue>
+                <NominalRValue>1.0</NominalRValue>
                 <InsulationDepth>0.0</InsulationDepth>
               </Layer>
             </PerimeterInsulation>
             <UnderSlabInsulation>
               <SystemIdentifier id='Slab2UnderSlabInsulation'/>
               <Layer>
-                <NominalRValue>0.0</NominalRValue>
-                <InsulationWidth>0.0</InsulationWidth>
+                <NominalRValue>1.0</NominalRValue>
+                <InsulationSpansEntireSlab>true</InsulationSpansEntireSlab>
               </Layer>
             </UnderSlabInsulation>
             <extension>
@@ -329,179 +260,312 @@
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
-            <Area>3.0</Area>
+            <Area>18.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.24</UFactor>
-            <SHGC>0.32</SHGC>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>18.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>24.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window2'/>
-            <Area>12.5</Area>
-            <Azimuth>270</Azimuth>
-            <UFactor>0.24</UFactor>
-            <SHGC>0.32</SHGC>
+            <Area>18.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>16.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>22.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window3'/>
-            <Area>18.0</Area>
+            <Area>36.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>12.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>18.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window4'/>
-            <Area>42.0</Area>
+            <Area>63.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.29</UFactor>
-            <SHGC>0.3</SHGC>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>10.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>8.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window5'/>
-            <Area>16.0</Area>
-            <Azimuth>270</Azimuth>
-            <UFactor>0.24</UFactor>
-            <SHGC>0.32</SHGC>
+            <Area>54.0</Area>
+            <Azimuth>180</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>7.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window6'/>
-            <Area>36.0</Area>
-            <Azimuth>180</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <Area>4.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>13.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>15.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window7'/>
-            <Area>30.0</Area>
-            <Azimuth>180</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <Area>4.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>15.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>17.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window8'/>
-            <Area>10.0</Area>
-            <Azimuth>90</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <Area>24.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>7.0</Depth>
+              <DistanceToTopOfWindow>2.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>10.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window9'/>
-            <Area>14.0</Area>
-            <Azimuth>0</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <Area>20.8</Area>
+            <Azimuth>180</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>10.0</Depth>
+              <DistanceToTopOfWindow>2.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>10.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window10'/>
-            <Area>30.0</Area>
+            <Area>14.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>7.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>12.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window11'/>
-            <Area>15.0</Area>
+            <Area>14.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>5.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>10.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window12'/>
-            <Area>18.8</Area>
-            <Azimuth>270</Azimuth>
-            <UFactor>0.24</UFactor>
-            <SHGC>0.32</SHGC>
+            <Area>14.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window13'/>
-            <Area>20.0</Area>
-            <Azimuth>180</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <Area>14.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window14'/>
-            <Area>20.0</Area>
+            <Area>15.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>5.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>10.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window15'/>
-            <Area>6.0</Area>
-            <Azimuth>90</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <Area>4.0</Area>
+            <Azimuth>180</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>2.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window16'/>
-            <Area>21.0</Area>
-            <Azimuth>90</Azimuth>
-            <UFactor>0.27</UFactor>
-            <SHGC>0.3</SHGC>
+            <Area>4.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>2.0</DistanceToBottomOfWindow>
+            </Overhangs>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
-            <AttachedToWall idref='Wall2'/>
+            <AttachedToWall idref='Wall1'/>
+          </Window>
+          <Window>
+            <SystemIdentifier id='Window17'/>
+            <Area>30.0</Area>
+            <Azimuth>180</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
+            </Overhangs>
+            <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
+            <AttachedToWall idref='Wall1'/>
+          </Window>
+          <Window>
+            <SystemIdentifier id='Window18'/>
+            <Area>30.0</Area>
+            <Azimuth>180</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
+            </Overhangs>
+            <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
+            <AttachedToWall idref='Wall1'/>
+          </Window>
+          <Window>
+            <SystemIdentifier id='Window19'/>
+            <Area>30.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
+            </Overhangs>
+            <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
+            <AttachedToWall idref='Wall1'/>
+          </Window>
+          <Window>
+            <SystemIdentifier id='Window20'/>
+            <Area>30.0</Area>
+            <Azimuth>0</Azimuth>
+            <UFactor>0.33</UFactor>
+            <SHGC>0.23</SHGC>
+            <Overhangs>
+              <Depth>1.0</Depth>
+              <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
+              <DistanceToBottomOfWindow>6.0</DistanceToBottomOfWindow>
+            </Overhangs>
+            <FractionOperable>0.67</FractionOperable>
+            <PerformanceClass>residential</PerformanceClass>
+            <AttachedToWall idref='Wall1'/>
           </Window>
         </Windows>
         <Doors>
           <Door>
             <SystemIdentifier id='Door1'/>
-            <AttachedToWall idref='Wall1'/>
-            <Area>19.8</Area>
+            <AttachedToWall idref='Wall2'/>
+            <Area>21.0</Area>
             <Azimuth>0</Azimuth>
-            <RValue>5.0</RValue>
-          </Door>
-          <Door>
-            <SystemIdentifier id='Door2'/>
-            <AttachedToWall idref='Wall3'/>
-            <Area>17.2</Area>
-            <Azimuth>0</Azimuth>
-            <RValue>2.8</RValue>
+            <RValue>2.1</RValue>
           </Door>
         </Doors>
       </Enclosure>
@@ -516,46 +580,31 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>39000.0</HeatingCapacity>
+              <HeatingCapacity>77000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.95</Value>
               </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>0.9</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>211.0</ElectricAuxiliaryEnergy>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <ElectricAuxiliaryEnergy>536.0</ElectricAuxiliaryEnergy>
               <extension>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
               </extension>
             </HeatingSystem>
-            <HeatingSystem>
-              <SystemIdentifier id='HeatingSystem2'/>
-              <IsSharedSystem>false</IsSharedSystem>
-              <HeatingSystemType>
-                <WallFurnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>13500.0</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>0.706</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>0.0</ElectricAuxiliaryEnergy>
-            </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
               <DistributionSystem idref='HVACDistribution1'/>
-              <IsSharedSystem>false</IsSharedSystem>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>32400.0</CoolingCapacity>
+              <CoolingCapacity>57000.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Value>16.0</Value>
               </AnnualCoolingEfficiency>
-              <SensibleHeatFraction>0.7</SensibleHeatFraction>
+              <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
@@ -576,7 +625,7 @@
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>28.55</Value>
+                    <Value>27.5</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -584,50 +633,39 @@
                   <DuctType>return</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>42.83</Value>
+                    <Value>25.5</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
                   <DuctType>supply</DuctType>
-                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
-                  <DuctLocation>attic - vented</DuctLocation>
-                  <DuctSurfaceArea>255.25</DuctSurfaceArea>
+                  <DuctInsulationRValue>6.0</DuctInsulationRValue>
+                  <DuctLocation>living space</DuctLocation>
+                  <DuctSurfaceArea>950.94</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <DuctType>return</DuctType>
-                  <DuctInsulationRValue>8.0</DuctInsulationRValue>
-                  <DuctLocation>attic - vented</DuctLocation>
-                  <DuctSurfaceArea>47.25</DuctSurfaceArea>
-                </Ducts>
-                <Ducts>
-                  <DuctType>supply</DuctType>
-                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
+                  <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>255.25</DuctSurfaceArea>
+                  <DuctSurfaceArea>880.5</DuctSurfaceArea>
                 </Ducts>
-                <Ducts>
-                  <DuctType>return</DuctType>
-                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
-                  <DuctSurfaceArea>47.25</DuctSurfaceArea>
-                </Ducts>
-                <NumberofReturnRegisters>1</NumberofReturnRegisters>
+                <NumberofReturnRegisters>6</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>2000.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>3522.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <MechanicalVentilation>
           <VentilationFans>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
-              <FanType>supply only</FanType>
-              <TestedFlowRate>74.0</TestedFlowRate>
-              <HoursInOperation>24.0</HoursInOperation>
+              <FanType>central fan integrated supply</FanType>
+              <TestedFlowRate>130.0</TestedFlowRate>
+              <HoursInOperation>22.98</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>65.0</FanPower>
+              <FanPower>25.0</FanPower>
+              <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
@@ -639,13 +677,19 @@
             <Location>garage</Location>
             <IsSharedSystem>false</IsSharedSystem>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <EnergyFactor>0.96</EnergyFactor>
+            <EnergyFactor>0.82</EnergyFactor>
+            <WaterHeaterInsulation>
+              <Jacket>
+                <JacketRValue>0.0</JacketRValue>
+              </Jacket>
+            </WaterHeaterInsulation>
+            <UsesDesuperheater>false</UsesDesuperheater>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
             <SystemType>
               <Standard>
-                <PipingLength>91.0</PipingLength>
+                <PipingLength>62.0</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>
@@ -655,12 +699,12 @@
           <WaterFixture>
             <SystemIdentifier id='WaterFixture1'/>
             <WaterFixtureType>shower head</WaterFixtureType>
-            <LowFlow>true</LowFlow>
+            <LowFlow>false</LowFlow>
           </WaterFixture>
           <WaterFixture>
             <SystemIdentifier id='WaterFixture2'/>
             <WaterFixtureType>faucet</WaterFixtureType>
-            <LowFlow>true</LowFlow>
+            <LowFlow>false</LowFlow>
           </WaterFixture>
         </WaterHeating>
       </Systems>
@@ -669,21 +713,21 @@
           <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
-          <IntegratedModifiedEnergyFactor>0.807</IntegratedModifiedEnergyFactor>
-          <RatedAnnualkWh>487.0</RatedAnnualkWh>
-          <LabelElectricRate>0.0803</LabelElectricRate>
-          <LabelGasRate>0.69</LabelGasRate>
-          <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
+          <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
+          <RatedAnnualkWh>400.0</RatedAnnualkWh>
+          <LabelElectricRate>0.12</LabelElectricRate>
+          <LabelGasRate>1.09</LabelGasRate>
+          <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
           <LabelUsage>6.0</LabelUsage>
-          <Capacity>3.2</Capacity>
+          <Capacity>3.0</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
-          <CombinedEnergyFactor>2.62</CombinedEnergyFactor>
-          <ControlType>moisture</ControlType>
+          <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
+          <Vented>false</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
@@ -693,7 +737,7 @@
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
           <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
-          <LabelAnnualGasCost>22.32</LabelAnnualGasCost>
+          <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
           <LabelUsage>4.0</LabelUsage>
         </Dishwasher>
         <Refrigerator>
@@ -709,60 +753,36 @@
         </CookingRange>
         <Oven>
           <SystemIdentifier id='Oven1'/>
-          <IsConvection>true</IsConvection>
+          <IsConvection>false</IsConvection>
         </Oven>
       </Appliances>
       <Lighting>
         <LightingGroup>
           <SystemIdentifier id='LightingGroup1'/>
-          <Location>garage</Location>
+          <Location>interior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
-            <LightEmittingDiode/>
+            <CompactFluorescent/>
           </LightingType>
         </LightingGroup>
         <LightingGroup>
           <SystemIdentifier id='LightingGroup2'/>
-          <Location>interior</Location>
-          <FractionofUnitsInLocation>1.0</FractionofUnitsInLocation>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
             <CompactFluorescent/>
           </LightingType>
         </LightingGroup>
         <LightingGroup>
           <SystemIdentifier id='LightingGroup3'/>
-          <Location>exterior</Location>
-          <FractionofUnitsInLocation>1.0</FractionofUnitsInLocation>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
             <CompactFluorescent/>
           </LightingType>
         </LightingGroup>
         <LightingGroup>
           <SystemIdentifier id='LightingGroup4'/>
-          <Location>garage</Location>
-          <FractionofUnitsInLocation>0.66</FractionofUnitsInLocation>
-          <LightingType>
-            <CompactFluorescent/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup5'/>
-          <Location>interior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <LightEmittingDiode/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup6'/>
-          <Location>exterior</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
-          <LightingType>
-            <LightEmittingDiode/>
-          </LightingType>
-        </LightingGroup>
-        <LightingGroup>
-          <SystemIdentifier id='LightingGroup8'/>
           <Location>interior</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
@@ -770,8 +790,16 @@
           </LightingType>
         </LightingGroup>
         <LightingGroup>
-          <SystemIdentifier id='LightingGroup9'/>
+          <SystemIdentifier id='LightingGroup5'/>
           <Location>exterior</Location>
+          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <LightingType>
+            <FluorescentTube/>
+          </LightingType>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup6'/>
+          <Location>garage</Location>
           <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
           <LightingType>
             <FluorescentTube/>
@@ -779,12 +807,36 @@
         </LightingGroup>
         <LightingGroup>
           <SystemIdentifier id='LightingGroup7'/>
-          <Location>garage</Location>
-          <FractionofUnitsInLocation>0.0</FractionofUnitsInLocation>
+          <Location>interior</Location>
+          <FractionofUnitsInLocation>1.0</FractionofUnitsInLocation>
           <LightingType>
-            <FluorescentTube/>
+            <LightEmittingDiode/>
           </LightingType>
         </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup8'/>
+          <Location>exterior</Location>
+          <FractionofUnitsInLocation>1.0</FractionofUnitsInLocation>
+          <LightingType>
+            <LightEmittingDiode/>
+          </LightingType>
+        </LightingGroup>
+        <LightingGroup>
+          <SystemIdentifier id='LightingGroup9'/>
+          <Location>garage</Location>
+          <FractionofUnitsInLocation>1.0</FractionofUnitsInLocation>
+          <LightingType>
+            <LightEmittingDiode/>
+          </LightingType>
+        </LightingGroup>
+        <CeilingFan>
+          <SystemIdentifier id='CeilingFan1'/>
+          <Airflow>
+            <FanSpeed>medium</FanSpeed>
+            <Efficiency>75.0</Efficiency>
+          </Airflow>
+          <Quantity>5</Quantity>
+        </CeilingFan>
       </Lighting>
     </BuildingDetails>
   </Building>

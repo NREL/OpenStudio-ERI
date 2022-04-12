@@ -26,7 +26,7 @@
       </Address>
     </Site>
     <ProjectStatus>
-      <EventType>audit</EventType>
+      <EventType>proposed workscope</EventType>
     </ProjectStatus>
     <BuildingDetails>
       <BuildingSummary>
@@ -509,8 +509,6 @@
               <TestedFlowRate>100.0</TestedFlowRate>
               <HoursInOperation>19.7</HoursInOperation>
               <IsSharedSystem>false</IsSharedSystem>
-              <AdjustedTotalRecoveryEfficiency>0.0</AdjustedTotalRecoveryEfficiency>
-              <AdjustedSensibleRecoveryEfficiency>0.0</AdjustedSensibleRecoveryEfficiency>
               <FanPower>54.2</FanPower>
             </VentilationFan>
           </VentilationFans>
@@ -592,7 +590,7 @@
           <RatedAnnualkWh>378.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
-          <SystemIdentifier id='Range1'/>
+          <SystemIdentifier id='CookingRange1'/>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <IsInduction>false</IsInduction>
