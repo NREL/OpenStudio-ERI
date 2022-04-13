@@ -42,7 +42,7 @@ def is_eri_ref_all_electric(hpxml_doc)
       return false
     end
   end
-  if not XMLHelper.has_element(hpxml_doc, '//HeatingSystem | //HeatPump')
+  if not XMLHelper.has_element(hpxml_doc, '//HeatingSystem[FractionHeatLoadServed > 0] | //HeatPump[FractionHeatLoadServed > 0]')
     # No heating system, ERI Reference will get gas furnace
     return false
   end
