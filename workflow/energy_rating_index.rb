@@ -33,20 +33,14 @@ def get_eri_version(hpxml_doc)
 end
 
 def is_all_electric(hpxml_doc)
-  if XMLHelper.has_element(hpxml_doc, '//HeatingSystemFuel[text() != "electricity"]')
-    return false
-  end
-  if XMLHelper.has_element(hpxml_doc, '//CoolingSystemFuel[text() != "electricity"]')
-    return false
-  end
-  if XMLHelper.has_element(hpxml_doc, '//HeatPumpFuel[text() != "electricity"]')
-    return false
-  end
-  if XMLHelper.has_element(hpxml_doc, '//BackupSystemFuel[text() != "electricity"]')
-    return false
-  end
-  if XMLHelper.has_element(hpxml_doc, '//FuelType[text() != "electricity"]')
-    return false
+  ['HeatingSystemFuel',
+   'CoolingSystemFuel',
+   'HeatPumpFuel',
+   'BackupSystemFuel',
+   'FuelType'].each do |fuel_name|
+    if XMLHelper.has_element(hpxml_doc, "//#{fuel_name}[text() != 'electricity']")
+      return false
+    end
   end
 
   return true
