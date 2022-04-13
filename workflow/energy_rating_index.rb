@@ -32,7 +32,7 @@ def get_eri_version(hpxml_doc)
   return eri_version
 end
 
-def is_all_electric(hpxml_doc)
+def is_eri_ref_all_electric(hpxml_doc)
   ['HeatingSystemFuel',
    'CoolingSystemFuel',
    'HeatPumpFuel',
@@ -41,6 +41,10 @@ def is_all_electric(hpxml_doc)
     if XMLHelper.has_element(hpxml_doc, "//#{fuel_name}[text() != 'electricity']")
       return false
     end
+  end
+  if not XMLHelper.has_element(hpxml_doc, '//HeatingSystem | //HeatPump')
+    # No heating system, ERI Reference will get gas furnace
+    return false
   end
 
   return true
@@ -84,9 +88,9 @@ if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Con
 end
 if calc_co2e_index
   # All-electric ERI Reference Home
-  co2_ref_home_is_electric = is_all_electric(hpxml_doc)
+  eri_ref_home_is_electric = is_eri_ref_all_electric(hpxml_doc)
   co2_ref_home_run = [Constants.CalcTypeCO2eReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
-  if not co2_ref_home_is_electric
+  if not eri_ref_home_is_electric
     # Additional CO2e Reference Home run only needed if different than ERI Reference Home
     runs << co2_ref_home_run
   end
@@ -99,7 +103,7 @@ if not options[:skip_simulation]
   if calc_co2e_index
     # CO2e Rated Home is same as ERI Rated Home
     design_outputs[Constants.CalcTypeCO2eRatedHome] = design_outputs[Constants.CalcTypeERIRatedHome].dup
-    if co2_ref_home_is_electric
+    if eri_ref_home_is_electric
       design_outputs[Constants.CalcTypeCO2eReferenceHome] = design_outputs[Constants.CalcTypeERIReferenceHome].dup
 
       # Duplicate output files too
