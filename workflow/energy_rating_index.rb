@@ -20,8 +20,7 @@ require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
-def get_eri_version(hpxml_path)
-  hpxml_doc = XMLHelper.parse_file(hpxml_path)
+def get_eri_version(hpxml_doc)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
   if eri_version.nil?
     fail 'ERICalculation/Version not specified.'
@@ -33,6 +32,40 @@ def get_eri_version(hpxml_path)
   return eri_version
 end
 
+def is_all_electric(hpxml_doc)
+  if XMLHelper.has_element(hpxml_doc, '//HeatingSystemFuel[text() != "electricity"]')
+    return false
+  end
+  if XMLHelper.has_element(hpxml_doc, '//CoolingSystemFuel[text() != "electricity"]')
+    return false
+  end
+  if XMLHelper.has_element(hpxml_doc, '//HeatPumpFuel[text() != "electricity"]')
+    return false
+  end
+  if XMLHelper.has_element(hpxml_doc, '//BackupSystemFuel[text() != "electricity"]')
+    return false
+  end
+  if XMLHelper.has_element(hpxml_doc, '//FuelType[text() != "electricity"]')
+    return false
+  end
+
+  return true
+end
+
+def duplicate_output_files(eri_ref_home_run, co2_ref_home_run, resultsdir)
+  # Duplicate E+ output directory
+  FileUtils.cp_r(get_design_dir(eri_ref_home_run), get_design_dir(co2_ref_home_run))
+
+  # Duplicate results files
+  eri_ref_home_filename = get_output_filename(eri_ref_home_run, '')
+  co2_ref_home_filename = get_output_filename(co2_ref_home_run, '')
+  Dir["#{resultsdir}/*.*"].each do |results_file|
+    next unless results_file.start_with? eri_ref_home_filename
+
+    FileUtils.cp(results_file, results_file.gsub(eri_ref_home_filename, co2_ref_home_filename))
+  end
+end
+
 # Check for correct versions of OS
 Version.check_openstudio_version()
 
@@ -40,7 +73,8 @@ options = process_arguments(File.basename(__FILE__), args, basedir)
 
 resultsdir = setup_resultsdir(options)
 
-eri_version = get_eri_version(options[:hpxml])
+hpxml_doc = XMLHelper.parse_file(options[:hpxml])
+eri_version = get_eri_version(hpxml_doc)
 
 # Create list of designs to run: [calc_type, HPXML, output_dir, results_dir]
 runs = []
@@ -55,8 +89,13 @@ if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Con
   calc_co2e_index = true
 end
 if calc_co2e_index
-  # Additional CO2e Reference Home (i.e., all-electric ERI Reference Home)
-  runs << [Constants.CalcTypeCO2eReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
+  # All-electric ERI Reference Home
+  co2_ref_home_is_electric = is_all_electric(hpxml_doc)
+  co2_ref_home_run = [Constants.CalcTypeCO2eReferenceHome, options[:hpxml], options[:output_dir], resultsdir]
+  if not co2_ref_home_is_electric
+    # Additional CO2e Reference Home run only needed if different than ERI Reference Home
+    runs << co2_ref_home_run
+  end
 end
 
 run_simulations(runs, options, basedir)
@@ -66,6 +105,13 @@ if not options[:skip_simulation]
   if calc_co2e_index
     # CO2e Rated Home is same as ERI Rated Home
     design_outputs[Constants.CalcTypeCO2eRatedHome] = design_outputs[Constants.CalcTypeERIRatedHome].dup
+    if co2_ref_home_is_electric
+      design_outputs[Constants.CalcTypeCO2eReferenceHome] = design_outputs[Constants.CalcTypeERIReferenceHome].dup
+
+      # Duplicate output files too
+      eri_ref_home_run = runs.select { |r| r[0] == Constants.CalcTypeERIReferenceHome }[0]
+      duplicate_output_files(eri_ref_home_run, co2_ref_home_run, resultsdir)
+    end
   end
 
   # Calculate and write results
