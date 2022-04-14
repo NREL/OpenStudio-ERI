@@ -40,14 +40,13 @@ class ERIPVTest < MiniTest::Test
   end
 
   def test_pv_batteries
+    skip # Temporarily disabled until RESNET allows this.
     hpxml_name = 'base-pv-battery.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        # Temporarily disabled until RESNET allows this.
-        _check_battery(hpxml)
-        # _check_battery(hpxml, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0, usable_capacity_kwh: 18.0 }])
+        _check_battery(hpxml, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0, usable_capacity_kwh: 18.0 }])
       else
         _check_battery(hpxml)
       end
