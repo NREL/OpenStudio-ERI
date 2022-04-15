@@ -86,6 +86,7 @@
             <AtticType>
               <CathedralCeiling/>
             </AtticType>
+            <AttachedToRoof idref='Roof1'/>
           </Attic>
         </Attics>
         <Foundations>
