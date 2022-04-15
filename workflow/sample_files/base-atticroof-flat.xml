@@ -86,6 +86,7 @@
             <AtticType>
               <FlatRoof/>
             </AtticType>
+            <AttachedToRoof idref='Roof1'/>
           </Attic>
         </Attics>
         <Foundations>
