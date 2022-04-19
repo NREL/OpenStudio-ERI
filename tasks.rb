@@ -2234,6 +2234,7 @@ def create_sample_hpxmls
                   'base-location-portland-or.xml',
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
+                  'base-mechvent-cfis-airflow-fraction-zero.xml',
                   'base-mechvent-erv.xml',
                   'base-mechvent-erv-atre-asre.xml',
                   'base-mechvent-exhaust.xml',
@@ -2342,6 +2343,7 @@ def create_sample_hpxmls
 
       ventilation_fan.is_shared_system = false if ventilation_fan.is_shared_system.nil?
       ventilation_fan.tested_flow_rate = ventilation_fan.rated_flow_rate.to_f + ventilation_fan.delivered_ventilation.to_f if ventilation_fan.tested_flow_rate.nil?
+      ventilation_fan.cfis_vent_mode_airflow_fraction = 1.0 if ventilation_fan.cfis_vent_mode_airflow_fraction.nil? && ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
     end
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type

@@ -138,6 +138,7 @@
 [SF_National_3.1] base-location-phoenix-az.xml,59.0,1.0,59.0,69.0,69.0,FAIL
 [SF_National_3.1] base-location-portland-or.xml,71.0,1.0,71.0,75.0,75.0,FAIL
 [SF_National_3.1] base-mechvent-balanced.xml,65.0,1.0,65.0,82.0,82.0,FAIL
+[SF_National_3.1] base-mechvent-cfis-airflow-fraction-zero.xml,65.0,1.0,65.0,78.0,78.0,FAIL
 [SF_National_3.1] base-mechvent-cfis.xml,65.0,1.0,65.0,80.0,80.0,FAIL
 [SF_National_3.1] base-mechvent-erv-atre-asre.xml,65.0,1.0,65.0,71.0,71.0,FAIL
 [SF_National_3.1] base-mechvent-erv.xml,65.0,1.0,65.0,71.0,71.0,FAIL

@@ -1296,9 +1296,14 @@ If a central fan integrated supply system is specified, additional information i
   Element                                                                   Type               Units  Constraints   Required  Default  Notes
   ========================================================================  =================  =====  ============  ========  =======  =======================================
   ``AttachedToHVACDistributionSystem``                                      idref                     See [#]_      Yes                ID of attached distribution system
+  ``extension/VentilationOnlyModeAirflowFraction``                          double                    0 - 1         Yes                Blower airflow rate fraction during ventilation only mode [#]_
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
   .. [#] HVACDistribution type cannot be HydronicDistribution.
+  .. [#] Blower airflow rate when operating in ventilation only mode (i.e., not heating or cooling mode), as a fraction of the maximum blower airflow rate.
+         This value will depend on whether the blower fan can operate at reduced airflow rates during ventilation only operation.
+         It is used to determine how much conditioned air is recirculated through ducts during ventilation only operation, resulting in additional duct losses.
+         A value of zero will result in no conditioned air recirculation, and thus no additional duct losses.
 
 In-Unit System
 ~~~~~~~~~~~~~~

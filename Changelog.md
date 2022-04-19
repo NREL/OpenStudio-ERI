@@ -10,6 +10,7 @@ __New Features__
   - Adds "Energy Use: Total" and "Energy Use: Net" columns to the ERI____Home.csv output files; allows hourly outputs.
   - **Breaking change**: New "End Use: \<Fuel\>: Heating Heat Pump Backup" output, disaggregated from "End Use: \<Fuel\>: Heating".
 - **Breaking change**: Deprecates duct leakage to outside exemptions; software tools must provide duct leakage to outside or DSE. `SoftwareInfo/extension/ERICalculation/Version` enumerations "2014ADEGL", "2014ADEG", "2014ADE" are replaced by "2014AEG" and "2014AE".
+- **Breaking change**: For CFIS systems, an `extension/VentilationOnlyModeAirflowFraction` input is now required to address duct losses during ventilation only mode.
 - Allows `AirInfiltrationMeasurement/InfiltrationHeight` as an optional input; if not provided, it is inferred from other inputs as before. 
 - Allows duct leakage to be entered in units of CFM50 as an alternative to CFM25.
 - Adds a `--skip-simulation` flag that can be used to just generate the ERI Rated/Reference Home HPXMLs and then stop.
