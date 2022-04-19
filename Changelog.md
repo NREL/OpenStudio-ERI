@@ -19,6 +19,7 @@ __Bugfixes__
 - Adds more stringent limits for `AirflowDefectRatio` (now allows values from 1/10th to 10x the design value).
 - Fixes opaque door R-value in the Reference Home in IECC climate zone 1.
 - Hourly output fixes: some outputs off by 1 hour; possible negative combi boiler values.
+- Fixes possible NaN result for ERI if, in a very cold climate, the Reference Home has no cooling load.
 
 ## OpenStudio-ERI v1.3.0
 
