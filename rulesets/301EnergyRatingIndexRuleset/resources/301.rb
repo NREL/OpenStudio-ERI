@@ -1498,7 +1498,8 @@ class EnergyRatingIndex301Ruleset
                                        fan_power: unit_fan_power.round(3),
                                        distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                        used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
-                                       is_shared_system: orig_vent_fan.is_shared_system)
+                                       is_shared_system: orig_vent_fan.is_shared_system,
+                                       cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction)
       else
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
@@ -1519,7 +1520,8 @@ class EnergyRatingIndex301Ruleset
                                        preheating_fraction_load_served: orig_vent_fan.preheating_fraction_load_served,
                                        precooling_fuel: orig_vent_fan.precooling_fuel,
                                        precooling_efficiency_cop: orig_vent_fan.precooling_efficiency_cop,
-                                       precooling_fraction_load_served: orig_vent_fan.precooling_fraction_load_served)
+                                       precooling_fraction_load_served: orig_vent_fan.precooling_fraction_load_served,
+                                       cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction)
       end
     end
   end
