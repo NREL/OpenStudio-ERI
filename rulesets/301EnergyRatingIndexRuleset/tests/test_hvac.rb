@@ -946,7 +946,7 @@ class ERIHVACtest < MiniTest::Test
     new_hpxml = measure.new_hpxml
 
     # Check that HVAC sizing correctly specified
-    assert_equal(true, new_hpxml.header.use_max_load_for_heat_pumps)
+    assert_equal(HPXML::HeatPumpSizingHERS, new_hpxml.header.heat_pump_sizing_methodology)
     assert_equal(true, new_hpxml.header.allow_increased_fixed_capacities)
 
     return new_hpxml
