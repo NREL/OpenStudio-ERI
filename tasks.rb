@@ -241,7 +241,9 @@ def create_hpxmls
     'base-hvac-autosize-mini-split-air-conditioner-only-ducted.xml' => 'base-hvac-mini-split-air-conditioner-only-ducted.xml',
     'base-hvac-autosize-ptac.xml' => 'base-hvac-ptac.xml',
     'base-hvac-autosize-ptac-with-heating.xml' => 'base-hvac-ptac-with-heating.xml',
-    'base-hvac-autosize-pthp.xml' => 'base-hvac-pthp.xml',
+    'base-hvac-autosize-pthp-sizing-methodology-acca.xml' => 'base-hvac-pthp.xml',
+    'base-hvac-autosize-pthp-sizing-methodology-hers.xml' => 'base-hvac-pthp.xml',
+    'base-hvac-autosize-pthp-sizing-methodology-maxload.xml' => 'base-hvac-pthp.xml',
     'base-hvac-autosize-room-ac-only.xml' => 'base-hvac-room-ac-only.xml',
     'base-hvac-autosize-stove-oil-only.xml' => 'base-hvac-stove-oil-only.xml',
     'base-hvac-autosize-wall-furnace-elec-only.xml' => 'base-hvac-wall-furnace-elec-only.xml',
@@ -337,6 +339,7 @@ def create_hpxmls
     'base-mechvent-balanced.xml' => 'base.xml',
     'base-mechvent-bath-kitchen-fans.xml' => 'base.xml',
     'base-mechvent-cfis.xml' => 'base.xml',
+    'base-mechvent-cfis-airflow-fraction-zero.xml' => 'base-mechvent-cfis.xml',
     'base-mechvent-cfis-dse.xml' => 'base-hvac-dse.xml',
     'base-mechvent-cfis-evap-cooler-only-ducted.xml' => 'base-hvac-evap-cooler-only-ducted.xml',
     'base-mechvent-erv.xml' => 'base.xml',
@@ -4312,6 +4315,8 @@ def apply_hpxml_modification(hpxml_file, hpxml)
                                sensible_recovery_efficiency: 0.72,
                                fan_power: 7.5,
                                used_for_whole_building_ventilation: true)
+  elsif ['base-mechvent-cfis-airflow-fraction-zero.xml'].include? hpxml_file
+    hpxml.ventilation_fans[0].cfis_vent_mode_airflow_fraction = 0.0
   end
 
   # ---------------- #
