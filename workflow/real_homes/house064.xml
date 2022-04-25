@@ -501,6 +501,9 @@
               <IsSharedSystem>false</IsSharedSystem>
               <FanPower>268.0</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
+              <extension>
+                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
+              </extension>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
