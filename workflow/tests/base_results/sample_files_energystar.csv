@@ -16,7 +16,6 @@
 [SF_National_3.1] base-atticroof-radiant-barrier.xml,61.0,1.0,61.0,73.0,73.0,FAIL
 [SF_National_3.1] base-atticroof-unvented-insulated-roof.xml,65.0,1.0,65.0,74.0,74.0,FAIL
 [SF_National_3.1] base-atticroof-vented.xml,65.0,1.0,65.0,76.0,76.0,FAIL
-[SF_National_3.1] base-battery.xml,65.0,1.0,65.0,78.0,78.0,FAIL
 [SF_National_3.1] base-bldgtype-multifamily-adjacent-to-multiple.xml,66.0,1.0,66.0,68.0,68.0,FAIL
 [SF_National_3.1] base-bldgtype-multifamily-location-portland-or.xml,72.0,1.0,72.0,68.0,68.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-boiler-only-baseboard.xml,70.0,1.0,70.0,65.0,65.0,PASS
@@ -38,7 +37,7 @@
 [SF_National_3.1] base-bldgtype-multifamily-shared-water-heater.xml,86.0,1.0,86.0,59.0,59.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily.xml,67.0,1.0,67.0,62.0,62.0,PASS
 [SF_National_3.1] base-bldgtype-single-family-attached.xml,66.0,1.0,66.0,73.0,73.0,FAIL
-[SF_National_3.1] base-dhw-combi-tankless.xml,69.0,1.0,69.0,64.0,64.0,PASS
+[SF_National_3.1] base-dhw-combi-tankless.xml,69.0,1.0,69.0,65.0,65.0,PASS
 [SF_National_3.1] base-dhw-desuperheater.xml,76.0,1.0,76.0,81.0,81.0,FAIL
 [SF_National_3.1] base-dhw-dwhr.xml,65.0,1.0,65.0,75.0,75.0,FAIL
 [SF_National_3.1] base-dhw-indirect-standbyloss.xml,69.0,1.0,69.0,68.0,68.0,PASS
@@ -139,6 +138,7 @@
 [SF_National_3.1] base-location-phoenix-az.xml,59.0,1.0,59.0,69.0,69.0,FAIL
 [SF_National_3.1] base-location-portland-or.xml,71.0,1.0,71.0,75.0,75.0,FAIL
 [SF_National_3.1] base-mechvent-balanced.xml,65.0,1.0,65.0,82.0,82.0,FAIL
+[SF_National_3.1] base-mechvent-cfis-airflow-fraction-zero.xml,65.0,1.0,65.0,78.0,78.0,FAIL
 [SF_National_3.1] base-mechvent-cfis.xml,65.0,1.0,65.0,80.0,80.0,FAIL
 [SF_National_3.1] base-mechvent-erv-atre-asre.xml,65.0,1.0,65.0,71.0,71.0,FAIL
 [SF_National_3.1] base-mechvent-erv.xml,65.0,1.0,65.0,71.0,71.0,FAIL
@@ -149,7 +149,6 @@
 [SF_National_3.1] base-mechvent-supply.xml,65.0,1.0,65.0,77.0,77.0,FAIL
 [SF_National_3.1] base-mechvent-whole-house-fan.xml,65.0,1.0,65.0,76.0,76.0,FAIL
 [SF_National_3.1] base-misc-generators.xml,65.0,1.0,65.0,83.0,83.0,FAIL
-[SF_National_3.1] base-pv-battery.xml,65.0,1.0,65.0,78.0,78.0,FAIL
 [SF_National_3.1] base-pv.xml,65.0,1.0,65.0,78.0,78.0,FAIL
 [SF_National_3.1] base.xml,65.0,1.0,65.0,78.0,78.0,FAIL
 [SF_Pacific_3.0] base-location-honolulu-hi.xml,61.0,1.0,61.0,77.0,77.0,FAIL

@@ -8,15 +8,12 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <ERICalculation>
-        <Version>latest</Version>
-      </ERICalculation>
-      <EnergyStarCalculation>
-        <Version>SF_National_3.1</Version>
-      </EnergyStarCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
+      <HVACSizingControl>
+        <HeatPumpSizingMethodology>ACCA</HeatPumpSizingMethodology>
+      </HVACSizingControl>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -25,7 +22,6 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
-        <ZipCode>80206</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -52,7 +48,9 @@
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <AverageCeilingHeight>8.0</AverageCeilingHeight>
           <NumberofBedrooms>3</NumberofBedrooms>
+          <NumberofBathrooms>2</NumberofBathrooms>
           <ConditionedFloorArea>2700.0</ConditionedFloorArea>
+          <ConditionedBuildingVolume>21600.0</ConditionedBuildingVolume>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -199,8 +197,6 @@
               <Layer>
                 <InstallationType>continuous - interior</InstallationType>
                 <NominalRValue>0.0</NominalRValue>
-                <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -260,7 +256,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
@@ -275,7 +270,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
@@ -290,7 +284,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
@@ -305,7 +298,6 @@
               <WinterShadingCoefficient>0.85</WinterShadingCoefficient>
             </InteriorShading>
             <FractionOperable>0.67</FractionOperable>
-            <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
         </Windows>
@@ -323,91 +315,37 @@
         <HVAC>
           <HVACPlant>
             <PrimarySystems>
-              <PrimaryHeatingSystem idref='HeatingSystem1'/>
-              <PrimaryCoolingSystem idref='CoolingSystem1'/>
+              <PrimaryHeatingSystem idref='HeatPump1'/>
+              <PrimaryCoolingSystem idref='HeatPump1'/>
             </PrimarySystems>
-            <HeatingSystem>
-              <SystemIdentifier id='HeatingSystem1'/>
-              <DistributionSystem idref='HVACDistribution1'/>
-              <HeatingSystemType>
-                <Furnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>36000.0</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>0.92</Value>
-              </AnnualHeatingEfficiency>
+            <HeatPump>
+              <SystemIdentifier id='HeatPump1'/>
+              <HeatPumpType>packaged terminal heat pump</HeatPumpType>
+              <HeatPumpFuel>electricity</HeatPumpFuel>
+              <CoolingSensibleHeatFraction>0.65</CoolingSensibleHeatFraction>
+              <BackupType>integrated</BackupType>
+              <BackupSystemFuel>electricity</BackupSystemFuel>
+              <BackupAnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </BackupAnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <extension>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
-              </extension>
-            </HeatingSystem>
-            <CoolingSystem>
-              <SystemIdentifier id='CoolingSystem1'/>
-              <DistributionSystem idref='HVACDistribution1'/>
-              <CoolingSystemType>central air conditioner</CoolingSystemType>
-              <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>24000.0</CoolingCapacity>
-              <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Units>EER</Units>
+                <Value>11.4</Value>
               </AnnualCoolingEfficiency>
-              <SensibleHeatFraction>0.73</SensibleHeatFraction>
-              <extension>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
-                <ChargeDefectRatio>-0.25</ChargeDefectRatio>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-              </extension>
-            </CoolingSystem>
+              <AnnualHeatingEfficiency>
+                <Units>COP</Units>
+                <Value>3.6</Value>
+              </AnnualHeatingEfficiency>
+            </HeatPump>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl1'/>
-            <ControlType>manual thermostat</ControlType>
             <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
-          <HVACDistribution>
-            <SystemIdentifier id='HVACDistribution1'/>
-            <DistributionSystemType>
-              <AirDistribution>
-                <AirDistributionType>regular velocity</AirDistributionType>
-                <DuctLeakageMeasurement>
-                  <DuctType>supply</DuctType>
-                  <DuctLeakage>
-                    <Units>CFM25</Units>
-                    <Value>75.0</Value>
-                    <TotalOrToOutside>to outside</TotalOrToOutside>
-                  </DuctLeakage>
-                </DuctLeakageMeasurement>
-                <DuctLeakageMeasurement>
-                  <DuctType>return</DuctType>
-                  <DuctLeakage>
-                    <Units>CFM25</Units>
-                    <Value>25.0</Value>
-                    <TotalOrToOutside>to outside</TotalOrToOutside>
-                  </DuctLeakage>
-                </DuctLeakageMeasurement>
-                <Ducts>
-                  <DuctType>supply</DuctType>
-                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
-                  <DuctLocation>attic - unvented</DuctLocation>
-                  <DuctSurfaceArea>150.0</DuctSurfaceArea>
-                </Ducts>
-                <Ducts>
-                  <DuctType>return</DuctType>
-                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>attic - unvented</DuctLocation>
-                  <DuctSurfaceArea>50.0</DuctSurfaceArea>
-                </Ducts>
-                <NumberofReturnRegisters>2</NumberofReturnRegisters>
-              </AirDistribution>
-            </DistributionSystemType>
-            <ConditionedFloorAreaServed>2700.0</ConditionedFloorAreaServed>
-          </HVACDistribution>
         </HVAC>
         <WaterHeating>
           <WaterHeatingSystem>
@@ -415,7 +353,6 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>living space</Location>
-            <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <HeatingCapacity>18767.0</HeatingCapacity>
@@ -444,53 +381,10 @@
             <LowFlow>false</LowFlow>
           </WaterFixture>
         </WaterHeating>
-        <Photovoltaics>
-          <PVSystem>
-            <SystemIdentifier id='PVSystem1'/>
-            <IsSharedSystem>false</IsSharedSystem>
-            <Location>roof</Location>
-            <ModuleType>standard</ModuleType>
-            <Tracking>fixed</Tracking>
-            <ArrayAzimuth>180</ArrayAzimuth>
-            <ArrayTilt>20.0</ArrayTilt>
-            <MaxPowerOutput>4000.0</MaxPowerOutput>
-            <InverterEfficiency>0.96</InverterEfficiency>
-            <SystemLossesFraction>0.14</SystemLossesFraction>
-          </PVSystem>
-          <PVSystem>
-            <SystemIdentifier id='PVSystem2'/>
-            <IsSharedSystem>false</IsSharedSystem>
-            <Location>roof</Location>
-            <ModuleType>premium</ModuleType>
-            <Tracking>fixed</Tracking>
-            <ArrayAzimuth>90</ArrayAzimuth>
-            <ArrayTilt>20.0</ArrayTilt>
-            <MaxPowerOutput>1500.0</MaxPowerOutput>
-            <InverterEfficiency>0.96</InverterEfficiency>
-            <SystemLossesFraction>0.14</SystemLossesFraction>
-          </PVSystem>
-        </Photovoltaics>
-        <Batteries>
-          <Battery>
-            <SystemIdentifier id='Battery1'/>
-            <Location>outside</Location>
-            <BatteryType>Li-ion</BatteryType>
-            <NominalCapacity>
-              <Units>kWh</Units>
-              <Value>20.0</Value>
-            </NominalCapacity>
-            <UsableCapacity>
-              <Units>kWh</Units>
-              <Value>18.0</Value>
-            </UsableCapacity>
-            <RatedPowerOutput>15000.0</RatedPowerOutput>
-          </Battery>
-        </Batteries>
       </Systems>
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -502,7 +396,6 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
@@ -511,7 +404,6 @@
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
-          <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

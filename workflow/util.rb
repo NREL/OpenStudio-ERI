@@ -437,9 +437,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
     nec_x_cool = 0
     if eec_x_cool * reul_cool > 0
       nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
+      # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and excluded from eul_la
+      nec_x_cool += (rated_output['End Use: Electricity: Whole House Fan (MBtu)'] * reul_cool / tot_reul_cool)
     end
-    # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and excluded from eul_la
-    nec_x_cool += (rated_output['End Use: Electricity: Whole House Fan (MBtu)'] * reul_cool / tot_reul_cool)
     nmeul_cool = 0
     if ec_r_cool > 0
       nmeul_cool = reul_cool * (nec_x_cool / ec_r_cool)

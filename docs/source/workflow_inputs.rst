@@ -1296,9 +1296,14 @@ If a central fan integrated supply system is specified, additional information i
   Element                                                                   Type               Units  Constraints   Required  Default  Notes
   ========================================================================  =================  =====  ============  ========  =======  =======================================
   ``AttachedToHVACDistributionSystem``                                      idref                     See [#]_      Yes                ID of attached distribution system
+  ``extension/VentilationOnlyModeAirflowFraction``                          double                    0 - 1         Yes                Blower airflow rate fraction during ventilation only mode [#]_
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
   .. [#] HVACDistribution type cannot be HydronicDistribution.
+  .. [#] Blower airflow rate when operating in ventilation only mode (i.e., not heating or cooling mode), as a fraction of the maximum blower airflow rate.
+         This value will depend on whether the blower fan can operate at reduced airflow rates during ventilation only operation.
+         It is used to determine how much conditioned air is recirculated through ducts during ventilation only operation, resulting in additional duct losses.
+         A value of zero will result in no conditioned air recirculation, and thus no additional duct losses.
 
 In-Unit System
 ~~~~~~~~~~~~~~
@@ -1694,24 +1699,6 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
          Default from PVWatts is 0.14.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system.
-
-HPXML Batteries
-***************
-
-A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/Batteries/Battery``.
-
-  ====================================================  =======  =========  =======================  ========  ========  ============================================
-  Element                                               Type     Units      Constraints              Required  Default   Notes
-  ====================================================  =======  =========  =======================  ========  ========  ============================================
-  ``SystemIdentifier``                                  id                                           Yes                 Unique identifier
-  ``Location``                                          string              See [#]_                 Yes                 Location
-  ``BatteryType``                                       string              See [#]_                 Yes                 Battery type
-  ``NominalCapacity[Units="kWh"]/Value``                double   kWh        >= 0                     Yes                 Nominal (total) capacity
-  ``UsableCapacity[Units="kWh"]/Value``                 double   kWh        >= 0, < NominalCapacity  Yes                 Usable capacity
-  ====================================================  =======  =========  =======================  ========  ========  ============================================
-
-  .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
-  .. [#] BatteryType only choice is "Li-ion".
 
 HPXML Generators
 ****************

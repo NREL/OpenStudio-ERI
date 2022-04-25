@@ -161,6 +161,29 @@ class EnergyRatingIndexTest < Minitest::Test
     rundir, hpxmls, csvs = _run_workflow(xml, test_name, skip_simulation: true)
   end
 
+  def test_co2index_without_extra_simulation
+    # Check that if we run an all-electric home, it reuses the ERI Reference Home
+    # simulation results for the CO2e Reference Home, rather than running an additional
+    # simulation for the CO2e Reference Home.
+    test_name = 'co2index_without_extra_simulation'
+
+    # Run ERI workflow w/ all-electric home
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base-hvac-air-to-air-heat-pump-1-speed.xml"
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name)
+
+    # Check that CO2e Reference Home HPXML references ERI Reference Home
+    hpxml = HPXML.new(hpxml_path: hpxmls[:co2ref])
+    assert_equal(Constants.CalcTypeERIReferenceHome, hpxml.header.eri_design)
+
+    # Run ERI workflow w/ mixed fuel home
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name)
+
+    # Check that CO2e Reference Home HPXML does not reference ERI Reference Home
+    hpxml = HPXML.new(hpxml_path: hpxmls[:co2ref])
+    assert_equal(Constants.CalcTypeCO2eReferenceHome, hpxml.header.eri_design)
+  end
+
   def test_resnet_ashrae_140
     test_name = 'RESNET_Test_4.1_Standard_140'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))

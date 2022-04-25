@@ -2112,7 +2112,7 @@ def create_sample_hpxmls
                   'base-atticroof-radiant-barrier.xml',
                   'base-atticroof-unvented-insulated-roof.xml',
                   'base-atticroof-vented.xml',
-                  'base-battery.xml',
+                  # 'base-battery.xml',
                   'base-bldgtype-multifamily.xml',
                   'base-bldgtype-multifamily-adjacent-to-multiple.xml',
                   'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml',
@@ -2234,6 +2234,7 @@ def create_sample_hpxmls
                   'base-location-portland-or.xml',
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
+                  'base-mechvent-cfis-airflow-fraction-zero.xml',
                   'base-mechvent-erv.xml',
                   'base-mechvent-erv-atre-asre.xml',
                   'base-mechvent-exhaust.xml',
@@ -2243,8 +2244,8 @@ def create_sample_hpxmls
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
                   'base-misc-generators.xml',
-                  'base-pv.xml',
-                  'base-pv-battery.xml']
+                  'base-pv.xml']
+  # 'base-pv-battery.xml']
   include_list.each do |include_file|
     if File.exist? "hpxml-measures/workflow/sample_files/#{include_file}"
       FileUtils.cp("hpxml-measures/workflow/sample_files/#{include_file}", "workflow/sample_files/#{include_file}")
@@ -2351,6 +2352,7 @@ def create_sample_hpxmls
         ventilation_fan.rated_flow_rate = nil
         ventilation_fan.delivered_ventilation = nil
       end
+      ventilation_fan.cfis_vent_mode_airflow_fraction = 1.0 if ventilation_fan.cfis_vent_mode_airflow_fraction.nil? && ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
     end
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type

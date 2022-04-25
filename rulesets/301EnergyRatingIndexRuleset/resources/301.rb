@@ -206,7 +206,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.state_code = orig_hpxml.header.state_code
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
     new_hpxml.header.allow_increased_fixed_capacities = true
-    new_hpxml.header.use_max_load_for_heat_pumps = true
+    new_hpxml.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
 
     add_emissions_scenarios(orig_hpxml, new_hpxml)
 
@@ -1498,7 +1498,8 @@ class EnergyRatingIndex301Ruleset
                                        fan_power: unit_fan_power.round(3),
                                        distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                        used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
-                                       is_shared_system: orig_vent_fan.is_shared_system)
+                                       is_shared_system: orig_vent_fan.is_shared_system,
+                                       cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction)
       else
         new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
                                        fan_type: orig_vent_fan.fan_type,
@@ -1519,7 +1520,8 @@ class EnergyRatingIndex301Ruleset
                                        preheating_fraction_load_served: orig_vent_fan.preheating_fraction_load_served,
                                        precooling_fuel: orig_vent_fan.precooling_fuel,
                                        precooling_efficiency_cop: orig_vent_fan.precooling_efficiency_cop,
-                                       precooling_fraction_load_served: orig_vent_fan.precooling_fraction_load_served)
+                                       precooling_fraction_load_served: orig_vent_fan.precooling_fraction_load_served,
+                                       cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction)
       end
     end
   end
@@ -1796,13 +1798,14 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_batteries_rated(orig_hpxml, new_hpxml)
-    orig_hpxml.batteries.each do |orig_battery|
-      new_hpxml.batteries.add(id: orig_battery.id,
-                              type: orig_battery.type,
-                              location: orig_battery.location,
-                              nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
-                              usable_capacity_kwh: orig_battery.usable_capacity_kwh)
-    end
+    # Temporarily disabled until RESNET allows this.
+    # orig_hpxml.batteries.each do |orig_battery|
+    #   new_hpxml.batteries.add(id: orig_battery.id,
+    #                           type: orig_battery.type,
+    #                           location: orig_battery.location,
+    #                           nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
+    #                           usable_capacity_kwh: orig_battery.usable_capacity_kwh)
+    # end
   end
 
   def self.set_systems_batteries_iad(orig_hpxml, new_hpxml)
