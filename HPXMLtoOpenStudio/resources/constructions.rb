@@ -1370,10 +1370,17 @@ class Constructions
       # Create transmittance schedule for heating/cooling seasons
       trans_values = cooling_season.map { |c| c == 1 ? sf_summer : sf_winter }
       if shading_schedules[trans_values].nil?
-        trans_sch = MonthWeekdayWeekendSchedule.new(model, "trans schedule winter=#{sf_winter} summer=#{sf_summer}", Array.new(24, 1), Array.new(24, 1), trans_values, Constants.ScheduleTypeLimitsFraction, false)
+        sch_name = "trans schedule winter=#{sf_winter} summer=#{sf_summer}"
+        if trans_values.uniq.size == 1
+          trans_sch = OpenStudio::Model::ScheduleConstant.new(model)
+          trans_sch.setValue(trans_values[0])
+          trans_sch.setName(sch_name)
+        else
+          trans_sch = MonthWeekdayWeekendSchedule.new(model, sch_name, Array.new(24, 1), Array.new(24, 1), trans_values, Constants.ScheduleTypeLimitsFraction, false).schedule
+        end
         shading_schedules[trans_values] = trans_sch
       end
-      shading_surface.setTransmittanceSchedule(shading_schedules[trans_values].schedule)
+      shading_surface.setTransmittanceSchedule(shading_schedules[trans_values])
 
       # EMS to actuate view factor to ground
       sub_surface_type = sub_surface.subSurfaceType.downcase.to_s
@@ -1381,7 +1388,7 @@ class Constructions
       actuator.setName("#{sub_surface_type}#{index}_actuator")
 
       if shading_ems[:sensors][trans_values].nil?
-        shading_schedule_name = shading_schedules[trans_values].schedule.name.to_s
+        shading_schedule_name = shading_schedules[trans_values].name.to_s
         shading_coeff_sensor = OpenStudio::Model::EnergyManagementSystemSensor.new(model, 'Schedule Value')
         shading_coeff_sensor.setName("#{sub_surface_type}_shading_coefficient")
         shading_coeff_sensor.setKeyName(shading_schedule_name)
