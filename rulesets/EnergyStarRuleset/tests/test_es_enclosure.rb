@@ -66,22 +66,26 @@ class EnergyStarEnclosureTest < MiniTest::Test
       else
         rb_grade = nil
       end
+      adjacent_to = HPXML::LocationAtticVented
+      rvalue = 2.3
 
       _convert_to_es('base.xml', es_version)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
+      _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
+
+      if [ESConstants.MFNationalVer1_1].include? es_version
+        # Ducts remain in living space, so no need to transition roof to vented attic
+        adjacent_to = HPXML::LocationLivingSpace
+        rvalue = 25.8
+      end
 
       _convert_to_es('base-atticroof-cathedral.xml', es_version)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
-
-      _convert_to_es('base-atticroof-conditioned.xml', es_version)
-      hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
+      _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
       _convert_to_es('base-atticroof-flat.xml', es_version)
       hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
+      _check_roofs(hpxml, area: 1350, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
     end
 
     ESConstants.MFVersions.each do |es_version|
@@ -121,10 +125,6 @@ class EnergyStarEnclosureTest < MiniTest::Test
       _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-cathedral.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_measure()
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
-
-      _convert_to_es('base-atticroof-conditioned.xml', ESConstants.SFPacificVer3_0, state_code)
       hpxml = _test_measure()
       _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
