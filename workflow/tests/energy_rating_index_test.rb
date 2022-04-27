@@ -1611,8 +1611,10 @@ class EnergyRatingIndexTest < Minitest::Test
     assert_operator((energy['HVAC3b'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, 2.80)
     assert_operator((energy['HVAC3b'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, 31.10)
     assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, 1.90)
-    # Temporarily disabled as we no longer pass w/ EnergyPlus 22.1 Kiva changes
-    #assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, 6.71)
+    # FIXME: Temporarily disabled as we no longer pass w/ EnergyPlus 22.1 Kiva changes;
+    #        using the current acceptance criteria for the time being instead
+    # assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, 6.71)
+    assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, 12.5)
     assert_operator((energy['HVAC3d'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, 4.41)
     assert_operator((energy['HVAC3d'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, 19.91)
 
