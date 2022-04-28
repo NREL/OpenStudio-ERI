@@ -9,6 +9,9 @@
   <SoftwareInfo>
     <extension>
       <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
+      <AdditionalProperties>
+        <ParentHPXMLFile>HVAC2a.xml</ParentHPXMLFile>
+      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>

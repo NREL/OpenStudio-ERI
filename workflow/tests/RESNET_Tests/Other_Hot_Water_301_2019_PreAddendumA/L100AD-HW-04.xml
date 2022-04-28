@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>2019</Version>
       </ERICalculation>
+      <AdditionalProperties>
+        <ParentHPXMLFile>L100AD-HW-02.xml</ParentHPXMLFile>
+      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>

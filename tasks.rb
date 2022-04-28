@@ -135,11 +135,12 @@ def create_test_hpxmls
 
   puts "Generating #{hpxmls_files.size} HPXML files..."
 
-  hpxmls_files.each do |derivative, parent|
+  hpxmls_files.each do |derivative, orig_parent|
     print '.'
 
     begin
       hpxml_files = [derivative]
+      parent = orig_parent
       unless parent.nil?
         hpxml_files.unshift(parent)
       end
@@ -158,7 +159,7 @@ def create_test_hpxmls
           hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file), collapse_enclosure: false)
           next
         end
-        set_hpxml_header(hpxml_file, hpxml)
+        set_hpxml_header(hpxml_file, hpxml, orig_parent)
         set_hpxml_site(hpxml_file, hpxml)
         set_hpxml_building_construction(hpxml_file, hpxml)
         set_hpxml_building_occupancy(hpxml_file, hpxml)
@@ -247,7 +248,7 @@ def get_standard_140_hpxml(hpxml_path)
   return hpxml
 end
 
-def set_hpxml_header(hpxml_file, hpxml)
+def set_hpxml_header(hpxml_file, hpxml, orig_parent)
   if hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.header.apply_ashrae140_assumptions = nil
   end
@@ -281,6 +282,9 @@ def set_hpxml_header(hpxml_file, hpxml)
     hpxml.header.state_code = File.basename(hpxml_file)[11..12]
   end
   hpxml.header.zip_code = '00000'
+  if not orig_parent.nil?
+    hpxml.header.extension_properties['ParentHPXMLFile'] = File.basename(orig_parent)
+  end
 end
 
 def set_hpxml_site(hpxml_file, hpxml)
