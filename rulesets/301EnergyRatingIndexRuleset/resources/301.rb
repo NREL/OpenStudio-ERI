@@ -2623,9 +2623,7 @@ class EnergyRatingIndex301Ruleset
       next if new_hpxml.hvac_distributions.select { |d| d.id == hvac.distribution_system_idref }.size > 0
 
       # Add new DSE distribution if distribution doesn't already exist
-      dist_id = get_new_distribution_id(orig_hpxml, new_hpxml)
-      hvac.distribution_system_idref = dist_id
-      new_hpxml.hvac_distributions.add(id: dist_id,
+      new_hpxml.hvac_distributions.add(id: hvac.distribution_system_idref,
                                        distribution_system_type: HPXML::HVACDistributionTypeDSE,
                                        annual_heating_dse: 0.8,
                                        annual_cooling_dse: 0.8)
