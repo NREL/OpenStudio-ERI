@@ -657,7 +657,7 @@ class EnergyStarRuleset
       heat_pump = hvac_configuration[:heat_pump]
       if not heating_system.nil?
         if heating_system.heating_system_type == HPXML::HVACTypeBoiler
-          add_reference_heating_boiler(orig_hpxml, new_hpxml, heating_system)
+          add_reference_boiler(orig_hpxml, new_hpxml, heating_system)
         elsif heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
           if not cooling_system.nil?
             fraction_cool_load_served = cooling_system.fraction_cool_load_served
@@ -666,16 +666,16 @@ class EnergyStarRuleset
           end
           add_reference_heat_pump(orig_hpxml, new_hpxml, heating_system.fraction_heat_load_served, fraction_cool_load_served, heating_system, cooling_system)
         else
-          add_reference_heating_furnace(orig_hpxml, new_hpxml, heating_system.fraction_heat_load_served, heating_system)
+          add_reference_furnace(orig_hpxml, new_hpxml, heating_system.fraction_heat_load_served, heating_system)
         end
       end
       if not cooling_system.nil?
-        if (not heating_system.nil?) && (heating_system.heating_system_fuel == HPXML::FuelTypeElectricity)
+        if new_hpxml.heat_pumps.select { |hp| hp.clg_seed_id == cooling_system.id }.size > 0
           # Already created HP above
         elsif cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower
-          add_reference_cooling_chiller_or_cooling_tower(orig_hpxml, new_hpxml, cooling_system)
+          add_reference_chiller_or_cooling_tower(orig_hpxml, new_hpxml, cooling_system)
         else
-          add_reference_cooling_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
+          add_reference_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
         end
       end
       if not heat_pump.nil?
@@ -1938,7 +1938,7 @@ class EnergyStarRuleset
     end
   end
 
-  def self.add_reference_heating_boiler(orig_hpxml, new_hpxml, orig_system)
+  def self.add_reference_boiler(orig_hpxml, new_hpxml, orig_system)
     afue = get_default_boiler_eff(orig_system)
 
     if orig_system.is_shared_system # Retain the shared boiler regardless of its heating capacity.
@@ -1967,7 +1967,7 @@ class EnergyStarRuleset
                                   fraction_heat_load_served: orig_system.fraction_heat_load_served)
   end
 
-  def self.add_reference_heating_furnace(orig_hpxml, new_hpxml, load_frac, orig_system)
+  def self.add_reference_furnace(orig_hpxml, new_hpxml, load_frac, orig_system)
     furnace_afue = get_default_furnace_afue(orig_system.heating_system_fuel)
     furnace_fuel_type = orig_system.heating_system_fuel
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
@@ -1987,7 +1987,7 @@ class EnergyStarRuleset
                                   fan_watts_per_cfm: 0.58)
   end
 
-  def self.add_reference_cooling_air_conditioner(orig_hpxml, new_hpxml, load_frac, orig_system)
+  def self.add_reference_air_conditioner(orig_hpxml, new_hpxml, load_frac, orig_system)
     seer = get_default_ac_seer()
     shr = orig_system.cooling_shr
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
@@ -2009,7 +2009,7 @@ class EnergyStarRuleset
                                   fan_watts_per_cfm: 0.58)
   end
 
-  def self.add_reference_cooling_chiller_or_cooling_tower(orig_hpxml, new_hpxml, orig_system)
+  def self.add_reference_chiller_or_cooling_tower(orig_hpxml, new_hpxml, orig_system)
     if orig_system.cooling_system_type == HPXML::HVACTypeChiller
       kw_per_ton = get_default_chiller_kw_per_ton()
     end
