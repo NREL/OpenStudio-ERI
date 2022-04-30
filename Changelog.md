@@ -2,6 +2,7 @@
 
 __New Features__
 - Updates to OpenStudio 3.4.0/EnergyPlus 22.1.
+- Updates to OpenStudio-HPXML 1.4.0.
 - Implements ANSI/RESNET/ICC Standard 301-2019 Addenda C & D. `ERICalculation/Version` can now be "2019ABC" or "2019ABCD" in the HPXML files.
   - Adds calculation of CO2e Rating Index and CO2e/NOx/SO2 emissions (annual and hourly).
   - Adds support for shared hot water recirculation systems controlled by temperature.
@@ -16,9 +17,7 @@ __New Features__
 - Adds a `--skip-simulation` flag that can be used to just generate the ERI Rated/Reference Home HPXMLs and then stop.
 
 __Bugfixes__
-- Adds more stringent limits for `AirflowDefectRatio` (now allows values from 1/10th to 10x the design value).
 - Fixes opaque door R-value in the Reference Home in IECC climate zone 1.
-- Hourly output fixes: some outputs off by 1 hour; possible negative combi boiler values.
 - Fixes possible NaN result for ERI if, in a very cold climate, the Reference Home has no cooling load.
 
 ## OpenStudio-ERI v1.3.0

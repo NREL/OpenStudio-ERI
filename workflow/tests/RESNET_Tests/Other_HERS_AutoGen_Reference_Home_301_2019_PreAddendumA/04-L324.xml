@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>2019</Version>
       </ERICalculation>
+      <AdditionalProperties>
+        <ParentHPXMLFile>04-L324.xml</ParentHPXMLFile>
+      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>

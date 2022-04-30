@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>2014A</Version>
       </ERICalculation>
+      <AdditionalProperties>
+        <ParentHPXMLFile>L100A-04.xml</ParentHPXMLFile>
+      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>
