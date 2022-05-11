@@ -8,7 +8,6 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <OccupancyCalculationType>asset</OccupancyCalculationType>
       <ERICalculation>
         <Version>2019</Version>
       </ERICalculation>
