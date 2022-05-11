@@ -207,6 +207,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
+    new_hpxml.header.occupancy_calculation_type = HPXML::OccupancyCalculationTypeAsset
 
     add_emissions_scenarios(orig_hpxml, new_hpxml)
 

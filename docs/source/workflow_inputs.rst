@@ -369,7 +369,7 @@ Other walls (e.g., wood framed walls) that are connected to a below-grade space 
   ``Height``                                                      double    ft            > 0          Yes                        Total height
   ``Area``                                                        double    ft2           > 0          Yes                        Gross area (including doors/windows)
   ``Azimuth``                                                     integer   deg           0 - 359      No         See [#]_        Azimuth (clockwise from North)
-  ``Thickness``                                                   double    inches        > 0          Yes                        Thickness excluding interior framing
+  ``Thickness``                                                   double    in            > 0          Yes                        Thickness excluding interior framing
   ``DepthBelowGrade``                                             double    ft            0 - Height   Yes                        Depth below grade [#]_
   ``Insulation/SystemIdentifier``                                 id                                   Yes                        Unique identifier
   ``Insulation/Layer[InstallationType="continuous - interior"]``  element                 0 - 1        See [#]_                   Interior insulation layer
@@ -450,7 +450,7 @@ Each space type that borders the ground (i.e., basements, crawlspaces, garages, 
   ``SystemIdentifier``                                     id                                   Yes                  Unique identifier
   ``InteriorAdjacentTo``                                   string                  See [#]_     Yes                  Interior adjacent space type
   ``Area``                                                 double    ft2           > 0          Yes                  Gross area
-  ``Thickness``                                            double    inches        >= 0         Yes                  Thickness [#]_
+  ``Thickness``                                            double    in            >= 0         Yes                  Thickness [#]_
   ``ExposedPerimeter``                                     double    ft            >= 0         Yes                  Perimeter exposed to ambient conditions [#]_
   ``DepthBelowGrade``                                      double    ft            >= 0         See [#]_             Depth from the top of the slab surface to grade
   ``PerimeterInsulation/SystemIdentifier``                 id                                   Yes                  Unique identifier
@@ -504,7 +504,7 @@ If overhangs are specified, additional information is entered in ``Overhangs``.
   ============================  ========  ======  ===========  ========  =======  ========================================================
   Element                       Type      Units   Constraints  Required  Default  Notes
   ============================  ========  ======  ===========  ========  =======  ========================================================
-  ``Depth``                     double    inches  >= 0         Yes                Depth of overhang
+  ``Depth``                     double    ft      >= 0         Yes                Depth of overhang
   ``DistanceToTopOfWindow``     double    ft      >= 0         Yes                Vertical distance from overhang to top of window
   ``DistanceToBottomOfWindow``  double    ft      See [#]_     Yes                Vertical distance from overhang to bottom of window [#]_
   ============================  ========  ======  ===========  ========  =======  ========================================================
@@ -928,7 +928,7 @@ If a backup type of "integrated" is provided, additional information is entered 
   ========================================================================  ========  ======  ===========  ========  =========  ==========================================
 
   .. [#] BackupSystemFuel choices are "electricity", "natural gas", "fuel oil", "propane", "wood", or "wood pellets".
-  .. [#] Provide BackupHeatingSwitchoverTemperature for a situation in which there is a discrete outdoor temperature when the heat pump stops operating and the backup heating system starts operating.
+  .. [#] Provide BackupHeatingSwitchoverTemperature for a situation where there is a discrete outdoor temperature when the heat pump stops operating and the backup heating system starts operating.
          If not provided, the backup heating system will operate as needed for hours when the heat pump has insufficient capacity.
 
 Air-to-Air Heat Pump
