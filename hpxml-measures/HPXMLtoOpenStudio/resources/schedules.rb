@@ -1135,6 +1135,8 @@ class SchedulesFile
   ColumnHotWaterClothesWasher = 'hot_water_clothes_washer'
   ColumnHotWaterFixtures = 'hot_water_fixtures'
   ColumnVacancy = 'vacancy'
+  ColumnHeatingSetpoint = 'heating_setpoint'
+  ColumnCoolingSetpoint = 'cooling_setpoint'
 
   def initialize(runner: nil,
                  model: nil,
@@ -1150,12 +1152,16 @@ class SchedulesFile
 
     @tmp_schedules = Marshal.load(Marshal.dump(@schedules))
     set_vacancy
+    convert_setpoints
 
-    tmpfile = Tempfile.new(['schedules', '.csv'])
-    @tmp_schedules_path = tmpfile.path.to_s
-    export
+    tmpdir = Dir.tmpdir
+    tmpdir = ENV['LOCAL_SCRATCH'] if ENV.keys.include?('LOCAL_SCRATCH')
+    tmpfile = Tempfile.new(['schedules', '.csv'], tmpdir)
+    tmp_schedules_path = tmpfile.path.to_s
 
-    get_external_file
+    export(tmp_schedules_path)
+
+    get_external_file(tmp_schedules_path)
   end
 
   def nil?
@@ -1226,10 +1232,10 @@ class SchedulesFile
     end
   end
 
-  def export
-    return false if @tmp_schedules_path.nil?
+  def export(tmp_schedules_path)
+    return false if tmp_schedules_path.nil?
 
-    CSV.open(@tmp_schedules_path, 'wb') do |csv|
+    CSV.open(tmp_schedules_path, 'wb') do |csv|
       csv << @tmp_schedules.keys
       rows = @tmp_schedules.values.transpose
       rows.each do |row|
@@ -1368,11 +1374,16 @@ class SchedulesFile
     return peak_flow
   end
 
-  def get_external_file
-    if File.exist? @tmp_schedules_path
-      @external_file = OpenStudio::Model::ExternalFile::getExternalFile(@model, @tmp_schedules_path)
+  def get_external_file(tmp_schedules_path)
+    if File.exist? tmp_schedules_path
+      @external_file = OpenStudio::Model::ExternalFile::getExternalFile(@model, tmp_schedules_path)
       if @external_file.is_initialized
         @external_file = @external_file.get
+        # ExternalFile creates a new file, so delete our temporary one immediately if we can
+        begin
+          File.delete(tmp_schedules_path)
+        rescue
+        end
       end
     end
   end
@@ -1392,8 +1403,22 @@ class SchedulesFile
     end
   end
 
+  def convert_setpoints
+    return if @tmp_schedules.keys.none? { |k| SchedulesFile.SetpointColumnNames.include?(k) }
+
+    col_names = @tmp_schedules.keys
+
+    @tmp_schedules[col_names[0]].each_with_index do |ts, i|
+      SchedulesFile.SetpointColumnNames.each do |setpoint_col_name|
+        next unless col_names.include?(setpoint_col_name)
+
+        @tmp_schedules[setpoint_col_name][i] = UnitConversions.convert(@tmp_schedules[setpoint_col_name][i], 'f', 'c')
+      end
+    end
+  end
+
   def self.ColumnNames
-    return SchedulesFile.OccupancyColumnNames
+    return SchedulesFile.OccupancyColumnNames + SchedulesFile.SetpointColumnNames
   end
 
   def self.OccupancyColumnNames
@@ -1428,18 +1453,25 @@ class SchedulesFile
     ]
   end
 
+  def self.SetpointColumnNames
+    return [
+      ColumnHeatingSetpoint,
+      ColumnCoolingSetpoint
+    ]
+  end
+
   def affected_by_vacancy
     affected_by_vacancy = {}
     column_names = SchedulesFile.ColumnNames
     column_names.each do |column_name|
       affected_by_vacancy[column_name] = true
-      next unless [ColumnRefrigerator,
-                   ColumnExtraRefrigerator,
-                   ColumnFreezer,
-                   ColumnPoolPump,
-                   ColumnPoolHeater,
-                   ColumnHotTubPump,
-                   ColumnHotTubHeater].include? column_name
+      next unless ([ColumnRefrigerator,
+                    ColumnExtraRefrigerator,
+                    ColumnFreezer,
+                    ColumnPoolPump,
+                    ColumnPoolHeater,
+                    ColumnHotTubPump,
+                    ColumnHotTubHeater] + SchedulesFile.SetpointColumnNames).include? column_name
 
       affected_by_vacancy[column_name] = false
     end
@@ -1451,6 +1483,9 @@ class SchedulesFile
     column_names = SchedulesFile.ColumnNames
     column_names.each do |column_name|
       max_value_one[column_name] = true
+      if SchedulesFile.SetpointColumnNames.include? column_name
+        max_value_one[column_name] = false
+      end
     end
     return max_value_one
   end
@@ -1460,6 +1495,9 @@ class SchedulesFile
     column_names = SchedulesFile.ColumnNames
     column_names.each do |column_name|
       min_value_zero[column_name] = true
+      if SchedulesFile.SetpointColumnNames.include? column_name
+        min_value_zero[column_name] = false
+      end
     end
     return min_value_zero
   end
