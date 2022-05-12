@@ -161,6 +161,14 @@ class EnergyRatingIndexTest < Minitest::Test
     rundir, hpxmls, csvs = _run_workflow(xml, test_name, skip_simulation: true)
   end
 
+  def test_rated_home_only
+    test_name = 'rated_home_only'
+
+    # Run ERI workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    rundir, hpxmls, csvs = _run_workflow(xml, test_name, rated_home_only: true)
+  end
+
   def test_co2index_without_extra_simulation
     # Check that if we run an all-electric home, it reuses the ERI Reference Home
     # simulation results for the CO2e Reference Home, rather than running an additional

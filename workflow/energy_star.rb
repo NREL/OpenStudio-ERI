@@ -103,7 +103,7 @@ end
 # Check for correct versions of OS
 Version.check_openstudio_version()
 
-options = process_arguments(File.basename(__FILE__), args, basedir)
+options = process_arguments(File.basename(__FILE__), args, basedir, 'energystar')
 
 resultsdir = setup_resultsdir(options)
 

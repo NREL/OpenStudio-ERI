@@ -13,7 +13,7 @@ def setup_resultsdir(options)
   return resultsdir
 end
 
-def process_arguments(calling_rb, args, basedir)
+def process_arguments(calling_rb, args, basedir, caller)
   timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'emissions', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
 
   options = {}
@@ -59,6 +59,13 @@ def process_arguments(calling_rb, args, basedir)
     options[:skip_simulation] = false
     opts.on('--skip-simulation', 'Skip the EnergyPlus simulations') do |t|
       options[:skip_simulation] = true
+    end
+
+    if caller == 'eri'
+      options[:rated_home_only] = false
+      opts.on('--rated-home-only', 'Only run the Rated Home') do |t|
+        options[:rated_home_only] = true
+      end
     end
 
     options[:debug] = false
