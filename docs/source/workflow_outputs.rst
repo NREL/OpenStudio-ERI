@@ -14,7 +14,7 @@ ERI output files described below are found in the ``results`` directory.
 See the `sample_results_eri <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri>`_ directory for examples of these outputs.
 
 CO2e_Results.csv
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 A ``CO2e_Results.csv`` file will be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 The file includes all of the outputs that are used in the CO2e Index calculation.
