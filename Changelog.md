@@ -15,6 +15,7 @@ __New Features__
 - Allows `AirInfiltrationMeasurement/InfiltrationHeight` as an optional input; if not provided, it is inferred from other inputs as before. 
 - Allows duct leakage to be entered in units of CFM50 as an alternative to CFM25.
 - Adds a `--skip-simulation` flag that can be used to just generate the ERI Rated/Reference Home HPXMLs and then stop.
+- Adds a `--rated-home-only` flag to run only the ERI Rated Home simulation (ERI will not be calculated).
 - Simplifies ERI Reference Home configuration with respect to HVAC types and number of DSE distribution systems.
 
 __Bugfixes__
