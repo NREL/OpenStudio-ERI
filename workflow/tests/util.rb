@@ -28,7 +28,7 @@ def _run_ruleset(design, xml, out_xml)
 end
 
 def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none',
-                  run_energystar: false, component_loads: false, skip_simulation: false)
+                  run_energystar: false, component_loads: false, skip_simulation: false, rated_home_only: false)
   xml = File.absolute_path(xml)
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -45,6 +45,10 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
   if skip_simulation
     skipsim = ' --skip-simulation'
   end
+  ratedhome = ''
+  if rated_home_only
+    ratedhome = ' --rated-home-only'
+  end
 
   # Run workflow
   if run_energystar
@@ -52,14 +56,20 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
   else
     workflow_rb = 'energy_rating_index.rb'
   end
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads}#{skipsim} -o #{rundir} --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o #{rundir} --debug"
   start_time = Time.now
   system(command)
   runtime = (Time.now - start_time).round(2)
 
   hpxmls = {}
   csvs = {}
-  if not run_energystar
+  if rated_home_only
+    # ERI w/ Rated Home only
+    hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
+    csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
+    log_dirs = [Constants.CalcTypeERIRatedHome].map { |d| d.gsub(' ', '') }
+  elsif not run_energystar
+    # ERI
     hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
     hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
     csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
@@ -80,6 +90,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
       log_dirs << Constants.CalcTypeCO2eReferenceHome.gsub(' ', '')
     end
   else
+    # ENERGY STAR
     hpxmls[:ref] = File.join(rundir, 'results', 'ESReference.xml')
     hpxmls[:rated] = File.join(rundir, 'results', 'ESRated.xml')
     hpxmls[:ref_ref] = File.join(rundir, 'ESReference', 'results', 'ERIReferenceHome.xml')
