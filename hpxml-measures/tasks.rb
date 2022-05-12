@@ -141,6 +141,8 @@ def create_hpxmls
     'base-dhw-tank-heat-pump-with-solar.xml' => 'base-dhw-tank-heat-pump.xml',
     'base-dhw-tank-heat-pump-with-solar-fraction.xml' => 'base-dhw-tank-heat-pump.xml',
     'base-dhw-tank-heat-pump-operating-mode-heat-pump-only.xml' => 'base-dhw-tank-heat-pump-uef.xml',
+    'base-dhw-tank-heat-pump-detailed-setpoints.xml' => 'base-dhw-tank-heat-pump-uef.xml',
+    'base-dhw-tank-heat-pump-detailed-operating-modes.xml' => 'base-dhw-tank-heat-pump-uef.xml',
     'base-dhw-tank-heat-pump-detailed-schedules.xml' => 'base-dhw-tank-heat-pump-uef.xml',
     'base-dhw-tank-model-type-stratified.xml' => 'base.xml',
     'base-dhw-tank-detailed-setpoints.xml' => 'base.xml',
@@ -2548,7 +2550,13 @@ def set_measure_argument_values(hpxml_file, args, sch_args, orig_parent)
   end
 
   # Water Heater Schedules
-  if ['base-dhw-tank-heat-pump-detailed-schedules.xml'].include? hpxml_file
+  if ['base-dhw-tank-heat-pump-detailed-setpoints.xml'].include? hpxml_file
+    args['water_heater_setpoint_temperature'] = Constants.Auto
+    args['schedules_filepaths'] = '../../HPXMLtoOpenStudio/resources/schedule_files/water-heater-setpoints.csv'
+  elsif ['base-dhw-tank-heat-pump-detailed-operating-modes.xml'].include? hpxml_file
+    args['water_heater_setpoint_temperature'] = Constants.Auto
+    args['schedules_filepaths'] = '../../HPXMLtoOpenStudio/resources/schedule_files/water-heater-operating-modes.csv'
+  elsif ['base-dhw-tank-heat-pump-detailed-schedules.xml'].include? hpxml_file
     args['water_heater_setpoint_temperature'] = Constants.Auto
     args['schedules_filepaths'] = '../../HPXMLtoOpenStudio/resources/schedule_files/water-heater-setpoints.csv, ../../HPXMLtoOpenStudio/resources/schedule_files/water-heater-operating-modes.csv'
   elsif ['base-dhw-tank-detailed-setpoints.xml'].include? hpxml_file
@@ -5156,7 +5164,11 @@ if ARGV[0].to_sym == :create_release_zips
       puts "Command failed: '#{command}'. Perhaps sphinx needs to be installed?"
       exit!
     end
-    FileUtils.rm_r(File.join(File.dirname(__FILE__), 'documentation', '_static', 'fonts'))
+
+    fonts_dir = File.join(File.dirname(__FILE__), 'documentation', '_static', 'fonts')
+    if Dir.exist? fonts_dir
+      FileUtils.rm_r(fonts_dir)
+    end
 
     # Check if we need to download weather files for the full release zip
     num_epws_expected = 1011
