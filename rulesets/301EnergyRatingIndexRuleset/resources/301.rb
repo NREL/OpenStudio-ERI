@@ -1818,7 +1818,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_batteries_rated(orig_hpxml, new_hpxml)
-    # Temporarily disabled until RESNET allows this.
     orig_hpxml.batteries.each do |orig_battery|
       new_hpxml.batteries.add(id: orig_battery.id,
                               type: orig_battery.type,
