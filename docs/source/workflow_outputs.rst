@@ -11,15 +11,12 @@ ERI Files
 ---------
 
 ERI output files described below are found in the ``results`` directory.
-See the `sample_results_eri <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri>`_ directory for examples of these outputs.
 
 CO2e_Results.csv
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 A ``CO2e_Results.csv`` file will be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 The file includes all of the outputs that are used in the CO2e Index calculation.
-
-See the `example CO2e_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/CO2e_Results.csv>`_.
 
 ERI_Results.csv
 ~~~~~~~~~~~~~~~
@@ -29,8 +26,6 @@ The file reflects the format of the Results tab of the HERS Method Test spreadsh
 
 Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
 
-See the `example ERI_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERI_Results.csv>`_.
-
 ERI_Worksheet.csv
 ~~~~~~~~~~~~~~~~~
 
@@ -39,15 +34,11 @@ The file reflects the format of the Worksheet tab of the HERS Method Test spread
 
 Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
 
-See the `example ERI_Worksheet.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERI_Worksheet.csv>`_.
-
 ERI______Home.csv
 ~~~~~~~~~~~~~~~~~
 
 A CSV file is written for each of the homes simulated (e.g., ``ERIReferenceHome.csv`` for the Reference home).
 The CSV file includes the following sections of output.
-
-See the `example ERIRatedHome.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome.csv>`_.
 
 A ``CO2eReferenceHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
@@ -316,8 +307,6 @@ Timeseries outputs can be one of the following frequencies: hourly, daily, or mo
 Timestamps in the output use the end-of-hour (or end-of-day for daily frequency, etc.) convention.
 Most outputs will be summed over the hour (e.g., energy) but some will be averaged over the hour (e.g., temperatures, airflows).
 
-See the `example ERIRatedHome_Hourly.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome_Hourly.csv>`_.
-
 ERI______Home.xml
 ~~~~~~~~~~~~~~~~~
 
@@ -332,8 +321,6 @@ Defaults will be applied for a few different reasons:
 #. HVAC sizing calculations (e.g., autosized HVAC capacities and airflow rates, heating/cooling design loads)
 
 Any HPXML-defaulted values will include the ``dataSource='software'`` attribute.
-
-See the `example ERIRatedHome.xml <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/results/ERIRatedHome.xml>`_.
 
 A ``CO22ReferenceHome.xml`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
@@ -350,13 +337,10 @@ In addition, raw EnergyPlus simulation input/output files are available for each
   The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. 
   If there are additional outputs of interest that are not available in our summary output files, please send us a request.
 
-See the `example ERIRatedHome directory <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_eri/ERIRatedHome>`_.
-
 ENERGY STAR Files
 -----------------
 
 ENERGY STAR output files described below are found in the ``results`` directory.
-See the `sample_results_energystar <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_energystar>`_ directory for examples of these outputs.
 
 ES_Results.csv
 ~~~~~~~~~~~~~~
@@ -374,20 +358,14 @@ The ``ES_Results.csv`` file includes the following:
    ENERGY STAR Certification            PASS or FAIL
    ===================================  =====
 
-See the `example ES_Results.csv <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_energystar/results/ES_Results.csv>`_.
-
 ES______.xml
 ~~~~~~~~~~~~
 
 An HPXML file is written for the ENERGY STAR Reference Home (``ESReference.xml``) and the Rated Home (``ESRated.xml``).
 The file reflects the configuration of the home after applying the ENERGY STAR ruleset.
 
-See the `example ESReference.xml <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_energystar/results/ESReference.xml>`_.
-
 ERI Directories
 ~~~~~~~~~~~~~~~
 
 Two directories are created under ``results``, one called ``ESRerence`` and one called ``ESRated``.
 Each directory has the full set of :ref:`eri_files` corresponding to the ERI calculation of the ES Reference Home and Rated Home.
-
-See the `example ESReference directory <https://github.com/NREL/OpenStudio-ERI/tree/master/workflow/sample_results_energystar/ESReference/>`_.

@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>build_residential_hpxml</name>
   <uid>a13a8983-2b01-4930-8af2-42030b6e4233</uid>
-  <version_id>b89355fa-6976-4b03-a910-5d9c69f6aa24</version_id>
-  <version_modified>20220511T182807Z</version_modified>
+  <version_id>baab1e43-e4a9-4d84-8f44-aed424d5a63a</version_id>
+  <version_modified>20220512T032600Z</version_modified>
   <xml_checksum>2C38F48B</xml_checksum>
   <class_name>BuildResidentialHPXML</class_name>
   <display_name>HPXML Builder</display_name>
@@ -2628,7 +2628,7 @@
       <units>deg-F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>71</default_value>
+      <default_value>auto</default_value>
     </argument>
     <argument>
       <name>hvac_control_heating_weekend_setpoint</name>
@@ -2638,7 +2638,7 @@
       <units>deg-F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>71</default_value>
+      <default_value>auto</default_value>
     </argument>
     <argument>
       <name>hvac_control_cooling_weekday_setpoint</name>
@@ -2648,7 +2648,7 @@
       <units>deg-F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>76</default_value>
+      <default_value>auto</default_value>
     </argument>
     <argument>
       <name>hvac_control_cooling_weekend_setpoint</name>
@@ -2658,7 +2658,7 @@
       <units>deg-F</units>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>76</default_value>
+      <default_value>auto</default_value>
     </argument>
     <argument>
       <name>hvac_control_heating_season_period</name>
@@ -3673,6 +3673,42 @@
       </choices>
     </argument>
     <argument>
+      <name>water_heater_tank_model_type</name>
+      <display_name>Water Heater: Tank Type</display_name>
+      <description>Type of tank model to use. The 'stratified' tank generally provide more accurate results, but may significantly increase run time. Applies only to storage water heater.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>mixed</value>
+          <display_name>mixed</display_name>
+        </choice>
+        <choice>
+          <value>stratified</value>
+          <display_name>stratified</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
+      <name>water_heater_operating_mode</name>
+      <display_name>Water Heater: Operating Mode</display_name>
+      <description>The water heater operating mode. The 'heat pump only' option only uses the heat pump, while 'standard' allows the backup electric resistance to come on in high demand situations. This is ignored if a scheduled operating mode type is selected. Applies only to heat pump water heater.</description>
+      <type>Choice</type>
+      <required>false</required>
+      <model_dependent>false</model_dependent>
+      <choices>
+        <choice>
+          <value>standard</value>
+          <display_name>standard</display_name>
+        </choice>
+        <choice>
+          <value>heat pump only</value>
+          <display_name>heat pump only</display_name>
+        </choice>
+      </choices>
+    </argument>
+    <argument>
       <name>hot_water_distribution_system_type</name>
       <display_name>Hot Water Distribution: System Type</display_name>
       <description>The type of the hot water distribution system.</description>
@@ -4353,9 +4389,8 @@
       <description>The usable capacity of the lithium ion battery.</description>
       <type>String</type>
       <units>kWh</units>
-      <required>true</required>
+      <required>false</required>
       <model_dependent>false</model_dependent>
-      <default_value>auto</default_value>
     </argument>
     <argument>
       <name>lighting_present</name>
@@ -6157,7 +6192,7 @@
       <filename>build_residential_hpxml_test.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>43553C6E</checksum>
+      <checksum>AFBDA179</checksum>
     </file>
     <file>
       <version>
@@ -6168,7 +6203,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>A28D948E</checksum>
+      <checksum>F0DC5B81</checksum>
     </file>
   </files>
 </measure>

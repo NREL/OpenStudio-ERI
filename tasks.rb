@@ -2554,7 +2554,7 @@ def create_sample_hpxmls
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-bldgtype-multifamily-location-portland-or.xml')
 end
 
-command_list = [:generate_sample_outputs, :update_measures, :create_release_zips]
+command_list = [:update_measures, :create_release_zips]
 
 def display_usage(command_list)
   puts "Usage: openstudio #{File.basename(__FILE__)} [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
@@ -2572,44 +2572,6 @@ elsif not command_list.include? ARGV[0].to_sym
   puts "ERROR: Invalid command '#{ARGV[0]}'."
   display_usage(command_list)
   exit!
-end
-
-if ARGV[0].to_sym == :generate_sample_outputs
-  Dir.chdir('workflow')
-
-  # Update ERI sample files
-  FileUtils.rm_rf('sample_results_eri/.', secure: true)
-  sleep 1
-  FileUtils.mkdir_p('sample_results_eri')
-
-  cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" energy_rating_index.rb -x sample_files/base.xml --hourly ALL"
-  system(command)
-
-  dirs = ['ERIRatedHome',
-          'ERIReferenceHome',
-          'ERIIndexAdjustmentDesign',
-          'ERIIndexAdjustmentReferenceHome',
-          'results']
-  dirs.each do |dir|
-    FileUtils.copy_entry dir, "sample_results_eri/#{dir}"
-  end
-
-  # Update ENERGY STAR sample files
-  FileUtils.rm_rf('sample_results_energystar/.', secure: true)
-  sleep 1
-  FileUtils.mkdir_p('sample_results_energystar')
-
-  cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" energy_star.rb -x sample_files/base.xml --hourly ALL"
-  system(command)
-
-  dirs = ['ESRated',
-          'ESReference',
-          'results']
-  dirs.each do |dir|
-    FileUtils.copy_entry dir, "sample_results_energystar/#{dir}"
-  end
 end
 
 if ARGV[0].to_sym == :update_measures
@@ -2681,7 +2643,9 @@ if ARGV[0].to_sym == :create_release_zips
       exit!
     end
   end
-  files = ['hpxml-measures/HPXMLtoOpenStudio/measure.*',
+  files = ['Changelog.md',
+           'LICENSE.md',
+           'hpxml-measures/HPXMLtoOpenStudio/measure.*',
            'hpxml-measures/HPXMLtoOpenStudio/resources/**/*.*',
            'hpxml-measures/ReportSimulationOutput/measure.*',
            'hpxml-measures/ReportSimulationOutput/resources/**/*.*',
@@ -2691,12 +2655,11 @@ if ARGV[0].to_sym == :create_release_zips
            'rulesets/EnergyStarRuleset/resources/**/*.*',
            'weather/*.*',
            'workflow/*.*',
+           'workflow/real_homes/*.*',
            'workflow/sample_files/*.*',
            'workflow/tests/*.rb',
-           'workflow/tests/base_results/RESNET_Test_4.*.csv',
-           'workflow/tests/base_results/EPA_Tests.csv',
-           'workflow/tests/RESNET_Tests/4.*/*.xml',
-           'workflow/tests/EPA_Tests/**/*.xml',
+           'workflow/tests/**/*.csv',
+           'workflow/tests/**/*.xml',
            'documentation/index.html',
            'documentation/_static/**/*.*']
 
@@ -2714,7 +2677,11 @@ if ARGV[0].to_sym == :create_release_zips
       puts "Command failed: '#{command}'. Perhaps sphinx needs to be installed?"
       exit!
     end
-    FileUtils.rm_r(File.join(File.dirname(__FILE__), 'documentation', '_static', 'fonts'))
+
+    fonts_dir = File.join(File.dirname(__FILE__), 'documentation', '_static', 'fonts')
+    if Dir.exist? fonts_dir
+      FileUtils.rm_r(fonts_dir)
+    end
 
     # Check if we need to download weather files for the full release zip
     num_epws_expected = 1011
