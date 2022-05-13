@@ -40,7 +40,6 @@ class ERIPVTest < MiniTest::Test
   end
 
   def test_pv_batteries
-    skip # Temporarily disabled until RESNET allows this.
     hpxml_name = 'base-pv-battery.xml'
 
     _all_calc_types.each do |calc_type|

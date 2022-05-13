@@ -1819,13 +1819,13 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_systems_batteries_rated(orig_hpxml, new_hpxml)
     # Temporarily disabled until RESNET allows this.
-    # orig_hpxml.batteries.each do |orig_battery|
-    #   new_hpxml.batteries.add(id: orig_battery.id,
-    #                           type: orig_battery.type,
-    #                           location: orig_battery.location,
-    #                           nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
-    #                           usable_capacity_kwh: orig_battery.usable_capacity_kwh)
-    # end
+    orig_hpxml.batteries.each do |orig_battery|
+      new_hpxml.batteries.add(id: orig_battery.id,
+                              type: orig_battery.type,
+                              location: orig_battery.location,
+                              nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
+                              usable_capacity_kwh: orig_battery.usable_capacity_kwh)
+    end
   end
 
   def self.set_systems_batteries_iad(orig_hpxml, new_hpxml)

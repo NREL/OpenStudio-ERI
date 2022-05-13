@@ -1,3 +1,9 @@
+## OpenStudio-ERI v1.5.0
+__New Features__
+- Allows modeling electric storage batteries.
+
+__Bugfixes__
+
 ## OpenStudio-ERI v1.4.0
 
 __New Features__
