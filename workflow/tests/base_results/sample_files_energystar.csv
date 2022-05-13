@@ -16,6 +16,7 @@
 [SF_National_3.1] base-atticroof-radiant-barrier.xml,61.0,1.0,61.0,74.0,74.0,FAIL
 [SF_National_3.1] base-atticroof-unvented-insulated-roof.xml,66.0,1.0,66.0,75.0,75.0,FAIL
 [SF_National_3.1] base-atticroof-vented.xml,66.0,1.0,66.0,77.0,77.0,FAIL
+[SF_National_3.1] base-battery.xml,66.0,1.0,66.0,79.0,79.0,FAIL
 [SF_National_3.1] base-bldgtype-multifamily-adjacent-to-multiple.xml,66.0,1.0,66.0,68.0,68.0,FAIL
 [SF_National_3.1] base-bldgtype-multifamily-location-portland-or.xml,72.0,1.0,72.0,68.0,68.0,PASS
 [SF_National_3.1] base-bldgtype-multifamily-shared-boiler-only-baseboard.xml,70.0,1.0,70.0,65.0,65.0,PASS
@@ -154,6 +155,7 @@
 [SF_National_3.1] base-mechvent-supply.xml,66.0,1.0,66.0,79.0,79.0,FAIL
 [SF_National_3.1] base-mechvent-whole-house-fan.xml,66.0,1.0,66.0,77.0,77.0,FAIL
 [SF_National_3.1] base-misc-generators.xml,66.0,1.0,66.0,84.0,84.0,FAIL
+[SF_National_3.1] base-pv-battery.xml,66.0,1.0,66.0,79.0,79.0,FAIL
 [SF_National_3.1] base-pv.xml,66.0,1.0,66.0,79.0,79.0,FAIL
 [SF_National_3.1] base.xml,66.0,1.0,66.0,79.0,79.0,FAIL
 [SF_Pacific_3.0] base-location-honolulu-hi.xml,62.0,1.0,62.0,79.0,79.0,FAIL
