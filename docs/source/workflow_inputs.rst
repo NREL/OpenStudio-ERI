@@ -1215,7 +1215,7 @@ To define a hydronic distribution system, additional information is entered in `
   ``HydronicDistributionType``  string            See [#]_     Yes                  Type of hydronic distribution system
   ============================  =======  =======  ===========  ========  =========  ====================================
 
-  .. [#] HydronicDistributionType choices are "radiator", "baseboard", "radiant floor", or "radiant ceiling".
+  .. [#] HydronicDistributionType choices are "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop".
 
 Distribution System Efficiency (DSE)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
