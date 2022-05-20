@@ -846,6 +846,10 @@ If a mini-split is specified, additional information is entered in ``CoolingSyst
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
          If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
 
+.. note::
+
+  Mini-splits do not have a ``CompressorType`` input because they are assumed to be inverter driven (variable speed).
+
 .. warning::
 
   HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
@@ -1008,6 +1012,10 @@ If a mini-split heat pump is specified, additional information is entered in ``H
          A non-zero charge defect should typically only be applied for systems that are pre-charged on site.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
          If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+
+.. note::
+
+  Mini-splits do not have a ``CompressorType`` input because they are assumed to be inverter driven (variable speed).
 
 .. warning::
 
