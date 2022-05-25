@@ -598,7 +598,7 @@ class HotWaterAndAppliances
     return cef * 1.15 # Interpretation on ANSI/RESNET/ICC 301-2014 Clothes Dryer CEF
   end
 
-  def self.get_clothes_washer_default_values(eri_version, std_models)
+  def self.get_clothes_washer_default_values(eri_version)
     if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019A')
       return { integrated_modified_energy_factor: 1.0, # ft3/(kWh/cyc)
                 rated_annual_kwh: 400.0, # kWh/yr

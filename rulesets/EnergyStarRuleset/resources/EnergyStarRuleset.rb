@@ -918,7 +918,7 @@ class EnergyStarRuleset
                            capacity: 4.2, # ft^3
                            label_usage: 6.0 } # cyc/week
     else
-      reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version, std_models)
+      reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
     end
 
     new_hpxml.clothes_washers.add(id: id,
