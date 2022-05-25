@@ -1493,7 +1493,7 @@ class EnergyStarRuleset
         uef = 2.20
       end
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re, uef
+      return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef
 
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
