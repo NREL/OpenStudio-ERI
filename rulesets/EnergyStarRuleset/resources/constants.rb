@@ -14,7 +14,7 @@ class ESConstants
   end
 
   def self.SFVersions
-    return [self.SFNationalVer3_0, self.SFNationalVer3_1, self.SFPacificVer3_0, self.SFFloridaVer3_1, self.SFOregonWashingtonVer3_2]
+    return [self.SFNationalVer3_0, self.SFNationalVer3_1, self.SFNationalVer3_2, self.SFPacificVer3_0, self.SFFloridaVer3_1, self.SFOregonWashingtonVer3_2]
   end
 
   def self.MFVersions
@@ -22,7 +22,7 @@ class ESConstants
   end
 
   def self.NationalVersions
-    return [self.SFNationalVer3_0, self.SFNationalVer3_1, self.MFNationalVer1_0, self.MFNationalVer1_1]
+    return [self.SFNationalVer3_0, self.SFNationalVer3_1, self.SFNationalVer3_2, self.MFNationalVer1_0, self.MFNationalVer1_1]
   end
 
   def self.SFNationalVer3_0
