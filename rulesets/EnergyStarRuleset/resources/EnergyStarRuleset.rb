@@ -909,10 +909,17 @@ class EnergyStarRuleset
       location = clothes_washer.location.gsub('unvented', 'vented')
     end
 
-    if [ESConstants.SFNationalVer3_2].include? @program_version  # FIXME: Better way to handle it?
-      std_models = 'Std 2018-present'
+    if [ESConstants.SFNationalVer3_2].include? @program_version
+      reference_values = { integrated_modified_energy_factor: 1.57, # ft3/(kWh/cyc)
+                           rated_annual_kwh: 284.0, # kWh/yr
+                           label_electric_rate: 0.12, # $/kWh
+                           label_gas_rate: 1.09, # $/therm
+                           label_annual_gas_cost: 18.0, # $
+                           capacity: 4.2, # ft^3
+                           label_usage: 6.0 } # cyc/week
+    else
+      reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version, std_models)
     end
-    reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version, std_models)
 
     new_hpxml.clothes_washers.add(id: id,
                                   location: location,
