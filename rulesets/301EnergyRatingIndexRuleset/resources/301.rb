@@ -1126,7 +1126,8 @@ class EnergyRatingIndex301Ruleset
         end
       end
       if not cooling_system.nil?
-        if new_hpxml.heat_pumps.select { |hp| hp.clg_seed_id == cooling_system.id }.size > 0
+        clg_seed_id = cooling_system.clg_seed_id.nil? ? cooling_system.id : cooling_system.clg_seed_id
+        if new_hpxml.heat_pumps.select { |hp| hp.clg_seed_id == clg_seed_id }.size > 0
           # Already created HP above
         else
           add_reference_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, orig_system: cooling_system)

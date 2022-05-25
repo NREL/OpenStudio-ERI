@@ -1,3 +1,10 @@
+## OpenStudio-ERI v1.5.0
+
+__New Features__
+
+__Bugfixes__
+- Fixes possible error when running HERS Auto-Generation tests.
+
 ## OpenStudio-ERI v1.4.0
 
 __New Features__
