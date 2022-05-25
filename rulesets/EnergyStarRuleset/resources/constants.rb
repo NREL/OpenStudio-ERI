@@ -33,6 +33,10 @@ class ESConstants
     return 'SF_National_3.1'
   end
 
+  def self.SFNationalVer3_2
+    return 'SF_National_3.2'
+  end
+
   def self.SFPacificVer3_0
     return 'SF_Pacific_3.0'
   end
