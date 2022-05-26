@@ -18,7 +18,7 @@ class ESConstants
   end
 
   def self.MFVersions
-    return [self.MFNationalVer1_0, self.MFNationalVer1_1, self.MFOregonWashingtonVer1_2]
+    return [self.MFNationalVer1_0, self.MFNationalVer1_1, self.MFNationalVer1_2, self.MFOregonWashingtonVer1_2]
   end
 
   def self.NationalVersions
@@ -55,6 +55,10 @@ class ESConstants
 
   def self.MFNationalVer1_1
     return 'MF_National_1.1'
+  end
+
+  def self.MFNationalVer1_2
+    return 'MF_National_1.2'
   end
 
   def self.MFOregonWashingtonVer1_2
