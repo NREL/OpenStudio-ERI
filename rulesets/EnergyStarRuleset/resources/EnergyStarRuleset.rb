@@ -2198,6 +2198,7 @@ class EnergyStarRuleset
       shr = orig_clg_system.cooling_shr
     end
 
+    hvac_installation = {}
     if heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
       hvac_installation = get_hvac_installation_quality()
     end
