@@ -1615,12 +1615,16 @@ class EnergyStarRuleset
           return 0.98 # AFUE
         end
       elsif [ESConstants.SFNationalVer3_2].include? @program_version
-        if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-          return 0.80 # AFUE
-        elsif ['4A', '4B'].include? @iecc_zone
-          return 0.90 # AFUE
-        elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-          return 0.95 # AFUE
+        if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
+          if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
+            return 0.80 # AFUE
+          elsif ['4A', '4B'].include? @iecc_zone
+            return 0.90 # AFUE
+          elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+            return 0.95 # AFUE
+          end
+        elsif fuel_type == HPXML::FuelTypeElectricity
+          return 0.98 # AFUE
         end
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
@@ -2148,7 +2152,7 @@ class EnergyStarRuleset
       backup_heating_capacity = orig_htg_system.backup_heating_capacity
       dist_id = orig_htg_system.distribution_system.id
     else
-      if ['7', '8'].include? @iecc_zone
+      if (['7', '8'].include? @iecc_zone) && (not [ESConstants.SFNationalVer3_2].include? @program_version)
         heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
         cop = get_default_gshp_cop()
         eer = get_default_gshp_eer()
