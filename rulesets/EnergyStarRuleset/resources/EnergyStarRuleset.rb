@@ -797,7 +797,7 @@ class EnergyStarRuleset
   def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Service water heating systems
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
-      wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef = get_water_heater_properties(orig_water_heater)
+      wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr = get_water_heater_properties(orig_water_heater)
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
@@ -809,7 +809,8 @@ class EnergyStarRuleset
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           energy_factor: ef,
                                           recovery_efficiency: re,
-                                          uniform_energy_factor: uef)
+                                          uniform_energy_factor: uef,
+                                          first_hour_rating: fhr)
     end
   end
 
@@ -1482,6 +1483,7 @@ class EnergyStarRuleset
         wh_type = HPXML::WaterHeaterTypeTankless
         wh_fuel_type = HPXML::FuelTypeNaturalGas
         uef = 0.90
+        fhr = 40  # FIXME: Need to check with Scott
       else
         if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
           wh_tank_vol = 60.0 # gallon
@@ -1491,9 +1493,10 @@ class EnergyStarRuleset
         wh_type = HPXML::WaterHeaterTypeHeatPump
         wh_fuel_type = HPXML::FuelTypeElectricity
         uef = 2.20
+        fhr = 40  # FIXME: Need to check with Scott
       end
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef
+      return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
 
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type

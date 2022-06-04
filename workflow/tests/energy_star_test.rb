@@ -43,7 +43,7 @@ class EnergyStarTest < Minitest::Test
 
         if [ESConstants.SFNationalVer3_1].include? program_version
           # Run all files (MF files converted to SFA below)
-        elsif [ESConstants.SFNationalVer3_0].include? program_version
+        elsif [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_2].include? program_version
           next unless xml.include?('base.xml') # One file
         elsif [ESConstants.SFPacificVer3_0].include? program_version
           next unless xml.include? 'base-location-honolulu-hi.xml' # One file
