@@ -156,6 +156,7 @@
 [SF_National_3.1] base-misc-generators.xml,66.0,1.0,66.0,84.0,84.0,FAIL
 [SF_National_3.1] base-pv.xml,66.0,1.0,66.0,79.0,79.0,FAIL
 [SF_National_3.1] base.xml,66.0,1.0,66.0,79.0,79.0,FAIL
+[SF_National_3.2] base.xml,55.0,1.0,55.0,79.0,79.0,FAIL
 [SF_Pacific_3.0] base-location-honolulu-hi.xml,62.0,1.0,62.0,79.0,79.0,FAIL
 [SF_Florida_3.1] base-location-miami-fl.xml,63.0,1.0,63.0,76.0,76.0,FAIL
 [SF_OregonWashington_3.2] base-location-portland-or.xml,66.0,1.0,66.0,75.0,75.0,FAIL
