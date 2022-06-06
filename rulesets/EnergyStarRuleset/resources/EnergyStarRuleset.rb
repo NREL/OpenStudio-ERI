@@ -1483,7 +1483,6 @@ class EnergyStarRuleset
         wh_type = HPXML::WaterHeaterTypeTankless
         wh_fuel_type = HPXML::FuelTypeNaturalGas
         uef = 0.90
-        fhr = 40  # FIXME: Need to check with Scott
       else
         if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
           wh_tank_vol = 60.0 # gallon
