@@ -910,7 +910,7 @@ class EnergyStarRuleset
       location = clothes_washer.location.gsub('unvented', 'vented')
     end
 
-    if [ESConstants.SFNationalVer3_2].include? @program_version
+    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       reference_values = { integrated_modified_energy_factor: 1.57, # ft3/(kWh/cyc)
                            rated_annual_kwh: 284.0, # kWh/yr
                            label_electric_rate: 0.12, # $/kWh
@@ -1008,7 +1008,7 @@ class EnergyStarRuleset
       location = refrigerator.location.gsub('unvented', 'vented')
     end
 
-    if [ESConstants.SFNationalVer3_2].include? @program_version
+    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       rated_annual_kwh = 450.0
     else
       rated_annual_kwh = 423.0
@@ -1075,6 +1075,13 @@ class EnergyStarRuleset
       fFII_int = 1.0
       fFII_ext = 1.0
       fFII_grg = 1.0
+    elsif [ESConstants.MFNationalVer1_2].include? @program_version
+      fFI_int = 1.0
+      fFI_ext = 1.0
+      fFI_grg = 1.0
+      fFII_int = 0.0
+      fFII_ext = 0.0
+      fFII_grg = 0.0
     else
       fFI_int = 0.9
       fFI_ext = 0.0
@@ -1278,7 +1285,8 @@ class EnergyStarRuleset
   def self.get_default_door_ufactor_shgc()
     if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
       return 0.21, nil
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, 
+           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       return 0.17, nil
     end
 
@@ -1304,7 +1312,7 @@ class EnergyStarRuleset
       elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
         return 0.050  # assembly U-value
       end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
         return 0.360  # assembly U-value
       elsif ['3A', '3B', '3C'].include? @iecc_zone
@@ -1350,7 +1358,7 @@ class EnergyStarRuleset
       elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
         return 0.048
       end
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
         return 0.084
       elsif ['3A', '3B', '3C'].include? @iecc_zone
@@ -1394,7 +1402,7 @@ class EnergyStarRuleset
   end
 
   def self.get_enclosure_floors_over_uncond_spc_default_ufactor()
-    if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? @program_version
+    if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
         return 0.064
       elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
@@ -1532,6 +1540,25 @@ class EnergyStarRuleset
 
       return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
 
+    elsif [ESConstants.MFNationalVer1_2].include? @program_version
+      if not [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
+        wh_type = HPXML::WaterHeaterTypeTankless
+        wh_fuel_type = HPXML::FuelTypeNaturalGas
+        uef = 0.90
+      else
+        if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
+          wh_tank_vol = 60.0 # gallon
+        else
+          wh_tank_vol = orig_water_heater.tank_volume
+        end
+        wh_type = HPXML::WaterHeaterTypeHeatPump
+        wh_fuel_type = HPXML::FuelTypeElectricity
+        uef = 1.49
+        fhr = 40  # FIXME: Need to check with Scott
+      end
+
+      return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
+
     elsif [ESConstants.SFPacificVer3_0].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include?(orig_water_heater.water_heater_type) || (orig_wh_fuel_type == HPXML::FuelTypeElectricity)
         wh_tank_vol = 50.0 # gallon
@@ -1616,7 +1643,7 @@ class EnergyStarRuleset
         elsif fuel_type == HPXML::FuelTypeElectricity
           return 0.98 # AFUE
         end
-      elsif [ESConstants.SFNationalVer3_2].include? @program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
           if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
             return 0.80 # AFUE
@@ -1677,7 +1704,7 @@ class EnergyStarRuleset
           return 0.85
         end
       end
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
         return 0.80
       elsif ['4A', '4B'].include? @iecc_zone
@@ -1702,7 +1729,7 @@ class EnergyStarRuleset
 
   def self.get_default_ashp_hspf()
     if ESConstants.NationalVersions.include? @program_version
-      if [ESConstants.SFNationalVer3_2].include? @program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
         return 9.2
       else
         if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
@@ -1728,7 +1755,7 @@ class EnergyStarRuleset
 
   def self.get_default_heat_pump_backup_fuel()
     if ESConstants.NationalVersions.include? @program_version
-      if [ESConstants.SFNationalVer3_2].include? @program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
         return HPXML::FuelTypeElectricity
       else
         if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
@@ -1757,6 +1784,8 @@ class EnergyStarRuleset
       else
         return # nop
       end
+    elsif [ESConstants.MFNationalVer1_2].include? @program_version
+      return 2.7
     end
 
     fail 'Unexpected case.'
@@ -1787,7 +1816,7 @@ class EnergyStarRuleset
       elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
         return 13.0
       end
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
         return 16.0
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
@@ -1817,7 +1846,7 @@ class EnergyStarRuleset
       else
         return # nop
       end
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       return 16.0
     elsif [ESConstants.SFPacificVer3_0].include? @program_version
       return 14.5
@@ -1841,6 +1870,8 @@ class EnergyStarRuleset
       else
         return # nop
       end
+    elsif [ESConstants.MFNationalVer1_2].include? @program_version
+      return 14.0
     end
 
     fail 'Unexpected case.'
@@ -1849,7 +1880,8 @@ class EnergyStarRuleset
   def self.get_fan_cfm_per_w()
     if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
       return 2.2
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, 
+           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       return 2.8
     end
 
@@ -1961,7 +1993,8 @@ class EnergyStarRuleset
           duct_location_and_surface_area[HPXML::LocationLivingSpace] = 0.25 * total_duct_area
         end
       end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, 
+           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? @program_version
       duct_location_and_surface_area[HPXML::LocationLivingSpace] = total_duct_area # Duct location configured to be 100% in conditioned space.
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       if ceiling_type_for_ducts == 'adiabatic'
@@ -1992,7 +2025,8 @@ class EnergyStarRuleset
       else # All other ducts in unconditioned space
         return 6.0
       end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, 
+           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? @program_version
       return 0.0
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include?(duct_location) # Ducts in conditioned space
@@ -2004,7 +2038,8 @@ class EnergyStarRuleset
   end
 
   def self.calc_default_duct_leakage_to_outside(cfa)
-    if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? @program_version
+    if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, 
+        ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? @program_version
       return 0.0
     else
       return [(0.04 * cfa), 40].max
@@ -2050,7 +2085,7 @@ class EnergyStarRuleset
     heating_capacity = -1 if heating_capacity.nil? # Use auto-sizing
 
     heating_system_fuel = orig_system.heating_system_fuel
-    if ([ESConstants.SFNationalVer3_2].include? @program_version) && (heating_system_fuel != HPXML::FuelTypeElectricity)
+    if ([ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version) && (heating_system_fuel != HPXML::FuelTypeElectricity)
       heating_system_fuel = HPXML::FuelTypeNaturalGas
     end
 
@@ -2071,7 +2106,7 @@ class EnergyStarRuleset
     furnace_afue = get_default_furnace_afue(orig_system.heating_system_fuel)
 
     furnace_fuel_type = orig_system.heating_system_fuel
-    if ([ESConstants.SFNationalVer3_2].include? @program_version) && (furnace_fuel_type != HPXML::FuelTypeElectricity)
+    if ([ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version) && (furnace_fuel_type != HPXML::FuelTypeElectricity)
       furnace_fuel_type = HPXML::FuelTypeNaturalGas
     end
 
@@ -2154,7 +2189,17 @@ class EnergyStarRuleset
       backup_heating_capacity = orig_htg_system.backup_heating_capacity
       dist_id = orig_htg_system.distribution_system.id
     else
-      if (['7', '8'].include? @iecc_zone) && (not [ESConstants.SFNationalVer3_2].include? @program_version)
+      if @program_version == ESConstants.MFNationalVer1_2  # FIXME: Make sure that it works properly
+        if orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+          heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
+          cop = get_default_gshp_cop()
+          eer = get_default_gshp_eer()
+        else
+          heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
+          hspf = get_default_ashp_hspf()
+          seer = get_default_ashp_seer()
+        end
+      elsif (['7', '8'].include? @iecc_zone) && (@program_version != ESConstants.SFNationalVer3_2)
         heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
         cop = get_default_gshp_cop()
         eer = get_default_gshp_eer()
@@ -2237,7 +2282,7 @@ class EnergyStarRuleset
   end
 
   def self.get_hvac_installation_quality()
-    if [ESConstants.SFNationalVer3_2].include? @program_version
+    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       return { charge_defect_ratio: -0.25,
                airflow_defect_ratio: -0.20,
                fan_watts_per_cfm: 0.52 }
@@ -2270,7 +2315,7 @@ class EnergyStarRuleset
       elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
         return 0.026
       end
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C'].include? @iecc_zone
         return 0.035
       elsif ['2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
@@ -2306,7 +2351,7 @@ class EnergyStarRuleset
       elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
         return 10.0, 4.0
       end
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
         return 0.0, 0.0
       elsif ['3A', '3B', '3C'].include? @iecc_zone
@@ -2353,7 +2398,7 @@ class EnergyStarRuleset
         return 0.30, 0.40
       end
 
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
         return 0.40, 0.25
       elsif ['3A', '3B', '3C'].include? @iecc_zone

@@ -18,11 +18,11 @@ class ESConstants
   end
 
   def self.MFVersions
-    return [self.MFNationalVer1_0, self.MFNationalVer1_1, self.MFOregonWashingtonVer1_2]
+    return [self.MFNationalVer1_0, self.MFNationalVer1_1, self.MFNationalVer1_2, self.MFOregonWashingtonVer1_2]
   end
 
   def self.NationalVersions
-    return [self.SFNationalVer3_0, self.SFNationalVer3_1, self.SFNationalVer3_2, self.MFNationalVer1_0, self.MFNationalVer1_1]
+    return [self.SFNationalVer3_0, self.SFNationalVer3_1, self.SFNationalVer3_2, self.MFNationalVer1_0, self.MFNationalVer1_1, self.MFNationalVer1_2]
   end
 
   def self.SFNationalVer3_0
