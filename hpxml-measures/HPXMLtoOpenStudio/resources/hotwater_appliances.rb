@@ -601,20 +601,20 @@ class HotWaterAndAppliances
   def self.get_clothes_washer_default_values(eri_version)
     if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019A')
       return { integrated_modified_energy_factor: 1.0, # ft3/(kWh/cyc)
-                rated_annual_kwh: 400.0, # kWh/yr
-                label_electric_rate: 0.12, # $/kWh
-                label_gas_rate: 1.09, # $/therm
-                label_annual_gas_cost: 27.0, # $
-                capacity: 3.0, # ft^3
-                label_usage: 6.0 } # cyc/week
+               rated_annual_kwh: 400.0, # kWh/yr
+               label_electric_rate: 0.12, # $/kWh
+               label_gas_rate: 1.09, # $/therm
+               label_annual_gas_cost: 27.0, # $
+               capacity: 3.0, # ft^3
+               label_usage: 6.0 } # cyc/week
     else
       return { integrated_modified_energy_factor: 0.331, # ft3/(kWh/cyc)
-                rated_annual_kwh: 704.0, # kWh/yr
-                label_electric_rate: 0.08, # $/kWh
-                label_gas_rate: 0.58, # $/therm
-                label_annual_gas_cost: 23.0, # $
-                capacity: 2.874, # ft^3
-                label_usage: 999 } # unused
+               rated_annual_kwh: 704.0, # kWh/yr
+               label_electric_rate: 0.08, # $/kWh
+               label_gas_rate: 0.58, # $/therm
+               label_annual_gas_cost: 23.0, # $
+               capacity: 2.874, # ft^3
+               label_usage: 999 } # unused
     end
   end
 
