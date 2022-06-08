@@ -11,6 +11,7 @@
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
+      <SchedulesFilePath>../../HPXMLtoOpenStudio/resources/schedule_files/occupancy-stochastic-10-mins.csv</SchedulesFilePath>
       <AdditionalProperties>
         <ParentHPXMLFile>base.xml</ParentHPXMLFile>
       </AdditionalProperties>
@@ -351,18 +352,6 @@
             <SystemIdentifier id='HVACControl1'/>
             <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
-            <HeatingSeason>
-              <BeginMonth>11</BeginMonth>
-              <BeginDayOfMonth>1</BeginDayOfMonth>
-              <EndMonth>5</EndMonth>
-              <EndDayOfMonth>1</EndDayOfMonth>
-            </HeatingSeason>
-            <CoolingSeason>
-              <BeginMonth>6</BeginMonth>
-              <BeginDayOfMonth>1</BeginDayOfMonth>
-              <EndMonth>10</EndMonth>
-              <EndDayOfMonth>1</EndDayOfMonth>
-            </CoolingSeason>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution1'/>
