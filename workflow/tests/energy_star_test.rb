@@ -51,7 +51,7 @@ class EnergyStarTest < Minitest::Test
           next unless xml.include? 'base-location-miami-fl.xml' # One file
         elsif [ESConstants.SFOregonWashingtonVer3_2].include? program_version
           next unless xml.include? 'base-location-portland-or.xml' # One file
-        elsif [ESConstants.MFNationalVer1_1].include? program_version
+        elsif [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
           next unless xml.include?('base-bldgtype-multifamily') || xml.include?('base-bldgtype-single-family-attached') # All MF/SFA files
         elsif [ESConstants.MFNationalVer1_0].include? program_version
           next unless xml.include?('base-bldgtype-multifamily.xml') || xml.include?('base-bldgtype-single-family-attached.xml') # Two files

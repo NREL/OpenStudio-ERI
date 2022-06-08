@@ -75,7 +75,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml = _test_measure()
       _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
-      if [ESConstants.MFNationalVer1_1].include? es_version
+      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? es_version
         # Ducts remain in living space, so no need to transition roof to vented attic
         adjacent_to = HPXML::LocationLivingSpace
         rvalue = 25.8
@@ -146,7 +146,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.082
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
         rvalue = 1.0 / 0.056
-      elsif [ESConstants.SFNationalVer3_2].include? es_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? es_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -172,6 +172,8 @@ class EnergyStarEnclosureTest < MiniTest::Test
     ESConstants.MFVersions.each do |es_version|
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         rvalue = 1.0 / 0.064
+      elsif es_version == ESConstants.MFNationalVer1_2
+        rvalue = 1.0 / 0.045
       elsif es_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.056
       end
@@ -215,7 +217,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.082
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
         rvalue = 1.0 / 0.056
-      elsif es_version == ESConstants.SFNationalVer3_2
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? es_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -235,7 +237,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
     ESConstants.AllVersions.each do |es_version|
       if es_version == ESConstants.SFNationalVer3_0
         rvalue = 1.0 / 0.059
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? es_version
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? es_version
         rvalue = 1.0 / 0.050
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         rvalue = 7.5
@@ -325,7 +327,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
         rvalue = 1.0 / 0.026
         rvalue_floors_over_uncond_spaces = 1.0 / 0.028
-      elsif es_version == ESConstants.SFNationalVer3_2
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? es_version
         rvalue = 1.0 / 0.024
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       end
@@ -348,7 +350,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base-atticroof-cathedral.xml', es_version)
       hpxml = _test_measure()
-      if es_version == ESConstants.MFNationalVer1_1
+      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? es_version
         _check_floors(hpxml)
       else
         _check_floors(hpxml, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue)
@@ -360,7 +362,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       _convert_to_es('base-atticroof-flat.xml', es_version)
       hpxml = _test_measure()
-      if es_version == ESConstants.MFNationalVer1_1
+      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? es_version
         _check_floors(hpxml)
       else
         _check_floors(hpxml, area: 1350, rvalue: rvalue)
@@ -373,6 +375,9 @@ class EnergyStarEnclosureTest < MiniTest::Test
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif es_version == ESConstants.MFNationalVer1_1
         rvalue = 1.0 / 0.021
+        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
+      elsif es_version == ESConstants.MFNationalVer1_2
+        rvalue = 1.0 / 0.024
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif es_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.026
@@ -427,7 +432,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         perim_ins_r = 10
         under_ins_width = 999
         under_ins_r = 10
-      elsif es_version == ESConstants.SFNationalVer3_2
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? es_version
         perim_ins_depth = 4
         perim_ins_r = 10
         under_ins_width = 0
@@ -467,7 +472,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
     ESConstants.SFVersions.each do |es_version|
       if es_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? es_version
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? es_version
         ufactor, shgc = 0.27, 0.40
       elsif es_version == ESConstants.SFPacificVer3_0
         ufactor, shgc = 0.60, 0.27
@@ -515,7 +520,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       # Base test (non-structural windows)
       if es_version == ESConstants.MFNationalVer1_0
         ufactor, shgc = 0.30, 0.40
-      elsif es_version == ESConstants.MFNationalVer1_1
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? es_version
         ufactor, shgc = 0.27, 0.40
       elsif es_version == ESConstants.MFOregonWashingtonVer1_2
         ufactor, shgc = 0.27, 0.30
@@ -530,10 +535,10 @@ class EnergyStarEnclosureTest < MiniTest::Test
       # Test w/ structural fixed windows
       if es_version == ESConstants.MFNationalVer1_0
         ufactor2 = 0.38
-      elsif es_version == ESConstants.MFNationalVer1_1
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? es_version
         ufactor2 = 0.36
-      elsif es_version == ESConstants.MFOregonWashingtonVer1_2
-        ufactor2 = 0.36
+      elsif es_version == ESConstants.MFNationalVer1_2
+        ufactor2 = 0.34
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.windows.each do |window|
@@ -552,9 +557,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       # Test w/ structural operable windows
       if es_version == ESConstants.MFNationalVer1_0
         ufactor3 = 0.45
-      elsif es_version == ESConstants.MFNationalVer1_1
-        ufactor3 = 0.43
-      elsif es_version == ESConstants.MFOregonWashingtonVer1_2
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2, ESConstants.MFNationalVer1_2].include? es_version
         ufactor3 = 0.43
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -583,7 +586,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       elsif es_version == ESConstants.MFNationalVer1_0
         ufactor, shgc = 0.60, 0.27
         areas = [89.46, 89.46, 59.64, 59.64]
-      elsif es_version == ESConstants.MFNationalVer1_1
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? es_version
         ufactor, shgc = 0.40, 0.25
         areas = [89.46, 89.46, 59.64, 59.64]
       end
@@ -621,7 +624,8 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
   def test_enclosure_doors
     ESConstants.AllVersions.each do |es_version|
-      if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? es_version
+      if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, 
+          ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
         rvalue = 1.0 / 0.17
       else
         rvalue = 1.0 / 0.21

@@ -23,8 +23,10 @@ class EnergyStarLightingTest < MiniTest::Test
       hpxml = _test_measure()
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
         _check_lighting(hpxml, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-      elsif [ESConstants.SFNationalVer3_2].include? es_version
+      elsif es_version == ESConstants.SFNationalVer3_2
         _check_lighting(hpxml, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+      elsif es_version == ESConstants.MFNationalVer1_2
+        _check_lighting(hpxml, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
         _check_lighting(hpxml, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       end

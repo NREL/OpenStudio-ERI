@@ -1312,7 +1312,7 @@ class EnergyStarRuleset
       elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
         return 0.050  # assembly U-value
       end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
         return 0.360  # assembly U-value
       elsif ['3A', '3B', '3C'].include? @iecc_zone
@@ -1335,6 +1335,16 @@ class EnergyStarRuleset
         return 10.0  # interior insulation R-value
       elsif ['8'].include? @iecc_zone
         return 12.5  # interior insulation R-value
+      end
+    elsif @program_version == ESConstants.MFNationalVer1_2
+      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+        return (1 / 0.360).round(3)  # assembly R-value
+      elsif ['3A', '3B', '3C'].include? @iecc_zone
+        return (1 / 0.091).round(3)  # assembly R-value
+      elsif ['4A', '4B'].include? @iecc_zone
+        return (1 / 0.059).round(3)  # assembly R-value
+      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return (1 / 0.050).round(3)  # assembly R-value
       end
     elsif [ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       return 15.0 # interior insulation R-value
@@ -2189,8 +2199,8 @@ class EnergyStarRuleset
       backup_heating_capacity = orig_htg_system.backup_heating_capacity
       dist_id = orig_htg_system.distribution_system.id
     else
-      if @program_version == ESConstants.MFNationalVer1_2  # FIXME: Make sure that it works properly
-        if orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+      if @program_version == ESConstants.MFNationalVer1_2
+        if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir)
           heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
           cop = get_default_gshp_cop()
           eer = get_default_gshp_eer()
@@ -2398,7 +2408,7 @@ class EnergyStarRuleset
         return 0.30, 0.40
       end
 
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
         return 0.40, 0.25
       elsif ['3A', '3B', '3C'].include? @iecc_zone
@@ -2482,6 +2492,53 @@ class EnergyStarRuleset
             return 0.34, 0.40
           elsif ['7', '8'].include? @iecc_zone
             return 0.28, 0.40
+          end
+        end
+      else
+        if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+          return 0.40, 0.25
+        elsif ['3A', '3B', '3C'].include? @iecc_zone
+          return 0.30, 0.25
+        elsif ['4A', '4B'].include? @iecc_zone
+          return 0.30, 0.40
+        elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+          return 0.27, 0.40
+        end
+      end
+
+    elsif [ESConstants.MFNationalVer1_2].include? @program_version
+      if orig_window.performance_class == HPXML::WindowClassArchitectural
+        if orig_window.fraction_operable > 0
+          if ['1A', '1B', '1C'].include? @iecc_zone
+            return 0.59, 0.25
+          elsif ['2A', '2B', '2C'].include? @iecc_zone
+            return 0.57, 0.25
+          elsif ['3A', '3B', '3C'].include? @iecc_zone
+            return 0.51, 0.25
+          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
+            return 0.43, 0.40
+          elsif ['6A', '6B', '6C'].include? @iecc_zone
+            return 0.40, 0.40
+          elsif @iecc_zone == '7'
+            return 0.34, 0.40
+          elsif @iecc_zone == '8'
+            return 0.30, 0.40
+          end
+        else
+          if ['1A', '1B', '1C'].include? @iecc_zone
+            return 0.48, 0.25
+          elsif ['2A', '2B', '2C'].include? @iecc_zone
+            return 0.43, 0.25
+          elsif ['3A', '3B', '3C'].include? @iecc_zone
+            return 0.40, 0.25
+          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
+            return 0.34, 0.40
+          elsif ['6A', '6B', '6C'].include? @iecc_zone
+            return 0.32, 0.40
+          elsif @iecc_zone == '7'
+            return 0.28, 0.40
+          elsif @iecc_zone == '8'
+            return 0.27, 0.40
           end
         end
       else
