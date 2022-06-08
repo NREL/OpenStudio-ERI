@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.5.0
 
 __Bugfixes__
-- Fixes units for Peak Loads (kBtu/hr, not kBtu) in annual results file.
+- Fixes units for Peak Loads (kBtu/hr, not kBtu) in ERI____Home.csv output files.
 
 ## OpenStudio-ERI v1.4.1
 
