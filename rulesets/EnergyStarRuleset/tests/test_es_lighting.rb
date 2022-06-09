@@ -44,7 +44,6 @@ class EnergyStarLightingTest < MiniTest::Test
   def test_ceiling_fans
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-lighting-ceiling-fans.xml', es_version)
-      medium_cfm = 3000.0
       hpxml = _test_measure()
       _check_ceiling_fans(hpxml, cfm_per_w: 122.0, quantity: 4)
     end

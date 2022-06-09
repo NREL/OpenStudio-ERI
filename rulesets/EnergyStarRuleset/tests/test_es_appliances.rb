@@ -207,6 +207,7 @@ class EnergyStarApplianceTest < MiniTest::Test
   def _check_dishwasher(hpxml, ef:, annual_kwh:, cap:, elec_rate:, gas_rate:, agc:, label_usage:, location:)
     assert_equal(1, hpxml.dishwashers.size)
     dishwasher = hpxml.dishwashers[0]
+    assert_equal(location, dishwasher.location)
     if ef.nil?
       assert_nil(dishwasher.energy_factor)
       assert_in_epsilon(annual_kwh, dishwasher.rated_annual_kwh, 0.01)

@@ -55,7 +55,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
     set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
-    set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
+    set_systems_water_heating_use_reference(new_hpxml)
     set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
@@ -75,7 +75,7 @@ class EnergyRatingIndex301Ruleset
     set_ceiling_fans_reference(orig_hpxml, new_hpxml)
 
     # MiscLoads
-    set_misc_loads_reference(orig_hpxml, new_hpxml)
+    set_misc_loads_reference(new_hpxml)
 
     return new_hpxml
   end
@@ -128,7 +128,7 @@ class EnergyRatingIndex301Ruleset
     set_ceiling_fans_rated(orig_hpxml, new_hpxml)
 
     # MiscLoads
-    set_misc_loads_rated(orig_hpxml, new_hpxml)
+    set_misc_loads_rated(new_hpxml)
 
     return new_hpxml
   end
@@ -146,24 +146,24 @@ class EnergyRatingIndex301Ruleset
 
     # Enclosure
     set_enclosure_attics_iad(orig_hpxml, new_hpxml)
-    set_enclosure_foundations_iad(orig_hpxml, new_hpxml)
+    set_enclosure_foundations_iad(new_hpxml)
     set_enclosure_roofs_iad(orig_hpxml, new_hpxml)
     set_enclosure_rim_joists_iad(orig_hpxml, new_hpxml)
     set_enclosure_walls_iad(orig_hpxml, new_hpxml)
-    set_enclosure_foundation_walls_iad(orig_hpxml, new_hpxml)
+    set_enclosure_foundation_walls_iad(new_hpxml)
     set_enclosure_ceilings_iad(orig_hpxml, new_hpxml)
-    set_enclosure_floors_iad(orig_hpxml, new_hpxml)
-    set_enclosure_slabs_iad(orig_hpxml, new_hpxml)
+    set_enclosure_floors_iad(new_hpxml)
+    set_enclosure_slabs_iad(new_hpxml)
     set_enclosure_windows_iad(orig_hpxml, new_hpxml)
     set_enclosure_skylights_iad(orig_hpxml, new_hpxml)
     set_enclosure_doors_iad(orig_hpxml, new_hpxml)
-    set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
+    set_enclosure_air_infiltration_iad(new_hpxml)
 
     # Systems
     set_systems_hvac_iad(orig_hpxml, new_hpxml)
-    set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
+    set_systems_mechanical_ventilation_iad(new_hpxml)
     set_systems_whole_house_fan_iad(orig_hpxml, new_hpxml)
-    set_systems_water_heating_use_iad(orig_hpxml, new_hpxml)
+    set_systems_water_heating_use_iad(new_hpxml)
     set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     set_systems_solar_thermal_iad(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
@@ -183,7 +183,7 @@ class EnergyRatingIndex301Ruleset
     set_ceiling_fans_iad(orig_hpxml, new_hpxml)
 
     # MiscLoads
-    set_misc_loads_iad(orig_hpxml, new_hpxml)
+    set_misc_loads_iad(new_hpxml)
 
     return new_hpxml
   end
@@ -208,7 +208,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
 
-    add_emissions_scenarios(orig_hpxml, new_hpxml)
+    add_emissions_scenarios(new_hpxml)
 
     return new_hpxml
   end
@@ -344,7 +344,7 @@ class EnergyRatingIndex301Ruleset
                                                 a_ext: @infil_a_ext.round(3))
   end
 
-  def self.set_enclosure_air_infiltration_iad(orig_hpxml, new_hpxml)
+  def self.set_enclosure_air_infiltration_iad(new_hpxml)
     @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
@@ -418,7 +418,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_foundations_iad(orig_hpxml, new_hpxml)
+  def self.set_enclosure_foundations_iad(new_hpxml)
     # Always has a vented crawlspace
     new_hpxml.foundations.add(id: 'VentedCrawlspace',
                               foundation_type: HPXML::FoundationTypeCrawlspaceVented,
@@ -717,7 +717,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_foundation_walls_iad(orig_hpxml, new_hpxml)
+  def self.set_enclosure_foundation_walls_iad(new_hpxml)
     # Add vented crawlspace foundation wall
     new_hpxml.foundation_walls.add(id: 'FoundationWall',
                                    interior_adjacent_to: HPXML::LocationCrawlspaceVented,
@@ -830,7 +830,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_floors_iad(orig_hpxml, new_hpxml)
+  def self.set_enclosure_floors_iad(new_hpxml)
     floor_ufactor = get_reference_floor_ufactor()
 
     # Add crawlspace floor
@@ -905,7 +905,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_enclosure_slabs_iad(orig_hpxml, new_hpxml)
+  def self.set_enclosure_slabs_iad(new_hpxml)
     # Add crawlspace slab
     new_hpxml.slabs.add(id: 'Slab',
                         interior_adjacent_to: HPXML::LocationCrawlspaceVented,
@@ -1035,8 +1035,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
-    ufactor, shgc = get_reference_glazing_ufactor_shgc()
-    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
+    ufactor, _shgc = get_reference_glazing_ufactor_shgc()
+    exterior_area, _interior_area = get_reference_door_area(orig_hpxml)
 
     # Create new exterior door
     if exterior_area > 0
@@ -1068,9 +1068,9 @@ class EnergyRatingIndex301Ruleset
   def self.set_enclosure_doors_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Doors
     ext_thermal_bndry_doors = orig_hpxml.doors.select { |door| door.is_exterior_thermal_boundary }
-    ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
+    ref_ufactor, _ref_shgc = get_reference_glazing_ufactor_shgc()
     avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: 1.0 / ref_ufactor)
-    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
+    exterior_area, _interior_area = get_reference_door_area(orig_hpxml)
 
     # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
     if exterior_area > 0
@@ -1160,7 +1160,7 @@ class EnergyRatingIndex301Ruleset
                                 cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
 
     # Distribution system
-    add_reference_distribution_system(orig_hpxml, new_hpxml)
+    add_reference_distribution_system(new_hpxml)
   end
 
   def self.get_hvac_configurations(orig_hpxml)
@@ -1364,7 +1364,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Add DSE distribution for these systems
-    add_reference_distribution_system(orig_hpxml, new_hpxml)
+    add_reference_distribution_system(new_hpxml)
   end
 
   def self.set_systems_hvac_iad(orig_hpxml, new_hpxml)
@@ -1547,7 +1547,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_systems_mechanical_ventilation_iad(orig_hpxml, new_hpxml)
+  def self.set_systems_mechanical_ventilation_iad(new_hpxml)
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
 
     # Calculate fan cfm
@@ -1698,7 +1698,7 @@ class EnergyRatingIndex301Ruleset
     set_systems_water_heater_reference(orig_hpxml, new_hpxml)
   end
 
-  def self.set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_water_heating_use_reference(new_hpxml)
     # Table 4.2.2(1) - Service water heating systems
 
     has_uncond_bsmnt = new_hpxml.has_location(HPXML::LocationBasementUnconditioned)
@@ -1725,7 +1725,7 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     if orig_hpxml.hot_water_distributions.size == 0
-      set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
+      set_systems_water_heating_use_reference(new_hpxml)
       return
     end
 
@@ -1757,9 +1757,9 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_systems_water_heating_use_iad(orig_hpxml, new_hpxml)
+  def self.set_systems_water_heating_use_iad(new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
-    set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
+    set_systems_water_heating_use_reference(new_hpxml)
   end
 
   def self.set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
@@ -2245,7 +2245,7 @@ class EnergyRatingIndex301Ruleset
     set_ceiling_fans_reference(orig_hpxml, new_hpxml)
   end
 
-  def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
+  def self.set_misc_loads_reference(new_hpxml)
     # Misc
     kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
     new_hpxml.plug_loads.add(id: 'MiscPlugLoad',
@@ -2263,12 +2263,12 @@ class EnergyRatingIndex301Ruleset
                              frac_latent: frac_latent.round(3))
   end
 
-  def self.set_misc_loads_rated(orig_hpxml, new_hpxml)
-    set_misc_loads_reference(orig_hpxml, new_hpxml)
+  def self.set_misc_loads_rated(new_hpxml)
+    set_misc_loads_reference(new_hpxml)
   end
 
-  def self.set_misc_loads_iad(orig_hpxml, new_hpxml)
-    set_misc_loads_reference(orig_hpxml, new_hpxml)
+  def self.set_misc_loads_iad(new_hpxml)
+    set_misc_loads_reference(new_hpxml)
   end
 
   private
@@ -2333,7 +2333,7 @@ class EnergyRatingIndex301Ruleset
 
     # 2. Ensure each unmeasured system is at least 15 cfm per RESNET 55i
     q_fans.each do |id, val|
-      q_fans[id] = [q_fans[id], 15.0].max
+      q_fans[id] = [val, 15.0].max
     end
 
     # 3. If additional airflow remains (i.e., no unmeasured system to attribute it to), bump up measured systems
@@ -2376,7 +2376,7 @@ class EnergyRatingIndex301Ruleset
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
         cfm50 = ach50 * @infil_volume / 60.0
-        tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
+        tot_cb_area, _ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
         if cfm50 / tot_cb_area <= 0.30
           ach50 *= @infil_a_ext
         end
@@ -2645,7 +2645,7 @@ class EnergyRatingIndex301Ruleset
                                   clg_seed_id: seed_id)
   end
 
-  def self.add_reference_distribution_system(orig_hpxml, new_hpxml)
+  def self.add_reference_distribution_system(new_hpxml)
     new_hpxml.hvac_systems.each do |hvac|
       next if hvac.distribution_system_idref.nil?
       next if new_hpxml.hvac_distributions.select { |d| d.id == hvac.distribution_system_idref }.size > 0
@@ -2688,7 +2688,7 @@ class EnergyRatingIndex301Ruleset
   def self.get_hvac_capacities_for_distribution_system(orig_hvac_dist)
     htg_cap = 0.0
     clg_cap = 0.0
-    hvac = orig_hvac_dist.hvac_systems.each do |hvac|
+    orig_hvac_dist.hvac_systems.each do |hvac|
       if hvac.respond_to?(:heating_capacity)
         htg_cap = hvac.heating_capacity
       end
@@ -2867,7 +2867,7 @@ class EnergyRatingIndex301Ruleset
     return if zip_code.size != 5
 
     begin
-      test_int = Integer(zip_code)
+      Integer(zip_code)
     rescue
       return
     end
@@ -2923,7 +2923,7 @@ class EnergyRatingIndex301Ruleset
     return egrid_subregion
   end
 
-  def self.add_emissions_scenarios(orig_hpxml, new_hpxml)
+  def self.add_emissions_scenarios(new_hpxml)
     if not [Constants.CalcTypeCO2eReferenceHome,
             Constants.CalcTypeERIReferenceHome,
             Constants.CalcTypeERIRatedHome].include? @calc_type

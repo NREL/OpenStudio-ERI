@@ -40,7 +40,7 @@ class EnergyStarRuleset
 
     # Systems
     set_systems_hvac_reference(orig_hpxml, new_hpxml)
-    set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
+    set_systems_mechanical_ventilation_reference(new_hpxml)
     set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
     set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
@@ -58,7 +58,7 @@ class EnergyStarRuleset
     set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
 
     # Lighting
-    set_lighting_reference(orig_hpxml, new_hpxml)
+    set_lighting_reference(new_hpxml)
     set_ceiling_fans_reference(orig_hpxml, new_hpxml)
 
     # MiscLoads
@@ -636,7 +636,7 @@ class EnergyStarRuleset
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Doors
     # The door type is assumed to be opaque
-    door_ufactor, door_shgc = get_default_door_ufactor_shgc()
+    door_ufactor, _door_shgc = get_default_door_ufactor_shgc()
 
     orig_hpxml.doors.each do |orig_door|
       new_hpxml.doors.add(id: orig_door.id,
@@ -657,7 +657,7 @@ class EnergyStarRuleset
       heat_pump = hvac_configuration[:heat_pump]
       if not heating_system.nil?
         if heating_system.heating_system_type == HPXML::HVACTypeBoiler
-          add_reference_boiler(orig_hpxml, new_hpxml, heating_system)
+          add_reference_boiler(new_hpxml, heating_system)
         elsif heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
           if not cooling_system.nil?
             fraction_cool_load_served = cooling_system.fraction_cool_load_served
@@ -673,7 +673,7 @@ class EnergyStarRuleset
         if new_hpxml.heat_pumps.select { |hp| hp.clg_seed_id == cooling_system.id }.size > 0
           # Already created HP above
         elsif cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower
-          add_reference_chiller_or_cooling_tower(orig_hpxml, new_hpxml, cooling_system)
+          add_reference_chiller_or_cooling_tower(new_hpxml, cooling_system)
         else
           add_reference_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
         end
@@ -768,7 +768,7 @@ class EnergyStarRuleset
     end
   end
 
-  def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_mechanical_ventilation_reference(new_hpxml)
     # Exhibit 2 - Whole-House Mechanical ventilation
     # mechanical vent fan cfm
     q_tot = 0.01 * @cfa + 7.5 * (@nbeds + 1)
@@ -1060,7 +1060,7 @@ class EnergyStarRuleset
                         is_convection: reference_values[:is_convection])
   end
 
-  def self.set_lighting_reference(orig_hpxml, new_hpxml)
+  def self.set_lighting_reference(new_hpxml)
     if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
       fFI_int = 0.8
       fFI_ext = 0.0
@@ -1225,7 +1225,7 @@ class EnergyStarRuleset
 
   def self.get_enclosure_air_infiltration_default(orig_hpxml)
     if ESConstants.MFVersions.include? @program_version
-      tot_cb_area, ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
+      tot_cb_area, _ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
       cfm50_per_enclosure_area = get_enclosure_compartmentalization_infiltration_rates()
 
       infil_air_leakage = tot_cb_area * cfm50_per_enclosure_area
@@ -1911,7 +1911,7 @@ class EnergyStarRuleset
       end
     end
 
-    predominant_foundation_type = { basement: basement_floor_area, crawlspace: crawlspace_floor_area, slab: slab_on_grade_area, ambient: ambient_floor_area, adiabatic: adiabatic_floor_area }.max_by { |k, v| v }[0] # find the key of the largest area
+    predominant_foundation_type = { basement: basement_floor_area, crawlspace: crawlspace_floor_area, slab: slab_on_grade_area, ambient: ambient_floor_area, adiabatic: adiabatic_floor_area }.max_by { |_k, v| v }[0] # find the key of the largest area
     return predominant_foundation_type.to_s
   end
 
@@ -2063,7 +2063,7 @@ class EnergyStarRuleset
     end
   end
 
-  def self.add_reference_boiler(orig_hpxml, new_hpxml, orig_system)
+  def self.add_reference_boiler(new_hpxml, orig_system)
     afue = get_default_boiler_eff(orig_system)
 
     if orig_system.is_shared_system # Retain the shared boiler regardless of its heating capacity.
@@ -2148,7 +2148,7 @@ class EnergyStarRuleset
                                   fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
   end
 
-  def self.add_reference_chiller_or_cooling_tower(orig_hpxml, new_hpxml, orig_system)
+  def self.add_reference_chiller_or_cooling_tower(new_hpxml, orig_system)
     if orig_system.cooling_system_type == HPXML::HVACTypeChiller
       kw_per_ton = get_default_chiller_kw_per_ton()
     end

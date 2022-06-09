@@ -57,9 +57,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     workflow_rb = 'energy_rating_index.rb'
   end
   command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o #{rundir} --debug"
-  start_time = Time.now
   system(command)
-  runtime = (Time.now - start_time).round(2)
 
   hpxmls = {}
   csvs = {}
@@ -216,13 +214,10 @@ def _run_simulation(xml, test_name)
 
   assert(results[:success])
 
-  sql_path = File.join(rundir, 'eplusout.sql')
-  assert(File.exist?(sql_path))
-
   csv_path = File.join(rundir, 'results_annual.csv')
   assert(File.exist?(csv_path))
 
-  return sql_path, csv_path, results[:sim_time]
+  return csv_path
 end
 
 def _get_simulation_load_results(csv_path)

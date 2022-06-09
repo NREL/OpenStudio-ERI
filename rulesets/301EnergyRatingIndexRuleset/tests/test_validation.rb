@@ -53,7 +53,7 @@ class ERI301ValidationTest < MiniTest::Test
         xml_doc = Nokogiri::XML(File.open(s_path)) do |config|
           config.options = Nokogiri::XML::ParseOptions::STRICT
         end
-        stron_doc = SchematronNokogiri::Schema.new(xml_doc)
+        SchematronNokogiri::Schema.new(xml_doc)
       end
     rescue LoadError
     end
@@ -170,7 +170,7 @@ class ERI301ValidationTest < MiniTest::Test
       hpxml_doc = hpxml.to_oga()
 
       XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
-      model, hpxml = _test_measure(error_case, expected_errors)
+      _test_measure(expected_errors)
     end
   end
 
@@ -178,7 +178,7 @@ class ERI301ValidationTest < MiniTest::Test
 
   def _test_schematron_validation(hpxml_doc, expected_errors = [])
     # Validate via validator.rb
-    errors, warnings = Validator.run_validators(hpxml_doc, [@eri_validator_stron_path, @hpxml_stron_path])
+    errors, _warnings = Validator.run_validators(hpxml_doc, [@eri_validator_stron_path, @hpxml_stron_path])
     _compare_errors(errors, expected_errors)
   end
 
@@ -192,7 +192,7 @@ class ERI301ValidationTest < MiniTest::Test
     assert_equal(0, errors.size)
   end
 
-  def _test_measure(error_case, expected_errors)
+  def _test_measure(expected_errors)
     # create an instance of the measure
     measure = EnergyRatingIndex301Measure.new
 

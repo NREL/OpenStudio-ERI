@@ -1,3 +1,9 @@
+## OpenStudio-ERI v1.5.0
+
+__Bugfixes__
+- Fixes units for Peak Loads (kBtu/hr, not kBtu) in ERI____Home.csv output files.
+- Bugfix for increasing HVAC capacities due to installation grading.
+
 ## OpenStudio-ERI v1.4.1
 
 __Bugfixes__

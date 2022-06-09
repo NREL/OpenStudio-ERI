@@ -79,7 +79,7 @@ class EnergyStarTest < Minitest::Test
         es_xml = File.absolute_path(File.join(xmldir, 'tmp.xml'))
         XMLHelper.write_file(hpxml.to_oga, es_xml)
 
-        rundir, hpxmls, csvs = _run_workflow(es_xml, test_name, run_energystar: true)
+        rundir, _hpxmls, csvs = _run_workflow(es_xml, test_name, run_energystar: true)
         key = "[#{program_version}] #{File.basename(xml)}"
         version_results[key] = _get_csv_results(csvs[:es_results])
 
@@ -95,7 +95,7 @@ class EnergyStarTest < Minitest::Test
     keys = all_results.values[0].keys
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['[Version] XML'] + keys
-      all_results.each_with_index do |(xml_key, results), i|
+      all_results.each do |xml_key, results|
         csv_line = [xml_key]
         keys.each do |key|
           csv_line << results[key]
@@ -115,7 +115,7 @@ class EnergyStarTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../real_homes"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name, run_energystar: true)
+      rundir, _hpxmls, csvs = _run_workflow(xml, test_name, run_energystar: true)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:es_results])
 
       _rm_path(rundir)
@@ -126,7 +126,7 @@ class EnergyStarTest < Minitest::Test
     keys = all_results.values[0].keys
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['XML'] + keys
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         csv_line = [File.basename(xml)]
         keys.each do |key|
           csv_line << results[key]
@@ -158,7 +158,7 @@ class EnergyStarTest < Minitest::Test
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       next unless xml.include? 'energy-star'
 
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)], run_energystar: true)
+      rundir, _hpxmls, _csvs = _run_workflow(xml, test_name, expect_error: true, expect_error_msgs: expected_error_msgs[File.basename(xml)], run_energystar: true)
       _rm_path(rundir)
     end
   end
@@ -171,7 +171,7 @@ class EnergyStarTest < Minitest::Test
 
       # Run ENERGY STAR workflow
       xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name, timeseries_frequency: timeseries_frequency, run_energystar: true)
+      _rundir, _hpxmls, csvs = _run_workflow(xml, test_name, timeseries_frequency: timeseries_frequency, run_energystar: true)
 
       # Check for timeseries output files
       assert(File.exist?(csvs[:rated_timeseries_results]))
@@ -186,7 +186,7 @@ class EnergyStarTest < Minitest::Test
 
     # Run ENERGY STAR workflow
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name, run_energystar: true, skip_simulation: true)
+    _run_workflow(xml, test_name, run_energystar: true, skip_simulation: true)
   end
 
   def test_epa
@@ -198,7 +198,7 @@ class EnergyStarTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), 'EPA_Tests')
     all_results = {}
     Dir["#{xmldir}/**/*.xml"].sort.each do |xml|
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name, run_energystar: true)
+      _rundir, _hpxmls, csvs = _run_workflow(xml, test_name, run_energystar: true)
       ref_results = _get_csv_results(csvs[:ref_eri_results])
       rated_results = _get_csv_results(csvs[:rated_eri_results])
 
@@ -212,7 +212,7 @@ class EnergyStarTest < Minitest::Test
     keys = all_results.values[0].keys
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['[Version] XML'] + keys
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         es_version = xml.split('/')[-2]
         csv_line = ["[#{es_version}] #{File.basename(xml)}"]
         keys.each do |key|
@@ -224,7 +224,7 @@ class EnergyStarTest < Minitest::Test
     puts "Wrote results to #{test_results_csv}."
 
     # Check ERI scores are equal for manually configured test homes (from EPA) and auto-generated ESRDs
-    all_results.each do |xml, results|
+    all_results.values.each do |results|
       assert_equal(results['Reference Home ERI'], results['Rated Home ERI'])
     end
   end
