@@ -360,13 +360,10 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
     ESConstants.MFVersions.each do |es_version|
       if es_version == ESConstants.MFNationalVer1_0
-        rvalue = 1.0 / 0.027
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif es_version == ESConstants.MFNationalVer1_1
-        rvalue = 1.0 / 0.021
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif es_version == ESConstants.MFOregonWashingtonVer1_2
-        rvalue = 1.0 / 0.026
         rvalue_floors_over_uncond_spaces = 1.0 / 0.028
       end
 
@@ -441,7 +438,6 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml.climate_and_risk_zones.iecc_zone = '1A'
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      hpxml_name = File.basename(@tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_measure()
       _check_slabs(hpxml, area: 1350, exp_perim: 150, depth_below_grade: 0)

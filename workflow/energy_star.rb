@@ -135,13 +135,13 @@ runs << [Constants.CalcTypeERIIndexAdjustmentDesign, rated_hpxml, esrated_dir, e
 runs << [Constants.CalcTypeERIIndexAdjustmentReferenceHome, rated_hpxml, esrated_dir, esrated_resultsdir]
 
 # Run simulations
-run_simulations(runs, options, basedir)
+run_simulations(runs, options)
 
 if not options[:skip_simulation]
   puts 'Calculating ENERGY STAR...'
 
   # Calculate ES Reference ERI
-  esrd_outputs = retrieve_outputs(runs[0..3], options)
+  esrd_outputs = retrieve_outputs(runs[0..3])
   esrd_results = calculate_eri(esrd_outputs, esrd_resultsdir)
 
   # Calculate Size-Adjusted ERI for Energy Star Reference Homes
@@ -150,7 +150,7 @@ if not options[:skip_simulation]
 
   # Calculate ES Rated ERI, w/ On-site Power Production (OPP) restriction as appropriate
   opp_reduction_limit = calc_opp_eri_limit(esrd_results[:eri], saf, es_version)
-  rated_outputs = retrieve_outputs(runs[4..7], options)
+  rated_outputs = retrieve_outputs(runs[4..7])
   rated_results = calculate_eri(rated_outputs, esrated_resultsdir, opp_reduction_limit: opp_reduction_limit)
 
   if rated_results[:eri].round(0) <= target_eri.round(0)

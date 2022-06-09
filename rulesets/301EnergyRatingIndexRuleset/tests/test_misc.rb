@@ -95,7 +95,7 @@ class ERIMiscTest < MiniTest::Test
         assert_in_epsilon(misc_lat, plug_load.frac_latent, 0.01)
 
         # Energy & Internal Gains
-        nbeds, cfa, eri_design = _get_hpxml_info(hpxml)
+        _nbeds, cfa, eri_design = _get_hpxml_info(hpxml)
         if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
           btu = UnitConversions.convert(plug_load.kWh_per_year, 'kWh', 'Btu')
 
@@ -111,7 +111,7 @@ class ERIMiscTest < MiniTest::Test
         assert_in_epsilon(tv_lat, plug_load.frac_latent, 0.01)
 
         # Energy & Internal Gains
-        nbeds, cfa, eri_design = _get_hpxml_info(hpxml)
+        nbeds, _cfa, eri_design = _get_hpxml_info(hpxml)
         if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
           btu = UnitConversions.convert(plug_load.kWh_per_year, 'kWh', 'Btu')
 

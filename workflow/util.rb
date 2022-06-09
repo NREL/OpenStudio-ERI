@@ -52,29 +52,29 @@ def process_arguments(calling_rb, args, basedir, caller)
     end
 
     options[:add_comp_loads] = false
-    opts.on('--add-component-loads', 'Add heating/cooling component loads calculation') do |t|
+    opts.on('--add-component-loads', 'Add heating/cooling component loads calculation') do |_t|
       options[:add_comp_loads] = true
     end
 
     options[:skip_simulation] = false
-    opts.on('--skip-simulation', 'Skip the EnergyPlus simulations') do |t|
+    opts.on('--skip-simulation', 'Skip the EnergyPlus simulations') do |_t|
       options[:skip_simulation] = true
     end
 
     if caller == 'eri'
       options[:rated_home_only] = false
-      opts.on('--rated-home-only', 'Only run the Rated Home') do |t|
+      opts.on('--rated-home-only', 'Only run the Rated Home') do |_t|
         options[:rated_home_only] = true
       end
     end
 
     options[:debug] = false
-    opts.on('-d', '--debug') do |t|
+    opts.on('-d', '--debug') do |_t|
       options[:debug] = true
     end
 
     options[:version] = false
-    opts.on('-v', '--version', 'Reports the workflow version') do |t|
+    opts.on('-v', '--version', 'Reports the workflow version') do |_t|
       options[:version] = true
     end
 
@@ -145,7 +145,7 @@ def process_arguments(calling_rb, args, basedir, caller)
   return options
 end
 
-def run_simulations(runs, options, basedir)
+def run_simulations(runs, options)
   # Run simulations
   puts "HPXML: #{options[:hpxml]}"
   if Process.respond_to?(:fork) # e.g., most Unix systems
@@ -158,7 +158,7 @@ def run_simulations(runs, options, basedir)
     end
 
     Parallel.map(runs, in_processes: runs.size) do |run|
-      output_hpxml_path, designdir = run_design_direct(basedir, run, options)
+      designdir = run_design_direct(run, options)
       if not options[:skip_simulation]
         kill unless File.exist? File.join(designdir, 'eplusout.end')
       end
@@ -180,7 +180,7 @@ def run_simulations(runs, options, basedir)
 
     pids = {}
     Parallel.map(runs, in_threads: runs.size) do |run|
-      output_hpxml_path, designdir, pids[run] = run_design_spawn(basedir, run, options)
+      designdir, pids[run] = run_design_spawn(run, options)
       Process.wait pids[run]
       next unless not options[:skip_simulation]
 
@@ -193,40 +193,31 @@ def run_simulations(runs, options, basedir)
   end
 end
 
-def run_design_direct(basedir, run, options)
+def run_design_direct(run, options)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   designdir = get_design_dir(run)
   timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, options[:timeseries_output_freq], options[:timeseries_outputs])
 
-  output_hpxml_path = run_design(basedir,
-                                 run,
-                                 options[:hpxml],
-                                 options[:debug],
-                                 timeseries_output_freq,
-                                 timeseries_outputs,
-                                 options[:add_comp_loads],
-                                 options[:skip_simulation])
+  run_design(run, options[:debug], timeseries_output_freq, timeseries_outputs,
+             options[:add_comp_loads], options[:skip_simulation])
 
-  return output_hpxml_path, designdir
+  return designdir
 end
 
-def run_design_spawn(basedir, run, options)
+def run_design_spawn(run, options)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
   designdir = get_design_dir(run)
-  output_hpxml_path = get_output_filename(run)
   timeseries_output_freq, timeseries_outputs = timeseries_output_for_run(run, options[:timeseries_output_freq], options[:timeseries_outputs])
 
   cli_path = OpenStudio.getOpenStudioCLI
   command = "\"#{cli_path}\" "
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
-  command += "\"#{basedir}\" "
   command += "\"#{run.join('|')}\" "
-  command += "\"#{options[:hpxml]}\" "
   command += "\"#{options[:debug]}\" "
   command += "\"#{timeseries_output_freq}\" "
   command += "\"#{timeseries_outputs.join('|')}\" "
@@ -234,7 +225,7 @@ def run_design_spawn(basedir, run, options)
   command += "\"#{options[:skip_simulation]}\" "
   pid = Process.spawn(command)
 
-  return output_hpxml_path, designdir, pid
+  return designdir, pid
 end
 
 def timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
@@ -248,13 +239,12 @@ def timeseries_output_for_run(run, timeseries_output_freq, timeseries_outputs)
   return 'none', []
 end
 
-def retrieve_outputs(runs, options)
+def retrieve_outputs(runs)
   # Retrieve outputs for ERI calculations
   design_outputs = {}
   runs.each do |run|
     runkey = run[0]
 
-    designdir = get_design_dir(run)
     csv_path = get_output_filename(run, '.csv')
 
     if not File.exist? csv_path
@@ -347,7 +337,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
 
   results[:nmeul_vent_preheat] = []
   if not rated_output['ERI: Mech Vent Preheating: ID'].nil?
-    rated_output['ERI: Mech Vent Preheating: ID'].each_with_index do |sys_id, rated_idx|
+    for rated_idx in 0..rated_output['ERI: Mech Vent Preheating: ID'].size - 1
       ec_x_preheat = rated_output['ERI: Mech Vent Preheating: EC'][rated_idx]
       coeff_preheat_a, coeff_preheat_b = get_heating_coefficients(rated_output['ERI: Mech Vent Preheating: FuelType'][rated_idx])
       eec_x_preheat = rated_output['ERI: Mech Vent Preheating: EEC'][rated_idx]
@@ -360,7 +350,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
 
   results[:nmeul_vent_precool] = []
   if not rated_output['ERI: Mech Vent Precooling: ID'].nil?
-    rated_output['ERI: Mech Vent Precooling: ID'].each_with_index do |sys_id, rated_idx|
+    for rated_idx in 0..rated_output['ERI: Mech Vent Precooling: ID'].size - 1
       ec_x_precool = rated_output['ERI: Mech Vent Precooling: EC'][rated_idx]
       coeff_precool_a, coeff_precool_b = get_cooling_coefficients()
       eec_x_precool = rated_output['ERI: Mech Vent Precooling: EEC'][rated_idx]
@@ -616,7 +606,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   return results
 end
 
-def _calculate_co2e_index(eri_version, rated_output, ref_output, results)
+def _calculate_co2e_index(rated_output, ref_output, results)
   # Check that CO2e Reference Home doesn't have fossil fuel use.
   ['Natural Gas', 'Fuel Oil', 'Propane',
    'Wood Cord', 'Wood Pellets'].each do |fuel|
@@ -646,7 +636,7 @@ def _calculate_co2e_index(eri_version, rated_output, ref_output, results)
   return results
 end
 
-def calculate_eri(design_outputs, resultsdir, eri_version: nil, opp_reduction_limit: nil)
+def calculate_eri(design_outputs, resultsdir, opp_reduction_limit: nil)
   if design_outputs.keys.include? Constants.CalcTypeERIIndexAdjustmentDesign
     results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
                                  design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome],
@@ -661,18 +651,17 @@ def calculate_eri(design_outputs, resultsdir, eri_version: nil, opp_reduction_li
                            opp_reduction_limit: opp_reduction_limit)
 
   if design_outputs.keys.include? Constants.CalcTypeCO2eRatedHome
-    results = _calculate_co2e_index(eri_version,
-                                    design_outputs[Constants.CalcTypeCO2eRatedHome],
+    results = _calculate_co2e_index(design_outputs[Constants.CalcTypeCO2eRatedHome],
                                     design_outputs[Constants.CalcTypeCO2eReferenceHome],
                                     results)
   end
 
-  write_eri_results(results, resultsdir, design_outputs, results_iad, eri_version)
+  write_eri_results(results, resultsdir, design_outputs, results_iad)
 
   return results
 end
 
-def write_eri_results(results, resultsdir, design_outputs, results_iad, eri_version)
+def write_eri_results(results, resultsdir, design_outputs, results_iad)
   ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
 
   # ERI Results file

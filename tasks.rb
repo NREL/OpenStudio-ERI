@@ -444,7 +444,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             air_leakage: ach50,
                                             infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
-    tot_cb_area, ext_cb_area = hpxml.compartmentalization_boundary_areas()
+    tot_cb_area, _ext_cb_area = hpxml.compartmentalization_boundary_areas()
     hpxml.air_infiltration_measurements.clear
     hpxml.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml.air_infiltration_measurements.size + 1}",
                                             unit_of_measure: HPXML::UnitsCFM,
@@ -2593,7 +2593,17 @@ if ARGV[0].to_sym == :update_measures
   # Apply rubocop
   cops = ['Layout',
           'Lint/DeprecatedClassMethods',
-          # 'Lint/RedundantStringCoercion', # Enable when rubocop is upgraded
+          'Lint/DuplicateElsifCondition',
+          'Lint/DuplicateHashKey',
+          'Lint/DuplicateMethods',
+          'Lint/InterpolationCheck',
+          'Lint/LiteralAsCondition',
+          'Lint/RedundantStringCoercion',
+          'Lint/SelfAssignment',
+          'Lint/UnderscorePrefixedVariableName',
+          'Lint/UnusedBlockArgument',
+          'Lint/UnusedMethodArgument',
+          'Lint/UselessAssignment',
           'Style/AndOr',
           'Style/FrozenStringLiteralComment',
           'Style/HashSyntax',
@@ -2698,7 +2708,7 @@ if ARGV[0].to_sym == :create_release_zips
     if num_epws_local < num_epws_expected
       puts 'Fetching all weather files...'
       command = "#{OpenStudio.getOpenStudioCLI} workflow/energy_rating_index.rb --download-weather"
-      log = `#{command}`
+      `#{command}`
     end
   end
 

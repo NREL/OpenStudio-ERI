@@ -98,10 +98,10 @@ if not options[:rated_home_only]
   end
 end
 
-run_simulations(runs, options, basedir)
+run_simulations(runs, options)
 
 if not options[:skip_simulation]
-  design_outputs = retrieve_outputs(runs, options)
+  design_outputs = retrieve_outputs(runs)
 
   if not options[:rated_home_only]
     if calc_co2e_index
@@ -122,7 +122,7 @@ if not options[:skip_simulation]
     else
       puts 'Calculating ERI...'
     end
-    results = calculate_eri(design_outputs, resultsdir, eri_version: eri_version)
+    results = calculate_eri(design_outputs, resultsdir)
     puts "ERI: #{results[:eri].round(2)}"
     if calc_co2e_index
       if not results[:co2eindex].nil?

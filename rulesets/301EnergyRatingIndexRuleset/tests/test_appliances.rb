@@ -369,10 +369,10 @@ class ERIApplianceTest < MiniTest::Test
     assert_in_epsilon(label_usage, clothes_washer.label_usage, 0.01)
 
     # Energy & Internal Gains
-    nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
+    nbeds, _cfa, eri_version, eri_design, _elec_appl = _get_hpxml_info(hpxml)
     if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
       clothes_washer.usage_multiplier = 1.0
-      cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
+      cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
       btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
 
       expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_cw_ref_energy_gains(eri_version, nbeds)
@@ -403,7 +403,7 @@ class ERIApplianceTest < MiniTest::Test
     assert_equal(0.0, clothes_dryer.vented_flow_rate)
 
     # Energy & Internal Gains
-    nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
+    nbeds, _cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
     if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
       clothes_washer = hpxml.clothes_washers[0]
       clothes_washer.usage_multiplier = 1.0
@@ -440,10 +440,10 @@ class ERIApplianceTest < MiniTest::Test
     assert_in_epsilon(label_usage, dishwasher.label_usage, 0.01)
 
     # Energy & Internal Gains
-    nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
+    nbeds, _cfa, eri_version, eri_design, _elec_appl = _get_hpxml_info(hpxml)
     if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
       dishwasher.usage_multiplier = 1.0
-      dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
+      dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
       btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
 
       expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_dw_ref_energy_gains(eri_version, nbeds)
@@ -460,7 +460,7 @@ class ERIApplianceTest < MiniTest::Test
     assert_equal(annual_kwh, refrigerator.rated_annual_kwh)
 
     # Energy & Internal Gains
-    nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
+    nbeds, _cfa, _eri_version, eri_design, _elec_appl = _get_hpxml_info(hpxml)
     if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
       refrigerator.usage_multiplier = 1.0
       rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
@@ -484,7 +484,7 @@ class ERIApplianceTest < MiniTest::Test
     assert_equal(oven_is_convection, oven.is_convection)
 
     # Energy & Internal Gains
-    nbeds, cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
+    nbeds, _cfa, _eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
     if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
       cooking_range.usage_multiplier = 1.0
       cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cooking_range, oven)

@@ -34,7 +34,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name)
+      rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results], csvs[:co2e_results])
 
       _rm_path(rundir)
@@ -43,7 +43,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     keys = []
-    all_results.each do |xml, xml_results|
+    all_results.values.each do |xml_results|
       xml_results.keys.each do |key|
         next if keys.include? key
 
@@ -52,7 +52,7 @@ class EnergyRatingIndexTest < Minitest::Test
     end
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['XML'] + keys
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         csv_line = [File.basename(xml)]
         keys.each do |key|
           csv_line << results[key]
@@ -72,7 +72,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../real_homes"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name)
+      rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results(csvs[:eri_results], csvs[:co2e_results])
 
       _rm_path(rundir)
@@ -81,7 +81,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Write results to csv
     keys = []
-    all_results.each do |xml, xml_results|
+    all_results.values.each do |xml_results|
       xml_results.keys.each do |key|
         next if keys.include? key
 
@@ -90,7 +90,7 @@ class EnergyRatingIndexTest < Minitest::Test
     end
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['XML'] + keys
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         csv_line = [File.basename(xml)]
         keys.each do |key|
           csv_line << results[key]
@@ -124,7 +124,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
       # Run ERI workflow
       xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name, timeseries_frequency: timeseries_frequency)
+      _rundir, _hpxmls, csvs = _run_workflow(xml, test_name, timeseries_frequency: timeseries_frequency)
 
       # Check for timeseries output files
       assert(File.exist?(csvs[:rated_timeseries_results]))
@@ -139,7 +139,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run simulation
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name, component_loads: true)
+    _rundir, _hpxmls, csvs = _run_workflow(xml, test_name, component_loads: true)
 
     # Check for presence of component loads
     [csvs[:rated_results], csvs[:ref_results]].each do |csv_output_path|
@@ -158,7 +158,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run ERI workflow
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name, skip_simulation: true)
+    _run_workflow(xml, test_name, skip_simulation: true)
   end
 
   def test_rated_home_only
@@ -166,7 +166,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run ERI workflow
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name, rated_home_only: true)
+    _run_workflow(xml, test_name, rated_home_only: true)
   end
 
   def test_co2index_without_extra_simulation
@@ -177,7 +177,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run ERI workflow w/ all-electric home
     xml = "#{File.dirname(__FILE__)}/../sample_files/base-hvac-air-to-air-heat-pump-1-speed.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name)
+    _rundir, hpxmls, _csvs = _run_workflow(xml, test_name)
 
     # Check that CO2e Reference Home HPXML references ERI Reference Home
     hpxml = HPXML.new(hpxml_path: hpxmls[:co2ref])
@@ -185,7 +185,7 @@ class EnergyRatingIndexTest < Minitest::Test
 
     # Run ERI workflow w/ mixed fuel home
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
-    rundir, hpxmls, csvs = _run_workflow(xml, test_name)
+    _rundir, hpxmls, _csvs = _run_workflow(xml, test_name)
 
     # Check that CO2e Reference Home HPXML does not reference ERI Reference Home
     hpxml = HPXML.new(hpxml_path: hpxmls[:co2ref])
@@ -202,7 +202,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
+      csv_path = _run_simulation(xml, test_name)
       htg_load, clg_load = _get_simulation_load_results(csv_path)
       xml = File.basename(xml)
       if xml.include? 'C.xml'
@@ -355,7 +355,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
+      csv_path = _run_simulation(xml, test_name)
 
       is_heat = false
       if xml.include? 'HVAC2'
@@ -374,7 +374,7 @@ class EnergyRatingIndexTest < Minitest::Test
     hvac_energy = {}
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['Test Case', 'HVAC (kWh or therm)', 'HVAC Fan (kWh)']
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
         if xml.include?('HVAC2a') || xml.include?('HVAC2b')
@@ -400,7 +400,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
-      sql_path, csv_path, sim_time = _run_simulation(xml, test_name)
+      csv_path = _run_simulation(xml, test_name)
 
       is_heat = false
       if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
@@ -416,14 +416,14 @@ class EnergyRatingIndexTest < Minitest::Test
     dhw_energy = {}
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['Test Case', 'Heat/Cool (kWh or therm)', 'HVAC Fan (kWh)']
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         next unless ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
 
         csv << [xml, results[0], results[1]]
         test_name = File.basename(xml, File.extname(xml))
         dhw_energy[test_name] = results[0] / 10.0 + results[1] / 293.08
       end
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         next if ['HVAC3a.xml', 'HVAC3e.xml'].include? xml
 
         csv << [xml, results[0], results[1]]
@@ -505,15 +505,13 @@ class EnergyRatingIndexTest < Minitest::Test
     File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    base_vals = {}
-    mn_vals = {}
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
       out_xml = File.join(@test_files_dir, File.basename(xml))
       _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
-      sql_path, csv_path, sim_time = _run_simulation(out_xml, test_name)
+      csv_path = _run_simulation(out_xml, test_name)
 
       all_results[File.basename(xml)] = _get_hot_water(csv_path)
       assert_operator(all_results[File.basename(xml)][0], :>, 0)
@@ -526,7 +524,7 @@ class EnergyRatingIndexTest < Minitest::Test
     dhw_energy = {}
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['Test Case', 'DHW Energy (therms)', 'Recirc Pump (kWh)', 'GPD']
-      all_results.each_with_index do |(xml, result), i|
+      all_results.each do |xml, result|
         rated_dhw, rated_recirc, rated_gpd = result
         csv << [xml, (rated_dhw * 10.0).round(1), (rated_recirc * 293.08).round(1), rated_gpd]
         test_name = File.basename(xml, File.extname(xml))
@@ -568,7 +566,7 @@ class EnergyRatingIndexTest < Minitest::Test
       end
       XMLHelper.write_file(new_hpxml.to_oga, out_xml)
 
-      rundir, hpxmls, csvs = _run_workflow(out_xml, test_name)
+      _rundir, _hpxmls, csvs = _run_workflow(out_xml, test_name)
       worksheet_results = _get_csv_results(csvs[:eri_worksheet])
       all_results[File.basename(xml)]['e-Ratio'] = (worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']).round(7)
     end
@@ -598,7 +596,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      rundir, hpxmls, csvs = _run_workflow(xml, test_name)
+      _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[xml] = _get_csv_results(csvs[:eri_results])
       all_results[xml].delete('EC_x Dehumid (MBtu)') # Not yet included in RESNET spreadsheet
     end
@@ -608,7 +606,7 @@ class EnergyRatingIndexTest < Minitest::Test
     keys = all_results.values[0].keys
     CSV.open(test_results_csv, 'w') do |csv|
       csv << ['Test Case'] + keys
-      all_results.each_with_index do |(xml, results), i|
+      all_results.each do |xml, results|
         csv_line = [File.basename(xml)]
         keys.each do |key|
           csv_line << results[key]
@@ -758,7 +756,7 @@ class EnergyRatingIndexTest < Minitest::Test
     hpxml = HPXML.new(hpxml_path: hpxml)
 
     # Above-grade walls
-    wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml)
+    wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml)
     results['Above-grade walls (Uo)'] = wall_u.round(3)
     results['Above-grade wall solar absorptance (α)'] = wall_solar_abs.round(2)
     results['Above-grade wall infrared emittance (ε)'] = wall_emiss.round(2)
@@ -789,11 +787,11 @@ class EnergyRatingIndexTest < Minitest::Test
     end
 
     # Ceilings
-    ceil_u, ceil_area = _get_ceilings(hpxml)
+    ceil_u, _ceil_area = _get_ceilings(hpxml)
     results['Ceilings (Uo)'] = ceil_u.round(3)
 
     # Roofs
-    roof_solar_abs, roof_emiss, roof_area = _get_roofs(hpxml)
+    roof_solar_abs, roof_emiss, _roof_area = _get_roofs(hpxml)
     results['Roof solar absorptance (α)'] = roof_solar_abs.round(2)
     results['Roof infrared emittance (ε)'] = roof_emiss.round(2)
 
@@ -834,7 +832,7 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
 
     # Infiltration
-    sla, ach50 = _get_infiltration(hpxml)
+    sla, _ach50 = _get_infiltration(hpxml)
     results['SLAo (ft2/ft2)'] = sla.round(5)
 
     # Internal gains
@@ -853,13 +851,13 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Air Distribution System Efficiency'] = dse.round(2)
 
     # Thermostat
-    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml)
+    tstat, htg_sp, clg_sp = _get_tstat(hpxml)
     results['Thermostat Type'] = tstat
     results['Heating thermostat settings'] = htg_sp.round(0)
     results['Cooling thermostat settings'] = clg_sp.round(0)
 
     # Mechanical ventilation
-    mv_kwh, mv_cfm = _get_mech_vent(hpxml)
+    mv_kwh, _mv_cfm = _get_mech_vent(hpxml)
     results['Mechanical ventilation (kWh/y)'] = mv_kwh.round(2)
 
     # Domestic hot water
@@ -881,12 +879,12 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Infiltration Volume (ft3)'] = hpxml.air_infiltration_measurements[0].infiltration_volume
 
     # Above-grade Walls
-    wall_u, wall_solar_abs, wall_emiss, wall_area = _get_above_grade_walls(hpxml)
+    wall_u, _wall_solar_abs, _wall_emiss, wall_area = _get_above_grade_walls(hpxml)
     results['Above-grade walls area (ft2)'] = wall_area
     results['Above-grade walls (Uo)'] = wall_u
 
     # Roof
-    roof_solar_abs, roof_emiss, roof_area = _get_roofs(hpxml)
+    _roof_solar_abs, _roof_emiss, roof_area = _get_roofs(hpxml)
     results['Roof gross area (ft2)'] = roof_area
 
     # Ceilings
@@ -914,7 +912,7 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Window SHGCo (cooling)'] = win_shgc_clg
 
     # Infiltration
-    sla, ach50 = _get_infiltration(hpxml)
+    _sla, ach50 = _get_infiltration(hpxml)
     results['Infiltration rate (ACH50)'] = ach50
 
     # Mechanical Ventilation
@@ -923,7 +921,7 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Mechanical ventilation'] = mv_kwh
 
     # HVAC
-    afue, hspf, seer, dse = _get_hvac(hpxml)
+    afue, hspf, seer, _dse = _get_hvac(hpxml)
     if (test_num == 1) || (test_num == 4)
       results['Labeled heating system rating and efficiency'] = afue
     else
@@ -932,7 +930,7 @@ class EnergyRatingIndexTest < Minitest::Test
     results['Labeled cooling system rating and efficiency'] = seer
 
     # Thermostat
-    tstat, htg_sp, htg_setback, clg_sp, clg_setup = _get_tstat(hpxml)
+    tstat, htg_sp, clg_sp = _get_tstat(hpxml)
     results['Thermostat Type'] = tstat
     results['Heating thermostat settings'] = htg_sp
     results['Cooling thermostat settings'] = clg_sp
@@ -1382,7 +1380,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Appliances: Dishwasher
     dishwasher = hpxml.dishwashers[0]
     dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
-    dw_annual_kwh, dw_frac_sens, dw_frac_lat, dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
+    dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
     btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (dw_frac_sens * btu)
     xml_appl_lat += (dw_frac_lat * btu)
@@ -1390,7 +1388,7 @@ class EnergyRatingIndexTest < Minitest::Test
     # Appliances: ClothesWasher
     clothes_washer = hpxml.clothes_washers[0]
     clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
-    cw_annual_kwh, cw_frac_sens, cw_frac_lat, cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
+    cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
     btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
     xml_appl_sens += (cw_frac_sens * btu)
     xml_appl_lat += (cw_frac_lat * btu)
@@ -1442,7 +1440,7 @@ class EnergyRatingIndexTest < Minitest::Test
         f_grg_led = lg.fraction_of_units_in_location
       end
     end
-    int_kwh, ext_kwh, grg_kwh = Lighting.calc_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
+    int_kwh, _ext_kwh, grg_kwh = Lighting.calc_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
     xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
     s += "#{xml_ltg_sens}\n"
 
@@ -1484,9 +1482,9 @@ class EnergyRatingIndexTest < Minitest::Test
   def _get_tstat(hpxml)
     hvac_control = hpxml.hvac_controls[0]
     tstat = hvac_control.control_type.gsub(' thermostat', '')
-    htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(hvac_control.control_type)
-    clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(hvac_control.control_type)
-    return tstat, htg_sp, htg_setback_sp, clg_sp, clg_setup_sp
+    htg_sp, _htg_setback_sp, _htg_setback_hrs_per_week, _htg_setback_start_hr = HVAC.get_default_heating_setpoint(hvac_control.control_type)
+    clg_sp, _clg_setup_sp, _clg_setup_hrs_per_week, _clg_setup_start_hr = HVAC.get_default_cooling_setpoint(hvac_control.control_type)
+    return tstat, htg_sp, clg_sp
   end
 
   def _get_mech_vent(hpxml)
@@ -1511,10 +1509,9 @@ class EnergyRatingIndexTest < Minitest::Test
     return ref_pipe_l, ref_loop_l
   end
 
-  def _check_method_results(results, test_num, has_tankless_water_heater, version, test_loc = nil)
+  def _check_method_results(results, test_num, has_tankless_water_heater, version)
     using_iaf = false
 
-    cooling_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'elec', 4 => 'elec', 5 => 'elec' }
     cooling_mepr =  { 1 => 10.00,  2 => 10.00,  3 => 10.00,  4 => 10.00,  5 => 10.00 }
     heating_fuel =  { 1 => 'elec', 2 => 'elec', 3 => 'gas',  4 => 'elec', 5 => 'gas' }
     heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96  }

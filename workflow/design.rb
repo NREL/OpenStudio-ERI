@@ -12,7 +12,7 @@ def get_output_filename(run, file_suffix = '.xml')
   return File.join(run[3], run[0].gsub(' ', '') + file_suffix)
 end
 
-def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
+def run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
   measures_dir = File.join(File.dirname(__FILE__), '..')
   designdir = get_design_dir(run)
   output_hpxml = get_output_filename(run)
@@ -57,20 +57,16 @@ def run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_ou
 
   print_prefix = "[#{run[0]}] "
 
-  results = run_hpxml_workflow(designdir, measures, measures_dir, debug: debug, print_prefix: print_prefix,
-                                                                  run_measures_only: skip_simulation)
-
-  return output_hpxml
+  run_hpxml_workflow(designdir, measures, measures_dir, debug: debug, print_prefix: print_prefix,
+                                                        run_measures_only: skip_simulation)
 end
 
-if ARGV.size == 8
-  basedir = ARGV[0]
-  run = ARGV[1].split('|').map { |x| (x.length == 0 ? nil : x) }
-  hpxml = ARGV[2]
-  debug = (ARGV[3].downcase.to_s == 'true')
-  timeseries_output_freq = ARGV[4]
-  timeseries_outputs = ARGV[5].split('|')
-  add_comp_loads = (ARGV[6].downcase.to_s == 'true')
-  skip_simulation = (ARGV[7].downcase.to_s == 'true')
-  run_design(basedir, run, hpxml, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
+if ARGV.size == 6
+  run = ARGV[0].split('|').map { |x| (x.length == 0 ? nil : x) }
+  debug = (ARGV[1].downcase.to_s == 'true')
+  timeseries_output_freq = ARGV[2]
+  timeseries_outputs = ARGV[3].split('|')
+  add_comp_loads = (ARGV[4].downcase.to_s == 'true')
+  skip_simulation = (ARGV[5].downcase.to_s == 'true')
+  run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
 end
