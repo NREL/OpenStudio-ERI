@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <measure>
   <schema_version>3.0</schema_version>
+  <error>Unable to extract OpenStudio::Measure::OSMeasure object from /mnt/c/git/openstudio-eri/rulesets/EnergyStarRuleset/measure.rb. The script should contain a class that derives from OpenStudio::Measure::OSMeasure and should close with a line stating the class name followed by .new.registerWithApplication.</error>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>7ad318e7-f27f-4b1f-8af7-fd0f4d2866c8</version_id>
-  <version_modified>20220430T135651Z</version_modified>
+  <version_id>7b09d4f6-be98-4d1e-8a61-845f85aa01f0</version_id>
+  <version_modified>20220609T035730Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -14,7 +15,9 @@
     <argument>
       <name>calc_type</name>
       <display_name>Calculation Type</display_name>
+      <description></description>
       <type>Choice</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
       <default_value>ES Reference</default_value>
@@ -28,22 +31,32 @@
           <display_name>ES Reference</display_name>
         </choice>
       </choices>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>hpxml_input_path</name>
       <display_name>HPXML Input File Path</display_name>
       <description>Absolute (or relative) path of the input HPXML file.</description>
       <type>String</type>
+      <units></units>
       <required>true</required>
       <model_dependent>false</model_dependent>
+      <default_value></default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
     <argument>
       <name>hpxml_output_path</name>
       <display_name>HPXML Output File Path</display_name>
       <description>Absolute (or relative) path of the output HPXML file.</description>
       <type>String</type>
+      <units></units>
       <required>false</required>
       <model_dependent>false</model_dependent>
+      <default_value></default_value>
+      <min_value></min_value>
+      <max_value></max_value>
     </argument>
   </arguments>
   <outputs />
@@ -102,12 +115,6 @@
       <checksum>9FEB3750</checksum>
     </file>
     <file>
-      <filename>test_es_appliances.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>37D78395</checksum>
-    </file>
-    <file>
       <filename>constants.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
@@ -118,12 +125,6 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>50A17C27</checksum>
-    </file>
-    <file>
-      <filename>test_es_lighting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BBC0B2C6</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -150,6 +151,12 @@
       <checksum>95EC34B2</checksum>
     </file>
     <file>
+      <filename>test_es_pv_batteries.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>C829AD5C</checksum>
+    </file>
+    <file>
       <version>
         <software_program>OpenStudio</software_program>
         <identifier>2.1.1</identifier>
@@ -158,31 +165,37 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D729FDF6</checksum>
+      <checksum>7B22697D</checksum>
     </file>
     <file>
-      <filename>test_es_hvac.rb</filename>
+      <filename>test_es_lighting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>E19F3993</checksum>
+      <checksum>036FA376</checksum>
     </file>
     <file>
       <filename>test_es_enclosure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>0B349D2E</checksum>
-    </file>
-    <file>
-      <filename>test_es_pv_batteries.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>C829AD5C</checksum>
+      <checksum>19961FE8</checksum>
     </file>
     <file>
       <filename>EnergyStarRuleset.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>77AABA2D</checksum>
+      <checksum>4BEEFC15</checksum>
+    </file>
+    <file>
+      <filename>test_es_appliances.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>915DA18D</checksum>
+    </file>
+    <file>
+      <filename>test_es_hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>AD7446A1</checksum>
     </file>
   </files>
 </measure>
