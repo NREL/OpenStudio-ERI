@@ -624,7 +624,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
   def test_enclosure_doors
     ESConstants.AllVersions.each do |es_version|
-      if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, 
+      if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
         rvalue = 1.0 / 0.17
       else

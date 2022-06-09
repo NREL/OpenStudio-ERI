@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>7ad318e7-f27f-4b1f-8af7-fd0f4d2866c8</version_id>
-  <version_modified>20220430T135651Z</version_modified>
+  <version_id>c3fcf7f8-df7e-4e11-92aa-751c76068966</version_id>
+  <version_modified>20220609T164759Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -102,28 +102,10 @@
       <checksum>9FEB3750</checksum>
     </file>
     <file>
-      <filename>test_es_appliances.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>37D78395</checksum>
-    </file>
-    <file>
-      <filename>constants.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>resource</usage_type>
-      <checksum>EA2BA100</checksum>
-    </file>
-    <file>
       <filename>test_es_util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>50A17C27</checksum>
-    </file>
-    <file>
-      <filename>test_es_lighting.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>BBC0B2C6</checksum>
     </file>
     <file>
       <filename>util.rb</filename>
@@ -132,22 +114,10 @@
       <checksum>8B5935CF</checksum>
     </file>
     <file>
-      <filename>test_es_water_heating.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>55764DAE</checksum>
-    </file>
-    <file>
       <filename>util.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>FF3BA16A</checksum>
-    </file>
-    <file>
-      <filename>test_es_ventilation.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>95EC34B2</checksum>
     </file>
     <file>
       <version>
@@ -161,28 +131,58 @@
       <checksum>D729FDF6</checksum>
     </file>
     <file>
-      <filename>test_es_hvac.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>E19F3993</checksum>
-    </file>
-    <file>
-      <filename>test_es_enclosure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>test</usage_type>
-      <checksum>0B349D2E</checksum>
-    </file>
-    <file>
       <filename>test_es_pv_batteries.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>C829AD5C</checksum>
     </file>
     <file>
+      <filename>test_es_appliances.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>073765F5</checksum>
+    </file>
+    <file>
+      <filename>constants.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>resource</usage_type>
+      <checksum>DD10AE15</checksum>
+    </file>
+    <file>
+      <filename>test_es_lighting.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>B1CE16D4</checksum>
+    </file>
+    <file>
+      <filename>test_es_water_heating.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DC571F85</checksum>
+    </file>
+    <file>
+      <filename>test_es_ventilation.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>E01C8CC7</checksum>
+    </file>
+    <file>
+      <filename>test_es_hvac.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>062F3A06</checksum>
+    </file>
+    <file>
+      <filename>test_es_enclosure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>test</usage_type>
+      <checksum>DDF68CBF</checksum>
+    </file>
+    <file>
       <filename>EnergyStarRuleset.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>77AABA2D</checksum>
+      <checksum>D2358A69</checksum>
     </file>
   </files>
 </measure>

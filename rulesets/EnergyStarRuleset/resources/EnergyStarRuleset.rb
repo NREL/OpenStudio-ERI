@@ -1285,7 +1285,7 @@ class EnergyStarRuleset
   def self.get_default_door_ufactor_shgc()
     if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
       return 0.21, nil
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, 
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
            ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       return 0.17, nil
     end
@@ -1496,7 +1496,7 @@ class EnergyStarRuleset
 
       return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
 
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
+    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if not [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeTankless
         wh_fuel_type = HPXML::FuelTypeNaturalGas
@@ -1509,8 +1509,12 @@ class EnergyStarRuleset
         end
         wh_type = HPXML::WaterHeaterTypeHeatPump
         wh_fuel_type = HPXML::FuelTypeElectricity
-        uef = 2.20
-        fhr = 40  # FIXME: Need to check with Scott
+        if @program_version == ESConstants.SFNationalVer3_2
+          uef = 2.20
+        elsif @program_version == ESConstants.MFNationalVer1_2
+          uef = 1.49
+        end
+        fhr = 40 # FIXME: Need to check with Scott
       end
 
       return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
@@ -1549,25 +1553,6 @@ class EnergyStarRuleset
       end
 
       return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
-
-    elsif [ESConstants.MFNationalVer1_2].include? @program_version
-      if not [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeTankless
-        wh_fuel_type = HPXML::FuelTypeNaturalGas
-        uef = 0.90
-      else
-        if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
-          wh_tank_vol = 60.0 # gallon
-        else
-          wh_tank_vol = orig_water_heater.tank_volume
-        end
-        wh_type = HPXML::WaterHeaterTypeHeatPump
-        wh_fuel_type = HPXML::FuelTypeElectricity
-        uef = 1.49
-        fhr = 40  # FIXME: Need to check with Scott
-      end
-
-      return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
 
     elsif [ESConstants.SFPacificVer3_0].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include?(orig_water_heater.water_heater_type) || (orig_wh_fuel_type == HPXML::FuelTypeElectricity)
@@ -1890,7 +1875,7 @@ class EnergyStarRuleset
   def self.get_fan_cfm_per_w()
     if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
       return 2.2
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2, 
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
            ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       return 2.8
     end
@@ -2003,7 +1988,7 @@ class EnergyStarRuleset
           duct_location_and_surface_area[HPXML::LocationLivingSpace] = 0.25 * total_duct_area
         end
       end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, 
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
            ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? @program_version
       duct_location_and_surface_area[HPXML::LocationLivingSpace] = total_duct_area # Duct location configured to be 100% in conditioned space.
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
@@ -2035,7 +2020,7 @@ class EnergyStarRuleset
       else # All other ducts in unconditioned space
         return 6.0
       end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, 
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
            ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? @program_version
       return 0.0
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
@@ -2048,7 +2033,7 @@ class EnergyStarRuleset
   end
 
   def self.calc_default_duct_leakage_to_outside(cfa)
-    if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1, 
+    if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
         ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? @program_version
       return 0.0
     else
@@ -2302,7 +2287,7 @@ class EnergyStarRuleset
                fan_watts_per_cfm: 0.58 }
     end
   end
-  
+
   def self.get_default_ceiling_fan_cfm_per_w()
     return 122.0 # CFM per Watts
   end
