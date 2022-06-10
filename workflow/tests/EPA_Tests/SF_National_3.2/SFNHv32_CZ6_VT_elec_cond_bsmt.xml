@@ -347,9 +347,9 @@
             <WaterHeaterType>heat pump water heater</WaterHeaterType>
             <Location>living space</Location>
             <IsSharedSystem>false</IsSharedSystem>
+            <TankVolume>60.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <EnergyFactor>0.93</EnergyFactor>
-            <UniformEnergyFactor>0.9</UniformEnergyFactor>
+            <UniformEnergyFactor>2.2</UniformEnergyFactor>
             <FirstHourRating>40.0</FirstHourRating>
           </WaterHeatingSystem>
           <HotWaterDistribution>
