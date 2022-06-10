@@ -204,7 +204,7 @@ class HVAC
 
   def self.apply_ground_to_air_heat_pump(model, runner, weather, heat_pump,
                                          sequential_heat_load_fracs, sequential_cool_load_fracs,
-                                         control_zone)
+                                         control_zone, clg_ssn_sensor)
 
     obj_name = Constants.ObjectNameGroundSourceHeatPump
 
@@ -346,11 +346,7 @@ class HVAC
 
     if heat_pump.is_shared_system
       # Shared pump power per ANSI/RESNET/ICC 301-2019 Section 4.4.5.1 (pump runs 8760)
-      # Ancillary fields do not correctly work so using ElectricEquipment object instead;
-      # Revert when https://github.com/NREL/EnergyPlus/issues/8230 is fixed.
       shared_pump_w = heat_pump.shared_loop_watts / heat_pump.number_of_units_served.to_f
-      # air_loop_unitary.setAncilliaryOffCycleElectricPower(shared_pump_w)
-      # air_loop_unitary.setAncilliaryOnCycleElectricPower(shared_pump_w)
       equip_def = OpenStudio::Model::ElectricEquipmentDefinition.new(model)
       equip_def.setName(Constants.ObjectNameSharedPump(obj_name))
       equip = OpenStudio::Model::ElectricEquipment.new(equip_def)
@@ -362,7 +358,9 @@ class HVAC
       equip_def.setFractionLost(1)
       equip.setSchedule(model.alwaysOnDiscreteSchedule)
       equip.setEndUseSubcategory(equip_def.name.to_s)
-      disaggregate_fan_or_pump(model, equip, htg_coil, clg_coil, htg_supp_coil, heat_pump)
+      # Since pump energy occurs throughout year, use cooling season definition to disaggregate
+      # heating vs cooling for hours where the GSHP is not operating.
+      disaggregate_fan_or_pump(model, equip, htg_coil, clg_coil, htg_supp_coil, heat_pump, clg_ssn_sensor)
     end
 
     # Air Loop
@@ -1390,7 +1388,7 @@ class HVAC
     pump_program_calling_manager.addProgram(pump_program)
   end
 
-  def self.disaggregate_fan_or_pump(model, fan_or_pump, htg_object, clg_object, backup_htg_object, hpxml_object)
+  def self.disaggregate_fan_or_pump(model, fan_or_pump, htg_object, clg_object, backup_htg_object, hpxml_object, clg_ssn_sensor = nil)
     # Disaggregate into heating/cooling output energy use.
 
     sys_id = hpxml_object.id
@@ -1406,6 +1404,7 @@ class HVAC
     end
     fan_or_pump_sensor.setName("#{fan_or_pump.name} s")
     fan_or_pump_sensor.setKeyName(fan_or_pump.name.to_s)
+    fan_or_pump_var = fan_or_pump.name.to_s.gsub(' ', '_')
 
     if clg_object.nil?
       clg_object_sensor = nil
@@ -1459,8 +1458,6 @@ class HVAC
                 'backup_htg' => backup_htg_object_sensor }
     sensors = sensors.select { |_m, s| !s.nil? }
 
-    fan_or_pump_var = fan_or_pump.name.to_s.gsub(' ', '_')
-
     # Disaggregate electric fan/pump energy
     fan_or_pump_program = OpenStudio::Model::EnergyManagementSystemProgram.new(model)
     fan_or_pump_program.setName("#{fan_or_pump_var} disaggregate program")
@@ -1477,14 +1474,15 @@ class HVAC
         fan_or_pump_program.addLine("Set #{fan_or_pump_var}_#{mode} = 0")
       end
       sensors.each_with_index do |(mode, sensor), i|
-        if i == 0
-          fan_or_pump_program.addLine("If #{sensor.name} > 0")
-        elsif i == 2
-          fan_or_pump_program.addLine('Else')
-        else
-          fan_or_pump_program.addLine("ElseIf #{sensor.name} > 0")
-        end
+        str_prefix = (i == 0 ? 'If' : 'ElseIf')
+        fan_or_pump_program.addLine("#{str_prefix} #{sensor.name} > 0")
         fan_or_pump_program.addLine("  Set #{fan_or_pump_var}_#{mode} = #{fan_or_pump_sensor.name}")
+      end
+      if not clg_ssn_sensor.nil?
+        fan_or_pump_program.addLine("ElseIf #{clg_ssn_sensor.name} > 0")
+        fan_or_pump_program.addLine("  Set #{fan_or_pump_var}_clg = #{fan_or_pump_sensor.name}")
+        fan_or_pump_program.addLine('Else')
+        fan_or_pump_program.addLine("  Set #{fan_or_pump_var}_primary_htg = #{fan_or_pump_sensor.name}")
       end
       fan_or_pump_program.addLine('EndIf')
     end
