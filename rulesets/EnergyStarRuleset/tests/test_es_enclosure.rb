@@ -370,12 +370,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
     end
 
     ESConstants.MFVersions.each do |es_version|
-      if es_version == ESConstants.MFNationalVer1_0
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
-      elsif es_version == ESConstants.MFNationalVer1_1
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
-      elsif es_version == ESConstants.MFNationalVer1_2
-        rvalue = 1.0 / 0.024
+      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? es_version
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif es_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue_floors_over_uncond_spaces = 1.0 / 0.028
