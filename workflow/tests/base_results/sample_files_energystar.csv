@@ -120,7 +120,7 @@
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ducted-heating-only.xml,68.0,1.0,68.0,69.0,69.0,FAIL
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ducted.xml,66.0,1.0,66.0,64.0,64.0,PASS
 [SF_National_3.1] base-hvac-mini-split-heat-pump-ductless.xml,66.0,1.0,66.0,57.0,57.0,PASS
-[SF_National_3.1] base-hvac-multiple.xml,68.0,1.0,68.0,114.0,114.0,FAIL
+[SF_National_3.1] base-hvac-multiple.xml,68.0,1.0,68.0,101.0,101.0,FAIL
 [SF_National_3.1] base-hvac-none.xml,78.0,1.0,78.0,84.0,84.0,FAIL
 [SF_National_3.1] base-hvac-portable-heater-gas-only.xml,67.0,1.0,67.0,69.0,69.0,FAIL
 [SF_National_3.1] base-hvac-programmable-thermostat.xml,65.0,1.0,65.0,75.0,75.0,FAIL
@@ -150,7 +150,7 @@
 [SF_National_3.1] base-mechvent-exhaust.xml,65.0,1.0,65.0,79.0,79.0,FAIL
 [SF_National_3.1] base-mechvent-hrv-asre.xml,65.0,1.0,65.0,71.0,71.0,FAIL
 [SF_National_3.1] base-mechvent-hrv.xml,65.0,1.0,65.0,71.0,71.0,FAIL
-[SF_National_3.1] base-mechvent-multiple.xml,65.0,1.0,65.0,87.0,87.0,FAIL
+[SF_National_3.1] base-mechvent-multiple.xml,65.0,1.0,65.0,84.0,84.0,FAIL
 [SF_National_3.1] base-mechvent-supply.xml,65.0,1.0,65.0,78.0,78.0,FAIL
 [SF_National_3.1] base-mechvent-whole-house-fan.xml,65.0,1.0,65.0,77.0,77.0,FAIL
 [SF_National_3.1] base-misc-generators.xml,65.0,1.0,65.0,83.0,83.0,FAIL
@@ -173,7 +173,7 @@
 [MF_National_1.1] base-bldgtype-multifamily-shared-chiller-only-water-loop-heat-pump.xml,80.0,1.0,80.0,78.0,78.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml,74.0,1.0,74.0,66.0,66.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-generator.xml,69.0,1.0,69.0,69.0,69.0,PASS
-[MF_National_1.1] base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml,69.0,1.0,69.0,70.0,70.0,FAIL
+[MF_National_1.1] base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml,69.0,1.0,69.0,71.0,71.0,FAIL
 [MF_National_1.1] base-bldgtype-multifamily-shared-laundry-room.xml,63.0,1.0,63.0,60.0,60.0,PASS
 [MF_National_1.1] base-bldgtype-multifamily-shared-mechvent-preconditioning.xml,69.0,1.0,69.0,70.0,70.0,FAIL
 [MF_National_1.1] base-bldgtype-multifamily-shared-mechvent.xml,69.0,1.0,69.0,66.0,66.0,PASS
