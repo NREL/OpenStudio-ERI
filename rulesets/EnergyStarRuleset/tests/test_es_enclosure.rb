@@ -375,7 +375,6 @@ class EnergyStarEnclosureTest < MiniTest::Test
       elsif es_version == ESConstants.MFNationalVer1_1
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif es_version == ESConstants.MFNationalVer1_2
-        rvalue = 1.0 / 0.024
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif es_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue_floors_over_uncond_spaces = 1.0 / 0.028
