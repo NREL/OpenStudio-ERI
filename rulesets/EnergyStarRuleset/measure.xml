@@ -3,8 +3,8 @@
   <schema_version>3.0</schema_version>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>0aaf93cb-4465-48ce-8973-eec312025058</version_id>
-  <version_modified>20220610T172642Z</version_modified>
+  <version_id>811c0491-9eb2-4ecd-82b7-4b4ef3ca2fa5</version_id>
+  <version_modified>20220613T152238Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -182,7 +182,7 @@
       <filename>test_es_enclosure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>B070B028</checksum>
+      <checksum>C6A93863</checksum>
     </file>
   </files>
 </measure>
