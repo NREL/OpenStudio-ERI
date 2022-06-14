@@ -1255,6 +1255,14 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
       afue = 0.95
     end
 
+    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.20
+    else
+      fan_watts_per_cfm = 0.58
+      airflow_defect_ratio = -0.25
+    end
+
     hpxml.heating_systems.clear
     hpxml.heating_systems.add(id: "HeatingSystem#{hpxml.heating_systems.size + 1}",
                               distribution_system_idref: 'HVACDistribution1',
@@ -1263,8 +1271,8 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               heating_capacity: -1,
                               heating_efficiency_afue: afue,
                               fraction_heat_load_served: 1,
-                              fan_watts_per_cfm: 0.58,
-                              airflow_defect_ratio: -0.25)
+                              fan_watts_per_cfm: fan_watts_per_cfm,
+                              airflow_defect_ratio: airflow_defect_ratio)
   end
 end
 
@@ -1364,10 +1372,34 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
   elsif hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('_elec_')
       return
-    elsif hpxml_file.include?('CZ4') || hpxml_file.include?('CZ6')
-      seer = 13
     elsif hpxml_file.include?('CZ2')
-      seer = 14.5
+      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+        seer = 16
+      else
+        seer = 14.5
+      end
+    elsif hpxml_file.include?('CZ4')
+      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+        seer = 16
+      else
+        seer = 13
+      end
+    elsif hpxml_file.include?('CZ6')
+      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+        seer = 14
+      else
+        seer = 13
+      end
+    end
+
+    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.20
+      charge_defect_ratio = -0.25
+    else
+      fan_watts_per_cfm = 0.58
+      airflow_defect_ratio = -0.25
+      charge_defect_ratio = -0.25
     end
 
     hpxml.cooling_systems.clear
@@ -1378,9 +1410,9 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               cooling_capacity: -1,
                               fraction_cool_load_served: 1,
                               cooling_efficiency_seer: seer,
-                              fan_watts_per_cfm: 0.58,
-                              airflow_defect_ratio: -0.25,
-                              charge_defect_ratio: -0.25)
+                              fan_watts_per_cfm: fan_watts_per_cfm,
+                              airflow_defect_ratio: airflow_defect_ratio,
+                              charge_defect_ratio: charge_defect_ratio)
   end
 end
 
@@ -1472,14 +1504,39 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
     if hpxml_file.include?('_gas_')
       return
     elsif hpxml_file.include?('CZ2')
-      hspf = 8.2
-      seer = 15
+      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+        hspf = 9.2
+        seer = 16
+      else
+        hspf = 8.2
+        seer = 15
+      end
     elsif hpxml_file.include?('CZ4')
-      hspf = 8.5
-      seer = 15
+      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+        hspf = 9.2
+        seer = 16
+      else
+        hspf = 8.5
+        seer = 15
+      end
     elsif hpxml_file.include?('CZ6')
-      hspf = 9.5
-      seer = 14.5
+      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+        hspf = 9.2
+        seer = 16
+      else
+        hspf = 9.5
+        seer = 14.5
+      end
+    end
+
+    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.20
+      charge_defect_ratio = -0.25
+    else
+      fan_watts_per_cfm = 0.58
+      airflow_defect_ratio = -0.25
+      charge_defect_ratio = -0.25
     end
 
     hpxml.heat_pumps.clear
@@ -1497,9 +1554,9 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml)
                          fraction_cool_load_served: 1,
                          heating_efficiency_hspf: hspf,
                          cooling_efficiency_seer: seer,
-                         fan_watts_per_cfm: 0.58,
-                         airflow_defect_ratio: -0.25,
-                         charge_defect_ratio: -0.25)
+                         fan_watts_per_cfm: fan_watts_per_cfm,
+                         airflow_defect_ratio: airflow_defect_ratio,
+                         charge_defect_ratio: charge_defect_ratio)
   end
 end
 
@@ -1978,7 +2035,18 @@ end
 def set_hpxml_clothes_washer(hpxml_file, hpxml)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water') || hpxml_file.include?('EPA_Tests')
 
-  default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
+  if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    default_values = { integrated_modified_energy_factor: 1.57, # ft3/(kWh/cyc)
+                       rated_annual_kwh: 284.0, # kWh/yr
+                       label_electric_rate: 0.12, # $/kWh
+                       label_gas_rate: 1.09, # $/therm
+                       label_annual_gas_cost: 18.0, # $
+                       capacity: 4.2, # ft^3
+                       label_usage: 6.0 } # cyc/week
+  else
+    default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
+  end
+
   hpxml.clothes_washers.clear
   hpxml.clothes_washers.add(id: "ClothesWasher#{hpxml.clothes_washers.size + 1}",
                             is_shared_appliance: false,
@@ -2068,9 +2136,16 @@ end
 def set_hpxml_refrigerator(hpxml_file, hpxml)
   if hpxml_file.include?('EPA_Tests')
     hpxml.refrigerators.clear
+
+    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      rated_annual_kwh = 450.0
+    else
+      rated_annual_kwh = 423.0
+    end
+
     hpxml.refrigerators.add(id: "Refrigerator#{hpxml.refrigerators.size + 1}",
                             location: HPXML::LocationLivingSpace,
-                            rated_annual_kwh: 423.0)
+                            rated_annual_kwh: rated_annual_kwh)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     # Standard
     default_values = HotWaterAndAppliances.get_refrigerator_default_values(hpxml.building_construction.number_of_bedrooms)

@@ -303,8 +303,8 @@
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <extension>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <FanPowerWattsPerCFM>0.52</FanPowerWattsPerCFM>
+                <AirflowDefectRatio>-0.2</AirflowDefectRatio>
               </extension>
             </HeatingSystem>
             <CoolingSystem>
@@ -316,12 +316,12 @@
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Value>16.0</Value>
               </AnnualCoolingEfficiency>
               <extension>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <AirflowDefectRatio>-0.2</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
+                <FanPowerWattsPerCFM>0.52</FanPowerWattsPerCFM>
               </extension>
             </CoolingSystem>
           </HVACPlant>
@@ -419,13 +419,13 @@
           <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
-          <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
-          <RatedAnnualkWh>400.0</RatedAnnualkWh>
+          <IntegratedModifiedEnergyFactor>1.57</IntegratedModifiedEnergyFactor>
+          <RatedAnnualkWh>284.0</RatedAnnualkWh>
           <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
-          <LabelAnnualGasCost>27.0</LabelAnnualGasCost>
+          <LabelAnnualGasCost>18.0</LabelAnnualGasCost>
           <LabelUsage>6.0</LabelUsage>
-          <Capacity>3.0</Capacity>
+          <Capacity>4.2</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
@@ -448,7 +448,7 @@
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
           <Location>living space</Location>
-          <RatedAnnualkWh>423.0</RatedAnnualkWh>
+          <RatedAnnualkWh>450.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
