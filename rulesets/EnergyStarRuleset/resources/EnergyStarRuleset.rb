@@ -85,7 +85,7 @@ class EnergyStarRuleset
 
     @program_version = orig_hpxml.header.energystar_calculation_version
     bldg_type = orig_hpxml.building_construction.residential_facility_type
-    if bldg_type == HPXML::ResidentialTypeSFA
+    if bldg_type == HPXML::ResidentialTypeSFA && (@program_version.include? 'MF')
       begin
         # ESRD configured as SF National v3.X
         ref_design_config_mapping = {
