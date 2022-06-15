@@ -143,36 +143,28 @@ Annual Emissions
 
 Annual emissions are listed below.
 
-Emissions (CO2e, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2e Reference Home.
+Emissions for each emissions type (CO2e, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2e Reference Home.
+Note that rows below with values of zero will be excluded.
 
-   ==========================================  ========
-   Type                                        Notes
-   ==========================================  ========
-   Emissions: CO2e: RESNET: Total (lb)         Sum of the diseggregated fuel values
-   Emissions: CO2e: RESNET: Electricity (lb)
-   Emissions: CO2e: RESNET: Natural Gas (lb)
-   Emissions: CO2e: RESNET: Fuel Oil (lb)
-   Emissions: CO2e: RESNET: Propane (lb)
-   Emissions: CO2e: RESNET: Wood Cord (lb)
-   Emissions: CO2e: RESNET: Wood Pellets (lb)
-   Emissions: CO2e: RESNET: Coal (lb)          Not used by OS-ERI
-   Emissions: NOx: RESNET: Total (lb)          Sum of the diseggregated fuel values
-   Emissions: NOx: RESNET: Electricity (lb)
-   Emissions: NOx: RESNET: Natural Gas (lb)
-   Emissions: NOx: RESNET: Fuel Oil (lb)
-   Emissions: NOx: RESNET: Propane (lb)
-   Emissions: NOx: RESNET: Wood Cord (lb)
-   Emissions: NOx: RESNET: Wood Pellets (lb)
-   Emissions: NOx: RESNET: Coal (lb)           Not used by OS-ERI
-   Emissions: SO2: RESNET: Total (lb)          Sum of the diseggregated fuel values
-   Emissions: SO2: RESNET: Electricity (lb)
-   Emissions: SO2: RESNET: Natural Gas (lb)
-   Emissions: SO2: RESNET: Fuel Oil (lb)
-   Emissions: SO2: RESNET: Propane (lb)
-   Emissions: SO2: RESNET: Wood Cord (lb)
-   Emissions: SO2: RESNET: Wood Pellets (lb)
-   Emissions: SO2: RESNET: Coal (lb)           Not used by OS-ERI
-   ==========================================  ========
+   ===============================================================  ===============================================================
+   Type                                                             Notes
+   ===============================================================  ===============================================================
+   Emissions: <EmissionsType>: RESNET: Total (lb)                   Total emissions
+   Emissions: <EmissionsType>: RESNET: Electricity: Total (lb)      Emissions for Electricity only
+   Emissions: <EmissionsType>: RESNET: Electricity: <EndUse> (lb)   Emissions for this Electricity end use only (one row per end use)
+   Emissions: <EmissionsType>: RESNET: Natural Gas: Total (lb)      Emissions for Natural Gas only
+   Emissions: <EmissionsType>: RESNET: Natural Gas: <EndUse> (lb)   Emissions for this Natural Gas end use only (one row per end use)
+   Emissions: <EmissionsType>: RESNET: Fuel Oil: Total (lb)         Emissions for Fuel Oil only
+   Emissions: <EmissionsType>: RESNET: Fuel Oil: <EndUse> (lb)      Emissions for this Fuel Oil end use only (one row per end use)
+   Emissions: <EmissionsType>: RESNET: Propane: Total (lb)          Emissions for Propane only
+   Emissions: <EmissionsType>: RESNET: Propane: <EndUse> (lb)       Emissions for this Propane end use only (one row per end use)
+   Emissions: <EmissionsType>: RESNET: Wood Cord: Total (lb)        Emissions for Wood Cord only
+   Emissions: <EmissionsType>: RESNET: Wood Cord: <EndUse> (lb)     Emissions for this Wood Cord end use only (one row per end use)
+   Emissions: <EmissionsType>: RESNET: Wood Pellets: Total (lb)     Emissions for Wood Pellets only
+   Emissions: <EmissionsType>: RESNET: Wood Pellets: <EndUse> (lb)  Emissions for this Wood Pellets end use only (one row per end use)
+   Emissions: <EmissionsType>: RESNET: Coal: Total (lb)             Not used by OS-ERI
+   Emissions: <EmissionsType>: RESNET: Coal: <EndUse> (lb)          Not used by OS-ERI
+   ===============================================================  ===============================================================
 
 Annual Building Loads
 ^^^^^^^^^^^^^^^^^^^^^
@@ -293,11 +285,13 @@ Depending on the outputs requested, CSV files may include:
    Total Consumptions                   Energy use for building total.
    Fuel Consumptions                    Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
    End Use Consumptions                 Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
-   Emissions                            Emissions (e.g., CO2e, NOx, SO2), both total and disaggregated by fuel type.
+   Emissions                            Emissions (CO2e, NOx, SO2).
+   Emission Fuels                       Emissions (CO2e, NOx, SO2) disaggregated by fuel type.
+   Emission End Uses                    Emissions (CO2e, NOx, SO2) disaggregated by end use.
    Hot Water Uses                       Water use for each end use type (in gallons).
    Total Loads                          Heating, cooling, and hot water loads (in kBtu) for the building.
    Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
-   Zone Temperatures                    Average temperatures (in deg-F) for each space modeled (e.g., living space, attic, garage, basement, crawlspace, etc.).
+   Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., living space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
    Airflows                             Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
    Weather                              Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
    ===================================  =====

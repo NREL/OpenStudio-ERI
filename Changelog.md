@@ -1,5 +1,11 @@
 ## OpenStudio-ERI v1.5.0
 
+__New Features__
+- Annual/timeseries outputs:
+  - Adds annual emission outputs disaggregated by end use; timeseries emission outputs disaggregated by end use can be requested.
+  - Allows requesting timeseries unmet hours for heating and cooling.
+  - Adds heating/cooling setpoints to timeseries outputs when requesting zone temperatures.
+
 __Bugfixes__
 - Fixes units for Peak Loads (kBtu/hr, not kBtu) in ERI____Home.csv output files.
 - Bugfix for increasing HVAC capacities due to installation grading.

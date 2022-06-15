@@ -14,11 +14,13 @@ def setup_resultsdir(options)
 end
 
 def process_arguments(calling_rb, args, basedir, caller)
-  timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'emissions', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
+  timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'emissions', 'emissionfuels',
+                      'emissionenduses', 'hotwater', 'loads', 'componentloads',
+                      'unmethours', 'temperatures', 'airflows', 'weather']
 
   options = {}
   OptionParser.new do |opts|
-    opts.banner = "Usage: #{calling_rb} -x building.xml\n e.g., #{calling_rb} -x sample_files/base.xml\n"
+    opts.banner = "Usage: #{calling_rb} -x building.xml"
 
     opts.on('-x', '--xml <FILE.xml>', 'HPXML file') do |t|
       options[:hpxml] = t
@@ -29,17 +31,17 @@ def process_arguments(calling_rb, args, basedir, caller)
     end
 
     options[:hourly_outputs] = []
-    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types.join(', ')}); can be called multiple times") do |t|
       options[:hourly_outputs] << t
     end
 
     options[:daily_outputs] = []
-    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types.join(', ')}); can be called multiple times") do |t|
       options[:daily_outputs] << t
     end
 
     options[:monthly_outputs] = []
-    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types.join(', ')}); can be called multiple times") do |t|
       options[:monthly_outputs] << t
     end
 
@@ -69,7 +71,7 @@ def process_arguments(calling_rb, args, basedir, caller)
     end
 
     options[:debug] = false
-    opts.on('-d', '--debug') do |_t|
+    opts.on('-d', '--debug', 'Generate additional debug output/files') do |_t|
       options[:debug] = true
     end
 
