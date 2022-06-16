@@ -612,7 +612,7 @@ def _calculate_co2e_index(rated_output, ref_output, results)
   # Check that CO2e Reference Home doesn't have fossil fuel use.
   ['Natural Gas', 'Fuel Oil', 'Propane',
    'Wood Cord', 'Wood Pellets'].each do |fuel|
-    next if ref_output["Fuel Use: #{fuel}: Total (MBtu)"] == 0
+    next if ref_output["Fuel Use: #{fuel}: Total (MBtu)"].to_f == 0
 
     fail 'CO2e Reference Home found with fossil fuel energy use.'
   end
@@ -626,8 +626,8 @@ def _calculate_co2e_index(rated_output, ref_output, results)
     # emissions factors.
     ['Electricity', 'Natural Gas', 'Fuel Oil',
      'Propane', 'Wood Cord', 'Wood Pellets'].each do |fuel|
-      next unless rated_output["Fuel Use: #{fuel}: Total (MBtu)"] > 0
-      next unless rated_output["Emissions: CO2e: RESNET: #{fuel} (lb)"] == 0
+      next unless rated_output["Fuel Use: #{fuel}: Total (MBtu)"].to_f > 0
+      next unless rated_output["Emissions: CO2e: RESNET: #{fuel}: Total (lb)"].to_f == 0
 
       return results
     end
