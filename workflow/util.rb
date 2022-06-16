@@ -14,11 +14,13 @@ def setup_resultsdir(options)
 end
 
 def process_arguments(calling_rb, args, basedir, caller)
-  timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'emissions', 'hotwater', 'loads', 'componentloads', 'temperatures', 'airflows', 'weather']
+  timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'emissions', 'emissionfuels',
+                      'emissionenduses', 'hotwater', 'loads', 'componentloads',
+                      'unmethours', 'temperatures', 'airflows', 'weather']
 
   options = {}
   OptionParser.new do |opts|
-    opts.banner = "Usage: #{calling_rb} -x building.xml\n e.g., #{calling_rb} -x sample_files/base.xml\n"
+    opts.banner = "Usage: #{calling_rb} -x building.xml"
 
     opts.on('-x', '--xml <FILE.xml>', 'HPXML file') do |t|
       options[:hpxml] = t
@@ -29,17 +31,17 @@ def process_arguments(calling_rb, args, basedir, caller)
     end
 
     options[:hourly_outputs] = []
-    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--hourly TYPE', timeseries_types, "Request hourly output type (#{timeseries_types.join(', ')}); can be called multiple times") do |t|
       options[:hourly_outputs] << t
     end
 
     options[:daily_outputs] = []
-    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--daily TYPE', timeseries_types, "Request daily output type (#{timeseries_types.join(', ')}); can be called multiple times") do |t|
       options[:daily_outputs] << t
     end
 
     options[:monthly_outputs] = []
-    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types[0..5].join(', ')},", "#{timeseries_types[6..-1].join(', ')}); can be called multiple times") do |t|
+    opts.on('--monthly TYPE', timeseries_types, "Request monthly output type (#{timeseries_types.join(', ')}); can be called multiple times") do |t|
       options[:monthly_outputs] << t
     end
 
@@ -69,7 +71,7 @@ def process_arguments(calling_rb, args, basedir, caller)
     end
 
     options[:debug] = false
-    opts.on('-d', '--debug') do |_t|
+    opts.on('-d', '--debug', 'Generate additional debug output/files') do |_t|
       options[:debug] = true
     end
 
@@ -610,7 +612,7 @@ def _calculate_co2e_index(rated_output, ref_output, results)
   # Check that CO2e Reference Home doesn't have fossil fuel use.
   ['Natural Gas', 'Fuel Oil', 'Propane',
    'Wood Cord', 'Wood Pellets'].each do |fuel|
-    next if ref_output["Fuel Use: #{fuel}: Total (MBtu)"] == 0
+    next if ref_output["Fuel Use: #{fuel}: Total (MBtu)"].to_f == 0
 
     fail 'CO2e Reference Home found with fossil fuel energy use.'
   end
@@ -624,8 +626,8 @@ def _calculate_co2e_index(rated_output, ref_output, results)
     # emissions factors.
     ['Electricity', 'Natural Gas', 'Fuel Oil',
      'Propane', 'Wood Cord', 'Wood Pellets'].each do |fuel|
-      next unless rated_output["Fuel Use: #{fuel}: Total (MBtu)"] > 0
-      next unless rated_output["Emissions: CO2e: RESNET: #{fuel} (lb)"] == 0
+      next unless rated_output["Fuel Use: #{fuel}: Total (MBtu)"].to_f > 0
+      next unless rated_output["Emissions: CO2e: RESNET: #{fuel}: Total (lb)"].to_f == 0
 
       return results
     end

@@ -28,7 +28,7 @@ base-bldgtype-multifamily-shared-chiller-only-water-loop-heat-pump.xml,78.06,7.8
 base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml,66.47,7.8,5.71,10.5,12.43,3.82,11.51,4.39,3.19,9.7,0.0,13.08,0.23,79.72,2732.45,3139.71,1.0917
 base-bldgtype-multifamily-shared-generator.xml,69.17,7.8,5.71,10.5,12.47,3.8,11.51,3.0,3.02,9.7,0.0,13.08,0.22951,141.86,4799.78,3099.86,1.0915
 base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml,70.5,7.81,5.72,10.5,6.56,2.96,11.51,2.05,3.54,9.7,0.0,13.08,0.22761,68.02,2299.77,3099.86,1.0907
-base-bldgtype-multifamily-shared-laundry-room.xml,60.41,7.27,6.0,10.49,11.62,3.93,18.26,3.18,2.92,12.54,0.0,13.08,0.22912,106.39,3606.97,3106.6,1.0913
+base-bldgtype-multifamily-shared-laundry-room.xml,60.41,7.27,6.0,10.49,11.62,3.93,18.26,3.18,2.92,12.54,0.0,13.08,0.22912,106.39,3607.0,3106.6,1.0913
 base-bldgtype-multifamily-shared-mechvent-preconditioning.xml,69.86,7.68,5.8,10.5,12.27,3.84,11.51,0.74,3.36,9.69,0.0,14.58,0.22951,85.29,2927.29,3144.39,1.0915
 base-bldgtype-multifamily-shared-mechvent.xml,65.94,7.68,5.8,10.5,12.27,3.84,11.51,2.78,3.03,9.7,0.0,14.58,0.22951,76.08,2610.95,3144.39,1.0915
 base-bldgtype-multifamily-shared-pv.xml,6.06,7.8,5.71,10.5,12.47,3.8,11.51,3.0,3.02,9.7,0.0,13.08,0.22951,24.92,843.06,3099.86,1.0915
