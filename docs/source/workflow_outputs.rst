@@ -42,6 +42,18 @@ The CSV file includes the following sections of output.
 
 A ``CO2eReferenceHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
+Annual Energy Consumption
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Annual energy consumption outputs are listed below.
+
+  ====================================  ===========================
+  Type                                  Notes
+  ====================================  ===========================
+  Energy Use: Total (MBtu)
+  Energy Use: Net (MBtu)                Subtracts any power produced by PV (including any battery storage) or generators.
+  ====================================  ===========================
+
 Annual Energy Consumption by Fuel Type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
