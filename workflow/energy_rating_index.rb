@@ -65,17 +65,13 @@ end
 
 def duplicate_output_files(source_run, dest_run, resultsdir)
   # Duplicate E+ output directory
-  puts "source_run.design_dir #{source_run.design_dir}"
-  puts "dest_run.design_dir #{dest_run.design_dir}"
   FileUtils.cp_r(source_run.design_dir, dest_run.design_dir)
 
   # Duplicate results files
   source_filename = File.basename(source_run.hpxml_out_path, '.xml')
   dest_filename = File.basename(dest_run.hpxml_out_path, '.xml')
-  puts "source_filename #{source_filename}"
-  puts "dest_filename #{dest_filename}"
   Dir["#{resultsdir}/*.*"].each do |results_file|
-    next unless results_file.start_with? source_filename
+    next unless File.basename(results_file).start_with? source_filename
 
     FileUtils.cp(results_file, results_file.gsub(source_filename, dest_filename))
   end
@@ -146,11 +142,9 @@ def run_design_spawn(run, options)
   cli_path = OpenStudio.getOpenStudioCLI
   command = "\"#{cli_path}\" "
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
-  command += "\"#{run.name}\" "
   command += "\"#{run.measures.to_s.gsub('"', '\'')}\" "
   command += "\"#{run.hpxml_in_path}\" "
-  command += "\"#{run.hpxml_out_path}\" "
-  command += "\"#{run.design_dir}\" "
+  command += "\"#{run.output_dir}\" "
   command += "\"#{options[:debug]}\" "
   command += "\"#{options[:timeseries_output_freq]}\" "
   command += "\"#{options[:timeseries_outputs].join('|')}\" "
@@ -802,12 +796,12 @@ def main(options)
 
   if not eri_version.nil?
     # ERI runs
-    runs << DesignRun.new('301EnergyRatingIndexRuleset': Constants.CalcTypeERIRatedHome)
+    runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIRatedHome }, options[:hpxml], options[:output_dir])
     if not options[:rated_home_only]
-      runs << DesignRun.new('301EnergyRatingIndexRuleset': Constants.CalcTypeERIReferenceHome)
+      runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIReferenceHome }, options[:hpxml], options[:output_dir])
       if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
-        runs << DesignRun.new('301EnergyRatingIndexRuleset': Constants.CalcTypeERIIndexAdjustmentDesign)
-        runs << DesignRun.new('301EnergyRatingIndexRuleset': Constants.CalcTypeERIIndexAdjustmentReferenceHome)
+        runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentDesign }, options[:hpxml], options[:output_dir])
+        runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentReferenceHome }, options[:hpxml], options[:output_dir])
       end
       calc_co2e_index = false
       if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD'))
@@ -816,7 +810,7 @@ def main(options)
       if calc_co2e_index
         # All-electric ERI Reference Home
         eri_ref_home_is_electric = is_eri_ref_all_electric(hpxml_doc)
-        co2_ref_home_run = DesignRun.new('301EnergyRatingIndexRuleset': Constants.CalcTypeCO2eReferenceHome)
+        co2_ref_home_run = DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeCO2eReferenceHome }, options[:hpxml], options[:output_dir])
         if not eri_ref_home_is_electric
           # Additional CO2e Reference Home run only needed if different than ERI Reference Home
           runs << co2_ref_home_run
@@ -826,28 +820,14 @@ def main(options)
   end
   if not es_version.nil?
     # ENERGY STAR runs
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarReference,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIRatedHome)
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarReference,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIReferenceHome)
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarReference,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIIndexAdjustmentDesign)
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarReference,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarRated,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIRatedHome)
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarRated,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIReferenceHome)
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarRated,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIIndexAdjustmentDesign)
-    runs << DesignRun.new('EnergyStarRuleset': ESConstants.CalcTypeEnergyStarRated,
-                          '301EnergyRatingIndexRuleset': Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-  end
-  runs.each do |r|
-    r.hpxml_in_path = options[:hpxml]
-    r.design_dir = File.join(options[:output_dir], r.name)
-    r.hpxml_out_path = File.join(options[:output_dir], 'results', "#{r.name}.xml")
-    r.csv_output_path = File.join(options[:output_dir], 'results', "#{r.name}.csv")
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIRatedHome }, options[:hpxml], options[:output_dir])
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIReferenceHome }, options[:hpxml], options[:output_dir])
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentDesign }, options[:hpxml], options[:output_dir])
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentReferenceHome }, options[:hpxml], options[:output_dir])
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIRatedHome }, options[:hpxml], options[:output_dir])
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIReferenceHome }, options[:hpxml], options[:output_dir])
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentDesign }, options[:hpxml], options[:output_dir])
+    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentReferenceHome }, options[:hpxml], options[:output_dir])
   end
 
   run_simulations(runs, options)
@@ -872,7 +852,6 @@ def main(options)
           eri_outputs[Constants.CalcTypeCO2eReferenceHome] = eri_outputs[Constants.CalcTypeERIReferenceHome].dup
 
           # Duplicate output files too
-          # FIXME
           eri_ref_home_run = eri_runs.select { |r| r.measures['301EnergyRatingIndexRuleset'] == Constants.CalcTypeERIReferenceHome }[0]
           duplicate_output_files(eri_ref_home_run, co2_ref_home_run, resultsdir)
         end

@@ -5,20 +5,24 @@
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
 class DesignRun
-  def initialize(**kwargs)
+  def initialize(measures, hpxml_in_path, output_dir)
     @measures = {}
     @name = ''
     @eri_name = ''
-    kwargs.each do |k, v|
-      k = k.to_s
-      @measures[k] = v
+    measures.each do |measure_name, calc_type|
+      @measures[measure_name] = calc_type
       @name += '_' unless @name.empty?
-      @name += v.gsub(' ', '')
-      @eri_name = v if k == '301EnergyRatingIndexRuleset'
+      @name += calc_type.gsub(' ', '')
+      @eri_name = calc_type if measure_name == '301EnergyRatingIndexRuleset'
     end
+    @hpxml_in_path = hpxml_in_path
+    @design_dir = File.join(output_dir, @name)
+    @hpxml_out_path = File.join(output_dir, 'results', "#{@name}.xml")
+    @csv_output_path = File.join(output_dir, 'results', "#{@name}.csv")
+    @output_dir = output_dir
   end
-  attr_accessor(:name, :measures, :eri_name,
-                :hpxml_in_path, :design_dir, :hpxml_out_path, :csv_output_path)
+  attr_accessor(:name, :measures, :hpxml_in_path, :output_dir, :eri_name,
+                :design_dir, :hpxml_out_path, :csv_output_path)
 end
 
 def run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
@@ -77,17 +81,12 @@ def run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_
                                                              run_measures_only: skip_simulation)
 end
 
-if ARGV.size == 10
-  run = DesignRun.new
-  run.name = ARGV[0]
-  run.measures = eval(ARGV[1])
-  run.hpxml_in_path = ARGV[2]
-  run.hpxml_out_path = ARGV[3]
-  run.design_dir = ARGV[4]
-  debug = (ARGV[5].downcase.to_s == 'true')
-  timeseries_output_freq = ARGV[6]
-  timeseries_outputs = ARGV[7].split('|')
-  add_comp_loads = (ARGV[8].downcase.to_s == 'true')
-  skip_simulation = (ARGV[9].downcase.to_s == 'true')
+if ARGV.size == 8
+  run = DesignRun.new(eval(ARGV[0]), ARGV[1], ARGV[2])
+  debug = (ARGV[3].downcase.to_s == 'true')
+  timeseries_output_freq = ARGV[4]
+  timeseries_outputs = ARGV[5].split('|')
+  add_comp_loads = (ARGV[6].downcase.to_s == 'true')
+  skip_simulation = (ARGV[7].downcase.to_s == 'true')
   run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
 end
