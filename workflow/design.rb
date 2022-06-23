@@ -4,35 +4,48 @@
 
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
-def get_design_dir(run)
-  return File.join(run[2], run[0].gsub(' ', ''))
-end
-
-def get_output_filename(run, file_suffix = '.xml')
-  return File.join(run[3], run[0].gsub(' ', '') + file_suffix)
+class DesignRun
+  def initialize(**kwargs)
+    @measures = {}
+    @name = ''
+    @eri_name = ''
+    kwargs.each do |k, v|
+      k = k.to_s
+      @measures[k] = v
+      @name += '_' unless @name.empty?
+      @name += v.gsub(' ', '')
+      @eri_name = v if k == '301EnergyRatingIndexRuleset'
+    end
+  end
+  attr_accessor(:name, :measures, :eri_name,
+                :hpxml_in_path, :design_dir, :hpxml_out_path, :csv_output_path)
 end
 
 def run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
   measures_dir = File.join(File.dirname(__FILE__), '..')
-  designdir = get_design_dir(run)
-  output_hpxml = get_output_filename(run)
 
   measures = {}
 
-  # Add 301 measure to workflow
-  measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
-  args = {}
-  args['calc_type'] = run[0]
-  args['hpxml_input_path'] = run[1]
-  args['hpxml_output_path'] = output_hpxml
-  update_args_hash(measures, measure_subdir, args)
+  input_hpxml = run.hpxml_in_path
+  output_hpxml = run.hpxml_out_path
+
+  run.measures.each do |measure_name, calc_type|
+    # Add ruleset measure to workflow
+    measure_subdir = "rulesets/#{measure_name}"
+    args = {}
+    args['calc_type'] = calc_type
+    args['hpxml_input_path'] = input_hpxml
+    args['hpxml_output_path'] = output_hpxml
+    update_args_hash(measures, measure_subdir, args)
+    input_hpxml = output_hpxml # Output of last measure is input for new next measure
+  end
 
   if not skip_simulation
     # Add OS-HPXML translator measure to workflow
     measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
     args = {}
     args['hpxml_path'] = output_hpxml
-    args['output_dir'] = File.absolute_path(designdir)
+    args['output_dir'] = File.absolute_path(run.design_dir)
     args['debug'] = debug
     args['add_component_loads'] = (add_comp_loads || timeseries_outputs.include?('componentloads'))
     args['skip_validation'] = !debug
@@ -58,18 +71,23 @@ def run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_
     update_args_hash(measures, measure_subdir, args)
   end
 
-  print_prefix = "[#{run[0]}] "
+  print_prefix = "[#{run.name}] "
 
-  run_hpxml_workflow(designdir, measures, measures_dir, debug: debug, print_prefix: print_prefix,
-                                                        run_measures_only: skip_simulation)
+  run_hpxml_workflow(run.design_dir, measures, measures_dir, debug: debug, print_prefix: print_prefix,
+                                                             run_measures_only: skip_simulation)
 end
 
-if ARGV.size == 6
-  run = ARGV[0].split('|').map { |x| (x.length == 0 ? nil : x) }
-  debug = (ARGV[1].downcase.to_s == 'true')
-  timeseries_output_freq = ARGV[2]
-  timeseries_outputs = ARGV[3].split('|')
-  add_comp_loads = (ARGV[4].downcase.to_s == 'true')
-  skip_simulation = (ARGV[5].downcase.to_s == 'true')
+if ARGV.size == 10
+  run = DesignRun.new
+  run.name = ARGV[0]
+  run.measures = eval(ARGV[1])
+  run.hpxml_in_path = ARGV[2]
+  run.hpxml_out_path = ARGV[3]
+  run.design_dir = ARGV[4]
+  debug = (ARGV[5].downcase.to_s == 'true')
+  timeseries_output_freq = ARGV[6]
+  timeseries_outputs = ARGV[7].split('|')
+  add_comp_loads = (ARGV[8].downcase.to_s == 'true')
+  skip_simulation = (ARGV[9].downcase.to_s == 'true')
   run_design(run, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, skip_simulation)
 end

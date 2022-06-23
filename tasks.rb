@@ -2544,7 +2544,7 @@ def create_sample_hpxmls
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
   end
 
-  # ENERGY STAR Oregon/Washington MF file
+  # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-multifamily.xml')
   hpxml.header.energystar_calculation_version = ESConstants.MFOregonWashingtonVer1_2
   hpxml.climate_and_risk_zones.iecc_zone = '4C'
