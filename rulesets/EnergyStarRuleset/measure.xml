@@ -4,8 +4,8 @@
   <error>Unable to extract OpenStudio::Measure::OSMeasure object from /mnt/c/git/openstudio-eri/rulesets/EnergyStarRuleset/measure.rb. The script should contain a class that derives from OpenStudio::Measure::OSMeasure and should close with a line stating the class name followed by .new.registerWithApplication.</error>
   <name>energy_star_measure</name>
   <uid>cd245684-9633-49dd-9eae-d5ccfa972bab</uid>
-  <version_id>7b09d4f6-be98-4d1e-8a61-845f85aa01f0</version_id>
-  <version_modified>20220609T035730Z</version_modified>
+  <version_id>8c5c4ae5-0e62-44b9-b73e-dde84958a7e0</version_id>
+  <version_modified>20220624T194305Z</version_modified>
   <xml_checksum>48718AE9</xml_checksum>
   <class_name>EnergyStarMeasure</class_name>
   <display_name>Apply ENERGY STAR Ruleset</display_name>
@@ -157,17 +157,6 @@
       <checksum>C829AD5C</checksum>
     </file>
     <file>
-      <version>
-        <software_program>OpenStudio</software_program>
-        <identifier>2.1.1</identifier>
-        <min_compatible>2.1.1</min_compatible>
-      </version>
-      <filename>measure.rb</filename>
-      <filetype>rb</filetype>
-      <usage_type>script</usage_type>
-      <checksum>7B22697D</checksum>
-    </file>
-    <file>
       <filename>test_es_lighting.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
@@ -196,6 +185,17 @@
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
       <checksum>AD7446A1</checksum>
+    </file>
+    <file>
+      <version>
+        <software_program>OpenStudio</software_program>
+        <identifier>2.1.1</identifier>
+        <min_compatible>2.1.1</min_compatible>
+      </version>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>AF80FEE1</checksum>
     </file>
   </files>
 </measure>
