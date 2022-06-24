@@ -204,8 +204,8 @@ def create_test_hpxmls
       XMLHelper.write_file(hpxml_doc, hpxml_path)
 
       # Validate file against HPXML schema
-      schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
-      errors = XMLHelper.validate(hpxml_doc.to_s, File.join(schemas_dir, 'HPXML.xsd'), nil)
+      xsd_path = File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+      errors, _ = XMLValidator.validate_against_schema(hpxml_path, xsd_path)
       if errors.size > 0
         fail errors.to_s
       end
@@ -2581,6 +2581,7 @@ if ARGV[0].to_sym == :update_measures
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
+  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
   require_relative 'rulesets/EnergyStarRuleset/resources/constants'
 
   # Prevent NREL error regarding U: drive when not VPNed in

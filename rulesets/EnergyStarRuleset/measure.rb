@@ -8,9 +8,9 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/validator'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 require_relative 'resources/EnergyStarRuleset'
 require_relative 'resources/constants'
 
@@ -80,12 +80,11 @@ class EnergyStarMeasure < OpenStudio::Measure::ModelMeasure
     end
 
     begin
-      stron_paths = []
       if calc_type == ESConstants.CalcTypeEnergyStarRated # Only need to validate once
-        stron_paths << File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
-        stron_paths << File.join(File.dirname(__FILE__), '..', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
+        xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
+        stron_path = File.join(File.dirname(__FILE__), '..', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
       end
-      orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
+      orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_path: xsd_path, schematron_path: stron_path)
       orig_hpxml.errors.each do |error|
         runner.registerError(error)
       end
