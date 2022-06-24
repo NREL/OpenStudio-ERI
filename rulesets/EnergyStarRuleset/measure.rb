@@ -16,6 +16,8 @@ require_relative 'resources/constants'
 
 # start the measure
 class EnergyStarMeasure < OpenStudio::Measure::ModelMeasure
+  attr_accessor(:orig_hpxml, :new_hpxml)
+
   # human readable name
   def name
     return 'Apply ENERGY STAR Ruleset'
@@ -85,21 +87,21 @@ class EnergyStarMeasure < OpenStudio::Measure::ModelMeasure
         stron_paths << File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
         stron_paths << File.join(File.dirname(__FILE__), '..', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
       end
-      orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
-      orig_hpxml.errors.each do |error|
+      @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
+      @orig_hpxml.errors.each do |error|
         runner.registerError(error)
       end
-      orig_hpxml.warnings.each do |warning|
+      @orig_hpxml.warnings.each do |warning|
         runner.registerWarning(warning)
       end
-      return false unless orig_hpxml.errors.empty?
+      return false unless @orig_hpxml.errors.empty?
 
       # Apply ENERGY STAR ruleset on HPXML object
-      new_hpxml = EnergyStarRuleset.apply_ruleset(orig_hpxml, calc_type)
+      @new_hpxml = EnergyStarRuleset.apply_ruleset(@orig_hpxml, calc_type)
 
       # Write new HPXML file
       if hpxml_output_path.is_initialized
-        XMLHelper.write_file(new_hpxml.to_oga, hpxml_output_path.get)
+        XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
         runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
       end
     rescue Exception => e

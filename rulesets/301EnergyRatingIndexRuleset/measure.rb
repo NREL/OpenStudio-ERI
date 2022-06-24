@@ -28,6 +28,8 @@ require_relative 'resources/301'
 
 # start the measure
 class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
+  attr_accessor(:orig_hpxml, :new_hpxml)
+
   # human readable name
   def name
     return 'Apply Energy Rating Index Ruleset'
@@ -100,17 +102,17 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
         stron_paths << File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
         stron_paths << File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
       end
-      orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
-      orig_hpxml.errors.each do |error|
+      @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
+      @orig_hpxml.errors.each do |error|
         runner.registerError(error)
       end
-      orig_hpxml.warnings.each do |warning|
+      @orig_hpxml.warnings.each do |warning|
         runner.registerWarning(warning)
       end
-      return false unless orig_hpxml.errors.empty?
+      return false unless @orig_hpxml.errors.empty?
 
       # Weather file
-      epw_path = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
+      epw_path = @orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
       if not File.exist? epw_path
         test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
         epw_path = test_epw_path if File.exist? test_epw_path
@@ -133,11 +135,11 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       weather = WeatherProcess.new(nil, nil, cache_path)
 
       # Apply 301 ruleset on HPXML object
-      new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, orig_hpxml, calc_type, weather)
+      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, @orig_hpxml, calc_type, weather)
 
       # Write new HPXML file
       if hpxml_output_path.is_initialized
-        XMLHelper.write_file(new_hpxml.to_oga, hpxml_output_path.get)
+        XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
         runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
       end
     rescue Exception => e
