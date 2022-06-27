@@ -27,6 +27,13 @@ Rake::TestTask.new('test_eri') do |t|
   t.verbose = true
 end
 
+desc 'Run Real Home tests'
+Rake::TestTask.new('test_real_homes') do |t|
+  t.test_files = Dir['workflow/tests/real_homes_test.rb']
+  t.warning = false
+  t.verbose = true
+end
+
 desc 'Run RESNET tests'
 Rake::TestTask.new('test_resnet') do |t|
   t.test_files = Dir['workflow/tests/resnet_test.rb']
