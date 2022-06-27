@@ -81,24 +81,32 @@ class EnergyStarMeasure < OpenStudio::Measure::ModelMeasure
       return false
     end
 
-    stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml'),
-                   File.join(File.dirname(__FILE__), '..', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')]
-    @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
-    @orig_hpxml.errors.each do |error|
-      runner.registerError(error)
-    end
-    @orig_hpxml.warnings.each do |warning|
-      runner.registerWarning(warning)
-    end
-    return false unless @orig_hpxml.errors.empty?
+    begin
+      stron_paths = []
+      if calc_type == ESConstants.CalcTypeEnergyStarRated # Only need to validate once
+        stron_paths << File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
+        stron_paths << File.join(File.dirname(__FILE__), '..', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
+      end
+      @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
+      @orig_hpxml.errors.each do |error|
+        runner.registerError(error)
+      end
+      @orig_hpxml.warnings.each do |warning|
+        runner.registerWarning(warning)
+      end
+      return false unless @orig_hpxml.errors.empty?
 
-    # Apply ENERGY STAR ruleset on HPXML object
-    @new_hpxml = EnergyStarRuleset.apply_ruleset(@orig_hpxml, calc_type)
+      # Apply ENERGY STAR ruleset on HPXML object
+      @new_hpxml = EnergyStarRuleset.apply_ruleset(@orig_hpxml, calc_type)
 
-    # Write new HPXML file
-    if hpxml_output_path.is_initialized
-      XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
-      runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
+      # Write new HPXML file
+      if hpxml_output_path.is_initialized
+        XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
+        runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
+      end
+    rescue Exception => e
+      runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
+      return false
     end
 
     return true

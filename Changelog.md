@@ -10,6 +10,7 @@ __Bugfixes__
 - Fixes units for Peak Loads (kBtu/hr, not kBtu) in ERI____Home.csv output files.
 - Bugfix for increasing HVAC capacities due to installation grading.
 - Fixes possible output error for ground source heat pumps with a shared hydronic circulation loop.
+- Fixes zero energy use for a ventilation fan w/ non-zero fan power and zero airflow rate.
 
 ## OpenStudio-ERI v1.4.1
 
