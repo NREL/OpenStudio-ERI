@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
+
 def _run_ruleset(design, xml, out_xml)
   model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
@@ -159,9 +161,17 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     end
 
     # Check HPXMLs are valid
-    _test_schema_validation(xml)
+    xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+    stron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
     hpxmls.keys.each do |k|
-      _test_schema_validation(hpxmls[k])
+      hpxml = HPXML.new(hpxml_path: hpxmls[k], schema_path: xsd_path, schematron_path: stron_path) # Validate in.xml to ensure it can be run back through OS-HPXML
+      next unless not hpxml.errors.empty?
+
+      puts 'ERRORS:'
+      hpxml.errors.each do |error|
+        puts error
+      end
+      flunk "EPvalidator.xml error in #{hpxmls[k]}."
     end
 
     # Check run.log for OS warnings
@@ -248,17 +258,6 @@ def _get_csv_results(csv1, csv2 = nil)
   end
 
   return results
-end
-
-def _test_schema_validation(xml)
-  # TODO: Remove this when schema validation is included with CLI calls
-  schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
-  hpxml_doc = XMLHelper.parse_file(xml)
-  errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
-  if errors.size > 0
-    puts "#{xml}: #{errors}"
-  end
-  assert_equal(0, errors.size)
 end
 
 def _rm_path(path)
