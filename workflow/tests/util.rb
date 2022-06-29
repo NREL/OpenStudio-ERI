@@ -164,6 +164,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
     stron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
     hpxmls.keys.each do |k|
+      next if hpxmls[k].include?('ESReference.xml') or hpxmls[k].include?('ESRated.xml')
       hpxml = HPXML.new(hpxml_path: hpxmls[k], schema_path: xsd_path, schematron_path: stron_path) # Validate in.xml to ensure it can be run back through OS-HPXML
       next unless not hpxml.errors.empty?
 
