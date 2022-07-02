@@ -1184,9 +1184,6 @@ class ReportSimulationOutputTest < MiniTest::Test
     assert(!File.exist?(timeseries_csv))
     actual_annual_rows = File.readlines(annual_csv).map { |x| x.split(',')[0].strip }.select { |x| !x.empty? }
     assert(actual_annual_rows.include? 'ERI: Building: CFA')
-
-    # Cleanup
-    File.delete(annual_csv)
   end
 
   def test_for_unsuccessful_simulation_infinity
@@ -1239,15 +1236,9 @@ class ReportSimulationOutputTest < MiniTest::Test
     # Cleanup
     File.delete(osw_path)
 
-    if args_hash['generate_eri_outputs']
-      annual_csv = args_hash['hpxml_path'].gsub('.xml', '.csv')
-      timeseries_csv = args_hash['hpxml_path'].gsub('.xml', '_Hourly.csv')
-      run_log = File.join(File.dirname(args_hash['hpxml_path']), 'run.log')
-    else
-      annual_csv = File.join(File.dirname(template_osw), 'run', 'results_annual.csv')
-      timeseries_csv = File.join(File.dirname(template_osw), 'run', 'results_timeseries.csv')
-      run_log = File.join(File.dirname(template_osw), 'run', 'run.log')
-    end
+    annual_csv = File.join(File.dirname(template_osw), 'run', 'results_annual.csv')
+    timeseries_csv = File.join(File.dirname(template_osw), 'run', 'results_timeseries.csv')
+    run_log = File.join(File.dirname(template_osw), 'run', 'run.log')
     return annual_csv, timeseries_csv, run_log
   end
 

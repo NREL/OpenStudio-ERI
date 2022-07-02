@@ -496,7 +496,6 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
     output_dir = File.dirname(runner.lastEpwFilePath.get.to_s)
 
-    hpxml_path = @model.getBuilding.additionalProperties.getFeatureAsString('hpxml_path').get
     hpxml_defaults_path = @model.getBuilding.additionalProperties.getFeatureAsString('hpxml_defaults_path').get
     building_id = @model.getBuilding.additionalProperties.getFeatureAsString('building_id').get
     @hpxml = HPXML.new(hpxml_path: hpxml_defaults_path, building_id: building_id)
@@ -519,23 +518,15 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
     end
 
     # Set paths
-    if generate_eri_outputs
-      # ERI run, store files in a particular location
-      output_dir = File.dirname(hpxml_path)
-      hpxml_name = File.basename(hpxml_path).gsub('.xml', '')
-      annual_output_path = File.join(output_dir, "#{hpxml_name}.#{output_format}")
-      timeseries_output_path = File.join(output_dir, "#{hpxml_name}_#{timeseries_frequency.capitalize}.#{output_format}")
+    if annual_output_file_name.is_initialized
+      annual_output_path = File.join(output_dir, annual_output_file_name.get)
     else
-      if annual_output_file_name.is_initialized
-        annual_output_path = File.join(output_dir, annual_output_file_name.get)
-      else
-        annual_output_path = File.join(output_dir, "results_annual.#{output_format}")
-      end
-      if timeseries_output_file_name.is_initialized
-        timeseries_output_path = File.join(output_dir, timeseries_output_file_name.get)
-      else
-        timeseries_output_path = File.join(output_dir, "results_timeseries.#{output_format}")
-      end
+      annual_output_path = File.join(output_dir, "results_annual.#{output_format}")
+    end
+    if timeseries_output_file_name.is_initialized
+      timeseries_output_path = File.join(output_dir, timeseries_output_file_name.get)
+    else
+      timeseries_output_path = File.join(output_dir, "results_timeseries.#{output_format}")
     end
 
     if timeseries_frequency != 'none'
