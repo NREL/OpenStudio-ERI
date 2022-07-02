@@ -50,7 +50,7 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
 
   calc_type = designs.map { |d| d.calc_type }.join(',')
   init_calc_type = designs.map { |d| d.init_calc_type.to_s }.join(',')
-  hpxml_output_paths = designs.map { |d| d.hpxml_output_path }.join(',')
+  hpxml_output_path = designs.map { |d| d.hpxml_output_path }.join(',')
 
   # Call 301EnergyRatingIndexRuleset measure
   measures = {}
@@ -60,7 +60,7 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
   args['init_calc_type'] = init_calc_type
   args['calc_type'] = calc_type
   args['hpxml_input_path'] = options[:hpxml]
-  args['hpxml_output_paths'] = hpxml_output_paths
+  args['hpxml_output_path'] = hpxml_output_path
   update_args_hash(measures, measure_subdir, args)
 
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)

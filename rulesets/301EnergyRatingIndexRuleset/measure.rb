@@ -64,7 +64,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     arg.setDisplayName('ERI Calculation Type(s)')
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument('hpxml_output_paths', false)
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('hpxml_output_path', false)
     arg.setDisplayName('HPXML Output File Path(s)')
     arg.setDescription('Absolute (or relative) path of the output HPXML file.')
     args << arg
@@ -85,14 +85,14 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     hpxml_input_path = runner.getStringArgumentValue('hpxml_input_path', user_arguments)
     calc_type = runner.getOptionalStringArgumentValue('calc_type', user_arguments).to_s.split(',')
     init_calc_type = runner.getOptionalStringArgumentValue('init_calc_type', user_arguments).to_s.split(',')
-    hpxml_output_paths = runner.getOptionalStringArgumentValue('hpxml_output_paths', user_arguments).to_s.split(',')
+    hpxml_output_path = runner.getOptionalStringArgumentValue('hpxml_output_path', user_arguments).to_s.split(',')
 
-    num_designs = [calc_type.size, init_calc_type.size, hpxml_output_paths.size].max
+    num_designs = [calc_type.size, init_calc_type.size, hpxml_output_path.size].max
     calc_type = [nil] * num_designs if calc_type.empty?
     init_calc_type = [nil] * num_designs if init_calc_type.empty?
-    hpxml_output_paths = [nil] * num_designs if hpxml_output_paths.empty?
+    hpxml_output_path = [nil] * num_designs if hpxml_output_path.empty?
 
-    if calc_type.size != init_calc_type.size || calc_type.size != hpxml_output_paths.size
+    if calc_type.size != init_calc_type.size || calc_type.size != hpxml_output_path.size
       fail 'Unexpected measure arguments.'
     end
 
@@ -140,18 +140,20 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       # Obtain weather object
       weather = WeatherProcess.new(nil, nil, cache_path)
 
-      # Obtain egrid subregion & cambium gea region
       eri_version = @orig_hpxml.header.eri_calculation_version
       eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
-      egrid_subregion = get_epa_egrid_subregion(runner, @orig_hpxml)
-      if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
-        cambium_gea = get_cambium_gea_region(runner, @orig_hpxml)
+      if not eri_version.nil?
+        # Obtain egrid subregion & cambium gea region
+        egrid_subregion = get_epa_egrid_subregion(runner, @orig_hpxml)
+        if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
+          cambium_gea = get_cambium_gea_region(runner, @orig_hpxml)
+        end
       end
 
       create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
       new_hpxmls = {}
-      calc_type.zip(init_calc_type, hpxml_output_paths).each do |this_calc_type, this_init_calc_type, hpxml_output_path|
+      calc_type.zip(init_calc_type, hpxml_output_path).each do |this_calc_type, this_init_calc_type, hpxml_output_path|
         # Ensure we don't modify the original HPXML
         @new_hpxml = Marshal.load(Marshal.dump(@orig_hpxml))
 

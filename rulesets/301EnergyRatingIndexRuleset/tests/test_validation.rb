@@ -5,7 +5,7 @@ require 'openstudio'
 require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
-require_relative '../resources/constants.rb'
+require_relative '../resources/ESconstants.rb'
 
 class ERI301ValidationTest < MiniTest::Test
   def setup
