@@ -2581,7 +2581,7 @@ if ARGV[0].to_sym == :update_measures
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-  require_relative 'rulesets/301EnergyRatingIndexRuleset/resources/ESconstants'
+  require_relative 'rulesets/301EnergyRatingIndexRuleset/resources/constants'
 
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')

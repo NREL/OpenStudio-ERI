@@ -12,8 +12,8 @@ require 'fileutils'
 require 'parallel'
 require 'oga'
 require_relative 'design.rb'
-require_relative '../rulesets/301EnergyRatingIndexRuleset/resources/ESconstants'
-require_relative '../rulesets/301EnergyRatingIndexRuleset/resources/util'
+require_relative 'util.rb'
+require_relative '../rulesets/301EnergyRatingIndexRuleset/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/version'
@@ -31,14 +31,8 @@ def get_program_versions(hpxml_doc)
   { eri_version => [Constants.ERIVersions, 'ERICalculation/Version'],
     es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] }.each do |version, values|
     all_versions, xpath = values
-    if (not version.nil?)
-      if not all_versions.include?(version)
-        fail "Unexpected #{xpath}: '#{version}'."
-      end
-
-      puts "#{xpath}: #{version}"
-    else
-      puts "#{xpath}: None"
+    if (not version.nil?) && (not all_versions.include? version)
+      fail "Unexpected #{xpath}: '#{version}'."
     end
   end
 
@@ -87,7 +81,7 @@ def run_simulations(designs, options, duplicates)
   # Down-select to unique designs that need to be simulated
   unique_designs = designs.select { |d| !duplicates.keys.include?(d.hpxml_output_path) }
 
-  puts "Running #{unique_designs.size} Unique HPXMLs..."
+  puts "Running #{unique_designs.size} Simulations..."
 
   # Run simulations
   if Process.respond_to?(:fork) # e.g., most Unix systems
@@ -99,8 +93,8 @@ def run_simulations(designs, options, duplicates)
       raise Parallel::Kill
     end
 
-    Parallel.map_with_index(unique_designs, in_processes: unique_designs.size) do |design, i|
-      designdir = run_design_direct(design, options, i + 1, unique_designs.size)
+    Parallel.map(unique_designs, in_processes: unique_designs.size) do |design|
+      designdir = run_design_direct(design, options)
       kill unless File.exist? File.join(designdir, 'eplusout.end')
     end
 
@@ -119,8 +113,8 @@ def run_simulations(designs, options, duplicates)
     end
 
     pids = {}
-    Parallel.map_with_index(unique_designs, in_threads: unique_designs.size) do |design, i|
-      designdir, pids[design] = run_design_spawn(design, options, i + 1, unique_designs.size)
+    Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
+      designdir, pids[design] = run_design_spawn(design, options)
       Process.wait pids[design]
 
       if not File.exist? File.join(designdir, 'eplusout.end')
@@ -151,16 +145,16 @@ def duplicate_output_files(duplicates, designs, resultsdir)
   end
 end
 
-def run_design_direct(design, options, design_num, num_designs)
+def run_design_direct(design, options)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   run_design(design, options[:debug], options[:timeseries_output_freq], options[:timeseries_outputs],
-             options[:add_comp_loads], design_num, num_designs)
+             options[:add_comp_loads])
 
   return design.design_dir
 end
 
-def run_design_spawn(design, options, design_num, num_designs)
+def run_design_spawn(design, options)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -176,8 +170,6 @@ def run_design_spawn(design, options, design_num, num_designs)
   command += "\"#{options[:timeseries_output_freq]}\" "
   command += "\"#{options[:timeseries_outputs].join('|')}\" "
   command += "\"#{options[:add_comp_loads]}\" "
-  command += "\"#{design_num}\" "
-  command += "\"#{num_designs}\" "
   pid = Process.spawn(command)
 
   return design.design_dir, pid

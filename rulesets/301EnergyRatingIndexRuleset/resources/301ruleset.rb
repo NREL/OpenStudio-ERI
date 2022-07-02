@@ -31,7 +31,6 @@ class EnergyRatingIndex301Ruleset
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
-    hpxml.header.eri_design = 'TRUE' # FIXME
 
     return hpxml
   end

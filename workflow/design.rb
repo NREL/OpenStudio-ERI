@@ -21,8 +21,7 @@ class Design
                 :output_dir, :design_dir)
 end
 
-def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads,
-               design_num, num_designs)
+def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
   measures_dir = File.join(File.dirname(__FILE__), '..')
 
   measures = {}
@@ -54,14 +53,14 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['include_timeseries_zone_temperatures'] = timeseries_outputs.include? 'temperatures'
   args['include_timeseries_airflows'] = timeseries_outputs.include? 'airflows'
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
+  args['generate_eri_outputs'] = true
   update_args_hash(measures, measure_subdir, args)
 
-  print "[#{design_num}/#{num_designs}] Running #{File.basename(design.hpxml_output_path)}...\n"
   run_hpxml_workflow(design.design_dir, measures, measures_dir, debug: debug,
                                                                 suppress_print: true)
 end
 
-if ARGV.size == 9
+if ARGV.size == 7
   calc_type = ARGV[0]
   init_calc_type = (ARGV[1].empty? ? nil : ARGV[1])
   output_dir = ARGV[2]
@@ -70,8 +69,5 @@ if ARGV.size == 9
   timeseries_output_freq = ARGV[4]
   timeseries_outputs = ARGV[5].split('|')
   add_comp_loads = (ARGV[6].downcase.to_s == 'true')
-  design_num = ARGV[7].to_i
-  num_designs = ARGV[8].to_i
-  run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads,
-             design_num, num_designs)
+  run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
 end

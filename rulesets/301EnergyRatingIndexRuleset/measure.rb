@@ -26,7 +26,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative 'resources/301ruleset'
 require_relative 'resources/ESruleset'
-require_relative 'resources/ESconstants' # FIXME
+require_relative 'resources/constants'
 
 # start the measure
 class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
