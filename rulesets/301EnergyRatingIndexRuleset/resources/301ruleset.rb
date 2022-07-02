@@ -27,7 +27,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(hpxml, @eri_version, @weather, convert_shared_systems: false)
+    HPXMLDefaults.apply(runner, hpxml, @eri_version, @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
