@@ -7,7 +7,7 @@ require_relative '../measure.rb'
 require 'fileutils'
 require_relative 'util'
 
-class EnergyStarPVTest < MiniTest::Test
+class EnergyStarGeneratorTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
@@ -17,30 +17,21 @@ class EnergyStarPVTest < MiniTest::Test
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
   end
 
-  def test_pv
+  def test_generator
     ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-pv.xml', es_version)
+      _convert_to_es('base-misc-generators.xml', es_version)
       hpxml = _test_measure()
-      _check_pv(hpxml)
-    end
-  end
-
-  def test_pv_batteries
-    skip # Temporarily disabled until RESNET allows this.
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-pv-battery.xml', es_version)
-      hpxml = _test_measure()
-      _check_battery(hpxml)
+      _check_generator(hpxml)
     end
   end
 
   def _test_measure()
     args_hash = {}
     args_hash['hpxml_input_path'] = @tmp_hpxml_path
-    args_hash['calc_type'] = ESConstants.CalcTypeEnergyStarReference
+    args_hash['init_calc_type'] = ESConstants.CalcTypeEnergyStarReference
 
     # create an instance of the measure
-    measure = EnergyStarMeasure.new
+    measure = EnergyRatingIndex301Measure.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
@@ -73,12 +64,8 @@ class EnergyStarPVTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _check_pv(hpxml)
-    assert_equal(0, hpxml.pv_systems.size)
-  end
-
-  def _check_battery(hpxml)
-    assert_equal(0, hpxml.batteries.size)
+  def _check_generator(hpxml)
+    assert_equal(0, hpxml.generators.size)
   end
 
   def _convert_to_es(hpxml_name, program_version, state_code = nil)

@@ -24,7 +24,9 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/validator'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-require_relative 'resources/301'
+require_relative 'resources/301ruleset'
+require_relative 'resources/ESruleset'
+require_relative 'resources/ESconstants' # FIXME
 
 # start the measure
 class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
@@ -49,25 +51,21 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
   def arguments(model) # rubocop:disable Lint/UnusedMethodArgument
     args = OpenStudio::Measure::OSArgumentVector.new
 
-    # make a choice argument for design type
-    calc_types = []
-    calc_types << Constants.CalcTypeERIReferenceHome
-    calc_types << Constants.CalcTypeERIRatedHome
-    calc_types << Constants.CalcTypeERIIndexAdjustmentDesign
-    calc_types << Constants.CalcTypeERIIndexAdjustmentReferenceHome
-    calc_types << Constants.CalcTypeCO2eReferenceHome
-    calc_type = OpenStudio::Measure::OSArgument.makeChoiceArgument('calc_type', calc_types, true)
-    calc_type.setDisplayName('Calculation Type')
-    calc_type.setDefaultValue(Constants.CalcTypeERIRatedHome)
-    args << calc_type
-
     arg = OpenStudio::Measure::OSArgument.makeStringArgument('hpxml_input_path', true)
     arg.setDisplayName('HPXML Input File Path')
     arg.setDescription('Absolute (or relative) path of the input HPXML file.')
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument.makeStringArgument('hpxml_output_path', false)
-    arg.setDisplayName('HPXML Output File Path')
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('init_calc_type', false)
+    arg.setDisplayName('Initial Calculation Type(s)')
+    args << arg
+
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('calc_type', false)
+    arg.setDisplayName('ERI Calculation Type(s)')
+    args << arg
+
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('hpxml_output_paths', false)
+    arg.setDisplayName('HPXML Output File Path(s)')
     arg.setDescription('Absolute (or relative) path of the output HPXML file.')
     args << arg
 
@@ -84,9 +82,19 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     end
 
     # assign the user inputs to variables
-    calc_type = runner.getStringArgumentValue('calc_type', user_arguments)
     hpxml_input_path = runner.getStringArgumentValue('hpxml_input_path', user_arguments)
-    hpxml_output_path = runner.getOptionalStringArgumentValue('hpxml_output_path', user_arguments)
+    calc_type = runner.getOptionalStringArgumentValue('calc_type', user_arguments).to_s.split(',')
+    init_calc_type = runner.getOptionalStringArgumentValue('init_calc_type', user_arguments).to_s.split(',')
+    hpxml_output_paths = runner.getOptionalStringArgumentValue('hpxml_output_paths', user_arguments).to_s.split(',')
+
+    num_designs = [calc_type.size, init_calc_type.size, hpxml_output_paths.size].max
+    calc_type = [nil] * num_designs if calc_type.empty?
+    init_calc_type = [nil] * num_designs if init_calc_type.empty?
+    hpxml_output_paths = [nil] * num_designs if hpxml_output_paths.empty?
+
+    if calc_type.size != init_calc_type.size || calc_type.size != hpxml_output_paths.size
+      fail 'Unexpected measure arguments.'
+    end
 
     unless (Pathname.new hpxml_input_path).absolute?
       hpxml_input_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_input_path))
@@ -98,10 +106,8 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
     begin
       stron_paths = []
-      if calc_type == Constants.CalcTypeERIRatedHome # Only need to validate once
-        stron_paths << File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
-        stron_paths << File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
-      end
+      stron_paths << File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
+      stron_paths << File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
       @orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
       @orig_hpxml.errors.each do |error|
         runner.registerError(error)
@@ -134,20 +140,103 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       # Obtain weather object
       weather = WeatherProcess.new(nil, nil, cache_path)
 
-      # Apply 301 ruleset on HPXML object
-      @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, @orig_hpxml, calc_type, weather)
+      # Obtain egrid subregion & cambium gea region
+      eri_version = @orig_hpxml.header.eri_calculation_version
+      eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+      egrid_subregion = get_epa_egrid_subregion(runner, @orig_hpxml)
+      if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
+        cambium_gea = get_cambium_gea_region(runner, @orig_hpxml)
+      end
 
-      # Write new HPXML file
-      if hpxml_output_path.is_initialized
-        XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path.get)
-        runner.registerInfo("Wrote file: #{hpxml_output_path.get}")
+      create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
+
+      new_hpxmls = {}
+      calc_type.zip(init_calc_type, hpxml_output_paths).each do |this_calc_type, this_init_calc_type, hpxml_output_path|
+        # Ensure we don't modify the original HPXML
+        @new_hpxml = Marshal.load(Marshal.dump(@orig_hpxml))
+
+        # Apply initial ruleset on HPXML object
+        if [ESConstants.CalcTypeEnergyStarReference,
+            ESConstants.CalcTypeEnergyStarRated].include? this_init_calc_type
+          @new_hpxml = EnergyStarRuleset.apply_ruleset(@new_hpxml, this_init_calc_type)
+        end
+
+        if not this_calc_type.nil?
+          # Apply 301 ruleset on HPXML object
+          @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, @new_hpxml, this_calc_type, weather,
+                                                                 egrid_subregion, cambium_gea, create_time)
+        end
+
+        # Write new HPXML file
+        if not hpxml_output_path.nil?
+          new_hpxmls[hpxml_output_path] = XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path)
+          runner.registerInfo("Wrote file: #{hpxml_output_path}")
+        end
       end
     rescue Exception => e
       runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
       return false
     end
 
+    duplicates = {}
+    new_hpxmls.each_with_index do |(hpxml_output_path, new_hpxml), i|
+      next if i == 0
+
+      new_hpxmls.each_with_index do |(hpxml_output_path2, new_hpxml2), j|
+        next if j >= i
+
+        if new_hpxml == new_hpxml2
+          duplicates[hpxml_output_path] = hpxml_output_path2
+        end
+      end
+    end
+    model.getBuilding.additionalProperties.setFeature('Duplicates', duplicates.to_s)
+
     return true
+  end
+
+  def get_epa_egrid_subregion(runner, hpxml)
+    egrid_zip_filepath = File.join(File.dirname(__FILE__), 'resources', 'data', 'egrid', 'ZIP_mappings.csv')
+    egrid_subregion = lookup_region_from_zip(hpxml.header.zip_code, egrid_zip_filepath, 0, 1)
+    if egrid_subregion.nil?
+      runner.registerWarning("Could not look up eGRID subregion for zip code: '#{hpxml.header.zip_code}'. Emissions will not be calculated.")
+    end
+    return egrid_subregion
+  end
+
+  def get_cambium_gea_region(runner, hpxml)
+    cambium_zip_filepath = File.join(File.dirname(__FILE__), 'resources', 'data', 'cambium', 'ZIP_mappings.csv')
+    cambium_gea = lookup_region_from_zip(hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
+    if cambium_gea.nil?
+      runner.registerWarning("Could not look up Cambium GEA for zip code: '#{hpxml.header.zip_code}'. CO2e emissions will not be calculated.")
+    end
+    return cambium_gea
+  end
+
+  def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
+    return if zip_code.nil?
+
+    if zip_code.include? '-'
+      zip_code = zip_code.split('-')[0]
+    end
+    zip_code = zip_code.rjust(5, '0')
+
+    return if zip_code.size != 5
+
+    begin
+      Integer(zip_code)
+    rescue
+      return
+    end
+
+    CSV.foreach(zip_filepath) do |row|
+      fail "Zip code in #{zip_filepath} needs to be 5 digits." if zip_code.size != 5
+      next unless row[zip_column_index] == zip_code
+
+      return row[output_column_index]
+    end
+
+    return
   end
 end
 

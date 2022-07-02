@@ -12,8 +12,8 @@ require 'fileutils'
 require 'parallel'
 require 'oga'
 require_relative 'design.rb'
-require_relative '../rulesets/EnergyStarRuleset/resources/constants'
-require_relative '../rulesets/EnergyStarRuleset/resources/util'
+require_relative '../rulesets/301EnergyRatingIndexRuleset/resources/ESconstants'
+require_relative '../rulesets/301EnergyRatingIndexRuleset/resources/util'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/version'
@@ -23,61 +23,72 @@ basedir = File.expand_path(File.dirname(__FILE__))
 
 def get_program_versions(hpxml_doc)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
-  if (not eri_version.nil?)
-    if (eri_version != 'latest') && (not Constants.ERIVersions.include?(eri_version))
-      fail "Unexpected ERICalculation/Version: '#{eri_version}'."
-    end
-
-    puts "ERICalculation/Version: #{eri_version}"
-  else
-    puts 'ERICalculation/Version: None'
+  if eri_version == 'latest'
+    eri_version = Constants.ERIVersions[-1]
   end
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
-  if (not es_version.nil?)
-    if not ESConstants.AllVersions.include?(es_version)
-      fail "Unexpected EnergyStarCalculation/Version: '#{es_version}'."
-    end
 
-    puts "EnergyStarCalculation/Version: #{es_version}"
-  else
-    puts 'EnergyStarCalculation/Version: None'
+  { eri_version => [Constants.ERIVersions, 'ERICalculation/Version'],
+    es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] }.each do |version, values|
+    all_versions, xpath = values
+    if (not version.nil?)
+      if not all_versions.include?(version)
+        fail "Unexpected #{xpath}: '#{version}'."
+      end
+
+      puts "#{xpath}: #{version}"
+    else
+      puts "#{xpath}: None"
+    end
   end
+
   return eri_version, es_version
 end
 
-def is_eri_ref_all_electric(hpxml_doc)
-  ['HeatingSystemFuel',
-   'CoolingSystemFuel',
-   'HeatPumpFuel',
-   'BackupSystemFuel',
-   'FuelType'].each do |fuel_name|
-    if XMLHelper.has_element(hpxml_doc, "//#{fuel_name}[text() != 'electricity']")
-      return false
-    end
-  end
-  if not XMLHelper.has_element(hpxml_doc, '//HeatingSystem[FractionHeatLoadServed > 0] | //HeatPump[FractionHeatLoadServed > 0]')
-    # No heating system, ERI Reference will get gas furnace
-    return false
+def apply_rulesets_and_generate_hpxmls(designs, options)
+  puts "Generating #{designs.size} HPXMLs..."
+
+  calc_type = designs.map { |d| d.calc_type }.join(',')
+  init_calc_type = designs.map { |d| d.init_calc_type.to_s }.join(',')
+  hpxml_output_paths = designs.map { |d| d.hpxml_output_path }.join(',')
+
+  # Call 301EnergyRatingIndexRuleset measure
+  measures = {}
+  measures_dir = File.join(File.dirname(__FILE__), '..')
+  measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
+  args = {}
+  args['init_calc_type'] = init_calc_type
+  args['calc_type'] = calc_type
+  args['hpxml_input_path'] = options[:hpxml]
+  args['hpxml_output_paths'] = hpxml_output_paths
+  update_args_hash(measures, measure_subdir, args)
+
+  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
+  os_log = OpenStudio::StringStreamLogSink.new
+  os_log.setLogLevel(OpenStudio::Warn)
+  model = OpenStudio::Model::Model.new
+  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+
+  success = apply_measures(measures_dir, measures, runner, model, false, 'OpenStudio::Measure::ModelMeasure')
+  rundir = options[:output_dir] # FIXME
+  report_measure_errors_warnings(runner, rundir, options[:debug])
+  report_os_warnings(os_log, rundir)
+
+  if not success
+    fail "HPXMLs not successfully generated. See #{File.join(rundir, 'run.log')} for details."
   end
 
-  return true
+  # Get duplicate HPXMLs
+  duplicates = eval(model.getBuilding.additionalProperties.getFeatureAsString('Duplicates').get)
+  return duplicates
 end
 
-def duplicate_output_files(source_run, dest_run, resultsdir)
-  # Duplicate E+ output directory
-  FileUtils.cp_r(source_run.design_dir, dest_run.design_dir)
+def run_simulations(designs, options, duplicates)
+  # Down-select to unique designs that need to be simulated
+  unique_designs = designs.select { |d| !duplicates.keys.include?(d.hpxml_output_path) }
 
-  # Duplicate results files
-  source_filename = File.basename(source_run.hpxml_out_path, '.xml')
-  dest_filename = File.basename(dest_run.hpxml_out_path, '.xml')
-  Dir["#{resultsdir}/*.*"].each do |results_file|
-    next unless File.basename(results_file).start_with? source_filename
+  puts "Running #{unique_designs.size} Unique HPXMLs..."
 
-    FileUtils.cp(results_file, results_file.gsub(source_filename, dest_filename))
-  end
-end
-
-def run_simulations(runs, options)
   # Run simulations
   if Process.respond_to?(:fork) # e.g., most Unix systems
 
@@ -88,11 +99,9 @@ def run_simulations(runs, options)
       raise Parallel::Kill
     end
 
-    Parallel.map(runs, in_processes: runs.size) do |run|
-      designdir = run_design_direct(run, options)
-      if not options[:skip_simulation]
-        kill unless File.exist? File.join(designdir, 'eplusout.end')
-      end
+    Parallel.map_with_index(unique_designs, in_processes: unique_designs.size) do |design, i|
+      designdir = run_design_direct(design, options, i + 1, unique_designs.size)
+      kill unless File.exist? File.join(designdir, 'eplusout.end')
     end
 
   else # e.g., Windows
@@ -110,10 +119,9 @@ def run_simulations(runs, options)
     end
 
     pids = {}
-    Parallel.map(runs, in_threads: runs.size) do |run|
-      designdir, pids[run] = run_design_spawn(run, options)
-      Process.wait pids[run]
-      next unless not options[:skip_simulation]
+    Parallel.map_with_index(unique_designs, in_threads: unique_designs.size) do |design, i|
+      designdir, pids[design] = run_design_spawn(design, options, i + 1, unique_designs.size)
+      Process.wait pids[design]
 
       if not File.exist? File.join(designdir, 'eplusout.end')
         kill(pids)
@@ -124,16 +132,35 @@ def run_simulations(runs, options)
   end
 end
 
-def run_design_direct(run, options)
-  # Calls design.rb methods directly. Should only be called from a forked
-  # process. This is the fastest approach.
-  run_design(run, options[:debug], options[:timeseries_output_freq], options[:timeseries_outputs],
-             options[:add_comp_loads], options[:skip_simulation])
+def duplicate_output_files(duplicates, designs, resultsdir)
+  duplicates.each do |dest_hpxml_path, source_hpxml_path|
+    source_design = designs.select { |d| d.hpxml_output_path == source_hpxml_path }[0]
+    dest_design = designs.select { |d| d.hpxml_output_path == dest_hpxml_path }[0]
 
-  return run.design_dir
+    # Duplicate E+ output directory
+    FileUtils.cp_r(source_design.design_dir, dest_design.design_dir)
+
+    # Duplicate results files
+    source_filename = File.basename(source_design.hpxml_output_path, '.xml')
+    dest_filename = File.basename(dest_design.hpxml_output_path, '.xml')
+    Dir["#{resultsdir}/*.*"].each do |results_file|
+      next unless File.basename(results_file).start_with? source_filename
+
+      FileUtils.cp(results_file, results_file.gsub(source_filename, dest_filename))
+    end
+  end
 end
 
-def run_design_spawn(run, options)
+def run_design_direct(design, options, design_num, num_designs)
+  # Calls design.rb methods directly. Should only be called from a forked
+  # process. This is the fastest approach.
+  run_design(design, options[:debug], options[:timeseries_output_freq], options[:timeseries_outputs],
+             options[:add_comp_loads], design_num, num_designs)
+
+  return design.design_dir
+end
+
+def run_design_spawn(design, options, design_num, num_designs)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
@@ -142,52 +169,53 @@ def run_design_spawn(run, options)
   cli_path = OpenStudio.getOpenStudioCLI
   command = "\"#{cli_path}\" "
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
-  command += "\"#{run.measures.to_s.gsub('"', '\'')}\" "
-  command += "\"#{run.hpxml_in_path}\" "
-  command += "\"#{run.output_dir}\" "
+  command += "\"#{design.calc_type}\" "
+  command += "\"#{design.init_calc_type}\" "
+  command += "\"#{design.output_dir}\" "
   command += "\"#{options[:debug]}\" "
   command += "\"#{options[:timeseries_output_freq]}\" "
   command += "\"#{options[:timeseries_outputs].join('|')}\" "
   command += "\"#{options[:add_comp_loads]}\" "
-  command += "\"#{options[:skip_simulation]}\" "
+  command += "\"#{design_num}\" "
+  command += "\"#{num_designs}\" "
   pid = Process.spawn(command)
 
-  return run.design_dir, pid
+  return design.design_dir, pid
 end
 
-def retrieve_eri_outputs(runs)
+def retrieve_eri_outputs(designs)
   # Retrieve outputs for ERI calculations
   design_outputs = {}
-  runs.each do |run|
-    csv_path = run.csv_output_path
+  designs.each do |design|
+    csv_path = design.csv_output_path
 
     if not File.exist? csv_path
       puts 'Errors encountered. Aborting...'
       exit!
     end
 
-    eri_calc_type = run.measures['301EnergyRatingIndexRuleset']
+    calc_type = design.calc_type
 
-    design_outputs[eri_calc_type] = {}
+    design_outputs[calc_type] = {}
 
     CSV.foreach(csv_path) do |row|
       next if row.nil? || (row.size < 2) || row[1].nil?
 
       if row[1].include? ',' # Array of values
         begin
-          design_outputs[eri_calc_type][row[0]] = row[1].split(',').map { |v| Float(v) }
+          design_outputs[calc_type][row[0]] = row[1].split(',').map { |v| Float(v) }
         rescue
-          design_outputs[eri_calc_type][row[0]] = row[1].split(',')
+          design_outputs[calc_type][row[0]] = row[1].split(',')
         end
       else # Single value
         begin
-          design_outputs[eri_calc_type][row[0]] = Float(row[1])
+          design_outputs[calc_type][row[0]] = Float(row[1])
         rescue
-          design_outputs[eri_calc_type][row[0]] = row[1]
+          design_outputs[calc_type][row[0]] = row[1]
         end
         if (row[0].start_with? 'ERI:') && (not row[0].include? 'Building:')
           # Convert to array
-          design_outputs[eri_calc_type][row[0]] = [design_outputs[eri_calc_type][row[0]]]
+          design_outputs[calc_type][row[0]] = [design_outputs[calc_type][row[0]]]
         end
       end
     end
@@ -791,81 +819,58 @@ def main(options)
   hpxml_doc = XMLHelper.parse_file(options[:hpxml])
   eri_version, es_version = get_program_versions(hpxml_doc)
 
-  # Create list of designs to run: [calc_type, HPXML, output_dir, results_dir]
-  runs = []
-
+  # Create list of designs
+  designs = []
   if not eri_version.nil?
-    # ERI runs
-    runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIRatedHome }, options[:hpxml], options[:output_dir])
+    # ERI designs
+    designs << Design.new(calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
     if not options[:rated_home_only]
-      runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIReferenceHome }, options[:hpxml], options[:output_dir])
-      if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
-        runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentDesign }, options[:hpxml], options[:output_dir])
-        runs << DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentReferenceHome }, options[:hpxml], options[:output_dir])
+      designs << Design.new(calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+      if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE')
+        # Add IAF designs
+        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
+        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
       end
-      calc_co2e_index = false
-      if (eri_version == 'latest') || (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD'))
-        calc_co2e_index = true
-      end
-      if calc_co2e_index
-        # All-electric ERI Reference Home
-        eri_ref_home_is_electric = is_eri_ref_all_electric(hpxml_doc)
-        co2_ref_home_run = DesignRun.new({ '301EnergyRatingIndexRuleset' => Constants.CalcTypeCO2eReferenceHome }, options[:hpxml], options[:output_dir])
-        if not eri_ref_home_is_electric
-          # Additional CO2e Reference Home run only needed if different than ERI Reference Home
-          runs << co2_ref_home_run
-        end
+      if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
+        # Add CO2e designs
+        designs << Design.new(calc_type: Constants.CalcTypeCO2eRatedHome, output_dir: options[:output_dir])
+        designs << Design.new(calc_type: Constants.CalcTypeCO2eReferenceHome, output_dir: options[:output_dir])
       end
     end
   end
   if not es_version.nil?
-    # ENERGY STAR runs
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIRatedHome }, options[:hpxml], options[:output_dir])
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIReferenceHome }, options[:hpxml], options[:output_dir])
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentDesign }, options[:hpxml], options[:output_dir])
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarReference, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentReferenceHome }, options[:hpxml], options[:output_dir])
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIRatedHome }, options[:hpxml], options[:output_dir])
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIReferenceHome }, options[:hpxml], options[:output_dir])
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentDesign }, options[:hpxml], options[:output_dir])
-    runs << DesignRun.new({ 'EnergyStarRuleset' => ESConstants.CalcTypeEnergyStarRated, '301EnergyRatingIndexRuleset' => Constants.CalcTypeERIIndexAdjustmentReferenceHome }, options[:hpxml], options[:output_dir])
+    # ENERGY STAR designs
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
   end
 
-  run_simulations(runs, options)
+  duplicates = apply_rulesets_and_generate_hpxmls(designs, options)
 
   if not options[:skip_simulation]
 
+    run_simulations(designs, options, duplicates)
+
+    # For duplicate designs that weren't simulated, populate their output
+    duplicate_output_files(duplicates, designs, resultsdir)
+
     if (not eri_version.nil?) && (not options[:rated_home_only])
       # Calculate ERI & CO2e Index
-      if calc_co2e_index
-        puts 'Calculating ERI & CO2e Index...'
-      else
-        puts 'Calculating ERI...'
-      end
+      puts 'Calculating ERI...'
 
-      eri_runs = runs.select { |r| r.measures.size == 1 && !r.measures['301EnergyRatingIndexRuleset'].nil? }
-      eri_outputs = retrieve_eri_outputs(eri_runs)
-
-      if calc_co2e_index
-        # CO2e Rated Home is same as ERI Rated Home
-        eri_outputs[Constants.CalcTypeCO2eRatedHome] = eri_outputs[Constants.CalcTypeERIRatedHome].dup
-        if eri_ref_home_is_electric
-          eri_outputs[Constants.CalcTypeCO2eReferenceHome] = eri_outputs[Constants.CalcTypeERIReferenceHome].dup
-
-          # Duplicate output files too
-          eri_ref_home_run = eri_runs.select { |r| r.measures['301EnergyRatingIndexRuleset'] == Constants.CalcTypeERIReferenceHome }[0]
-          duplicate_output_files(eri_ref_home_run, co2_ref_home_run, resultsdir)
-        end
-      end
+      eri_designs = designs.select { |d| d.init_calc_type.nil? }
+      eri_outputs = retrieve_eri_outputs(eri_designs)
 
       # Calculate and write results
       eri_results = calculate_eri(eri_outputs, resultsdir)
       puts "ERI: #{eri_results[:eri].round(2)}"
-      if calc_co2e_index
-        if not eri_results[:co2eindex].nil?
-          puts "CO2e Index: #{eri_results[:co2eindex].round(2)}"
-        else
-          puts 'CO2e Index: N/A'
-        end
+      if not eri_results[:co2eindex].nil?
+        puts "CO2e Index: #{eri_results[:co2eindex].round(2)}"
       end
     end
 
@@ -874,8 +879,8 @@ def main(options)
       puts 'Calculating ENERGY STAR...'
 
       # Calculate ES Reference ERI
-      esrd_eri_runs = runs.select { |r| r.measures['EnergyStarRuleset'].to_s == ESConstants.CalcTypeEnergyStarReference }
-      esrd_eri_outputs = retrieve_eri_outputs(esrd_eri_runs)
+      esrd_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarReference }
+      esrd_eri_outputs = retrieve_eri_outputs(esrd_eri_designs)
       esrd_eri_results = calculate_eri(esrd_eri_outputs, resultsdir, csv_filename_prefix: ESConstants.CalcTypeEnergyStarReference.gsub(' ', ''))
 
       # Calculate Size-Adjusted ERI for Energy Star Reference Homes
@@ -884,8 +889,8 @@ def main(options)
 
       # Calculate ES Rated ERI, w/ On-site Power Production (OPP) restriction as appropriate
       opp_reduction_limit = calc_opp_eri_limit(esrd_eri_results[:eri], saf, es_version)
-      rated_eri_runs = runs.select { |r| r.measures['EnergyStarRuleset'].to_s == ESConstants.CalcTypeEnergyStarRated }
-      rated_eri_outputs = retrieve_eri_outputs(rated_eri_runs)
+      rated_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarRated }
+      rated_eri_outputs = retrieve_eri_outputs(rated_eri_designs)
       rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, csv_filename_prefix: ESConstants.CalcTypeEnergyStarRated.gsub(' ', ''),
                                                                        opp_reduction_limit: opp_reduction_limit)
 
