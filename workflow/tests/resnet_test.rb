@@ -25,7 +25,6 @@ class RESNETTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.1_Standard_140')
     all_results = []
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(xml)
       csv_path = _run_simulation(xml, test_name)
       htg_load, clg_load = _get_simulation_load_results(csv_path)
       xml = File.basename(xml)
@@ -178,7 +177,6 @@ class RESNETTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.4_HVAC')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(xml)
       csv_path = _run_simulation(xml, test_name)
 
       is_heat = false
@@ -223,7 +221,6 @@ class RESNETTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.5_DSE')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(xml)
       csv_path = _run_simulation(xml, test_name)
 
       is_heat = false
@@ -297,7 +294,6 @@ class RESNETTest < Minitest::Test
     all_results = {}
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      _test_schema_validation(xml)
       out_xml = File.join(@test_files_dir, File.basename(xml))
       _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
       csv_path = _run_simulation(out_xml, test_name)
