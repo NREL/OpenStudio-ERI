@@ -1,5 +1,31 @@
 # frozen_string_literal: true
 
+class Constants
+  def self.CalcTypeCO2eRatedHome
+    return 'CO2e Rated Home'
+  end
+
+  def self.CalcTypeCO2eReferenceHome
+    return 'CO2e Reference Home'
+  end
+
+  def self.CalcTypeERIRatedHome
+    return 'ERI Rated Home'
+  end
+
+  def self.CalcTypeERIReferenceHome
+    return 'ERI Reference Home'
+  end
+
+  def self.CalcTypeERIIndexAdjustmentDesign
+    return 'ERI Index Adjustment Design'
+  end
+
+  def self.CalcTypeERIIndexAdjustmentReferenceHome
+    return 'ERI Index Adjustment Reference Home'
+  end
+end
+
 class ESConstants
   def self.CalcTypeEnergyStarRated
     return 'ES Rated'

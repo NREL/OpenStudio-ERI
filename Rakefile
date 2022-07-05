@@ -20,16 +20,30 @@ Rake::TestTask.new('test_measures') do |t|
   t.verbose = true
 end
 
-desc 'Run ERI workflow tests'
-Rake::TestTask.new('test_eri_workflow') do |t|
+desc 'Run ERI tests'
+Rake::TestTask.new('test_eri') do |t|
   t.test_files = Dir['workflow/tests/energy_rating_index_test.rb']
   t.warning = false
   t.verbose = true
 end
 
-desc 'Run ENERGY STAR workflow tests'
-Rake::TestTask.new('test_energystar_workflow') do |t|
-  t.test_files = Dir['workflow/tests/energy_star_test.rb']
+desc 'Run Real Home tests'
+Rake::TestTask.new('test_real_homes') do |t|
+  t.test_files = Dir['workflow/tests/real_homes_test.rb']
+  t.warning = false
+  t.verbose = true
+end
+
+desc 'Run RESNET tests'
+Rake::TestTask.new('test_resnet') do |t|
+  t.test_files = Dir['workflow/tests/resnet_test.rb']
+  t.warning = false
+  t.verbose = true
+end
+
+desc 'Run EPA tests'
+Rake::TestTask.new('test_epa') do |t|
+  t.test_files = Dir['workflow/tests/epa_test.rb']
   t.warning = false
   t.verbose = true
 end

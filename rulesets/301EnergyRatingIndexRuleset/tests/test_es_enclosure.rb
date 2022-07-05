@@ -631,10 +631,10 @@ class EnergyStarEnclosureTest < MiniTest::Test
   def _test_measure()
     args_hash = {}
     args_hash['hpxml_input_path'] = @tmp_hpxml_path
-    args_hash['calc_type'] = ESConstants.CalcTypeEnergyStarReference
+    args_hash['init_calc_type'] = ESConstants.CalcTypeEnergyStarReference
 
     # create an instance of the measure
-    measure = EnergyStarMeasure.new
+    measure = EnergyRatingIndex301Measure.new
 
     # create an instance of a runner
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)

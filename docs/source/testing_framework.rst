@@ -6,33 +6,28 @@ A large number of tests are automatically run for every code change in the GitHu
 The current set of tests include:
 
 - Successful ERI calculations for all sample files
-- RESNET® ANSI/ASHRAE Standard 140-2011, Class II, Tier 1 Tests
-- RESNET HERS® Reference Home auto-generation tests
-- RESNET HERS Index Adjustment Design auto-generation tests
-- RESNET HERS method tests
-- RESNET HVAC tests
-- RESNET Duct distribution system efficiency tests
-- RESNET Hot water system performance tests
-- EPA Tests for ENERGY STAR
+- RESNET® HERS® tests (ASHRAE 140, HVAC tests, etc.)
+- EPA ENERGY STAR tests
 
 If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
 
 Running Tests Locally
 ---------------------
 
-HERS tests can be run using:
+All RESNET HERS tests can be run using:
 
-| ``openstudio energy_rating_index_test.rb --name=test_resnet_ashrae_140``
-| ``openstudio energy_rating_index_test.rb --name=test_resnet_hers_reference_home_auto_generation``
-| ``openstudio energy_rating_index_test.rb --name=test_resnet_hers_method``
-| ``openstudio energy_rating_index_test.rb --name=test_resnet_hvac``
-| ``openstudio energy_rating_index_test.rb --name=test_resnet_dse``
-| ``openstudio energy_rating_index_test.rb --name=test_resnet_hot_water``
+| ``openstudio resnet_test.rb``
 | 
 
-ENERGY STAR tests can be run using:
+All EPA ENERGY STAR tests can be run using:
 
-| ``openstudio energy_star_test.rb --name=test_epa``
+| ``openstudio epa_test.rb``
+| 
+
+Or individual tests can be run by specifying the name of the test. A couple examples:
+
+| ``openstudio resnet_test.rb --name=test_resnet_ashrae_140``
+| ``openstudio epa_test.rb --name=test_epa``
 | 
 
 Test results in CSV format are created at workflow/tests/test_results. 

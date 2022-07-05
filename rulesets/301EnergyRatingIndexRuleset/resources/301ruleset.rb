@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class EnergyRatingIndex301Ruleset
-  def self.apply_ruleset(runner, hpxml, calc_type, weather)
+  def self.apply_ruleset(runner, hpxml, calc_type, weather, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @runner = runner
     @weather = weather
     @calc_type = calc_type
+    @egrid_subregion = egrid_subregion
+    @cambium_gea = cambium_gea
 
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
@@ -17,12 +19,18 @@ class EnergyRatingIndex301Ruleset
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
+    elsif calc_type == Constants.CalcTypeCO2eRatedHome
+      @calc_type = Constants.CalcTypeERIRatedHome
+      hpxml = apply_rated_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeCO2eReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, true)
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(hpxml, @eri_version, @weather, convert_shared_systems: false)
+    HPXMLDefaults.apply(runner, hpxml, @eri_version, @weather, convert_shared_systems: false)
+
+    # Ensure two otherwise identical HPXML files don't differ by create time
+    hpxml.header.created_date_and_time = create_time
 
     return hpxml
   end
@@ -200,7 +208,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
     new_hpxml.header.eri_calculation_version = @eri_version
-    new_hpxml.header.eri_design = @calc_type
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
@@ -2856,32 +2863,6 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
-    return if zip_code.nil?
-
-    if zip_code.include? '-'
-      zip_code = zip_code.split('-')[0]
-    end
-    zip_code = zip_code.rjust(5, '0')
-
-    return if zip_code.size != 5
-
-    begin
-      Integer(zip_code)
-    rescue
-      return
-    end
-
-    CSV.foreach(zip_filepath) do |row|
-      fail "Zip code in #{zip_filepath} needs to be 5 digits." if zip_code.size != 5
-      next unless row[zip_column_index] == zip_code
-
-      return row[output_column_index]
-    end
-
-    return
-  end
-
   def self.lookup_egrid_value(egrid_subregion, zip_column_index, output_column_index)
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
       zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'egrid2019_summary_tables.csv')
@@ -2897,32 +2878,6 @@ class EnergyRatingIndex301Ruleset
     return
   end
 
-  def self.get_cambium_gea_region(hpxml)
-    # Get Cambium GEA region
-    cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
-    cambium_gea = lookup_region_from_zip(hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
-    if cambium_gea.nil?
-      @runner.registerWarning("Could not look up Cambium GEA for zip code: '#{hpxml.header.zip_code}'. CO2e emissions will not be calculated.")
-    else
-      hpxml.header.cambium_region_gea = cambium_gea
-      hpxml.header.cambium_region_gea_isdefaulted = true
-    end
-    return cambium_gea
-  end
-
-  def self.get_epa_egrid_subregion(hpxml)
-    # Get eGRID subregion
-    egrid_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'ZIP_mappings.csv')
-    egrid_subregion = lookup_region_from_zip(hpxml.header.zip_code, egrid_zip_filepath, 0, 1)
-    if egrid_subregion.nil?
-      @runner.registerWarning("Could not look up eGRID subregion for zip code: '#{hpxml.header.zip_code}'. Emissions will not be calculated.")
-    else
-      hpxml.header.egrid_subregion = egrid_subregion
-      hpxml.header.egrid_subregion_isdefaulted = true
-    end
-    return egrid_subregion
-  end
-
   def self.add_emissions_scenarios(new_hpxml)
     if not [Constants.CalcTypeCO2eReferenceHome,
             Constants.CalcTypeERIReferenceHome,
@@ -2930,10 +2885,14 @@ class EnergyRatingIndex301Ruleset
       return
     end
 
-    egrid_subregion = get_epa_egrid_subregion(new_hpxml)
+    if not @egrid_subregion.nil?
+      new_hpxml.header.egrid_subregion = @egrid_subregion
+      new_hpxml.header.egrid_subregion_isdefaulted = true
+    end
 
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
-      cambium_gea = get_cambium_gea_region(new_hpxml)
+    if not @cambium_gea.nil?
+      new_hpxml.header.cambium_region_gea = @cambium_gea
+      new_hpxml.header.cambium_region_gea_isdefaulted = true
     end
 
     # Fossil fuel values
@@ -2969,10 +2928,10 @@ class EnergyRatingIndex301Ruleset
     # CO2e Emissions Scenario
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
       # Use Cambium database for electricity
-      if not cambium_gea.nil?
+      if not @cambium_gea.nil?
         cambium_geas = ['AZNMc', 'CAMXc', 'ERCTc', 'FRCCc', 'MROEc', 'MROWc', 'NEWEc', 'NWPPc', 'NYSTc', 'RFCEc',
                         'RFCMc', 'RFCWc', 'RMPAc', 'SPNOc', 'SPSOc', 'SRMVc', 'SRMWc', 'SRSOc', 'SRTVc', 'SRVCc']
-        col_num = cambium_geas.index(cambium_gea) + 5
+        col_num = cambium_geas.index(@cambium_gea) + 5
         cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'RESNET_2021_CO2e_GEAdata.csv')
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2e',
@@ -2989,8 +2948,8 @@ class EnergyRatingIndex301Ruleset
       end
     else # Before 301-2019 Addendum D
       # Use EPA's eGrid database for electricity
-      if not egrid_subregion.nil?
-        annual_elec_co2e_value = lookup_egrid_value(egrid_subregion, 0, 1) # lb/mWh
+      if not @egrid_subregion.nil?
+        annual_elec_co2e_value = lookup_egrid_value(@egrid_subregion, 0, 1) # lb/mWh
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2e',
                                                  elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
@@ -3005,8 +2964,8 @@ class EnergyRatingIndex301Ruleset
     end
 
     # NOx Emissions Scenario
-    if not egrid_subregion.nil?
-      elec_nox_value = lookup_egrid_value(egrid_subregion, 0, 5) # lb/mWh
+    if not @egrid_subregion.nil?
+      elec_nox_value = lookup_egrid_value(@egrid_subregion, 0, 5) # lb/mWh
       new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                emissions_type: 'NOx',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
@@ -3020,8 +2979,8 @@ class EnergyRatingIndex301Ruleset
     end
 
     # SO2 Emissions Scenario
-    if not egrid_subregion.nil?
-      elec_so2_value = lookup_egrid_value(egrid_subregion, 0, 7) # lb/mWh
+    if not @egrid_subregion.nil?
+      elec_so2_value = lookup_egrid_value(@egrid_subregion, 0, 7) # lb/mWh
       new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                emissions_type: 'SO2',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
