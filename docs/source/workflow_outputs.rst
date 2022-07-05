@@ -348,6 +348,9 @@ ENERGY STAR Files
 
 ENERGY STAR output files described below are found in the ``results`` directory.
 
+In addition, :ref:`eri_files` corresponding to the ERI calculation of the ENERGY STAR Reference Home and ENERGY STAR Rated Home will be generated.
+For example, ESRated_ERIReferenceHome.xml is the ERI Reference Home HPXML file corresponding to the ENERGY STAR Rated Home.
+
 ES_Results.csv
 ~~~~~~~~~~~~~~
 
@@ -367,11 +370,5 @@ The ``ES_Results.csv`` file includes the following:
 ES______.xml
 ~~~~~~~~~~~~
 
-An HPXML file is written for the ENERGY STAR Reference Home (``ESReference.xml``) and the Rated Home (``ESRated.xml``).
+An HPXML file is written for the ENERGY STAR Reference Home (``ESReference.xml``) and the ENERGY STAR Rated Home (``ESRated.xml``).
 The file reflects the configuration of the home after applying the ENERGY STAR ruleset.
-
-ERI Directories
-~~~~~~~~~~~~~~~
-
-Two directories are created under ``results``, one called ``ESRerence`` and one called ``ESRated``.
-Each directory has the full set of :ref:`eri_files` corresponding to the ERI calculation of the ES Reference Home and Rated Home.

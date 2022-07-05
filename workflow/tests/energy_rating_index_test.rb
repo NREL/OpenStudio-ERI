@@ -7,7 +7,7 @@ require 'fileutils'
 require 'csv'
 require 'oga'
 require_relative 'util.rb'
-require_relative '../../rulesets/EnergyStarRuleset/resources/constants'
+require_relative '../../rulesets/301EnergyRatingIndexRuleset/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
@@ -142,16 +142,14 @@ class EnergyRatingIndexTest < Minitest::Test
     _rundir, hpxmls, _csvs = _run_workflow(xml, test_name)
 
     # Check that CO2e Reference Home HPXML references ERI Reference Home
-    hpxml = HPXML.new(hpxml_path: hpxmls[:co2ref])
-    assert_equal(Constants.CalcTypeERIReferenceHome, hpxml.header.eri_design)
+    assert_equal(true, FileUtils.compare_file(hpxmls[:co2ref], hpxmls[:ref]))
 
     # Run ERI workflow w/ mixed fuel home
     xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
     _rundir, hpxmls, _csvs = _run_workflow(xml, test_name)
 
     # Check that CO2e Reference Home HPXML does not reference ERI Reference Home
-    hpxml = HPXML.new(hpxml_path: hpxmls[:co2ref])
-    assert_equal(Constants.CalcTypeCO2eReferenceHome, hpxml.header.eri_design)
+    assert_equal(false, FileUtils.compare_file(hpxmls[:co2ref], hpxmls[:ref]))
   end
 
   def test_running_with_cli
