@@ -30,8 +30,11 @@ def _run_ruleset(design, xml, out_xml)
 end
 
 def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none',
-                  run_energystar: false, component_loads: false, skip_simulation: false, rated_home_only: false)
+                  component_loads: false, skip_simulation: false, rated_home_only: false)
   xml = File.absolute_path(xml)
+  hpxml_doc = XMLHelper.parse_file(xml)
+  eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
+  es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
@@ -53,11 +56,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
   end
 
   # Run workflow
-  if run_energystar
-    workflow_rb = 'energy_star.rb'
-  else
-    workflow_rb = 'energy_rating_index.rb'
-  end
+  workflow_rb = 'energy_rating_index.rb'
   command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o #{rundir} --debug"
   system(command)
 
@@ -68,65 +67,67 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
     csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
     log_dirs = [Constants.CalcTypeERIRatedHome].map { |d| d.gsub(' ', '') }
-  elsif not run_energystar
-    # ERI
-    hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
-    hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-    csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
-    csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
-    csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
-    csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
-    if timeseries_frequency != 'none'
-      csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-      csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
-    end
-    log_dirs = [Constants.CalcTypeERIRatedHome,
-                Constants.CalcTypeERIReferenceHome,
-                Constants.CalcTypeERIIndexAdjustmentDesign,
-                Constants.CalcTypeERIIndexAdjustmentReferenceHome].map { |d| d.gsub(' ', '') }
-    if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv')
-      hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
-      csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
-      log_dirs << Constants.CalcTypeCO2eReferenceHome.gsub(' ', '')
-    end
   else
-    # ENERGY STAR
-    hpxmls[:ref] = File.join(rundir, 'results', 'ESReference.xml')
-    hpxmls[:rated] = File.join(rundir, 'results', 'ESRated.xml')
-    hpxmls[:ref_ref] = File.join(rundir, 'ESReference', 'results', 'ERIReferenceHome.xml')
-    hpxmls[:ref_rated] = File.join(rundir, 'ESReference', 'results', 'ERIRatedHome.xml')
-    hpxmls[:ref_iad] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentDesign.xml')
-    hpxmls[:ref_iadref] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentReferenceHome.xml')
-    hpxmls[:rated_ref] = File.join(rundir, 'ESRated', 'results', 'ERIReferenceHome.xml')
-    hpxmls[:rated_rated] = File.join(rundir, 'ESRated', 'results', 'ERIRatedHome.xml')
-    hpxmls[:rated_iad] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentDesign.xml')
-    hpxmls[:rated_iadref] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentReferenceHome.xml')
-    csvs[:es_results] = File.join(rundir, 'results', 'ES_Results.csv')
-    csvs[:ref_eri_results] = File.join(rundir, 'ESReference', 'results', 'ERI_Results.csv')
-    csvs[:ref_eri_worksheet] = File.join(rundir, 'ESReference', 'results', 'ERI_Worksheet.csv')
-    csvs[:ref_rated_results] = File.join(rundir, 'ESReference', 'results', 'ERIRatedHome.csv')
-    csvs[:ref_ref_results] = File.join(rundir, 'ESReference', 'results', 'ERIReferenceHome.csv')
-    csvs[:ref_iad_results] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentDesign.csv')
-    csvs[:ref_iadref_results] = File.join(rundir, 'ESReference', 'results', 'ERIIndexAdjustmentReferenceHome.csv')
-    csvs[:rated_eri_results] = File.join(rundir, 'ESRated', 'results', 'ERI_Results.csv')
-    csvs[:rated_eri_worksheet] = File.join(rundir, 'ESRated', 'results', 'ERI_Worksheet.csv')
-    csvs[:rated_rated_results] = File.join(rundir, 'ESRated', 'results', 'ERIRatedHome.csv')
-    csvs[:rated_ref_results] = File.join(rundir, 'ESRated', 'results', 'ERIReferenceHome.csv')
-    csvs[:rated_iad_results] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentDesign.csv')
-    csvs[:rated_iadref_results] = File.join(rundir, 'ESRated', 'results', 'ERIIndexAdjustmentReferenceHome.csv')
-    if timeseries_frequency != 'none'
-      csvs[:rated_timeseries_results] = File.join(rundir, 'ESRated', 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-      csvs[:ref_timeseries_results] = File.join(rundir, 'ESReference', 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+    if not eri_version.nil?
+      # ERI
+      hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
+      hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
+      csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
+      csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
+      csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
+      csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
+      if timeseries_frequency != 'none'
+        csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+      end
+      log_dirs = [Constants.CalcTypeERIRatedHome,
+                  Constants.CalcTypeERIReferenceHome,
+                  Constants.CalcTypeERIIndexAdjustmentDesign,
+                  Constants.CalcTypeERIIndexAdjustmentReferenceHome].map { |d| d.gsub(' ', '') }
+      if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv')
+        hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
+        csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
+        log_dirs << Constants.CalcTypeCO2eReferenceHome.gsub(' ', '')
+      end
     end
-    log_dirs = [File.join('ESRated', Constants.CalcTypeERIRatedHome),
-                File.join('ESRated', Constants.CalcTypeERIReferenceHome),
-                File.join('ESRated', Constants.CalcTypeERIIndexAdjustmentDesign),
-                File.join('ESRated', Constants.CalcTypeERIIndexAdjustmentReferenceHome),
-                File.join('ESReference', Constants.CalcTypeERIRatedHome),
-                File.join('ESReference', Constants.CalcTypeERIReferenceHome),
-                File.join('ESReference', Constants.CalcTypeERIIndexAdjustmentDesign),
-                File.join('ESReference', Constants.CalcTypeERIIndexAdjustmentReferenceHome)].map { |d| d.gsub(' ', '') }
-    log_dirs << 'results'
+    if not es_version.nil?
+      # ENERGY STAR
+      hpxmls[:es_ref] = File.join(rundir, 'results', 'ESReference.xml')
+      hpxmls[:es_rated] = File.join(rundir, 'results', 'ESRated.xml')
+      hpxmls[:esrd_ref] = File.join(rundir, 'results', 'ESReference_ERIReferenceHome.xml')
+      hpxmls[:esrd_rated] = File.join(rundir, 'results', 'ESReference_ERIRatedHome.xml')
+      hpxmls[:esrd_iad] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentDesign.xml')
+      hpxmls[:esrd_iadref] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentReferenceHome.xml')
+      hpxmls[:esrat_ref] = File.join(rundir, 'results', 'ESRated_ERIReferenceHome.xml')
+      hpxmls[:esrat_rated] = File.join(rundir, 'results', 'ESRated_ERIRatedHome.xml')
+      hpxmls[:esrat_iad] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentDesign.xml')
+      hpxmls[:esrat_iadref] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.xml')
+      csvs[:es_results] = File.join(rundir, 'results', 'ES_Results.csv')
+      csvs[:esrd_eri_results] = File.join(rundir, 'results', 'ESReference_ERI_Results.csv')
+      csvs[:esrd_eri_worksheet] = File.join(rundir, 'results', 'ESReference_ERI_Worksheet.csv')
+      csvs[:esrat_eri_results] = File.join(rundir, 'results', 'ESRated_ERI_Results.csv')
+      csvs[:esrat_eri_worksheet] = File.join(rundir, 'results', 'ESRated_ERI_Worksheet.csv')
+      csvs[:esrd_rated_results] = File.join(rundir, 'results', 'ESReference_ERIRatedHome.csv')
+      csvs[:esrd_ref_results] = File.join(rundir, 'results', 'ESReference_ERIReferenceHome.csv')
+      csvs[:esrd_iad_results] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentDesign.csv')
+      csvs[:esrd_iadref_results] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentReferenceHome.csv')
+      csvs[:esrat_rated_results] = File.join(rundir, 'results', 'ESRated_ERIRatedHome.csv')
+      csvs[:esrat_ref_results] = File.join(rundir, 'results', 'ESRated_ERIReferenceHome.csv')
+      csvs[:esrat_iad_results] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentDesign.csv')
+      csvs[:esrat_iadref_results] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.csv')
+      if timeseries_frequency != 'none'
+        csvs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+      end
+      log_dirs = [[ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIRatedHome],
+                  [ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIReferenceHome],
+                  [ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIIndexAdjustmentDesign],
+                  [ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIIndexAdjustmentReferenceHome],
+                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIRatedHome],
+                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIReferenceHome],
+                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIIndexAdjustmentDesign],
+                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIIndexAdjustmentReferenceHome]].map { |d| d[0].gsub(' ', '') + '_' + d[1].gsub(' ', '') }
+    end
   end
 
   if expect_error
@@ -164,7 +165,8 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
     stron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
     hpxmls.keys.each do |k|
-      next if hpxmls[k].include?('ESReference.xml') or hpxmls[k].include?('ESRated.xml')
+      next if hpxmls[k].include?('ESReference.xml') || hpxmls[k].include?('ESRated.xml')
+
       hpxml = HPXML.new(hpxml_path: hpxmls[k], schema_path: xsd_path, schematron_path: stron_path) # Validate in.xml to ensure it can be run back through OS-HPXML
       next unless not hpxml.errors.empty?
 
@@ -210,15 +212,6 @@ def _run_simulation(xml, test_name)
   measure_subdir = 'hpxml-measures/ReportSimulationOutput'
   args = {}
   args['timeseries_frequency'] = 'none'
-  args['include_timeseries_fuel_consumptions'] = false
-  args['include_timeseries_end_use_consumptions'] = false
-  args['include_timeseries_emissions'] = false
-  args['include_timeseries_hot_water_uses'] = false
-  args['include_timeseries_total_loads'] = false
-  args['include_timeseries_component_loads'] = false
-  args['include_timeseries_zone_temperatures'] = false
-  args['include_timeseries_airflows'] = false
-  args['include_timeseries_weather'] = false
   update_args_hash(measures, measure_subdir, args)
 
   results = run_hpxml_workflow(rundir, measures, measures_dir)
@@ -232,16 +225,16 @@ def _run_simulation(xml, test_name)
 end
 
 def _get_simulation_load_results(csv_path)
-  results = _get_csv_results(csv_path)
+  results = _get_csv_results([csv_path])
   htg_load = results['Load: Heating: Delivered (MBtu)'].round(2)
   clg_load = results['Load: Cooling: Delivered (MBtu)'].round(2)
 
   return htg_load, clg_load
 end
 
-def _get_csv_results(csv1, csv2 = nil)
+def _get_csv_results(csvs)
   results = {}
-  [csv1, csv2].each do |csv|
+  csvs.each do |csv|
     next if csv.nil?
     next unless File.exist? csv
 

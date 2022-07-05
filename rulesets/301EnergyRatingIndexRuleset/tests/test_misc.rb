@@ -64,13 +64,6 @@ class ERIMiscTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _get_hpxml_info(hpxml)
-    nbeds = hpxml.building_construction.number_of_bedrooms
-    cfa = hpxml.building_construction.conditioned_floor_area
-    eri_design = hpxml.header.eri_design
-    return nbeds, cfa, eri_design
-  end
-
   def _expected_misc_ref_energy_gains(cfa)
     kwh_per_yr = 0.91 * cfa
     sens_btu_per_yr = (7.27 * cfa) * 365.0
@@ -93,33 +86,11 @@ class ERIMiscTest < MiniTest::Test
         assert_in_epsilon(misc_kwh, plug_load.kWh_per_year, 0.01)
         assert_in_epsilon(misc_sens, plug_load.frac_sensible, 0.01)
         assert_in_epsilon(misc_lat, plug_load.frac_latent, 0.01)
-
-        # Energy & Internal Gains
-        _nbeds, cfa, eri_design = _get_hpxml_info(hpxml)
-        if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-          btu = UnitConversions.convert(plug_load.kWh_per_year, 'kWh', 'Btu')
-
-          expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_misc_ref_energy_gains(cfa)
-          assert_in_epsilon(expected_annual_kwh, plug_load.kWh_per_year, 0.02)
-          assert_in_epsilon(expected_sens_btu, plug_load.frac_sensible * btu, 0.01)
-          assert_in_epsilon(expected_lat_btu, plug_load.frac_latent * btu, 0.01)
-        end
       elsif plug_load.plug_load_type == HPXML::PlugLoadTypeTelevision
         num_pls += 1
         assert_in_epsilon(tv_kwh, plug_load.kWh_per_year, 0.01)
         assert_in_epsilon(tv_sens, plug_load.frac_sensible, 0.01)
         assert_in_epsilon(tv_lat, plug_load.frac_latent, 0.01)
-
-        # Energy & Internal Gains
-        nbeds, _cfa, eri_design = _get_hpxml_info(hpxml)
-        if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-          btu = UnitConversions.convert(plug_load.kWh_per_year, 'kWh', 'Btu')
-
-          expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_tv_ref_energy_gains(nbeds)
-          assert_in_epsilon(expected_annual_kwh, plug_load.kWh_per_year, 0.02)
-          assert_in_epsilon(expected_sens_btu, plug_load.frac_sensible * btu, 0.01)
-          assert_in_epsilon(expected_lat_btu, plug_load.frac_latent * btu, 0.01)
-        end
       end
     end
     assert_equal(2, num_pls)

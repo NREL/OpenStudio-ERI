@@ -392,7 +392,7 @@ class ERIWaterHeatingTest < MiniTest::Test
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.heating_systems[0].fraction_heat_load_served = 0.15
     { HPXML::FuelTypeOil => 0.35, HPXML::FuelTypeElectricity => 0.5 }.each do |fuel, frac|
-      hpxml.heating_systems.add(id: "HeatingSystem#{fuel.gsub(' ','')}",
+      hpxml.heating_systems.add(id: "HeatingSystem#{fuel.gsub(' ', '')}",
                                 heating_system_type: HPXML::HVACTypeStove,
                                 heating_system_fuel: fuel,
                                 heating_capacity: 999,

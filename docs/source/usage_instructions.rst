@@ -16,17 +16,17 @@ To get started:
 
 .. _running:
 
-Running ERI
------------
+Running Calculations
+--------------------
 
-Run the ERI calculation on a provided sample HPXML file as follows:
+Run all calculations (e.g., ERI, ENERGY STAR, etc.) on a provided sample HPXML file as follows:
 ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml``
 
 Note that all simulations will be executed in parallel if there are sufficient cpus/cores available.
 
 This will generate output as shown below:
 
-.. image:: https://user-images.githubusercontent.com/5861765/82058115-8be1cc80-9681-11ea-9288-8b1eca5ec422.png
+.. image:: https://user-images.githubusercontent.com/5861765/177409096-102d0a15-c89c-400a-a81c-df9f402810a9.png
 
 You can also request generation of timeseries output CSV files as part of the calculation by providing one or more timeseries flags (``--hourly``, ``--daily``, or ``--monthly``).
 
@@ -40,14 +40,6 @@ You can also skip simulations (i.e., just generate the ERI Reference/Rated Home 
 ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --skip-simulation``
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
-
-Running ENERGY STAR
--------------------
-
-Run the ENERGY STAR calculation on a provided sample HPXML file as follows:
-``openstudio workflow/energy_star.rb -x workflow/sample_files/base.xml``
-
-Note that all simulations will be executed in parallel if there are sufficient cpus/cores available.
 
 Output
 ------
