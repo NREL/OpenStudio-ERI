@@ -32,7 +32,13 @@ def get_program_versions(hpxml_doc)
     es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] }.each do |version, values|
     all_versions, xpath = values
     if (not version.nil?) && (not all_versions.include? version)
-      fail "Unexpected #{xpath}: '#{version}'."
+      puts "Unexpected #{xpath}: '#{version}'"
+      exit!
+    end
+    if not version.nil?
+      puts "#{xpath}: #{version}"
+    else
+      puts "#{xpath}: None"
     end
   end
 
@@ -44,6 +50,7 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
 
   calc_type = designs.map { |d| d.calc_type }.join(',')
   init_calc_type = designs.map { |d| d.init_calc_type.to_s }.join(',')
+  init_hpxml_output_path = designs.map { |d| d.init_hpxml_output_path }.join(',')
   hpxml_output_path = designs.map { |d| d.hpxml_output_path }.join(',')
 
   # Call 301EnergyRatingIndexRuleset measure
@@ -54,6 +61,7 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
   args['init_calc_type'] = init_calc_type
   args['calc_type'] = calc_type
   args['hpxml_input_path'] = options[:hpxml]
+  args['init_hpxml_output_path'] = init_hpxml_output_path
   args['hpxml_output_path'] = hpxml_output_path
   update_args_hash(measures, measure_subdir, args)
 
@@ -64,12 +72,15 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
   success = apply_measures(measures_dir, measures, runner, model, false, 'OpenStudio::Measure::ModelMeasure')
-  rundir = options[:output_dir] # FIXME
+  rundir = options[:output_dir]
+  run_log = File.join(rundir, 'run.log')
+  File.delete(run_log) if File.exist? run_log
   report_measure_errors_warnings(runner, rundir, options[:debug])
   report_os_warnings(os_log, rundir)
 
   if not success
-    fail "HPXMLs not successfully generated. See #{File.join(rundir, 'run.log')} for details."
+    puts "HPXMLs not successfully generated. See #{run_log} for details."
+    exit!
   end
 
   # Get duplicate HPXMLs
@@ -572,7 +583,7 @@ def _calculate_co2e_index(rated_output, ref_output, results)
   return results
 end
 
-def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_reduction_limit: nil)
+def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_reduction_limit: nil, skip_csv: false)
   if design_outputs.keys.include? Constants.CalcTypeERIIndexAdjustmentDesign
     results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
                                  design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome],
@@ -592,7 +603,9 @@ def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_redu
                                     results)
   end
 
-  write_eri_results(results, resultsdir, design_outputs, results_iad, csv_filename_prefix)
+  if not skip_csv
+    write_eri_results(results, resultsdir, design_outputs, results_iad, csv_filename_prefix)
+  end
 
   return results
 end
@@ -893,9 +906,7 @@ def main(options)
       end
 
       # Calculate ES Rated ERI w/o OPP for extra information
-      # FIXME: Double-check if overriding the csv file here is the desired result
-      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, csv_filename_prefix: ESConstants.CalcTypeEnergyStarRated.gsub(' ', ''),
-                                                                              opp_reduction_limit: 0.0)
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, skip_csv: true, opp_reduction_limit: 0.0)
 
       write_es_results(resultsdir, esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
 
@@ -1006,7 +1017,8 @@ if not options[:monthly_outputs].empty?
 end
 
 if n_freq > 1
-  fail 'Multiple timeseries frequencies (hourly, daily, monthly) are not supported.'
+  puts 'Multiple timeseries frequencies (hourly, daily, monthly) are not supported.'
+  exit!
 end
 
 if options[:timeseries_outputs].include? 'ALL'
@@ -1029,14 +1041,16 @@ if options[:cache]
 end
 
 if not options[:hpxml]
-  fail "HPXML argument is required. Call #{File.basename(__FILE__)} -h for usage."
+  puts "HPXML argument is required. Call #{File.basename(__FILE__)} -h for usage."
+  exit!
 end
 
 unless (Pathname.new options[:hpxml]).absolute?
   options[:hpxml] = File.expand_path(options[:hpxml])
 end
 unless File.exist?(options[:hpxml]) && options[:hpxml].downcase.end_with?('.xml')
-  fail "'#{options[:hpxml]}' does not exist or is not an .xml file."
+  puts "'#{options[:hpxml]}' does not exist or is not an .xml file."
+  exit!
 end
 
 if options[:output_dir].nil?

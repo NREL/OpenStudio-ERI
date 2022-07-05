@@ -101,6 +101,8 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     end
     if not es_version.nil?
       # ENERGY STAR
+      hpxmls[:es_ref] = File.join(rundir, 'results', 'ESReference.xml')
+      hpxmls[:es_rated] = File.join(rundir, 'results', 'ESRated.xml')
       hpxmls[:esrd_ref] = File.join(rundir, 'results', 'ESReference_ERIReferenceHome.xml')
       hpxmls[:esrd_rated] = File.join(rundir, 'results', 'ESReference_ERIRatedHome.xml')
       hpxmls[:esrd_iad] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentDesign.xml')

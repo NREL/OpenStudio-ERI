@@ -12,12 +12,13 @@ class Design
     name = calc_type.gsub(' ', '')
     if not init_calc_type.nil?
       name = init_calc_type.gsub(' ', '') + '_' + name
+      @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
     end
     @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
     @csv_output_path = File.join(output_dir, 'results', "#{name}.csv")
     @design_dir = File.join(output_dir, name)
   end
-  attr_accessor(:calc_type, :init_calc_type, :hpxml_output_path, :csv_output_path,
+  attr_accessor(:calc_type, :init_calc_type, :init_hpxml_output_path, :hpxml_output_path, :csv_output_path,
                 :output_dir, :design_dir)
 end
 
