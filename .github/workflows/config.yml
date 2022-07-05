@@ -107,7 +107,7 @@ jobs:
   run-resnet-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:3.4.0
+      image: docker://nrel/openstudio:dev-3.4.1-alpha
     steps:
       - uses: actions/checkout@v2
         with:
@@ -130,7 +130,7 @@ jobs:
   run-epa-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:3.4.0
+      image: docker://nrel/openstudio:dev-3.4.1-alpha
     steps:
       - uses: actions/checkout@v2
         with:
