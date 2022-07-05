@@ -264,15 +264,6 @@ class ERIApplianceTest < MiniTest::Test
     return measure.new_hpxml
   end
 
-  def _get_hpxml_info(hpxml)
-    nbeds = hpxml.building_construction.number_of_bedrooms
-    cfa = hpxml.building_construction.conditioned_floor_area
-    eri_version = hpxml.header.eri_calculation_version
-    eri_design = hpxml.header.eri_design
-    elec_appl = (hpxml.cooking_ranges[0].fuel_type == HPXML::FuelTypeElectricity && hpxml.clothes_dryers[0].fuel_type == HPXML::FuelTypeElectricity)
-    return nbeds, cfa, eri_version, eri_design, elec_appl
-  end
-
   def _expected_dw_ref_energy_gains(eri_version, nbeds)
     if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019A')
       kwh_per_yr = 60 + 24 * nbeds
@@ -367,19 +358,6 @@ class ERIApplianceTest < MiniTest::Test
     assert_in_epsilon(agc, clothes_washer.label_annual_gas_cost, 0.01)
     assert_in_epsilon(cap, clothes_washer.capacity, 0.01)
     assert_in_epsilon(label_usage, clothes_washer.label_usage, 0.01)
-
-    # Energy & Internal Gains
-    nbeds, _cfa, eri_version, eri_design, _elec_appl = _get_hpxml_info(hpxml)
-    if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      clothes_washer.usage_multiplier = 1.0
-      cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
-      btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
-
-      expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_cw_ref_energy_gains(eri_version, nbeds)
-      assert_in_epsilon(expected_annual_kwh, cw_annual_kwh, 0.02)
-      assert_in_epsilon(expected_sens_btu, cw_frac_sens * btu, 0.01)
-      assert_in_epsilon(expected_lat_btu, cw_frac_lat * btu, 0.01)
-    end
   end
 
   def _check_clothes_dryer(hpxml, fuel_type:, ef:, cef:, control: nil, location:)
@@ -401,22 +379,6 @@ class ERIApplianceTest < MiniTest::Test
     end
     assert_equal(true, clothes_dryer.is_vented)
     assert_equal(0.0, clothes_dryer.vented_flow_rate)
-
-    # Energy & Internal Gains
-    nbeds, _cfa, eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
-    if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      clothes_washer = hpxml.clothes_washers[0]
-      clothes_washer.usage_multiplier = 1.0
-      clothes_dryer.usage_multiplier = 1.0
-      cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(eri_version, nbeds, clothes_dryer, clothes_washer)
-      btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
-
-      expected_annual_kwh, expected_annual_therm, expected_sens_btu, expected_lat_btu = _expected_cd_ref_energy_gains(eri_version, nbeds, elec_appl)
-      assert_in_epsilon(expected_annual_kwh, cd_annual_kwh, 0.02)
-      assert_in_epsilon(expected_annual_therm, cd_annual_therm, 0.02)
-      assert_in_epsilon(expected_sens_btu, cd_frac_sens * btu, 0.01)
-      assert_in_epsilon(expected_lat_btu, cd_frac_lat * btu, 0.01)
-    end
   end
 
   def _check_dishwasher(hpxml, ef:, annual_kwh:, cap:, elec_rate:, gas_rate:, agc:, label_usage:, location:)
@@ -438,19 +400,6 @@ class ERIApplianceTest < MiniTest::Test
     assert_in_epsilon(gas_rate, dishwasher.label_gas_rate, 0.01)
     assert_in_epsilon(agc, dishwasher.label_annual_gas_cost, 0.01)
     assert_in_epsilon(label_usage, dishwasher.label_usage, 0.01)
-
-    # Energy & Internal Gains
-    nbeds, _cfa, eri_version, eri_design, _elec_appl = _get_hpxml_info(hpxml)
-    if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      dishwasher.usage_multiplier = 1.0
-      dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
-      btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
-
-      expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_dw_ref_energy_gains(eri_version, nbeds)
-      assert_in_epsilon(expected_annual_kwh, dw_annual_kwh, 0.02)
-      assert_in_epsilon(expected_sens_btu, dw_frac_sens * btu, 0.01)
-      assert_in_epsilon(expected_lat_btu, dw_frac_lat * btu, 0.01)
-    end
   end
 
   def _check_refrigerator(hpxml, annual_kwh:, location:)
@@ -458,19 +407,6 @@ class ERIApplianceTest < MiniTest::Test
     refrigerator = hpxml.refrigerators[0]
     assert_equal(location, refrigerator.location)
     assert_equal(annual_kwh, refrigerator.rated_annual_kwh)
-
-    # Energy & Internal Gains
-    nbeds, _cfa, _eri_version, eri_design, _elec_appl = _get_hpxml_info(hpxml)
-    if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      refrigerator.usage_multiplier = 1.0
-      rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
-      btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
-
-      expected_annual_kwh, expected_sens_btu, expected_lat_btu = _expected_rf_ref_energy_gains(nbeds)
-      assert_in_epsilon(expected_annual_kwh, rf_annual_kwh, 0.01)
-      assert_in_epsilon(expected_sens_btu, rf_frac_sens * btu, 0.01)
-      assert_in_epsilon(expected_lat_btu, rf_frac_lat * btu, 0.01)
-    end
   end
 
   def _check_cooking_range(hpxml, fuel_type:, cook_is_induction:, oven_is_convection:, location:)
@@ -482,20 +418,6 @@ class ERIApplianceTest < MiniTest::Test
     assert_equal(1, hpxml.ovens.size)
     oven = hpxml.ovens[0]
     assert_equal(oven_is_convection, oven.is_convection)
-
-    # Energy & Internal Gains
-    nbeds, _cfa, _eri_version, eri_design, elec_appl = _get_hpxml_info(hpxml)
-    if (eri_design == Constants.CalcTypeERIReferenceHome) || (eri_design == Constants.CalcTypeERIIndexAdjustmentReferenceHome)
-      cooking_range.usage_multiplier = 1.0
-      cook_annual_kwh, cook_annual_therm, cook_frac_sens, cook_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cooking_range, oven)
-      btu = UnitConversions.convert(cook_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cook_annual_therm, 'therm', 'Btu')
-
-      expected_annual_kwh, expected_annual_therm, expected_sens_btu, expected_lat_btu = _expected_cr_ref_energy_gains(nbeds, elec_appl)
-      assert_in_epsilon(expected_annual_kwh, cook_annual_kwh, 0.02)
-      assert_in_epsilon(expected_annual_therm, cook_annual_therm, 0.02)
-      assert_in_epsilon(expected_sens_btu, cook_frac_sens * btu, 0.01)
-      assert_in_epsilon(expected_lat_btu, cook_frac_lat * btu, 0.01)
-    end
   end
 
   def _check_dehumidifiers(hpxml, all_expected_values = [])

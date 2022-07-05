@@ -58,7 +58,7 @@ jobs:
           name: documentation
           path: docs/_build/html/
 
-  run-eri-workflow-tests:
+  run-eri-tests:
     runs-on: ubuntu-latest
     container:
       image: docker://nrel/openstudio:3.4.0
@@ -71,9 +71,9 @@ jobs:
         run: |
           rm -f Gemfile.lock && bundle install
 
-      - name: Run ERI workflow tests
+      - name: Run ERI tests
         run: |
-          bundle exec rake test_eri_workflow
+          bundle exec rake test_eri
 
       - name: Store results
         uses: actions/upload-artifact@v2
@@ -81,7 +81,7 @@ jobs:
           path: workflow/tests/test_results
           name: test_results_eri
 
-  run-energystar-workflow-tests:
+  run-real-home-tests:
     runs-on: ubuntu-latest
     container:
       image: docker://nrel/openstudio:3.4.0
@@ -94,15 +94,61 @@ jobs:
         run: |
           rm -f Gemfile.lock && bundle install
 
-      - name: Run ENERGY STAR workflow tests
+      - name: Run Real Home tests
         run: |
-          bundle exec rake test_energystar_workflow
+          bundle exec rake test_real_homes
 
       - name: Store results
         uses: actions/upload-artifact@v2
         with:
           path: workflow/tests/test_results
-          name: test_results_energystar
+          name: test_results_real_homes
+
+  run-resnet-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://nrel/openstudio:3.4.0
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install software
+        run: |
+          rm -f Gemfile.lock && bundle install
+
+      - name: Run RESNET tests
+        run: |
+          bundle exec rake test_resnet
+
+      - name: Store results
+        uses: actions/upload-artifact@v2
+        with:
+          path: workflow/tests/test_results
+          name: test_results_resnet
+
+  run-epa-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://nrel/openstudio:3.4.0
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install software
+        run: |
+          rm -f Gemfile.lock && bundle install
+
+      - name: Run EPA tests
+        run: |
+          bundle exec rake test_epa
+
+      - name: Store results
+        uses: actions/upload-artifact@v2
+        with:
+          path: workflow/tests/test_results
+          name: test_results_epa
 
   run-windows-tests:
     runs-on: windows-latest
@@ -118,12 +164,11 @@ jobs:
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
-          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_star.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
 
   compare-results:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: [run-eri-workflow-tests, run-energystar-workflow-tests]
+    needs: [run-eri-tests, run-real-home-tests, run-resnet-tests, run-epa-tests]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -153,12 +198,26 @@ jobs:
             results
           name: test_results_eri
 
-      - name: Download ENERGY STAR feature results
+      - name: Download Real Home feature results
         uses: actions/download-artifact@v2
         with:
           path: |
             results
-          name: test_results_energystar
+          name: test_results_real_homes
+
+      - name: Download RESNET feature results
+        uses: actions/download-artifact@v2
+        with:
+          path: |
+            results
+          name: test_results_resnet
+
+      - name: Download EPA feature results
+        uses: actions/download-artifact@v2
+        with:
+          path: |
+            results
+          name: test_results_epa
 
       - name: Compare results
         run: |
@@ -182,7 +241,7 @@ jobs:
 
   update-results:
     runs-on: ubuntu-latest
-    needs: [run-eri-workflow-tests, run-energystar-workflow-tests]
+    needs: [run-eri-tests, run-real-home-tests, run-resnet-tests, run-epa-tests]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -195,12 +254,26 @@ jobs:
             results
           name: test_results_eri
 
-      - name: Download ENERGY STAR feature results
+      - name: Download Real Home feature results
         uses: actions/download-artifact@v2
         with:
           path: |
             results
-          name: test_results_energystar
+          name: test_results_real_homes
+
+      - name: Download RESNET feature results
+        uses: actions/download-artifact@v2
+        with:
+          path: |
+            results
+          name: test_results_resnet
+
+      - name: Download EPA feature results
+        uses: actions/download-artifact@v2
+        with:
+          path: |
+            results
+          name: test_results_epa
 
       - name: Commit latest results
         shell: bash        

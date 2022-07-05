@@ -2275,6 +2275,7 @@ def create_sample_hpxmls
     # Handle different inputs for ERI
 
     hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.utility_bill_scenarios.clear
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
     hpxml.attics.each do |attic|
@@ -2544,7 +2545,7 @@ def create_sample_hpxmls
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
   end
 
-  # ENERGY STAR Oregon/Washington MF file
+  # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-multifamily.xml')
   hpxml.header.energystar_calculation_version = ESConstants.MFOregonWashingtonVer1_2
   hpxml.climate_and_risk_zones.iecc_zone = '4C'
@@ -2581,7 +2582,7 @@ if ARGV[0].to_sym == :update_measures
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-  require_relative 'rulesets/EnergyStarRuleset/resources/constants'
+  require_relative 'rulesets/301EnergyRatingIndexRuleset/resources/constants'
 
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
@@ -2661,8 +2662,6 @@ if ARGV[0].to_sym == :create_release_zips
            'hpxml-measures/ReportSimulationOutput/resources/**/*.*',
            'rulesets/301EnergyRatingIndexRuleset/measure.*',
            'rulesets/301EnergyRatingIndexRuleset/resources/**/*.*',
-           'rulesets/EnergyStarRuleset/measure.*',
-           'rulesets/EnergyStarRuleset/resources/**/*.*',
            'weather/*.*',
            'workflow/*.*',
            'workflow/real_homes/*.*',
