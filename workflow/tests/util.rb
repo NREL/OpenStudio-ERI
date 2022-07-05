@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+require 'oga'
+require_relative '../../rulesets/301EnergyRatingIndexRuleset/resources/constants'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 
 def _run_ruleset(design, xml, out_xml)
