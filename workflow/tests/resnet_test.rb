@@ -896,9 +896,9 @@ class RESNETTest < Minitest::Test
       elsif test_num == 2
         mv_kwh_yr = 222.1
       elsif test_num == 3
-        mv_kwh_yr = 287.8
+        mv_kwh_yr = 288.1
       else
-        mv_kwh_yr = 762.8
+        mv_kwh_yr = 763.4
       end
     end
     assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], epsilon)

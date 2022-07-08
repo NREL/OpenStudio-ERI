@@ -2467,7 +2467,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
-    q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+    q_inf = nl * @weather.data.WSF * @cfa * 8.202 / 60.0 # Effective annual average infiltration rate, cfm
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       if is_balanced
         phi = 1.0
