@@ -65,6 +65,11 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
     arg.setDescription('Use comma-separate values if more than one.')
     args << arg
 
+    arg = OpenStudio::Measure::OSArgument.makeStringArgument('iecc_version', false)
+    arg.setDisplayName('IECC Version(s)')
+    arg.setDescription('Use comma-separate values if more than one.')
+    args << arg
+
     arg = OpenStudio::Measure::OSArgument.makeStringArgument('init_hpxml_output_path', false)
     arg.setDisplayName('Initial HPXML Output File Path(s)')
     arg.setDescription('Output HPXML file path(s) after applying the initial calculation type. Use comma-separate values if more than one.')
@@ -89,18 +94,21 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
     # assign the user inputs to variables
     hpxml_input_path = runner.getStringArgumentValue('hpxml_input_path', user_arguments)
-    init_calc_type = runner.getOptionalStringArgumentValue('init_calc_type', user_arguments).to_s.split(',').map(&:strip)
-    calc_type = runner.getOptionalStringArgumentValue('calc_type', user_arguments).to_s.split(',').map(&:strip)
-    init_hpxml_output_path = runner.getOptionalStringArgumentValue('init_hpxml_output_path', user_arguments).to_s.split(',').map(&:strip)
-    hpxml_output_path = runner.getOptionalStringArgumentValue('hpxml_output_path', user_arguments).to_s.split(',').map(&:strip)
+    init_calc_type = runner.getOptionalStringArgumentValue('init_calc_type', user_arguments).to_s.split(',', -1).map(&:strip)
+    calc_type = runner.getOptionalStringArgumentValue('calc_type', user_arguments).to_s.split(',', -1).map(&:strip)
+    iecc_version = runner.getOptionalStringArgumentValue('iecc_version', user_arguments).to_s.split(',', -1).map(&:strip)
+    init_hpxml_output_path = runner.getOptionalStringArgumentValue('init_hpxml_output_path', user_arguments).to_s.split(',', -1).map(&:strip)
+    hpxml_output_path = runner.getOptionalStringArgumentValue('hpxml_output_path', user_arguments).to_s.split(',', -1).map(&:strip)
 
-    num_designs = [calc_type.size, init_calc_type.size, init_hpxml_output_path.size, hpxml_output_path.size].max
+    num_designs = [calc_type.size, init_calc_type.size, init_hpxml_output_path.size, hpxml_output_path.size, iecc_version.size].max
     init_calc_type = [nil] * num_designs if init_calc_type.empty?
     calc_type = [nil] * num_designs if calc_type.empty?
+    iecc_version = [nil] * num_designs if iecc_version.empty?
     init_hpxml_output_path = [nil] * num_designs if init_hpxml_output_path.empty?
     hpxml_output_path = [nil] * num_designs if hpxml_output_path.empty?
 
-    if calc_type.size != init_calc_type.size || calc_type.size != init_hpxml_output_path.size || calc_type.size != hpxml_output_path.size
+    if calc_type.size != init_calc_type.size || calc_type.size != init_hpxml_output_path.size ||
+       calc_type.size != hpxml_output_path.size || calc_type.size != iecc_version.size
       fail 'Unexpected measure arguments.'
     end
 
@@ -162,8 +170,8 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
       create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
       new_hpxmls = {}
-      all_calcs = calc_type.zip(init_calc_type, init_hpxml_output_path, hpxml_output_path)
-      all_calcs.each do |this_calc_type, this_init_calc_type, this_init_hpxml_output_path, hpxml_output_path|
+      all_calcs = calc_type.zip(init_calc_type, init_hpxml_output_path, iecc_version, hpxml_output_path)
+      all_calcs.each do |this_calc_type, this_init_calc_type, this_init_hpxml_output_path, this_iecc_version, this_hpxml_output_path|
         # Ensure we don't modify the original HPXML
         @new_hpxml = Marshal.load(Marshal.dump(@orig_hpxml))
 
@@ -184,13 +192,13 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
         # Apply 301 ruleset on HPXML object
         if not this_calc_type.nil?
           @new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, @new_hpxml, this_calc_type, weather,
-                                                                 egrid_subregion, cambium_gea, create_time)
+                                                                 this_iecc_version, egrid_subregion, cambium_gea, create_time)
         end
 
         # Write final HPXML file
-        if (not hpxml_output_path.nil?) && (not hpxml_output_path.empty?)
-          new_hpxmls[hpxml_output_path] = XMLHelper.write_file(@new_hpxml.to_oga, hpxml_output_path)
-          runner.registerInfo("Wrote file: #{hpxml_output_path}")
+        if (not hpxml_output_path.nil?) && (not this_hpxml_output_path.empty?)
+          new_hpxmls[this_hpxml_output_path] = XMLHelper.write_file(@new_hpxml.to_oga, this_hpxml_output_path)
+          runner.registerInfo("Wrote file: #{this_hpxml_output_path}")
         end
       end
     rescue Exception => e
@@ -207,6 +215,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
 
         if new_hpxml == new_hpxml2
           duplicates[hpxml_output_path] = hpxml_output_path2
+          break
         end
       end
     end

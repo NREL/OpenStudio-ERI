@@ -5,11 +5,14 @@
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
 class Design
-  def initialize(calc_type:, init_calc_type: nil, output_dir:)
+  def initialize(calc_type:, init_calc_type: nil, output_dir:, iecc_version: nil)
     @calc_type = calc_type
     @init_calc_type = init_calc_type
     @output_dir = output_dir
     name = calc_type.gsub(' ', '')
+    if not iecc_version.nil?
+      name = name.gsub('ERI', 'IECC')
+    end
     if not init_calc_type.nil?
       name = init_calc_type.gsub(' ', '') + '_' + name
       @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
@@ -17,9 +20,10 @@ class Design
     @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
     @csv_output_path = File.join(output_dir, 'results', "#{name}.csv")
     @design_dir = File.join(output_dir, name)
+    @iecc_version = iecc_version
   end
   attr_accessor(:calc_type, :init_calc_type, :init_hpxml_output_path, :hpxml_output_path, :csv_output_path,
-                :output_dir, :design_dir)
+                :output_dir, :design_dir, :iecc_version)
 end
 
 def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
@@ -63,14 +67,15 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
                                                                 suppress_print: true)
 end
 
-if ARGV.size == 7
+if ARGV.size == 8
   calc_type = ARGV[0]
   init_calc_type = (ARGV[1].empty? ? nil : ARGV[1])
-  output_dir = ARGV[2]
-  design = Design.new(calc_type: calc_type, init_calc_type: init_calc_type, output_dir: output_dir)
-  debug = (ARGV[3].downcase.to_s == 'true')
-  timeseries_output_freq = ARGV[4]
-  timeseries_outputs = ARGV[5].split('|')
-  add_comp_loads = (ARGV[6].downcase.to_s == 'true')
+  iecc_version = (ARGV[2].empty? ? nil : ARGV[2])
+  output_dir = ARGV[3]
+  design = Design.new(calc_type: calc_type, init_calc_type: init_calc_type, output_dir: output_dir, iecc_version: iecc_version)
+  debug = (ARGV[4].downcase.to_s == 'true')
+  timeseries_output_freq = ARGV[5]
+  timeseries_outputs = ARGV[6].split('|')
+  add_comp_loads = (ARGV[7].downcase.to_s == 'true')
   run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
 end

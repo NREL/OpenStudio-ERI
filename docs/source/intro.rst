@@ -8,6 +8,7 @@ The project supports:
 
 - ANSI/RESNET/ICC 301© Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
 - ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path
+- IECC Energy Rating Index Compliance Alternative (Section R406)
 
 License
 -------

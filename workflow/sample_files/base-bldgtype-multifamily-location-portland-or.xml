@@ -14,6 +14,9 @@
       <EnergyStarCalculation>
         <Version>MF_OregonWashington_1.2</Version>
       </EnergyStarCalculation>
+      <IECCERICalculation>
+        <Version>2021</Version>
+      </IECCERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>

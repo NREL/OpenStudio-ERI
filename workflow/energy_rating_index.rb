@@ -27,9 +27,11 @@ def get_program_versions(hpxml_doc)
     eri_version = Constants.ERIVersions[-1]
   end
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
+  iecc_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
 
   { eri_version => [Constants.ERIVersions, 'ERICalculation/Version'],
-    es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] }.each do |version, values|
+    es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'],
+    iecc_version => [IECCConstants.AllVersions, 'IECCERICalculation/Version'] }.each do |version, values|
     all_versions, xpath = values
     if (not version.nil?) && (not all_versions.include? version)
       puts "Unexpected #{xpath}: '#{version}'"
@@ -42,7 +44,7 @@ def get_program_versions(hpxml_doc)
     end
   end
 
-  return eri_version, es_version
+  return eri_version, es_version, iecc_version
 end
 
 def apply_rulesets_and_generate_hpxmls(designs, options)
@@ -51,6 +53,7 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
   calc_type = designs.map { |d| d.calc_type }.join(',')
   init_calc_type = designs.map { |d| d.init_calc_type.to_s }.join(',')
   init_hpxml_output_path = designs.map { |d| d.init_hpxml_output_path }.join(',')
+  iecc_version = designs.map { |d| d.iecc_version }.join(',')
   hpxml_output_path = designs.map { |d| d.hpxml_output_path }.join(',')
 
   # Call 301EnergyRatingIndexRuleset measure
@@ -62,6 +65,7 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
   args['calc_type'] = calc_type
   args['hpxml_input_path'] = options[:hpxml]
   args['init_hpxml_output_path'] = init_hpxml_output_path
+  args['iecc_version'] = iecc_version
   args['hpxml_output_path'] = hpxml_output_path
   update_args_hash(measures, measure_subdir, args)
 
@@ -71,9 +75,9 @@ def apply_rulesets_and_generate_hpxmls(designs, options)
   model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
 
-  success = apply_measures(measures_dir, measures, runner, model, false, 'OpenStudio::Measure::ModelMeasure')
   rundir = options[:output_dir]
   run_log = File.join(rundir, 'run.log')
+  success = apply_measures(measures_dir, measures, runner, model, false, 'OpenStudio::Measure::ModelMeasure')
   File.delete(run_log) if File.exist? run_log
   report_measure_errors_warnings(runner, rundir, options[:debug])
   report_os_warnings(os_log, rundir)
@@ -176,6 +180,7 @@ def run_design_spawn(design, options)
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
   command += "\"#{design.calc_type}\" "
   command += "\"#{design.init_calc_type}\" "
+  command += "\"#{design.iecc_version}\" "
   command += "\"#{design.output_dir}\" "
   command += "\"#{options[:debug]}\" "
   command += "\"#{options[:timeseries_output_freq]}\" "
@@ -822,7 +827,7 @@ def main(options)
 
   puts "HPXML: #{options[:hpxml]}"
   hpxml_doc = XMLHelper.parse_file(options[:hpxml])
-  eri_version, es_version = get_program_versions(hpxml_doc)
+  eri_version, es_version, iecc_version = get_program_versions(hpxml_doc)
 
   # Create list of designs
   designs = []
@@ -853,6 +858,15 @@ def main(options)
     designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
     designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
     designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+  end
+  if not iecc_version.nil?
+    # IECC ERI designs
+    # FIXME: Need to ensure the correct ERI version (e.g., latest 2014 vs latest 2019)
+    # FIXME: Building thermal envelope and ERI requirements related to on-site power production (+ documentation)
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
   end
 
   duplicates = apply_rulesets_and_generate_hpxmls(designs, options)

@@ -48,32 +48,26 @@ HPXML Software Info
 
 High-level simulation inputs are entered in ``/HPXML/SoftwareInfo``.
 
-HPXML ERI/ES Calculation
-************************
+High-level software inputs are entered in ``/HPXML/SoftwareInfo``.
 
-The version of the ERI calculation is entered in ``/HPXML/SoftwareInfo/extension/ERICalculation``.
+HPXML Calculations
+******************
 
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  Element      Type      Units    Constraints  Required  Default  Description
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  ``Version``  string             See [#]_     No [#]_            Version of 301 Standard w/ addenda
-  ===========  ========  =======  ===========  ========  =======  ==================================
+The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/SoftwareInfo/extension``.
+
+  =================================  ========  =======  ===========  ========  =======  ==================================
+  Element                            Type      Units    Constraints  Required  Default  Description
+  =================================  ========  =======  ===========  ========  =======  ==================================
+  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version of 301 Standard w/ addenda
+  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version of IECC
+  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version of ENERGY STAR program
+  =================================  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
+  .. [#] ERICalculation/Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
-  .. [#] Version only required to run ERI calculation.
-
-The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/extension/EnergyStarCalculation``.
-
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  Element      Type      Units    Constraints  Required  Default  Description
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  ``Version``  string             See [#]_     No [#]_            Version of ENERGY STAR program
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  
-  .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
-  .. [#] Version only required to run ENERGY STAR calculation.
+  .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
+  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
 
 HPXML Building Site
 -------------------

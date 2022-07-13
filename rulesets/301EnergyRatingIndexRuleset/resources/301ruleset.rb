@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 class EnergyRatingIndex301Ruleset
-  def self.apply_ruleset(runner, hpxml, calc_type, weather, egrid_subregion, cambium_gea, create_time)
+  def self.apply_ruleset(runner, hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @runner = runner
     @weather = weather
-    @calc_type = calc_type
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
 
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
-      hpxml = apply_reference_home_ruleset(hpxml)
+      hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
     elsif calc_type == Constants.CalcTypeERIRatedHome
       hpxml = apply_rated_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
@@ -20,10 +19,9 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeCO2eRatedHome
-      @calc_type = Constants.CalcTypeERIRatedHome
       hpxml = apply_rated_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeCO2eReferenceHome
-      hpxml = apply_reference_home_ruleset(hpxml, true)
+      hpxml = apply_reference_home_ruleset(hpxml, is_all_electric: true)
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
@@ -35,7 +33,7 @@ class EnergyRatingIndex301Ruleset
     return hpxml
   end
 
-  def self.apply_reference_home_ruleset(orig_hpxml, is_all_electric = false)
+  def self.apply_reference_home_ruleset(orig_hpxml, iecc_version: nil, is_all_electric: false)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
     # BuildingSummary
@@ -60,11 +58,11 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
 
     # Systems
-    set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric)
-    set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
+    set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric: is_all_electric)
+    set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml, iecc_version)
     set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
     set_systems_water_heating_use_reference(new_hpxml)
-    set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric)
+    set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric: is_all_electric)
     set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
     set_systems_batteries_reference(orig_hpxml, new_hpxml)
@@ -72,11 +70,11 @@ class EnergyRatingIndex301Ruleset
 
     # Appliances
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
-    set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric)
+    set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric: is_all_electric)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
-    set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric)
+    set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric: is_all_electric)
 
     # Lighting
     set_lighting_reference(orig_hpxml, new_hpxml)
@@ -1095,7 +1093,7 @@ class EnergyRatingIndex301Ruleset
     # TODO: Create adiabatic wall/door?
   end
 
-  def self.set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric = false)
+  def self.set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric: false)
     # Table 4.2.2(1) - Heating systems
     # Table 4.2.2(1) - Cooling systems
 
@@ -1390,13 +1388,19 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_mechanical_ventilation_reference(orig_hpxml, new_hpxml, iecc_version = nil)
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
 
     # Calculate fan cfm for airflow rate using Reference Home infiltration
     # https://www.resnet.us/wp-content/uploads/No.-301-2014-01-Table-4.2.21-Reference-Home-Air-Exchange-Rate.pdf
     ref_sla = 0.00036
-    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
+    if ['2018', '2021'].include? iecc_version
+      # IECC exception for ERI reference design ventilation rate
+      # FIXME: Add unit tests
+      q_tot = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
+    else
+      q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
+    end
     q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
 
     mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1597,7 +1601,7 @@ class EnergyRatingIndex301Ruleset
     # nop
   end
 
-  def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric = false)
+  def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml, is_all_electric: false, in_conditioned_space: false)
     # Table 4.2.2(1) - Service water heating systems
 
     has_multiple_water_heaters = (orig_hpxml.water_heating_systems.size > 1)
@@ -1627,7 +1631,7 @@ class EnergyRatingIndex301Ruleset
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
 
       location = orig_water_heater.location
-      if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? @calc_type
+      if in_conditioned_space
         # Hot water equipment shall be located in conditioned space.
         location = HPXML::LocationLivingSpace
       end
@@ -1651,7 +1655,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     if orig_hpxml.water_heating_systems.size == 0
-      add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric)
+      add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric: is_all_electric)
     end
   end
 
@@ -1702,7 +1706,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_systems_water_heater_iad(orig_hpxml, new_hpxml)
     # Table 4.3.1(1) Configuration of Index Adjustment Design - Service water heating systems
-    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
+    set_systems_water_heater_reference(orig_hpxml, new_hpxml, in_conditioned_space: true)
   end
 
   def self.set_systems_water_heating_use_reference(new_hpxml)
@@ -1920,7 +1924,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.clothes_washers[0].location = HPXML::LocationLivingSpace
   end
 
-  def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric = false)
+  def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric: false)
     # Default values
     id = 'ClothesDryer'
     location = HPXML::LocationLivingSpace
@@ -2102,7 +2106,7 @@ class EnergyRatingIndex301Ruleset
     # nop
   end
 
-  def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric = false)
+  def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric: false)
     # Default values
     range_id = 'CookingRange'
     location = HPXML::LocationLivingSpace
@@ -2665,7 +2669,7 @@ class EnergyRatingIndex301Ruleset
     end
   end
 
-  def self.add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric = false)
+  def self.add_reference_water_heater(orig_hpxml, new_hpxml, is_all_electric: false)
     if is_all_electric
       wh_fuel_type = HPXML::FuelTypeElectricity
     else
@@ -2879,12 +2883,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.add_emissions_scenarios(new_hpxml)
-    if not [Constants.CalcTypeCO2eReferenceHome,
-            Constants.CalcTypeERIReferenceHome,
-            Constants.CalcTypeERIRatedHome].include? @calc_type
-      return
-    end
-
     if not @egrid_subregion.nil?
       new_hpxml.header.egrid_subregion = @egrid_subregion
       new_hpxml.header.egrid_subregion_isdefaulted = true

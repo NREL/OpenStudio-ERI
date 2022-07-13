@@ -40,7 +40,7 @@ ERI______Home.csv
 A CSV file is written for each of the homes simulated (e.g., ``ERIReferenceHome.csv`` for the Reference home).
 The CSV file includes the following sections of output.
 
-A ``CO2eReferenceHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+A ``CO2eReferenceHome.csv`` and ``CO2eRatedHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
 Annual Energy Consumption
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,7 +155,7 @@ Annual Emissions
 
 Annual emissions are listed below.
 
-Emissions for each emissions type (CO2e, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2e Reference Home.
+Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 Note that rows below with values of zero will be excluded.
 
    ===============================================================  ===============================================================
@@ -328,7 +328,7 @@ Defaults will be applied for a few different reasons:
 
 Any HPXML-defaulted values will include the ``dataSource='software'`` attribute.
 
-A ``CO22ReferenceHome.xml`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+A ``CO22ReferenceHome.xml`` and ``CO22RatedHome.xml`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 
 .. _eri_simulation_files:
 
