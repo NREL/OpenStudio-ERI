@@ -46,8 +46,6 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
 HPXML Software Info
 -------------------
 
-High-level simulation inputs are entered in ``/HPXML/SoftwareInfo``.
-
 High-level software inputs are entered in ``/HPXML/SoftwareInfo``.
 
 HPXML Calculations

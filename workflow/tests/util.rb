@@ -66,7 +66,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x #{xml}#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o #{rundir} --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o \"#{rundir}\" --debug"
   system(command)
 
   hpxmls = {}
