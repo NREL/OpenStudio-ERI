@@ -125,15 +125,15 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       end
     end
     if not iecc_eri_version.nil?
-      hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECCERIReferenceHome.xml')
-      hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECCERIRatedHome.xml')
-      # FIXME: Need to implement and document
-      # csvs[:iecc_eri_results] = File.join(rundir, 'results', 'IECC_ERI_Results.csv')
-      csvs[:iecc_eri_rated_results] = File.join(rundir, 'results', 'IECCERIRatedHome.csv')
-      csvs[:iecc_eri_ref_results] = File.join(rundir, 'results', 'IECCERIReferenceHome.csv')
+      hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
+      hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
+      csvs[:iecc_eri_results] = File.join(rundir, 'results', 'IECC_ERI_Results.csv')
+      csvs[:iecc_eri_worksheet] = File.join(rundir, 'results', 'IECC_ERI_Worksheet.csv')
+      csvs[:iecc_eri_rated_results] = File.join(rundir, 'results', 'IECC_ERIRatedHome.csv')
+      csvs[:iecc_eri_ref_results] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.csv')
       if timeseries_frequency != 'none'
-        csvs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECCERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECCERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECC_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
     end
   end

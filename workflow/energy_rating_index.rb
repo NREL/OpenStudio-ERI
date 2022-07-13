@@ -876,11 +876,11 @@ def main(options)
     # For duplicate designs that weren't simulated, populate their output
     duplicate_output_files(duplicates, designs, resultsdir)
 
+    puts 'Calculating results...'
+
     if (not eri_version.nil?) && (not options[:rated_home_only])
       # Calculate ERI & CO2e Index
-      puts 'Calculating ERI...'
-
-      eri_designs = designs.select { |d| d.init_calc_type.nil? }
+      eri_designs = designs.select { |d| d.init_calc_type.nil? && d.iecc_version.nil? }
       eri_outputs = retrieve_eri_outputs(eri_designs)
 
       # Calculate and write results
@@ -891,10 +891,17 @@ def main(options)
       end
     end
 
-    if not es_version.nil?
-      # Calculate ENERGY STAR
-      puts 'Calculating ENERGY STAR...'
+    if not iecc_version.nil?
+      # Calculate IECC ERI
+      iecc_eri_designs = designs.select { |d| !d.iecc_version.nil? }
+      iecc_eri_outputs = retrieve_eri_outputs(iecc_eri_designs)
 
+      # Calculate and write results
+      iecc_eri_results = calculate_eri(iecc_eri_outputs, resultsdir, csv_filename_prefix: 'IECC')
+      puts "IECC ERI: #{iecc_eri_results[:eri].round(2)}"
+    end
+
+    if not es_version.nil?
       # Calculate ES Reference ERI
       esrd_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarReference }
       esrd_eri_outputs = retrieve_eri_outputs(esrd_eri_designs)

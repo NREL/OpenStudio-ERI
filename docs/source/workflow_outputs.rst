@@ -21,11 +21,12 @@ Based on which calculations were requested in the HPXML file, summary output fil
   ================  ===============================================  =========
   Calculation       File                                             Notes
   ================  ===============================================  =========
-  ERI               :ref:`co2e_results_csv`                          Only produced if 301-2019 Addendum D or newer.
-  ERI               :ref:`eri_results_csv`         
-  ERI               :ref:`eri_worksheet_csv`
-  IECC ERI Pathway  :ref:`iecc_eri_results_csv`  
-  ENERGY STAR       :ref:`es_results_csv`
+  ERI               CO2e_Results.csv                                 See :ref:`co2e_results_csv`. Only produced if 301-2019 Addendum D or newer.
+  ERI               ERI_Results.csv                                  See :ref:`eri_results_csv`.
+  ERI               ERI_Worksheet.csv                                See :ref:`eri_worksheet_csv`.
+  IECC ERI Pathway  IECC_ERI_Results.csv                             See :ref:`eri_results_csv` (same format).
+  IECC ERI Pathway  IECC_ERI_Worksheet.csv                           See :ref:`eri_worksheet_csv` (same format).
+  ENERGY STAR       ES_Results.csv                                   See :ref:`es_results_csv`.
   ================  ===============================================  =========
 
 .. _co2e_results_csv:
@@ -55,13 +56,6 @@ The ``ERI_Worksheet.csv`` file includes more detailed components that feed into 
 The file reflects the format of the Worksheet tab of the HERS Method Test spreadsheet.
 
 Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
-
-.. _iecc_eri_results_csv:
-
-IECC_ERI_Results.csv
-~~~~~~~~~~~~~~~~~~~~
-
-TODO
 
 .. _es_results_csv:
 
@@ -97,10 +91,10 @@ Based on which calculations were requested in the HPXML file, CSV annual output 
   ERI               ERIReferenceHome.csv                             ERI Reference Home.
   ERI               ERIIndexAdjustmentDesign.csv                     ERI Index Adjustment Design. Only produced if 301-2014 Addendum E or newer.
   ERI               ERIIndexAdjustmentReferenceHome.csv              ERI Index Adjustment Reference Home. Only produced if 301-2014 Addendum E or newer.
-  IECC ERI Pathway  IECCERIRatedHome.csv                             IECC ERI Rated Home.
-  IECC ERI Pathway  IECCERIReferenceHome.csv                         IECC ERI Reference Home.
-  IECC ERI Pathway  IECCERIIndexAdjustmentDesign.csv                 IECC ERI Index Adjustment Design.
-  IECC ERI Pathway  IECCERIIndexAdjustmentReferenceHome.csv          IECC ERI Index Adjustment Reference Home.
+  IECC ERI Pathway  IECC_ERIRatedHome.csv                            IECC ERI Rated Home.
+  IECC ERI Pathway  IECC_ERIReferenceHome.csv                        IECC ERI Reference Home.
+  IECC ERI Pathway  IECC_ERIIndexAdjustmentDesign.csv                IECC ERI Index Adjustment Design.
+  IECC ERI Pathway  IECC_ERIIndexAdjustmentReferenceHome.csv         IECC ERI Index Adjustment Reference Home.
   ENERGY STAR       ESRated_ERIRatedHome.csv                         ERI Rated Home for the ENERGY STAR rated home.
   ENERGY STAR       ESRated_ERIReferenceHome.csv                     ERI Reference Home for the ENERGY STAR rated home.
   ENERGY STAR       ESRated_ERIIndexAdjustmentDesign.csv             ERI Index Adjustment Design for the ENERGY STAR rated home.

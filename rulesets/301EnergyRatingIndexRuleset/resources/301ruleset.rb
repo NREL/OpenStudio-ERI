@@ -1408,7 +1408,6 @@ class EnergyRatingIndex301Ruleset
     ref_sla = 0.00036
     if ['2018', '2021'].include? iecc_version
       # IECC exception for ERI reference design ventilation rate
-      # FIXME: Add unit tests
       q_tot = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
