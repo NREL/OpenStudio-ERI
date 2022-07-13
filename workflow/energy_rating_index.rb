@@ -861,8 +861,6 @@ def main(options)
   end
   if not iecc_version.nil?
     # IECC ERI designs
-    # FIXME: Need to ensure the correct ERI version (e.g., latest 2014 vs latest 2019)
-    # FIXME: Building thermal envelope and ERI requirements related to on-site power production (+ documentation)
     designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
     designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
     designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])

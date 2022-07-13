@@ -8,6 +8,21 @@ class EnergyRatingIndex301Ruleset
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
 
+    if (not iecc_version.nil?) && (not iecc_version.empty?)
+      if ['2015', '2018'].include? iecc_version
+        # Use 2014 w/ all addenda
+        @eri_version = Constants.ERIVersions.select { |v| v.include? '2014' }[-1]
+      elsif ['2021'].include? iecc_version
+        # Use 2019 w/ all addenda
+        @eri_version = Constants.ERIVersions.select { |v| v.include? '2019' }[-1]
+      else
+        fail "Unhandled IECC version: #{iecc_version}."
+      end
+    else
+      @eri_version = hpxml.header.eri_calculation_version
+    end
+    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
+
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
@@ -196,9 +211,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.create_new_hpxml(orig_hpxml)
     new_hpxml = HPXML.new
-
-    @eri_version = orig_hpxml.header.eri_calculation_version
-    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
     new_hpxml.header.xml_type = orig_hpxml.header.xml_type
     new_hpxml.header.xml_generated_by = 'OpenStudio-ERI'
