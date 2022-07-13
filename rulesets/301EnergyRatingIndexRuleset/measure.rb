@@ -196,7 +196,7 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
         end
 
         # Write final HPXML file
-        if (not hpxml_output_path.nil?) && (not this_hpxml_output_path.empty?)
+        if (not this_hpxml_output_path.nil?) && (not this_hpxml_output_path.empty?)
           new_hpxmls[this_hpxml_output_path] = XMLHelper.write_file(@new_hpxml.to_oga, this_hpxml_output_path)
           runner.registerInfo("Wrote file: #{this_hpxml_output_path}")
         end

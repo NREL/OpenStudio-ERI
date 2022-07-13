@@ -35,7 +35,7 @@ class ERILightingTest < MiniTest::Test
   end
 
   def test_lighting_pre_addendum_g
-    hpxml_name = 'base-version-2014AE.xml'
+    hpxml_name = 'base-version-eri-2014AE.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)

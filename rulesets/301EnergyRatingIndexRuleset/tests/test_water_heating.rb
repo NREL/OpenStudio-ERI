@@ -408,7 +408,7 @@ class ERIWaterHeatingTest < MiniTest::Test
   end
 
   def test_water_heating_pre_addendum_a
-    hpxml_name = 'base-version-2014.xml'
+    hpxml_name = 'base-version-eri-2014.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_measure(hpxml_name, calc_type)
