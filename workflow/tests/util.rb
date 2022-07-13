@@ -38,11 +38,12 @@ def _run_ruleset(design, xml, out_xml)
   XMLHelper.write_file(hpxml, out_xml)
 end
 
-def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, timeseries_frequency: 'none',
-                  component_loads: false, skip_simulation: false, rated_home_only: false)
+def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,
+                  skip_simulation: false, rated_home_only: false)
   xml = File.absolute_path(xml)
   hpxml_doc = XMLHelper.parse_file(xml)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
+  iecc_eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
@@ -75,7 +76,6 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
     # ERI w/ Rated Home only
     hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
     csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
-    log_dirs = [Constants.CalcTypeERIRatedHome].map { |d| d.gsub(' ', '') }
   else
     if not eri_version.nil?
       # ERI
@@ -89,14 +89,9 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
         csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
         csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
-      log_dirs = [Constants.CalcTypeERIRatedHome,
-                  Constants.CalcTypeERIReferenceHome,
-                  Constants.CalcTypeERIIndexAdjustmentDesign,
-                  Constants.CalcTypeERIIndexAdjustmentReferenceHome].map { |d| d.gsub(' ', '') }
       if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv')
         hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
         csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
-        log_dirs << Constants.CalcTypeCO2eReferenceHome.gsub(' ', '')
       end
     end
     if not es_version.nil?
@@ -128,65 +123,48 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
         csvs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
         csvs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
-      log_dirs = [[ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIRatedHome],
-                  [ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIReferenceHome],
-                  [ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIIndexAdjustmentDesign],
-                  [ESConstants.CalcTypeEnergyStarReference, Constants.CalcTypeERIIndexAdjustmentReferenceHome],
-                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIRatedHome],
-                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIReferenceHome],
-                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIIndexAdjustmentDesign],
-                  [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIIndexAdjustmentReferenceHome]].map { |d| d[0].gsub(' ', '') + '_' + d[1].gsub(' ', '') }
+    end
+    puts "iecc_eri_version #{iecc_eri_version}"
+    if not iecc_eri_version.nil?
+      hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECCERIReferenceHome.xml')
+      hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECCERIRatedHome.xml')
+      # FIXME: Need to implement
+      # csvs[:iecc_eri_results] = File.join(rundir, 'results', 'IECC_ERI_Results.csv')
+      csvs[:iecc_eri_rated_results] = File.join(rundir, 'results', 'IECCERIRatedHome.csv')
+      csvs[:iecc_eri_ref_results] = File.join(rundir, 'results', 'IECCERIReferenceHome.csv')
+      if timeseries_frequency != 'none'
+        csvs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECCERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECCERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+      end
     end
   end
 
-  if expect_error
-    if expect_error_msgs.nil?
-      flunk "No error message defined for #{File.basename(xml)}."
-    else
-      found_error_msg = false
-      log_dirs.each do |log_dir|
-        next unless File.exist? File.join(rundir, log_dir, 'run.log')
-
-        run_log = File.readlines(File.join(rundir, log_dir, 'run.log')).map(&:strip)
-        expect_error_msgs.each do |error_msg|
-          run_log.each do |run_line|
-            next unless run_line.include? error_msg
-
-            found_error_msg = true
-            break
-          end
-        end
-      end
-      assert(found_error_msg)
+  # Check all output files exist
+  hpxmls.values.each do |hpxml_path|
+    puts "Did not find #{hpxml_path}" unless File.exist?(hpxml_path)
+    assert(File.exist?(hpxml_path))
+  end
+  if not skip_simulation
+    csvs.values.each do |csv_path|
+      puts "Did not find #{csv_path}" unless File.exist?(csv_path)
+      assert(File.exist?(csv_path))
     end
-  else
-    # Check all output files exist
-    hpxmls.keys.each do |k|
-      assert(File.exist?(hpxmls[k]))
-    end
-    if not skip_simulation
-      csvs.keys.each do |k|
-        assert(File.exist?(csvs[k]))
-      end
-    end
+  end
 
-    # Check HPXMLs are valid
-    _test_schema_validation(xml)
-    hpxmls.keys.each do |k|
-      _test_schema_validation(hpxmls[k])
-    end
+  # Check HPXMLs are valid
+  _test_schema_validation(xml)
+  hpxmls.values.each do |hpxml_path|
+    _test_schema_validation(hpxml_path)
+  end
 
-    # Check run.log for OS warnings
-    log_dirs.each do |log_dir|
-      next unless File.exist? File.join(rundir, log_dir, 'run.log')
+  # Check run.log for OS warnings
+  Dir["#{rundir}/*/run.log"].sort.each do |log_path|
+    run_log = File.readlines(log_path).map(&:strip)
+    run_log.each do |log_line|
+      next unless log_line.include? 'OS Message:'
+      next if log_line.include?('OS Message: Minutes field (60) on line 9 of EPW file')
 
-      run_log = File.readlines(File.join(rundir, log_dir, 'run.log')).map(&:strip)
-      run_log.each do |log_line|
-        next unless log_line.include? 'OS Message:'
-        next if log_line.include?('OS Message: Minutes field (60) on line 9 of EPW file')
-
-        flunk "Unexpected warning found in #{log_dir} run.log: #{log_line}"
-      end
+      flunk "Unexpected warning found in #{log_path} run.log: #{log_line}"
     end
   end
 

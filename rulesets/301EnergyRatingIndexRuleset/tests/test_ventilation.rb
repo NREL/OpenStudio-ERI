@@ -919,6 +919,24 @@ class ERIMechVentTest < MiniTest::Test
     end
   end
 
+  def test_mech_vent_iecc_eri_exception
+    hpxml_name = 'base-mechvent-exhaust.xml'
+    IECCConstants.AllVersions.each do |iecc_version|
+      _all_calc_types.each do |calc_type|
+        base_hpxml = _test_measure(hpxml_name, calc_type)
+        iecc_hpxml = _test_measure(hpxml_name, calc_type, iecc_version)
+
+        if ['2018', '2021'].include?(iecc_version) && calc_type == Constants.CalcTypeERIReferenceHome
+          # Check that ventilation exception in 2018/2021 IECC is being applied to the ERI Reference Home
+          assert_operator(iecc_hpxml.ventilation_fans[0].tested_flow_rate, :<, base_hpxml.ventilation_fans[0].tested_flow_rate)
+        else
+          # In all other cases, check for the same ventilation as the standard ERI
+          assert_equal(base_hpxml.ventilation_fans[0].tested_flow_rate, iecc_hpxml.ventilation_fans[0].tested_flow_rate)
+        end
+      end
+    end
+  end
+
   def test_whole_house_fan
     hpxml_name = 'base-mechvent-whole-house-fan.xml'
 
@@ -932,9 +950,10 @@ class ERIMechVentTest < MiniTest::Test
     end
   end
 
-  def _test_measure(hpxml_name, calc_type)
+  def _test_measure(hpxml_name, calc_type, iecc_version = nil)
     args_hash = {}
     args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
+    args_hash['iecc_version'] = iecc_version unless iecc_version.nil?
     args_hash['calc_type'] = calc_type
 
     # create an instance of the measure

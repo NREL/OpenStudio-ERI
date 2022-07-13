@@ -11,7 +11,7 @@ class Design
     @output_dir = output_dir
     name = calc_type.gsub(' ', '')
     if not iecc_version.nil?
-      name = name.gsub('ERI', 'IECC')
+      name = name.gsub('ERI', 'IECCERI')
     end
     if not init_calc_type.nil?
       name = init_calc_type.gsub(' ', '') + '_' + name
