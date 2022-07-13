@@ -920,11 +920,16 @@ class ERIMechVentTest < MiniTest::Test
   end
 
   def test_mech_vent_iecc_eri_exception
-    hpxml_name = 'base-mechvent-exhaust.xml'
     IECCConstants.AllVersions.each do |iecc_version|
       _all_calc_types.each do |calc_type|
-        base_hpxml = _test_measure(hpxml_name, calc_type)
+        hpxml_name = 'base-mechvent-exhaust.xml'
+
+        # Run IECC calculation
         iecc_hpxml = _test_measure(hpxml_name, calc_type, iecc_version)
+
+        # Run non-IECC calculation (using same ERI version as above)
+        hpxml_name = _change_eri_version(hpxml_name, iecc_hpxml.header.eri_calculation_version)
+        base_hpxml = _test_measure(hpxml_name, calc_type)
 
         if ['2018', '2021'].include?(iecc_version) && calc_type == Constants.CalcTypeERIReferenceHome
           # Check that ventilation exception in 2018/2021 IECC is being applied to the ERI Reference Home

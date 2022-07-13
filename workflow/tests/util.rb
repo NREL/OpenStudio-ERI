@@ -127,7 +127,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     if not iecc_eri_version.nil?
       hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECCERIReferenceHome.xml')
       hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECCERIRatedHome.xml')
-      # FIXME: Need to implement
+      # FIXME: Need to implement and document
       # csvs[:iecc_eri_results] = File.join(rundir, 'results', 'IECC_ERI_Results.csv')
       csvs[:iecc_eri_rated_results] = File.join(rundir, 'results', 'IECCERIRatedHome.csv')
       csvs[:iecc_eri_ref_results] = File.join(rundir, 'results', 'IECCERIReferenceHome.csv')
