@@ -56,9 +56,9 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   =================================  ========  =======  ===========  ========  =======  ==================================
   Element                            Type      Units    Constraints  Required  Default  Description
   =================================  ========  =======  ===========  ========  =======  ==================================
-  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version of 301 Standard w/ addenda to perform ERI calculation
-  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version year to perform IECC ERI calculation
-  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Program version to perform ENERGY STAR ERI calculation
+  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version to perform ERI calculation
+  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version to perform IECC ERI calculation
+  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version to perform ENERGY STAR ERI calculation
   =================================  ========  =======  ===========  ========  =======  ==================================
   
   .. [#] ERICalculation/Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
