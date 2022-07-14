@@ -5,21 +5,25 @@
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
 class Design
-  def initialize(calc_type:, init_calc_type: nil, output_dir:, iecc_version: nil)
+  def initialize(calc_type: nil, init_calc_type: nil, output_dir: nil, iecc_version: nil)
     @calc_type = calc_type
     @init_calc_type = init_calc_type
-    @output_dir = output_dir
-    name = calc_type.gsub(' ', '')
+    name = calc_type.to_s.gsub(' ', '')
     if not iecc_version.nil?
       name = name.gsub('ERI', 'IECC_ERI')
     end
     if not init_calc_type.nil?
       name = init_calc_type.gsub(' ', '') + '_' + name
-      @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
     end
-    @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
-    @csv_output_path = File.join(output_dir, 'results', "#{name}.csv")
-    @design_dir = File.join(output_dir, name)
+    if not output_dir.nil?
+      @output_dir = output_dir
+      @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
+      @csv_output_path = File.join(output_dir, 'results', "#{name}.csv")
+      @design_dir = File.join(output_dir, name)
+      if not init_calc_type.nil?
+        @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
+      end
+    end
     @iecc_version = iecc_version
   end
   attr_accessor(:calc_type, :init_calc_type, :init_hpxml_output_path, :hpxml_output_path, :csv_output_path,

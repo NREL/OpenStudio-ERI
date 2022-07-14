@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'oga'
-require_relative '../../rulesets/301EnergyRatingIndexRuleset/resources/constants'
+require_relative '../design'
+require_relative '../../rulesets/main'
+require_relative '../../rulesets/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
@@ -12,30 +14,14 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversi
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 def _run_ruleset(design, xml, out_xml)
-  model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-  measures_dir = File.join(File.dirname(__FILE__), '..', '..')
 
-  measures = {}
+  designs = [Design.new(calc_type: design)]
+  designs[0].hpxml_output_path = out_xml
+  success, _, _ = run_rulesets(runner, File.absolute_path(xml), designs)
 
-  # Add 301 measure to workflow
-  measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
-  args = {}
-  args['calc_type'] = design
-  args['hpxml_input_path'] = File.absolute_path(xml)
-  args['hpxml_output_path'] = out_xml
-  update_args_hash(measures, measure_subdir, args)
-
-  # Apply measures
-  FileUtils.mkdir_p(File.dirname(out_xml))
-  success = apply_measures(measures_dir, measures, runner, model)
-  show_output(runner.result) unless success
   assert(success)
   assert(File.exist?(out_xml))
-
-  hpxml = XMLHelper.parse_file(out_xml)
-  XMLHelper.delete_element(XMLHelper.get_element(hpxml, '/HPXML/SoftwareInfo/extension/ERICalculation'), 'Design')
-  XMLHelper.write_file(hpxml, out_xml)
 end
 
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,

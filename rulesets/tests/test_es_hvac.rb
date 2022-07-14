@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
-require_relative '../measure.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
-require_relative 'util'
+require_relative 'util.rb'
 
 class EnergyStarHVACtest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
@@ -113,7 +111,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_none
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-none.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -126,7 +124,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_boiler_elec
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-boiler-elec-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -139,7 +137,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_boiler_gas
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-boiler-gas-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_boiler_afue_cz5(es_version), frac_load: 1.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -152,7 +150,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_furnace_elec
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-furnace-elec-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -177,7 +175,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_furnace_gas
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-furnace-gas-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml)
@@ -202,7 +200,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_stove_wood_pellets
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-stove-wood-pellets-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeWoodPellets, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml)
@@ -227,7 +225,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_wall_furnace_elec
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-wall-furnace-elec-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -252,7 +250,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_elec_resistance
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-elec-resistance-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -281,7 +279,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -306,7 +304,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_air_source_heat_pump
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-air-to-air-heat-pump-1-speed.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -335,7 +333,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -360,7 +358,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_mini_split_heat_pump_ducted
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-mini-split-heat-pump-ducted.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -385,7 +383,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_mini_split_heat_pump_ductless
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-mini-split-heat-pump-ductless.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -410,7 +408,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_pthp
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-pthp.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -435,7 +433,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_ground_source_heat_pump
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-ground-to-air-heat-pump.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -464,7 +462,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -489,7 +487,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_dual_fuel_heat_pump_gas
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -514,7 +512,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_dual_fuel_heat_pump_elec
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -539,7 +537,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_central_air_conditioner
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-central-ac-only-1-speed.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -565,7 +563,7 @@ class EnergyStarHVACtest < MiniTest::Test
     ['base-hvac-room-ac-only.xml', 'base-hvac-room-ac-only-ceer.xml'].each do |hpxml_name|
       ESConstants.AllVersions.each do |es_version|
         _convert_to_es(hpxml_name, es_version)
-        hpxml = _test_measure()
+        hpxml = _test_ruleset()
         hvac_iq_values = get_default_hvac_iq_values()
         _check_heating_system(hpxml)
         _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
@@ -591,7 +589,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_ptac
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-ptac.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
@@ -616,7 +614,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_ptac_with_heating
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-ptac-with-heating.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
@@ -641,7 +639,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_evaporative_cooler
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-evap-cooler-only.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
@@ -666,7 +664,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_mini_split_air_conditioner_ducted
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-mini-split-air-conditioner-only-ducted.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -691,7 +689,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_mini_split_air_conditioner_ductless
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-mini-split-air-conditioner-only-ductless.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -716,7 +714,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_furnace_gas_and_central_air_conditioner
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -737,7 +735,7 @@ class EnergyStarHVACtest < MiniTest::Test
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       _convert_to_es('base-foundation-multiple.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -759,7 +757,7 @@ class EnergyStarHVACtest < MiniTest::Test
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_duct_leakage(es_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       _convert_to_es('base-foundation-ambient.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -782,7 +780,7 @@ class EnergyStarHVACtest < MiniTest::Test
 
       # Test w/ 2 stories
       _convert_to_es('base-enclosure-2stories.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -811,7 +809,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.building_construction.number_of_conditioned_floors += 1
       hpxml.building_construction.number_of_conditioned_floors_above_grade += 1
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -840,7 +838,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.building_construction.number_of_conditioned_floors += 1
       hpxml.building_construction.number_of_conditioned_floors_above_grade += 1
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -868,7 +866,7 @@ class EnergyStarHVACtest < MiniTest::Test
   def test_multiple_hvac
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-hvac-multiple.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 0.1, **hvac_iq_values },
                                     { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 0.1 },
@@ -894,7 +892,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.heating_systems[0].fraction_heat_load_served = 0.2
       hpxml.cooling_systems[0].fraction_cool_load_served = 0.3
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_gas_furnace_afue_cz5(es_version), frac_load: 0.2, **hvac_iq_values }])
       _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_central_ac_seer_cz5(es_version), frac_load: 0.3, shr: 0.73, **hvac_iq_values }])
@@ -922,7 +920,7 @@ class EnergyStarHVACtest < MiniTest::Test
       _convert_to_es(hpxml_name, es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -935,7 +933,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? es_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
@@ -957,7 +955,7 @@ class EnergyStarHVACtest < MiniTest::Test
       _convert_to_es(hpxml_name, es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -978,7 +976,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? es_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
@@ -1008,7 +1006,7 @@ class EnergyStarHVACtest < MiniTest::Test
       _convert_to_es(hpxml_name, es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
@@ -1029,7 +1027,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? es_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
@@ -1059,7 +1057,7 @@ class EnergyStarHVACtest < MiniTest::Test
       _convert_to_es(hpxml_name, es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.89, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
@@ -1080,7 +1078,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? es_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
@@ -1108,7 +1106,7 @@ class EnergyStarHVACtest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-baseboard.xml'
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_heat_pump(hpxml)
@@ -1122,7 +1120,7 @@ class EnergyStarHVACtest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml'
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_heat_pump(hpxml)
@@ -1144,7 +1142,7 @@ class EnergyStarHVACtest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml'
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       _check_heat_pump(hpxml)
@@ -1166,7 +1164,7 @@ class EnergyStarHVACtest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-water-loop-heat-pump.xml'
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
@@ -1188,7 +1186,7 @@ class EnergyStarHVACtest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml'
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeCoolingTower, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
@@ -1210,7 +1208,7 @@ class EnergyStarHVACtest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml'
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es(hpxml_name, es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -1236,7 +1234,7 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       hvac_iq_values = get_default_hvac_iq_values()
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml)
@@ -1263,48 +1261,26 @@ class EnergyStarHVACtest < MiniTest::Test
       hpxml.hvac_controls[0].cooling_setpoint_temp = 80
       hpxml.hvac_controls[0].control_type = HPXML::HVACControlTypeManual
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
     end
   end
 
-  def _test_measure()
-    args_hash = {}
-    args_hash['hpxml_input_path'] = @tmp_hpxml_path
-    args_hash['init_calc_type'] = ESConstants.CalcTypeEnergyStarReference
-
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
-
-    # create an instance of a runner
+  def _test_ruleset()
+    require_relative '../../workflow/design'
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
 
-    model = OpenStudio::Model::Model.new
+    success, _, hpxml = run_rulesets(runner, @tmp_hpxml_path, designs)
 
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    runner.result.stepErrors.each do |s|
+      puts "Error: #{s}"
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # show the output
-    show_output(result) unless result.value.valueName == 'Success'
-
     # assert that it ran correctly
-    assert_equal('Success', result.value.valueName)
+    assert_equal(true, success)
 
-    return measure.new_hpxml
+    return hpxml
   end
 
   def _check_heating_system(hpxml, all_expected_values = [])

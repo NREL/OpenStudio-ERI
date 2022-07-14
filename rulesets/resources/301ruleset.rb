@@ -8,7 +8,7 @@ class EnergyRatingIndex301Ruleset
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
 
-    if (not iecc_version.nil?) && (not iecc_version.empty?)
+    if not iecc_version.nil?
       if ['2015', '2018'].include? iecc_version
         # Use 2014 w/ all addenda
         @eri_version = Constants.ERIVersions.select { |v| v.include? '2014' }[-1]
@@ -2880,9 +2880,9 @@ class EnergyRatingIndex301Ruleset
 
   def self.lookup_egrid_value(egrid_subregion, zip_column_index, output_column_index)
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
-      zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'egrid2019_summary_tables.csv')
+      zip_filepath = File.join(File.dirname(__FILE__), '..', 'data', 'egrid', 'egrid2019_summary_tables.csv')
     else
-      zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'egrid2012_summary_tables.csv')
+      zip_filepath = File.join(File.dirname(__FILE__), '..', 'data', 'egrid', 'egrid2012_summary_tables.csv')
     end
     CSV.foreach(zip_filepath) do |row|
       next unless row[zip_column_index] == egrid_subregion
@@ -2941,7 +2941,7 @@ class EnergyRatingIndex301Ruleset
         cambium_geas = ['AZNMc', 'CAMXc', 'ERCTc', 'FRCCc', 'MROEc', 'MROWc', 'NEWEc', 'NWPPc', 'NYSTc', 'RFCEc',
                         'RFCMc', 'RFCWc', 'RMPAc', 'SPNOc', 'SPSOc', 'SRMVc', 'SRMWc', 'SRSOc', 'SRTVc', 'SRVCc']
         col_num = cambium_geas.index(@cambium_gea) + 5
-        cambium_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'RESNET_2021_CO2e_GEAdata.csv')
+        cambium_filepath = File.join(File.dirname(__FILE__), '..', 'data', 'cambium', 'RESNET_2021_CO2e_GEAdata.csv')
         new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
                                                  emissions_type: 'CO2e',
                                                  elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,

@@ -13,7 +13,8 @@ require 'parallel'
 require 'oga'
 require_relative 'design.rb'
 require_relative 'util.rb'
-require_relative '../rulesets/301EnergyRatingIndexRuleset/resources/constants'
+require_relative '../rulesets/main'
+require_relative '../rulesets/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/version'
@@ -50,45 +51,20 @@ end
 def apply_rulesets_and_generate_hpxmls(designs, options)
   puts "Generating #{designs.size} HPXMLs..."
 
-  calc_type = designs.map { |d| d.calc_type }.join(',')
-  init_calc_type = designs.map { |d| d.init_calc_type.to_s }.join(',')
-  init_hpxml_output_path = designs.map { |d| d.init_hpxml_output_path }.join(',')
-  iecc_version = designs.map { |d| d.iecc_version }.join(',')
-  hpxml_output_path = designs.map { |d| d.hpxml_output_path }.join(',')
-
-  # Call 301EnergyRatingIndexRuleset measure
-  measures = {}
-  measures_dir = File.join(File.dirname(__FILE__), '..')
-  measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
-  args = {}
-  args['init_calc_type'] = init_calc_type
-  args['calc_type'] = calc_type
-  args['hpxml_input_path'] = options[:hpxml]
-  args['init_hpxml_output_path'] = init_hpxml_output_path
-  args['iecc_version'] = iecc_version
-  args['hpxml_output_path'] = hpxml_output_path
-  update_args_hash(measures, measure_subdir, args)
-
-  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  os_log = OpenStudio::StringStreamLogSink.new
-  os_log.setLogLevel(OpenStudio::Warn)
-  model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+
+  success, duplicates, _ = run_rulesets(runner, options[:hpxml], designs)
 
   rundir = options[:output_dir]
   run_log = File.join(rundir, 'run.log')
-  success = apply_measures(measures_dir, measures, runner, model, false, 'OpenStudio::Measure::ModelMeasure')
   File.delete(run_log) if File.exist? run_log
   report_measure_errors_warnings(runner, rundir, options[:debug])
-  report_os_warnings(os_log, rundir)
 
   if not success
     puts "HPXMLs not successfully generated. See #{run_log} for details."
     exit!
   end
 
-  # Get duplicate HPXMLs
-  duplicates = eval(model.getBuilding.additionalProperties.getFeatureAsString('Duplicates').get)
   return duplicates
 end
 

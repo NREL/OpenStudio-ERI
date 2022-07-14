@@ -1,22 +1,20 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/measure/ShowRunnerOutput'
-require_relative '../measure.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
 class ERIMiscTest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
   end
 
   def test_misc
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_misc(hpxml, misc_kwh: 2184, misc_sens: 0.855, misc_lat: 0.045, tv_kwh: 620, tv_sens: 1, tv_lat: 0)
       else
@@ -25,43 +23,22 @@ class ERIMiscTest < MiniTest::Test
     end
   end
 
-  def _test_measure(hpxml_name, calc_type)
-    args_hash = {}
-    args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    args_hash['calc_type'] = calc_type
-
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
-
-    # create an instance of a runner
+  def _test_ruleset(hpxml_name, calc_type)
+    require_relative '../../workflow/design'
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    designs = [Design.new(calc_type: calc_type)]
 
-    model = OpenStudio::Model::Model.new
+    hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
+    success, _, hpxml = run_rulesets(runner, hpxml_input_path, designs)
 
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    runner.result.stepErrors.each do |s|
+      puts "Error: #{s}"
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # show the output
-    show_output(result) unless result.value.valueName == 'Success'
-
     # assert that it ran correctly
-    assert_equal('Success', result.value.valueName)
+    assert_equal(true, success)
 
-    return measure.new_hpxml
+    return hpxml
   end
 
   def _expected_misc_ref_energy_gains(cfa)

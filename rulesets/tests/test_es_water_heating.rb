@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
-require_relative '../measure.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
-require_relative 'util'
+require_relative 'util.rb'
 
 class EnergyStarWaterHeatingTest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
@@ -37,7 +35,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_water_heating_tank_elec
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.95, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -57,7 +55,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_water_heating_tank_gas
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-tank-gas-uef.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 30, ef: 0.67, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -76,7 +74,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_water_heating_tank_oil
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-tank-oil.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeOil, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.60, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -95,7 +93,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_water_heating_tank_heat_pump
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-tank-heat-pump-uef.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.95, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -115,7 +113,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_water_heating_tankless_electric
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-tankless-electric-uef.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 60, ef: 0.95, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -135,7 +133,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_water_heating_tankless_gas
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-tankless-gas-uef.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.67, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -154,7 +152,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_multiple_water_heating
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-multiple.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.95, n_units_served: 1 },
                                     { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.2, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.67, n_units_served: 1 },
@@ -194,7 +192,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_indirect_water_heating
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-indirect-standbyloss.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.67, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -213,7 +211,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_indirect_tankless_coil
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-combi-tankless.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.67, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -232,7 +230,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_water_heating_recirc
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-dhw-recirc-demand.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.95, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -251,7 +249,7 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
   def test_shared_water_heating_recirc
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-bldgtype-multifamily-shared-water-heater-recirc.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1].include? es_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 120.0, ef: 0.45, n_units_served: 1 }])
       elsif es_version == ESConstants.SFPacificVer3_0
@@ -267,43 +265,21 @@ class EnergyStarWaterHeatingTest < MiniTest::Test
     end
   end
 
-  def _test_measure()
-    args_hash = {}
-    args_hash['hpxml_input_path'] = @tmp_hpxml_path
-    args_hash['init_calc_type'] = ESConstants.CalcTypeEnergyStarReference
-
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
-
-    # create an instance of a runner
+  def _test_ruleset()
+    require_relative '../../workflow/design'
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
 
-    model = OpenStudio::Model::Model.new
+    success, _, hpxml = run_rulesets(runner, @tmp_hpxml_path, designs)
 
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    runner.result.stepErrors.each do |s|
+      puts "Error: #{s}"
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # show the output
-    show_output(result) unless result.value.valueName == 'Success'
-
     # assert that it ran correctly
-    assert_equal('Success', result.value.valueName)
+    assert_equal(true, success)
 
-    return measure.new_hpxml
+    return hpxml
   end
 
   def _check_water_heater(hpxml, all_expected_values = [])

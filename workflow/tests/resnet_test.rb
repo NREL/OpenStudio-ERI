@@ -298,8 +298,11 @@ class RESNETTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), dir_name)
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _test_schema_validation(xml)
+
+      # TODO: We can remove the _run_ruleset call if we address https://github.com/NREL/OpenStudio-ERI/issues/541
       out_xml = File.join(@test_files_dir, File.basename(xml))
       _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
+
       csv_path = _run_simulation(out_xml, test_name)
 
       all_results[File.basename(xml)] = _get_hot_water(csv_path)

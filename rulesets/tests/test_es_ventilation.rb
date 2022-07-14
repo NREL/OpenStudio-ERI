@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
-require_relative '../measure.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
-require_relative 'util'
+require_relative 'util.rb'
 
 class EnergyStarVentTest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
@@ -43,7 +41,7 @@ class EnergyStarVentTest < MiniTest::Test
   def test_mech_vent
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_mech_vent(hpxml, [{ fantype: fan_type(es_version, hpxml), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(es_version)) }])
     end
   end
@@ -51,7 +49,7 @@ class EnergyStarVentTest < MiniTest::Test
   def test_mech_vent_attached_or_multifamily
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_mech_vent(hpxml, [{ fantype: fan_type(es_version, hpxml), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(es_version)) }])
     end
   end
@@ -59,7 +57,7 @@ class EnergyStarVentTest < MiniTest::Test
   def test_mech_vent_erv
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-mechvent-erv.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_mech_vent(hpxml, [{ fantype: fan_type(es_version, hpxml), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(es_version)) }])
     end
   end
@@ -67,7 +65,7 @@ class EnergyStarVentTest < MiniTest::Test
   def test_mech_vent_hrv
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-mechvent-hrv.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_mech_vent(hpxml, [{ fantype: fan_type(es_version, hpxml), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(es_version)) }])
     end
   end
@@ -75,7 +73,7 @@ class EnergyStarVentTest < MiniTest::Test
   def test_mech_vent_nbeds_5
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-enclosure-beds-5.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_mech_vent(hpxml, [{ fantype: fan_type(es_version, hpxml), flowrate: 72.0, hours: 24, power: (72.0 / cfm_per_watt(es_version)) }])
     end
   end
@@ -83,7 +81,7 @@ class EnergyStarVentTest < MiniTest::Test
   def test_mech_vent_location_miami_fl
     ESConstants.NationalVersions.each do |es_version|
       _convert_to_es('base-location-miami-fl.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_mech_vent(hpxml, [{ fantype: fan_type(es_version, hpxml), flowrate: 43.5, hours: 24, power: (43.5 / cfm_per_watt(es_version)) }])
     end
   end
@@ -98,7 +96,7 @@ class EnergyStarVentTest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_mech_vent(hpxml, [{ fantype: fan_type(es_version, hpxml), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(es_version)) }])
     end
   end
@@ -106,48 +104,26 @@ class EnergyStarVentTest < MiniTest::Test
   def test_whole_house_fan
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-mechvent-whole-house-fan.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_whf(hpxml)
     end
   end
 
-  def _test_measure()
-    args_hash = {}
-    args_hash['hpxml_input_path'] = @tmp_hpxml_path
-    args_hash['init_calc_type'] = ESConstants.CalcTypeEnergyStarReference
-
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
-
-    # create an instance of a runner
+  def _test_ruleset()
+    require_relative '../../workflow/design'
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
 
-    model = OpenStudio::Model::Model.new
+    success, _, hpxml = run_rulesets(runner, @tmp_hpxml_path, designs)
 
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    runner.result.stepErrors.each do |s|
+      puts "Error: #{s}"
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # show the output
-    show_output(result) unless result.value.valueName == 'Success'
-
     # assert that it ran correctly
-    assert_equal('Success', result.value.valueName)
+    assert_equal(true, success)
 
-    return measure.new_hpxml
+    return hpxml
   end
 
   def _check_mech_vent(hpxml, all_expected_values = [])
