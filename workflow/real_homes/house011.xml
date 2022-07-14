@@ -14,6 +14,9 @@
       <EnergyStarCalculation>
         <Version>MF_National_1.1</Version>
       </EnergyStarCalculation>
+      <IECCERICalculation>
+        <Version>2021</Version>
+      </IECCERICalculation>
     </extension>
   </SoftwareInfo>
   <Building>

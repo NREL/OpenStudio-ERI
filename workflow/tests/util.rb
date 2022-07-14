@@ -217,12 +217,16 @@ def _get_csv_results(csvs)
     CSV.foreach(csv) do |row|
       next if row.nil? || (row.size < 2)
 
-      if row[0] == 'ENERGY STAR Certification' # String outputs
-        results[row[0]] = row[1]
-      elsif row[1].include? ',' # Sum values for visualization on CI
-        results[row[0]] = row[1].split(',').map(&:to_f).sum
+      key, value = row
+      if csv.include? 'IECC'
+        key = "IECC #{key}"
+      end
+      if key == 'ENERGY STAR Certification' # String outputs
+        results[key] = value
+      elsif value.include? ',' # Sum values for visualization on CI
+        results[key] = value.split(',').map(&:to_f).sum
       else
-        results[row[0]] = Float(row[1])
+        results[key] = Float(value)
       end
     end
   end
