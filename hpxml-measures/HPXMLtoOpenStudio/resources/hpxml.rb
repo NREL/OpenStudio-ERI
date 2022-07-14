@@ -954,11 +954,11 @@ class HPXML < Object
         @energystar_calculation_version => 'EnergyStarCalculation',
         @iecc_eri_calculation_version => 'IECCERICalculation',
         @zerh_calculation_version => 'ZERHCalculation' }.each do |calculation_version, element_name|
-        next unless not calculation_version.nil?
+        next if calculation_version.nil?
 
         extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
-        eri_calculation = XMLHelper.add_element(extension, element_name)
-        XMLHelper.add_element(eri_calculation, 'Version', calculation_version, :string)
+        calculation = XMLHelper.add_element(extension, element_name)
+        XMLHelper.add_element(calculation, 'Version', calculation_version, :string)
       end
       if (not @timestep.nil?) || (not @sim_begin_month.nil?) || (not @sim_begin_day.nil?) || (not @sim_end_month.nil?) || (not @sim_end_day.nil?) || (not @dst_enabled.nil?) || (not @dst_begin_month.nil?) || (not @dst_begin_day.nil?) || (not @dst_end_month.nil?) || (not @dst_end_day.nil?)
         extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
@@ -1040,6 +1040,7 @@ class HPXML < Object
       @eri_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/ERICalculation/Version', :string)
       @iecc_eri_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/IECCERICalculation/Version', :string)
       @energystar_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
+      @zerh_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/ZERHCalculation/Version', :string)
       @timestep = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/Timestep', :integer)
       @sim_begin_month = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/BeginMonth', :integer)
       @sim_begin_day = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/BeginDayOfMonth', :integer)
