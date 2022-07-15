@@ -16,7 +16,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 def _run_ruleset(design, xml, out_xml)
   designs = [Design.new(calc_type: design)]
   designs[0].hpxml_output_path = out_xml
-  success, _, _, _, _ = run_rulesets(runner, File.absolute_path(xml), designs)
+  success, _, _, _, _ = run_rulesets(File.absolute_path(xml), designs)
 
   assert(success)
   assert(File.exist?(out_xml))
