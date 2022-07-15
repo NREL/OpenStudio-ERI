@@ -2275,6 +2275,7 @@ def create_sample_hpxmls
     # Handle different inputs for ERI
 
     hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
@@ -2531,10 +2532,11 @@ def create_sample_hpxmls
   hpxml.hvac_controls[0].control_type = HPXML::HVACControlTypeProgrammable
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
-  # Older versions
+  # Older ERI versions
   Constants.ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.eri_calculation_version = eri_version
+    hpxml.header.iecc_eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
 
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
@@ -2542,7 +2544,17 @@ def create_sample_hpxmls
       hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
     end
 
-    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
+    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
+  end
+
+  # Older IECC versions
+  IECCConstants.AllVersions[0..-2].each do |iecc_version|
+    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+    hpxml.header.iecc_eri_calculation_version = iecc_version
+    hpxml.header.eri_calculation_version = nil
+    hpxml.header.energystar_calculation_version = nil
+
+    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
   end
 
   # Additional ENERGY STAR files
@@ -2582,7 +2594,7 @@ if ARGV[0].to_sym == :update_measures
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-  require_relative 'rulesets/301EnergyRatingIndexRuleset/resources/constants'
+  require_relative 'rulesets/resources/constants'
 
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
@@ -2660,8 +2672,7 @@ if ARGV[0].to_sym == :create_release_zips
            'hpxml-measures/HPXMLtoOpenStudio/resources/**/*.*',
            'hpxml-measures/ReportSimulationOutput/measure.*',
            'hpxml-measures/ReportSimulationOutput/resources/**/*.*',
-           'rulesets/301EnergyRatingIndexRuleset/measure.*',
-           'rulesets/301EnergyRatingIndexRuleset/resources/**/*.*',
+           'rulesets/**/*.*',
            'weather/*.*',
            'workflow/*.*',
            'workflow/real_homes/*.*',

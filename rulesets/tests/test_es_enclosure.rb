@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
-require_relative '../measure.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
-require_relative 'util'
+require_relative 'util.rb'
 
 class EnergyStarEnclosureTest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
@@ -32,13 +30,13 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_infiltration(hpxml, value, units)
     end
 
     ESConstants.MFVersions.each do |es_version|
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_infiltration(hpxml, 834.0, 'CFM')
     end
 
@@ -52,7 +50,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base-location-miami-fl.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_infiltration(hpxml, value, units)
     end
   end
@@ -70,7 +68,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       rvalue = 2.3
 
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
       if [ESConstants.MFNationalVer1_1].include? es_version
@@ -80,17 +78,17 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base-atticroof-cathedral.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
       _convert_to_es('base-atticroof-flat.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_roofs(hpxml, area: 1350, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
     end
 
     ESConstants.MFVersions.each do |es_version|
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_roofs(hpxml)
     end
 
@@ -102,7 +100,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? es_version
         rb_grade = 1
       else
@@ -121,15 +119,15 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
       # In both HI and GU, if > 10 linear ft. of ductwork are located in unconditioned attic, place radiant barrier
       _convert_to_es('base.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-cathedral.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es('base-atticroof-flat.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_roofs(hpxml, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
   end
@@ -149,11 +147,11 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_walls(hpxml, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
       _convert_to_es('base-atticroof-conditioned.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if ESConstants.MFVersions.include? es_version
         _check_walls(hpxml, area: 1806, rvalue: (rvalue * 1440 + 4.0 * 366) / 1806, sabs: 0.75, emit: 0.9)
       else
@@ -161,7 +159,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base-enclosure-garage.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_walls(hpxml, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
 
@@ -173,11 +171,11 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_walls(hpxml, area: 980, rvalue: (rvalue * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
 
       _convert_to_es('base-bldgtype-multifamily-adjacent-to-multiple.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_walls(hpxml, area: 1086, rvalue: (rvalue * 686 + 4.0 * 400) / 1086, sabs: 0.75, emit: 0.9)
     end
 
@@ -190,15 +188,15 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_walls(hpxml, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
       _convert_to_es('base-atticroof-conditioned.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_walls(hpxml, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
 
       _convert_to_es('base-enclosure-garage.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_walls(hpxml, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
   end
@@ -216,11 +214,11 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_rim_joists(hpxml, area: 116, rvalue: rvalue, sabs: 0.75, emit: 0.90)
 
       _convert_to_es('base-foundation-multiple.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.90)
     end
   end
@@ -245,7 +243,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
                      'base-foundation-conditioned-basement-wall-interior-insulation.xml']
       hpxml_names.each do |hpxml_name|
         _convert_to_es(hpxml_name, es_version)
-        hpxml = _test_measure()
+        hpxml = _test_ruleset()
         if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
@@ -271,7 +269,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
         hpxml.climate_and_risk_zones.weather_station_wmo = 722020
         XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-        hpxml = _test_measure()
+        hpxml = _test_ruleset()
         if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
@@ -283,14 +281,14 @@ class EnergyStarEnclosureTest < MiniTest::Test
 
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-foundation-unconditioned-basement.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7)
 
       hpxml_names = ['base-foundation-unvented-crawlspace.xml',
                      'base-foundation-vented-crawlspace.xml']
       hpxml_names.each do |name|
         _convert_to_es(name, es_version)
-        hpxml = _test_measure()
+        hpxml = _test_ruleset()
         _check_foundation_walls(hpxml, area: 600, height: 4, depth_bg: 3)
       end
     end
@@ -322,23 +320,23 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 1350, rvalue: rvalue)
 
       _convert_to_es('base-foundation-unconditioned-basement.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 2700, rvalue: (rvalue * 1350 + rvalue_floors_over_uncond_spaces * 1350) / 2700)
 
       _convert_to_es('base-foundation-unconditioned-basement-wall-insulation.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 2700, rvalue: (rvalue * 1350 + rvalue_floors_over_uncond_spaces * 1350) / 2700)
 
       _convert_to_es('base-enclosure-garage.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 1950, rvalue: (rvalue * 1350 + 2.1 * 600) / 1950)
 
       _convert_to_es('base-atticroof-cathedral.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if es_version == ESConstants.MFNationalVer1_1
         _check_floors(hpxml)
       else
@@ -346,11 +344,11 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base-atticroof-conditioned.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 450, rvalue: rvalue)
 
       _convert_to_es('base-atticroof-flat.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if es_version == ESConstants.MFNationalVer1_1
         _check_floors(hpxml)
       else
@@ -368,11 +366,11 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 1800, rvalue: (2.1 * 900 + 2.1 * 900) / 1800)
 
       _convert_to_es('base-bldgtype-multifamily-adjacent-to-multiple.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 1800, rvalue: (2.1 * 1050 + rvalue_floors_over_uncond_spaces * 750) / 1800)
     end
 
@@ -394,7 +392,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_floors(hpxml, area: 2700, rvalue: (rvalue * 1350 + rvalue_floors_over_uncond_spaces * 1350) / 2700)
     end
   end
@@ -402,7 +400,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
   def test_enclosure_slabs
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_slabs(hpxml, area: 1350, exp_perim: 150)
 
       if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
@@ -423,14 +421,14 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base-foundation-slab.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_slabs(hpxml, area: 1350, exp_perim: 150, perim_ins_depth: perim_ins_depth, perim_ins_r: perim_ins_r,
                           under_ins_width: under_ins_width, under_ins_r: under_ins_r, depth_below_grade: 0)
     end
 
     ESConstants.NationalVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_slabs(hpxml, area: 1350, exp_perim: 150)
 
       _convert_to_es('base-foundation-slab.xml', es_version)
@@ -439,7 +437,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_slabs(hpxml, area: 1350, exp_perim: 150, depth_below_grade: 0)
     end
   end
@@ -460,7 +458,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: 74.55, ufactor: ufactor, shgc: shgc },
                                                  180 => { area: 74.55, ufactor: ufactor, shgc: shgc },
@@ -468,7 +466,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
                                                  270 => { area: 74.55, ufactor: ufactor, shgc: shgc } })
 
       _convert_to_es('base-foundation-unconditioned-basement.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: 50.63, ufactor: ufactor, shgc: shgc },
                                                  180 => { area: 50.63, ufactor: ufactor, shgc: shgc },
@@ -476,7 +474,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
                                                  270 => { area: 50.63, ufactor: ufactor, shgc: shgc } })
 
       _convert_to_es('base-atticroof-cathedral.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: 77.95, ufactor: ufactor, shgc: shgc },
                                                  180 => { area: 77.95, ufactor: ufactor, shgc: shgc },
@@ -484,7 +482,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
                                                  270 => { area: 77.95, ufactor: ufactor, shgc: shgc } })
 
       _convert_to_es('base-atticroof-conditioned.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: 107.17, ufactor: ufactor, shgc: shgc },
                                                  180 => { area: 107.17, ufactor: ufactor, shgc: shgc },
@@ -503,7 +501,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         ufactor, shgc = 0.27, 0.30
       end
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor, shgc: shgc },
                                                  180 => { area: 33.34, ufactor: ufactor, shgc: shgc },
@@ -525,7 +523,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         window.fraction_operable = 0.0
       end
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
                                                  180 => { area: 33.34, ufactor: ufactor, shgc: shgc },
@@ -547,7 +545,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         window.fraction_operable = 1.0
       end
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
                                                  180 => { area: 33.34, ufactor: ufactor3, shgc: shgc },
@@ -576,7 +574,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_windows(hpxml, frac_operable: 0.67,
                             values_by_azimuth: { 0 => { area: areas[0], ufactor: ufactor, shgc: shgc },
                                                  180 => { area: areas[1], ufactor: ufactor, shgc: shgc },
@@ -588,7 +586,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
   def test_enclosure_skylights
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-enclosure-skylights.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_skylights(hpxml)
     end
   end
@@ -596,7 +594,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
   def test_enclosure_overhangs
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-enclosure-overhangs.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_overhangs(hpxml)
     end
   end
@@ -610,48 +608,25 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: rvalue } })
     end
   end
 
-  def _test_measure()
-    args_hash = {}
-    args_hash['hpxml_input_path'] = @tmp_hpxml_path
-    args_hash['init_calc_type'] = ESConstants.CalcTypeEnergyStarReference
+  def _test_ruleset()
+    require_relative '../../workflow/design'
+    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
 
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
+    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
 
-    # create an instance of a runner
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-
-    model = OpenStudio::Model::Model.new
-
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    errors.each do |s|
+      puts "Error: #{s}"
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # show the output
-    show_output(result) unless result.value.valueName == 'Success'
-
     # assert that it ran correctly
-    assert_equal('Success', result.value.valueName)
+    assert_equal(true, success)
 
-    return measure.new_hpxml
+    return hpxml
   end
 
   def _check_infiltration(hpxml, value, units)

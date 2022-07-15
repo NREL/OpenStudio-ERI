@@ -7,7 +7,7 @@ require 'fileutils'
 require 'csv'
 require 'oga'
 require_relative 'util.rb'
-require_relative '../../rulesets/301EnergyRatingIndexRuleset/resources/constants'
+require_relative '../../rulesets/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
@@ -31,7 +31,10 @@ class EnergyRatingIndexTest < Minitest::Test
     xmldir = "#{File.dirname(__FILE__)}/../sample_files"
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
-      all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results], csvs[:co2e_results], csvs[:es_results]])
+      all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results],
+                                                          csvs[:co2e_results],
+                                                          csvs[:es_results],
+                                                          csvs[:iecc_eri_results]])
 
       _rm_path(rundir)
     end

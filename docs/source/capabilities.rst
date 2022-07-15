@@ -19,6 +19,12 @@ The following ENERGY STAR programs/versions are supported:
 - Multifamily, National, v1
 - Multifamily, Oregon and Washington, v1.2
 
+The following IECC ERI versions are supported:
+
+- 2015
+- 2018
+- 2021
+
 Accuracy vs Speed
 -----------------
 

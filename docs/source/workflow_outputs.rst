@@ -3,20 +3,41 @@
 Workflow Outputs
 ================
 
-Upon completing an ERI or ENERGY STAR calculation, a variety of summary output files and simulation files are available.
+Upon completing an OpenStudio-ERI run, a variety of summary output files and simulation files are available:
 
-.. _eri_files:
+- :ref:`summary_outputs_csv`
+- :ref:`home_annual_outputs_csv`
+- :ref:`home_timeseries_outputs_csv`
+- :ref:`home_configurations_hpxml`
+- :ref:`home_energyplus_files`
 
-ERI Files
----------
+.. _summary_outputs_csv:
 
-ERI output files described below are found in the ``results`` directory.
+Summary Outputs (CSV)
+---------------------
+
+Based on which calculations were requested in the HPXML file, summary output files will be found in the ``results`` directory.
+
+  ================  ===============================================  =========
+  Calculation       File                                             Notes
+  ================  ===============================================  =========
+  ERI               CO2e_Results.csv                                 See :ref:`co2e_results_csv`. Only produced if 301-2019 Addendum D or newer.
+  ERI               ERI_Results.csv                                  See :ref:`eri_results_csv`.
+  ERI               ERI_Worksheet.csv                                See :ref:`eri_worksheet_csv`.
+  IECC ERI Pathway  IECC_ERI_Results.csv                             See :ref:`eri_results_csv` (same format).
+  IECC ERI Pathway  IECC_ERI_Worksheet.csv                           See :ref:`eri_worksheet_csv` (same format).
+  ENERGY STAR       ES_Results.csv                                   See :ref:`es_results_csv`.
+  ================  ===============================================  =========
+
+.. _co2e_results_csv:
 
 CO2e_Results.csv
 ~~~~~~~~~~~~~~~~
 
 A ``CO2e_Results.csv`` file will be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
 The file includes all of the outputs that are used in the CO2e Index calculation.
+
+.. _eri_results_csv:
 
 ERI_Results.csv
 ~~~~~~~~~~~~~~~
@@ -26,6 +47,8 @@ The file reflects the format of the Results tab of the HERS Method Test spreadsh
 
 Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
 
+.. _eri_worksheet_csv:
+
 ERI_Worksheet.csv
 ~~~~~~~~~~~~~~~~~
 
@@ -34,13 +57,55 @@ The file reflects the format of the Worksheet tab of the HERS Method Test spread
 
 Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
 
-ERI______Home.csv
-~~~~~~~~~~~~~~~~~
+.. _es_results_csv:
 
-A CSV file is written for each of the homes simulated (e.g., ``ERIReferenceHome.csv`` for the Reference home).
-The CSV file includes the following sections of output.
+ES_Results.csv
+~~~~~~~~~~~~~~
 
-A ``CO2eReferenceHome.csv`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+The ``ES_Results.csv`` file includes the following:
+
+   ===================================  =====
+   Output                               Notes
+   ===================================  =====
+   Reference Home ERI                   ERI of the ES Reference Home
+   SAF (Size Adjustment Factor)         Can only be less than 1 for some ES programs/versions
+   SAF Adjusted ERI Target              Reference Home ERI multiplied by SAF
+   Rated Home ERI                       ERI of the Rated Home including OPP as allowed by the ES program/version
+   Rated Home ERI w/o OPP               ERI of the Rated Home excluding any on-site power production (OPP)
+   ENERGY STAR Certification            PASS or FAIL
+   ===================================  =====
+
+.. _home_annual_outputs_csv:
+
+Home Annual Outputs (CSV)
+-------------------------
+
+Based on which calculations were requested in the HPXML file, CSV annual output files will be found in the ``results`` directory for each simulated home.
+
+  ================  ===============================================  =========
+  Calculation       File                                             Notes
+  ================  ===============================================  =========
+  ERI               CO2eRatedHome.csv                                CO2e Rated Home. Only produced if 301-2019 Addendum D or newer.
+  ERI               CO2eReferenceHome.csv                            CO2e Reference Home. Only produced if 301-2019 Addendum D or newer.
+  ERI               ERIRatedHome.csv                                 ERI Rated Home.
+  ERI               ERIReferenceHome.csv                             ERI Reference Home.
+  ERI               ERIIndexAdjustmentDesign.csv                     ERI Index Adjustment Design. Only produced if 301-2014 Addendum E or newer.
+  ERI               ERIIndexAdjustmentReferenceHome.csv              ERI Index Adjustment Reference Home. Only produced if 301-2014 Addendum E or newer.
+  IECC ERI Pathway  IECC_ERIRatedHome.csv                            IECC ERI Rated Home.
+  IECC ERI Pathway  IECC_ERIReferenceHome.csv                        IECC ERI Reference Home.
+  IECC ERI Pathway  IECC_ERIIndexAdjustmentDesign.csv                IECC ERI Index Adjustment Design.
+  IECC ERI Pathway  IECC_ERIIndexAdjustmentReferenceHome.csv         IECC ERI Index Adjustment Reference Home.
+  ENERGY STAR       ESRated_ERIRatedHome.csv                         ERI Rated Home for the ENERGY STAR rated home.
+  ENERGY STAR       ESRated_ERIReferenceHome.csv                     ERI Reference Home for the ENERGY STAR rated home.
+  ENERGY STAR       ESRated_ERIIndexAdjustmentDesign.csv             ERI Index Adjustment Design for the ENERGY STAR rated home.
+  ENERGY STAR       ESRated_ERIIndexAdjustmentReferenceHome.csv      ERI Index Adjustment Reference Home for the ENERGY STAR rated home.
+  ENERGY STAR       ESReference_ERIRatedHome.csv                     ERI Rated Home for the ENERGY STAR Reference Design.
+  ENERGY STAR       ESReference_ERIReferenceHome.csv                 ERI Reference Home for the ENERGY STAR Reference Design.
+  ENERGY STAR       ESReference_ERIIndexAdjustmentDesign.csv         ERI Index Adjustment Design for the ENERGY STAR Reference Design.
+  ENERGY STAR       ESReference_ERIIndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ENERGY STAR Reference Design.
+  ================  ===============================================  =========
+
+Each CSV file includes the following sections of output.
 
 Annual Energy Consumption
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,7 +120,7 @@ Annual energy consumption outputs are listed below.
   ====================================  ===========================
 
 Annual Energy Consumption by Fuel Type
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Fuel uses are listed below.
 
@@ -73,7 +138,7 @@ Fuel uses are listed below.
    ==========================  ===========================
 
 Annual Energy Consumption By End Use
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 End uses are listed below.
 
@@ -151,11 +216,11 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    ===================================================================  ====================================================
 
 Annual Emissions
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 Annual emissions are listed below.
 
-Emissions for each emissions type (CO2e, NOx, and SO2) are provided for the Rated Home, ERI Reference Home, and CO2e Reference Home.
+Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 Note that rows below with values of zero will be excluded.
 
    ===============================================================  ===============================================================
@@ -179,7 +244,7 @@ Note that rows below with values of zero will be excluded.
    ===============================================================  ===============================================================
 
 Annual Building Loads
-^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~
 
 Annual building loads are listed below.
 
@@ -197,7 +262,7 @@ Annual building loads are listed below.
 Note that the "Delivered" loads represent the energy delivered by the HVAC/DHW system; if a system is significantly undersized, there will be unmet load not reflected by these values.
 
 Annual Unmet Hours
-^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~
 
 Annual unmet hours are listed below.
 
@@ -211,7 +276,7 @@ Annual unmet hours are listed below.
 These numbers reflect the number of hours during the year when the conditioned space temperature is more than 0.2 deg-C (0.36 deg-F) from the setpoint during heating/cooling.
 
 Peak Building Electricity
-^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Peak building electricity outputs are listed below.
 
@@ -223,7 +288,7 @@ Peak building electricity outputs are listed below.
    ==================================  =========================================================
 
 Peak Building Loads
-^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~
 
 Peak building loads are listed below.
 
@@ -237,7 +302,7 @@ Peak building loads are listed below.
 Note that the "Delivered" peak loads represent the energy delivered by the HVAC system; if a system is significantly undersized, there will be unmet peak load not reflected by these values.
 
 Annual Component Building Loads
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Note**: This section is only available if the ``--add-component-loads`` argument is used.
 The argument is not used by default for faster performance.
@@ -270,7 +335,7 @@ Component loads disaggregated by Heating/Cooling are listed below.
    =================================================  =========================================================================================================
 
 Annual Hot Water Uses
-^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~
 
 Annual hot water uses are listed below.
 
@@ -283,8 +348,10 @@ Annual hot water uses are listed below.
    Hot Water: Distribution Waste (gal) 
    ===================================  =====
 
-Timeseries Outputs
-~~~~~~~~~~~~~~~~~~
+.. _home_timeseries_outputs_csv:
+
+Home Timeseries Outputs (CSV)
+-----------------------------
 
 See the :ref:`running` section for requesting timeseries outputs.
 When requested, a CSV file of timeseries outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv``, ``ERIReferenceHome_Daily.csv``, or ``ERIReferenceHome_Monthly.csv`` for the Reference home).
@@ -313,27 +380,28 @@ Timeseries outputs can be one of the following frequencies: hourly, daily, or mo
 Timestamps in the output use the end-of-hour (or end-of-day for daily frequency, etc.) convention.
 Most outputs will be summed over the hour (e.g., energy) but some will be averaged over the hour (e.g., temperatures, airflows).
 
-ERI______Home.xml
-~~~~~~~~~~~~~~~~~
+.. _home_configurations_hpxml:
 
-An HPXML file is written for each of the homes simulated (e.g., ``ERIReferenceHome.xml`` for the Reference home).
-The file reflects the configuration of the home after applying the ERI 301 ruleset.
+Home Configurations (HPXML)
+---------------------------
 
-The file will also show HPXML default values that are applied as part of modeling this home.
+Based on which calculations were requested in the HPXML file, home configuration details in HPXML format will be found in the ``results`` directory for each simulated home.
+The HPXML files will have the same filename as the :ref:`home_annual_outputs_csv` output files, but with a .xml extension instead of .csv.
+The files reflect the configuration of the home after applying, e.g., the ERI 301 ruleset.
+
+The files will also show HPXML default values that are applied as part of modeling the home.
 Defaults will be applied for a few different reasons:
 
 #. Optional ERI inputs aren't provided (e.g., ventilation rate for a vented attic, SHR for an air conditioner, etc.)
 #. Modeling assumptions (e.g., 1 hour timestep, Jan 1 - Dec 31 run period, appliance schedules, etc.)
 #. HVAC sizing calculations (e.g., autosized HVAC capacities and airflow rates, heating/cooling design loads)
 
-Any HPXML-defaulted values will include the ``dataSource='software'`` attribute.
+Any defaulted values will include the ``dataSource='software'`` attribute in the HPXML file.
 
-A ``CO22ReferenceHome.xml`` will also be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
+.. _home_energyplus_files:
 
-.. _eri_simulation_files:
-
-Simulation Files
-~~~~~~~~~~~~~~~~
+Home EnergyPlus Files
+---------------------
 
 In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``ERIRatedHome``, ``ERIReferenceHome``, etc. directories).
 
@@ -341,34 +409,4 @@ In addition, raw EnergyPlus simulation input/output files are available for each
 
   It is highly discouraged for software tools to read the raw EnergyPlus output files. 
   The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. 
-  If there are additional outputs of interest that are not available in our summary output files, please send us a request.
-
-ENERGY STAR Files
------------------
-
-ENERGY STAR output files described below are found in the ``results`` directory.
-
-In addition, :ref:`eri_files` corresponding to the ERI calculation of the ENERGY STAR Reference Home and ENERGY STAR Rated Home will be generated.
-For example, ESRated_ERIReferenceHome.xml is the ERI Reference Home HPXML file corresponding to the ENERGY STAR Rated Home.
-
-ES_Results.csv
-~~~~~~~~~~~~~~
-
-The ``ES_Results.csv`` file includes the following:
-
-   ===================================  =====
-   Output                               Notes
-   ===================================  =====
-   Reference Home ERI                   ERI of the ES Reference Home
-   SAF (Size Adjustment Factor)         Can only be less than 1 for some ES programs/versions
-   SAF Adjusted ERI Target              Reference Home ERI multiplied by SAF
-   Rated Home ERI                       ERI of the Rated Home including OPP as allowed by the ES program/version
-   Rated Home ERI w/o OPP               ERI of the Rated Home excluding any on-site power production (OPP)
-   ENERGY STAR Certification            PASS or FAIL
-   ===================================  =====
-
-ES______.xml
-~~~~~~~~~~~~
-
-An HPXML file is written for the ENERGY STAR Reference Home (``ESReference.xml``) and the ENERGY STAR Rated Home (``ESRated.xml``).
-The file reflects the configuration of the home after applying the ENERGY STAR ruleset.
+  If there are additional outputs of interest that are not available in the annual/timeseries output files, please send us a request.

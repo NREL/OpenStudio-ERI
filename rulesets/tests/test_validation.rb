@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/measure/ShowRunnerOutput'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
-require_relative '../measure.rb'
-require_relative '../resources/constants.rb'
+require_relative 'util.rb'
 
 class ERI301ValidationTest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
-    @eri_validator_stron_path = File.join(@root_path, 'rulesets', '301EnergyRatingIndexRuleset', 'resources', '301validator.xml')
+    @eri_validator_stron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
     @hpxml_stron_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
 
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
@@ -135,7 +133,7 @@ class ERI301ValidationTest < MiniTest::Test
                      'energy-star-MF_National_1.1' => [ESConstants.MFNationalVer1_1, HPXML::ResidentialTypeSFD],
                      'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
         es_version, bldg_type = es_props[error_case]
-        hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+        hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files', 'base.xml'))
         hpxml.header.energystar_calculation_version = es_version
         hpxml.building_construction.residential_facility_type = bldg_type
         hpxml.header.state_code = 'CO'
@@ -150,7 +148,7 @@ class ERI301ValidationTest < MiniTest::Test
     end
   end
 
-  def test_measure_error_messages
+  def test_ruleset_error_messages
     # Test case => Error message
     all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."] }
 
@@ -170,7 +168,7 @@ class ERI301ValidationTest < MiniTest::Test
       hpxml_doc = hpxml.to_oga()
 
       XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
-      _test_measure(expected_errors)
+      _test_ruleset(expected_errors)
     end
   end
 
@@ -192,40 +190,19 @@ class ERI301ValidationTest < MiniTest::Test
     assert_equal(0, errors.size)
   end
 
-  def _test_measure(expected_errors)
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
+  def _test_ruleset(expected_errors)
+    require_relative '../../workflow/design'
+    designs = [Design.new(calc_type: Constants.CalcTypeERIRatedHome)]
+    designs[0].hpxml_output_path = File.absolute_path(@tmp_output_path)
 
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-    model = OpenStudio::Model::Model.new
+    success, errors, _, _, _ = run_rulesets(File.absolute_path(@tmp_hpxml_path), designs)
 
-    # get arguments
-    args_hash = {}
-    args_hash['calc_type'] = Constants.CalcTypeERIRatedHome
-    args_hash['hpxml_input_path'] = File.absolute_path(@tmp_hpxml_path)
-    args_hash['hpxml_output_path'] = File.absolute_path(@tmp_output_path)
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    if expected_errors.empty?
+      assert_equal(true, success)
+    else
+      assert_equal(false, success)
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    assert_equal('Fail', result.value.valueName)
-
-    errors = []
-    result.stepErrors.each do |s|
-      errors << s
-    end
     _compare_errors(errors, expected_errors)
   end
 

@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/measure/ShowRunnerOutput'
-require_relative '../measure.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
 class ERIApplianceTest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
@@ -21,7 +19,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationLivingSpace)
@@ -41,7 +39,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2019')
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_washer(hpxml, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
@@ -62,7 +60,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-appliances-modified.xml'
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, location: HPXML::LocationLivingSpace)
@@ -82,7 +80,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2019')
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_washer(hpxml, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
@@ -103,7 +101,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-appliances-gas.xml'
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -120,7 +118,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2019')
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationLivingSpace)
         _check_cooking_range(hpxml, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationLivingSpace)
@@ -138,7 +136,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeERIRatedHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         location = HPXML::LocationBasementUnconditioned
       else
@@ -156,7 +154,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-appliances-none.xml'
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
       _check_clothes_dryer(hpxml, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationLivingSpace)
       _check_dishwasher(hpxml, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationLivingSpace)
@@ -169,7 +167,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-appliances-dehumidifier-multiple.xml'
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_dehumidifiers(hpxml, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationLivingSpace },
                                      { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 0.95, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationLivingSpace }])
@@ -186,7 +184,7 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2019A')
 
     _all_calc_types.each do |calc_type|
-      hpxml = _test_measure(hpxml_name, calc_type)
+      hpxml = _test_ruleset(hpxml_name, calc_type)
       _check_dehumidifiers(hpxml)
     end
   end
@@ -201,7 +199,7 @@ class ERIApplianceTest < MiniTest::Test
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
       _all_calc_types.each do |calc_type|
-        hpxml = _test_measure(hpxml_name, calc_type)
+        hpxml = _test_ruleset(hpxml_name, calc_type)
         if ratio_of_units_to_appliance > 14
           # Reference appliances
           _check_clothes_washer(hpxml, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationLivingSpace)
@@ -225,43 +223,21 @@ class ERIApplianceTest < MiniTest::Test
     end
   end
 
-  def _test_measure(hpxml_name, calc_type)
-    args_hash = {}
-    args_hash['hpxml_input_path'] = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    args_hash['calc_type'] = calc_type
+  def _test_ruleset(hpxml_name, calc_type)
+    require_relative '../../workflow/design'
+    designs = [Design.new(calc_type: calc_type)]
 
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
+    hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
+    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs)
 
-    # create an instance of a runner
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-
-    model = OpenStudio::Model::Model.new
-
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    errors.each do |s|
+      puts "Error: #{s}"
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # show the output
-    show_output(result) unless result.value.valueName == 'Success'
-
     # assert that it ran correctly
-    assert_equal('Success', result.value.valueName)
+    assert_equal(true, success)
 
-    return measure.new_hpxml
+    return hpxml
   end
 
   def _expected_dw_ref_energy_gains(eri_version, nbeds)

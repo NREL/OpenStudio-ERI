@@ -14,6 +14,9 @@
       <EnergyStarCalculation>
         <Version>SF_Pacific_3.0</Version>
       </EnergyStarCalculation>
+      <IECCERICalculation>
+        <Version>2021</Version>
+      </IECCERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>

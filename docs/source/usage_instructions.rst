@@ -26,7 +26,7 @@ Note that all simulations will be executed in parallel if there are sufficient c
 
 This will generate output as shown below:
 
-.. image:: https://user-images.githubusercontent.com/5861765/177409096-102d0a15-c89c-400a-a81c-df9f402810a9.png
+.. image:: https://user-images.githubusercontent.com/5861765/178850875-12c90097-e1fd-48c5-888b-db4355d923e8.png
 
 You can also request generation of timeseries output CSV files as part of the calculation by providing one or more timeseries flags (``--hourly``, ``--daily``, or ``--monthly``).
 

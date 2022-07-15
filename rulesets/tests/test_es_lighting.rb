@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
-require 'openstudio/ruleset/ShowRunnerOutput'
-require_relative '../measure.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../main.rb'
 require 'fileutils'
-require_relative 'util'
+require_relative 'util.rb'
 
 class EnergyStarLightingTest < MiniTest::Test
   def setup
-    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..'))
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
   end
 
@@ -20,7 +18,7 @@ class EnergyStarLightingTest < MiniTest::Test
   def test_lighting
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
         _check_lighting(hpxml, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
@@ -32,7 +30,7 @@ class EnergyStarLightingTest < MiniTest::Test
   def test_ceiling_fans_none
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_ceiling_fans(hpxml)
     end
   end
@@ -40,7 +38,7 @@ class EnergyStarLightingTest < MiniTest::Test
   def test_ceiling_fans
     ESConstants.AllVersions.each do |es_version|
       _convert_to_es('base-lighting-ceiling-fans.xml', es_version)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_ceiling_fans(hpxml, cfm_per_w: 122.0, quantity: 4)
     end
   end
@@ -51,48 +49,25 @@ class EnergyStarLightingTest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.building_construction.number_of_bedrooms = 5
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_measure()
+      hpxml = _test_ruleset()
       _check_ceiling_fans(hpxml, cfm_per_w: 122.0, quantity: 6)
     end
   end
 
-  def _test_measure()
-    args_hash = {}
-    args_hash['hpxml_input_path'] = @tmp_hpxml_path
-    args_hash['init_calc_type'] = ESConstants.CalcTypeEnergyStarReference
+  def _test_ruleset()
+    require_relative '../../workflow/design'
+    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
 
-    # create an instance of the measure
-    measure = EnergyRatingIndex301Measure.new
+    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
 
-    # create an instance of a runner
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-
-    model = OpenStudio::Model::Model.new
-
-    # get arguments
-    arguments = measure.arguments(model)
-    argument_map = OpenStudio::Measure.convertOSArgumentVectorToMap(arguments)
-
-    # populate argument with specified hash value if specified
-    arguments.each do |arg|
-      temp_arg_var = arg.clone
-      if args_hash.has_key?(arg.name)
-        assert(temp_arg_var.setValue(args_hash[arg.name]))
-      end
-      argument_map[arg.name] = temp_arg_var
+    errors.each do |s|
+      puts "Error: #{s}"
     end
 
-    # run the measure
-    measure.run(model, runner, argument_map)
-    result = runner.result
-
-    # show the output
-    show_output(result) unless result.value.valueName == 'Success'
-
     # assert that it ran correctly
-    assert_equal('Success', result.value.valueName)
+    assert_equal(true, success)
 
-    return measure.new_hpxml
+    return hpxml
   end
 
   def _check_lighting(hpxml, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)

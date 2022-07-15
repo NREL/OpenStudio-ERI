@@ -16,7 +16,7 @@ Running Tests Locally
 
 All RESNET HERS tests can be run using:
 
-| ``openstudio resnet_test.rb``
+| ``openstudio resnet_hers_test.rb``
 | 
 
 All EPA ENERGY STAR tests can be run using:
@@ -26,7 +26,7 @@ All EPA ENERGY STAR tests can be run using:
 
 Or individual tests can be run by specifying the name of the test. A couple examples:
 
-| ``openstudio resnet_test.rb --name=test_resnet_ashrae_140``
+| ``openstudio resnet_hers_test.rb --name=test_resnet_ashrae_140``
 | ``openstudio epa_test.rb --name=test_epa``
 | 
 

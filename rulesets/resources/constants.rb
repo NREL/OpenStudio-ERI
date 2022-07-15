@@ -83,3 +83,9 @@ class ESConstants
     return 'MF_OregonWashington_1.2'
   end
 end
+
+class IECCConstants
+  def self.AllVersions
+    return ['2015', '2018', '2021']
+  end
+end

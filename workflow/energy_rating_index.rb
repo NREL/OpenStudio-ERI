@@ -13,7 +13,8 @@ require 'parallel'
 require 'oga'
 require_relative 'design.rb'
 require_relative 'util.rb'
-require_relative '../rulesets/301EnergyRatingIndexRuleset/resources/constants'
+require_relative '../rulesets/main'
+require_relative '../rulesets/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/version'
@@ -27,9 +28,11 @@ def get_program_versions(hpxml_doc)
     eri_version = Constants.ERIVersions[-1]
   end
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
+  iecc_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
 
   { eri_version => [Constants.ERIVersions, 'ERICalculation/Version'],
-    es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] }.each do |version, values|
+    es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'],
+    iecc_version => [IECCConstants.AllVersions, 'IECCERICalculation/Version'] }.each do |version, values|
     all_versions, xpath = values
     if (not version.nil?) && (not all_versions.include? version)
       puts "Unexpected #{xpath}: '#{version}'"
@@ -42,49 +45,31 @@ def get_program_versions(hpxml_doc)
     end
   end
 
-  return eri_version, es_version
+  return eri_version, es_version, iecc_version
 end
 
 def apply_rulesets_and_generate_hpxmls(designs, options)
   puts "Generating #{designs.size} HPXMLs..."
 
-  calc_type = designs.map { |d| d.calc_type }.join(',')
-  init_calc_type = designs.map { |d| d.init_calc_type.to_s }.join(',')
-  init_hpxml_output_path = designs.map { |d| d.init_hpxml_output_path }.join(',')
-  hpxml_output_path = designs.map { |d| d.hpxml_output_path }.join(',')
+  success, errors, warnings, duplicates, _ = run_rulesets(options[:hpxml], designs)
 
-  # Call 301EnergyRatingIndexRuleset measure
-  measures = {}
-  measures_dir = File.join(File.dirname(__FILE__), '..')
-  measure_subdir = 'rulesets/301EnergyRatingIndexRuleset'
-  args = {}
-  args['init_calc_type'] = init_calc_type
-  args['calc_type'] = calc_type
-  args['hpxml_input_path'] = options[:hpxml]
-  args['init_hpxml_output_path'] = init_hpxml_output_path
-  args['hpxml_output_path'] = hpxml_output_path
-  update_args_hash(measures, measure_subdir, args)
-
-  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  os_log = OpenStudio::StringStreamLogSink.new
-  os_log.setLogLevel(OpenStudio::Warn)
-  model = OpenStudio::Model::Model.new
-  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
-
-  success = apply_measures(measures_dir, measures, runner, model, false, 'OpenStudio::Measure::ModelMeasure')
-  rundir = options[:output_dir]
-  run_log = File.join(rundir, 'run.log')
+  # Report warnings/errors
+  run_log = File.join(options[:output_dir], 'run.log')
   File.delete(run_log) if File.exist? run_log
-  report_measure_errors_warnings(runner, rundir, options[:debug])
-  report_os_warnings(os_log, rundir)
+  File.open(run_log, 'a') do |f|
+    warnings.each do |s|
+      f << "Warning: #{s}\n"
+    end
+    errors.each do |s|
+      f << "Error: #{s}\n"
+    end
+  end
 
   if not success
     puts "HPXMLs not successfully generated. See #{run_log} for details."
     exit!
   end
 
-  # Get duplicate HPXMLs
-  duplicates = eval(model.getBuilding.additionalProperties.getFeatureAsString('Duplicates').get)
   return duplicates
 end
 
@@ -176,6 +161,7 @@ def run_design_spawn(design, options)
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
   command += "\"#{design.calc_type}\" "
   command += "\"#{design.init_calc_type}\" "
+  command += "\"#{design.iecc_version}\" "
   command += "\"#{design.output_dir}\" "
   command += "\"#{options[:debug]}\" "
   command += "\"#{options[:timeseries_output_freq]}\" "
@@ -822,7 +808,7 @@ def main(options)
 
   puts "HPXML: #{options[:hpxml]}"
   hpxml_doc = XMLHelper.parse_file(options[:hpxml])
-  eri_version, es_version = get_program_versions(hpxml_doc)
+  eri_version, es_version, iecc_version = get_program_versions(hpxml_doc)
 
   # Create list of designs
   designs = []
@@ -854,6 +840,13 @@ def main(options)
     designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
     designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
   end
+  if not iecc_version.nil?
+    # IECC ERI designs
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+  end
 
   duplicates = apply_rulesets_and_generate_hpxmls(designs, options)
 
@@ -864,11 +857,11 @@ def main(options)
     # For duplicate designs that weren't simulated, populate their output
     duplicate_output_files(duplicates, designs, resultsdir)
 
+    puts 'Calculating results...'
+
     if (not eri_version.nil?) && (not options[:rated_home_only])
       # Calculate ERI & CO2e Index
-      puts 'Calculating ERI...'
-
-      eri_designs = designs.select { |d| d.init_calc_type.nil? }
+      eri_designs = designs.select { |d| d.init_calc_type.nil? && d.iecc_version.nil? }
       eri_outputs = retrieve_eri_outputs(eri_designs)
 
       # Calculate and write results
@@ -879,10 +872,17 @@ def main(options)
       end
     end
 
-    if not es_version.nil?
-      # Calculate ENERGY STAR
-      puts 'Calculating ENERGY STAR...'
+    if not iecc_version.nil?
+      # Calculate IECC ERI
+      iecc_eri_designs = designs.select { |d| !d.iecc_version.nil? }
+      iecc_eri_outputs = retrieve_eri_outputs(iecc_eri_designs)
 
+      # Calculate and write results
+      iecc_eri_results = calculate_eri(iecc_eri_outputs, resultsdir, csv_filename_prefix: 'IECC')
+      puts "IECC ERI: #{iecc_eri_results[:eri].round(2)}"
+    end
+
+    if not es_version.nil?
       # Calculate ES Reference ERI
       esrd_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarReference }
       esrd_eri_outputs = retrieve_eri_outputs(esrd_eri_designs)
