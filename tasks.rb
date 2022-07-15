@@ -176,7 +176,7 @@ def create_test_hpxmls
         set_hpxml_rim_joists(hpxml_file, hpxml)
         set_hpxml_walls(hpxml_file, hpxml)
         set_hpxml_foundation_walls(hpxml_file, hpxml)
-        set_hpxml_frame_floors(hpxml_file, hpxml)
+        set_hpxml_floors(hpxml_file, hpxml)
         set_hpxml_slabs(hpxml_file, hpxml)
         set_hpxml_windows(hpxml_file, hpxml)
         set_hpxml_doors(hpxml_file, hpxml)
@@ -866,20 +866,20 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
   end
 end
 
-def set_hpxml_frame_floors(hpxml_file, hpxml)
+def set_hpxml_floors(hpxml_file, hpxml)
   if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # R-11 floor from ASHRAE 140 but with 13% framing factor instead of 10%
-    hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                           exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
-                           interior_adjacent_to: HPXML::LocationLivingSpace,
-                           area: 1539,
-                           insulation_assembly_r_value: 13.85)
+    hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                     exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
+                     interior_adjacent_to: HPXML::LocationLivingSpace,
+                     area: 1539,
+                     insulation_assembly_r_value: 13.85)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Uninsulated
-    hpxml.frame_floors[0].insulation_assembly_r_value = 4.24
-    hpxml.frame_floors[0].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
+    hpxml.floors[0].insulation_assembly_r_value = 4.24
+    hpxml.floors[0].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
-    hpxml.frame_floors.delete_at(1)
+    hpxml.floors.delete_at(1)
   elsif hpxml_file.include?('EPA_Tests')
     # Ceiling
     if hpxml_file.include?('EPA_Tests/SF')
@@ -889,7 +889,7 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('middle_interior')
       exterior_adjacent_to = HPXML::LocationOtherHousingUnit
-      other_space_above_or_below = HPXML::FrameFloorOtherSpaceAbove
+      other_space_above_or_below = HPXML::FloorOtherSpaceAbove
       ceiling_assembly_r = 1.67
     else
       exterior_adjacent_to = HPXML::LocationAtticVented
@@ -913,12 +913,12 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
         ceiling_assembly_r = (1.0 / 0.024).round(3)
       end
     end
-    hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                           exterior_adjacent_to: exterior_adjacent_to,
-                           interior_adjacent_to: HPXML::LocationLivingSpace,
-                           area: area,
-                           insulation_assembly_r_value: ceiling_assembly_r,
-                           other_space_above_or_below: other_space_above_or_below)
+    hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                     exterior_adjacent_to: exterior_adjacent_to,
+                     interior_adjacent_to: HPXML::LocationLivingSpace,
+                     area: area,
+                     insulation_assembly_r_value: ceiling_assembly_r,
+                     other_space_above_or_below: other_space_above_or_below)
     # Floor
     if hpxml_file.include?('vented_crawl')
       if hpxml_file.include?('EPA_Tests/SF')
@@ -926,18 +926,18 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
       elsif hpxml_file.include?('EPA_Tests/MF')
         floor_assembly_r = (1.0 / 0.033).round(3)
       end
-      hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                             exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                             interior_adjacent_to: HPXML::LocationLivingSpace,
-                             area: area,
-                             insulation_assembly_r_value: floor_assembly_r)
+      hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                       exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       area: area,
+                       insulation_assembly_r_value: floor_assembly_r)
     elsif hpxml_file.include?('top_corner') || hpxml_file.include?('middle_interior')
-      hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                             exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
-                             interior_adjacent_to: HPXML::LocationLivingSpace,
-                             area: area,
-                             insulation_assembly_r_value: 3.1,
-                             other_space_above_or_below: HPXML::FrameFloorOtherSpaceBelow)
+      hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                       exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
+                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       area: area,
+                       insulation_assembly_r_value: 3.1,
+                       other_space_above_or_below: HPXML::FloorOtherSpaceBelow)
     end
   end
 end
@@ -2456,6 +2456,7 @@ def create_sample_hpxmls
     # Handle different inputs for ERI
 
     hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
@@ -2712,10 +2713,11 @@ def create_sample_hpxmls
   hpxml.hvac_controls[0].control_type = HPXML::HVACControlTypeProgrammable
   XMLHelper.write_file(hpxml.to_oga, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
-  # Older versions
+  # Older ERI versions
   Constants.ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.eri_calculation_version = eri_version
+    hpxml.header.iecc_eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
 
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
@@ -2723,7 +2725,17 @@ def create_sample_hpxmls
       hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
     end
 
-    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-#{eri_version}.xml")
+    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
+  end
+
+  # Older IECC versions
+  IECCConstants.AllVersions[0..-2].each do |iecc_version|
+    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+    hpxml.header.iecc_eri_calculation_version = iecc_version
+    hpxml.header.eri_calculation_version = nil
+    hpxml.header.energystar_calculation_version = nil
+
+    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
   end
 
   # Additional ENERGY STAR files
@@ -2763,7 +2775,7 @@ if ARGV[0].to_sym == :update_measures
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
   require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-  require_relative 'rulesets/301EnergyRatingIndexRuleset/resources/constants'
+  require_relative 'rulesets/resources/constants'
 
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
@@ -2841,8 +2853,7 @@ if ARGV[0].to_sym == :create_release_zips
            'hpxml-measures/HPXMLtoOpenStudio/resources/**/*.*',
            'hpxml-measures/ReportSimulationOutput/measure.*',
            'hpxml-measures/ReportSimulationOutput/resources/**/*.*',
-           'rulesets/301EnergyRatingIndexRuleset/measure.*',
-           'rulesets/301EnergyRatingIndexRuleset/resources/**/*.*',
+           'rulesets/**/*.*',
            'weather/*.*',
            'workflow/*.*',
            'workflow/real_homes/*.*',
