@@ -28,13 +28,15 @@ require_relative 'resources/301ruleset'
 require_relative 'resources/ESruleset'
 require_relative 'resources/constants'
 
-def run_rulesets(runner, hpxml_input_path, designs)
+def run_rulesets(hpxml_input_path, designs)
+  errors, warnings = [], []
+
   unless (Pathname.new hpxml_input_path).absolute?
     hpxml_input_path = File.expand_path(File.join(File.dirname(__FILE__), hpxml_input_path))
   end
   unless File.exist?(hpxml_input_path) && hpxml_input_path.downcase.end_with?('.xml')
-    runner.registerError("'#{hpxml_input_path}' does not exist or is not an .xml file.")
-    return false
+    errors << "'#{hpxml_input_path}' does not exist or is not an .xml file."
+    return false, errors, warnings
   end
 
   begin
@@ -43,12 +45,12 @@ def run_rulesets(runner, hpxml_input_path, designs)
     stron_paths << File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
     orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
     orig_hpxml.errors.each do |error|
-      runner.registerError(error)
+      errors << error
     end
     orig_hpxml.warnings.each do |warning|
-      runner.registerWarning(warning)
+      warnings << warning
     end
-    return false unless orig_hpxml.errors.empty?
+    return false, errors, warnings unless orig_hpxml.errors.empty?
 
     # Weather file
     epw_path = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
@@ -61,14 +63,14 @@ def run_rulesets(runner, hpxml_input_path, designs)
       epw_path = test_epw_path if File.exist? test_epw_path
     end
     if not File.exist?(epw_path)
-      runner.registerError("'#{epw_path}' could not be found.")
-      return false
+      errors << "'#{epw_path}' could not be found."
+      return false, errors, warnings
     end
 
     cache_path = epw_path.gsub('.epw', '-cache.csv')
     if not File.exist?(cache_path)
-      runner.registerError("'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather")
-      return false
+      errors << "'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather"
+      return false, errors, warnings
     end
 
     # Obtain weather object
@@ -76,11 +78,18 @@ def run_rulesets(runner, hpxml_input_path, designs)
 
     eri_version = orig_hpxml.header.eri_calculation_version
     eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+    zip_code = orig_hpxml.header.zip_code
     if not eri_version.nil?
       # Obtain egrid subregion & cambium gea region
-      egrid_subregion = get_epa_egrid_subregion(runner, orig_hpxml)
+      egrid_subregion = get_epa_egrid_subregion(zip_code)
+      if not egrid_subregion.nil?
+        warnings << "Could not look up eGRID subregion for zip code: '#{zip_code}'. Emissions will not be calculated."
+      end
       if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
-        cambium_gea = get_cambium_gea_region(runner, orig_hpxml)
+        cambium_gea = get_cambium_gea_region(zip_code)
+        if not cambium_gea.nil?
+          warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
+        end
       end
     end
 
@@ -102,13 +111,12 @@ def run_rulesets(runner, hpxml_input_path, designs)
       if not design.init_hpxml_output_path.nil?
         if not File.exist? design.init_hpxml_output_path
           XMLHelper.write_file(new_hpxml.to_oga, design.init_hpxml_output_path)
-          runner.registerInfo("Wrote file: #{design.init_hpxml_output_path}")
         end
       end
 
       # Apply 301 ruleset on HPXML object
       if not design.calc_type.nil?
-        new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(runner, new_hpxml, design.calc_type, weather,
+        new_hpxml = EnergyRatingIndex301Ruleset.apply_ruleset(new_hpxml, design.calc_type, weather,
                                                               design.iecc_version, egrid_subregion, cambium_gea, create_time)
       end
       last_hpxml = new_hpxml
@@ -116,12 +124,11 @@ def run_rulesets(runner, hpxml_input_path, designs)
       # Write final HPXML file
       if not design.hpxml_output_path.nil?
         new_hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_oga, design.hpxml_output_path)
-        runner.registerInfo("Wrote file: #{design.hpxml_output_path}")
       end
     end
   rescue Exception => e
-    runner.registerError("#{e.message}\n#{e.backtrace.join("\n")}")
-    return false
+    errors << "#{e.message}\n#{e.backtrace.join("\n")}"
+    return false, errors, warnings
   end
 
   duplicates = {}
@@ -138,24 +145,18 @@ def run_rulesets(runner, hpxml_input_path, designs)
     end
   end
 
-  return true, duplicates, last_hpxml
+  return true, errors, warnings, duplicates, last_hpxml
 end
 
-def get_epa_egrid_subregion(runner, hpxml)
+def get_epa_egrid_subregion(zip_code)
   egrid_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'egrid', 'ZIP_mappings.csv')
-  egrid_subregion = lookup_region_from_zip(hpxml.header.zip_code, egrid_zip_filepath, 0, 1)
-  if egrid_subregion.nil?
-    runner.registerWarning("Could not look up eGRID subregion for zip code: '#{hpxml.header.zip_code}'. Emissions will not be calculated.")
-  end
+  egrid_subregion = lookup_region_from_zip(zip_code, egrid_zip_filepath, 0, 1)
   return egrid_subregion
 end
 
-def get_cambium_gea_region(runner, hpxml)
+def get_cambium_gea_region(zip_code)
   cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
-  cambium_gea = lookup_region_from_zip(hpxml.header.zip_code, cambium_zip_filepath, 0, 1)
-  if cambium_gea.nil?
-    runner.registerWarning("Could not look up Cambium GEA for zip code: '#{hpxml.header.zip_code}'. CO2e emissions will not be calculated.")
-  end
+  cambium_gea = lookup_region_from_zip(zip_code, cambium_zip_filepath, 0, 1)
   return cambium_gea
 end
 

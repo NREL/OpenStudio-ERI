@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
@@ -226,13 +225,12 @@ class ERIApplianceTest < MiniTest::Test
 
   def _test_ruleset(hpxml_name, calc_type)
     require_relative '../../workflow/design'
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     designs = [Design.new(calc_type: calc_type)]
 
     hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    success, _, hpxml = run_rulesets(runner, hpxml_input_path, designs)
+    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs)
 
-    runner.result.stepErrors.each do |s|
+    errors.each do |s|
       puts "Error: #{s}"
     end
 

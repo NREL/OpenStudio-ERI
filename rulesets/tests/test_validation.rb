@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
@@ -193,11 +192,10 @@ class ERI301ValidationTest < MiniTest::Test
 
   def _test_ruleset(expected_errors)
     require_relative '../../workflow/design'
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     designs = [Design.new(calc_type: Constants.CalcTypeERIRatedHome)]
     designs[0].hpxml_output_path = File.absolute_path(@tmp_output_path)
 
-    success, _, _ = run_rulesets(runner, File.absolute_path(@tmp_hpxml_path), designs)
+    success, errors, _, _, _ = run_rulesets(File.absolute_path(@tmp_hpxml_path), designs)
 
     if expected_errors.empty?
       assert_equal(true, success)
@@ -205,10 +203,6 @@ class ERI301ValidationTest < MiniTest::Test
       assert_equal(false, success)
     end
 
-    errors = []
-    runner.result.stepErrors.each do |s|
-      errors << s
-    end
     _compare_errors(errors, expected_errors)
   end
 

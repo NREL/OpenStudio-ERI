@@ -51,14 +51,19 @@ end
 def apply_rulesets_and_generate_hpxmls(designs, options)
   puts "Generating #{designs.size} HPXMLs..."
 
-  runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+  success, errors, warnings, duplicates, _ = run_rulesets(options[:hpxml], designs)
 
-  success, duplicates, _ = run_rulesets(runner, options[:hpxml], designs)
-
-  rundir = options[:output_dir]
-  run_log = File.join(rundir, 'run.log')
+  # Report warnings/errors
+  run_log = File.join(options[:output_dir], 'run.log')
   File.delete(run_log) if File.exist? run_log
-  report_measure_errors_warnings(runner, rundir, options[:debug])
+  File.open(run_log, 'a') do |f|
+    warnings.each do |s|
+      f << "Warning: #{s}\n"
+    end
+    errors.each do |s|
+      f << "Error: #{s}\n"
+    end
+  end
 
   if not success
     puts "HPXMLs not successfully generated. See #{run_log} for details."

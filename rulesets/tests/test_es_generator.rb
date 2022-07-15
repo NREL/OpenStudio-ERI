@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
-require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
@@ -26,12 +25,11 @@ class EnergyStarGeneratorTest < MiniTest::Test
 
   def _test_ruleset()
     require_relative '../../workflow/design'
-    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
 
-    success, _, hpxml = run_rulesets(runner, @tmp_hpxml_path, designs)
+    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
 
-    runner.result.stepErrors.each do |s|
+    errors.each do |s|
       puts "Error: #{s}"
     end
 

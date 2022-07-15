@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class EnergyRatingIndex301Ruleset
-  def self.apply_ruleset(runner, hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
+  def self.apply_ruleset(hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
-    @runner = runner
     @weather = weather
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
@@ -40,7 +39,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(runner, hpxml, @eri_version, @weather, convert_shared_systems: false)
+    HPXMLDefaults.apply(nil, hpxml, @eri_version, @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
