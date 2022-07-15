@@ -233,7 +233,7 @@ class EnergyRatingIndex301Ruleset
     # Remove garage, multifamily buffer, and adiabatic surfaces as appropriate.
 
     # Garage only
-    (orig_hpxml.roofs + orig_hpxml.frame_floors + orig_hpxml.slabs).each do |orig_surface|
+    (orig_hpxml.roofs + orig_hpxml.floors + orig_hpxml.slabs).each do |orig_surface|
       next unless [HPXML::LocationGarage].include?(orig_surface.interior_adjacent_to) ||
                   [HPXML::LocationGarage].include?(orig_surface.exterior_adjacent_to)
 
@@ -408,8 +408,8 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_foundations_reference(orig_hpxml, new_hpxml)
     # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists.
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.interior_adjacent_to.include?('crawlspace') || orig_frame_floor.exterior_adjacent_to.include?('crawlspace')
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.interior_adjacent_to.include?('crawlspace') || orig_floor.exterior_adjacent_to.include?('crawlspace')
 
       new_hpxml.foundations.add(id: 'VentedCrawlspace',
                                 foundation_type: HPXML::FoundationTypeCrawlspaceVented,
@@ -755,38 +755,38 @@ class EnergyRatingIndex301Ruleset
     ceiling_ufactor = get_reference_ceiling_ufactor()
 
     # Table 4.2.2(1) - Ceilings
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_ceiling
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_ceiling
 
-      if orig_frame_floor.is_thermal_boundary
+      if orig_floor.is_thermal_boundary
         # Insulated for, e.g., ceilings between vented attic and living space.
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       else
         # Uninsulated for, e.g., ceilings between vented attic and garage.
-        insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 2.1].min # uninsulated
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
       end
-      new_hpxml.frame_floors.add(id: orig_frame_floor.id,
-                                 exterior_adjacent_to: orig_frame_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
-                                 interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
-                                 area: orig_frame_floor.area,
-                                 insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value,
-                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
+      new_hpxml.floors.add(id: orig_floor.id,
+                           exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
+                           interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           area: orig_floor.area,
+                           insulation_id: orig_floor.insulation_id,
+                           insulation_assembly_r_value: insulation_assembly_r_value,
+                           other_space_above_or_below: orig_floor.other_space_above_or_below)
     end
   end
 
   def self.set_enclosure_ceilings_rated(orig_hpxml, new_hpxml)
     # Preserve all ceilings
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_ceiling
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_ceiling
 
-      new_hpxml.frame_floors.add(id: orig_frame_floor.id,
-                                 exterior_adjacent_to: orig_frame_floor.exterior_adjacent_to,
-                                 interior_adjacent_to: orig_frame_floor.interior_adjacent_to,
-                                 area: orig_frame_floor.area,
-                                 insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value,
-                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
+      new_hpxml.floors.add(id: orig_floor.id,
+                           exterior_adjacent_to: orig_floor.exterior_adjacent_to,
+                           interior_adjacent_to: orig_floor.interior_adjacent_to,
+                           area: orig_floor.area,
+                           insulation_id: orig_floor.insulation_id,
+                           insulation_assembly_r_value: orig_floor.insulation_assembly_r_value,
+                           other_space_above_or_below: orig_floor.other_space_above_or_below)
     end
   end
 
@@ -795,54 +795,54 @@ class EnergyRatingIndex301Ruleset
 
     # Scale down ceiling area to 1200 sqft while maintaining ratio of attic types.
     sum_ceiling_area = 0.0
-    new_hpxml.frame_floors.each do |new_frame_floor|
-      next unless new_frame_floor.is_ceiling
+    new_hpxml.floors.each do |new_floor|
+      next unless new_floor.is_ceiling
 
-      sum_ceiling_area += new_frame_floor.area
+      sum_ceiling_area += new_floor.area
     end
-    new_hpxml.frame_floors.each do |new_frame_floor|
-      next unless new_frame_floor.is_ceiling
+    new_hpxml.floors.each do |new_floor|
+      next unless new_floor.is_ceiling
 
-      new_frame_floor.area = 1200.0 * new_frame_floor.area / sum_ceiling_area
+      new_floor.area = 1200.0 * new_floor.area / sum_ceiling_area
     end
   end
 
   def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
     floor_ufactor = get_reference_floor_ufactor()
 
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_floor
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_floor
 
       # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
       # Uninsulated for, e.g., floors between living space and conditioned basement.
-      if orig_frame_floor.is_thermal_boundary
+      if orig_floor.is_thermal_boundary
         insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
       else
-        insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
       end
 
-      new_hpxml.frame_floors.add(id: orig_frame_floor.id,
-                                 exterior_adjacent_to: orig_frame_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
-                                 interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
-                                 area: orig_frame_floor.area,
-                                 insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value,
-                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
+      new_hpxml.floors.add(id: orig_floor.id,
+                           exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
+                           interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           area: orig_floor.area,
+                           insulation_id: orig_floor.insulation_id,
+                           insulation_assembly_r_value: insulation_assembly_r_value,
+                           other_space_above_or_below: orig_floor.other_space_above_or_below)
     end
   end
 
   def self.set_enclosure_floors_rated(orig_hpxml, new_hpxml)
     # Preserve all floors
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_floor
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_floor
 
-      new_hpxml.frame_floors.add(id: orig_frame_floor.id,
-                                 exterior_adjacent_to: orig_frame_floor.exterior_adjacent_to,
-                                 interior_adjacent_to: orig_frame_floor.interior_adjacent_to,
-                                 area: orig_frame_floor.area,
-                                 insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: orig_frame_floor.insulation_assembly_r_value,
-                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
+      new_hpxml.floors.add(id: orig_floor.id,
+                           exterior_adjacent_to: orig_floor.exterior_adjacent_to,
+                           interior_adjacent_to: orig_floor.interior_adjacent_to,
+                           area: orig_floor.area,
+                           insulation_id: orig_floor.insulation_id,
+                           insulation_assembly_r_value: orig_floor.insulation_assembly_r_value,
+                           other_space_above_or_below: orig_floor.other_space_above_or_below)
     end
   end
 
@@ -850,11 +850,11 @@ class EnergyRatingIndex301Ruleset
     floor_ufactor = get_reference_floor_ufactor()
 
     # Add crawlspace floor
-    new_hpxml.frame_floors.add(id: 'FloorAboveCrawlspace',
-                               interior_adjacent_to: HPXML::LocationLivingSpace,
-                               exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                               area: 1200,
-                               insulation_assembly_r_value: (1.0 / floor_ufactor).round(3))
+    new_hpxml.floors.add(id: 'FloorAboveCrawlspace',
+                         interior_adjacent_to: HPXML::LocationLivingSpace,
+                         exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                         area: 1200,
+                         insulation_assembly_r_value: (1.0 / floor_ufactor).round(3))
   end
 
   def self.set_enclosure_slabs_reference(orig_hpxml, new_hpxml)

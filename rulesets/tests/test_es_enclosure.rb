@@ -774,9 +774,9 @@ class EnergyStarEnclosureTest < MiniTest::Test
   def _check_floors(hpxml, area: nil, rvalue: nil)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
-    hpxml.frame_floors.each do |frame_floor|
-      area_values << frame_floor.area
-      rvalue_x_area_values << frame_floor.insulation_assembly_r_value * frame_floor.area
+    hpxml.floors.each do |floor|
+      area_values << floor.area
+      rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
     end
 
     if area.nil?

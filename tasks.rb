@@ -170,7 +170,7 @@ def create_test_hpxmls
         set_hpxml_rim_joists(hpxml_file, hpxml)
         set_hpxml_walls(hpxml_file, hpxml)
         set_hpxml_foundation_walls(hpxml_file, hpxml)
-        set_hpxml_frame_floors(hpxml_file, hpxml)
+        set_hpxml_floors(hpxml_file, hpxml)
         set_hpxml_slabs(hpxml_file, hpxml)
         set_hpxml_windows(hpxml_file, hpxml)
         set_hpxml_doors(hpxml_file, hpxml)
@@ -833,20 +833,20 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
   end
 end
 
-def set_hpxml_frame_floors(hpxml_file, hpxml)
+def set_hpxml_floors(hpxml_file, hpxml)
   if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
     # R-11 floor from ASHRAE 140 but with 13% framing factor instead of 10%
-    hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                           exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
-                           interior_adjacent_to: HPXML::LocationLivingSpace,
-                           area: 1539,
-                           insulation_assembly_r_value: 13.85)
+    hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                     exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
+                     interior_adjacent_to: HPXML::LocationLivingSpace,
+                     area: 1539,
+                     insulation_assembly_r_value: 13.85)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Uninsulated
-    hpxml.frame_floors[0].insulation_assembly_r_value = 4.24
-    hpxml.frame_floors[0].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
+    hpxml.floors[0].insulation_assembly_r_value = 4.24
+    hpxml.floors[0].exterior_adjacent_to = HPXML::LocationCrawlspaceUnvented
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml'].include? hpxml_file
-    hpxml.frame_floors.delete_at(1)
+    hpxml.floors.delete_at(1)
   elsif hpxml_file.include?('EPA_Tests')
     # Ceiling
     if hpxml_file.include?('EPA_Tests/SF')
@@ -856,7 +856,7 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('middle_interior')
       exterior_adjacent_to = HPXML::LocationOtherHousingUnit
-      other_space_above_or_below = HPXML::FrameFloorOtherSpaceAbove
+      other_space_above_or_below = HPXML::FloorOtherSpaceAbove
       ceiling_assembly_r = 1.67
     else
       exterior_adjacent_to = HPXML::LocationAtticVented
@@ -874,12 +874,12 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
         ceiling_assembly_r = (1.0 / 0.026).round(3)
       end
     end
-    hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                           exterior_adjacent_to: exterior_adjacent_to,
-                           interior_adjacent_to: HPXML::LocationLivingSpace,
-                           area: area,
-                           insulation_assembly_r_value: ceiling_assembly_r,
-                           other_space_above_or_below: other_space_above_or_below)
+    hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                     exterior_adjacent_to: exterior_adjacent_to,
+                     interior_adjacent_to: HPXML::LocationLivingSpace,
+                     area: area,
+                     insulation_assembly_r_value: ceiling_assembly_r,
+                     other_space_above_or_below: other_space_above_or_below)
     # Floor
     if hpxml_file.include?('vented_crawl')
       if hpxml_file.include?('EPA_Tests/SF')
@@ -887,18 +887,18 @@ def set_hpxml_frame_floors(hpxml_file, hpxml)
       elsif hpxml_file.include?('EPA_Tests/MF')
         floor_assembly_r = (1.0 / 0.033).round(3)
       end
-      hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                             exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                             interior_adjacent_to: HPXML::LocationLivingSpace,
-                             area: area,
-                             insulation_assembly_r_value: floor_assembly_r)
+      hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                       exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       area: area,
+                       insulation_assembly_r_value: floor_assembly_r)
     elsif hpxml_file.include?('top_corner') || hpxml_file.include?('middle_interior')
-      hpxml.frame_floors.add(id: "FrameFloor#{hpxml.frame_floors.size + 1}",
-                             exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
-                             interior_adjacent_to: HPXML::LocationLivingSpace,
-                             area: area,
-                             insulation_assembly_r_value: 3.1,
-                             other_space_above_or_below: HPXML::FrameFloorOtherSpaceBelow)
+      hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
+                       exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
+                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       area: area,
+                       insulation_assembly_r_value: 3.1,
+                       other_space_above_or_below: HPXML::FloorOtherSpaceBelow)
     end
   end
 end

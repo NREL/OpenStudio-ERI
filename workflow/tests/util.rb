@@ -971,10 +971,10 @@ end
 
 def _get_above_grade_floors(hpxml)
   u_factor = num = 0.0
-  hpxml.frame_floors.each do |frame_floor|
-    next unless frame_floor.is_floor
+  hpxml.floors.each do |floor|
+    next unless floor.is_floor
 
-    u_factor += 1.0 / frame_floor.insulation_assembly_r_value
+    u_factor += 1.0 / floor.insulation_assembly_r_value
     num += 1
   end
   return u_factor / num
@@ -996,11 +996,11 @@ end
 
 def _get_ceilings(hpxml)
   u_factor = area = num = 0.0
-  hpxml.frame_floors.each do |frame_floor|
-    next unless frame_floor.is_ceiling
+  hpxml.floors.each do |floor|
+    next unless floor.is_ceiling
 
-    u_factor += 1.0 / frame_floor.insulation_assembly_r_value
-    area += frame_floor.area
+    u_factor += 1.0 / floor.insulation_assembly_r_value
+    area += floor.area
     num += 1
   end
   return u_factor / num, area
@@ -1024,10 +1024,10 @@ def _get_attic_vent_area(hpxml)
 
     sla = attic.vented_attic_sla
   end
-  hpxml.frame_floors.each do |frame_floor|
-    next unless frame_floor.is_ceiling && (frame_floor.exterior_adjacent_to == HPXML::LocationAtticVented)
+  hpxml.floors.each do |floor|
+    next unless floor.is_ceiling && (floor.exterior_adjacent_to == HPXML::LocationAtticVented)
 
-    area += frame_floor.area
+    area += floor.area
   end
   return sla * area
 end
@@ -1039,10 +1039,10 @@ def _get_crawl_vent_area(hpxml)
 
     sla = foundation.vented_crawlspace_sla
   end
-  hpxml.frame_floors.each do |frame_floor|
-    next unless frame_floor.is_floor && (frame_floor.exterior_adjacent_to == HPXML::LocationCrawlspaceVented)
+  hpxml.floors.each do |floor|
+    next unless floor.is_floor && (floor.exterior_adjacent_to == HPXML::LocationCrawlspaceVented)
 
-    area += frame_floor.area
+    area += floor.area
   end
   return sla * area
 end

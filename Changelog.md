@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.5.0
 
 __New Features__
+- **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
 - Allows performing IECC ERI calculation.
 - Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
