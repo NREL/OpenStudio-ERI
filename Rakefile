@@ -36,7 +36,7 @@ end
 
 desc 'Run RESNET tests'
 Rake::TestTask.new('test_resnet') do |t|
-  t.test_files = Dir['workflow/tests/resnet_test.rb']
+  t.test_files = Dir['workflow/tests/resnet*test.rb']
   t.warning = false
   t.verbose = true
 end
