@@ -146,34 +146,34 @@
             </Insulation>
           </Wall>
         </Walls>
-        <FrameFloors>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor1'/>
+        <Floors>
+          <Floor>
+            <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1110.0</Area>
             <Insulation>
-              <SystemIdentifier id='FrameFloor1Insulation'/>
+              <SystemIdentifier id='Floor1Insulation'/>
               <AssemblyEffectiveRValue>1.67</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <OtherSpaceAboveOrBelow>above</OtherSpaceAboveOrBelow>
             </extension>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor2'/>
+          </Floor>
+          <Floor>
+            <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1110.0</Area>
             <Insulation>
-              <SystemIdentifier id='FrameFloor2Insulation'/>
+              <SystemIdentifier id='Floor2Insulation'/>
               <AssemblyEffectiveRValue>2.24</AssemblyEffectiveRValue>
             </Insulation>
             <extension>
               <OtherSpaceAboveOrBelow>below</OtherSpaceAboveOrBelow>
             </extension>
-          </FrameFloor>
-        </FrameFloors>
+          </Floor>
+        </Floors>
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>

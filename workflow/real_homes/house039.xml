@@ -370,38 +370,38 @@
             </Insulation>
           </FoundationWall>
         </FoundationWalls>
-        <FrameFloors>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor1'/>
+        <Floors>
+          <Floor>
+            <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>2510.0</Area>
             <Insulation>
-              <SystemIdentifier id='FrameFloor1Insulation'/>
+              <SystemIdentifier id='Floor1Insulation'/>
               <AssemblyEffectiveRValue>50.56</AssemblyEffectiveRValue>
             </Insulation>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor2'/>
+          </Floor>
+          <Floor>
+            <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>20.0</Area>
             <Insulation>
-              <SystemIdentifier id='FrameFloor2Insulation'/>
+              <SystemIdentifier id='Floor2Insulation'/>
               <AssemblyEffectiveRValue>28.35</AssemblyEffectiveRValue>
             </Insulation>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor3'/>
+          </Floor>
+          <Floor>
+            <SystemIdentifier id='Floor3'/>
             <ExteriorAdjacentTo>crawlspace - unvented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>3823.0</Area>
             <Insulation>
-              <SystemIdentifier id='FrameFloor3Insulation'/>
+              <SystemIdentifier id='Floor3Insulation'/>
               <AssemblyEffectiveRValue>2.19</AssemblyEffectiveRValue>
             </Insulation>
-          </FrameFloor>
-        </FrameFloors>
+          </Floor>
+        </Floors>
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab1'/>

@@ -216,28 +216,28 @@
             </Insulation>
           </Wall>
         </Walls>
-        <FrameFloors>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor1'/>
+        <Floors>
+          <Floor>
+            <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>attic - unvented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>4093.0</Area>
             <Insulation>
-              <SystemIdentifier id='FrameFloor1Insulation'/>
+              <SystemIdentifier id='Floor1Insulation'/>
               <AssemblyEffectiveRValue>1.67</AssemblyEffectiveRValue>
             </Insulation>
-          </FrameFloor>
-          <FrameFloor>
-            <SystemIdentifier id='FrameFloor2'/>
+          </Floor>
+          <Floor>
+            <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>575.0</Area>
             <Insulation>
-              <SystemIdentifier id='FrameFloor2Insulation'/>
+              <SystemIdentifier id='Floor2Insulation'/>
               <AssemblyEffectiveRValue>27.88</AssemblyEffectiveRValue>
             </Insulation>
-          </FrameFloor>
-        </FrameFloors>
+          </Floor>
+        </Floors>
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab1'/>

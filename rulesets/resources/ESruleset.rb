@@ -181,8 +181,8 @@ class EnergyStarRuleset
 
   def self.set_enclosure_foundations_reference(orig_hpxml, new_hpxml)
     # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.interior_adjacent_to.include?('crawlspace') || orig_frame_floor.exterior_adjacent_to.include?('crawlspace')
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.interior_adjacent_to.include?('crawlspace') || orig_floor.exterior_adjacent_to.include?('crawlspace')
 
       new_hpxml.foundations.add(id: 'ESVentedCrawlspace',
                                 foundation_type: HPXML::FoundationTypeCrawlspaceVented)
@@ -236,14 +236,14 @@ class EnergyStarRuleset
     end
 
     # Add a roof above the vented attic that is newly added to Reference Design
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_ceiling
-      next unless [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace].include? orig_frame_floor.exterior_adjacent_to
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_ceiling
+      next unless [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace].include? orig_floor.exterior_adjacent_to
       next unless @has_auto_generated_attic
 
-      # Estimate the area of the roof based on the frame floor area and pitch=
+      # Estimate the area of the roof based on the floor area and pitch
       pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
-      roof_area = orig_frame_floor.area / Math.cos(pitch_to_radians)
+      roof_area = orig_floor.area / Math.cos(pitch_to_radians)
 
       new_hpxml.roofs.add(id: 'ESRoof',
                           interior_adjacent_to: HPXML::LocationAtticVented,
@@ -429,60 +429,60 @@ class EnergyStarRuleset
     ceiling_ufactor = get_reference_ceiling_ufactor()
 
     # Exhibit 2 - Ceilings
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_ceiling
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_ceiling
 
       if ESConstants.MFVersions.include? @program_version
         # Retain boundary condition of ceilings in the Rated Unit, including adiabatic ceilings.
-        ceiling_exterior_adjacent_to = orig_frame_floor.exterior_adjacent_to.gsub('unvented', 'vented')
-        if ([ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version) && @has_auto_generated_attic && ([HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_frame_floor.exterior_adjacent_to)
+        ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
+        if ([ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version) && @has_auto_generated_attic && ([HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to)
           ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
         end
 
-        insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 2.1].min # uninsulated
-        if orig_frame_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_frame_floor.exterior_adjacent_to)
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
+        if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
           # Ceilings adjacent to exterior or unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
           insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
         end
       elsif ESConstants.SFVersions.include? @program_version
-        ceiling_exterior_adjacent_to = orig_frame_floor.exterior_adjacent_to.gsub('unvented', 'vented')
-        if [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_frame_floor.exterior_adjacent_to
+        ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
+        if [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to
           ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
         end
 
         # Changes the U-factor for a ceiling to be uninsulated if the ceiling is not a thermal boundary.
-        insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 2.1].min # uninsulated
-        if orig_frame_floor.is_thermal_boundary
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
+        if orig_floor.is_thermal_boundary
           insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
-        elsif [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_frame_floor.exterior_adjacent_to
+        elsif [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to
           insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3) # Becomes the ceiling adjacent to the vented attic
         end
       end
 
-      new_hpxml.frame_floors.add(id: orig_frame_floor.id,
-                                 exterior_adjacent_to: ceiling_exterior_adjacent_to,
-                                 interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
-                                 area: orig_frame_floor.area,
-                                 insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value,
-                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
+      new_hpxml.floors.add(id: orig_floor.id,
+                           exterior_adjacent_to: ceiling_exterior_adjacent_to,
+                           interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           area: orig_floor.area,
+                           insulation_id: orig_floor.insulation_id,
+                           insulation_assembly_r_value: insulation_assembly_r_value,
+                           other_space_above_or_below: orig_floor.other_space_above_or_below)
     end
 
-    # Add a frame floor between the vented attic and living space
+    # Add a floor between the vented attic and living space
     orig_hpxml.roofs.each do |orig_roof|
       next unless orig_roof.is_exterior_thermal_boundary
       next unless @has_auto_generated_attic
 
-      # Estimate the area of the frame floor based on the roof area and pitch
+      # Estimate the area of the floor based on the roof area and pitch
       pitch_to_radians = Math.atan(orig_roof.pitch / 12.0)
-      frame_floor_area = orig_roof.area * Math.cos(pitch_to_radians)
+      floor_area = orig_roof.area * Math.cos(pitch_to_radians)
 
-      new_hpxml.frame_floors.add(id: 'ESFrameFloor',
-                                 exterior_adjacent_to: HPXML::LocationAtticVented,
-                                 interior_adjacent_to: HPXML::LocationLivingSpace,
-                                 area: frame_floor_area,
-                                 insulation_id: 'ESFrameFloorInsulation',
-                                 insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
+      new_hpxml.floors.add(id: 'ESFloor',
+                           exterior_adjacent_to: HPXML::LocationAtticVented,
+                           interior_adjacent_to: HPXML::LocationLivingSpace,
+                           area: floor_area,
+                           insulation_id: 'ESFloorInsulation',
+                           insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
     end
   end
 
@@ -490,31 +490,31 @@ class EnergyStarRuleset
     floor_ufactor = get_enclosure_floors_over_uncond_spc_default_ufactor()
 
     # Exhibit 2 - Floors over unconditioned spaces
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_floor
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_floor
 
       if ESConstants.MFVersions.include? @program_version
-        insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
-        if orig_frame_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_frame_floor.exterior_adjacent_to)
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
+        if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
           # Ceilings adjacent to outdoor environment, non-freezing space, unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
           insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
         end
       elsif ESConstants.SFVersions.include? @program_version
         # Uninsulated for, e.g., floors between living space and conditioned basement.
-        insulation_assembly_r_value = [orig_frame_floor.insulation_assembly_r_value, 3.1].min # uninsulated
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
         # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
-        if orig_frame_floor.is_thermal_boundary
+        if orig_floor.is_thermal_boundary
           insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
         end
       end
 
-      new_hpxml.frame_floors.add(id: orig_frame_floor.id,
-                                 exterior_adjacent_to: orig_frame_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
-                                 interior_adjacent_to: orig_frame_floor.interior_adjacent_to.gsub('unvented', 'vented'),
-                                 area: orig_frame_floor.area,
-                                 insulation_id: orig_frame_floor.insulation_id,
-                                 insulation_assembly_r_value: insulation_assembly_r_value,
-                                 other_space_above_or_below: orig_frame_floor.other_space_above_or_below)
+      new_hpxml.floors.add(id: orig_floor.id,
+                           exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
+                           interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           area: orig_floor.area,
+                           insulation_id: orig_floor.insulation_id,
+                           insulation_assembly_r_value: insulation_assembly_r_value,
+                           other_space_above_or_below: orig_floor.other_space_above_or_below)
     end
   end
 
@@ -1767,15 +1767,15 @@ class EnergyStarRuleset
     crawlspace_floor_area = 0.0
     basement_floor_area = 0.0
     slab_on_grade_area = 0.0
-    # calculate floor area by frame floor type
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_floor
-      next unless orig_frame_floor.interior_adjacent_to == HPXML::LocationLivingSpace
+    # calculate floor area by floor type
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_floor
+      next unless orig_floor.interior_adjacent_to == HPXML::LocationLivingSpace
 
-      if orig_frame_floor.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
-        adiabatic_floor_area += orig_frame_floor.area
-      elsif orig_frame_floor.exterior_adjacent_to == HPXML::LocationOutside
-        ambient_floor_area += orig_frame_floor.area
+      if orig_floor.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
+        adiabatic_floor_area += orig_floor.area
+      elsif orig_floor.exterior_adjacent_to == HPXML::LocationOutside
+        ambient_floor_area += orig_floor.area
       end
     end
     # calculate floor area by slab type
@@ -1798,16 +1798,16 @@ class EnergyStarRuleset
     adiabatic_ceiling_area = 0.0
     ceiling_exterior_boundary = []
     # calculate total ceiling area and adiabatic ceiling area
-    orig_hpxml.frame_floors.each do |orig_frame_floor|
-      next unless orig_frame_floor.is_ceiling
+    orig_hpxml.floors.each do |orig_floor|
+      next unless orig_floor.is_ceiling
 
-      total_ceiling_area += orig_frame_floor.area
+      total_ceiling_area += orig_floor.area
 
-      ceiling_exterior_boundary << orig_frame_floor.exterior_adjacent_to unless ceiling_exterior_boundary.include?(orig_frame_floor.exterior_adjacent_to)
+      ceiling_exterior_boundary << orig_floor.exterior_adjacent_to unless ceiling_exterior_boundary.include?(orig_floor.exterior_adjacent_to)
 
-      next unless [HPXML::LocationLivingSpace, HPXML::LocationOtherHousingUnit].include? orig_frame_floor.exterior_adjacent_to
+      next unless [HPXML::LocationLivingSpace, HPXML::LocationOtherHousingUnit].include? orig_floor.exterior_adjacent_to
 
-      adiabatic_ceiling_area += orig_frame_floor.area
+      adiabatic_ceiling_area += orig_floor.area
     end
 
     if (total_ceiling_area == adiabatic_ceiling_area) && (total_ceiling_area > 0)
