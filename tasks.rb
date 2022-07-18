@@ -2635,11 +2635,6 @@ if ARGV[0].to_sym == :update_measures
   puts 'Applying rubocop auto-correct to measures...'
   system(command)
 
-  # Update measures XMLs
-  command = "#{OpenStudio.getOpenStudioCLI} measure -t '#{File.join(File.dirname(__FILE__), 'rulesets')}'"
-  puts 'Updating measure.xmls...'
-  system(command, [:out, :err] => File::NULL)
-
   puts 'Done.'
 end
 
