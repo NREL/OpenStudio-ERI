@@ -1407,11 +1407,11 @@ class EnergyRatingIndex301Ruleset
     ref_sla = 0.00036
     if ['2018', '2021'].include? iecc_version
       # IECC exception for ERI reference design ventilation rate
-      q_tot = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
+      q_fan_airflow = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
+      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
     end
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
 
     mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
 

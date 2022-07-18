@@ -931,7 +931,8 @@ class ERIMechVentTest < MiniTest::Test
 
         if ['2018', '2021'].include?(iecc_version) && calc_type == Constants.CalcTypeERIReferenceHome
           # Check that ventilation exception in 2018/2021 IECC is being applied to the ERI Reference Home
-          assert_operator(iecc_hpxml.ventilation_fans[0].tested_flow_rate, :<, base_hpxml.ventilation_fans[0].tested_flow_rate)
+          refute_equal(iecc_hpxml.ventilation_fans[0].tested_flow_rate, base_hpxml.ventilation_fans[0].tested_flow_rate)
+          assert_equal(57.0, iecc_hpxml.ventilation_fans[0].tested_flow_rate)
         else
           # In all other cases, check for the same ventilation as the standard ERI
           assert_equal(base_hpxml.ventilation_fans[0].tested_flow_rate, iecc_hpxml.ventilation_fans[0].tested_flow_rate)
