@@ -48,7 +48,7 @@ HPXML Software Info
 
 High-level simulation inputs are entered in ``/HPXML/SoftwareInfo``.
 
-HPXML ERI/ES Calculation
+HPXML ERI/ES/ZERH Calculation
 ************************
 
 The version of the ERI calculation is entered in ``/HPXML/SoftwareInfo/extension/ERICalculation``.
@@ -74,6 +74,17 @@ The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/e
   
   .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
   .. [#] Version only required to run ENERGY STAR calculation.
+
+The version of the Zero Energy Ready Home calculation is entered in ``/HPXML/SoftwareInfo/extension/ZERHCalculation``.
+
+  ===========  ========  =======  ===========  ========  =======  =========================================
+  Element      Type      Units    Constraints  Required  Default  Description
+  ===========  ========  =======  ===========  ========  =======  =========================================
+  ``Version``  string             See [#]_     No [#]_            Version of Zero Energy Ready Home program
+  ===========  ========  =======  ===========  ========  =======  =========================================
+  
+  .. [#] Version choice is "Version_1".
+  .. [#] Version only required to run Zero Energy Ready Home calculation.
 
 HPXML Building Site
 -------------------

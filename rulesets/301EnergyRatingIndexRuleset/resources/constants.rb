@@ -83,3 +83,21 @@ class ESConstants
     return 'MF_OregonWashington_1.2'
   end
 end
+
+class ZERHConstants
+  def self.CalcTypeZERHRated
+    return 'ZERH Rated'
+  end
+
+  def self.CalcTypeZERHReference
+    return 'ZERH Reference'
+  end
+
+  def self.AllVersions
+    return self.Ver1
+  end
+
+  def self.Ver1
+    return 'Version_1'
+  end
+end

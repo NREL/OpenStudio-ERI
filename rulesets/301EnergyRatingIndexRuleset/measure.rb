@@ -26,6 +26,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative 'resources/301ruleset'
 require_relative 'resources/ESruleset'
+require_relative 'resources/ZERHruleset'
 require_relative 'resources/constants'
 
 # start the measure
@@ -171,6 +172,10 @@ class EnergyRatingIndex301Measure < OpenStudio::Measure::ModelMeasure
         if [ESConstants.CalcTypeEnergyStarReference,
             ESConstants.CalcTypeEnergyStarRated].include? this_init_calc_type
           @new_hpxml = EnergyStarRuleset.apply_ruleset(@new_hpxml, this_init_calc_type)
+        end
+        if [ZERHConstants.CalcTypeZERHReference,
+            ZERHConstants.CalcTypeZERHRated].include? this_init_calc_type
+          @new_hpxml = ZeroEnergyReadyHomeRuleset.apply_ruleset(@new_hpxml, this_init_calc_type)
         end
 
         # Write initial HPXML file

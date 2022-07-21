@@ -356,16 +356,17 @@ ES_Results.csv
 
 The ``ES_Results.csv`` file includes the following:
 
-   ===================================  =====
-   Output                               Notes
-   ===================================  =====
-   Reference Home ERI                   ERI of the ES Reference Home
-   SAF (Size Adjustment Factor)         Can only be less than 1 for some ES programs/versions
-   SAF Adjusted ERI Target              Reference Home ERI multiplied by SAF
-   Rated Home ERI                       ERI of the Rated Home including OPP as allowed by the ES program/version
-   Rated Home ERI w/o OPP               ERI of the Rated Home excluding any on-site power production (OPP)
-   ENERGY STAR Certification            PASS or FAIL
-   ===================================  =====
+   ====================================  =====
+   Output                                Notes
+   ====================================  =====
+   Reference Home ERI                    ERI of the ES Reference Home
+   SAF (Size Adjustment Factor)          Can only be less than 1 for some ES programs/versions
+   SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
+   Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the ES program/version
+   Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
+   ENERGY STAR Certification             PASS or FAIL
+   Zero Energy Ready Home Certification  PASS or FAIL
+   ====================================  =====
 
 ES______.xml
 ~~~~~~~~~~~~

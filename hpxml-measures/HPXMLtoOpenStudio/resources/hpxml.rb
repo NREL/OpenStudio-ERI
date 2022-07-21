@@ -959,6 +959,11 @@ class HPXML < Object
         energystar_calculation = XMLHelper.add_element(extension, 'EnergyStarCalculation')
         XMLHelper.add_element(energystar_calculation, 'Version', @energystar_calculation_version, :string)
       end
+      if not @zerh_calculation_version.nil?
+        extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
+        zerh_calculation = XMLHelper.add_element(extension, 'ZERHCalculation')
+        XMLHelper.add_element(zerh_calculation, 'Version', @zerh_calculation_version, :string)
+      end
       if (not @timestep.nil?) || (not @sim_begin_month.nil?) || (not @sim_begin_day.nil?) || (not @sim_end_month.nil?) || (not @sim_end_day.nil?) || (not @dst_enabled.nil?) || (not @dst_begin_month.nil?) || (not @dst_begin_day.nil?) || (not @dst_end_month.nil?) || (not @dst_end_day.nil?)
         extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
         simulation_control = XMLHelper.add_element(extension, 'SimulationControl')
@@ -1038,6 +1043,7 @@ class HPXML < Object
       @software_program_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/SoftwareProgramVersion', :string)
       @eri_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/ERICalculation/Version', :string)
       @energystar_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
+      @zerh_calculation_version = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/ZERHCalculation/Version', :string)
       @timestep = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/Timestep', :integer)
       @sim_begin_month = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/BeginMonth', :integer)
       @sim_begin_day = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/BeginDayOfMonth', :integer)
