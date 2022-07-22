@@ -12,6 +12,7 @@ __New Features__
   - Adds heating/cooling setpoints to timeseries outputs when requesting zone temperatures.
 
 __Bugfixes__
+- Fixes incorrect ERI calculation when the Rated Home has multiple water heaters.
 - Fixes units for Peak Loads (kBtu/hr, not kBtu) in ERI____Home.csv output files.
 - Bugfix for increasing HVAC capacities due to installation grading.
 - Fixes possible output error for ground source heat pumps with a shared hydronic circulation loop.
