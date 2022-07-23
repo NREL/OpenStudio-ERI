@@ -2639,10 +2639,10 @@ if ARGV[0].to_sym == :update_measures
 end
 
 if ARGV[0].to_sym == :create_release_zips
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/version'
+  require_relative 'workflow/version'
 
-  release_map = { File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_HPXML_Version}-minimal.zip") => false,
-                  File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_HPXML_Version}-full.zip") => true }
+  release_map = { File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_ERI_Version}-minimal.zip") => false,
+                  File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_ERI_Version}-full.zip") => true }
 
   release_map.keys.each do |zip_path|
     File.delete(zip_path) if File.exist? zip_path

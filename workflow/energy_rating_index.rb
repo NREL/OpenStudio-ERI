@@ -1030,8 +1030,8 @@ if options[:timeseries_outputs].include? 'ALL'
   options[:timeseries_outputs] = timeseries_types[1..-1]
 end
 if options[:version]
-  workflow_version = '1.4.1'
-  puts "OpenStudio-ERI v#{workflow_version}"
+  require_relative 'version.rb'
+  puts "OpenStudio-ERI v#{Version::OS_ERI_Version}"
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
   exit!
