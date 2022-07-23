@@ -111,7 +111,7 @@ def process_arguments(calling_rb, args, basedir, caller)
     options[:timeseries_outputs] = timeseries_types[1..-1]
   end
   if options[:version]
-    workflow_version = '1.4.1'
+    workflow_version = '1.4.2'
     puts "OpenStudio-ERI v#{workflow_version}"
     puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
     puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
