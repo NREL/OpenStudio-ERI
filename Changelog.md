@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.4.2
+
+__Bugfixes__
+- Fixes incorrect ERI calculation when the Rated Home has multiple water heaters.
+
 ## OpenStudio-ERI v1.4.1
 
 __Bugfixes__
