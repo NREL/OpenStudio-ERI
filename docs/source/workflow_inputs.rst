@@ -29,7 +29,7 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
 
 2. Validation using `Schematron <http://schematron.com/>`_
 
-  The Schematron document for the ERI use case can be found at ``rulesets/301EnergyRatingIndexRuleset/resources/301validator.xml``.
+  The Schematron document for the ERI use case can be found at ``rulesets/resources/301validator.xml``.
   Schematron is a rule-based validation language, expressed in XML using XPath expressions, for validating the presence or absence of inputs in XML files. 
   As opposed to an XSD Schema, a Schematron document validates constraints and requirements based on conditionals and other logical statements.
   For example, if an element is specified with a particular value, the applicable enumerations of another element may change.
@@ -46,34 +46,38 @@ HPXML files submitted to OpenStudio-ERI should undergo a two step validation pro
 HPXML Software Info
 -------------------
 
-High-level simulation inputs are entered in ``/HPXML/SoftwareInfo``.
+High-level software inputs are entered in ``/HPXML/SoftwareInfo``.
 
-HPXML ERI/ES/ZERH Calculation
-************************
+HPXML Calculations
+******************
 
-The version of the ERI calculation is entered in ``/HPXML/SoftwareInfo/extension/ERICalculation``.
+The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/SoftwareInfo/extension``.
 
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  Element      Type      Units    Constraints  Required  Default  Description
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  ``Version``  string             See [#]_     No [#]_            Version of 301 Standard w/ addenda
-  ===========  ========  =======  ===========  ========  =======  ==================================
+  =================================  ========  =======  ===========  ========  =======  ==================================
+  Element                            Type      Units    Constraints  Required  Default  Description
+  =================================  ========  =======  ===========  ========  =======  ==================================
+  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version to perform ERI calculation
+  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version to perform IECC ERI calculation
+  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version to perform ENERGY STAR ERI calculation
+  =================================  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
+  .. [#] ERICalculation/Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
-  .. [#] Version only required to run ERI calculation.
+  .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
+  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
 
-The version of the ENERGY STAR calculation is entered in ``/HPXML/SoftwareInfo/extension/EnergyStarCalculation``.
+.. warning::
 
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  Element      Type      Units    Constraints  Required  Default  Description
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  ``Version``  string             See [#]_     No [#]_            Version of ENERGY STAR program
-  ===========  ========  =======  ===========  ========  =======  ==================================
-  
-  .. [#] Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
-  .. [#] Version only required to run ENERGY STAR calculation.
+  For the IECC ERI compliance calculation, OpenStudio-ERI does not perform additional compliance checks beyond calculating the ERI.
+  For example, it does not check the building thermal envelope (2021 IECC, Section R406.3) nor that the on-site renewable energy is below a specified limit (2021 IECC, Section R406.4).
+  It is the software tool's responsibility to perform these additional steps. 
+
+.. warning::
+
+  For the ENERGY STAR ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ENERGY STAR ERI Target.
+  For example, it does not check that the home meets all ENERGY STAR Mandatory Requirements.
+  It is the software tool's responsibility to perform these additional steps. 
 
 The version of the Zero Energy Ready Home calculation is entered in ``/HPXML/SoftwareInfo/extension/ZERHCalculation``.
 
@@ -282,7 +286,7 @@ HPXML Roofs
 
 Each pitched or flat roof surface that is exposed to ambient conditions is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/Roofs/Roof``.
 
-For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``FrameFloor`` and not a ``Roof``.
+For a multifamily building where the dwelling unit has another dwelling unit above it, the surface between the two dwelling units should be considered a ``Floor`` and not a ``Roof``.
 
   ======================================  =========  ============  ===========  =========  ========  ==================================
   Element                                 Type       Units         Constraints  Required   Default   Notes
@@ -418,10 +422,10 @@ If insulation layers are provided, additional information is entered in each ``F
 
   .. [#] When NominalRValue is non-zero, DistanceToBottomOfInsulation must be greater than DistanceToTopOfInsulation and less than or equal to FoundationWall/Height.
 
-HPXML Frame Floors
-******************
+HPXML Floors
+************
 
-Each floor/ceiling surface that is not in contact with the ground (Slab) nor adjacent to ambient conditions above (Roof) is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/FrameFloors/FrameFloor``.
+Each floor/ceiling surface that is not in contact with the ground (Slab) nor adjacent to ambient conditions above (Roof) is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/Floors/Floor``.
 
   ======================================  ========  ============  ===========  ========  =======  ============================
   Element                                 Type      Units         Constraints  Required  Default  Notes
@@ -440,7 +444,7 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
          See :ref:`hpxmllocations` for descriptions.
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
-For frame floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space", additional information is entered in ``FrameFloor``.
+For floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space", additional information is entered in ``Floor``.
 
   ======================================  ========  =====  ==============  ========  =======  ==========================================
   Element                                 Type      Units  Constraints     Required  Default  Notes
@@ -810,7 +814,7 @@ If a PTAC is specified, additional information is entered in ``CoolingSystem``.
   ===================================================================  =================  ===========  ===============  ========  =========  ==================================
   Element                                                              Type               Units        Constraints      Required  Default    Notes
   ===================================================================  =================  ===========  ===============  ========  =========  ==================================
-  ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``       integer or double  # or Btu/Wh  > 1600 or > 0    Yes                  Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``       double             Btu/Wh       > 0              Yes                  Rated cooling efficiency
   ``CoolingCapacity``                                                  double             Btu/hr       >= 0             Yes                  Cooling output capacity
   ``SensibleHeatFraction``                                             double             frac         0 - 1            No                   Sensible heat fraction
   ===================================================================  =================  ===========  ===============  ========  =========  ==================================

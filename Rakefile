@@ -8,14 +8,14 @@ require 'rake/testtask'
 
 desc 'Run all tests'
 Rake::TestTask.new('test_all') do |t|
-  t.test_files = Dir['rulesets/*/tests/*.rb'] + Dir['workflow/tests/*.rb']
+  t.test_files = Dir['rulesets/tests/*.rb'] + Dir['workflow/tests/*.rb']
   t.warning = false
   t.verbose = true
 end
 
 desc 'Run measure unit tests'
 Rake::TestTask.new('test_measures') do |t|
-  t.test_files = Dir['rulesets/*/tests/*.rb']
+  t.test_files = Dir['rulesets/tests/*.rb']
   t.warning = false
   t.verbose = true
 end
@@ -36,7 +36,7 @@ end
 
 desc 'Run RESNET tests'
 Rake::TestTask.new('test_resnet') do |t|
-  t.test_files = Dir['workflow/tests/resnet_test.rb']
+  t.test_files = Dir['workflow/tests/resnet*test.rb']
   t.warning = false
   t.verbose = true
 end
