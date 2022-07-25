@@ -44,6 +44,7 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
   hpxml_doc = XMLHelper.parse_file(xml)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
+  zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
@@ -136,6 +137,43 @@ def _run_workflow(xml, test_name, expect_error: false, expect_error_msgs: nil, t
                   [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIReferenceHome],
                   [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIIndexAdjustmentDesign],
                   [ESConstants.CalcTypeEnergyStarRated, Constants.CalcTypeERIIndexAdjustmentReferenceHome]].map { |d| d[0].gsub(' ', '') + '_' + d[1].gsub(' ', '') }
+    elsif not zerh_calculation.nil?
+      # Zero Energy Ready Home
+      hpxmls[:zerh_ref] = File.join(rundir, 'results', 'ZERHReference.xml')
+      hpxmls[:zerh_rated] = File.join(rundir, 'results', 'ZERHRated.xml')
+      hpxmls[:zerhrd_ref] = File.join(rundir, 'results', 'ZERHReference_ERIReferenceHome.xml')
+      hpxmls[:zerhrd_rated] = File.join(rundir, 'results', 'ZERHReference_ERIRatedHome.xml')
+      hpxmls[:zerhrd_iad] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentDesign.xml')
+      hpxmls[:zerhrd_iadref] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentReferenceHome.xml')
+      hpxmls[:zerhrat_ref] = File.join(rundir, 'results', 'ZERHRated_ERIReferenceHome.xml')
+      hpxmls[:zerhrat_rated] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.xml')
+      hpxmls[:zerhrat_iad] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.xml')
+      hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
+      csvs[:zerh_results] = File.join(rundir, 'results', 'ZERH_Results.csv')
+      csvs[:zerhrd_eri_results] = File.join(rundir, 'results', 'ZERHReference_ERI_Results.csv')
+      csvs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', 'ZERHReference_ERI_Worksheet.csv')
+      csvs[:zerhrat_eri_results] = File.join(rundir, 'results', 'ZERHRated_ERI_Results.csv')
+      csvs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', 'ZERHRated_ERI_Worksheet.csv')
+      csvs[:zerhrd_rated_results] = File.join(rundir, 'results', 'ZERHReference_ERIRatedHome.csv')
+      csvs[:zerhrd_ref_results] = File.join(rundir, 'results', 'ZERHReference_ERIReferenceHome.csv')
+      csvs[:zerhrd_iad_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentDesign.csv')
+      csvs[:zerhrd_iadref_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentReferenceHome.csv')
+      csvs[:zerhrat_rated_results] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.csv')
+      csvs[:zerhrat_ref_results] = File.join(rundir, 'results', 'ZERHRated_ERIReferenceHome.csv')
+      csvs[:zerhrat_iad_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.csv')
+      csvs[:zerhrat_iadref_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.csv')
+      if timeseries_frequency != 'none'
+        csvs[:zerhrat_timeseries_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:zerhrd_timeseries_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+      end
+      log_dirs = [[ZERHConstants.CalcTypeZERHReference, Constants.CalcTypeERIRatedHome],
+                  [ZERHConstants.CalcTypeZERHReference, Constants.CalcTypeERIReferenceHome],
+                  [ZERHConstants.CalcTypeZERHReference, Constants.CalcTypeERIIndexAdjustmentDesign],
+                  [ZERHConstants.CalcTypeZERHReference, Constants.CalcTypeERIIndexAdjustmentReferenceHome],
+                  [ZERHConstants.CalcTypeZERHRated, Constants.CalcTypeERIRatedHome],
+                  [ZERHConstants.CalcTypeZERHRated, Constants.CalcTypeERIReferenceHome],
+                  [ZERHConstants.CalcTypeZERHRated, Constants.CalcTypeERIIndexAdjustmentDesign],
+                  [ZERHConstants.CalcTypeZERHRated, Constants.CalcTypeERIIndexAdjustmentReferenceHome]].map { |d| d[0].gsub(' ', '') + '_' + d[1].gsub(' ', '') }
     end
   end
 
