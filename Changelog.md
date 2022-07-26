@@ -6,17 +6,22 @@ __New Features__
 - Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
   - **Breaking change**: The organization of ENERGY STAR output files have changed.
+- Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
 - Annual/timeseries outputs:
   - Adds annual emission outputs disaggregated by end use; timeseries emission outputs disaggregated by end use can be requested.
   - Allows requesting timeseries unmet hours for heating and cooling.
   - Adds heating/cooling setpoints to timeseries outputs when requesting zone temperatures.
 
 __Bugfixes__
-- Fixes incorrect ERI calculation when the Rated Home has multiple water heaters.
 - Fixes units for Peak Loads (kBtu/hr, not kBtu) in ERI____Home.csv output files.
 - Bugfix for increasing HVAC capacities due to installation grading.
 - Fixes possible output error for ground source heat pumps with a shared hydronic circulation loop.
 - Fixes zero energy use for a ventilation fan w/ non-zero fan power and zero airflow rate.
+
+## OpenStudio-ERI v1.4.2
+
+__Bugfixes__
+- Fixes incorrect ERI calculation when the Rated Home has multiple water heaters.
 
 ## OpenStudio-ERI v1.4.1
 

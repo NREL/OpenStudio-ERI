@@ -207,6 +207,7 @@ class ERIHVACtest < MiniTest::Test
 
   def test_air_source_heat_pump
     hpxml_names = ['base-hvac-air-to-air-heat-pump-1-speed.xml',
+                   'base-hvac-air-to-air-heat-pump-1-speed-seer2-hspf2.xml',
                    'base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml']
 
     hpxml_names.each do |hpxml_name|
@@ -376,18 +377,21 @@ class ERIHVACtest < MiniTest::Test
   end
 
   def test_central_air_conditioner
-    hpxml_name = 'base-hvac-central-ac-only-1-speed.xml'
+    hpxml_names = ['base-hvac-central-ac-only-1-speed.xml',
+                   'base-hvac-central-ac-only-1-speed-seer2.xml']
 
-    _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _all_calc_types.each do |calc_type|
-        hpxml = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
-          hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-          _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
-        else
-          hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-          _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+    hpxml_names.each do |hpxml_name|
+      _eri_versions.each do |eri_version|
+        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
+        _all_calc_types.each do |calc_type|
+          hpxml = _test_ruleset(hpxml_name, calc_type)
+          if [Constants.CalcTypeERIRatedHome].include? calc_type
+            hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+            _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+          else
+            hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
+            _check_cooling_system(hpxml, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
+          end
         end
       end
     end
@@ -927,7 +931,7 @@ class ERIHVACtest < MiniTest::Test
       assert_equal(expected_values[:systype], heating_system.heating_system_type)
       assert_equal(expected_values[:fuel], heating_system.heating_system_fuel)
       if not expected_values[:eff].nil?
-        assert_equal(expected_values[:eff], heating_system.heating_efficiency_afue.to_f + heating_system.heating_efficiency_percent.to_f)
+        assert_in_delta(expected_values[:eff], heating_system.heating_efficiency_afue.to_f + heating_system.heating_efficiency_percent.to_f, 0.1)
       else
         assert_nil(heating_system.heating_efficiency_afue)
         assert_nil(heating_system.heating_efficiency_percent)
@@ -940,7 +944,7 @@ class ERIHVACtest < MiniTest::Test
       if expected_values[:eae].nil?
         assert_nil(heating_system.electric_auxiliary_energy)
       else
-        assert_in_epsilon(expected_values[:eae], heating_system.electric_auxiliary_energy, 0.01)
+        assert_in_epsilon(expected_values[:eae], heating_system.electric_auxiliary_energy, 0.1)
       end
       dist_system = heating_system.distribution_system
       if expected_values[:dse].nil?
@@ -990,22 +994,22 @@ class ERIHVACtest < MiniTest::Test
         assert_nil(heat_pump.compressor_type)
       end
       if not expected_values[:hspf].nil?
-        assert_equal(expected_values[:hspf], heat_pump.heating_efficiency_hspf)
+        assert_in_delta(expected_values[:hspf], heat_pump.heating_efficiency_hspf, 0.1)
       else
         assert_nil(heat_pump.heating_efficiency_hspf)
       end
       if not expected_values[:cop].nil?
-        assert_equal(expected_values[:cop], heat_pump.heating_efficiency_cop)
+        assert_in_delta(expected_values[:cop], heat_pump.heating_efficiency_cop, 0.1)
       else
         assert_nil(heat_pump.heating_efficiency_cop)
       end
       if not expected_values[:seer].nil?
-        assert_equal(expected_values[:seer], heat_pump.cooling_efficiency_seer)
+        assert_in_delta(expected_values[:seer], heat_pump.cooling_efficiency_seer, 0.1)
       else
         assert_nil(heat_pump.cooling_efficiency_seer)
       end
       if not expected_values[:eer].nil?
-        assert_equal(expected_values[:eer], heat_pump.cooling_efficiency_eer)
+        assert_in_delta(expected_values[:eer], heat_pump.cooling_efficiency_eer, 0.1)
       else
         assert_nil(heat_pump.cooling_efficiency_eer)
       end
@@ -1042,7 +1046,7 @@ class ERIHVACtest < MiniTest::Test
         assert_nil(heat_pump.backup_heating_efficiency_afue)
         assert_nil(heat_pump.backup_type)
       else
-        assert_equal(expected_values[:backup_eff], heat_pump.backup_heating_efficiency_percent.to_f + heat_pump.backup_heating_efficiency_afue.to_f)
+        assert_in_delta(expected_values[:backup_eff], heat_pump.backup_heating_efficiency_percent.to_f + heat_pump.backup_heating_efficiency_afue.to_f, 0.1)
         assert_equal(HPXML::HeatPumpBackupTypeIntegrated, heat_pump.backup_type)
       end
       if expected_values[:backup_temp].nil?
@@ -1097,22 +1101,22 @@ class ERIHVACtest < MiniTest::Test
         assert_nil(cooling_system.compressor_type)
       end
       if not expected_values[:seer].nil?
-        assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.01)
+        assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.1)
       else
         assert_nil(cooling_system.cooling_efficiency_seer)
       end
       if not expected_values[:eer].nil?
-        assert_equal(expected_values[:eer], cooling_system.cooling_efficiency_eer)
+        assert_in_delta(expected_values[:eer], cooling_system.cooling_efficiency_eer, 0.1)
       else
         assert_nil(cooling_system.cooling_efficiency_eer)
       end
       if not expected_values[:ceer].nil?
-        assert_equal(expected_values[:ceer], cooling_system.cooling_efficiency_ceer)
+        assert_in_delta(expected_values[:ceer], cooling_system.cooling_efficiency_ceer, 0.1)
       else
         assert_nil(cooling_system.cooling_efficiency_ceer)
       end
       if not expected_values[:kw_per_ton].nil?
-        assert_equal(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton)
+        assert_in_delta(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton, 0.1)
       else
         assert_nil(cooling_system.cooling_efficiency_kw_per_ton)
       end
