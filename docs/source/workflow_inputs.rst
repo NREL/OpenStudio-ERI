@@ -750,18 +750,18 @@ Central Air Conditioner
 
 If a central air conditioner is specified, additional information is entered in ``CoolingSystem``.
 
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
-  Element                                          Type    Units   Constraints     Required  Default    Notes
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
-  ``DistributionSystem``                           idref           See [#]_        Yes                  ID of attached distribution system
-  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0             Yes                  Rated efficiency
-  ``CoolingCapacity``                              double  Btu/hr  >= 0            Yes                  Cooling output capacity
-  ``SensibleHeatFraction``                         double  frac    0 - 1           No                   Sensible heat fraction
-  ``CompressorType``                               string          See [#]_        No        See [#]_   Type of compressor
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0 [#]_       Yes                  Blower fan efficiency at maximum fan speed [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9        Yes                  Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
-  ===============================================  ======  ======  ==============  ========  =========  ================================================
+  ================================================================  ======  ======  ==============  ========  =========  ================================================
+  Element                                                           Type    Units   Constraints     Required  Default    Notes
+  ================================================================  ======  ======  ==============  ========  =========  ================================================
+  ``DistributionSystem``                                            idref           See [#]_        Yes                  ID of attached distribution system
+  ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0             Yes                  Rated efficiency
+  ``CoolingCapacity``                                               double  Btu/hr  >= 0            Yes                  Cooling output capacity
+  ``SensibleHeatFraction``                                          double  frac    0 - 1           No                   Sensible heat fraction
+  ``CompressorType``                                                string          See [#]_        No        See [#]_   Type of compressor
+  ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0 [#]_       Yes                  Blower fan efficiency at maximum fan speed [#]_
+  ``extension/AirflowDefectRatio``                                  double  frac    -0.9 - 9        Yes                  Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                                   double  frac    -0.25, 0, 0.25  Yes                  Deviation between design/installed charges [#]_
+  ================================================================  ======  ======  ==============  ========  =========  ================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
@@ -827,17 +827,17 @@ Mini-Split
 
 If a mini-split is specified, additional information is entered in ``CoolingSystem``.
 
-  ===============================================  ======  ======  ==============  ========  =======  ================================================
-  Element                                          Type    Units   Constraints     Required  Default  Notes
-  ===============================================  ======  ======  ==============  ========  =======  ================================================
-  ``DistributionSystem``                           idref           See [#]_        No                 ID of attached distribution system
-  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0             Yes                Rated cooling efficiency
-  ``CoolingCapacity``                              double  Btu/hr  >= 0            Yes                Cooling output capacity
-  ``SensibleHeatFraction``                         double  frac    0 - 1           No                 Sensible heat fraction
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0            Yes                Blower fan efficiency at maximum fan speed [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9        Yes                Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25  Yes                Deviation between design/installed charges [#]_
-  ===============================================  ======  ======  ==============  ========  =======  ================================================
+  ================================================================  ======  ======  ==============  ========  =======  ================================================
+  Element                                                           Type    Units   Constraints     Required  Default  Notes
+  ================================================================  ======  ======  ==============  ========  =======  ================================================
+  ``DistributionSystem``                                            idref           See [#]_        No                 ID of attached distribution system
+  ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0             Yes                Rated cooling efficiency
+  ``CoolingCapacity``                                               double  Btu/hr  >= 0            Yes                Cooling output capacity
+  ``SensibleHeatFraction``                                          double  frac    0 - 1           No                 Sensible heat fraction
+  ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0            Yes                Blower fan efficiency at maximum fan speed [#]_
+  ``extension/AirflowDefectRatio``                                  double  frac    -0.9 - 9        Yes                Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                                   double  frac    -0.25, 0, 0.25  Yes                Deviation between design/installed charges [#]_
+  ================================================================  ======  ======  ==============  ========  =======  ================================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
@@ -944,23 +944,23 @@ Air-to-Air Heat Pump
 
 If an air-to-air heat pump is specified, additional information is entered in ``HeatPump``.
 
-  ===============================================  ======  ======  ========================  ========  =========  ================================================
-  Element                                          Type    Units   Constraints               Required  Default    Notes
-  ===============================================  ======  ======  ========================  ========  =========  ================================================
-  ``DistributionSystem``                           idref           See [#]_                  Yes                  ID of attached distribution system
-  ``CompressorType``                               string          See [#]_                  No        See [#]_   Type of compressor
-  ``HeatingCapacity``                              double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
-  ``HeatingCapacity17F``                           double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
-  ``CoolingCapacity``                              double  Btu/hr  >= 0                      Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                  double  frac    0 - 1                     No                   Sensible heat fraction
-  ``FractionHeatLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
-  ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
-  ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Blower fan efficiency at maximum fan speed [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9                  Yes                  Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
-  ===============================================  ======  ======  ========================  ========  =========  ================================================
+  ================================================================  ======  ======  ========================  ========  =========  ================================================
+  Element                                                           Type    Units   Constraints               Required  Default    Notes
+  ================================================================  ======  ======  ========================  ========  =========  ================================================
+  ``DistributionSystem``                                            idref           See [#]_                  Yes                  ID of attached distribution system
+  ``CompressorType``                                                string          See [#]_                  No        See [#]_   Type of compressor
+  ``HeatingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
+  ``HeatingCapacity17F``                                            double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
+  ``CoolingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Cooling output capacity
+  ``CoolingSensibleHeatFraction``                                   double  frac    0 - 1                     No                   Sensible heat fraction
+  ``FractionHeatLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
+  ``FractionCoolLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
+  ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
+  ``AnnualHeatingEfficiency[Units="HSPF" or Units="HSPF2"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
+  ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0                      Yes                  Blower fan efficiency at maximum fan speed [#]_
+  ``extension/AirflowDefectRatio``                                  double  frac    -0.9 - 9                  Yes                  Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                                   double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
+  ================================================================  ======  ======  ========================  ========  =========  ================================================
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
@@ -987,22 +987,22 @@ Mini-Split Heat Pump
 
 If a mini-split heat pump is specified, additional information is entered in ``HeatPump``.
 
-  ===============================================  ======  ======  ========================  ========  =========  ================================================
-  Element                                          Type    Units   Constraints               Required  Default    Notes
-  ===============================================  ======  ======  ========================  ========  =========  ================================================
-  ``DistributionSystem``                           idref           See [#]_                  No                   ID of attached distribution system, if present
-  ``HeatingCapacity``                              double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
-  ``HeatingCapacity17F``                           double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
-  ``CoolingCapacity``                              double  Btu/hr  >= 0                      Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                  double  frac    0 - 1                     No                   Sensible heat fraction
-  ``FractionHeatLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
-  ``FractionCoolLoadServed``                       double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
-  ``AnnualHeatingEfficiency[Units="HSPF"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
-  ``extension/FanPowerWattsPerCFM``                double  W/cfm   >= 0                      Yes                  Blower fan efficiency at maximum fan speed [#]_
-  ``extension/AirflowDefectRatio``                 double  frac    -0.9 - 9                  Yes                  Deviation between design/installed airflows [#]_
-  ``extension/ChargeDefectRatio``                  double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
-  ===============================================  ======  ======  ========================  ========  =========  ================================================
+  ================================================================  ======  ======  ========================  ========  =========  ================================================
+  Element                                                           Type    Units   Constraints               Required  Default    Notes
+  ================================================================  ======  ======  ========================  ========  =========  ================================================
+  ``DistributionSystem``                                            idref           See [#]_                  No                   ID of attached distribution system, if present
+  ``HeatingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
+  ``HeatingCapacity17F``                                            double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
+  ``CoolingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Cooling output capacity
+  ``CoolingSensibleHeatFraction``                                   double  frac    0 - 1                     No                   Sensible heat fraction
+  ``FractionHeatLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
+  ``FractionCoolLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
+  ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency
+  ``AnnualHeatingEfficiency[Units="HSPF" or Units="HSPF2"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated heating efficiency
+  ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0                      Yes                  Blower fan efficiency at maximum fan speed [#]_
+  ``extension/AirflowDefectRatio``                                  double  frac    -0.9 - 9                  Yes                  Deviation between design/installed airflows [#]_
+  ``extension/ChargeDefectRatio``                                   double  frac    -0.25, 0, 0.25            Yes                  Deviation between design/installed charges [#]_
+  ================================================================  ======  ======  ========================  ========  =========  ================================================
 
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across both HeatingSystems and HeatPumps) must be less than or equal to 1.
