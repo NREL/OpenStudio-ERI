@@ -8,13 +8,13 @@ class EnergyStarRuleset
 
     # Update HPXML object based on ESRD configuration
     if calc_type == ESConstants.CalcTypeEnergyStarReference
-      hpxml = apply_energy_star_ruleset_reference(hpxml)
+      hpxml = apply_ruleset_reference(hpxml)
     end
 
     return hpxml
   end
 
-  def self.apply_energy_star_ruleset_reference(orig_hpxml)
+  def self.apply_ruleset_reference(orig_hpxml)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
     # BuildingSummary

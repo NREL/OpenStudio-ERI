@@ -6,16 +6,16 @@ require_relative 'ESruleset'
 class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
   def self.apply_ruleset(hpxml, calc_type)
     # Use latest version of 301-2019
-    @eri_version = ZERHConstants.AllVersions[-1]
-    hpxml.header.zerh_calculation_version = @eri_version
+    @zerh_version = ZERHConstants.AllVersions[-1]
+    hpxml.header.zerh_calculation_version = @zerh_version
 
     # Update HPXML object based on ZERH configuration
-    hpxml = apply_energy_star_ruleset_reference(hpxml)
+    hpxml = apply_ruleset_reference(hpxml)
 
     return hpxml
   end
 
-  # def self.apply_energy_star_ruleset_reference(orig_hpxml)
+  # def self.apply_ruleset_reference(orig_hpxml)
   #   new_hpxml = create_new_hpxml(orig_hpxml)
 
   #   # BuildingSummary
@@ -77,14 +77,13 @@ class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
     new_hpxml.header.transaction = orig_hpxml.header.transaction
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
-    new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
-    # new_hpxml.header.zerh_calculation_version = orig_hpxml.header.zerh_calculation_version  # FIXME: Add it to hpxml.rb?
+    new_hpxml.header.zerh_calculation_version = orig_hpxml.header.zerh_calculation_version
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
 
-    @program_version = ZERHConstants.Ver1  # FIXME: use orig_hpxml.header.zerh_calculation_version
+    @program_version = orig_hpxml.header.zerh_calculation_version
 
     return new_hpxml
   end
@@ -754,27 +753,30 @@ class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
   #   end
   # end
 
-  # def self.set_systems_mechanical_ventilation_reference(new_hpxml)
-  #   # Exhibit 2 - Whole-House Mechanical ventilation
-  #   # mechanical vent fan cfm
-  #   q_tot = 0.01 * @cfa + 7.5 * (@nbeds + 1)
+  def self.set_systems_mechanical_ventilation_reference(new_hpxml)
+    # Exhibit 2 - Whole-House Mechanical ventilation
+    # mechanical vent fan cfm
+    q_tot = 0.01 * @cfa + 7.5 * (@nbeds + 1)
 
-  #   # mechanical vent fan type
-  #   fan_type = get_systems_mechanical_ventilation_default_fan_type()
-  #   # mechanical vent fan cfm per Watts
-  #   fan_cfm_per_w = get_fan_cfm_per_w()
+    # mechanical vent fan type
+    fan_type = get_systems_mechanical_ventilation_default_fan_type()
+    # mechanical vent fan cfm per Watts
+    fan_cfm_per_w = get_fan_cfm_per_w()
+    # mechanicla vent fan heat recovery
+    fan_sre = get_mechanical_ventilation_fan_sre()
 
-  #   # mechanical vent fan Watts
-  #   fan_power_w = q_tot / fan_cfm_per_w
+    # mechanical vent fan Watts
+    fan_power_w = q_tot / fan_cfm_per_w
 
-  #   new_hpxml.ventilation_fans.add(id: 'ESVentilationFan',
-  #                                  is_shared_system: false,
-  #                                  fan_type: fan_type,
-  #                                  tested_flow_rate: q_tot.round(2),
-  #                                  hours_in_operation: 24,
-  #                                  fan_power: fan_power_w.round(3),
-  #                                  used_for_whole_building_ventilation: true)
-  # end
+    new_hpxml.ventilation_fans.add(id: 'ESVentilationFan',
+                                   is_shared_system: false,
+                                   fan_type: fan_type,
+                                   tested_flow_rate: q_tot.round(2),
+                                   hours_in_operation: 24,
+                                   fan_power: fan_power_w.round(3),
+                                   sensible_recovery_efficiency: fan_sre,
+                                   used_for_whole_building_ventilation: true)
+  end
 
   # def self.set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
   #   # nop
@@ -1028,55 +1030,53 @@ class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
   #                       is_convection: reference_values[:is_convection])
   # end
 
-  # def self.set_lighting_reference(new_hpxml)
-  #   if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
-  #     fFI_int = 0.80
-  #   else
-  #     fFI_int = 0.90
-  #   end
-  #   fFI_ext = 0.0
-  #   fFI_grg = 0.0
-  #   fFII_int = 0.0
-  #   fFII_ext = 0.0
-  #   fFII_grg = 0.0
+  def self.set_lighting_reference(new_hpxml)
+    if [ZERHConstants.Ver1].include? @program_version
+      fFI_int = 0.80
+    end
+    fFI_ext = 0.0
+    fFI_grg = 0.0
+    fFII_int = 0.0
+    fFII_ext = 0.0
+    fFII_grg = 0.0
 
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup1',
-  #                                 location: HPXML::LocationInterior,
-  #                                 fraction_of_units_in_location: fFII_int,
-  #                                 lighting_type: HPXML::LightingTypeLED)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup2',
-  #                                 location: HPXML::LocationExterior,
-  #                                 fraction_of_units_in_location: fFII_ext,
-  #                                 lighting_type: HPXML::LightingTypeLED)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup3',
-  #                                 location: HPXML::LocationGarage,
-  #                                 fraction_of_units_in_location: fFII_grg,
-  #                                 lighting_type: HPXML::LightingTypeLED)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup4',
-  #                                 location: HPXML::LocationInterior,
-  #                                 fraction_of_units_in_location: fFI_int,
-  #                                 lighting_type: HPXML::LightingTypeCFL)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup5',
-  #                                 location: HPXML::LocationExterior,
-  #                                 fraction_of_units_in_location: fFI_ext,
-  #                                 lighting_type: HPXML::LightingTypeCFL)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup6',
-  #                                 location: HPXML::LocationGarage,
-  #                                 fraction_of_units_in_location: fFI_grg,
-  #                                 lighting_type: HPXML::LightingTypeCFL)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup7',
-  #                                 location: HPXML::LocationInterior,
-  #                                 fraction_of_units_in_location: 0,
-  #                                 lighting_type: HPXML::LightingTypeLFL)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup8',
-  #                                 location: HPXML::LocationExterior,
-  #                                 fraction_of_units_in_location: 0,
-  #                                 lighting_type: HPXML::LightingTypeLFL)
-  #   new_hpxml.lighting_groups.add(id: 'ESLightingGroup9',
-  #                                 location: HPXML::LocationGarage,
-  #                                 fraction_of_units_in_location: 0,
-  #                                 lighting_type: HPXML::LightingTypeLFL)
-  # end
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup1',
+                                  location: HPXML::LocationInterior,
+                                  fraction_of_units_in_location: fFII_int,
+                                  lighting_type: HPXML::LightingTypeLED)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup2',
+                                  location: HPXML::LocationExterior,
+                                  fraction_of_units_in_location: fFII_ext,
+                                  lighting_type: HPXML::LightingTypeLED)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup3',
+                                  location: HPXML::LocationGarage,
+                                  fraction_of_units_in_location: fFII_grg,
+                                  lighting_type: HPXML::LightingTypeLED)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup4',
+                                  location: HPXML::LocationInterior,
+                                  fraction_of_units_in_location: fFI_int,
+                                  lighting_type: HPXML::LightingTypeCFL)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup5',
+                                  location: HPXML::LocationExterior,
+                                  fraction_of_units_in_location: fFI_ext,
+                                  lighting_type: HPXML::LightingTypeCFL)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup6',
+                                  location: HPXML::LocationGarage,
+                                  fraction_of_units_in_location: fFI_grg,
+                                  lighting_type: HPXML::LightingTypeCFL)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup7',
+                                  location: HPXML::LocationInterior,
+                                  fraction_of_units_in_location: 0,
+                                  lighting_type: HPXML::LightingTypeLFL)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup8',
+                                  location: HPXML::LocationExterior,
+                                  fraction_of_units_in_location: 0,
+                                  lighting_type: HPXML::LightingTypeLFL)
+    new_hpxml.lighting_groups.add(id: 'ESLightingGroup9',
+                                  location: HPXML::LocationGarage,
+                                  fraction_of_units_in_location: 0,
+                                  lighting_type: HPXML::LightingTypeLFL)
+  end
 
   # def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
   #   return if orig_hpxml.ceiling_fans.size == 0
@@ -1135,109 +1135,67 @@ class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
   #   fail 'Unexpected case.'
   # end
 
-  # def self.get_radiant_barrier_bool(orig_hpxml)
-  #   all_ducts = []
-  #   orig_hpxml.hvac_distributions.each do |hvac_dist|
-  #     hvac_dist.ducts.each do |duct|
-  #       all_ducts << duct
-  #     end
-  #   end
+  def self.get_radiant_barrier_bool(orig_hpxml)
+    return false
+  end
 
-  #   if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? @program_version
-  #     # Assumes there is > 10 linear feet of ductwork anytime there is > 0 sqft. of ductwork.
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include?(@iecc_zone)
-  #       all_ducts.each do |duct|
-  #         if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
-  #           return true
-  #         end
-  #       end
-  #     end
-  #   elsif [ESConstants.SFPacificVer3_0].include? @program_version
-  #     if ['HI'].include? @state_code
-  #       # Assumes there is > 10 linear feet of ductwork anytime there is > 0 sqft. of ductwork.
-  #       all_ducts.each do |duct|
-  #         if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
-  #           return true
-  #         end
-  #       end
-  #     elsif ['GU', 'MP'].include? @state_code
-  #       return true
-  #     else
-  #       fail "Unexpected state code: #{@state_code}."
-  #     end
-  #   elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return true
-  #   end
+  def self.get_enclosure_air_infiltration_default(orig_hpxml)
+    if [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type)  # FIXME: All attached dwellings
+      infil_air_leakage = 3.0  # ACH50
+      infil_unit_of_measure = HPXML::UnitsACH
 
-  #   return false
-  # end
+      return infil_air_leakage, infil_unit_of_measure
+    elsif [HPXML::ResidentialTypeSFD].include?(@bldg_type)
+      if [ZERHConstants.Ver1].include? @program_version
+        if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+          infil_air_leakage = 3.0  # ACH50
+        elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
+          infil_air_leakage = 2.5  # ACH50
+        elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7'].include? @iecc_zone
+          infil_air_leakage = 2.0  # ACH50
+        elsif ['8'].include? @iecc_zone
+          infil_air_leakage = 1.5  # ACH50
+        end
+      end
+      infil_unit_of_measure = HPXML::UnitsACH
 
-  # def self.get_enclosure_air_infiltration_default(orig_hpxml)
-  #   if ESConstants.MFVersions.include? @program_version
-  #     tot_cb_area, _ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
-  #     cfm50_per_enclosure_area = get_enclosure_compartmentalization_infiltration_rates()
+      return infil_air_leakage, infil_unit_of_measure
+    end
 
-  #     infil_air_leakage = tot_cb_area * cfm50_per_enclosure_area
-  #     infil_unit_of_measure = HPXML::UnitsCFM
+    fail 'Unexpected case.'
+  end
 
-  #     return infil_air_leakage, infil_unit_of_measure
-  #   elsif ESConstants.SFVersions.include? @program_version
-  #     if [ESConstants.SFNationalVer3_0].include? @program_version
-  #       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #         infil_air_leakage = 6.0  # ACH50
-  #       elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-  #         infil_air_leakage = 5.0  # ACH50
-  #       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7'].include? @iecc_zone
-  #         infil_air_leakage = 4.0  # ACH50
-  #       elsif ['8'].include? @iecc_zone
-  #         infil_air_leakage = 3.0  # ACH50
-  #       end
-  #     elsif [ESConstants.SFNationalVer3_1].include? @program_version
-  #       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #         infil_air_leakage = 4.0
-  #       elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #         infil_air_leakage = 3.0
-  #       end
-  #     elsif [ESConstants.SFPacificVer3_0].include? @program_version
-  #       infil_air_leakage = 6.0  # ACH50
-  #     elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-  #       infil_air_leakage = 5.0  # ACH50
-  #     elsif [ESConstants.SFOregonWashingtonVer3_2].include? @program_version
-  #       infil_air_leakage = 3.0  # ACH50
-  #     end
-  #     infil_unit_of_measure = HPXML::UnitsACH
+  def self.get_systems_mechanical_ventilation_default_fan_type()
+    if [ZERHConstants.Ver1].include? @program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
+        return HPXML::MechVentTypeSupply
+      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return HPXML::MechVentTypeBalanced
+      end
+    end
 
-  #     return infil_air_leakage, infil_unit_of_measure
-  #   end
+    fail 'Unexpected case.'
+  end
 
-  #   fail 'Unexpected case.'
-  # end
+  def self.get_mechanical_ventilation_fan_sre()
+    if [ZERHConstants.Ver1].include? @program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
+        return nil
+      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return 0.6
+      end
+    end
 
-  # def self.get_systems_mechanical_ventilation_default_fan_type()
-  #   if ESConstants.NationalVersions.include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-  #       return HPXML::MechVentTypeSupply
-  #     elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return HPXML::MechVentTypeExhaust
-  #     end
-  #   elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return HPXML::MechVentTypeSupply
-  #   elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return HPXML::MechVentTypeExhaust
-  #   end
+    fail 'Unexpected case.'
+  end
 
-  #   fail 'Unexpected case.'
-  # end
+  def self.get_default_door_ufactor_shgc()
+    if [ZERHConstants.Ver1].include? @program_version  # The same as ESConstants.SFNationalVer3_0
+      return 0.21, nil
+    end
 
-  # def self.get_default_door_ufactor_shgc()
-  #   if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return 0.21, nil
-  #   elsif [ESConstants.SFNationalVer3_1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return 0.17, nil
-  #   end
-
-  #   fail 'Unexpected case.'
-  # end
+    fail 'Unexpected case.'
+  end
 
   # def self.calc_default_total_win_area(orig_hpxml, cfa)
   #   ag_bndry_wall_area, bg_bndry_wall_area = orig_hpxml.thermal_boundary_wall_areas()
@@ -1247,133 +1205,51 @@ class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
   #   return 0.15 * cfa * fa * f
   # end
 
-  # def self.get_foundation_walls_default_ufactor_or_rvalue()
-  #   if [ESConstants.SFNationalVer3_0].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #       return 0.360  # assembly U-value
-  #     elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.091  # assembly U-value
-  #     elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #       return 0.059  # assembly U-value
-  #     elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.050  # assembly U-value
-  #     end
-  #   elsif [ESConstants.SFNationalVer3_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #       return 0.360  # assembly U-value
-  #     elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.091  # assembly U-value
-  #     elsif ['4A', '4B'].include? @iecc_zone
-  #       return 0.059  # assembly U-value
-  #     elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.050  # assembly U-value
-  #     end
-  #   elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return 0.360 # assembly U-value
-  #   elsif [ESConstants.SFOregonWashingtonVer3_2].include? @program_version
-  #     return 0.042 # assembly U-value
-  #   elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.0  # interior insulation R-value
-  #     elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
-  #       return 7.5  # interior insulation R-value
-  #     elsif ['7'].include? @iecc_zone
-  #       return 10.0  # interior insulation R-value
-  #     elsif ['8'].include? @iecc_zone
-  #       return 12.5  # interior insulation R-value
-  #     end
-  #   elsif [ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return 15.0 # interior insulation R-value
-  #   end
+  def self.get_foundation_walls_default_ufactor_or_rvalue()
+    if [ZERHConstants.Ver1].include? @program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+        return 0.360  # assembly U-value
+      elsif ['3A', '3B', '3C'].include? @iecc_zone
+        return 0.091  # assembly U-value
+      elsif ['4A', '4B'].include? @iecc_zone
+        return 0.059  # assembly U-value
+      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return 0.050  # assembly U-value
+      end
+    end
 
-  #   fail 'Unexpected case.'
-  # end
+    fail 'Unexpected case.'
+  end
 
-  # def self.get_enclosure_walls_default_ufactor()
-  #   if [ESConstants.SFNationalVer3_0].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-  #       return 0.082
-  #     elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.057
-  #     end
-  #   elsif [ESConstants.SFNationalVer3_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #       return 0.082
-  #     elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #       return 0.057
-  #     elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.048
-  #     end
-  #   elsif [ESConstants.SFPacificVer3_0].include? @program_version
-  #     if ['HI'].include? @state_code
-  #       return 0.082
-  #     elsif ['GU', 'MP'].include? @state_code
-  #       return 0.401
-  #     end
+  def self.get_enclosure_walls_default_ufactor()
+    if [ZERHConstants.Ver1].include? @program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+        return 0.084
+      elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
+        return 0.060
+      elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return 0.045
+      end
+    end
 
-  #     fail "Unexpected state code: #{@state_code}."
-  #   elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return 0.082
-  #   elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return 0.056
-  #   elsif [ESConstants.MFNationalVer1_0].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-  #       return 0.089
-  #     elsif ['4C', '5A', '5B', '5C'].include? @iecc_zone
-  #       return 0.064
-  #     elsif ['6A', '6B', '6C', '7'].include? @iecc_zone
-  #       return 0.051
-  #     elsif ['8'].include? @iecc_zone
-  #       return 0.036
-  #     end
-  #   elsif [ESConstants.MFNationalVer1_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #       return 0.064
-  #     elsif ['6A', '6B', '6C', '7'].include? @iecc_zone
-  #       return 0.051
-  #     elsif ['8'].include? @iecc_zone
-  #       return 0.036
-  #     end
-  #   end
+    fail 'Unexpected case.'
+  end
 
-  #   fail 'Unexpected case.'
-  # end
+  def self.get_enclosure_floors_over_uncond_spc_default_ufactor()
+    if [ZERHConstants.Ver1].include? @program_version  # The same as ESConstants.SFNationalVer3_0
+      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+        return 0.064
+      elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
+        return 0.047
+      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
+        return 0.033
+      elsif ['7', '8'].include? @iecc_zone
+        return 0.028
+      end
+    end
 
-  # def self.get_enclosure_floors_over_uncond_spc_default_ufactor()
-  #   if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #       return 0.064
-  #     elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-  #       return 0.047
-  #     elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
-  #       return 0.033
-  #     elsif ['7', '8'].include? @iecc_zone
-  #       return 0.028
-  #     end
-  #   elsif [ESConstants.SFPacificVer3_0].include? @program_version
-  #     return 0.257
-  #   elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return 0.064
-  #   elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return 0.028
-  #   elsif [ESConstants.MFNationalVer1_0].include? @program_version
-  #     if ['1A', '1B', '1C'].include? @iecc_zone
-  #       return 0.282
-  #     elsif ['2A', '2B', '2C'].include? @iecc_zone
-  #       return 0.052
-  #     else
-  #       return 0.033
-  #     end
-  #   elsif [ESConstants.MFNationalVer1_1].include? @program_version
-  #     if ['1A', '1B', '1C'].include? @iecc_zone
-  #       return 0.066
-  #     else
-  #       return 0.033
-  #     end
-  #   end
-
-  #   fail 'Unexpected case.'
-  # end
+    fail 'Unexpected case.'
+  end
 
   # def self.get_hot_water_distribution_low_flow
   #   if ESConstants.MFVersions.include? @program_version
@@ -1894,15 +1770,13 @@ class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
   #   end
   # end
 
-  # def self.calc_default_duct_leakage_to_outside(cfa)
-  #   if [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.MFNationalVer1_1].include? @program_version
-  #     return 0.0
-  #   else
-  #     return [(0.04 * cfa), 40].max
-  #   end
+  def self.calc_default_duct_leakage_to_outside(cfa)
+    if [ZERHConstants.Ver1].include? @program_version  # FIXME: As 100% of ducts is within the thermal and air barriers of the home, shouldn't it be 0? Ask Jamie and Scott
+      return 0.0
+    end
 
-  #   fail 'Unexpected case.'
-  # end
+    fail 'Unexpected case.'
+  end
 
   # def self.add_air_distribution(orig_hpxml, orig_system)
   #   i = 0
@@ -2118,208 +1992,54 @@ class ZeroEnergyReadyHomeRuleset < EnergyStarRuleset
   #   return 122.0 # CFM per Watts
   # end
 
-  # def self.get_reference_ceiling_ufactor()
-  #   # Ceiling U-Factor
-  #   if [ESConstants.SFNationalVer3_0].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.035
-  #     elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #       return 0.030
-  #     elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.026
-  #     end
-  #   elsif [ESConstants.SFNationalVer3_1].include? @program_version
-  #     if ['1A', '1B', '1C'].include? @iecc_zone
-  #       return 0.035
-  #     elsif ['2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.030
-  #     elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.026
-  #     end
-  #   elsif [ESConstants.SFPacificVer3_0].include? @program_version
-  #     return 0.035
-  #   elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return 0.035
-  #   elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return 0.026
-  #   elsif [ESConstants.MFNationalVer1_0].include? @program_version
-  #     return 0.027
-  #   elsif [ESConstants.MFNationalVer1_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-  #       return 0.027
-  #     elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.021
-  #     end
-  #   end
-  # end
+  def self.get_reference_ceiling_ufactor()
+    # Ceiling U-Factor
+    if [ZERHConstants.Ver1].include? @program_version
+      if ['1A', '1B', '1C'].include? @iecc_zone
+        return 0.035
+      elsif ['2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
+        return 0.030
+      elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return 0.026
+      end
+    end
 
-  # def self.get_reference_slab_perimeter_rvalue_depth()
-  #   if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1].include? @program_version
-  #     # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
-  #     # Slab-on-Grade R-Value & Depth (ft)
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.0, 0.0
-  #     elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #       return 10.0, 2.0
-  #     elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 10.0, 4.0
-  #     end
-  #   elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.0, 0.0
-  #     elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #       return 10.0, 2.0
-  #     elsif ['6A', '6B', '6C', '7'].include? @iecc_zone
-  #       return 15.0, 2.0
-  #     elsif ['8'].include? @iecc_zone
-  #       return 20.0, 2.0
-  #     end
-  #   elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return 0.0, 0.0
-  #   elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return 10.0, 2.0
-  #   end
-  # end
+    fail 'Unexpected case.'
+  end
 
-  # def self.get_reference_slab_under_rvalue_width()
-  #   if [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     return 10.0, nil # insulation under the entire slab
-  #   else
-  #     return 0.0, 0.0
-  #   end
-  # end
+  def self.get_reference_slab_perimeter_rvalue_depth()
+    if [ZERHConstants.Ver1].include? @program_version
+      # Slab-on-Grade R-Value & Depth (ft)
+      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
+        return 0.0, 0.0
+      elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
+        return 10.0, 2.0
+      elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return 10.0, 4.0
+      end
+    end
 
-  # def self.get_reference_glazing_ufactor_shgc(orig_window)
-  #   # Fenestration U-Factor and SHGC
+    fail 'Unexpected case.'
+  end
 
-  #   if [ESConstants.SFNationalVer3_0].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #       return 0.60, 0.27
-  #     elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.35, 0.30
-  #     elsif ['4A', '4B'].include? @iecc_zone
-  #       return 0.32, 0.40
-  #     elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.30, 0.40
-  #     end
+  def self.get_reference_slab_under_rvalue_width()
+    return 0.0, 0.0
+  end
 
-  #   elsif [ESConstants.SFNationalVer3_1].include? @program_version
-  #     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #       return 0.40, 0.25
-  #     elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #       return 0.30, 0.25
-  #     elsif ['4A', '4B'].include? @iecc_zone
-  #       return 0.30, 0.40
-  #     elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #       return 0.27, 0.40
-  #     end
+  def self.get_reference_glazing_ufactor_shgc(orig_window)
+    # Fenestration U-Factor and SHGC
+    if [ZERHConstants.Ver1].include? @program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+        return 0.40, 0.25
+      elsif ['3A', '3B', '3C'].include? @iecc_zone
+        return 0.30, 0.25
+      elsif ['4A', '4B'].include? @iecc_zone
+        return 0.30, 0.40
+      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+        return 0.27, 0.40
+      end
+    end
 
-  #   elsif [ESConstants.SFPacificVer3_0].include? @program_version
-  #     return 0.60, 0.27
-
-  #   elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-  #     return 0.65, 0.27
-
-  #   elsif [ESConstants.SFOregonWashingtonVer3_2].include? @program_version
-  #     return 0.27, 0.30
-
-  #   elsif [ESConstants.MFNationalVer1_0].include? @program_version
-  #     if orig_window.performance_class == HPXML::WindowClassArchitectural
-  #       if orig_window.fraction_operable > 0
-  #         if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #           return 0.65, 0.27
-  #         elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #           return 0.60, 0.30
-  #         elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #           return 0.45, 0.40
-  #         elsif ['6A', '6B', '6C'].include? @iecc_zone
-  #           return 0.43, 0.40
-  #         elsif ['7', '8'].include? @iecc_zone
-  #           return 0.37, 0.40
-  #         end
-  #       else
-  #         if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #           return 0.50, 0.27
-  #         elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #           return 0.46, 0.30
-  #         elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #           return 0.38, 0.40
-  #         elsif ['6A', '6B', '6C'].include? @iecc_zone
-  #           return 0.36, 0.40
-  #         elsif ['7', '8'].include? @iecc_zone
-  #           return 0.29, 0.40
-  #         end
-  #       end
-  #     else
-  #       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #         return 0.60, 0.27
-  #       elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #         return 0.35, 0.30
-  #       elsif ['4A', '4B'].include? @iecc_zone
-  #         return 0.32, 0.40
-  #       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #         return 0.30, 0.40
-  #       end
-  #     end
-
-  #   elsif [ESConstants.MFNationalVer1_1].include? @program_version
-  #     if orig_window.performance_class == HPXML::WindowClassArchitectural
-  #       if orig_window.fraction_operable > 0
-  #         if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #           return 0.62, 0.25
-  #         elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #           return 0.57, 0.25
-  #         elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #           return 0.43, 0.40
-  #         elsif ['6A', '6B', '6C'].include? @iecc_zone
-  #           return 0.41, 0.40
-  #         elsif ['7', '8'].include? @iecc_zone
-  #           return 0.35, 0.40
-  #         end
-  #       else
-  #         if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #           return 0.48, 0.25
-  #         elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #           return 0.44, 0.25
-  #         elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-  #           return 0.36, 0.40
-  #         elsif ['6A', '6B', '6C'].include? @iecc_zone
-  #           return 0.34, 0.40
-  #         elsif ['7', '8'].include? @iecc_zone
-  #           return 0.28, 0.40
-  #         end
-  #       end
-  #     else
-  #       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-  #         return 0.40, 0.25
-  #       elsif ['3A', '3B', '3C'].include? @iecc_zone
-  #         return 0.30, 0.25
-  #       elsif ['4A', '4B'].include? @iecc_zone
-  #         return 0.30, 0.40
-  #       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-  #         return 0.27, 0.40
-  #       end
-  #     end
-
-  #   elsif [ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-  #     if orig_window.performance_class == HPXML::WindowClassArchitectural
-  #       if orig_window.fraction_operable > 0
-  #         if ['4C', '5A', '5B', '5C'].include? @iecc_zone
-  #           return 0.43, 0.30
-  #         elsif ['6A', '6B', '6C'].include? @iecc_zone
-  #           return 0.41, 0.30
-  #         end
-  #       else
-  #         if ['4C', '5A', '5B', '5C'].include? @iecc_zone
-  #           return 0.36, 0.30
-  #         elsif ['6A', '6B', '6C'].include? @iecc_zone
-  #           return 0.34, 0.30
-  #         end
-  #       end
-  #     else
-  #       return 0.27, 0.30
-  #     end
-
-  #   end
-  # end
+    fail 'Unexpected case.'
+  end
 end
