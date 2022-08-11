@@ -1614,12 +1614,14 @@ Each water fixture is entered as a ``/HPXML/Building/BuildingDetails/Systems/Wat
   Element               Type     Units  Constraints  Required  Default   Notes
   ====================  =======  =====  ===========  ========  ========  ===============================================
   ``SystemIdentifier``  id                           Yes                 Unique identifier
-  ``WaterFixtureType``  string          See [#]_     Yes                 Type of water fixture
+  ``WaterFixtureType``  string          See [#]_     Yes                 Bathroom faucet or shower
   ``LowFlow``           boolean                      Yes                 Whether the fixture is considered low-flow [#]_
   ====================  =======  =====  ===========  ========  ========  ===============================================
 
   .. [#] WaterFixtureType choices are "shower head" or "faucet".
+         If the shower stall has multiple shower heads that operate simultaneously, combine them as a single entry.
   .. [#] LowFlow should be true if the fixture's flow rate (gpm) is <= 2.0.
+         Where a shower stall has multiple shower heads that operate simultaneously, the sum of their flows must be <= 2.0.
 
 HPXML Solar Thermal
 *******************
@@ -1753,13 +1755,13 @@ A single clothes washer can be entered as a ``/HPXML/Building/BuildingDetails/Ap
   ``SystemIdentifier``                                            id                                 Yes                Unique identifier
   ``IsSharedAppliance``                                           boolean                            Yes                Whether it serves multiple dwelling units [#]_
   ``Location``                                                    string                See [#]_     Yes                Location
-  ``IntegratedModifiedEnergyFactor`` or ``ModifiedEnergyFactor``  double   ft3/kWh/cyc  > 0          Yes                EnergyGuide label efficiency [#]_
+  ``IntegratedModifiedEnergyFactor`` or ``ModifiedEnergyFactor``  double   ft3/kWh/cyc  > 0          Yes                Efficiency [#]_
   ``RatedAnnualkWh``                                              double   kWh/yr       > 0          Yes                EnergyGuide label annual consumption
   ``LabelElectricRate``                                           double   $/kWh        > 0          Yes                EnergyGuide label electricity rate
   ``LabelGasRate``                                                double   $/therm      > 0          Yes                EnergyGuide label natural gas rate
   ``LabelAnnualGasCost``                                          double   $            > 0          Yes                EnergyGuide label annual gas cost
   ``LabelUsage``                                                  double   cyc/wk       > 0          Yes                EnergyGuide label number of cycles (not used if 301 version < 2019A)
-  ``Capacity``                                                    double   ft3          > 0          Yes                Clothes dryer volume
+  ``Capacity``                                                    double   ft3          > 0          Yes                Clothes washer volume
   ==============================================================  =======  ===========  ===========  ========  =======  ==============================================
 
   .. [#] For example, a clothes washer in a shared laundry room of a MF building.
@@ -1767,6 +1769,7 @@ A single clothes washer can be entered as a ``/HPXML/Building/BuildingDetails/Ap
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If ModifiedEnergyFactor (MEF) provided instead of IntegratedModifiedEnergyFactor (IMEF), it will be converted using the `Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF <https://www.resnet.us/wp-content/uploads/No.-301-2014-08-sECTION-4.2.2.5.2.8-Clothes-Washers-Eq-4.2-6.pdf>`_:
          IMEF = (MEF - 0.503) / 0.95.
+         IMEF may be found using the manufacturer’s data sheet, the `California Energy Commission Appliance Database <https://cacertappliances.energy.ca.gov/Pages/ApplianceSearch.aspx>`_, the `EPA ENERGY STAR website <https://www.energystar.gov/productfinder/>`_, or another reputable source.
 
 If the clothes washer is shared, additional information is entered in ``/HPXML/Building/BuildingDetails/Appliances/ClothesWasher``.
 
