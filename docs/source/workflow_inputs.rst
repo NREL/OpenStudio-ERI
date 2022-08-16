@@ -1427,7 +1427,7 @@ If a conventional storage water heater is specified, additional information is e
   Element                                        Type     Units         Constraints  Required  Default   Notes
   =============================================  =======  ============  ===========  ========  ========  ==========================================
   ``FuelType``                                   string                 See [#]_     Yes                 Fuel type
-  ``TankVolume``                                 double   gal           > 0          Yes                 Tank volume
+  ``TankVolume``                                 double   gal           > 0          Yes                 Nominal tank volume
   ``HeatingCapacity``                            double   Btu/hr        > 0          No        See [#]_  Heating output capacity
   ``UniformEnergyFactor`` or ``EnergyFactor``    double   frac          < 1          Yes                 EnergyGuide label rated efficiency
   ``FirstHourRating``                            double   gal/hr        > 0          See [#]_            EnergyGuide label first hour rating
@@ -1464,7 +1464,7 @@ If a heat pump water heater is specified, additional information is entered in `
   Element                                        Type     Units         Constraints  Required  Default   Notes
   =============================================  =======  ============  ===========  ========  ========  ==========================================
   ``FuelType``                                   string                 See [#]_     Yes                 Fuel type
-  ``TankVolume``                                 double   gal           > 0          Yes                 Tank volume
+  ``TankVolume``                                 double   gal           > 0          Yes                 Nominal tank volume
   ``UniformEnergyFactor`` or ``EnergyFactor``    double   frac          > 1          Yes                 EnergyGuide label rated efficiency
   ``FirstHourRating``                            double   gal/hr        > 0          See [#]_            EnergyGuide label first hour rating
   ``WaterHeaterInsulation/Jacket/JacketRValue``  double   F-ft2-hr/Btu  >= 0         No        0         R-value of additional tank insulation wrap
@@ -1482,7 +1482,7 @@ If a combination boiler w/ storage tank (sometimes referred to as an indirect wa
   Element                                        Type     Units         Constraints  Required      Default   Notes
   =============================================  =======  ============  ===========  ============  ========  ==================================================
   ``RelatedHVACSystem``                          idref                  See [#]_     Yes                     ID of boiler
-  ``TankVolume``                                 double   gal           > 0          Yes                     Volume of the storage tank
+  ``TankVolume``                                 double   gal           > 0          Yes                     Nominal volume of the storage tank
   ``WaterHeaterInsulation/Jacket/JacketRValue``  double   F-ft2-hr/Btu  >= 0         No            0         R-value of additional storage tank insulation wrap
   ``StandbyLoss``                                double   F/hr          > 0          No            See [#]_  Storage tank standby losses
   =============================================  =======  ============  ===========  ============  ========  ==================================================
