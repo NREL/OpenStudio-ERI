@@ -2172,7 +2172,7 @@ def create_sample_hpxmls
                   'base-foundation-ambient.xml',
                   'base-foundation-basement-garage.xml',
                   'base-foundation-conditioned-basement-slab-insulation.xml',
-                  'base-foundation-conditioned-basement-wall-interior-insulation.xml',
+                  'base-foundation-conditioned-basement-wall-insulation.xml',
                   'base-foundation-multiple.xml',
                   'base-foundation-slab.xml',
                   'base-foundation-unconditioned-basement.xml',
