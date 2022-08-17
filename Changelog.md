@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.4.3
+
+__Bugfixes__
+- Fixes excessive heat transfer when foundation wall interior insulation does not start from the top of the wall.
+
 ## OpenStudio-ERI v1.4.2
 
 __Bugfixes__
