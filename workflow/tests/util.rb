@@ -1374,6 +1374,7 @@ def _check_dse_test_results(energy)
   assert_operator((energy['HVAC3b'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, htg_max[0])
   # Note: OS-ERI does not pass this test because of differences in duct insulation
   #       R-values; see get_duct_insulation_rvalue() in airflow.rb.
+  # See https://github.com/resnet-us/software-consistency-inquiries/issues/21
   # assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[1])
   # assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, htg_max[1])
   assert_operator((energy['HVAC3d'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[2])
