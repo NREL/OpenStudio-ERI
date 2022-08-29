@@ -240,11 +240,11 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       hpxml_names = ['base.xml',
-                     'base-foundation-conditioned-basement-wall-interior-insulation.xml']
+                     'base-foundation-conditioned-basement-wall-insulation.xml']
       hpxml_names.each do |hpxml_name|
         _convert_to_es(hpxml_name, es_version)
         hpxml = _test_ruleset()
-        if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
+        if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
           type = nil
@@ -261,7 +261,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
       end
 
       hpxml_names = ['base.xml',
-                     'base-foundation-conditioned-basement-wall-interior-insulation.xml']
+                     'base-foundation-conditioned-basement-wall-insulation.xml']
       hpxml_names.each do |hpxml_name|
         _convert_to_es(hpxml_name, es_version)
         hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -270,7 +270,7 @@ class EnergyStarEnclosureTest < MiniTest::Test
         hpxml.climate_and_risk_zones.weather_station_wmo = 722020
         XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
         hpxml = _test_ruleset()
-        if hpxml_name == 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
+        if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
           type = nil
