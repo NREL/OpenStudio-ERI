@@ -730,7 +730,7 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   end
 
   if ESConstants.AllVersions.include? ruleset
-    results_csv = File.join(resultsdir, 'ZERH_Results.csv')
+    results_csv = File.join(resultsdir, 'ES_Results.csv')
     results_out = []
     results_out << ['Reference Home ERI', rd_eri]
 
@@ -751,7 +751,7 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
     end
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
   elsif ZERHConstants.AllVersions.include? ruleset
-    results_csv = File.join(resultsdir, 'ES_Results.csv')
+    results_csv = File.join(resultsdir, 'ZERH_Results.csv')
     results_out = []
     results_out << ['Reference Home ERI', rd_eri]
 

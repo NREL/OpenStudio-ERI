@@ -27,6 +27,7 @@ require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative 'resources/301ruleset'
 require_relative 'resources/ESruleset'
+require_relative 'resources/ZERHruleset'
 require_relative 'resources/constants'
 
 def run_rulesets(hpxml_input_path, designs)
@@ -106,6 +107,9 @@ def run_rulesets(hpxml_input_path, designs)
       if [ESConstants.CalcTypeEnergyStarReference,
           ESConstants.CalcTypeEnergyStarRated].include? design.init_calc_type
         new_hpxml = EnergyStarRuleset.apply_ruleset(new_hpxml, design.init_calc_type)
+      elsif [ZERHConstants.CalcTypeZERHReference,
+             ZERHConstants.CalcTypeZERHRated].include? design.init_calc_type
+        new_hpxml = ZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type)     
       end
 
       # Write initial HPXML file
