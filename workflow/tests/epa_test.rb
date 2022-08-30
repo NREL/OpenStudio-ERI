@@ -79,9 +79,9 @@ class EPATest < Minitest::Test
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 0.95)
+        _check_saf(get_saf(results, es_version, hpxml), 0.95)
       else
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       end
     end
 
@@ -92,9 +92,9 @@ class EPATest < Minitest::Test
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 0.877)
+        _check_saf(get_saf(results, es_version, hpxml), 0.877)
       else
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       end
     end
 
@@ -105,9 +105,9 @@ class EPATest < Minitest::Test
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       else
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       end
     end
 
@@ -116,9 +116,9 @@ class EPATest < Minitest::Test
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       else
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       end
     end
 
@@ -130,9 +130,9 @@ class EPATest < Minitest::Test
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 0.95)
+        _check_saf(get_saf(results, es_version, hpxml), 0.95)
       else
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       end
     end
 
@@ -141,9 +141,9 @@ class EPATest < Minitest::Test
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       else
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       end
     end
 
@@ -152,9 +152,9 @@ class EPATest < Minitest::Test
     ESConstants.AllVersions.each do |es_version|
       results = get_results_hash(hpxml)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       else
-        _check_saf(calc_energystar_saf(results, es_version, hpxml), 1.0)
+        _check_saf(get_saf(results, es_version, hpxml), 1.0)
       end
     end
 
