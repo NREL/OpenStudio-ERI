@@ -108,7 +108,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
         csvs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
         csvs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
-    elsif not zerh_calculation.nil?
+    elsif not zerh_version.nil?
       # Zero Energy Ready Home
       hpxmls[:zerh_ref] = File.join(rundir, 'results', 'ZERHReference.xml')
       hpxmls[:zerh_rated] = File.join(rundir, 'results', 'ZERHRated.xml')
