@@ -168,7 +168,7 @@ The IECC climate zone is entered in ``/HPXML/Building/BuildingDetails/Climateand
   ``ClimateZone``            string            See [#]_     Yes                IECC zone
   =========================  =======  =======  ===========  ========  =======  =========
 
-  .. [#] Year choices are 2003, 2006, 2009, or 2012.
+  .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, or 2021.
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
 
 HPXML Enclosure
