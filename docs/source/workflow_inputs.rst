@@ -88,7 +88,7 @@ Site information is entered in ``/HPXML/Building/Site``.
   Element                Type      Units    Constraints  Required  Default  Description
   =====================  ========  =======  ===========  ========  =======  ============================
   ``Address/StateCode``  string             See [#]_     Yes                State/territory where the home is located
-  ``Address/ZipCode``    string             See [#]_     Yes                ZIP Code where the home is located
+  ``Address/ZipCode``    string             See [#]_     Yes                ZIP Code where the home is located [#]_
   =====================  ========  =======  ===========  ========  =======  ============================
 
   .. [#] For ENERGY STAR calculations, allowed StateCode choices depend on the ENERGY STAR version:
@@ -99,6 +99,7 @@ Site information is entered in ``/HPXML/Building/Site``.
          - **OregonWashington**: OR, WA
 
   .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
+  .. [#] ZipCode is only currently used to look up the eGrid subregion (see ``rulesets/data/egrid/ZIP_mappings.csv``) and Cambium region (see ``rulesets/data/cambium/ZIP_mappings.csv``) for emissions calculations and the CO2e Index.
 
 HPXML Building Summary
 ----------------------
