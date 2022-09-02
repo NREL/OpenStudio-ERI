@@ -5,7 +5,7 @@ require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
-class EnergyStarPVTest < MiniTest::Test
+class EnergyStarZeroEnergyReadyHomePVTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
@@ -16,25 +16,29 @@ class EnergyStarPVTest < MiniTest::Test
   end
 
   def test_pv
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-pv.xml', es_version)
-      hpxml = _test_ruleset()
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      _convert_to_es_zerh('base-pv.xml', program_version)
+      hpxml = _test_ruleset(program_version)
       _check_pv(hpxml)
     end
   end
 
   def test_pv_batteries
     skip # Temporarily disabled until RESNET allows this.
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-pv-battery.xml', es_version)
-      hpxml = _test_ruleset()
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      _convert_to_es_zerh('base-pv-battery.xml', program_version)
+      hpxml = _test_ruleset(program_version)
       _check_battery(hpxml)
     end
   end
 
-  def _test_ruleset()
+  def _test_ruleset(program_version)
     require_relative '../../workflow/design'
-    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+    if ESConstants.AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+    elsif ZERHConstants.AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference)]
+    end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
 
@@ -56,7 +60,7 @@ class EnergyStarPVTest < MiniTest::Test
     assert_equal(0, hpxml.batteries.size)
   end
 
-  def _convert_to_es(hpxml_name, program_version, state_code = nil)
-    return convert_to_es(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
+  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
+    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

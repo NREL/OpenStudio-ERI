@@ -5,7 +5,7 @@ require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
-class EnergyStarLightingTest < MiniTest::Test
+class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
@@ -16,10 +16,10 @@ class EnergyStarLightingTest < MiniTest::Test
   end
 
   def test_lighting
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base.xml', es_version)
-      hpxml = _test_ruleset()
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      _convert_to_es_zerh('base.xml', program_version)
+      hpxml = _test_ruleset(program_version)
+      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1, ZERHConstants.Ver1].include? program_version
         _check_lighting(hpxml, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
         _check_lighting(hpxml, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -28,35 +28,39 @@ class EnergyStarLightingTest < MiniTest::Test
   end
 
   def test_ceiling_fans_none
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base.xml', es_version)
-      hpxml = _test_ruleset()
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      _convert_to_es_zerh('base.xml', program_version)
+      hpxml = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml)
     end
   end
 
   def test_ceiling_fans
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-lighting-ceiling-fans.xml', es_version)
-      hpxml = _test_ruleset()
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
+      hpxml = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml, cfm_per_w: 122.0, quantity: 4)
     end
   end
 
   def test_ceiling_fans_nbeds_5
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base-lighting-ceiling-fans.xml', es_version)
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.building_construction.number_of_bedrooms = 5
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset()
+      hpxml = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml, cfm_per_w: 122.0, quantity: 6)
     end
   end
 
-  def _test_ruleset()
+  def _test_ruleset(program_version)
     require_relative '../../workflow/design'
-    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+    if ESConstants.AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+    elsif ZERHConstants.AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference)]
+    end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
 
@@ -117,7 +121,7 @@ class EnergyStarLightingTest < MiniTest::Test
     end
   end
 
-  def _convert_to_es(hpxml_name, program_version, state_code = nil)
-    return convert_to_es(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
+  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
+    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

@@ -1684,7 +1684,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
             return 0.80 # AFUE
           elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
             return 0.90 # AFUE
-          elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zoneo
+          elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
             return 0.94 # AFUE
           end
         elsif fuel_type == HPXML::FuelTypeElectricity

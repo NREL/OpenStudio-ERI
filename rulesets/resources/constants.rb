@@ -100,7 +100,7 @@ class ZERHConstants
   end
 
   def self.AllVersions
-    return self.Ver1
+    return [self.Ver1]
   end
 
   def self.Ver1
