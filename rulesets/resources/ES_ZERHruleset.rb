@@ -1781,7 +1781,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_default_heat_pump_backup_fuel()
-    if ESConstants.NationalVersions.include? @program_version
+    if [*ESConstants.NationalVersions, ZERHConstants.Ver1].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
         return HPXML::FuelTypeElectricity
       else
@@ -1801,13 +1801,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       else
         return # nop
       end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.MFNationalVer1_1].include? @program_version
-      if ['7', '8'].include? @iecc_zone
-        return 3.6
-      else
-        return # nop
-      end
-    elsif [ZERHConstants.Ver1].include? @program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.MFNationalVer1_1, ZERHConstants.Ver1].include? @program_version
       if ['7', '8'].include? @iecc_zone
         return 3.6
       else
