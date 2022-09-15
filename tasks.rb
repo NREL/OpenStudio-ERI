@@ -346,19 +346,20 @@ def set_hpxml_building_occupancy(hpxml_file, hpxml)
 end
 
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
-  if hpxml.climate_and_risk_zones.climate_zone_ieccs.empty?
-    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006)
-  end
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Baltimore
-    hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4A'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '4A')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw'
     hpxml.header.state_code = 'MD'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
-    hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '3A'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '3A')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw'
@@ -366,37 +367,49 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
-    hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '1A')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Miami.Intl.AP.722020_TMY3.epw'
     hpxml.header.state_code = 'FL'
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
-    hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '7')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MN_Duluth.Intl.AP.727450_TMY3.epw'
     hpxml.header.state_code = 'MN'
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     if hpxml.climate_and_risk_zones.weather_station_epw_filepath == 'USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw'
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '5B'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '5B')
       hpxml.header.state_code = 'CO'
     end
   elsif hpxml_file.include?('EPA_Tests')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     if hpxml_file.include?('CZ2')
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '2A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '2A')
       hpxml.climate_and_risk_zones.weather_station_name = 'Tampa, FL'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Tampa.Intl.AP.722110_TMY3.epw'
       hpxml.header.state_code = 'FL'
     elsif hpxml_file.include?('CZ4')
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '4A')
       hpxml.climate_and_risk_zones.weather_station_name = 'St Louis, MO'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MO_St.Louis-Lambert.Intl.AP.724340_TMY3.epw'
       hpxml.header.state_code = 'MO'
     elsif hpxml_file.include?('CZ6')
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '6A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '6A')
       hpxml.climate_and_risk_zones.weather_station_name = 'Burlington, VT'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_VT_Burlington.Intl.AP.726170_TMY3.epw'
       hpxml.header.state_code = 'VT'
