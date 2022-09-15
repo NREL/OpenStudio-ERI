@@ -2505,8 +2505,10 @@ def create_sample_hpxmls
                                                             year: 2006)
       end
     end
-    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(hpxml.header.iecc_eri_calculation_version),
-                                                        zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+    if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(hpxml.header.iecc_eri_calculation_version) }.size == 0
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(hpxml.header.iecc_eri_calculation_version),
+                                                          zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+    end
 
     # Handle different inputs for ENERGY STAR
 
@@ -2573,8 +2575,10 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: iecc_version,
-                                                        zone: zone)
+    if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(iecc_version) }.size == 0
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(iecc_version),
+                                                          zone: zone)
+    end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
   end
