@@ -46,15 +46,6 @@
         <ClimateZoneIECC>
           <Year>2006</Year>
         </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>USA_NV_Las.Vegas-McCarran.Intl.AP.723860_TMY3</Name>

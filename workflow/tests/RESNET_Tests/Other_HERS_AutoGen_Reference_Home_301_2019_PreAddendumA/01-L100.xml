@@ -51,9 +51,6 @@
           <Year>2006</Year>
           <ClimateZone>4A</ClimateZone>
         </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Baltimore, MD</Name>

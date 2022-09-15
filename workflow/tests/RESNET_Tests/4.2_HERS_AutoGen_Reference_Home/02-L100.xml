@@ -51,12 +51,6 @@
           <Year>2006</Year>
           <ClimateZone>3A</ClimateZone>
         </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Dallas, TX</Name>

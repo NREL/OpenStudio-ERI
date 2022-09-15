@@ -346,7 +346,9 @@ def set_hpxml_building_occupancy(hpxml_file, hpxml)
 end
 
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
-  hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006)
+  if hpxml.climate_and_risk_zones.climate_zone_ieccs.empty?
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006)
+  end
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Baltimore
     hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4A'

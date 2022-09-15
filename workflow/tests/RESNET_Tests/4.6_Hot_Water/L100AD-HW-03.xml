@@ -51,12 +51,6 @@
           <Year>2006</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2006</Year>
-        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Duluth, MN</Name>
