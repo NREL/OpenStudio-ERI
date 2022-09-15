@@ -6,6 +6,9 @@ class EnergyStarRuleset
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
+    # Use Year=2006 per ANSI 301
+    @iecc_zone_year = 2006
+
     # Update HPXML object based on ESRD configuration
     if calc_type == ESConstants.CalcTypeEnergyStarReference
       hpxml = apply_energy_star_ruleset_reference(hpxml)
@@ -128,8 +131,7 @@ class EnergyStarRuleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    # Use Year=2006 per ANSI/301
-    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == @iecc_zone_year }[0]
     new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
                                                             zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id

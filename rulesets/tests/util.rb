@@ -17,6 +17,20 @@ def _change_eri_version(hpxml_name, version)
   return hpxml_name
 end
 
+def _change_iecc_version(hpxml_name, version)
+  # Create derivative file w/ changed ERI version
+  hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+  hpxml.header.iecc_eri_calculation_version = version
+  if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(version) }.size == 0
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(version),
+                                                        zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+  end
+
+  hpxml_name = File.basename(@tmp_hpxml_path)
+  XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+  return hpxml_name
+end
+
 def _all_calc_types()
   return [Constants.CalcTypeERIReferenceHome,
           Constants.CalcTypeERIRatedHome,

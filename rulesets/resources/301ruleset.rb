@@ -22,20 +22,28 @@ class EnergyRatingIndex301Ruleset
     end
     @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
+    if iecc_version.nil?
+      # Use Year=2006 per ANSI 301
+      @iecc_zone_year = 2006
+    else
+      # Use same year as the IECC version requested
+      @iecc_zone_year = Integer(iecc_version)
+    end
+
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
-      hpxml = apply_reference_home_ruleset(hpxml, iecc_version)
+      hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
     elsif calc_type == Constants.CalcTypeERIRatedHome
-      hpxml = apply_rated_home_ruleset(hpxml, iecc_version)
+      hpxml = apply_rated_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
-      hpxml = apply_index_adjustment_design_ruleset(hpxml, iecc_version)
+      hpxml = apply_index_adjustment_design_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
-      hpxml = apply_index_adjustment_design_ruleset(hpxml, iecc_version)
-      hpxml = apply_reference_home_ruleset(hpxml, iecc_version)
+      hpxml = apply_index_adjustment_design_ruleset(hpxml)
+      hpxml = apply_reference_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeCO2eRatedHome
-      hpxml = apply_rated_home_ruleset(hpxml, iecc_version)
+      hpxml = apply_rated_home_ruleset(hpxml)
     elsif calc_type == Constants.CalcTypeCO2eReferenceHome
-      hpxml = apply_reference_home_ruleset(hpxml, iecc_version, is_all_electric: true)
+      hpxml = apply_reference_home_ruleset(hpxml, is_all_electric: true)
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
@@ -47,14 +55,14 @@ class EnergyRatingIndex301Ruleset
     return hpxml
   end
 
-  def self.apply_reference_home_ruleset(orig_hpxml, iecc_version, is_all_electric: false)
+  def self.apply_reference_home_ruleset(orig_hpxml, iecc_version: nil, is_all_electric: false)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
     # BuildingSummary
     set_summary_reference(orig_hpxml, new_hpxml)
 
     # ClimateAndRiskZones
-    set_climate(orig_hpxml, new_hpxml, iecc_version)
+    set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
     set_enclosure_attics_reference(orig_hpxml, new_hpxml)
@@ -100,14 +108,14 @@ class EnergyRatingIndex301Ruleset
     return new_hpxml
   end
 
-  def self.apply_rated_home_ruleset(orig_hpxml, iecc_version)
+  def self.apply_rated_home_ruleset(orig_hpxml)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
     # BuildingSummary
     set_summary_rated(orig_hpxml, new_hpxml)
 
     # ClimateAndRiskZones
-    set_climate(orig_hpxml, new_hpxml, iecc_version)
+    set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
     set_enclosure_attics_rated(orig_hpxml, new_hpxml)
@@ -153,7 +161,7 @@ class EnergyRatingIndex301Ruleset
     return new_hpxml
   end
 
-  def self.apply_index_adjustment_design_ruleset(orig_hpxml, iecc_version)
+  def self.apply_index_adjustment_design_ruleset(orig_hpxml)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
     remove_surfaces_from_iad(orig_hpxml)
@@ -162,7 +170,7 @@ class EnergyRatingIndex301Ruleset
     set_summary_iad(orig_hpxml, new_hpxml)
 
     # ClimateAndRiskZones
-    set_climate(orig_hpxml, new_hpxml, iecc_version)
+    set_climate(orig_hpxml, new_hpxml)
 
     # Enclosure
     set_enclosure_attics_iad(orig_hpxml, new_hpxml)
@@ -316,14 +324,8 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.has_flue_or_chimney = false
   end
 
-  def self.set_climate(orig_hpxml, new_hpxml, iecc_version)
-    if iecc_version.nil?
-      # Use Year=2006 per ANSI 301
-      climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
-    else
-      # Use same year as the IECC version requested
-      climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(iecc_version) }[0]
-    end
+  def self.set_climate(orig_hpxml, new_hpxml)
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == @iecc_zone_year }[0]
     new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
                                                             zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
