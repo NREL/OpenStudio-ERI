@@ -2,6 +2,7 @@
 
 __New Features__
 - **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+- **Breaking Change**: `ClimateandRiskZones/ClimateZoneIECC` must have the year specified as 2006.
 - Allows performing IECC ERI calculation.
 - Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
@@ -17,6 +18,7 @@ __Bugfixes__
 - Bugfix for increasing HVAC capacities due to installation grading.
 - Fixes possible output error for ground source heat pumps with a shared hydronic circulation loop.
 - Fixes zero energy use for a ventilation fan w/ non-zero fan power and zero airflow rate.
+- Fixes possible simulation error if a slab has an ExposedPerimeter near zero.
 
 ## OpenStudio-ERI v1.4.3
 

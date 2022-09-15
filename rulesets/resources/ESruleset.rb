@@ -128,13 +128,13 @@ class EnergyStarRuleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.climate_and_risk_zones.iecc_year = orig_hpxml.climate_and_risk_zones.iecc_year
-    new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: orig_hpxml.climate_and_risk_zones.climate_zone_ieccs[0].year,
+                                                            zone: orig_hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-    @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    @iecc_zone = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)

@@ -223,6 +223,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
+    new_hpxml.header.natvent_days_per_week = 7
 
     add_emissions_scenarios(new_hpxml)
 
@@ -316,12 +317,12 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.climate_and_risk_zones.iecc_year = orig_hpxml.climate_and_risk_zones.iecc_year
-    new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: orig_hpxml.climate_and_risk_zones.climate_zone_ieccs[0].year,
+                                                            zone: orig_hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-    @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    @iecc_zone = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
     @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 

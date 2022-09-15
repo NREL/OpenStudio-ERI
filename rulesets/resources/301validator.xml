@@ -83,7 +83,7 @@
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails'>
       <sch:assert role='ERROR' test='count(h:BuildingSummary/h:Site) = 1'>Expected 1 element(s) for xpath: BuildingSummary/Site</sch:assert> <!-- See [Site] -->
       <sch:assert role='ERROR' test='count(h:BuildingSummary/h:BuildingConstruction) = 1'>Expected 1 element(s) for xpath: BuildingSummary/BuildingConstruction</sch:assert> <!-- See [BuildingConstruction] -->
-      <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:ClimateZoneIECC) = 1'>Expected 1 element(s) for xpath: ClimateandRiskZones/ClimateZoneIECC</sch:assert> <!-- See [ClimateZoneIECC] -->
+      <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:ClimateZoneIECC[h:Year=2006]/h:ClimateZone) = 1'>Expected 1 element(s) for xpath: ClimateandRiskZones/ClimateZoneIECC[Year=2006]/ClimateZone</sch:assert>
       <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:WeatherStation) = 1'>Expected 1 element(s) for xpath: ClimateandRiskZones/WeatherStation</sch:assert> <!-- See [WeatherStation] -->
       <sch:assert role='ERROR' test='count(h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement/h:BuildingAirLeakage/h:UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]) = 1'>Expected 1 element(s) for xpath: Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]</sch:assert> <!-- see [AirInfiltrationUnits=ACHorCFM] or [AirInfiltrationUnits=ACHnatural] -->
       <sch:assert role='ERROR' test='count(h:Enclosure/h:Attics/h:Attic) &gt;= 0'>Expected 0 or more element(s) for xpath: Enclosure/Attics/Attic</sch:assert> <!-- see [Attic] -->
@@ -149,14 +149,6 @@ Temporarily disabled until RESNET allows this.
       <sch:assert role='ERROR' test='count(h:NumberofBedrooms) = 1'>Expected 1 element(s) for xpath: NumberofBedrooms</sch:assert>
       <sch:assert role='ERROR' test='count(h:ConditionedFloorArea) = 1'>Expected 1 element(s) for xpath: ConditionedFloorArea</sch:assert>
       <sch:assert role='ERROR' test='number(h:ConditionedFloorArea) &gt;= (sum(../../h:Enclosure/h:Slabs/h:Slab[h:InteriorAdjacentTo="living space" or h:InteriorAdjacentTo="basement - conditioned"]/h:Area) + sum(../../h:Enclosure/h:Floors/h:Floor[h:InteriorAdjacentTo="living space" and not(h:ExteriorAdjacentTo="attic - vented" or h:ExteriorAdjacentTo="attic - unvented" or ((h:ExteriorAdjacentTo="other housing unit" or h:ExteriorAdjacentTo="other heated space" or h:ExteriorAdjacentTo="other multifamily buffer space" or h:ExteriorAdjacentTo="other non-freezing space") and h:extension/h:OtherSpaceAboveOrBelow="above"))]/h:Area) - 1) or not(h:ConditionedFloorArea)'>Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas.</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-
-  <sch:pattern>
-    <sch:title>[ClimateZoneIECC]</sch:title>
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:ClimateandRiskZones/h:ClimateZoneIECC'>
-      <sch:assert role='ERROR' test='count(h:Year) = 1'>Expected 1 element(s) for xpath: Year</sch:assert>
-      <sch:assert role='ERROR' test='count(h:ClimateZone) = 1'>Expected 1 element(s) for xpath: ClimateZone</sch:assert>
     </sch:rule>
   </sch:pattern>
 
