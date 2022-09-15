@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <IECCERICalculation>
-        <Version>2015</Version>
+        <Version>2021</Version>
       </IECCERICalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
@@ -62,7 +62,7 @@
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
-          <Year>2015</Year>
+          <Year>2021</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>

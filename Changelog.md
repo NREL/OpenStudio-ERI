@@ -2,7 +2,11 @@
 
 __New Features__
 - **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
-- **Breaking Change**: `ClimateandRiskZones/ClimateZoneIECC` must have the year specified as 2006.
+- **Breaking Change**: The `ClimateZoneIECC/Year` is now more strict:
+  - All runs must include a 2006 IECC climate zone.
+  - IECC ERI pathway runs must include an IECC climate zone of the same year.
+  - TODO: ENERGY STAR ERI runs must include ....
+  - TODO: Zero Energy Ready Homes v1 runs ....
 - Allows performing IECC ERI calculation.
 - Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
