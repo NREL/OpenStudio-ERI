@@ -1,17 +1,18 @@
 ## OpenStudio-ERI v1.5.0
 
 __New Features__
+- Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
+- Adds IECC ERI pathway calculation (2015, 2018, 2021).
+- Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
+- Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
+  - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
+  - **Breaking change**: The organization of ENERGY STAR output files have changed.
 - **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
 - **Breaking Change**: The `ClimateZoneIECC/Year` is now more strict:
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
   - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
   - TODO: Zero Energy Ready Homes v1 runs ....
-- Allows performing IECC ERI calculation.
-- Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
-  - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
-  - **Breaking change**: The organization of ENERGY STAR output files have changed.
-- Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
 - Annual/timeseries outputs:
   - Adds annual emission outputs disaggregated by end use; timeseries emission outputs disaggregated by end use can be requested.
   - Allows requesting timeseries unmet hours for heating and cooling.

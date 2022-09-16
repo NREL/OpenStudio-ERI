@@ -65,7 +65,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
   .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
-  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
+  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.0", "SF_National_3.1", "SF_National_3.2", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", "MF_National_1.2", or "MF_OregonWashington_1.2".
 
 .. warning::
 
