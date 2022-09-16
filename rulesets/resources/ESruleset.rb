@@ -6,9 +6,16 @@ class EnergyStarRuleset
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
-    # Use Year=2006 per ANSI 301
-    @iecc_zone_year = 2006
+    @program_version = hpxml.header.energystar_calculation_version
 
+    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+      # Use Year=2021 for Reference Home configuration
+      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select{ |z| z.year == 2021 }[0].zone
+    else
+      # Use Year=2006 for Reference Home configuration
+      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select{ |z| z.year == 2006 }[0].zone
+    end
+    
     # Update HPXML object based on ESRD configuration
     if calc_type == ESConstants.CalcTypeEnergyStarReference
       hpxml = apply_energy_star_ruleset_reference(hpxml)
@@ -80,13 +87,12 @@ class EnergyStarRuleset
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
     new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
-    new_hpxml.header.energystar_calculation_version = orig_hpxml.header.energystar_calculation_version
+    new_hpxml.header.energystar_calculation_version = @program_version
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
 
-    @program_version = orig_hpxml.header.energystar_calculation_version
     bldg_type = orig_hpxml.building_construction.residential_facility_type
     if bldg_type == HPXML::ResidentialTypeSFA && (@program_version.include? 'MF')
       begin
@@ -131,14 +137,15 @@ class EnergyStarRuleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == @iecc_zone_year }[0]
-    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
-                                                            zone: climate_zone_iecc.zone)
+    # Set 2006 IECC zone for ERI
+    orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+      new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
+                                                              zone: climate_zone_iecc.zone)
+    end
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-    @iecc_zone = climate_zone_iecc.zone
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)

@@ -5,7 +5,7 @@ __New Features__
 - **Breaking Change**: The `ClimateZoneIECC/Year` is now more strict:
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
-  - TODO: ENERGY STAR ERI runs must include ....
+  - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
   - TODO: Zero Energy Ready Homes v1 runs ....
 - Allows performing IECC ERI calculation.
 - Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.

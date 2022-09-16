@@ -402,24 +402,34 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
     end
   elsif hpxml_file.include?('EPA_Tests')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+    years = [2006]
+    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      years << 2021
+    end
     if hpxml_file.include?('CZ2')
       hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
-                                                          zone: '2A')
+      years.each do |year|
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
+                                                            zone: '2A')
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Tampa, FL'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Tampa.Intl.AP.722110_TMY3.epw'
       hpxml.header.state_code = 'FL'
     elsif hpxml_file.include?('CZ4')
       hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
-                                                          zone: '4A')
+      years.each do |year|
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
+                                                            zone: '4A')
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'St Louis, MO'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MO_St.Louis-Lambert.Intl.AP.724340_TMY3.epw'
       hpxml.header.state_code = 'MO'
     elsif hpxml_file.include?('CZ6')
       hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
-                                                          zone: '6A')
+      years.each do |year|
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
+                                                            zone: '6A')
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Burlington, VT'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_VT_Burlington.Intl.AP.726170_TMY3.epw'
       hpxml.header.state_code = 'VT'

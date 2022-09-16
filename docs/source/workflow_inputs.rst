@@ -160,11 +160,13 @@ Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRi
 HPXML Climate Zones
 -------------------
 
-All OpenStudio-ERI runs must have a 2006 IECC climate zone, per ANSI/RESNET/ICC 301, entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2006]/ClimateZone``.
+All OpenStudio-ERI runs must have a 2006 IECC climate zone entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2006]/ClimateZone``.
 ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
 
 IECC ERI pathway runs must include an IECC climate zone of the same year.
 For example, if ``IECCERICalculation/Version is 2018, then a 2018 IECC climate zone must also be entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2018]/ClimateZone``
+
+ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
 
 HPXML Enclosure
 ---------------

@@ -32,18 +32,6 @@ class ClimateZonesTest < MiniTest::Test
     end
   end
 
-  def test_energystar
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base.xml', es_version)
-
-      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
-
-      hpxml = _test_energystar_ruleset()
-      _check_climate_zone(hpxml, year: 2006, zone: zone)
-    end
-  end
-
   def _test_ruleset(hpxml_name, calc_type, iecc_version = nil)
     require_relative '../../workflow/design'
     designs = [Design.new(calc_type: calc_type, iecc_version: iecc_version)]
@@ -61,30 +49,10 @@ class ClimateZonesTest < MiniTest::Test
     return hpxml
   end
 
-  def _test_energystar_ruleset()
-    require_relative '../../workflow/design'
-    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
-
-    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
-
-    errors.each do |s|
-      puts "Error: #{s}"
-    end
-
-    # assert that it ran correctly
-    assert_equal(true, success)
-
-    return hpxml
-  end
-
   def _check_climate_zone(hpxml, year:, zone:)
     assert_equal(1, hpxml.climate_and_risk_zones.climate_zone_ieccs.size)
     cz = hpxml.climate_and_risk_zones.climate_zone_ieccs[0]
     assert_equal(year, cz.year)
     assert_equal(zone, cz.zone)
-  end
-
-  def _convert_to_es(hpxml_name, program_version, state_code = nil)
-    return convert_to_es(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end
