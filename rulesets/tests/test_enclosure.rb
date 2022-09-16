@@ -370,12 +370,12 @@ class ERIEnclosureTest < MiniTest::Test
       end
     end
 
-    hpxml_name = 'base-foundation-conditioned-basement-wall-interior-insulation.xml'
+    hpxml_name = 'base-foundation-conditioned-basement-wall-insulation.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_foundation_walls(hpxml, area: 1200, rvalue: 18.9, ins_top: 1, ins_bottom: 16, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
+        _check_foundation_walls(hpxml, area: 1200, rvalue: 18.9, ins_top: 2, ins_bottom: 16, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_foundation_walls(hpxml, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type

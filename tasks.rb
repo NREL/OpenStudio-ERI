@@ -356,17 +356,20 @@ def set_hpxml_building_occupancy(hpxml_file, hpxml)
 end
 
 def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
-  hpxml.climate_and_risk_zones.iecc_year = 2006
   if ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/01-L100.xml'].include? hpxml_file
     # Baltimore
-    hpxml.climate_and_risk_zones.iecc_zone = '4A'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '4A')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw'
     hpxml.header.state_code = 'MD'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
     # Dallas
-    hpxml.climate_and_risk_zones.iecc_zone = '3A'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '3A')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw'
@@ -374,37 +377,49 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include? hpxml_file
     # Miami
-    hpxml.climate_and_risk_zones.iecc_zone = '1A'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '1A')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Miami.Intl.AP.722020_TMY3.epw'
     hpxml.header.state_code = 'FL'
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
     # Duluth
-    hpxml.climate_and_risk_zones.iecc_zone = '7'
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                        zone: '7')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
     hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MN_Duluth.Intl.AP.727450_TMY3.epw'
     hpxml.header.state_code = 'MN'
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     if hpxml.climate_and_risk_zones.weather_station_epw_filepath == 'USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw'
-      hpxml.climate_and_risk_zones.iecc_zone = '5B'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '5B')
       hpxml.header.state_code = 'CO'
     end
   elsif hpxml_file.include?('EPA_Tests')
     hpxml.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     if hpxml_file.include?('CZ2')
-      hpxml.climate_and_risk_zones.iecc_zone = '2A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '2A')
       hpxml.climate_and_risk_zones.weather_station_name = 'Tampa, FL'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Tampa.Intl.AP.722110_TMY3.epw'
       hpxml.header.state_code = 'FL'
     elsif hpxml_file.include?('CZ4')
-      hpxml.climate_and_risk_zones.iecc_zone = '4A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '4A')
       hpxml.climate_and_risk_zones.weather_station_name = 'St Louis, MO'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MO_St.Louis-Lambert.Intl.AP.724340_TMY3.epw'
       hpxml.header.state_code = 'MO'
     elsif hpxml_file.include?('CZ6')
-      hpxml.climate_and_risk_zones.iecc_zone = '6A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                          zone: '6A')
       hpxml.climate_and_risk_zones.weather_station_name = 'Burlington, VT'
       hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_VT_Burlington.Intl.AP.726170_TMY3.epw'
       hpxml.header.state_code = 'VT'
@@ -2353,7 +2368,7 @@ def create_sample_hpxmls
                   'base-foundation-ambient.xml',
                   'base-foundation-basement-garage.xml',
                   'base-foundation-conditioned-basement-slab-insulation.xml',
-                  'base-foundation-conditioned-basement-wall-interior-insulation.xml',
+                  'base-foundation-conditioned-basement-wall-insulation.xml',
                   'base-foundation-multiple.xml',
                   'base-foundation-slab.xml',
                   'base-foundation-unconditioned-basement.xml',
@@ -2365,6 +2380,7 @@ def create_sample_hpxmls
                   'base-hvac-air-to-air-heat-pump-1-speed.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml',
+                  'base-hvac-air-to-air-heat-pump-1-speed-seer2-hspf2.xml',
                   'base-hvac-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-air-to-air-heat-pump-var-speed.xml',
                   'base-hvac-boiler-elec-only.xml',
@@ -2372,6 +2388,7 @@ def create_sample_hpxmls
                   'base-hvac-boiler-oil-only.xml',
                   'base-hvac-boiler-propane-only.xml',
                   'base-hvac-central-ac-only-1-speed.xml',
+                  'base-hvac-central-ac-only-1-speed-seer2.xml',
                   'base-hvac-central-ac-only-2-speed.xml',
                   'base-hvac-central-ac-only-var-speed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
@@ -2664,10 +2681,14 @@ def create_sample_hpxmls
       if hpxml.header.state_code.nil?
         hpxml.header.state_code = 'NA'
       end
-      if hpxml.climate_and_risk_zones.iecc_zone.nil?
-        hpxml.climate_and_risk_zones.iecc_zone = '3A'
-        hpxml.climate_and_risk_zones.iecc_year = 2006
+      if hpxml.climate_and_risk_zones.climate_zone_ieccs.empty?
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(zone: '3A',
+                                                            year: 2006)
       end
+    end
+    if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(hpxml.header.iecc_eri_calculation_version) }.size == 0
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(hpxml.header.iecc_eri_calculation_version),
+                                                          zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
     end
 
     # Handle different inputs for ENERGY STAR
@@ -2728,12 +2749,17 @@ def create_sample_hpxmls
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
   end
 
-  # Older IECC versions
-  IECCConstants.AllVersions[0..-2].each do |iecc_version|
+  # All IECC versions
+  IECCConstants.AllVersions.each do |iecc_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.iecc_eri_calculation_version = iecc_version
     hpxml.header.eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
+    zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
+    if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(iecc_version) }.size == 0
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(iecc_version),
+                                                          zone: zone)
+    end
 
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
   end
@@ -2741,7 +2767,7 @@ def create_sample_hpxmls
   # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-multifamily.xml')
   hpxml.header.energystar_calculation_version = ESConstants.MFOregonWashingtonVer1_2
-  hpxml.climate_and_risk_zones.iecc_zone = '4C'
+  hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
   hpxml.climate_and_risk_zones.weather_station_name = 'Portland, OR'
   hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'USA_OR_Portland.Intl.AP.726980_TMY3.epw'
   hpxml.header.state_code = 'OR'
@@ -2816,19 +2842,14 @@ if ARGV[0].to_sym == :update_measures
   puts 'Applying rubocop auto-correct to measures...'
   system(command)
 
-  # Update measures XMLs
-  command = "#{OpenStudio.getOpenStudioCLI} measure -t '#{File.join(File.dirname(__FILE__), 'rulesets')}'"
-  puts 'Updating measure.xmls...'
-  system(command, [:out, :err] => File::NULL)
-
   puts 'Done.'
 end
 
 if ARGV[0].to_sym == :create_release_zips
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/version'
+  require_relative 'workflow/version'
 
-  release_map = { File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_HPXML_Version}-minimal.zip") => false,
-                  File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_HPXML_Version}-full.zip") => true }
+  release_map = { File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_ERI_Version}-minimal.zip") => false,
+                  File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_ERI_Version}-full.zip") => true }
 
   release_map.keys.each do |zip_path|
     File.delete(zip_path) if File.exist? zip_path

@@ -66,6 +66,10 @@
           <Year>2006</Year>
           <ClimateZone>2B</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2021</Year>
+          <ClimateZone>2B</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3</Name>

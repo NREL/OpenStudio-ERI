@@ -25,7 +25,7 @@ class EnergyStarVentTest < MiniTest::Test
   end
 
   def fan_type(es_version, hpxml)
-    iecc_zone = hpxml.climate_and_risk_zones.iecc_zone
+    iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
     if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
       return HPXML::MechVentTypeSupply
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
@@ -93,7 +93,7 @@ class EnergyStarVentTest < MiniTest::Test
 
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)

@@ -2,10 +2,16 @@
 
 __New Features__
 - **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+- **Breaking Change**: The `ClimateZoneIECC/Year` is now more strict:
+  - All runs must include a 2006 IECC climate zone.
+  - IECC ERI pathway runs must include an IECC climate zone of the same year.
+  - TODO: ENERGY STAR ERI runs must include ....
+  - TODO: Zero Energy Ready Homes v1 runs ....
 - Allows performing IECC ERI calculation.
 - Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
   - **Breaking change**: The organization of ENERGY STAR output files have changed.
+- Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
 - Annual/timeseries outputs:
   - Adds annual emission outputs disaggregated by end use; timeseries emission outputs disaggregated by end use can be requested.
   - Allows requesting timeseries unmet hours for heating and cooling.
@@ -16,6 +22,17 @@ __Bugfixes__
 - Bugfix for increasing HVAC capacities due to installation grading.
 - Fixes possible output error for ground source heat pumps with a shared hydronic circulation loop.
 - Fixes zero energy use for a ventilation fan w/ non-zero fan power and zero airflow rate.
+- Fixes possible simulation error if a slab has an ExposedPerimeter near zero.
+
+## OpenStudio-ERI v1.4.3
+
+__Bugfixes__
+- Fixes excessive heat transfer when foundation wall interior insulation does not start from the top of the wall.
+
+## OpenStudio-ERI v1.4.2
+
+__Bugfixes__
+- Fixes incorrect ERI calculation when the Rated Home has multiple water heaters.
 
 ## OpenStudio-ERI v1.4.1
 

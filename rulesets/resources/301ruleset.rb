@@ -22,6 +22,14 @@ class EnergyRatingIndex301Ruleset
     end
     @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
+    if iecc_version.nil?
+      # Use Year=2006 per ANSI 301
+      @iecc_zone_year = 2006
+    else
+      # Use same year as the IECC version requested
+      @iecc_zone_year = Integer(iecc_version)
+    end
+
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
@@ -223,6 +231,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
+    new_hpxml.header.natvent_days_per_week = 7
 
     add_emissions_scenarios(new_hpxml)
 
@@ -316,12 +325,13 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.climate_and_risk_zones.iecc_year = orig_hpxml.climate_and_risk_zones.iecc_year
-    new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == @iecc_zone_year }[0]
+    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
+                                                            zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-    @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    @iecc_zone = climate_zone_iecc.zone
     @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
@@ -1256,6 +1266,7 @@ class EnergyRatingIndex301Ruleset
                                     cooling_capacity: orig_cooling_system.cooling_capacity,
                                     fraction_cool_load_served: orig_cooling_system.fraction_cool_load_served,
                                     cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
+                                    cooling_efficiency_seer2: orig_cooling_system.cooling_efficiency_seer2,
                                     cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
                                     cooling_efficiency_ceer: orig_cooling_system.cooling_efficiency_ceer,
                                     cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
@@ -1306,8 +1317,10 @@ class EnergyRatingIndex301Ruleset
                                fraction_heat_load_served: orig_heat_pump.fraction_heat_load_served,
                                fraction_cool_load_served: orig_heat_pump.fraction_cool_load_served,
                                cooling_efficiency_seer: orig_heat_pump.cooling_efficiency_seer,
+                               cooling_efficiency_seer2: orig_heat_pump.cooling_efficiency_seer2,
                                cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
                                heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
+                               heating_efficiency_hspf2: orig_heat_pump.heating_efficiency_hspf2,
                                heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
                                shared_loop_watts: orig_heat_pump.shared_loop_watts,
                                pump_watts_per_ton: orig_heat_pump.pump_watts_per_ton,
@@ -1407,11 +1420,11 @@ class EnergyRatingIndex301Ruleset
     ref_sla = 0.00036
     if ['2018', '2021'].include? iecc_version
       # IECC exception for ERI reference design ventilation rate
-      q_tot = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
+      q_fan_airflow = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
+      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
     end
-    q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
 
     mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
 

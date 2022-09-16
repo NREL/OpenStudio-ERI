@@ -30,9 +30,9 @@ def get_program_versions(hpxml_doc)
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
   iecc_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
 
-  { eri_version => [Constants.ERIVersions, 'ERICalculation/Version'],
-    es_version => [ESConstants.AllVersions, 'EnergyStarCalculation/Version'],
-    iecc_version => [IECCConstants.AllVersions, 'IECCERICalculation/Version'] }.each do |version, values|
+  { [Constants.ERIVersions, 'ERICalculation/Version'] => eri_version,
+    [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] => es_version,
+    [IECCConstants.AllVersions, 'IECCERICalculation/Version'] => iecc_version }.each do |values, version|
     all_versions, xpath = values
     if (not version.nil?) && (not all_versions.include? version)
       puts "Unexpected #{xpath}: '#{version}'"
@@ -408,32 +408,37 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
     fail 'Unexpected Reference Home results; should only be 1 DHW system.'
   end
 
-  reul_dhw = ref_output['ERI: Hot Water: Load'][0]
-  coeff_dhw_a, coeff_dhw_b = get_dhw_coefficients(ref_output['ERI: Hot Water: FuelType'][0])
-  eec_x_dhw = rated_output['ERI: Hot Water: EEC'].sum(0.0)
-  eec_r_dhw = ref_output['ERI: Hot Water: EEC'][0]
-  ec_x_dhw = rated_output['ERI: Hot Water: EC'].sum(0.0)
-  ec_r_dhw = ref_output['ERI: Hot Water: EC'][0]
-  dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
-  nec_x_dhw = 0
-  if eec_x_dhw * reul_dhw > 0
-    nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * ec_r_dhw * dse_r_dhw) / (eec_x_dhw * reul_dhw)
-  end
-  nmeul_dhw = 0
-  if ec_r_dhw > 0
-    nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
-  end
+  rated_output['ERI: Hot Water: ID'].each_with_index do |_sys_id, rated_idx|
+    # Apportion load/energy from single ref water heater to each rated water heater
+    rated_dhw_frac_load_served = (rated_output['ERI: Hot Water: Load'][rated_idx] / rated_output['ERI: Hot Water: Load'].sum(0.0))
 
-  results[:reul_dhw] << reul_dhw
-  results[:coeff_dhw_a] << coeff_dhw_a
-  results[:coeff_dhw_b] << coeff_dhw_b
-  results[:eec_x_dhw] << eec_x_dhw
-  results[:eec_r_dhw] << eec_r_dhw
-  results[:ec_x_dhw] << ec_x_dhw
-  results[:ec_r_dhw] << ec_r_dhw
-  results[:dse_r_dhw] << dse_r_dhw
-  results[:nec_x_dhw] << nec_x_dhw
-  results[:nmeul_dhw] << nmeul_dhw
+    reul_dhw = ref_output['ERI: Hot Water: Load'][0] * rated_dhw_frac_load_served
+    coeff_dhw_a, coeff_dhw_b = get_dhw_coefficients(ref_output['ERI: Hot Water: FuelType'][0])
+    eec_x_dhw = rated_output['ERI: Hot Water: EEC'][rated_idx]
+    eec_r_dhw = ref_output['ERI: Hot Water: EEC'][0]
+    ec_x_dhw = rated_output['ERI: Hot Water: EC'][rated_idx]
+    ec_r_dhw = ref_output['ERI: Hot Water: EC'][0] * rated_dhw_frac_load_served
+    dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
+    nec_x_dhw = 0
+    if eec_x_dhw * reul_dhw > 0
+      nec_x_dhw = (coeff_dhw_a * eec_x_dhw - coeff_dhw_b) * (ec_x_dhw * ec_r_dhw * dse_r_dhw) / (eec_x_dhw * reul_dhw)
+    end
+    nmeul_dhw = 0
+    if ec_r_dhw > 0
+      nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
+    end
+
+    results[:reul_dhw] << reul_dhw
+    results[:coeff_dhw_a] << coeff_dhw_a
+    results[:coeff_dhw_b] << coeff_dhw_b
+    results[:eec_x_dhw] << eec_x_dhw
+    results[:eec_r_dhw] << eec_r_dhw
+    results[:ec_x_dhw] << ec_x_dhw
+    results[:ec_r_dhw] << ec_r_dhw
+    results[:dse_r_dhw] << dse_r_dhw
+    results[:nec_x_dhw] << nec_x_dhw
+    results[:nmeul_dhw] << nmeul_dhw
+  end
 
   # ===== #
   # Other #
@@ -1025,8 +1030,8 @@ if options[:timeseries_outputs].include? 'ALL'
   options[:timeseries_outputs] = timeseries_types[1..-1]
 end
 if options[:version]
-  workflow_version = '1.4.1'
-  puts "OpenStudio-ERI v#{workflow_version}"
+  require_relative 'version.rb'
+  puts "OpenStudio-ERI v#{Version::OS_ERI_Version}"
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
   exit!

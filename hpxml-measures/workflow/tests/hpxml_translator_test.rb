@@ -304,7 +304,7 @@ class HPXMLTest < MiniTest::Test
 
     # Cleanup
     File.delete(osw_path_test)
-    xml_path_test = File.join(File.dirname(__FILE__), '..', 'base-stochastic-schedules.xml')
+    xml_path_test = File.join(File.dirname(__FILE__), '..', 'run', 'base-stochastic-schedules.xml')
     File.delete(xml_path_test)
   end
 
@@ -346,9 +346,9 @@ class HPXMLTest < MiniTest::Test
 
     # Cleanup
     File.delete(osw_path_test)
-    xml_path_test = File.join(File.dirname(__FILE__), '..', 'built.xml')
+    xml_path_test = File.join(File.dirname(__FILE__), '..', 'run', 'built.xml')
     File.delete(xml_path_test)
-    xml_path_test = File.join(File.dirname(__FILE__), '..', 'built-stochastic-schedules.xml')
+    xml_path_test = File.join(File.dirname(__FILE__), '..', 'run', 'built-stochastic-schedules.xml')
     File.delete(xml_path_test)
   end
 
@@ -374,14 +374,6 @@ class HPXMLTest < MiniTest::Test
     system(command, err: File::NULL)
     assert_equal(false, File.exist?(csv_output_path))
     assert(File.readlines(run_log).select { |l| l.include? 'Multiple Building elements defined in HPXML file; Building ID argument must be provided.' }.size > 0)
-  end
-
-  def test_weather_cache
-    cache_orig = File.join(@this_dir, '..', '..', 'weather', 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
-    cache_bak = cache_orig + '.bak'
-    File.rename(cache_orig, cache_bak)
-    _run_xml(File.absolute_path(File.join(@this_dir, '..', 'sample_files', 'base.xml')))
-    File.rename(cache_bak, cache_orig) # Put original file back
   end
 
   def test_release_zips
@@ -439,9 +431,6 @@ class HPXMLTest < MiniTest::Test
     assert(File.exist? timeseries_csv_path)
     assert(File.exist? hpxml_csv_path)
 
-    # Get results
-    results = _get_simulation_results(annual_csv_path, xml)
-
     # Check outputs
     hpxml_defaults_path = File.join(rundir, 'in.xml')
     stron_paths = [File.join(File.dirname(__FILE__), '..', '..', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')]
@@ -455,12 +444,13 @@ class HPXMLTest < MiniTest::Test
     end
     sizing_results = _get_hvac_sizing_results(hpxml, xml)
     bill_results = _get_bill_results(bills_csv_path)
+    results = _get_simulation_results(annual_csv_path, xml, hpxml)
     _verify_outputs(rundir, xml, results, hpxml)
 
     return results, sizing_results, bill_results
   end
 
-  def _get_simulation_results(annual_csv_path, xml)
+  def _get_simulation_results(annual_csv_path, xml, hpxml)
     # Grab all outputs from reporting measure CSV annual results
     results = {}
     CSV.foreach(annual_csv_path) do |row|
@@ -473,17 +463,21 @@ class HPXMLTest < MiniTest::Test
     if not xml.include? 'ASHRAE_Standard_140'
       sum_component_htg_loads = results.select { |k, _v| k.start_with? 'Component Load: Heating:' }.values.sum(0.0)
       sum_component_clg_loads = results.select { |k, _v| k.start_with? 'Component Load: Cooling:' }.values.sum(0.0)
-      total_htg_load = results['Load: Heating: Delivered (MBtu)']
-      total_clg_load = results['Load: Cooling: Delivered (MBtu)']
-      abs_htg_load_delta = (total_htg_load - sum_component_htg_loads).abs
-      abs_clg_load_delta = (total_clg_load - sum_component_clg_loads).abs
-      avg_htg_load = ([total_htg_load, abs_htg_load_delta].sum / 2.0)
-      avg_clg_load = ([total_htg_load, abs_htg_load_delta].sum / 2.0)
+      total_htg_load_delivered = results['Load: Heating: Delivered (MBtu)']
+      total_clg_load_delivered = results['Load: Cooling: Delivered (MBtu)']
+      abs_htg_load_delta = (total_htg_load_delivered - sum_component_htg_loads).abs
+      abs_clg_load_delta = (total_clg_load_delivered - sum_component_clg_loads).abs
+      avg_htg_load = ([total_htg_load_delivered, abs_htg_load_delta].sum / 2.0)
+      avg_clg_load = ([total_clg_load_delivered, abs_clg_load_delta].sum / 2.0)
       abs_htg_load_frac = abs_htg_load_delta / avg_htg_load
       abs_clg_load_frac = abs_clg_load_delta / avg_clg_load
       # Check that the difference is less than 0.6MBtu or less than 10%
-      assert((abs_htg_load_delta < 0.6) || (abs_htg_load_frac < 0.1))
-      assert((abs_clg_load_delta < 0.6) || (abs_clg_load_frac < 0.1))
+      if hpxml.total_fraction_heat_load_served > 0
+        assert((abs_htg_load_delta < 0.6) || (abs_htg_load_frac < 0.1))
+      end
+      if hpxml.total_fraction_cool_load_served > 0
+        assert((abs_clg_load_delta < 1.1) || (abs_clg_load_frac < 0.1))
+      end
     end
 
     return results

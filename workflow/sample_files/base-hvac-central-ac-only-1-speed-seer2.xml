@@ -21,7 +21,7 @@
         <Timestep>60</Timestep>
       </SimulationControl>
       <AdditionalProperties>
-        <ParentHPXMLFile>base.xml</ParentHPXMLFile>
+        <ParentHPXMLFile>base-hvac-central-ac-only-1-speed.xml</ParentHPXMLFile>
       </AdditionalProperties>
     </extension>
   </SoftwareInfo>
@@ -64,6 +64,10 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
+          <ClimateZone>5B</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2021</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
@@ -187,7 +191,6 @@
             <SystemIdentifier id='FoundationWall1'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
-            <Type>concrete block foam core</Type>
             <Height>8.0</Height>
             <Area>1200.0</Area>
             <Thickness>8.0</Thickness>
@@ -200,14 +203,14 @@
               <Layer>
                 <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>8.9</NominalRValue>
-                <DistanceToTopOfInsulation>1.0</DistanceToTopOfInsulation>
+                <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
                 <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
               </Layer>
               <Layer>
                 <InstallationType>continuous - interior</InstallationType>
-                <NominalRValue>10.0</NominalRValue>
+                <NominalRValue>0.0</NominalRValue>
                 <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
               </Layer>
             </Insulation>
           </FoundationWall>
@@ -330,27 +333,8 @@
         <HVAC>
           <HVACPlant>
             <PrimarySystems>
-              <PrimaryHeatingSystem idref='HeatingSystem1'/>
               <PrimaryCoolingSystem idref='CoolingSystem1'/>
             </PrimarySystems>
-            <HeatingSystem>
-              <SystemIdentifier id='HeatingSystem1'/>
-              <DistributionSystem idref='HVACDistribution1'/>
-              <HeatingSystemType>
-                <Furnace/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>36000.0</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>AFUE</Units>
-                <Value>0.92</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <extension>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
-              </extension>
-            </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
               <DistributionSystem idref='HVACDistribution1'/>
@@ -360,8 +344,8 @@
               <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Units>SEER2</Units>
+                <Value>12.4</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
@@ -374,7 +358,6 @@
           <HVACControl>
             <SystemIdentifier id='HVACControl1'/>
             <ControlType>manual thermostat</ControlType>
-            <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
