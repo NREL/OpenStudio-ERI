@@ -18,7 +18,8 @@ class EnergyStarVentTest < MiniTest::Test
   def cfm_per_watt(es_version)
     if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? es_version
       return 2.2
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? es_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
+           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? es_version
       return 2.8
     end
   end
@@ -92,7 +93,9 @@ class EnergyStarVentTest < MiniTest::Test
 
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '1A'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)

@@ -65,7 +65,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
   .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
-  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.0", "SF_National_3.1", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", or "MF_OregonWashington_1.2".
+  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.0", "SF_National_3.1", "SF_National_3.2", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", "MF_National_1.2", or "MF_OregonWashington_1.2".
 
 .. warning::
 
@@ -160,11 +160,13 @@ Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRi
 HPXML Climate Zones
 -------------------
 
-All OpenStudio-ERI runs must have a 2006 IECC climate zone, per ANSI/RESNET/ICC 301, entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2006]/ClimateZone``.
+All OpenStudio-ERI runs must have a 2006 IECC climate zone entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2006]/ClimateZone``.
 ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
 
 IECC ERI pathway runs must include an IECC climate zone of the same year.
 For example, if ``IECCERICalculation/Version is 2018, then a 2018 IECC climate zone must also be entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2018]/ClimateZone``
+
+ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
 
 HPXML Enclosure
 ---------------
