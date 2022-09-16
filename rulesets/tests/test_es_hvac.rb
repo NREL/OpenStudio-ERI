@@ -328,7 +328,9 @@ class EnergyStarHVACtest < MiniTest::Test
       # Test in climate zone 7
       _convert_to_es('base-hvac-elec-resistance-only.xml', es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '7'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -389,7 +391,9 @@ class EnergyStarHVACtest < MiniTest::Test
         # Test in climate zone 7
         _convert_to_es(hpxml_name, es_version)
         hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-        hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+          climate_zone_iecc.zone = '7'
+        end
         hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
         hpxml.climate_and_risk_zones.weather_station_wmo = 727450
         XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -530,7 +534,9 @@ class EnergyStarHVACtest < MiniTest::Test
       # Test in climate zone 7
       _convert_to_es('base-hvac-ground-to-air-heat-pump.xml', es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '7'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -1360,7 +1366,9 @@ class EnergyStarHVACtest < MiniTest::Test
       # Test in climate zone 7
       _convert_to_es(hpxml_name, es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '7'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)

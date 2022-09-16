@@ -93,7 +93,9 @@ class EnergyStarVentTest < MiniTest::Test
 
       _convert_to_es('base-bldgtype-multifamily.xml', es_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '1A'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
