@@ -181,6 +181,7 @@ def create_hpxmls
     'base-enclosure-split-surfaces.xml' => 'base-enclosure-skylights.xml', # Surfaces should collapse via HPXML.collapse_enclosure_surfaces()
     'base-enclosure-split-surfaces2.xml' => 'base-enclosure-skylights.xml', # Surfaces should NOT collapse via HPXML.collapse_enclosure_surfaces()
     'base-enclosure-walltypes.xml' => 'base.xml',
+    'base-enclosure-windows-natural-ventilation-availability.xml' => 'base.xml',
     'base-enclosure-windows-none.xml' => 'base.xml',
     'base-enclosure-windows-physical-properties.xml' => 'base.xml',
     'base-enclosure-windows-shading.xml' => 'base.xml',
@@ -286,6 +287,7 @@ def create_hpxmls
     'base-hvac-ducts-leakage-cfm50.xml' => 'base.xml',
     'base-hvac-ducts-leakage-percent.xml' => 'base.xml',
     'base-hvac-ducts-area-fractions.xml' => 'base-enclosure-2stories.xml',
+    'base-hvac-ducts-area-multipliers.xml' => 'base.xml',
     'base-hvac-elec-resistance-only.xml' => 'base.xml',
     'base-hvac-evap-cooler-furnace-gas.xml' => 'base.xml',
     'base-hvac-evap-cooler-only.xml' => 'base.xml',
@@ -529,9 +531,9 @@ end
 
 def set_measure_argument_values(hpxml_file, args, sch_args, orig_parent)
   if hpxml_file.include? 'ASHRAE_Standard_140'
-    args['hpxml_path'] = "../workflow/tests/#{hpxml_file}"
+    args['hpxml_path'] = "workflow/tests/#{hpxml_file}"
   else
-    args['hpxml_path'] = "../workflow/sample_files/#{hpxml_file}"
+    args['hpxml_path'] = "workflow/sample_files/#{hpxml_file}"
   end
   args['apply_validation'] = false # It's faster not to validate and the CI tests will catch issues
 
@@ -1226,6 +1228,7 @@ def set_measure_argument_values(hpxml_file, args, sch_args, orig_parent)
   if ['base-bldgtype-single-family-attached.xml'].include? hpxml_file
     args['geometry_unit_type'] = HPXML::ResidentialTypeSFA
     args['geometry_unit_cfa'] = 1800.0
+    args['geometry_unit_aspect_ratio'] = 0.6667
     args['geometry_building_num_units'] = 3
     args['geometry_unit_right_wall_is_adiabatic'] = true
     args['window_front_wwr'] = 0.18
@@ -1258,6 +1261,7 @@ def set_measure_argument_values(hpxml_file, args, sch_args, orig_parent)
   if ['base-bldgtype-multifamily.xml'].include? hpxml_file
     args['geometry_unit_type'] = HPXML::ResidentialTypeApartment
     args['geometry_unit_cfa'] = 900.0
+    args['geometry_unit_aspect_ratio'] = 0.6667
     args['geometry_foundation_type'] = HPXML::FoundationTypeAboveApartment
     args['geometry_attic_type'] = HPXML::AtticTypeBelowApartment
     args['geometry_unit_right_wall_is_adiabatic'] = true
@@ -1562,6 +1566,8 @@ def set_measure_argument_values(hpxml_file, args, sch_args, orig_parent)
     args['overhangs_right_depth'] = 1.5
     args['overhangs_right_distance_to_top_of_window'] = 2.0
     args['overhangs_right_distance_to_bottom_of_window'] = 6.0
+  elsif ['base-enclosure-windows-natural-ventilation-availability.xml'].include? hpxml_file
+    args['window_natvent_availability'] = 7
   elsif ['base-enclosure-windows-none.xml'].include? hpxml_file
     args['window_area_front'] = 0
     args['window_area_back'] = 0
@@ -4086,6 +4092,10 @@ def apply_hpxml_modification(hpxml_file, hpxml)
     hpxml.hvac_distributions[0].duct_leakage_measurements << hpxml.hvac_distributions[1].duct_leakage_measurements[1].dup
     hpxml.hvac_distributions[0].ducts << hpxml.hvac_distributions[1].ducts[0].dup
     hpxml.hvac_distributions[0].ducts << hpxml.hvac_distributions[1].ducts[1].dup
+  end
+  if ['base-hvac-ducts-area-multipliers.xml'].include? hpxml_file
+    hpxml.hvac_distributions[0].ducts[0].duct_surface_area_multiplier = 0.5
+    hpxml.hvac_distributions[0].ducts[1].duct_surface_area_multiplier = 1.5
   end
 
   # ------------------ #

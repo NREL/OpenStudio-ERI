@@ -66,6 +66,10 @@
           <Year>2006</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2021</Year>
+          <ClimateZone>7</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>USA_MN_Duluth.Intl.AP.727450_TMY3</Name>

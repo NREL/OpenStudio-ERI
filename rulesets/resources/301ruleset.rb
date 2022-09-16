@@ -22,6 +22,14 @@ class EnergyRatingIndex301Ruleset
     end
     @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
+    if iecc_version.nil?
+      # Use Year=2006 per ANSI 301
+      @iecc_zone_year = 2006
+    else
+      # Use same year as the IECC version requested
+      @iecc_zone_year = Integer(iecc_version)
+    end
+
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
@@ -223,6 +231,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
+    new_hpxml.header.natvent_days_per_week = 7
 
     add_emissions_scenarios(new_hpxml)
 
@@ -316,12 +325,13 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    new_hpxml.climate_and_risk_zones.iecc_year = orig_hpxml.climate_and_risk_zones.iecc_year
-    new_hpxml.climate_and_risk_zones.iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == @iecc_zone_year }[0]
+    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
+                                                            zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
-    @iecc_zone = orig_hpxml.climate_and_risk_zones.iecc_zone
+    @iecc_zone = climate_zone_iecc.zone
     @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 

@@ -50,7 +50,11 @@
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
-          <Year>2018</Year>
+          <Year>2006</Year>
+          <ClimateZone>2A</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2021</Year>
           <ClimateZone>2A</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>

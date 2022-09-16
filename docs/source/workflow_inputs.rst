@@ -157,20 +157,14 @@ Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRi
 
   .. [#] A full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
 
-HPXML Climate Zone
-------------------
+HPXML Climate Zones
+-------------------
 
-The IECC climate zone is entered in ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC``.
+All OpenStudio-ERI runs must have a 2006 IECC climate zone, per ANSI/RESNET/ICC 301, entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2006]/ClimateZone``.
+ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
 
-  =========================  =======  =======  ===========  ========  =======  =========
-  Element                    Type     Units    Constraints  Required  Default  Notes
-  =========================  =======  =======  ===========  ========  =======  =========
-  ``Year``                   integer           See [#]_     Yes                IECC year
-  ``ClimateZone``            string            See [#]_     Yes                IECC zone
-  =========================  =======  =======  ===========  ========  =======  =========
-
-  .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, or 2021.
-  .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
+IECC ERI pathway runs must include an IECC climate zone of the same year.
+For example, if ``IECCERICalculation/Version is 2018, then a 2018 IECC climate zone must also be entered as ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year=2018]/ClimateZone``
 
 HPXML Enclosure
 ---------------
@@ -214,7 +208,7 @@ Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/A
   .. [#] UnitofMeasure choices are "ACH" (air changes per hour at user-specified pressure), "CFM" (cubic feet per minute at user-specified pressure), or "ACHnatural" (natural air changes per hour).
   .. [#] HousePressure only required if BuildingAirLeakage/UnitofMeasure is not "ACHnatural".
   .. [#] HousePressure typical value is 50 Pa.
-  .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should *not* be adjusted by the Aext reduction factor specified in ANSI 301.
+  .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should *not* be adjusted by the Aext reduction factor specified in ANSI/RESNET/ICC 301.
          OpenStudio-ERI will automatically calculate and apply the Aext adjustment (and the Aext value can be found in, e.g., the ERIRatedHome.xml output file).
   .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
   .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.

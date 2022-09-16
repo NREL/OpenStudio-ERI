@@ -920,7 +920,7 @@ class ERIMechVentTest < MiniTest::Test
   def test_mech_vent_iecc_eri_exception
     IECCConstants.AllVersions.each do |iecc_version|
       _all_calc_types.each do |calc_type|
-        hpxml_name = 'base-mechvent-exhaust.xml'
+        hpxml_name = _change_iecc_version('base-mechvent-exhaust.xml', iecc_version)
 
         # Run IECC calculation
         iecc_hpxml = _test_ruleset(hpxml_name, calc_type, iecc_version)
