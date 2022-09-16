@@ -10,12 +10,12 @@ class EnergyStarRuleset
 
     if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       # Use Year=2021 for Reference Home configuration
-      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select{ |z| z.year == 2021 }[0].zone
+      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }[0].zone
     else
       # Use Year=2006 for Reference Home configuration
-      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select{ |z| z.year == 2006 }[0].zone
+      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0].zone
     end
-    
+
     # Update HPXML object based on ESRD configuration
     if calc_type == ESConstants.CalcTypeEnergyStarReference
       hpxml = apply_energy_star_ruleset_reference(hpxml)
@@ -1525,7 +1525,9 @@ class EnergyStarRuleset
         elsif @program_version == ESConstants.MFNationalVer1_2
           uef = 1.49
         end
-        fhr = 40 # FIXME: Need to check with Scott
+        # Use rated home FHR if provided, else 63, per EPA
+        fhr = orig_water_heater.first_hour_rating
+        fhr = 63.0 if fhr.nil?
       end
 
       return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
