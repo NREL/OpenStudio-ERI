@@ -4,7 +4,7 @@ __New Features__
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).
 - Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
-- Allows calculating all programs (e.g., ERI & ENERGY STAR) simultaneously while avoiding duplicate EnergyPlus simulations.
+- Allows calculating all programs (e.g., ERI, ENERGY STAR, IECC, etc.) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
   - **Breaking change**: The organization of ENERGY STAR output files have changed.
 - **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
