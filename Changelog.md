@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.4.4
+
+__Bugfixes__
+- Fixes possible simulation error if a slab has an ExposedPerimeter near zero.
+
 ## OpenStudio-ERI v1.4.3
 
 __Bugfixes__
