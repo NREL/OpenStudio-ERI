@@ -21,7 +21,7 @@
         <Timestep>60</Timestep>
       </SimulationControl>
       <AdditionalProperties>
-        <ParentHPXMLFile>base-bldgtype-multifamily.xml</ParentHPXMLFile>
+        <ParentHPXMLFile>base-bldgtype-multifamily-shared-laundry-room.xml</ParentHPXMLFile>
       </AdditionalProperties>
     </extension>
   </SoftwareInfo>
@@ -381,7 +381,7 @@
           <NumberofUnits>2</NumberofUnits>
           <IsSharedAppliance>true</IsSharedAppliance>
           <NumberofUnitsServed>3</NumberofUnitsServed>
-          <AttachedToWaterHeatingSystem idref='WaterHeatingSystem1'/>
+          <AttachedToHotWaterDistribution idref='HotWaterDistribution1'/>
           <Location>other heated space</Location>
           <IntegratedModifiedEnergyFactor>1.21</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>380.0</RatedAnnualkWh>
@@ -405,7 +405,7 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
           <IsSharedAppliance>true</IsSharedAppliance>
-          <AttachedToWaterHeatingSystem idref='WaterHeatingSystem1'/>
+          <AttachedToHotWaterDistribution idref='HotWaterDistribution1'/>
           <Location>other heated space</Location>
           <RatedAnnualkWh>307.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>

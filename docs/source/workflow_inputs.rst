@@ -1770,15 +1770,15 @@ A single clothes washer can be entered as a ``/HPXML/Building/BuildingDetails/Ap
 
 If the clothes washer is shared, additional information is entered in ``/HPXML/Building/BuildingDetails/Appliances/ClothesWasher``.
 
-  ================================  =======  =====  ===========  ========  =======  ==========================================================
-  Element                           Type     Units  Constraints  Required  Default  Notes
-  ================================  =======  =====  ===========  ========  =======  ==========================================================
-  ``AttachedToWaterHeatingSystem``  idref           See [#]_     Yes                ID of attached water heater
-  ``NumberofUnits``                 integer                      Yes                Number of clothes washers in the shared laundry room
-  ``NumberofUnitsServed``           integer                      Yes                Number of dwelling units served by the shared laundry room
-  ================================  =======  =====  ===========  ========  =======  ==========================================================
+  ======================================================================  =======  =====  ===========  ========  =======  ==========================================================
+  Element                                                                 Type     Units  Constraints  Required  Default  Notes
+  ======================================================================  =======  =====  ===========  ========  =======  ==========================================================
+  ``AttachedToWaterHeatingSystem`` or ``AttachedToHotWaterDistribution``  idref           See [#]_     Yes                ID of attached water heater or distribution system
+  ``NumberofUnits``                                                       integer                      Yes                Number of clothes washers in the shared laundry room
+  ``NumberofUnitsServed``                                                 integer                      Yes                Number of dwelling units served by the shared laundry room
+  ======================================================================  =======  =====  ===========  ========  =======  ==========================================================
 
-  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``.
+  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``; AttachedToHotWaterDistribution must reference a ``HotWaterDistribution``.
 
 .. note::
 
@@ -1851,13 +1851,13 @@ A single dishwasher can be entered as a ``/HPXML/Building/BuildingDetails/Applia
 
 If the dishwasher is shared, additional information is entered in ``/HPXML/Building/BuildingDetails/Appliances/Dishwasher``.
 
-  ================================  =======  =====  ===========  ========  =======  ===========================
-  Element                           Type     Units  Constraints  Required  Default  Notes
-  ================================  =======  =====  ===========  ========  =======  ===========================
-  ``AttachedToWaterHeatingSystem``  idref           See [#]_     Yes                ID of attached water heater
-  ================================  =======  =====  ===========  ========  =======  ===========================
+  ======================================================================  =======  =====  ===========  ========  =======  ===========================
+  Element                                                                 Type     Units  Constraints  Required  Default  Notes
+  ======================================================================  =======  =====  ===========  ========  =======  ===========================
+  ``AttachedToWaterHeatingSystem`` or ``AttachedToHotWaterDistribution``  idref           See [#]_     Yes                ID of attached water heater or distribution system
+  ======================================================================  =======  =====  ===========  ========  =======  ===========================
 
-  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``.
+  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``; AttachedToHotWaterDistribution must reference a ``HotWaterDistribution``.
 
 .. note::
   
