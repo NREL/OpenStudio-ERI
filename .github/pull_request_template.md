@@ -4,7 +4,9 @@
 
 ## Checklist
 
-Not all may apply:
+PR Author: Check these when they're done. Not all may apply. ~~strikethrough~~ and check any that do not apply. 
+
+PR Reviewer: Verify each has been completed.
 
 - [ ] OS-HPXML git subtree has been pulled
 - [ ] 301/ES rulesets and unit tests have been updated

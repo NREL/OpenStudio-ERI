@@ -2337,6 +2337,7 @@ def create_sample_hpxmls
                   'base-bldgtype-multifamily-shared-generator.xml',
                   'base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml',
                   'base-bldgtype-multifamily-shared-laundry-room.xml',
+                  'base-bldgtype-multifamily-shared-laundry-room-multiple-water-heaters.xml',
                   'base-bldgtype-multifamily-shared-mechvent.xml',
                   'base-bldgtype-multifamily-shared-mechvent-preconditioning.xml',
                   'base-bldgtype-multifamily-shared-pv.xml',
