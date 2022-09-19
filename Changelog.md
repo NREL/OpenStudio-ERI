@@ -23,6 +23,10 @@ __Bugfixes__
 - Bugfix for increasing HVAC capacities due to installation grading.
 - Fixes possible output error for ground source heat pumps with a shared hydronic circulation loop.
 - Fixes zero energy use for a ventilation fan w/ non-zero fan power and zero airflow rate.
+
+## OpenStudio-ERI v1.4.4
+
+__Bugfixes__
 - Fixes possible simulation error if a slab has an ExposedPerimeter near zero.
 
 ## OpenStudio-ERI v1.4.3
