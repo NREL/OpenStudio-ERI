@@ -19,7 +19,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         value, units = 4.0, 'ACH'
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFOregonWashingtonVer3_2].include? program_version
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2].include? program_version
         value, units = 3.0, 'ACH'
       elsif program_version == ESConstants.SFPacificVer3_0
         value, units = 6.0, 'ACH'
@@ -47,6 +47,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         value, units = 6.0, 'ACH'
       elsif program_version == ESConstants.SFNationalVer3_1
         value, units = 4.0, 'ACH'
+      elsif program_version == ESConstants.SFNationalVer3_2
+        value, units = 3.0, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1170.0, 'CFM'
       end
@@ -73,7 +75,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       hpxml = _test_ruleset(program_version)
       _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
-      if [ESConstants.MFNationalVer1_1].include? program_version
+      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         # Ducts remain in living space, so no need to transition roof to vented attic
         adjacent_to = HPXML::LocationLivingSpace
         rvalue = 25.8
@@ -98,7 +100,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     ESConstants.NationalVersions.each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '1A'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -146,6 +150,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.056
       elsif program_version == ZERHConstants.Ver1
         rvalue = 1.0 / 0.060
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+        rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
       end
@@ -170,6 +176,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     ESConstants.MFVersions.each do |program_version|
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
+      elsif program_version == ESConstants.MFNationalVer1_2
+        rvalue = 1.0 / 0.045
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.056
       end
@@ -215,6 +223,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.056
       elsif program_version == ZERHConstants.Ver1
         rvalue = 1.0 / 0.060
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+        rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
       end
@@ -233,7 +243,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         rvalue = 1.0 / 0.059
-      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1].include? program_version
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
+             ZERHConstants.Ver1].include? program_version
         rvalue = 1.0 / 0.050
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
         rvalue = 7.5
@@ -271,7 +282,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       hpxml_names.each do |hpxml_name|
         _convert_to_es_zerh(hpxml_name, program_version)
         hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-        hpxml.climate_and_risk_zones.iecc_zone = '1A'
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+          climate_zone_iecc.zone = '1A'
+        end
         hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
         hpxml.climate_and_risk_zones.weather_station_wmo = 722020
         XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -323,6 +336,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.026
         rvalue_floors_over_uncond_spaces = 1.0 / 0.028
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+        rvalue = 1.0 / 0.024
+        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       end
 
       _convert_to_es_zerh('base.xml', program_version)
@@ -343,7 +359,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if program_version == ESConstants.MFNationalVer1_1
+      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         _check_floors(hpxml)
       else
         _check_floors(hpxml, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue)
@@ -355,7 +371,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
       _convert_to_es_zerh('base-atticroof-flat.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if program_version == ESConstants.MFNationalVer1_1
+      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         _check_floors(hpxml)
       else
         _check_floors(hpxml, area: 1350, rvalue: rvalue)
@@ -363,9 +379,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     end
 
     ESConstants.MFVersions.each do |program_version|
-      if program_version == ESConstants.MFNationalVer1_0
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
-      elsif program_version == ESConstants.MFNationalVer1_1
+      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue_floors_over_uncond_spaces = 1.0 / 0.028
@@ -394,7 +408,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '1A'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -419,6 +435,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         perim_ins_r = 10
         under_ins_width = 999
         under_ins_r = 10
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+        perim_ins_depth = 4
+        perim_ins_r = 10
+        under_ins_width = 0
+        under_ins_r = 0
       else
         perim_ins_depth = 2
         perim_ins_r = 10
@@ -439,7 +460,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
       _convert_to_es_zerh('base-foundation-slab.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '1A'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -453,7 +476,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     ESConstants.SFVersions.each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
-      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1].include? program_version
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
+             ZERHConstants.Ver1].include? program_version
         ufactor, shgc = 0.27, 0.40
       elsif program_version == ESConstants.SFPacificVer3_0
         ufactor, shgc = 0.60, 0.27
@@ -501,7 +525,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       # Base test (non-structural windows)
       if program_version == ESConstants.MFNationalVer1_0
         ufactor, shgc = 0.30, 0.40
-      elsif program_version == ESConstants.MFNationalVer1_1
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         ufactor, shgc = 0.27, 0.40
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
         ufactor, shgc = 0.27, 0.30
@@ -516,10 +540,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       # Test w/ structural fixed windows
       if program_version == ESConstants.MFNationalVer1_0
         ufactor2 = 0.38
-      elsif program_version == ESConstants.MFNationalVer1_1
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         ufactor2 = 0.36
-      elsif program_version == ESConstants.MFOregonWashingtonVer1_2
-        ufactor2 = 0.36
+      elsif program_version == ESConstants.MFNationalVer1_2
+        ufactor2 = 0.34
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.windows.each do |window|
@@ -538,9 +562,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       # Test w/ structural operable windows
       if program_version == ESConstants.MFNationalVer1_0
         ufactor3 = 0.45
-      elsif program_version == ESConstants.MFNationalVer1_1
-        ufactor3 = 0.43
-      elsif program_version == ESConstants.MFOregonWashingtonVer1_2
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2, ESConstants.MFNationalVer1_2].include? program_version
         ufactor3 = 0.43
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -563,20 +585,22 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       if program_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.60, 0.27
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif program_version == ESConstants.SFNationalVer3_1
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [74.55, 74.55, 74.55, 74.55]
       elsif program_version == ESConstants.MFNationalVer1_0
         ufactor, shgc = 0.60, 0.27
         areas = [89.46, 89.46, 59.64, 59.64]
-      elsif program_version == ESConstants.MFNationalVer1_1
+      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [89.46, 89.46, 59.64, 59.64]
       end
 
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '1A'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -607,7 +631,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
   def test_enclosure_doors
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if [ESConstants.SFNationalVer3_1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
+          ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.17
       else
         rvalue = 1.0 / 0.21

@@ -100,7 +100,6 @@ EnergyPlus simulation controls are entered in ``/HPXML/SoftwareInfo/extension/Si
   ``EndMonth``                          integer            1 - 12         No        12 (December)                Run period end date
   ``EndDayOfMonth``                     integer            1 - 31         No        31                           Run period end date
   ``CalendarYear``                      integer            > 1600 [#]_    No        2007 (for TMY weather) [#]_  Calendar year (for start day of week)
-  ``DaylightSaving/Enabled``            boolean                           No        true                         Daylight saving enabled?
   ``TemperatureCapacitanceMultiplier``  double             > 0            No        1.0                          Multiplier on air heat capacitance [#]_
   ====================================  ========  =======  =============  ========  ===========================  =====================================
 
@@ -110,17 +109,6 @@ EnergyPlus simulation controls are entered in ``/HPXML/SoftwareInfo/extension/Si
   .. [#] TemperatureCapacitanceMultiplier affects the transient calculation of indoor air temperatures.
          Values greater than 1.0 have the effect of smoothing or damping the rate of change in the indoor air temperature from timestep to timestep.
          This heat capacitance effect is modeled on top of any other individual mass inputs (e.g., furniture mass, partition wall mass, interior drywall, etc.) in the HPXML.
-
-If daylight saving is enabled, additional information is specified in ``DaylightSaving``.
-
-  ======================================  ========  =====  =================  ========  =============================  ===========
-  Element                                 Type      Units  Constraints        Required  Default                        Description
-  ======================================  ========  =====  =================  ========  =============================  ===========
-  ``BeginMonth`` and ``BeginDayOfMonth``  integer          1 - 12 and 1 - 31  No        EPW else 3/12 (March 12) [#]_  Start date
-  ``EndMonth`` and ``EndDayOfMonth``      integer          1 - 12 and 1 - 31  No        EPW else 11/5 (November 5)     End date
-  ======================================  ========  =====  =================  ========  =============================  ===========
-
-  .. [#] Daylight saving dates will be defined according to the EPW weather file header; if not available, fallback default values listed above will be used.
 
 HPXML HVAC Sizing Control
 *************************
@@ -433,12 +421,24 @@ Building site information can be entered in ``/HPXML/Building/Site``.
   ``Address/StateCode``                    string                        No        See [#]_  State/territory where the home is located
   ``Address/ZipCode``                      string           See [#]_     No                  ZIP Code where the home is located
   ``TimeZone/UTCOffset``                   double           See [#]_     No        See [#]_  Difference in decimal hours between the home's time zone and UTC
+  ``TimeZone/DSTObserved``                 boolean                       No        true      Daylight saving time observed?
   =======================================  ========  =====  ===========  ========  ========  ===============
 
   .. [#] If StateCode not provided, defaults according to the EPW weather file header.
   .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
   .. [#] UTCOffset ranges from -12 to 14.
   .. [#] If UTCOffset not provided, defaults according to the EPW weather file header.
+
+If daylight saving time is observed, additional information can be specified in ``/HPXML/Building/Site/TimeZone/extension``.
+
+  ============================================  ========  =====  =================  ========  =============================  ===========
+  Element                                       Type      Units  Constraints        Required  Default                        Description
+  ============================================  ========  =====  =================  ========  =============================  ===========
+  ``DSTBeginMonth`` and ``DSTBeginDayOfMonth``  integer          1 - 12 and 1 - 31  No        EPW else 3/12 (March 12) [#]_  Start date
+  ``DSTEndMonth`` and ``DSTEndDayOfMonth``      integer          1 - 12 and 1 - 31  No        EPW else 11/5 (November 5)     End date
+  ============================================  ========  =====  =================  ========  =============================  ===========
+
+  .. [#] Daylight saving dates will be defined according to the EPW weather file header; if not available, fallback default values listed above will be used.
 
 HPXML Building Summary
 ----------------------
@@ -530,19 +530,19 @@ HPXML Climate Zones
 HPXML Climate Zone IECC
 ***********************
 
-Climate zone information can be entered as an ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC``.
+Climate zone information can be optionally entered as an ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC``.
 
   =================================  ========  =====  ===========  ========  ========  ===============
   Element                            Type      Units  Constraints  Required  Default   Description
   =================================  ========  =====  ===========  ========  ========  ===============
-  ``Year``                           integer          See [#]_     No        2006      IECC year
-  ``ClimateZone``                    string           See [#]_     No        See [#]_  IECC zone
+  ``Year``                           integer          See [#]_     Yes                 IECC year
+  ``ClimateZone``                    string           See [#]_     Yes                 IECC zone
   =================================  ========  =====  ===========  ========  ========  ===============
 
-  .. [#] Year choices are 2003, 2006, 2009, or 2012.
+  .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, or 2021.
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
-  .. [#] If ClimateZone not provided, defaults according to the EPW weather file header.
 
+If Climate zone information not provided, defaults according to the EPW weather file header.
 
 Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation``.
 
@@ -937,6 +937,16 @@ Each window or glass door area is entered as an ``/HPXML/Building/BuildingDetail
          If a ``Window`` represents multiple windows (e.g., 4), the value should be between 0 and 1 (e.g., 0, 0.25, 0.5, 0.75, or 1).
          The total open window area for natural ventilation is calculated using A) the operable fraction, B) the assumption that 50% of the area of operable windows can be open, and C) the assumption that 20% of that openable area is actually opened by occupants whenever outdoor conditions are favorable for cooling.
   .. [#] AttachedToWall must reference a ``Wall`` or ``FoundationWall``.
+
+If operable windows are defined, the availability of natural ventilation is entered in ``/HPXML/SoftwareInfo/extension``.
+
+  =============================================  ========  =========  ===========  ========  ========  ========================================================
+  Element                                        Type      Units      Constraints  Required  Default   Notes
+  =============================================  ========  =========  ===========  ========  ========  ========================================================
+  ``NaturalVentilationAvailabilityDaysperWeek``  integer   days/week  0 - 7        No        3 [#]_    How often windows can be opened by occupants for natural ventilation
+  =============================================  ========  =========  ===========  ========  ========  ========================================================
+
+  .. [#] Default of 3 days per week (Monday/Wednesday/Friday) is based on `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_.
 
 If UFactor and SHGC are not provided and GlassLayers is not "glass block", additional information is entered in ``Window``.
 
@@ -1863,6 +1873,7 @@ Additional information is entered in each ``Ducts``.
   ``DuctInsulationRValue``                         double   F-ft2-hr/Btu  >= 0              Yes                  R-value of duct insulation [#]_
   ``DuctLocation``                                 string                 See [#]_          No        See [#]_   Duct location
   ``FractionDuctArea`` and/or ``DuctSurfaceArea``  double   frac or ft2   0-1 [#]_ or >= 0  See [#]_  See [#]_   Duct fraction/surface area in location
+  ``extension/DuctSurfaceAreaMultiplier``          double                 >= 0              No        1.0        Duct surface area multiplier
   ===============================================  =======  ============  ================  ========  =========  ======================================
 
   .. [#] DuctInsulationRValue should not include air films (i.e., use 0 for an uninsulated duct).
@@ -2552,19 +2563,19 @@ HPXML Clothes Washer
 A single clothes washer can be entered as a ``/HPXML/Building/BuildingDetails/Appliances/ClothesWasher``.
 If not entered, the simulation will not include a clothes washer.
 
-  ==============================================================  =======  ===========  ===========  ========  ============  ==============================================
-  Element                                                         Type     Units        Constraints  Required  Default       Notes
-  ==============================================================  =======  ===========  ===========  ========  ============  ==============================================
-  ``SystemIdentifier``                                            id                                 Yes                     Unique identifier
-  ``IsSharedAppliance``                                           boolean                            No        false         Whether it serves multiple dwelling units [#]_
-  ``Location``                                                    string                See [#]_     No        living space  Location
-  ``IntegratedModifiedEnergyFactor`` or ``ModifiedEnergyFactor``  double   ft3/kWh/cyc  > 0          No        See [#]_      Efficiency [#]_
-  ``AttachedToWaterHeatingSystem``                                idref                 See [#]_     See [#]_                ID of attached water heater
-  ``extension/UsageMultiplier``                                   double                >= 0         No        1.0           Multiplier on energy & hot water usage
-  ``extension/WeekdayScheduleFractions``                          array                              No        See [#]_      24 comma-separated weekday fractions
-  ``extension/WeekendScheduleFractions``                          array                              No                      24 comma-separated weekend fractions
-  ``extension/MonthlyScheduleMultipliers``                        array                              No        See [#]_      12 comma-separated monthly multipliers
-  ==============================================================  =======  ===========  ===========  ========  ============  ==============================================
+  ======================================================================  =======  ===========  ===========  ========  ============  ==============================================
+  Element                                                                 Type     Units        Constraints  Required  Default       Notes
+  ======================================================================  =======  ===========  ===========  ========  ============  ==============================================
+  ``SystemIdentifier``                                                    id                                 Yes                     Unique identifier
+  ``IsSharedAppliance``                                                   boolean                            No        false         Whether it serves multiple dwelling units [#]_
+  ``Location``                                                            string                See [#]_     No        living space  Location
+  ``IntegratedModifiedEnergyFactor`` or ``ModifiedEnergyFactor``          double   ft3/kWh/cyc  > 0          No        See [#]_      Efficiency [#]_
+  ``AttachedToWaterHeatingSystem`` or ``AttachedToHotWaterDistribution``  idref                 See [#]_     See [#]_                ID of attached water heater or distribution system
+  ``extension/UsageMultiplier``                                           double                >= 0         No        1.0           Multiplier on energy & hot water usage
+  ``extension/WeekdayScheduleFractions``                                  array                              No        See [#]_      24 comma-separated weekday fractions
+  ``extension/WeekendScheduleFractions``                                  array                              No                      24 comma-separated weekend fractions
+  ``extension/MonthlyScheduleMultipliers``                                array                              No        See [#]_      12 comma-separated monthly multipliers
+  ======================================================================  =======  ===========  ===========  ========  ============  ==============================================
 
   .. [#] For example, a clothes washer in a shared laundry room of a MF building.
   .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "garage", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
@@ -2580,8 +2591,8 @@ If not entered, the simulation will not include a clothes washer.
   .. [#] If ModifiedEnergyFactor (MEF) provided instead of IntegratedModifiedEnergyFactor (IMEF), it will be converted using the `Interpretation on ANSI/RESNET 301-2014 Clothes Washer IMEF <https://www.resnet.us/wp-content/uploads/No.-301-2014-08-sECTION-4.2.2.5.2.8-Clothes-Washers-Eq-4.2-6.pdf>`_:
          IMEF = (MEF - 0.503) / 0.95.
          IMEF may be found using the manufacturer’s data sheet, the `California Energy Commission Appliance Database <https://cacertappliances.energy.ca.gov/Pages/ApplianceSearch.aspx>`_, the `EPA ENERGY STAR website <https://www.energystar.gov/productfinder/>`_, or another reputable source.
-  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``.
-  .. [#] AttachedToWaterHeatingSystem only required if IsSharedAppliance is true.
+  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``; AttachedToHotWaterDistribution must reference a ``HotWaterDistribution``.
+  .. [#] AttachedToWaterHeatingSystem (or AttachedToHotWaterDistribution) only required if IsSharedAppliance is true.
   .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 17 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.052, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017".
   .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.011, 1.002, 1.022, 1.020, 1.022, 0.996, 0.999, 0.999, 0.996, 0.964, 0.959, 1.011".
 
@@ -2643,19 +2654,19 @@ HPXML Dishwasher
 A single dishwasher can be entered as a ``/HPXML/Building/BuildingDetails/Appliances/Dishwasher``.
 If not entered, the simulation will not include a dishwasher.
 
-  ============================================  =======  ===========  ===========  ========  ============  ==============================================
-  Element                                       Type     Units        Constraints  Required  Default       Notes
-  ============================================  =======  ===========  ===========  ========  ============  ==============================================
-  ``SystemIdentifier``                          id                                 Yes                     Unique identifier
-  ``IsSharedAppliance``                         boolean                            No        false         Whether it serves multiple dwelling units [#]_
-  ``Location``                                  string                See [#]_     No        living space  Location
-  ``RatedAnnualkWh`` or ``EnergyFactor``        double   kWh/yr or #  > 0          No        See [#]_      EnergyGuide label consumption/efficiency [#]_
-  ``AttachedToWaterHeatingSystem``              idref                 See [#]_     See [#]_                ID of attached water heater
-  ``extension/UsageMultiplier``                 double                >= 0         No        1.0           Multiplier on energy & hot water usage
-  ``extension/WeekdayScheduleFractions``        array                              No        See [#]_      24 comma-separated weekday fractions
-  ``extension/WeekendScheduleFractions``        array                              No                      24 comma-separated weekend fractions
-  ``extension/MonthlyScheduleMultipliers``      array                              No        See [#]_      12 comma-separated monthly multipliers
-  ============================================  =======  ===========  ===========  ========  ============  ==============================================
+  ======================================================================  =======  ===========  ===========  ========  ============  ==============================================
+  Element                                                                 Type     Units        Constraints  Required  Default       Notes
+  ======================================================================  =======  ===========  ===========  ========  ============  ==============================================
+  ``SystemIdentifier``                                                    id                                 Yes                     Unique identifier
+  ``IsSharedAppliance``                                                   boolean                            No        false         Whether it serves multiple dwelling units [#]_
+  ``Location``                                                            string                See [#]_     No        living space  Location
+  ``RatedAnnualkWh`` or ``EnergyFactor``                                  double   kWh/yr or #  > 0          No        See [#]_      EnergyGuide label consumption/efficiency [#]_
+  ``AttachedToWaterHeatingSystem`` or ``AttachedToHotWaterDistribution``  idref                 See [#]_     See [#]_                ID of attached water heater or distribution system
+  ``extension/UsageMultiplier``                                           double                >= 0         No        1.0           Multiplier on energy & hot water usage
+  ``extension/WeekdayScheduleFractions``                                  array                              No        See [#]_      24 comma-separated weekday fractions
+  ``extension/WeekendScheduleFractions``                                  array                              No                      24 comma-separated weekend fractions
+  ``extension/MonthlyScheduleMultipliers``                                array                              No        See [#]_      12 comma-separated monthly multipliers
+  ======================================================================  =======  ===========  ===========  ========  ============  ==============================================
 
   .. [#] For example, a dishwasher in a shared mechanical room of a MF building.
   .. [#] Location choices are "living space", "basement - conditioned", "basement - unconditioned", "garage", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
@@ -2669,8 +2680,8 @@ If not entered, the simulation will not include a dishwasher.
          PlaceSettingCapacity = 12.
   .. [#] If EnergyFactor (EF) provided instead of RatedAnnualkWh, it will be converted using the following equation based on `ANSI/RESNET/ICC 301-2014 <https://codes.iccsafe.org/content/document/843>`_:
          RatedAnnualkWh = 215.0 / EF.
-  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``.
-  .. [#] AttachedToWaterHeatingSystem only required if IsSharedAppliance is true.
+  .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``; AttachedToHotWaterDistribution must reference a ``HotWaterDistribution``.
+  .. [#] AttachedToWaterHeatingSystem (or AttachedToHotWaterDistribution) only required if IsSharedAppliance is true.
   .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`detailedschedules` not used), default values from Figure 21 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.041, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031".
   .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`detailedschedules` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097".
 

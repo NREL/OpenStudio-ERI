@@ -97,7 +97,7 @@ def run_rulesets(hpxml_input_path, designs)
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
     last_hpxml = nil
-    new_hpxml_strings = {}
+    hpxml_strings = {}
     designs.each do |design|
       # Ensure we don't modify the original HPXML
       new_hpxml = Marshal.load(Marshal.dump(orig_hpxml))
@@ -126,7 +126,7 @@ def run_rulesets(hpxml_input_path, designs)
 
       # Write final HPXML file
       if not design.hpxml_output_path.nil?
-        new_hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_oga, design.hpxml_output_path)
+        hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_oga, design.hpxml_output_path)
       end
     end
   rescue Exception => e
@@ -134,11 +134,19 @@ def run_rulesets(hpxml_input_path, designs)
     return false, errors, warnings
   end
 
+  # Check for duplicate HPXML files
+
+  # First, replace IECC year strings so that we don't miss a duplicate just because the year is different
+  hpxml_strings.keys.each do |k|
+    hpxml_strings[k] = hpxml_strings[k].gsub(/<Year>.*<\/Year>/, '')
+  end
+
+  # Now identify duplicates
   duplicates = {}
-  new_hpxml_strings.each_with_index do |(hpxml_output_path, new_hpxml), i|
+  hpxml_strings.each_with_index do |(hpxml_output_path, new_hpxml), i|
     next if i == 0
 
-    new_hpxml_strings.each_with_index do |(hpxml_output_path2, new_hpxml2), j|
+    hpxml_strings.each_with_index do |(hpxml_output_path2, new_hpxml2), j|
       next if j >= i
 
       if new_hpxml == new_hpxml2

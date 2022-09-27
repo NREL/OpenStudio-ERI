@@ -16,10 +16,11 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
   end
 
   def cfm_per_watt(program_version, hpxml)
-    iecc_zone = hpxml.climate_and_risk_zones.iecc_zone
+    iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
     if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
       return 2.2
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
+           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
       return 2.8
     elsif [ZERHConstants.Ver1].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
@@ -31,7 +32,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
   end
 
   def fan_type(program_version, hpxml)
-    iecc_zone = hpxml.climate_and_risk_zones.iecc_zone
+    iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
     if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
       return HPXML::MechVentTypeSupply
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
@@ -52,7 +53,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
   end
 
   def sre(program_version, hpxml)
-    iecc_zone = hpxml.climate_and_risk_zones.iecc_zone
+    iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
     if ESConstants.AllVersions.include? program_version
       return nil
     elsif [ZERHConstants.Ver1].include? program_version
@@ -118,7 +119,9 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
 
       _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.iecc_zone = '1A'
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        climate_zone_iecc.zone = '1A'
+      end
       hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)

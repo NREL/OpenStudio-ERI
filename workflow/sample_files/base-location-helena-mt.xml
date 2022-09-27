@@ -66,6 +66,10 @@
           <Year>2006</Year>
           <ClimateZone>6B</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2021</Year>
+          <ClimateZone>6B</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>USA_MT_Helena.Rgnl.AP.727720_TMY3</Name>

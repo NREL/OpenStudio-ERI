@@ -89,21 +89,25 @@ class ERI301ValidationTest < MiniTest::Test
 
   def test_schematron_error_messages
     # Test case => Error message
-    all_expected_errors = { 'dhw-frac-load-served' => ['Expected sum(FractionDHWLoadServed) to be 1 [context: /HPXML/Building/BuildingDetails]'],
-                            'hvac-frac-load-served' => ['Expected sum(FractionHeatLoadServed) to be less than or equal to 1 [context: /HPXML/Building/BuildingDetails]',
-                                                        'Expected sum(FractionCoolLoadServed) to be less than or equal to 1 [context: /HPXML/Building/BuildingDetails]'],
-                            'enclosure-floor-area-exceeds-cfa' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas. [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction]'],
+    all_expected_errors = { 'dhw-frac-load-served' => ['Expected sum(FractionDHWLoadServed) to be 1'],
+                            'hvac-frac-load-served' => ['Expected sum(FractionHeatLoadServed) to be less than or equal to 1',
+                                                        'Expected sum(FractionCoolLoadServed) to be less than or equal to 1'],
+                            'enclosure-floor-area-exceeds-cfa' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas.'],
                             'energy-star-SF_Florida_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
-                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Florida")]]'],
-                            'energy-star-SF_National_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
-                            'energy-star-SF_National_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_National")]]'],
+                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"]'],
+                            'energy-star-SF_National_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
+                            'energy-star-SF_National_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
+                            'energy-star-SF_National_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
+                                                              'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone'],
                             'energy-star-SF_OregonWashington_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
-                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_OregonWashington")]]'],
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'],
                             'energy-star-SF_Pacific_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
-                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "SF_Pacific")]]'],
-                            'energy-star-MF_National_1.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
-                            'energy-star-MF_National_1.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_National")]]'],
-                            'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]] [context: /HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version[contains(text(), "MF_OregonWashington")]]',
+                                                             'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"]'],
+                            'energy-star-MF_National_1.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
+                            'energy-star-MF_National_1.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
+                            'energy-star-MF_National_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
+                                                              'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone'],
+                            'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
                                                                       'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|
@@ -127,16 +131,23 @@ class ERI301ValidationTest < MiniTest::Test
         es_props = { 'energy-star-SF_Florida_3.1' => [ESConstants.SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
                      'energy-star-SF_National_3.0' => [ESConstants.SFNationalVer3_0, HPXML::ResidentialTypeApartment],
                      'energy-star-SF_National_3.1' => [ESConstants.SFNationalVer3_1, HPXML::ResidentialTypeApartment],
+                     'energy-star-SF_National_3.2' => [ESConstants.SFNationalVer3_2, HPXML::ResidentialTypeApartment],
                      'energy-star-SF_OregonWashington_3.2' => [ESConstants.SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
                      'energy-star-SF_Pacific_3.0' => [ESConstants.SFPacificVer3_0, HPXML::ResidentialTypeApartment],
                      'energy-star-MF_National_1.0' => [ESConstants.MFNationalVer1_0, HPXML::ResidentialTypeSFD],
                      'energy-star-MF_National_1.1' => [ESConstants.MFNationalVer1_1, HPXML::ResidentialTypeSFD],
+                     'energy-star-MF_National_1.2' => [ESConstants.MFNationalVer1_2, HPXML::ResidentialTypeSFD],
                      'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
         es_version, bldg_type = es_props[error_case]
         hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files', 'base.xml'))
         hpxml.header.energystar_calculation_version = es_version
+        hpxml.header.iecc_eri_calculation_version = nil
         hpxml.building_construction.residential_facility_type = bldg_type
         hpxml.header.state_code = 'CO'
+        zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                            zone: zone)
       else
         fail "Unhandled case: #{error_case}."
       end
