@@ -137,16 +137,23 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
 
   # Check HPXMLs are valid
   xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-  stron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
-  hpxmls.values.each do |_hpxml_path|
-    hpxml = HPXML.new(hpxml_path: hpxmls[k], schema_path: xsd_path, schematron_path: stron_path) # Validate in.xml to ensure it can be run back through OS-HPXML
+  hpxmls.values.each do |hpxml_path|
+    if ['ESReference.xml',
+        'ESRated.xml'].include? File.basename(hpxml_path)
+      # Validate against 301validator.xml
+      stron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
+    else
+      # Validate against EPvalidator.xml
+      stron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    end
+    hpxml = HPXML.new(hpxml_path: hpxml_path, schema_path: xsd_path, schematron_path: stron_path) # Validate in.xml to ensure it can be run back through OS-HPXML
     next if hpxml.errors.empty?
 
     puts 'ERRORS:'
     hpxml.errors.each do |error|
       puts error
     end
-    flunk "Validation error in #{hpxmls[k]}."
+    flunk "Validation error in #{hpxml_path}."
   end
 
   # Check run.log for OS warnings
