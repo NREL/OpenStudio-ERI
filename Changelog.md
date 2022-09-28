@@ -1,6 +1,8 @@
 ## OpenStudio-HPXML v1.5.0
 
 __New Features__
+- Updates to OpenStudio 3.5.0/EnergyPlus 22.2.
+- **Breaking Change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
 - **Breaking change**: Replaces `SoftwareInfo/extension/SimulationControl/DaylightSaving/Enabled` with `Building/Site/TimeZone/DSTObserved`.
 - Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
@@ -35,6 +37,7 @@ __Bugfixes__
 - Fixes excessive heat transfer when foundation wall interior insulation does not start from the top of the wall.
 - Fixes how relative paths are treated when using an OpenStudio Workflow.
 - Fixes possible simulation error if a slab has an ExposedPerimeter near zero.
+- Fixes possible "Could not identify surface type for surface" error.
 - BuildResidentialHPXML measure:
   - Fixes aspect ratio convention for single-family attached and multifamily dwelling units.
 
