@@ -12,6 +12,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 
 def _run_ruleset(design, xml, out_xml)
   designs = [Design.new(calc_type: design)]
@@ -135,9 +136,17 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   end
 
   # Check HPXMLs are valid
-  _test_schema_validation(xml)
-  hpxmls.values.each do |hpxml_path|
-    _test_schema_validation(hpxml_path)
+  xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+  stron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+  hpxmls.values.each do |_hpxml_path|
+    hpxml = HPXML.new(hpxml_path: hpxmls[k], schema_path: xsd_path, schematron_path: stron_path) # Validate in.xml to ensure it can be run back through OS-HPXML
+    next if hpxml.errors.empty?
+
+    puts 'ERRORS:'
+    hpxml.errors.each do |error|
+      puts error
+    end
+    flunk "Validation error in #{hpxmls[k]}."
   end
 
   # Check run.log for OS warnings
@@ -218,17 +227,6 @@ def _get_csv_results(csvs)
   return results
 end
 
-def _test_schema_validation(xml)
-  # TODO: Remove this when schema validation is included with CLI calls
-  schemas_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
-  hpxml_doc = XMLHelper.parse_file(xml)
-  errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
-  if errors.size > 0
-    puts "#{xml}: #{errors}"
-  end
-  assert_equal(0, errors.size)
-end
-
 def _rm_path(path)
   if Dir.exist?(path)
     FileUtils.rm_r(path)
@@ -248,8 +246,6 @@ def _test_resnet_hot_water(test_name, dir_name)
   all_results = {}
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
-    _test_schema_validation(xml)
-
     # TODO: We can remove the _run_ruleset call if we address https://github.com/NREL/OpenStudio-ERI/issues/541
     out_xml = File.join(@test_files_dir, File.basename(xml))
     _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)

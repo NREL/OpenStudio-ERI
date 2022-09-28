@@ -21,10 +21,10 @@ require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/psychrometrics'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/schedules'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/validator'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
+require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 require_relative 'resources/301ruleset'
 require_relative 'resources/ESruleset'
 require_relative 'resources/constants'
@@ -41,10 +41,9 @@ def run_rulesets(hpxml_input_path, designs)
   end
 
   begin
-    stron_paths = []
-    stron_paths << File.join(File.dirname(__FILE__), '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
-    stron_paths << File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
-    orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schematron_validators: stron_paths)
+    xsd_path = File.join(File.dirname(__FILE__), '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+    stron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
+    orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_path: xsd_path, schematron_path: stron_path)
     orig_hpxml.errors.each do |error|
       errors << error
     end
