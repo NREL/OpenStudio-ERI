@@ -8,6 +8,7 @@ __New Features__
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
   - **Breaking change**: The organization of ENERGY STAR output files have changed.
 - **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+- **Breaking Change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
 - **Breaking Change**: The `ClimateZoneIECC/Year` is now more strict:
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.

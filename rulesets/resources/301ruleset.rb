@@ -1718,7 +1718,8 @@ class EnergyRatingIndex301Ruleset
                                           uses_desuperheater: uses_desuperheater,
                                           jacket_r_value: orig_water_heater.jacket_r_value,
                                           related_hvac_idref: orig_water_heater.related_hvac_idref,
-                                          standby_loss: orig_water_heater.standby_loss,
+                                          standby_loss_units: orig_water_heater.standby_loss_units,
+                                          standby_loss_value: orig_water_heater.standby_loss_value,
                                           temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
     end
 
