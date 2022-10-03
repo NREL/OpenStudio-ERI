@@ -425,7 +425,8 @@
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
-                <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
+                <AdditionalRuntimeOperatingMode>supplemental fan</AdditionalRuntimeOperatingMode>
+                <SupplementalFan idref='VentilationFan2'/>
               </CFISControls>
               <TestedFlowRate>330.0</TestedFlowRate>
               <HoursInOperation>8.0</HoursInOperation>
@@ -434,8 +435,16 @@
               <FanPower>300.0</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
               <extension>
-                <VentilationOnlyModeAirflowFraction>0.0</VentilationOnlyModeAirflowFraction>
+                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
               </extension>
+            </VentilationFan>
+            <VentilationFan>
+              <SystemIdentifier id='VentilationFan2'/>
+              <FanType>exhaust only</FanType>
+              <TestedFlowRate>120.0</TestedFlowRate>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
+              <IsSharedSystem>false</IsSharedSystem>
+              <FanPower>30.0</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>

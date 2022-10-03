@@ -1256,12 +1256,15 @@ Each mechanical ventilation system that provides ventilation to the whole dwelli
   ``UsedForWholeBuildingVentilation``                   boolean                     true          Yes                  Must be set to true
   ``IsSharedSystem``                                    boolean                     See [#]_      Yes                  Whether it serves multiple dwelling units
   ``FanType``                                           string                      See [#]_      Yes                  Type of ventilation system
-  ``HoursInOperation``                                  double             hrs/day  0 - 24        Yes                  Hours per day of operation
+  ``HoursInOperation``                                  double             hrs/day  0 - 24        See [#]_             Hours per day of operation [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``  double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ====================================================  =================  =======  ============  ========  =========  =========================================
 
   .. [#] For central fan integrated supply systems, IsSharedSystem must be false.
   .. [#] FanType choices are "energy recovery ventilator", "heat recovery ventilator", "exhaust only", "supply only", "balanced", or "central fan integrated supply".
+  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a CFIS system.
+  .. [#] For a CFIS system, the HoursInOperation and the flow rate are combined to form the expected/required hourly ventilation rate (e.g., 90 cfm and 8 hrs/day produce an hourly ventilation rate of 30 cfm).
+         For a CFIS system with a supplemental fan, the supplemental fan's runtime is automatically calculated (based on the air handler runtime) to maintain the hourly ventilation rate.
 
 Exhaust/Supply Only
 ~~~~~~~~~~~~~~~~~~~
@@ -1304,10 +1307,15 @@ If a central fan integrated supply system is specified, additional information i
   ========================================================================  =================  =====  ============  ========  =======  =======================================
   Element                                                                   Type               Units  Constraints   Required  Default  Notes
   ========================================================================  =================  =====  ============  ========  =======  =======================================
+  ``CFISControls/AdditionalRuntimeOperatingMode``                           string                    See [#]_      Yes                How additional ventilation is provided (beyond when the HVAC system is running)
+  ``CFISControls/SupplementalFan``                                          idref                     See [#]_      See [#]_           The supplemental fan providing additional ventilation
   ``AttachedToHVACDistributionSystem``                                      idref                     See [#]_      Yes                ID of attached distribution system
   ``extension/VentilationOnlyModeAirflowFraction``                          double                    0 - 1         Yes                Blower airflow rate fraction during ventilation only mode [#]_
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
+  .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan" or "supplemental fan".
+  .. [#] SupplementalFan must reference another ``VentilationFan`` w/ UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
+  .. [#] SupplementalFan only required if AdditionalRuntimeOperatingMode is "supplemental fan".
   .. [#] HVACDistribution type cannot be HydronicDistribution.
   .. [#] Blower airflow rate when operating in ventilation only mode (i.e., not heating or cooling mode), as a fraction of the maximum blower airflow rate.
          This value will depend on whether the blower fan can operate at reduced airflow rates during ventilation only operation.

@@ -394,7 +394,7 @@ Defaults will be applied for a few different reasons:
 
 #. Optional ERI inputs aren't provided (e.g., ventilation rate for a vented attic, SHR for an air conditioner, etc.)
 #. Modeling assumptions (e.g., 1 hour timestep, Jan 1 - Dec 31 run period, appliance schedules, etc.)
-#. HVAC sizing calculations (e.g., autosized HVAC capacities and airflow rates, heating/cooling design loads)
+#. HVAC sizing calculations (e.g., autosized HVAC capacities and airflow rates, heating/cooling design temperatures and loads)
 
 Any defaulted values will include the ``dataSource='software'`` attribute in the HPXML file.
 
