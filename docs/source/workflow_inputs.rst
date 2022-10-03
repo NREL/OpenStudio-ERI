@@ -1264,7 +1264,7 @@ Each mechanical ventilation system that provides ventilation to the whole dwelli
   .. [#] FanType choices are "energy recovery ventilator", "heat recovery ventilator", "exhaust only", "supply only", "balanced", or "central fan integrated supply".
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a CFIS system.
   .. [#] For a CFIS system, the HoursInOperation and the flow rate are combined to form the expected/required hourly ventilation rate (e.g., 90 cfm and 8 hrs/day produce an hourly ventilation rate of 30 cfm).
-         For a CFIS system with a supplemental fan, the supplemental fan's runtime is automatically calculated (based on the air handler runtime) to maintain the hourly ventilation rate.
+         For a CFIS system with a supplemental fan, the supplemental fan's runtime is automatically calculated for each hour (based on the air handler runtime) to maintain the hourly ventilation rate.
 
 Exhaust/Supply Only
 ~~~~~~~~~~~~~~~~~~~
