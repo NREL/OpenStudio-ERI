@@ -1555,6 +1555,7 @@ class HPXMLDefaults
     hpxml.ventilation_fans.each do |vent_fan|
       next unless vent_fan.used_for_whole_building_ventilation
 
+      # FIXME: Check which of these apply for a CFIS supplemental fan
       if vent_fan.is_shared_system.nil?
         vent_fan.is_shared_system = false
         vent_fan.is_shared_system_isdefaulted = true
@@ -1575,9 +1576,15 @@ class HPXMLDefaults
         vent_fan.fan_power = (vent_fan.flow_rate * Airflow.get_default_mech_vent_fan_power(vent_fan)).round(1)
         vent_fan.fan_power_isdefaulted = true
       end
-      if vent_fan.cfis_vent_mode_airflow_fraction.nil? && (vent_fan.fan_type == HPXML::MechVentTypeCFIS)
+      next unless vent_fan.fan_type == HPXML::MechVentTypeCFIS
+
+      if vent_fan.cfis_vent_mode_airflow_fraction.nil?
         vent_fan.cfis_vent_mode_airflow_fraction = 1.0
         vent_fan.cfis_vent_mode_airflow_fraction_isdefaulted = true
+      end
+      if vent_fan.cfis_addtl_runtime_operating_mode.nil?
+        vent_fan.cfis_addtl_runtime_operating_mode = HPXML::CFISModeAirHandler
+        vent_fan.cfis_addtl_runtime_operating_mode_isdefaulted = true
       end
     end
 
@@ -2604,7 +2611,7 @@ class HPXMLDefaults
     hvacpl = hpxml.hvac_plant
     tol = 10 # Btuh
 
-    # Assign heating design loads back to HPXML object
+    # Assign heating design loads to HPXML object
     hvacpl.hdl_total = bldg_design_loads.Heat_Tot.round
     hvacpl.hdl_walls = bldg_design_loads.Heat_Walls.round
     hvacpl.hdl_ceilings = bldg_design_loads.Heat_Ceilings.round
@@ -2624,7 +2631,7 @@ class HPXMLDefaults
       fail 'Heating design loads do not sum to total.'
     end
 
-    # Cooling sensible design loads back to HPXML object
+    # Assign cooling sensible design loads to HPXML object
     hvacpl.cdl_sens_total = bldg_design_loads.Cool_Sens.round
     hvacpl.cdl_sens_walls = bldg_design_loads.Cool_Walls.round
     hvacpl.cdl_sens_ceilings = bldg_design_loads.Cool_Ceilings.round
@@ -2647,7 +2654,7 @@ class HPXMLDefaults
       fail 'Cooling sensible design loads do not sum to total.'
     end
 
-    # Cooling latent design loads back to HPXML object
+    # Assign cooling latent design loads to HPXML object
     hvacpl.cdl_lat_total = bldg_design_loads.Cool_Lat.round
     hvacpl.cdl_lat_ducts = bldg_design_loads.Cool_Ducts_Lat.round
     hvacpl.cdl_lat_infilvent = bldg_design_loads.Cool_Infil_Lat.round
@@ -2658,7 +2665,11 @@ class HPXMLDefaults
       fail 'Cooling latent design loads do not sum to total.'
     end
 
-    # Assign sizing values back to HPXML objects
+    # Assign design temperatures to HPXML object
+    hvacpl.temp_heating = weather.design.HeatingDrybulb.round(2)
+    hvacpl.temp_cooling = weather.design.CoolingDrybulb.round(2)
+
+    # Assign sizing values to HPXML objects
     all_hvac_sizing_values.each do |hvac_system, hvac_sizing_values|
       htg_sys = hvac_system[:heating]
       clg_sys = hvac_system[:cooling]
