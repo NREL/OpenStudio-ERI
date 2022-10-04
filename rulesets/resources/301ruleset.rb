@@ -1492,7 +1492,7 @@ class EnergyRatingIndex301Ruleset
       if not orig_vent_fan.flow_rate_not_tested
         # Airflow measured; set to max of provided value and min Qfan requirement
         if orig_vent_fan.is_cfis_supplemental_fan?
-          average_oa_unit_flow_rate = [orig_vent_fan.flow_rate, q_fans[orig_vent_fan.id]].max
+          average_oa_unit_flow_rate = [orig_vent_fan.oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
         else
           average_oa_unit_flow_rate = [orig_vent_fan.average_oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
           if average_oa_unit_flow_rate > orig_vent_fan.average_oa_unit_flow_rate
