@@ -607,6 +607,7 @@
               <SystemIdentifier id='VentilationFan12'/>
               <FanType>exhaust only</FanType>
               <TestedFlowRate>15.0</TestedFlowRate>
+              <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
               <FanPower>3.75</FanPower>

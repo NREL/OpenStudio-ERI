@@ -483,8 +483,6 @@ class ERIMechVentTest < MiniTest::Test
         if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
           _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 34.8 }])
         elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-          cfis_airflow_fraction = (hpxml_name == 'base-mechvent-cfis-airflow-fraction-zero.xml' ? 0.0 : 1.0)
-          cfis_mode = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' ? HPXML::CFISModeSupplementalFan : HPXML::CFISModeAirHandler)
           _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, power: 300.0,
                                      cfis_airflow_fraction: cfis_airflow_fraction, cfis_mode: cfis_mode }])
         elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
@@ -530,7 +528,8 @@ class ERIMechVentTest < MiniTest::Test
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 26.8, hours: 24, power: 0.1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, power: 400.0, cfis_airflow_fraction: 1.0 }])
+        _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, power: 400.0, cfis_airflow_fraction: 1.0,
+                                   cfis_mode: HPXML::CFISModeAirHandler }])
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_mech_vent(hpxml, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.0, hours: 24, power: 42.0 }])
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
@@ -981,6 +980,7 @@ class ERIMechVentTest < MiniTest::Test
     num_mech_vent = 0
     hpxml.ventilation_fans.each_with_index do |ventilation_fan, idx|
       next unless ventilation_fan.used_for_whole_building_ventilation
+      next if ventilation_fan.is_cfis_supplemental_fan?
 
       expected_values = all_expected_values[idx]
       num_mech_vent += 1
