@@ -1314,7 +1314,7 @@ If a central fan integrated supply system is specified, additional information i
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
   .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan" or "supplemental fan".
-  .. [#] SupplementalFan must reference another ``VentilationFan`` w/ UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
+  .. [#] SupplementalFan must reference another ``VentilationFan`` where UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
   .. [#] SupplementalFan only required if AdditionalRuntimeOperatingMode is "supplemental fan".
   .. [#] HVACDistribution type cannot be HydronicDistribution.
   .. [#] Blower airflow rate when operating in ventilation only mode (i.e., not heating or cooling mode), as a fraction of the maximum blower airflow rate.
