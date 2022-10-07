@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+Dir["#{File.dirname(__FILE__)}/hpxml-measures/HPXMLtoOpenStudio/resources/*.rb"].each do |resource_file|
+  next if resource_file.include? 'minitest_helper.rb'
+
+  require resource_file
+end
+
 def create_test_hpxmls
   this_dir = File.dirname(__FILE__)
   tests_dir = File.join(this_dir, 'workflow/tests')
@@ -2807,11 +2813,6 @@ end
 
 if ARGV[0].to_sym == :update_measures
   require 'oga'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
   require_relative 'rulesets/resources/constants'
 
   # Prevent NREL error regarding U: drive when not VPNed in
