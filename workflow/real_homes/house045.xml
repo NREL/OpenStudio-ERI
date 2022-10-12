@@ -1326,7 +1326,7 @@
               <Recirculation>
                 <ControlType>timer</ControlType>
                 <RecirculationPipingLoopLength>220.0</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>10.0</BranchPipingLoopLength>
+                <BranchPipingLength>10.0</BranchPipingLength>
                 <PumpPower>50.0</PumpPower>
               </Recirculation>
             </SystemType>

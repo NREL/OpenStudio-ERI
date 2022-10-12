@@ -484,6 +484,9 @@
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>central fan integrated supply</FanType>
+              <CFISControls>
+                <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
+              </CFISControls>
               <TestedFlowRate>48.0</TestedFlowRate>
               <HoursInOperation>22.7</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>

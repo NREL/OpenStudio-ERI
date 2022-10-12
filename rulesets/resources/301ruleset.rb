@@ -1443,15 +1443,16 @@ class EnergyRatingIndex301Ruleset
       q_fans = calc_rated_home_q_fans_by_system(orig_hpxml, mech_vent_fans)
       sum_fan_w = 0.0
       sum_fan_cfm = 0.0
-      mech_vent_fans.each do |orig_vent_fan|
+      q_fans.each do |fan_id, flow_rate|
+        orig_vent_fan = mech_vent_fans.select { |f| f.id == fan_id }[0]
         if [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? orig_vent_fan.fan_type
-          sum_fan_w += (1.00 * q_fans[orig_vent_fan.id])
+          sum_fan_w += (1.00 * flow_rate)
         elsif orig_vent_fan.is_balanced?
-          sum_fan_w += (0.70 * q_fans[orig_vent_fan.id])
+          sum_fan_w += (0.70 * flow_rate)
         else
-          sum_fan_w += (0.35 * q_fans[orig_vent_fan.id])
+          sum_fan_w += (0.35 * flow_rate)
         end
-        sum_fan_cfm += q_fans[orig_vent_fan.id]
+        sum_fan_cfm += flow_rate
       end
 
       # Calculate fan power
@@ -1475,7 +1476,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_mechanical_ventilation_rated(orig_hpxml, new_hpxml)
-    mech_vent_fans = orig_hpxml.ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.hours_in_operation > 0 && (f.flow_rate_not_tested || f.flow_rate > 0) }
+    mech_vent_fans = orig_hpxml.ventilation_fans.select { |f|
+      f.used_for_whole_building_ventilation &&
+        (f.is_cfis_supplemental_fan? || f.hours_in_operation > 0) &&
+        (f.flow_rate_not_tested || f.flow_rate > 0)
+    }
 
     q_fans = calc_rated_home_q_fans_by_system(orig_hpxml, mech_vent_fans)
 
@@ -1486,10 +1491,14 @@ class EnergyRatingIndex301Ruleset
       # Calculate daily-average outdoor airflow rate for fan
       if not orig_vent_fan.flow_rate_not_tested
         # Airflow measured; set to max of provided value and min Qfan requirement
-        average_oa_unit_flow_rate = [orig_vent_fan.average_oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
-        if average_oa_unit_flow_rate > orig_vent_fan.average_oa_unit_flow_rate
-          # Increase hours in operation to try to meet requirement, per RESNET 55i
-          hours_in_operation = [average_oa_unit_flow_rate / orig_vent_fan.average_oa_unit_flow_rate * hours_in_operation, 24.0].min
+        if orig_vent_fan.is_cfis_supplemental_fan?
+          average_oa_unit_flow_rate = [orig_vent_fan.oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
+        else
+          average_oa_unit_flow_rate = [orig_vent_fan.average_oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
+          if average_oa_unit_flow_rate > orig_vent_fan.average_oa_unit_flow_rate
+            # Increase hours in operation to try to meet requirement, per RESNET 55i
+            hours_in_operation = [average_oa_unit_flow_rate / orig_vent_fan.average_oa_unit_flow_rate * hours_in_operation, 24.0].min
+          end
         end
       else
         # Airflow not measured; set to min Qfan requirement
@@ -1499,7 +1508,11 @@ class EnergyRatingIndex301Ruleset
       # Convert to actual fan flow rate(s)
       if not orig_vent_fan.is_shared_system
         # In-unit system
-        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation)
+        if orig_vent_fan.is_cfis_supplemental_fan?
+          total_unit_flow_rate = average_oa_unit_flow_rate
+        else
+          total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation)
+        end
       else
         # Shared system
         total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation) / (1 - orig_vent_fan.fraction_recirculation)
@@ -1541,42 +1554,34 @@ class EnergyRatingIndex301Ruleset
         end
       end
 
+      new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
+                                     is_shared_system: orig_vent_fan.is_shared_system,
+                                     fan_type: orig_vent_fan.fan_type,
+                                     hours_in_operation: hours_in_operation,
+                                     total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
+                                     total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
+                                     sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
+                                     sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
+                                     distribution_system_idref: orig_vent_fan.distribution_system_idref,
+                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
+                                     cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction,
+                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
+                                     cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
+      new_vent_fan = new_hpxml.ventilation_fans[-1]
       if not orig_vent_fan.is_shared_system
-        new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
-                                       fan_type: orig_vent_fan.fan_type,
-                                       tested_flow_rate: total_unit_flow_rate.round(2),
-                                       hours_in_operation: hours_in_operation,
-                                       total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
-                                       total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
-                                       sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
-                                       sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
-                                       fan_power: unit_fan_power.round(3),
-                                       distribution_system_idref: orig_vent_fan.distribution_system_idref,
-                                       used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
-                                       is_shared_system: orig_vent_fan.is_shared_system,
-                                       cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction)
+        new_vent_fan.tested_flow_rate = total_unit_flow_rate.round(2)
+        new_vent_fan.fan_power = unit_fan_power.round(3)
       else
-        new_hpxml.ventilation_fans.add(id: orig_vent_fan.id,
-                                       fan_type: orig_vent_fan.fan_type,
-                                       rated_flow_rate: system_flow_rate.round(2),
-                                       hours_in_operation: hours_in_operation,
-                                       total_recovery_efficiency: orig_vent_fan.total_recovery_efficiency,
-                                       total_recovery_efficiency_adjusted: orig_vent_fan.total_recovery_efficiency_adjusted,
-                                       sensible_recovery_efficiency: orig_vent_fan.sensible_recovery_efficiency,
-                                       sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
-                                       fan_power: system_fan_power.round(3),
-                                       distribution_system_idref: orig_vent_fan.distribution_system_idref,
-                                       used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
-                                       is_shared_system: orig_vent_fan.is_shared_system,
-                                       in_unit_flow_rate: total_unit_flow_rate.round(2),
-                                       fraction_recirculation: orig_vent_fan.fraction_recirculation,
-                                       preheating_fuel: orig_vent_fan.preheating_fuel,
-                                       preheating_efficiency_cop: orig_vent_fan.preheating_efficiency_cop,
-                                       preheating_fraction_load_served: orig_vent_fan.preheating_fraction_load_served,
-                                       precooling_fuel: orig_vent_fan.precooling_fuel,
-                                       precooling_efficiency_cop: orig_vent_fan.precooling_efficiency_cop,
-                                       precooling_fraction_load_served: orig_vent_fan.precooling_fraction_load_served,
-                                       cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction)
+        new_vent_fan.rated_flow_rate = system_flow_rate.round(2)
+        new_vent_fan.fan_power = system_fan_power.round(3)
+        new_vent_fan.in_unit_flow_rate = total_unit_flow_rate.round(2)
+        new_vent_fan.fraction_recirculation = orig_vent_fan.fraction_recirculation
+        new_vent_fan.preheating_fuel = orig_vent_fan.preheating_fuel
+        new_vent_fan.preheating_efficiency_cop = orig_vent_fan.preheating_efficiency_cop
+        new_vent_fan.preheating_fraction_load_served = orig_vent_fan.preheating_fraction_load_served
+        new_vent_fan.precooling_fuel = orig_vent_fan.precooling_fuel
+        new_vent_fan.precooling_efficiency_cop = orig_vent_fan.precooling_efficiency_cop
+        new_vent_fan.precooling_fraction_load_served = orig_vent_fan.precooling_fraction_load_served
       end
     end
   end
@@ -2310,10 +2315,11 @@ class EnergyRatingIndex301Ruleset
 
   private
 
-  def self.calc_rated_home_q_fans_by_system(orig_hpxml, mech_vent_fans)
+  def self.calc_rated_home_q_fans_by_system(orig_hpxml, all_mech_vent_fans)
     # Calculates the target average airflow rate for each mechanical
     # ventilation system based on their measured value (if available)
     # and the minimum continuous ventilation rate Qfan.
+    mech_vent_fans = all_mech_vent_fans.select { |f| !f.is_cfis_supplemental_fan? }
     supply_fans = mech_vent_fans.select { |f| f.includes_supply_air? && !f.is_balanced? }
     exhaust_fans = mech_vent_fans.select { |f| f.includes_exhaust_air? && !f.is_balanced? }
     balanced_fans = mech_vent_fans.select { |f| f.is_balanced? }
@@ -2387,6 +2393,14 @@ class EnergyRatingIndex301Ruleset
       q_fans[orig_vent_fan.id] = orig_vent_fan.average_oa_unit_flow_rate + cfm_oa_addtl_exhaust / measured_exhaust_fans.size
     end
 
+    # Set Qfan for any CFIS supplemental fans last
+    all_mech_vent_fans.each do |orig_vent_fan|
+      next unless orig_vent_fan.is_cfis_supplemental_fan?
+
+      parent_cfis_fan = all_mech_vent_fans.select { |f| f.cfis_supplemental_fan_idref == orig_vent_fan.id }[0]
+      q_fans[orig_vent_fan.id] = q_fans[parent_cfis_fan.id]
+    end
+
     return q_fans
   end
 
@@ -2450,6 +2464,7 @@ class EnergyRatingIndex301Ruleset
     cfm_exhaust = 0.0
     ventilation_fans.each do |vent_fan|
       next unless vent_fan.used_for_whole_building_ventilation
+      next if vent_fan.is_cfis_supplemental_fan?
       next if vent_fan.flow_rate_not_tested
 
       if total_or_oa == :total

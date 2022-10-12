@@ -467,7 +467,7 @@ Each space type that borders the ground (i.e., basements, crawlspaces, garages, 
   ``DepthBelowGrade``                                      double    ft            >= 0         See [#]_             Depth from the top of the slab surface to grade
   ``PerimeterInsulation/SystemIdentifier``                 id                                   Yes                  Unique identifier
   ``PerimeterInsulation/Layer/NominalRValue``              double    F-ft2-hr/Btu  >= 0         Yes                  R-value of vertical insulation
-  ``PerimeterInsulation/Layer/InsulationDepth``            double    ft            >= 0         Yes                  Depth from grade to bottom of vertical insulation
+  ``PerimeterInsulation/Layer/InsulationDepth``            double    ft            >= 0         Yes                  Depth from top of slab to bottom of vertical insulation
   ``UnderSlabInsulation/SystemIdentifier``                 id                                   Yes                  Unique identifier
   ``UnderSlabInsulation/Layer/NominalRValue``              double    F-ft2-hr/Btu  >= 0         Yes                  R-value of horizontal insulation
   ``UnderSlabInsulation/Layer/InsulationWidth``            double    ft            >= 0         See [#]_             Width from slab edge inward of horizontal insulation
@@ -1267,12 +1267,15 @@ Each mechanical ventilation system that provides ventilation to the whole dwelli
   ``UsedForWholeBuildingVentilation``                   boolean                     true          Yes                  Must be set to true
   ``IsSharedSystem``                                    boolean                     See [#]_      Yes                  Whether it serves multiple dwelling units
   ``FanType``                                           string                      See [#]_      Yes                  Type of ventilation system
-  ``HoursInOperation``                                  double             hrs/day  0 - 24        Yes                  Hours per day of operation
+  ``HoursInOperation``                                  double             hrs/day  0 - 24        See [#]_             Hours per day of operation [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``  double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ====================================================  =================  =======  ============  ========  =========  =========================================
 
   .. [#] For central fan integrated supply systems, IsSharedSystem must be false.
   .. [#] FanType choices are "energy recovery ventilator", "heat recovery ventilator", "exhaust only", "supply only", "balanced", or "central fan integrated supply".
+  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a CFIS system, in which case it is not allowed.
+  .. [#] For a CFIS system, the HoursInOperation and the flow rate are combined to form the expected/required hourly ventilation rate (e.g., 90 cfm and 8 hrs/day produce an hourly ventilation rate of 30 cfm).
+         For a CFIS system with a supplemental fan, the supplemental fan's runtime is automatically calculated for each hour (based on the air handler runtime) to maintain the hourly ventilation rate.
 
 Exhaust/Supply Only
 ~~~~~~~~~~~~~~~~~~~
@@ -1310,20 +1313,30 @@ If an energy recovery ventilator system is specified, additional information is 
 Central Fan Integrated Supply
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If a central fan integrated supply system is specified, additional information is entered in ``VentilationFan``.
+If a central fan integrated supply (CFIS) system is specified, additional information is entered in ``VentilationFan``.
 
   ========================================================================  =================  =====  ============  ========  =======  =======================================
   Element                                                                   Type               Units  Constraints   Required  Default  Notes
   ========================================================================  =================  =====  ============  ========  =======  =======================================
+  ``CFISControls/AdditionalRuntimeOperatingMode``                           string                    See [#]_      Yes                How additional ventilation is provided (beyond when the HVAC system is running)
+  ``CFISControls/SupplementalFan``                                          idref                     See [#]_      See [#]_           The supplemental fan providing additional ventilation
   ``AttachedToHVACDistributionSystem``                                      idref                     See [#]_      Yes                ID of attached distribution system
   ``extension/VentilationOnlyModeAirflowFraction``                          double                    0 - 1         Yes                Blower airflow rate fraction during ventilation only mode [#]_
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
+  .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan" or "supplemental fan".
+  .. [#] SupplementalFan must reference another ``VentilationFan`` where UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
+  .. [#] SupplementalFan only required if AdditionalRuntimeOperatingMode is "supplemental fan".
   .. [#] HVACDistribution type cannot be HydronicDistribution.
   .. [#] Blower airflow rate when operating in ventilation only mode (i.e., not heating or cooling mode), as a fraction of the maximum blower airflow rate.
          This value will depend on whether the blower fan can operate at reduced airflow rates during ventilation only operation.
          It is used to determine how much conditioned air is recirculated through ducts during ventilation only operation, resulting in additional duct losses.
          A value of zero will result in no conditioned air recirculation, and thus no additional duct losses.
+
+.. note::
+
+  CFIS systems are automated controllers that use the HVAC system's air handler fan to draw in outdoor air to meet an hourly ventilation target.
+  CFIS systems are modeled as assuming they A) maximize the use of normal heating/cooling runtime operation to meet the hourly ventilation target, B) block the flow of outdoor air when the hourly ventilation target has been met, and C) provide additional runtime operation (via air handler fan or supplemental fan) to meet the remainder of the hourly ventilation target when space heating/cooling runtime alone is not sufficient.
 
 In-Unit System
 ~~~~~~~~~~~~~~
@@ -1571,13 +1584,13 @@ If the in-unit distribution system is specified as recirculation, additional inf
   =================================  =======  =====  ===========  ========  ========  =====================================
   ``ControlType``                    string          See [#]_     Yes                 Recirculation control type
   ``RecirculationPipingLoopLength``  double   ft     > 0          Yes                 Recirculation piping loop length [#]_
-  ``BranchPipingLoopLength``         double   ft     > 0          Yes                 Branch piping loop length [#]_
+  ``BranchPipingLength``             double   ft     > 0          Yes                 Branch piping length [#]_
   ``PumpPower``                      double   W      >= 0         Yes                 Recirculation pump power
   =================================  =======  =====  ===========  ========  ========  =====================================
 
   .. [#] ControlType choices are "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
   .. [#] RecirculationPipingLoopLength is the recirculation loop length including both supply and return sides, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements.
-  .. [#] BranchPipingLoopLength is the length of the branch hot water piping from the recirculation loop to the farthest hot water fixture from the recirculation loop, measured longitudinally from plans, assuming the branch hot water piping does not run diagonally.
+  .. [#] BranchPipingLength is the length of the branch hot water piping from the recirculation loop to the farthest hot water fixture from the recirculation loop, measured longitudinally from plans, assuming the branch hot water piping does not run diagonally.
 
 Shared Recirculation
 ~~~~~~~~~~~~~~~~~~~~

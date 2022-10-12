@@ -1334,7 +1334,7 @@
               <Recirculation>
                 <ControlType>temperature</ControlType>
                 <RecirculationPipingLoopLength>256.0</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>108.0</BranchPipingLoopLength>
+                <BranchPipingLength>108.0</BranchPipingLength>
                 <PumpPower>44.0</PumpPower>
               </Recirculation>
             </SystemType>
