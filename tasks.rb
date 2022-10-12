@@ -2459,6 +2459,7 @@ def create_sample_hpxmls
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
                   'base-mechvent-cfis-airflow-fraction-zero.xml',
+                  'base-mechvent-cfis-supplemental-fan-exhaust.xml',
                   'base-mechvent-erv.xml',
                   'base-mechvent-erv-atre-asre.xml',
                   'base-mechvent-exhaust.xml',
@@ -2579,6 +2580,15 @@ def create_sample_hpxmls
         ventilation_fan.delivered_ventilation = nil
       end
       ventilation_fan.cfis_vent_mode_airflow_fraction = 1.0 if ventilation_fan.cfis_vent_mode_airflow_fraction.nil? && ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+      next unless not ventilation_fan.is_cfis_supplemental_fan?
+
+      if ventilation_fan.hours_in_operation.nil?
+        if ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+          ventilation_fan.hours_in_operation = 8.0
+        else
+          ventilation_fan.hours_in_operation = 24.0
+        end
+      end
     end
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
