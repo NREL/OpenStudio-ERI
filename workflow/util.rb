@@ -1,21 +1,13 @@
 # frozen_string_literal: true
 
 def get_saf(results, program_version, hpxml_obj_or_path)
-  if ESConstants.AllVersions.include? program_version
-    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? program_version
-      if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeSFA].include? results[:rated_facility_type]
-        calc_saf(results, hpxml_obj_or_path)
-      elsif [HPXML::ResidentialTypeApartment].include? results[:rated_facility_type]
-        # For condos and apartments in multi-family buildings the SAF shall always equal 1.0.
-        return 1.0
-      end
-    else
-      # SAF does not apply
-      return 1.0
+  if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeSFA].include? results[:rated_facility_type] # For condos and apartments in multi-family buildings the SAF shall always equal 1.0.
+    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ZERHConstants.Ver1].include? program_version
+      return calc_saf(results, hpxml_obj_or_path)
     end
-  elsif ZERHConstants.AllVersions.include? program_version
-    calc_saf(results, hpxml_obj_or_path)
   end
+
+  return 1.0 # SAF does not apply
 end
 
 def calc_saf(results, hpxml_obj_or_path)

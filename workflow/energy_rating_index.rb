@@ -960,9 +960,6 @@ def main(options)
     end
 
     if not zerh_version.nil?
-      # Calculate Zero Energy Ready Home
-      puts 'Calculating Zero Energy Ready Home...'
-
       # Calculate ZERH Reference ERI
       zerhrd_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHReference }
       zerhrd_eri_outputs = retrieve_eri_outputs(zerhrd_eri_designs)

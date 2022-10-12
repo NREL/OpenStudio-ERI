@@ -13,7 +13,7 @@ __New Features__
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
   - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
-  - TODO: Zero Energy Ready Homes v1 runs ....
+  - Zero Energy Ready Homes v1 runs must include a 2015 IECC climate zone.
 - Allows shared dishwasher/clothes washer to be attached to a hot water distribution system instead of a single water heater.
 - Annual/timeseries outputs:
   - Adds annual emission outputs disaggregated by end use; timeseries emission outputs disaggregated by end use can be requested.

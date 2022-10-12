@@ -951,11 +951,6 @@ class HPXML < Object
         calculation = XMLHelper.add_element(extension, element_name)
         XMLHelper.add_element(calculation, 'Version', calculation_version, :string)
       end
-      if not @zerh_calculation_version.nil?
-        extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
-        zerh_calculation = XMLHelper.add_element(extension, 'ZERHCalculation')
-        XMLHelper.add_element(zerh_calculation, 'Version', @zerh_calculation_version, :string)
-      end
       if (not @timestep.nil?) || (not @sim_begin_month.nil?) || (not @sim_begin_day.nil?) || (not @sim_end_month.nil?) || (not @sim_end_day.nil?) || (not @temperature_capacitance_multiplier.nil?)
         extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
         simulation_control = XMLHelper.add_element(extension, 'SimulationControl')

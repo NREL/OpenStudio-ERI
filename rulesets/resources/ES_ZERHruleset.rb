@@ -14,11 +14,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       # Use Year=2021 for Reference Home configuration
-      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }[0].zone
+      iecc_year = 2021
+    elsif ZERHConstants.AllVersions.include? @program_version
+      # Use Year=2015 for Reference Home configuration
+      iecc_year = 2015
     else
       # Use Year=2006 for Reference Home configuration
-      @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0].zone
+      iecc_year = 2006
     end
+    @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }[0].zone
 
     # Update HPXML object based on ESRD configuration
     if [ESConstants.CalcTypeEnergyStarReference,
