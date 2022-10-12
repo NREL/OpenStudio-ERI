@@ -8,11 +8,11 @@ __New Features__
 - Allows modeling CFIS ventilation systems with a supplemental fan.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
   - **Breaking change**: The organization of ENERGY STAR output files have changed.
-- **Breaking Change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
-- **Breaking Change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
-- **Breaking Change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
-- **Breaking Change**: New `CFISControls/AdditionalRuntimeOperatingMode` input required for CFIS ventilation systems.
-- **Breaking Change**: The `ClimateZoneIECC/Year` is now more strict:
+- **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+- **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
+- **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
+- **Breaking change**: New `CFISControls/AdditionalRuntimeOperatingMode` input required for CFIS ventilation systems.
+- **Breaking change**: The `ClimateZoneIECC/Year` is now more strict:
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
   - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
