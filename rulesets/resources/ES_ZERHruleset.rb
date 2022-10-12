@@ -21,15 +21,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     # Update HPXML object based on ESRD configuration
-    if [ESConstants.CalcTypeEnergyStarReference, ZERHConstants.CalcTypeZERHReference].include? calc_type
-      hpxml = apply_ruleset_reference(hpxml, calc_type)
+    if [ESConstants.CalcTypeEnergyStarReference,
+        ZERHConstants.CalcTypeZERHReference].include? calc_type
+      hpxml = apply_ruleset_reference(hpxml)
     end
 
     return hpxml
   end
 
-  def self.apply_ruleset_reference(orig_hpxml, calc_type)
-    new_hpxml = create_new_hpxml(orig_hpxml, calc_type)
+  def self.apply_ruleset_reference(orig_hpxml)
+    new_hpxml = create_new_hpxml(orig_hpxml)
 
     # BuildingSummary
     set_summary_reference(orig_hpxml, new_hpxml)
@@ -81,7 +82,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return new_hpxml
   end
 
-  def self.create_new_hpxml(orig_hpxml, calc_type)
+  def self.create_new_hpxml(orig_hpxml)
     new_hpxml = HPXML.new
     @state_code = orig_hpxml.header.state_code
 
@@ -1284,7 +1285,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type)
         infil_air_leakage = 3.0  # ACH50
         infil_unit_of_measure = HPXML::UnitsACH
-  
+
         return infil_air_leakage, infil_unit_of_measure
       elsif [HPXML::ResidentialTypeSFD].include?(@bldg_type)
         if [ZERHConstants.Ver1].include? @program_version
@@ -1299,7 +1300,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
           end
         end
         infil_unit_of_measure = HPXML::UnitsACH
-  
+
         return infil_air_leakage, infil_unit_of_measure
       end
     end
@@ -1332,12 +1333,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.get_mechanical_ventilation_fan_sre()
     if @program_version == ZERHConstants.Ver1
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-        return nil
+        return
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
         return 0.6
       end
     elsif ESConstants.AllVersions.include? @program_version
-      return nil
+      return
     end
 
     fail 'Unexpected case.'

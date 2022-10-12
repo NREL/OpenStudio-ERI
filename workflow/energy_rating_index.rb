@@ -772,7 +772,6 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
     end
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
   end
-  
 end
 
 def download_epws

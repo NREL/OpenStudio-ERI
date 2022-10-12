@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-def get_saf(results, ruleset, hpxml_obj_or_path)
-  if ESConstants.AllVersions.include? ruleset
-    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? ruleset
+def get_saf(results, program_version, hpxml_obj_or_path)
+  if ESConstants.AllVersions.include? program_version
+    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? program_version
       if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeSFA].include? results[:rated_facility_type]
-        calc_saf(results, ruleset, hpxml_obj_or_path)
+        calc_saf(results, hpxml_obj_or_path)
       elsif [HPXML::ResidentialTypeApartment].include? results[:rated_facility_type]
         # For condos and apartments in multi-family buildings the SAF shall always equal 1.0.
         return 1.0
@@ -13,12 +13,12 @@ def get_saf(results, ruleset, hpxml_obj_or_path)
       # SAF does not apply
       return 1.0
     end
-  elsif ZERHConstants.AllVersions.include? ruleset
-    calc_saf(results, ruleset, hpxml_obj_or_path)
+  elsif ZERHConstants.AllVersions.include? program_version
+    calc_saf(results, hpxml_obj_or_path)
   end
 end
 
-def calc_saf(results, ruleset, hpxml_obj_or_path)
+def calc_saf(results, hpxml_obj_or_path)
   # Calculates the Size Adjustment Factor
   # Calculate the ERI Target for all single-family detached homes, townhomes, rowhomes, duplexes, triplexes, and quadplexes.
   cfa = results[:rated_cfa]

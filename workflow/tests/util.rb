@@ -232,6 +232,11 @@ def _get_csv_results(csvs)
       next if row.nil? || (row.size < 2)
 
       key, value = row
+
+      # Convert to numeric values for CI comparison
+      value = 1 if value == 'PASS'
+      value = 0 if value == 'FAIL'
+
       if csv.include? 'IECC'
         key = "IECC #{key}"
       end

@@ -125,7 +125,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
     end
   end
 
-  def get_es_zerh_gas_furnace_afue_cz5(program_version)  # FIXME: Check the function name
+  def get_es_zerh_gas_furnace_afue_cz5(program_version) # FIXME: Check the function name
     if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
         ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
       return 0.95
@@ -203,7 +203,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
   end
 
   def test_furnace_elec
-[*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-hvac-furnace-elec-only.xml', program_version)
       hpxml = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)

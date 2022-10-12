@@ -55,10 +55,10 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
   def sre(program_version, hpxml)
     iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
     if ESConstants.AllVersions.include? program_version
-      return nil
+      return
     elsif [ZERHConstants.Ver1].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
-        return nil
+        return
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
         return 0.6
       end

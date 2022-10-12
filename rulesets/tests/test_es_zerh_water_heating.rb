@@ -371,10 +371,11 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < MiniTest::Test
       else
         assert_in_epsilon(expected_values[:jacket_r], water_heater.jacket_r_value, 0.01)
       end
-      if expected_values[:standby_loss].nil?
-        assert_nil(water_heater.standby_loss)
+      if expected_values[:standby_loss_value].nil?
+        assert_nil(water_heater.standby_loss_value)
       else
-        assert_equal(expected_values[:standby_loss], water_heater.standby_loss)
+        assert_equal(HPXML::UnitsDegFPerHour, water_heater.standby_loss_units)
+        assert_equal(expected_values[:standby_loss_value], water_heater.standby_loss_value)
       end
       if water_heater.number_of_units_served.nil?
         assert_equal(expected_values[:n_units_served], 1)

@@ -122,7 +122,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       else
         rb_grade = 1
       end
-      
+
       # In both HI and GU, if > 10 linear ft. of ductwork are located in unconditioned attic, place radiant barrier
       _convert_to_es_zerh('base.xml', ESConstants.SFPacificVer3_0, state_code)
       hpxml = _test_ruleset(ESConstants.SFPacificVer3_0)
