@@ -786,7 +786,7 @@
               <Recirculation>
                 <ControlType>presence sensor demand control</ControlType>
                 <RecirculationPipingLoopLength>115.0</RecirculationPipingLoopLength>
-                <BranchPipingLoopLength>60.0</BranchPipingLoopLength>
+                <BranchPipingLength>60.0</BranchPipingLength>
                 <PumpPower>80.0</PumpPower>
               </Recirculation>
             </SystemType>
