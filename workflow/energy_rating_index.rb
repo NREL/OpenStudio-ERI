@@ -975,9 +975,11 @@ def main(options)
       target_eri = zerhrd_eri_results[:eri] * saf
 
       # Calculate ZERH Rated ERI
+      opp_reduction_limit = calc_opp_eri_limit(zerhrd_eri_results[:eri], saf, zerh_version)
       rated_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHRated }
       rated_eri_outputs = retrieve_eri_outputs(rated_eri_designs)
-      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, csv_filename_prefix: ZERHConstants.CalcTypeZERHRated.gsub(' ', ''))
+      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, csv_filename_prefix: ZERHConstants.CalcTypeZERHRated.gsub(' ', ''),
+                                                                       opp_reduction_limit: opp_reduction_limit)
 
       if rated_eri_results[:eri].round(0) <= target_eri.round(0)
         passes = true

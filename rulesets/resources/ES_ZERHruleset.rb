@@ -456,7 +456,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
         # Retain boundary condition of ceilings in the Rated Unit, including adiabatic ceilings.
         ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
-        if ([ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version) && @has_auto_generated_attic && ([HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to)
+        if ([ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2, ZERHConstants.Ver1].include? @program_version) && @has_auto_generated_attic && ([HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to)
           ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
         end
 
@@ -2053,7 +2053,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     elsif [ZERHConstants.Ver1].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
         return 2.8
-      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
+      else
         return 1.2
       end
     end

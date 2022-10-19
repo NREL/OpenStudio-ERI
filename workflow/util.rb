@@ -58,19 +58,19 @@ def calc_saf(results, hpxml_obj_or_path)
   return saf # Size Adjustment Factor
 end
 
-def calc_opp_eri_limit(esrd_eri, saf, es_version)
+def calc_opp_eri_limit(rd_eri, saf, program_version)
   # Calculates the limit, in ERI points, for On-site Power Production per
-  # ENERGY STAR Program Requirements
+  # ENERGY STAR and Zero Energy Ready Home Program Requirements
 
-  if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? es_version
+  if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0].include? program_version
     # on-site power generation may only be used to meet the ENERGY STAR ERI Target for homes
     # that are larger than the Benchmark Home and only for the incremental change in the ENERGY
     # STAR ERI Target caused by the Size Adjustment Factor
-    orig_eri = esrd_eri.round(0)
-    saf_eri = (esrd_eri * saf).round(0)
+    orig_eri = rd_eri.round(0)
+    saf_eri = (rd_eri * saf).round(0)
     return orig_eri - saf_eri
   else
-    # on-site power generation may not be used to meet the ENERGY STAR ERI Target
+    # on-site power generation may not be used to meet the ENERGY STAR and Zero Energy Ready Home ERI Target
     return 0.0
   end
 end
