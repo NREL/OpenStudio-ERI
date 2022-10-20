@@ -3,7 +3,7 @@ Capabilities
 
 ERI Capabilities
 ----------------
-The following ERI Standards are currently available:
+The following ERI Standards are supported:
 
 - ANSI/RESNET/ICC 301-2014© Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index
 - ANSI/RESNET/ICC 301-2019 Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
@@ -22,6 +22,10 @@ The following IECC ERI versions are supported:
 - 2015
 - 2018
 - 2021
+
+The following Zero Energy Ready Homes versions are supported:
+
+- 1.0
 
 Accuracy vs Speed
 -----------------
