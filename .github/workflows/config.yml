@@ -11,7 +11,7 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.5.0-rc1
     steps:
       - uses: actions/checkout@v2
         with:
@@ -48,7 +48,7 @@ jobs:
   run-eri-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.5.0-rc1
     steps:
       - uses: actions/checkout@v2
         with:
@@ -71,7 +71,7 @@ jobs:
   run-real-home-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.5.0-rc1
     steps:
       - uses: actions/checkout@v2
         with:
@@ -94,7 +94,7 @@ jobs:
   run-resnet-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.5.0-rc1
     steps:
       - uses: actions/checkout@v2
         with:
@@ -117,7 +117,7 @@ jobs:
   run-epa-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.5.0-rc1
     steps:
       - uses: actions/checkout@v2
         with:
@@ -137,20 +137,20 @@ jobs:
           path: workflow/tests/test_results
           name: test_results_epa
 
-#  run-windows-tests:
-#    runs-on: windows-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#        with:
-#          ref: ${{ github.head_ref }}
-#      - name: Install software and run test
-#        shell: pwsh
-#        run: |
-#          $env:OS_VERSION="3.4.0"
-#          $env:OS_SHA="4bd816f785"
-#          Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
-#          tar -xzf Windows.tar.gz
-#          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
+  run-windows-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Install software and run test
+        shell: pwsh
+        run: |
+          $env:OS_VERSION="3.5.0-rc1"
+          $env:OS_SHA="0aa781eed9"
+          Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
+          tar -xzf Windows.tar.gz
+          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
 
   compare-results:
     if: github.event_name == 'pull_request'

@@ -309,7 +309,7 @@ class ERIWaterHeatingTest < MiniTest::Test
                                     { whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 80, ef: 2.3, n_units_served: 1 },
                                     { whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationLivingSpace, ef: 0.99, n_units_served: 1 },
                                     { whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, setpoint: 125.0, location: HPXML::LocationLivingSpace, ef: 0.82, n_units_served: 1 },
-                                    { whtype: HPXML::WaterHeaterTypeCombiStorage, frac_load: 0.1, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss: 0.843 }])
+                                    { whtype: HPXML::WaterHeaterTypeCombiStorage, frac_load: 0.1, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss_value: 0.843 }])
       else
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 40, ef: 0.9172, n_units_served: 1 }])
       end
@@ -340,7 +340,7 @@ class ERIWaterHeatingTest < MiniTest::Test
       elsif [Constants.CalcTypeERIReferenceHome].include? calc_type
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeCombiStorage, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss: 1.0 }])
+        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeCombiStorage, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, n_units_served: 1, standby_loss_value: 1.0 }])
       else
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationLivingSpace, tank_vol: 50, ef: 0.575, n_units_served: 1 }])
       end
@@ -539,10 +539,11 @@ class ERIWaterHeatingTest < MiniTest::Test
         assert_in_epsilon(expected_values[:jacket_r], water_heater.jacket_r_value, 0.01)
       end
       assert_in_epsilon(expected_values[:setpoint], water_heater.temperature, 0.01)
-      if expected_values[:standby_loss].nil?
-        assert_nil(water_heater.standby_loss)
+      if expected_values[:standby_loss_value].nil?
+        assert_nil(water_heater.standby_loss_value)
       else
-        assert_equal(expected_values[:standby_loss], water_heater.standby_loss)
+        assert_equal(HPXML::UnitsDegFPerHour, water_heater.standby_loss_units)
+        assert_equal(expected_values[:standby_loss_value], water_heater.standby_loss_value)
       end
       if expected_values[:whtype] == HPXML::WaterHeaterTypeTankless
         if not expected_values[:uef].nil?

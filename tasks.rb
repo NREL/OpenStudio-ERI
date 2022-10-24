@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+Dir["#{File.dirname(__FILE__)}/hpxml-measures/HPXMLtoOpenStudio/resources/*.rb"].each do |resource_file|
+  next if resource_file.include? 'minitest_helper.rb'
+
+  require resource_file
+end
+
 def create_test_hpxmls
   this_dir = File.dirname(__FILE__)
   tests_dir = File.join(this_dir, 'workflow/tests')
@@ -2453,6 +2459,7 @@ def create_sample_hpxmls
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
                   'base-mechvent-cfis-airflow-fraction-zero.xml',
+                  'base-mechvent-cfis-supplemental-fan-exhaust.xml',
                   'base-mechvent-erv.xml',
                   'base-mechvent-erv-atre-asre.xml',
                   'base-mechvent-exhaust.xml',
@@ -2573,6 +2580,15 @@ def create_sample_hpxmls
         ventilation_fan.delivered_ventilation = nil
       end
       ventilation_fan.cfis_vent_mode_airflow_fraction = 1.0 if ventilation_fan.cfis_vent_mode_airflow_fraction.nil? && ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+      next unless not ventilation_fan.is_cfis_supplemental_fan?
+
+      if ventilation_fan.hours_in_operation.nil?
+        if ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+          ventilation_fan.hours_in_operation = 8.0
+        else
+          ventilation_fan.hours_in_operation = 24.0
+        end
+      end
     end
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
@@ -2807,12 +2823,6 @@ end
 
 if ARGV[0].to_sym == :update_measures
   require 'oga'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-  require_relative 'hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
   require_relative 'rulesets/resources/constants'
 
   # Prevent NREL error regarding U: drive when not VPNed in

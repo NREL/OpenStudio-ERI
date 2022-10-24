@@ -3,31 +3,14 @@
 require 'pathname'
 require 'csv'
 require 'oga'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/airflow'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/battery'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/constructions'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/geometry'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml_defaults'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hvac'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/lighting'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/location'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/materials'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/psychrometrics'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/schedules'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/waterheater'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
-require_relative 'resources/301ruleset'
-require_relative 'resources/ESruleset'
-require_relative 'resources/constants'
+Dir["#{File.dirname(__FILE__)}/../hpxml-measures/HPXMLtoOpenStudio/resources/*.rb"].each do |resource_file|
+  next if resource_file.include? 'minitest_helper.rb'
+
+  require resource_file
+end
+Dir["#{File.dirname(__FILE__)}/resources/*.rb"].each do |resource_file|
+  require resource_file
+end
 
 def run_rulesets(hpxml_input_path, designs)
   errors, warnings = [], []

@@ -853,6 +853,11 @@ def main(options)
     designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
   end
 
+  if designs.size == 0
+    puts 'No calculations requested.'
+    exit!
+  end
+
   duplicates = apply_rulesets_and_generate_hpxmls(designs, options)
 
   if not options[:skip_simulation]
