@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'

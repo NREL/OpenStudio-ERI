@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator.rb'
 
 class ERI301ValidationTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
+    @hpxml_schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @eri_validator_stron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
-    @hpxml_stron_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'HPXMLvalidator.xml')
 
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
@@ -34,9 +36,9 @@ class ERI301ValidationTest < MiniTest::Test
       puts "[#{i + 1}/#{xmls.size}] Testing #{File.basename(xml)}..."
 
       # Test validation
+      _test_schema_validation(xml, @hpxml_schema_path)
       hpxml_doc = HPXML.new(hpxml_path: xml, building_id: 'MyBuilding').to_oga()
-      _test_schema_validation(hpxml_doc, xml)
-      _test_schematron_validation(hpxml_doc)
+      _test_schematron_validation(xml, hpxml_doc, expected_errors: []) # Ensure no errors
     end
     puts
   end
@@ -44,17 +46,8 @@ class ERI301ValidationTest < MiniTest::Test
   def test_validation_of_schematron_doc
     # Check that the schematron file is valid
 
-    begin
-      require 'schematron-nokogiri'
-
-      [@eri_validator_stron_path, @hpxml_stron_path].each do |s_path|
-        xml_doc = Nokogiri::XML(File.open(s_path)) do |config|
-          config.options = Nokogiri::XML::ParseOptions::STRICT
-        end
-        SchematronNokogiri::Schema.new(xml_doc)
-      end
-    rescue LoadError
-    end
+    schematron_schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'iso-schematron.xsd'))
+    _test_schema_validation(@eri_validator_stron_path, schematron_schema_path)
   end
 
   def test_role_attributes_in_schematron_doc
@@ -87,7 +80,8 @@ class ERI301ValidationTest < MiniTest::Test
     end
   end
 
-  def test_schematron_error_messages
+  def test_schema_schematron_error_messages
+    OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
     # Test case => Error message
     all_expected_errors = { 'dhw-frac-load-served' => ['Expected sum(FractionDHWLoadServed) to be 1'],
                             'hvac-frac-load-served' => ['Expected sum(FractionHeatLoadServed) to be less than or equal to 1',
@@ -155,7 +149,8 @@ class ERI301ValidationTest < MiniTest::Test
       hpxml_doc = hpxml.to_oga()
 
       # Test against schematron
-      _test_schematron_validation(hpxml_doc, expected_errors)
+      XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
+      _test_schema_and_schematron_validation(@tmp_hpxml_path, hpxml_doc, expected_errors: expected_errors)
     end
   end
 
@@ -169,9 +164,6 @@ class ERI301ValidationTest < MiniTest::Test
       if ['invalid-epw-filepath'].include? error_case
         hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
         hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'foo.epw'
-      elsif ['dhw-frac-load-served'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-dhw-multiple.xml'))
-        hpxml.water_heating_systems[0].fraction_dhw_load_served = 0.35
       else
         fail "Unhandled case: #{error_case}."
       end
@@ -185,20 +177,32 @@ class ERI301ValidationTest < MiniTest::Test
 
   private
 
-  def _test_schematron_validation(hpxml_doc, expected_errors = [])
-    # Validate via validator.rb
-    errors, _warnings = Validator.run_validators(hpxml_doc, [@eri_validator_stron_path, @hpxml_stron_path])
-    _compare_errors(errors, expected_errors)
+  def _test_schematron_validation(hpxml_path, hpxml_doc, expected_errors: nil, expected_warnings: nil)
+    errors, warnings = XMLValidator.validate_against_schematron(hpxml_path, @eri_validator_stron_path, hpxml_doc)
+    if not expected_errors.nil?
+      _compare_errors_or_warnings('error', errors, expected_errors)
+    end
+    if not expected_warnings.nil?
+      _compare_errors_or_warnings('warning', warnings, expected_warnings)
+    end
   end
 
-  def _test_schema_validation(hpxml_doc, xml)
-    # TODO: Remove this when schema validation is included with CLI calls
-    schemas_dir = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema'))
-    errors = XMLHelper.validate(hpxml_doc.to_xml, File.join(schemas_dir, 'HPXML.xsd'), nil)
+  def _test_schema_validation(hpxml_path, schema_path)
+    errors, _warnings = XMLValidator.validate_against_schema(hpxml_path, schema_path)
     if errors.size > 0
-      puts "#{xml}: #{errors}"
+      flunk "#{hpxml_path}: #{errors}"
     end
-    assert_equal(0, errors.size)
+  end
+
+  def _test_schema_and_schematron_validation(hpxml_path, hpxml_doc, expected_errors: nil, expected_warnings: nil)
+    sct_errors, sct_warnings = XMLValidator.validate_against_schematron(hpxml_path, @eri_validator_stron_path, hpxml_doc)
+    xsd_errors, xsd_warnings = XMLValidator.validate_against_schema(hpxml_path, @hpxml_schema_path)
+    if not expected_errors.nil?
+      _compare_errors_or_warnings('error', sct_errors + xsd_errors, expected_errors)
+    end
+    if not expected_warnings.nil?
+      _compare_errors_or_warnings('warning', sct_warnings + xsd_warnings, expected_warnings)
+    end
   end
 
   def _test_ruleset(expected_errors)
@@ -214,31 +218,32 @@ class ERI301ValidationTest < MiniTest::Test
       assert_equal(false, success)
     end
 
-    _compare_errors(errors, expected_errors)
+    _compare_errors_or_warnings('error', errors, expected_errors)
   end
 
-  def _compare_errors(actual_errors, expected_errors)
-    if expected_errors.empty?
-      if actual_errors.size > 0
-        puts "Found unexpected error messages:\n#{actual_errors}"
+  def _compare_errors_or_warnings(type, actual_msgs, expected_msgs)
+    if expected_msgs.empty?
+      if actual_msgs.size > 0
+        flunk "Found unexpected #{type} messages:\n#{actual_msgs}"
       end
-      assert(actual_errors.size == 0)
     else
-      expected_errors.each do |expected_error|
-        found_error = false
-        actual_errors.each do |actual_error|
-          found_error = true if actual_error.include? expected_error
+      expected_msgs.each do |expected_msg|
+        found_msg = false
+        actual_msgs.each do |actual_msg|
+          next unless actual_msg.include? expected_msg
+
+          found_msg = true
+          actual_msgs.delete(actual_msg)
+          break
         end
 
-        if not found_error
-          puts "Did not find expected error message\n'#{expected_error}'\nin\n#{actual_errors}"
+        if not found_msg
+          flunk "Did not find expected #{type} message\n'#{expected_msg}'\nin\n#{actual_msgs}"
         end
-        assert(found_error)
       end
-      if expected_errors.size != actual_errors.size
-        puts "Found extra error messages:\n#{actual_errors}"
+      if actual_msgs.size > 0
+        flunk "Found extra #{type} messages:\n#{actual_msgs}"
       end
-      assert_equal(expected_errors.size, actual_errors.size)
     end
   end
 end
