@@ -170,7 +170,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
   hpxmls.values.each do |hpxml_path|
     if ['ESReference.xml',
-        'ESRated.xml'].include? File.basename(hpxml_path)
+        'ESRated.xml',
+        'ZERHReference.xml',
+        'ZERHRated.xml'].include? File.basename(hpxml_path)
       # Validate against 301validator.xml
       stron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
     else
