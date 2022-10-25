@@ -34,7 +34,7 @@ def get_program_versions(hpxml_doc)
   { [Constants.ERIVersions, 'ERICalculation/Version'] => eri_version,
     [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] => es_version,
     [IECCConstants.AllVersions, 'IECCERICalculation/Version'] => iecc_version,
-    [ZERHConstants.Ver1, 'ZERHCalculation/Version'] => zerh_version }.each do |values, version|
+    [ZERHConstants.AllVersions, 'ZERHCalculation/Version'] => zerh_version }.each do |values, version|
     all_versions, xpath = values
     if (not version.nil?) && (not all_versions.include? version)
       puts "Unexpected #{xpath}: '#{version}'"
@@ -730,48 +730,30 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   end
 
   if ESConstants.AllVersions.include? ruleset
-    results_csv = File.join(resultsdir, 'ES_Results.csv')
-    results_out = []
-    results_out << ['Reference Home ERI', rd_eri]
-
-    if saf.nil?
-      results_out << ['SAF (Size Adjustment Factor)', 'N/A']
-    else
-      results_out << ['SAF (Size Adjustment Factor)', saf.round(3)]
-    end
-    results_out << ['SAF Adjusted ERI Target', target_eri]
-    results_out << [nil] # line break
-    results_out << ['Rated Home ERI', rated_eri]
-    results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
-    results_out << [nil] # line break
-    if passes
-      results_out << ['ENERGY STAR Certification', 'PASS']
-    else
-      results_out << ['ENERGY STAR Certification', 'FAIL']
-    end
-    CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+    program_abbreviation, program_name = 'ES', 'ENERGY STAR'
   elsif ZERHConstants.AllVersions.include? ruleset
-    results_csv = File.join(resultsdir, 'ZERH_Results.csv')
-    results_out = []
-    results_out << ['Reference Home ERI', rd_eri]
-
-    if saf.nil?
-      results_out << ['SAF (Size Adjustment Factor)', 'N/A']
-    else
-      results_out << ['SAF (Size Adjustment Factor)', saf.round(3)]
-    end
-    results_out << ['SAF Adjusted ERI Target', target_eri]
-    results_out << [nil] # line break
-    results_out << ['Rated Home ERI', rated_eri]
-    results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
-    results_out << [nil] # line break
-    if passes
-      results_out << ['Zero Energy Ready Home Certification', 'PASS']
-    else
-      results_out << ['Zero Energy Ready Home Certification', 'FAIL']
-    end
-    CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+    program_abbreviation, program_name = 'ZERH', 'Zero Energy Ready Home'
   end
+  results_csv = File.join(resultsdir, "#{program_abbreviation}_Results.csv")
+  results_out = []
+  results_out << ['Reference Home ERI', rd_eri]
+
+  if saf.nil?
+    results_out << ['SAF (Size Adjustment Factor)', 'N/A']
+  else
+    results_out << ['SAF (Size Adjustment Factor)', saf.round(3)]
+  end
+  results_out << ['SAF Adjusted ERI Target', target_eri]
+  results_out << [nil] # line break
+  results_out << ['Rated Home ERI', rated_eri]
+  results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
+  results_out << [nil] # line break
+  if passes
+    results_out << ["#{program_name} Certification", 'PASS']
+  else
+    results_out << ["#{program_name} Certification", 'FAIL']
+  end
+  CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 end
 
 def download_epws

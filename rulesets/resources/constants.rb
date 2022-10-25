@@ -112,6 +112,6 @@ class ZERHConstants
   end
 
   def self.Ver1
-    return 'Version_1'
+    return '1.0'
   end
 end
