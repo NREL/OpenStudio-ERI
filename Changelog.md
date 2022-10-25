@@ -1,6 +1,8 @@
 ## OpenStudio-ERI v1.5.0
 
 __New Features__
+- Updates to OpenStudio 3.5.0/EnergyPlus 22.2.
+- **Breaking Change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).
 - Adds Zero Energy Ready Homes calculation for v1.
