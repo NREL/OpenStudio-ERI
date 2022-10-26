@@ -43,12 +43,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _check_infiltration(hpxml, 834.0, 'CFM')
     end
 
-    ESConstants.NationalVersions.each do |program_version|
+    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         value, units = 6.0, 'ACH'
       elsif program_version == ESConstants.SFNationalVer3_1
         value, units = 4.0, 'ACH'
-      elsif program_version == ESConstants.SFNationalVer3_2
+      elsif [ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
         value, units = 3.0, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1170.0, 'CFM'
@@ -98,7 +98,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     end
 
     # Radiant barrier: In climate zones 1-3, if > 10 linear ft. of ductwork are located in unconditioned attic
-    ESConstants.NationalVersions.each do |program_version|
+    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
@@ -271,7 +271,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       end
     end
 
-    ESConstants.NationalVersions.each do |program_version|
+    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
         rvalue = 0.0
       else
@@ -395,7 +395,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _check_floors(hpxml, area: 1800, rvalue: (2.1 * 1050 + rvalue_floors_over_uncond_spaces * 750) / 1800)
     end
 
-    ESConstants.NationalVersions.each do |program_version|
+    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.MFNationalVer1_0
         rvalue = 1.0 / 0.027
         rvalue_floors_over_uncond_spaces = 1.0 / 0.282
@@ -454,7 +454,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
                           under_ins_width: under_ins_width, under_ins_r: under_ins_r, depth_below_grade: 0)
     end
 
-    ESConstants.NationalVersions.each do |program_version|
+    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = _test_ruleset(program_version)
       _check_slabs(hpxml, area: 1350, exp_perim: 150)
@@ -474,7 +474,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
   def test_enclosure_windows
     # SF tests
-    ESConstants.SFVersions.each do |program_version|
+    [*ESConstants.SFVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
@@ -582,11 +582,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     end
 
     # Test in Climate Zone 1A
-    ESConstants.NationalVersions.each do |program_version|
+    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.60, 0.27
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? program_version
+      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [74.55, 74.55, 74.55, 74.55]
       elsif program_version == ESConstants.MFNationalVer1_0

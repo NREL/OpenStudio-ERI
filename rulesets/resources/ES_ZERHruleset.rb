@@ -174,7 +174,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
     has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
     set_vented_attic = false
-    if ESConstants.MFVersions.include? @program_version
+    if (ESConstants.MFVersions.include? @program_version) ||
+       ((ZERHConstants.AllVersions.include? @program_version) && ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type))
       ceiling_type = get_ceiling_type(orig_hpxml)
       if ceiling_type == 'adiabatic'
         return # Where the Rated Unit is entirely located beneath another dwelling unit or unrated conditioned space, no attic is modeled in the Reference Design
@@ -600,7 +601,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fraction_operable = Airflow.get_default_fraction_of_windows_operable()
 
     # Calculate the window area
-    if ESConstants.SFVersions.include? @program_version
+    if [*ESConstants.SFVersions, *ZERHConstants.AllVersions].include? @program_version
       if @has_cond_bsmnt || [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type)
         # For homes with conditioned basements and attached homes:
         total_win_area = calc_default_total_win_area(orig_hpxml, @cfa)
