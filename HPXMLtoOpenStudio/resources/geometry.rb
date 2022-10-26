@@ -3,15 +3,20 @@
 class Geometry
   def self.create_space_and_zone(model, spaces, location)
     if not spaces.keys.include? location
-      thermal_zone = OpenStudio::Model::ThermalZone.new(model)
-      thermal_zone.setName(location)
+      thermal_zone = nil
+      if HPXML::conditioned_locations_this_unit.include? location
+        if spaces.keys.include? HPXML::LocationLivingSpace
+          # Use a single conditioned zone for all conditioned spaces
+          thermal_zone = spaces[HPXML::LocationLivingSpace].thermalZone.get
+        end
+      end
+      if thermal_zone.nil?
+        thermal_zone = OpenStudio::Model::ThermalZone.new(model)
+        thermal_zone.setName(location)
+      end
 
       space = OpenStudio::Model::Space.new(model)
       space.setName(location)
-
-      st = OpenStudio::Model::SpaceType.new(model)
-      st.setStandardsSpaceType(location)
-      space.setSpaceType(st)
 
       space.setThermalZone(thermal_zone)
       spaces[location] = space
@@ -474,47 +479,7 @@ class Geometry
     return UnitConversions.convert(tilts.max, 'rad', 'deg')
   end
 
-  # TODO: Remove this method
-  def self.is_living(space_or_zone)
-    return space_or_zone_is_of_type(space_or_zone, HPXML::LocationLivingSpace)
-  end
-
-  # TODO: Remove this method
-  def self.is_unconditioned_basement(space_or_zone)
-    return space_or_zone_is_of_type(space_or_zone, HPXML::LocationBasementUnconditioned)
-  end
-
-  # TODO: Remove this method
-  def self.is_garage(space_or_zone)
-    return space_or_zone_is_of_type(space_or_zone, HPXML::LocationGarage)
-  end
-
-  def self.space_or_zone_is_of_type(space_or_zone, location)
-    if space_or_zone.is_a? OpenStudio::Model::Space
-      return space_is_of_type(space_or_zone, location)
-    elsif space_or_zone.is_a? OpenStudio::Model::ThermalZone
-      return zone_is_of_type(space_or_zone, location)
-    end
-  end
-
-  def self.space_is_of_type(space, location)
-    unless space.isPlenum
-      if space.spaceType.is_initialized
-        if space.spaceType.get.standardsSpaceType.is_initialized
-          return true if space.spaceType.get.standardsSpaceType.get == location
-        end
-      end
-    end
-    return false
-  end
-
-  def self.zone_is_of_type(zone, location)
-    zone.spaces.each do |space|
-      return space_is_of_type(space, location)
-    end
-  end
-
-  def self.apply_occupants(model, runner, hpxml, num_occ, space, schedules_file)
+  def self.apply_occupants(model, runner, hpxml, num_occ, spaces, schedules_file)
     occ_gain, _hrs_per_day, sens_frac, _lat_frac = Geometry.get_occupancy_default_values()
     activity_per_person = UnitConversions.convert(occ_gain, 'Btu/hr', 'W')
 
@@ -546,21 +511,25 @@ class Geometry
     activity_sch.setValue(activity_per_person)
     activity_sch.setName(Constants.ObjectNameOccupants + ' activity schedule')
 
-    # Add people definition for the occ
-    occ_def = OpenStudio::Model::PeopleDefinition.new(model)
-    occ = OpenStudio::Model::People.new(occ_def)
-    occ.setName(Constants.ObjectNameOccupants)
-    occ.setSpace(space)
-    occ_def.setName(Constants.ObjectNameOccupants)
-    occ_def.setNumberOfPeopleCalculationMethod('People', 1)
-    occ_def.setNumberofPeople(num_occ)
-    occ_def.setFractionRadiant(occ_rad)
-    occ_def.setSensibleHeatFraction(occ_sens)
-    occ_def.setMeanRadiantTemperatureCalculationType('ZoneAveraged')
-    occ_def.setCarbonDioxideGenerationRate(0)
-    occ_def.setEnableASHRAE55ComfortWarnings(false)
-    occ.setActivityLevelSchedule(activity_sch)
-    occ.setNumberofPeopleSchedule(people_sch)
+    cond_spaces = spaces.select { |k, s| HPXML::conditioned_finished_locations.include?(k) && s.floorArea > 0 }.values
+    cond_floor_area = cond_spaces.map { |s| s.floorArea }.sum
+
+    # Add people heat gain
+    cond_spaces.each do |space|
+      occ_def = OpenStudio::Model::PeopleDefinition.new(model)
+      occ = OpenStudio::Model::People.new(occ_def)
+      occ.setName(Constants.ObjectNameOccupants)
+      occ.setSpace(space)
+      occ_def.setName(Constants.ObjectNameOccupants)
+      occ_def.setNumberofPeople(num_occ * space.floorArea / cond_floor_area)
+      occ_def.setFractionRadiant(occ_rad)
+      occ_def.setSensibleHeatFraction(occ_sens)
+      occ_def.setMeanRadiantTemperatureCalculationType('ZoneAveraged')
+      occ_def.setCarbonDioxideGenerationRate(0)
+      occ_def.setEnableASHRAE55ComfortWarnings(false)
+      occ.setActivityLevelSchedule(activity_sch)
+      occ.setNumberofPeopleSchedule(people_sch)
+    end
   end
 
   def self.get_occupancy_default_num(nbeds)

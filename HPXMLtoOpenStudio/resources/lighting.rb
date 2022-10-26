@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Lighting
-  def self.apply(runner, model, epw_file, spaces, lighting_groups, lighting, eri_version, schedules_file, cfa, gfa)
+  def self.apply(runner, model, epw_file, spaces, lighting_groups, lighting, eri_version, schedules_file, cfa)
     fractions = {}
     lighting_groups.each do |lg|
       fractions[[lg.location, lg.lighting_type]] = lg.fraction_of_units_in_location
@@ -9,6 +9,11 @@ class Lighting
 
     if fractions[[HPXML::LocationInterior, HPXML::LightingTypeCFL]].nil? # Not the lighting group(s) we're interested in
       return
+    end
+
+    gfa = 0
+    if spaces.keys.include? HPXML::LocationGarage
+      gfa = UnitConversions.convert(spaces[HPXML::LocationGarage].floorArea, 'm^2', 'ft^2')
     end
 
     int_kwh, ext_kwh, grg_kwh = calc_energy(eri_version, cfa, gfa,
@@ -54,18 +59,23 @@ class Lighting
         runner.registerWarning("Both '#{SchedulesFile::ColumnLightingInterior}' schedule file and monthly multipliers provided; the latter will be ignored.") if !lighting.interior_monthly_multipliers.nil?
       end
 
+      cond_spaces = spaces.select { |k, s| HPXML::conditioned_finished_locations.include?(k) && s.floorArea > 0 }.values
+      cond_floor_area = cond_spaces.map { |s| s.floorArea }.sum
+
       # Add lighting
-      ltg_def = OpenStudio::Model::LightsDefinition.new(model)
-      ltg = OpenStudio::Model::Lights.new(ltg_def)
-      ltg.setName(Constants.ObjectNameInteriorLighting)
-      ltg.setSpace(spaces[HPXML::LocationLivingSpace])
-      ltg.setEndUseSubcategory(Constants.ObjectNameInteriorLighting)
-      ltg_def.setName(Constants.ObjectNameInteriorLighting)
-      ltg_def.setLightingLevel(design_level)
-      ltg_def.setFractionRadiant(0.6)
-      ltg_def.setFractionVisible(0.2)
-      ltg_def.setReturnAirFraction(0.0)
-      ltg.setSchedule(interior_sch)
+      cond_spaces.each do |space|
+        ltg_def = OpenStudio::Model::LightsDefinition.new(model)
+        ltg = OpenStudio::Model::Lights.new(ltg_def)
+        ltg.setName("#{Constants.ObjectNameInteriorLighting} #{space.name}")
+        ltg.setSpace(space)
+        ltg.setEndUseSubcategory(Constants.ObjectNameInteriorLighting)
+        ltg_def.setName(Constants.ObjectNameInteriorLighting)
+        ltg_def.setLightingLevel(design_level * space.floorArea / cond_floor_area)
+        ltg_def.setFractionRadiant(0.6)
+        ltg_def.setFractionVisible(0.2)
+        ltg_def.setReturnAirFraction(0.0)
+        ltg.setSchedule(interior_sch)
+      end
     end
 
     # Add lighting to each garage space
