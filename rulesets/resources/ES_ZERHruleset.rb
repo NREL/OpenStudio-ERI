@@ -799,7 +799,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fan_type = get_systems_mechanical_ventilation_default_fan_type()
     # mechanical vent fan cfm per Watts
     fan_cfm_per_w = get_fan_cfm_per_w()
-    # mechanicla vent fan heat recovery
+    # mechanical vent fan heat recovery
     fan_sre = get_mechanical_ventilation_fan_sre()
 
     # mechanical vent fan Watts
@@ -1328,7 +1328,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
         return HPXML::MechVentTypeSupply
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return HPXML::MechVentTypeBalanced
+        return HPXML::MechVentTypeHRV
       end
     end
 
