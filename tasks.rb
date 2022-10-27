@@ -2718,8 +2718,13 @@ def create_sample_hpxmls
                                                           zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
     end
 
-    # Handle different inputs for ENERGY STAR
+    # Handle different inputs for ENERGY STAR/ZERH
 
+    hpxml.header.zerh_calculation_version = ZERHConstants.Ver1
+    if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2015 }.size == 0
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2015,
+                                                          zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+    end
     if hpxml_path.include? 'base-bldgtype-multifamily'
       hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1
     elsif hpxml.header.state_code == 'FL'
@@ -2767,6 +2772,7 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = eri_version
     hpxml.header.iecc_eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
+    hpxml.header.zerh_calculation_version = nil
 
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
       # Need old input for clothes dryers
@@ -2782,6 +2788,7 @@ def create_sample_hpxmls
     hpxml.header.iecc_eri_calculation_version = iecc_version
     hpxml.header.eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
+    hpxml.header.zerh_calculation_version = nil
     zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
     if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(iecc_version) }.size == 0
       hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(iecc_version),

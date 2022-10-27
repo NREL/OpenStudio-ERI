@@ -17,6 +17,9 @@
       <IECCERICalculation>
         <Version>2021</Version>
       </IECCERICalculation>
+      <ZERHCalculation>
+        <Version>1.0</Version>
+      </ZERHCalculation>
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
@@ -68,6 +71,10 @@
         </ClimateZoneIECC>
         <ClimateZoneIECC>
           <Year>2021</Year>
+          <ClimateZone>5B</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2015</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>

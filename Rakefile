@@ -41,9 +41,9 @@ Rake::TestTask.new('test_resnet') do |t|
   t.verbose = true
 end
 
-desc 'Run EPA tests'
-Rake::TestTask.new('test_epa') do |t|
-  t.test_files = Dir['workflow/tests/epa_test.rb']
+desc 'Run ES & ZERH tests'
+Rake::TestTask.new('test_es_zerh') do |t|
+  t.test_files = Dir['workflow/tests/es_zerh_test.rb']
   t.warning = false
   t.verbose = true
 end

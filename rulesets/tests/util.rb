@@ -39,8 +39,8 @@ def _all_calc_types()
           Constants.CalcTypeCO2eReferenceHome]
 end
 
-# Create derivative file for ENERGY STAR testing
-def convert_to_es(hpxml_name, program_version, root_path, tmp_hpxml_path, state_code = nil)
+# Create derivative file for ENERGY STAR and Zero Energy Ready Home program testing
+def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, state_code = nil)
   hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', hpxml_name))
 
   # Change weather station for regional ENERGY STAR
@@ -80,13 +80,16 @@ def convert_to_es(hpxml_name, program_version, root_path, tmp_hpxml_path, state_
     hpxml.header.state_code = 'OR'
   end
 
-  # Change program version to ENERGY STAR
-  hpxml.header.energystar_calculation_version = program_version
-
-  if ESConstants.SFVersions.include? program_version
-    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
-  else
-    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+  # Change program version to ENERGY STAR or Zero Energy Ready Home
+  if ESConstants.AllVersions.include? program_version
+    hpxml.header.energystar_calculation_version = program_version
+    if ESConstants.SFVersions.include? program_version
+      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+    else
+      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+    end
+  elsif ZERHConstants.AllVersions.include? program_version
+    hpxml.header.zerh_calculation_version = program_version
   end
 
   # Save new file

@@ -53,6 +53,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   ``ERICalculation/Version``         string             See [#]_     No        <none>   Version to perform ERI calculation
   ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version to perform IECC ERI calculation
   ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version to perform ENERGY STAR ERI calculation
+  ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version to perform Zero Energy Ready Home ERI calculation
   =================================  ========  =======  ===========  ========  =======  ==================================
   
   .. [#] ERICalculation/Version choices are "latest", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
@@ -60,6 +61,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          A value of "latest" can be used to always point to the latest version available.
   .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.0", "SF_National_3.1", "SF_National_3.2", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.0", "MF_National_1.1", "MF_National_1.2", or "MF_OregonWashington_1.2".
+  .. [#] ZERHCalculation/Version choice is "1.0".
 
 .. warning::
 
@@ -69,8 +71,8 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
 
 .. warning::
 
-  For the ENERGY STAR ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ENERGY STAR ERI Target.
-  For example, it does not check that the home meets all ENERGY STAR Mandatory Requirements.
+  For the ENERGY STAR and Zero Energy Ready Home ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ENERGY STAR and Zero Energy Ready Home ERI Target.
+  For example, it does not check that the home meets all ENERGY STAR and Zero Energy Ready Home Mandatory Requirements.
   It is the software tool's responsibility to perform these additional steps. 
 
 HPXML Building Site

@@ -102,7 +102,8 @@ class ERI301ValidationTest < MiniTest::Test
                             'energy-star-MF_National_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
                                                               'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone'],
                             'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
-                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'],
+                            'zerh-version_1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2015"]/ClimateZone'] }
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
@@ -122,22 +123,34 @@ class ERI301ValidationTest < MiniTest::Test
         hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
         hpxml.building_construction.conditioned_floor_area = 1348.8
       elsif error_case.include? 'energy-star'
-        es_props = { 'energy-star-SF_Florida_3.1' => [ESConstants.SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
-                     'energy-star-SF_National_3.0' => [ESConstants.SFNationalVer3_0, HPXML::ResidentialTypeApartment],
-                     'energy-star-SF_National_3.1' => [ESConstants.SFNationalVer3_1, HPXML::ResidentialTypeApartment],
-                     'energy-star-SF_National_3.2' => [ESConstants.SFNationalVer3_2, HPXML::ResidentialTypeApartment],
-                     'energy-star-SF_OregonWashington_3.2' => [ESConstants.SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
-                     'energy-star-SF_Pacific_3.0' => [ESConstants.SFPacificVer3_0, HPXML::ResidentialTypeApartment],
-                     'energy-star-MF_National_1.0' => [ESConstants.MFNationalVer1_0, HPXML::ResidentialTypeSFD],
-                     'energy-star-MF_National_1.1' => [ESConstants.MFNationalVer1_1, HPXML::ResidentialTypeSFD],
-                     'energy-star-MF_National_1.2' => [ESConstants.MFNationalVer1_2, HPXML::ResidentialTypeSFD],
-                     'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
-        es_version, bldg_type = es_props[error_case]
+        props = { 'energy-star-SF_Florida_3.1' => [ESConstants.SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.0' => [ESConstants.SFNationalVer3_0, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.1' => [ESConstants.SFNationalVer3_1, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.2' => [ESConstants.SFNationalVer3_2, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_OregonWashington_3.2' => [ESConstants.SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_Pacific_3.0' => [ESConstants.SFPacificVer3_0, HPXML::ResidentialTypeApartment],
+                  'energy-star-MF_National_1.0' => [ESConstants.MFNationalVer1_0, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_National_1.1' => [ESConstants.MFNationalVer1_1, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_National_1.2' => [ESConstants.MFNationalVer1_2, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
+        version, bldg_type = props[error_case]
         hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files', 'base.xml'))
-        hpxml.header.energystar_calculation_version = es_version
+        hpxml.header.energystar_calculation_version = version
         hpxml.header.iecc_eri_calculation_version = nil
+        hpxml.header.zerh_calculation_version = nil
         hpxml.building_construction.residential_facility_type = bldg_type
         hpxml.header.state_code = 'CO'
+        zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                            zone: zone)
+      elsif error_case.include? 'zerh'
+        versions = { 'zerh-version_1' => ZERHConstants.Ver1 }
+        version = versions[error_case]
+        hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files', 'base.xml'))
+        hpxml.header.zerh_calculation_version = version
+        hpxml.header.iecc_eri_calculation_version = nil
+        hpxml.header.energystar_calculation_version = nil
         zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
         hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
         hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,

@@ -97,3 +97,21 @@ class IECCConstants
     return ['2015', '2018', '2021']
   end
 end
+
+class ZERHConstants
+  def self.CalcTypeZERHRated
+    return 'ZERH Rated'
+  end
+
+  def self.CalcTypeZERHReference
+    return 'ZERH Reference'
+  end
+
+  def self.AllVersions
+    return [self.Ver1]
+  end
+
+  def self.Ver1
+    return '1.0'
+  end
+end

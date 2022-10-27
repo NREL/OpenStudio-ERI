@@ -5,6 +5,7 @@ __New Features__
 - **Breaking Change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).
+- Adds Zero Energy Ready Homes calculation for v1.
 - Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
 - Allows calculating all programs (e.g., ERI, ENERGY STAR, IECC, etc.) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
@@ -18,7 +19,7 @@ __New Features__
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
   - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
-  - TODO: Zero Energy Ready Homes v1 runs ....
+  - Zero Energy Ready Homes v1 runs must include a 2015 IECC climate zone.
 - Allows shared dishwasher/clothes washer to be attached to a hot water distribution system instead of a single water heater.
 - Adds HVAC capacities, design loads, and design temperatures to csv output files.
 - Annual/timeseries outputs:

@@ -29,10 +29,12 @@ def get_program_versions(hpxml_doc)
   end
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
   iecc_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
+  zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
 
   { [Constants.ERIVersions, 'ERICalculation/Version'] => eri_version,
     [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] => es_version,
-    [IECCConstants.AllVersions, 'IECCERICalculation/Version'] => iecc_version }.each do |values, version|
+    [IECCConstants.AllVersions, 'IECCERICalculation/Version'] => iecc_version,
+    [ZERHConstants.AllVersions, 'ZERHCalculation/Version'] => zerh_version }.each do |values, version|
     all_versions, xpath = values
     if (not version.nil?) && (not all_versions.include? version)
       puts "Unexpected #{xpath}: '#{version}'"
@@ -45,7 +47,7 @@ def get_program_versions(hpxml_doc)
     end
   end
 
-  return eri_version, es_version, iecc_version
+  return eri_version, es_version, iecc_version, zerh_version
 end
 
 def apply_rulesets_and_generate_hpxmls(designs, options)
@@ -717,19 +719,25 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
   end
 end
 
-def write_es_results(resultsdir, esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
-  esrd_eri = esrd_eri_results[:eri].round(0)
+def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
+  rd_eri = rd_eri_results[:eri].round(0)
   target_eri = target_eri.round(0)
   rated_eri = rated_eri_results[:eri].round(0)
   rated_wo_opp_eri = rated_eri_results_wo_opp[:eri].round(0)
 
-  if rated_wo_opp_eri - rated_eri > esrd_eri - target_eri
+  if rated_wo_opp_eri - rated_eri > rd_eri - target_eri
     fail 'Unexpected error.'
   end
 
-  results_csv = File.join(resultsdir, 'ES_Results.csv')
+  if ESConstants.AllVersions.include? ruleset
+    program_abbreviation, program_name = 'ES', 'ENERGY STAR'
+  elsif ZERHConstants.AllVersions.include? ruleset
+    program_abbreviation, program_name = 'ZERH', 'Zero Energy Ready Home'
+  end
+  results_csv = File.join(resultsdir, "#{program_abbreviation}_Results.csv")
   results_out = []
-  results_out << ['Reference Home ERI', esrd_eri]
+  results_out << ['Reference Home ERI', rd_eri]
+
   if saf.nil?
     results_out << ['SAF (Size Adjustment Factor)', 'N/A']
   else
@@ -741,9 +749,9 @@ def write_es_results(resultsdir, esrd_eri_results, rated_eri_results, rated_eri_
   results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
   results_out << [nil] # line break
   if passes
-    results_out << ['ENERGY STAR Certification', 'PASS']
+    results_out << ["#{program_name} Certification", 'PASS']
   else
-    results_out << ['ENERGY STAR Certification', 'FAIL']
+    results_out << ["#{program_name} Certification", 'FAIL']
   end
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 end
@@ -813,7 +821,7 @@ def main(options)
 
   puts "HPXML: #{options[:hpxml]}"
   hpxml_doc = XMLHelper.parse_file(options[:hpxml])
-  eri_version, es_version, iecc_version = get_program_versions(hpxml_doc)
+  eri_version, es_version, iecc_version, zerh_version = get_program_versions(hpxml_doc)
 
   # Create list of designs
   designs = []
@@ -851,6 +859,17 @@ def main(options)
     designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
     designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
     designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+  end
+  if not zerh_version.nil?
+    # ENERGY STAR designs
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
   end
 
   if designs.size == 0
@@ -899,7 +918,7 @@ def main(options)
       esrd_eri_results = calculate_eri(esrd_eri_outputs, resultsdir, csv_filename_prefix: ESConstants.CalcTypeEnergyStarReference.gsub(' ', ''))
 
       # Calculate Size-Adjusted ERI for Energy Star Reference Homes
-      saf = calc_energystar_saf(esrd_eri_results, es_version, options[:hpxml])
+      saf = get_saf(esrd_eri_results, es_version, options[:hpxml])
       target_eri = esrd_eri_results[:eri] * saf
 
       # Calculate ES Rated ERI, w/ On-site Power Production (OPP) restriction as appropriate
@@ -918,12 +937,47 @@ def main(options)
       # Calculate ES Rated ERI w/o OPP for extra information
       rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_results(resultsdir, esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
+      write_es_zerh_results(es_version, resultsdir, esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
 
       if passes
         puts 'ENERGY STAR Certification: PASS'
       else
         puts 'ENERGY STAR Certification: FAIL'
+      end
+    end
+
+    if not zerh_version.nil?
+      # Calculate ZERH Reference ERI
+      zerhrd_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHReference }
+      zerhrd_eri_outputs = retrieve_eri_outputs(zerhrd_eri_designs)
+      zerhrd_eri_results = calculate_eri(zerhrd_eri_outputs, resultsdir, csv_filename_prefix: ZERHConstants.CalcTypeZERHReference.gsub(' ', ''))
+
+      # Calculate Size-Adjusted ERI for ZERH Reference Homes
+      saf = get_saf(zerhrd_eri_results, zerh_version, options[:hpxml])
+      target_eri = zerhrd_eri_results[:eri] * saf
+
+      # Calculate ZERH Rated ERI
+      opp_reduction_limit = calc_opp_eri_limit(zerhrd_eri_results[:eri], saf, zerh_version)
+      rated_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHRated }
+      rated_eri_outputs = retrieve_eri_outputs(rated_eri_designs)
+      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, csv_filename_prefix: ZERHConstants.CalcTypeZERHRated.gsub(' ', ''),
+                                                                       opp_reduction_limit: opp_reduction_limit)
+
+      if rated_eri_results[:eri].round(0) <= target_eri.round(0)
+        passes = true
+      else
+        passes = false
+      end
+
+      # Calculate ZERH Rated ERI w/o OPP for extra information
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, skip_csv: true, opp_reduction_limit: 0.0)
+
+      write_es_zerh_results(zerh_version, resultsdir, zerhrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
+
+      if passes
+        puts 'Zero Energy Ready Home Certification: PASS'
+      else
+        puts 'Zero Energy Ready Home Certification: FAIL'
       end
     end
 

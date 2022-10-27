@@ -86,8 +86,10 @@ def run_rulesets(hpxml_input_path, designs)
 
       # Apply initial ruleset on HPXML object
       if [ESConstants.CalcTypeEnergyStarReference,
-          ESConstants.CalcTypeEnergyStarRated].include? design.init_calc_type
-        new_hpxml = EnergyStarRuleset.apply_ruleset(new_hpxml, design.init_calc_type)
+          ESConstants.CalcTypeEnergyStarRated,
+          ZERHConstants.CalcTypeZERHReference,
+          ZERHConstants.CalcTypeZERHRated].include? design.init_calc_type
+        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type)
       end
 
       # Write initial HPXML file

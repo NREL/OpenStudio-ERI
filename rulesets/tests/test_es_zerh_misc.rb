@@ -6,7 +6,7 @@ require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
-class EnergyStarMiscTest < MiniTest::Test
+class EnergyStarZeroEnergyReadyHomeMiscTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
@@ -17,16 +17,20 @@ class EnergyStarMiscTest < MiniTest::Test
   end
 
   def test_misc
-    ESConstants.AllVersions.each do |es_version|
-      _convert_to_es('base.xml', es_version)
-      hpxml = _test_ruleset()
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      _convert_to_es_zerh('base.xml', program_version)
+      hpxml = _test_ruleset(program_version)
       _check_misc(hpxml)
     end
   end
 
-  def _test_ruleset()
+  def _test_ruleset(program_version)
     require_relative '../../workflow/design'
-    designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+    if ESConstants.AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+    elsif ZERHConstants.AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference)]
+    end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
 
@@ -44,7 +48,7 @@ class EnergyStarMiscTest < MiniTest::Test
     assert_equal(0, hpxml.plug_loads.size)
   end
 
-  def _convert_to_es(hpxml_name, program_version, state_code = nil)
-    return convert_to_es(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
+  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
+    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

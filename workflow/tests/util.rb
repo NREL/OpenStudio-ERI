@@ -30,6 +30,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
   iecc_eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
+  zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
@@ -109,6 +110,36 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
         csvs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
     end
+    if not zerh_version.nil?
+      # Zero Energy Ready Home
+      hpxmls[:zerh_ref] = File.join(rundir, 'results', 'ZERHReference.xml')
+      hpxmls[:zerh_rated] = File.join(rundir, 'results', 'ZERHRated.xml')
+      hpxmls[:zerhrd_ref] = File.join(rundir, 'results', 'ZERHReference_ERIReferenceHome.xml')
+      hpxmls[:zerhrd_rated] = File.join(rundir, 'results', 'ZERHReference_ERIRatedHome.xml')
+      hpxmls[:zerhrd_iad] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentDesign.xml')
+      hpxmls[:zerhrd_iadref] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentReferenceHome.xml')
+      hpxmls[:zerhrat_ref] = File.join(rundir, 'results', 'ZERHRated_ERIReferenceHome.xml')
+      hpxmls[:zerhrat_rated] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.xml')
+      hpxmls[:zerhrat_iad] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.xml')
+      hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
+      csvs[:zerh_results] = File.join(rundir, 'results', 'ZERH_Results.csv')
+      csvs[:zerhrd_eri_results] = File.join(rundir, 'results', 'ZERHReference_ERI_Results.csv')
+      csvs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', 'ZERHReference_ERI_Worksheet.csv')
+      csvs[:zerhrat_eri_results] = File.join(rundir, 'results', 'ZERHRated_ERI_Results.csv')
+      csvs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', 'ZERHRated_ERI_Worksheet.csv')
+      csvs[:zerhrd_rated_results] = File.join(rundir, 'results', 'ZERHReference_ERIRatedHome.csv')
+      csvs[:zerhrd_ref_results] = File.join(rundir, 'results', 'ZERHReference_ERIReferenceHome.csv')
+      csvs[:zerhrd_iad_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentDesign.csv')
+      csvs[:zerhrd_iadref_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentReferenceHome.csv')
+      csvs[:zerhrat_rated_results] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.csv')
+      csvs[:zerhrat_ref_results] = File.join(rundir, 'results', 'ZERHRated_ERIReferenceHome.csv')
+      csvs[:zerhrat_iad_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.csv')
+      csvs[:zerhrat_iadref_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.csv')
+      if timeseries_frequency != 'none'
+        csvs[:zerhrat_timeseries_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
+        csvs[:zerhrd_timeseries_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+      end
+    end
     if not iecc_eri_version.nil?
       hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
       hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
@@ -139,7 +170,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   xsd_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
   hpxmls.values.each do |hpxml_path|
     if ['ESReference.xml',
-        'ESRated.xml'].include? File.basename(hpxml_path)
+        'ESRated.xml',
+        'ZERHReference.xml',
+        'ZERHRated.xml'].include? File.basename(hpxml_path)
       # Validate against 301validator.xml
       stron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
     else
@@ -223,12 +256,14 @@ def _get_csv_results(csvs)
       value = 1 if value == 'PASS'
       value = 0 if value == 'FAIL'
 
-      if csv.include? 'IECC'
+      if csv.include? 'IECC_'
         key = "IECC #{key}"
+      elsif csv.include? 'ES_'
+        key = "ES #{key}"
+      elsif csv.include? 'ZERH_'
+        key = "ZERH #{key}"
       end
-      if key == 'ENERGY STAR Certification' # String outputs
-        results[key] = value
-      elsif value.include? ',' # Sum values for visualization on CI
+      if value.to_s.include? ',' # Sum values for visualization on CI
         results[key] = value.split(',').map(&:to_f).sum
       else
         results[key] = Float(value)
