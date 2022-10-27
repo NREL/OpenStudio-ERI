@@ -2103,7 +2103,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
     return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
-    return if orig_hpxml.dehumidifiers.size == 0
 
     orig_hpxml.dehumidifiers.each do |dehumidifier|
       reference_values = HVAC.get_dehumidifier_default_values(dehumidifier.capacity)
@@ -2119,7 +2118,6 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dehumidifier_rated(orig_hpxml, new_hpxml)
     return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
-    return if orig_hpxml.dehumidifiers.size == 0
 
     orig_hpxml.dehumidifiers.each do |dehumidifier|
       new_hpxml.dehumidifiers.add(id: dehumidifier.id,

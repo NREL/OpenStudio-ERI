@@ -163,7 +163,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     infil_air_leakage, infil_unit_of_measure = get_enclosure_air_infiltration_default(orig_hpxml)
 
     # Air Infiltration
-    new_hpxml.air_infiltration_measurements.add(id: 'TargetHomeDesignInfiltration',
+    new_hpxml.air_infiltration_measurements.add(id: 'TargetInfiltration',
                                                 house_pressure: 50,
                                                 unit_of_measure: infil_unit_of_measure,
                                                 air_leakage: infil_air_leakage.round(1),
@@ -176,8 +176,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     set_vented_attic = false
     if (ESConstants.MFVersions.include? @program_version) ||
        ((ZERHConstants.AllVersions.include? @program_version) && ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type))
-      ceiling_type = get_ceiling_type(orig_hpxml)
-      if ceiling_type == 'adiabatic'
+      if is_ceiling_fully_adiabatic(orig_hpxml)
         return # Where the Rated Unit is entirely located beneath another dwelling unit or unrated conditioned space, no attic is modeled in the Reference Design
       else
         if @program_version == ESConstants.MFNationalVer1_1
@@ -195,7 +194,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       set_vented_attic = true
     end
     if set_vented_attic
-      new_hpxml.attics.add(id: 'TargetHomeDesignVentedAttic',
+      new_hpxml.attics.add(id: 'TargetVentedAttic',
                            attic_type: HPXML::AtticTypeVented)
       @has_auto_generated_attic = true unless has_attic
     end
@@ -206,7 +205,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.interior_adjacent_to.include?('crawlspace') || orig_floor.exterior_adjacent_to.include?('crawlspace')
 
-      new_hpxml.foundations.add(id: 'TargetHomeDesignVentedCrawlspace',
+      new_hpxml.foundations.add(id: 'TargetVentedCrawlspace',
                                 foundation_type: HPXML::FoundationTypeCrawlspaceVented)
       break
     end
@@ -267,7 +266,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
       roof_area = orig_floor.area / Math.cos(pitch_to_radians)
 
-      new_hpxml.roofs.add(id: 'TargetHomeDesignRoof',
+      new_hpxml.roofs.add(id: 'TargetRoof',
                           interior_adjacent_to: HPXML::LocationAtticVented,
                           area: roof_area,
                           azimuth: nil,
@@ -276,7 +275,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                           pitch: default_roof_pitch,
                           radiant_barrier: radiant_barrier_bool,
                           radiant_barrier_grade: radiant_barrier_grade,
-                          insulation_id: 'TargetHomeDesignRoofInsulation',
+                          insulation_id: 'TargetRoofInsulation',
                           insulation_assembly_r_value: 2.3) # Assumes that the roof is uninsulated
     end
   end
@@ -299,7 +298,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # Area is equally distributed to each direction to be consistent with walls.
     # Need to preserve above-grade vs below-grade for inferred infiltration height.
     if sum_gross_area_ag > 0
-      new_hpxml.rim_joists.add(id: 'TargetHomeDesignRimJoist',
+      new_hpxml.rim_joists.add(id: 'TargetRimJoist',
                                exterior_adjacent_to: HPXML::LocationOutside,
                                interior_adjacent_to: HPXML::LocationLivingSpace,
                                area: sum_gross_area_ag,
@@ -309,7 +308,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
     if sum_gross_area_bg > 0
-      new_hpxml.rim_joists.add(id: 'TargetHomeDesignRimJoistBasement',
+      new_hpxml.rim_joists.add(id: 'TargetRimJoistBasement',
                                exterior_adjacent_to: HPXML::LocationOutside,
                                interior_adjacent_to: HPXML::LocationBasementConditioned,
                                area: sum_gross_area_bg,
@@ -353,7 +352,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     # Create thermal boundary wall area
     if sum_gross_area > 0
-      new_hpxml.walls.add(id: 'TargetHomeDesignWall',
+      new_hpxml.walls.add(id: 'TargetWall',
                           exterior_adjacent_to: HPXML::LocationOutside,
                           interior_adjacent_to: HPXML::LocationLivingSpace,
                           wall_type: HPXML::WallTypeWoodStud,
@@ -499,11 +498,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       pitch_to_radians = Math.atan(orig_roof.pitch / 12.0)
       floor_area = orig_roof.area * Math.cos(pitch_to_radians)
 
-      new_hpxml.floors.add(id: 'TargetHomeDesignFloor',
+      new_hpxml.floors.add(id: 'TargetFloor',
                            exterior_adjacent_to: HPXML::LocationAtticVented,
                            interior_adjacent_to: HPXML::LocationLivingSpace,
                            area: floor_area,
-                           insulation_id: 'TargetHomeDesignFloorInsulation',
+                           insulation_id: 'TargetFloorInsulation',
                            insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
     end
   end
@@ -619,12 +618,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
         next if each_win_area <= 0.1
 
-        new_hpxml.windows.add(id: "TargetHomeDesignWindow#{orientation}",
+        new_hpxml.windows.add(id: "TargetWindow#{orientation}",
                               area: each_win_area.round(2),
                               azimuth: azimuth,
                               ufactor: win_ufactor,
                               shgc: win_shgc,
-                              wall_idref: 'TargetHomeDesignWall',
+                              wall_idref: 'TargetWall',
                               performance_class: HPXML::WindowClassResidential,
                               fraction_operable: fraction_operable)
       end
@@ -643,7 +642,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                               azimuth: win.azimuth,
                               ufactor: win_ufactor,
                               shgc: win_shgc,
-                              wall_idref: 'TargetHomeDesignWall',
+                              wall_idref: 'TargetWall',
                               performance_class: win.performance_class,
                               fraction_operable: fraction_operable)
       end
@@ -662,7 +661,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     orig_hpxml.doors.each do |orig_door|
       new_hpxml.doors.add(id: orig_door.id,
-                          wall_idref: 'TargetHomeDesignWall',
+                          wall_idref: 'TargetWall',
                           area: orig_door.area,
                           azimuth: orig_door.azimuth,
                           r_value: (1.0 / door_ufactor).round(3))
@@ -706,7 +705,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     # Exhibit 2 - Thermostat
-    new_hpxml.hvac_controls.add(id: 'TargetHomeDesignHVACControl',
+    new_hpxml.hvac_controls.add(id: 'TargetHVACControl',
                                 control_type: HPXML::HVACControlTypeProgrammable)
 
     # Exhibit 2 - Thermal distribution systems
@@ -792,23 +791,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.set_systems_mechanical_ventilation_reference(new_hpxml)
     # Exhibit 2 - Whole-House Mechanical ventilation
-    # mechanical vent fan cfm
-    q_tot = 0.01 * @cfa + 7.5 * (@nbeds + 1)
-
-    # mechanical vent fan type
+    fan_cfm = 0.01 * @cfa + 7.5 * (@nbeds + 1) # cfm
     fan_type = get_systems_mechanical_ventilation_default_fan_type()
-    # mechanical vent fan cfm per Watts
     fan_cfm_per_w = get_fan_cfm_per_w()
-    # mechanical vent fan heat recovery
     fan_sre = get_mechanical_ventilation_fan_sre()
+    fan_power_w = fan_cfm / fan_cfm_per_w
 
-    # mechanical vent fan Watts
-    fan_power_w = q_tot / fan_cfm_per_w
-
-    new_hpxml.ventilation_fans.add(id: 'TargetHomeDesignVentilationFan',
+    new_hpxml.ventilation_fans.add(id: 'TargetVentilationFan',
                                    is_shared_system: false,
                                    fan_type: fan_type,
-                                   tested_flow_rate: q_tot.round(2),
+                                   tested_flow_rate: fan_cfm.round(2),
                                    hours_in_operation: 24,
                                    fan_power: fan_power_w.round(3),
                                    sensible_recovery_efficiency: fan_sre,
@@ -882,12 +874,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # New water fixtures
     if orig_hpxml.water_fixtures.size == 0
       # Shower Head
-      new_hpxml.water_fixtures.add(id: 'TargetHomeDesignWaterFixture1',
+      new_hpxml.water_fixtures.add(id: 'TargetWaterFixture1',
                                    water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
                                    low_flow: bool_low_flow)
 
       # Faucet
-      new_hpxml.water_fixtures.add(id: 'TargetHomeDesignWaterFixture2',
+      new_hpxml.water_fixtures.add(id: 'TargetWaterFixture2',
                                    water_fixture_type: HPXML::WaterFixtureTypeFaucet,
                                    low_flow: bool_low_flow)
     else
@@ -904,7 +896,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
     if [ESConstants.SFPacificVer3_0].include? @program_version
       if orig_hpxml.water_heating_systems.any?  { |wh| (wh.fuel_type == HPXML::FuelTypeElectricity || orig_hpxml.solar_thermal_systems.size > 0) }
-        new_hpxml.solar_thermal_systems.add(id: 'TargetHomeDesignSolarThermalSystem',
+        new_hpxml.solar_thermal_systems.add(id: 'TargetSolarThermalSystem',
                                             system_type: 'hot water',
                                             solar_fraction: 0.90)
       end
@@ -1045,8 +1037,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
-    return if orig_hpxml.dehumidifiers.size == 0
-
     orig_hpxml.dehumidifiers.each do |dehumidifier|
       reference_values = HVAC.get_dehumidifier_default_values(dehumidifier.capacity)
       new_hpxml.dehumidifiers.add(id: dehumidifier.id,
@@ -1116,39 +1106,39 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       fFII_grg = 0.0
     end
 
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup1',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup1',
                                   location: HPXML::LocationInterior,
                                   fraction_of_units_in_location: fFII_int,
                                   lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup2',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup2',
                                   location: HPXML::LocationExterior,
                                   fraction_of_units_in_location: fFII_ext,
                                   lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup3',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup3',
                                   location: HPXML::LocationGarage,
                                   fraction_of_units_in_location: fFII_grg,
                                   lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup4',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup4',
                                   location: HPXML::LocationInterior,
                                   fraction_of_units_in_location: fFI_int,
                                   lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup5',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup5',
                                   location: HPXML::LocationExterior,
                                   fraction_of_units_in_location: fFI_ext,
                                   lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup6',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup6',
                                   location: HPXML::LocationGarage,
                                   fraction_of_units_in_location: fFI_grg,
                                   lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup7',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup7',
                                   location: HPXML::LocationInterior,
                                   fraction_of_units_in_location: 0,
                                   lighting_type: HPXML::LightingTypeLFL)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup8',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup8',
                                   location: HPXML::LocationExterior,
                                   fraction_of_units_in_location: 0,
                                   lighting_type: HPXML::LightingTypeLFL)
-    new_hpxml.lighting_groups.add(id: 'TargetHomeDesignLightingGroup9',
+    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup9',
                                   location: HPXML::LocationGarage,
                                   fraction_of_units_in_location: 0,
                                   lighting_type: HPXML::LightingTypeLFL)
@@ -1157,7 +1147,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
     return if orig_hpxml.ceiling_fans.size == 0
 
-    new_hpxml.ceiling_fans.add(id: 'TargetHomeDesignCeilingFan',
+    new_hpxml.ceiling_fans.add(id: 'TargetCeilingFan',
                                efficiency: get_default_ceiling_fan_cfm_per_w(),
                                quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
   end
@@ -2062,76 +2052,69 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fail 'Unexpected case.'
   end
 
-  def self.get_foundation_type(orig_hpxml)
-    adiabatic_floor_area = 0.0
-    ambient_floor_area = 0.0
-    crawlspace_floor_area = 0.0
-    basement_floor_area = 0.0
-    slab_on_grade_area = 0.0
+  def self.get_predominant_foundation_type(orig_hpxml)
+    floor_areas = { 'basement' => 0.0,
+                    'crawlspace' => 0.0,
+                    'slab' => 0.0,
+                    'ambient' => 0.0,
+                    'adiabatic' => 0.0 }
+
     # calculate floor area by floor type
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_floor
       next unless orig_floor.interior_adjacent_to == HPXML::LocationLivingSpace
 
-      if orig_floor.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
-        adiabatic_floor_area += orig_floor.area
-      elsif orig_floor.exterior_adjacent_to == HPXML::LocationOutside
-        ambient_floor_area += orig_floor.area
+      if [HPXML::LocationOtherHousingUnit].include? orig_floor.exterior_adjacent_to
+        floor_areas['adiabatic'] += orig_floor.area
+      elsif [HPXML::LocationOutside].include? orig_floor.exterior_adjacent_to
+        floor_areas['ambient'] += orig_floor.area
+      elsif [HPXML::LocationBasementConditioned, HPXML::LocationBasementUnconditioned].include? orig_floor.exterior_adjacent_to
+        floor_areas['basement'] += orig_floor.area
+      elsif [HPXML::LocationCrawlspaceVented, HPXML::LocationCrawlspaceUnvented].include? orig_floor.exterior_adjacent_to
+        floor_areas['crawlspace'] += orig_floor.area
       end
     end
+
     # calculate floor area by slab type
     orig_hpxml.slabs.each do |orig_slab|
-      if orig_slab.interior_adjacent_to == HPXML::LocationBasementConditioned || orig_slab.interior_adjacent_to == HPXML::LocationBasementUnconditioned
-        basement_floor_area += orig_slab.area
-      elsif orig_slab.interior_adjacent_to == HPXML::LocationCrawlspaceVented || orig_slab.interior_adjacent_to == HPXML::LocationCrawlspaceUnvented
-        crawlspace_floor_area += orig_slab.area
-      elsif orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
-        slab_on_grade_area += orig_slab.area
-      end
+      next unless orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
+
+      floor_areas['slab'] += orig_slab.area
     end
 
-    predominant_foundation_type = { basement: basement_floor_area, crawlspace: crawlspace_floor_area, slab: slab_on_grade_area, ambient: ambient_floor_area, adiabatic: adiabatic_floor_area }.max_by { |_k, v| v }[0] # find the key of the largest area
-    return predominant_foundation_type.to_s
+    return floor_areas.max_by { |_k, v| v }[0] # find the key of the largest area
   end
 
-  def self.get_ceiling_type(orig_hpxml)
-    total_ceiling_area = 0.0
-    adiabatic_ceiling_area = 0.0
-    ceiling_exterior_boundary = []
-    # calculate total ceiling area and adiabatic ceiling area
+  def self.is_ceiling_fully_adiabatic(orig_hpxml)
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
+      next unless orig_floor.interior_adjacent_to == HPXML::LocationLivingSpace
+      next unless orig_floor.exterior_adjacent_to != HPXML::LocationOtherHousingUnit
 
-      total_ceiling_area += orig_floor.area
+      return false # Found a thermal boundary ceiling not adjacent to other housing unit
+    end
+    orig_hpxml.roofs.each do |orig_roof|
+      next unless orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace
 
-      ceiling_exterior_boundary << orig_floor.exterior_adjacent_to unless ceiling_exterior_boundary.include?(orig_floor.exterior_adjacent_to)
-
-      next unless [HPXML::LocationLivingSpace, HPXML::LocationOtherHousingUnit].include? orig_floor.exterior_adjacent_to
-
-      adiabatic_ceiling_area += orig_floor.area
+      return false # Found a thermal boundary roof (which, by definition, is adjacent to outside)
     end
 
-    if (total_ceiling_area == adiabatic_ceiling_area) && (total_ceiling_area > 0)
-      return 'adiabatic'
-    elsif ceiling_exterior_boundary.length() > 1
-      return 'multi_ceiling_types'
-    end
+    return true
   end
 
   def self.get_duct_location_and_surface_area(orig_hpxml, total_duct_area)
     # EPA confirmed that duct percentages apply to ASHRAE 152 *total* duct area
     duct_location_and_surface_area = {}
-    foundation_type_for_ducts = get_foundation_type(orig_hpxml)
-    ceiling_type_for_ducts = get_ceiling_type(orig_hpxml)
+    predominant_foundation_type = get_predominant_foundation_type(orig_hpxml)
     if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? @program_version
-      if foundation_type_for_ducts == 'basement' # basement is the only foundation type or the predominant foundation type
+      if predominant_foundation_type == 'basement'
         if @ncfl_ag == 1
           if @has_cond_bsmnt
             duct_location_and_surface_area[HPXML::LocationBasementConditioned] = total_duct_area
           elsif @has_uncond_bsmnt
             duct_location_and_surface_area[HPXML::LocationBasementUnconditioned] = total_duct_area
           else
-            fail "Could not find 'basement - conditioned' or 'basement - unconditioned' for duct location in the model."
+            fail "Could not find '#{HPXML::LocationBasementConditioned}' or '#{HPXML::LocationBasementUnconditioned}' for duct location in the model."
           end
         else # two or more story above-grade
           if @has_cond_bsmnt
@@ -2139,27 +2122,27 @@ class EnergyStarZeroEnergyReadyHomeRuleset
           elsif @has_uncond_bsmnt
             duct_location_and_surface_area[HPXML::LocationBasementUnconditioned] = 0.5 * total_duct_area
           else
-            fail "Could not find 'basement - conditioned' or 'basement - unconditioned' for duct location in the model."
+            fail "Could not find '#{HPXML::LocationBasementConditioned}' or '#{HPXML::LocationBasementUnconditioned}' for duct location in the model."
           end
           duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.5 * total_duct_area
         end
-      elsif foundation_type_for_ducts == 'crawlspace' # crawlspace is the only foundation type or the predominant foundation type
+      elsif predominant_foundation_type == 'crawlspace'
         if @ncfl_ag == 1
           duct_location_and_surface_area[HPXML::LocationCrawlspaceVented] = total_duct_area
         else # two or more story above-grade
           duct_location_and_surface_area[HPXML::LocationCrawlspaceVented] = 0.5 * total_duct_area
           duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.5 * total_duct_area
         end
-      elsif foundation_type_for_ducts == 'ambient' # floor adjacent to ambient is the only foundation type or the predominant foundation type
+      elsif predominant_foundation_type == 'ambient'
         if @ncfl_ag == 1
           duct_location_and_surface_area[HPXML::LocationOutside] = total_duct_area
         else # two or more story above-grade
           duct_location_and_surface_area[HPXML::LocationOutside] = 0.5 * total_duct_area
           duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.5 * total_duct_area
         end
-      elsif foundation_type_for_ducts == 'adiabatic' # adiabatic floor is the only foundation type or the predominant foundation type
+      elsif predominant_foundation_type == 'adiabatic'
         duct_location_and_surface_area[HPXML::LocationAtticVented] = total_duct_area
-      elsif foundation_type_for_ducts == 'slab' # slab is the only foundation type or the predominant foundation type
+      elsif predominant_foundation_type == 'slab'
         if @ncfl_ag == 1
           duct_location_and_surface_area[HPXML::LocationAtticVented] = total_duct_area
         else # two or more story above-grade
@@ -2172,7 +2155,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
            ZERHConstants.Ver1].include? @program_version
       duct_location_and_surface_area[HPXML::LocationLivingSpace] = total_duct_area # Duct location configured to be 100% in conditioned space.
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      if ceiling_type_for_ducts == 'adiabatic'
+      if is_ceiling_fully_adiabatic(orig_hpxml)
         duct_location_and_surface_area[HPXML::LocationLivingSpace] = total_duct_area
       else
         if @ncfl_ag == 1
@@ -2229,7 +2212,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     i = 0
     while true
       i += 1
-      dist_id = "TargetHomeDesignHVACDistribution#{i}"
+      dist_id = "TargetHVACDistribution#{i}"
       next if orig_hpxml.hvac_distributions.select { |d| d.id == dist_id }.size > 0
 
       orig_hpxml.hvac_distributions.add(id: dist_id,
@@ -2266,7 +2249,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       heating_system_fuel = HPXML::FuelTypeNaturalGas
     end
 
-    new_hpxml.heating_systems.add(id: "TargetHomeDesignHeatingSystem#{new_hpxml.heating_systems.size + 1}",
+    new_hpxml.heating_systems.add(id: "TargetHeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   distribution_system_idref: orig_system.distribution_system.id,
                                   is_shared_system: orig_system.is_shared_system,
                                   number_of_units_served: number_of_units_served,
@@ -2295,7 +2278,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     hvac_installation = get_hvac_installation_quality()
 
-    new_hpxml.heating_systems.add(id: "TargetHomeDesignHeatingSystem#{new_hpxml.heating_systems.size + 1}",
+    new_hpxml.heating_systems.add(id: "TargetHeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeFurnace,
                                   heating_system_fuel: furnace_fuel_type,
@@ -2317,7 +2300,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     hvac_installation = get_hvac_installation_quality()
 
-    new_hpxml.cooling_systems.add(id: "TargetHomeDesignCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
+    new_hpxml.cooling_systems.add(id: "TargetCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
                                   distribution_system_idref: dist_id,
                                   cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
                                   cooling_system_fuel: HPXML::FuelTypeElectricity,
@@ -2341,7 +2324,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       shared_loop_watts *= orig_system.shared_loop_motor_efficiency / 0.85
     end
 
-    new_hpxml.cooling_systems.add(id: "TargetHomeDesignCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
+    new_hpxml.cooling_systems.add(id: "TargetCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
                                   is_shared_system: orig_system.is_shared_system,
                                   number_of_units_served: orig_system.number_of_units_served,
                                   distribution_system_idref: orig_system.distribution_system.id,
@@ -2431,7 +2414,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       hvac_installation = get_hvac_installation_quality()
     end
 
-    new_hpxml.heat_pumps.add(id: "TargetHomeDesignHeatPump#{new_hpxml.heat_pumps.size + 1}",
+    new_hpxml.heat_pumps.add(id: "TargetHeatPump#{new_hpxml.heat_pumps.size + 1}",
                              is_shared_system: is_shared_system,
                              number_of_units_served: number_of_units_served,
                              distribution_system_idref: dist_id,
