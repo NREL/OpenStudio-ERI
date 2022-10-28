@@ -778,10 +778,10 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.floors.add(id: orig_floor.id,
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           floor_or_ceiling: orig_floor.floor_or_ceiling,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: insulation_assembly_r_value,
-                           other_space_above_or_below: orig_floor.other_space_above_or_below)
+                           insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
 
@@ -793,10 +793,10 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.floors.add(id: orig_floor.id,
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to,
+                           floor_or_ceiling: orig_floor.floor_or_ceiling,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: orig_floor.insulation_assembly_r_value,
-                           other_space_above_or_below: orig_floor.other_space_above_or_below)
+                           insulation_assembly_r_value: orig_floor.insulation_assembly_r_value)
     end
   end
 
@@ -834,10 +834,10 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.floors.add(id: orig_floor.id,
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           floor_or_ceiling: orig_floor.floor_or_ceiling,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: insulation_assembly_r_value,
-                           other_space_above_or_below: orig_floor.other_space_above_or_below)
+                           insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
 
@@ -849,10 +849,10 @@ class EnergyRatingIndex301Ruleset
       new_hpxml.floors.add(id: orig_floor.id,
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to,
+                           floor_or_ceiling: orig_floor.floor_or_ceiling,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: orig_floor.insulation_assembly_r_value,
-                           other_space_above_or_below: orig_floor.other_space_above_or_below)
+                           insulation_assembly_r_value: orig_floor.insulation_assembly_r_value)
     end
   end
 
@@ -1385,7 +1385,8 @@ class EnergyRatingIndex301Ruleset
 
       # Ducts
       orig_hvac_distribution.ducts.each do |orig_duct|
-        new_hvac_distribution.ducts.add(duct_type: orig_duct.duct_type,
+        new_hvac_distribution.ducts.add(id: orig_duct.id,
+                                        duct_type: orig_duct.duct_type,
                                         duct_insulation_r_value: orig_duct.duct_insulation_r_value,
                                         duct_location: orig_duct.duct_location,
                                         duct_surface_area: orig_duct.duct_surface_area)

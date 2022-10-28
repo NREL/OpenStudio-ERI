@@ -920,7 +920,7 @@ def set_hpxml_floors(hpxml_file, hpxml)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('middle_interior')
       exterior_adjacent_to = HPXML::LocationOtherHousingUnit
-      other_space_above_or_below = HPXML::FloorOtherSpaceAbove
+      floor_or_ceiling = HPXML::FloorTypeCeiling
       ceiling_assembly_r = 1.67
     else
       exterior_adjacent_to = HPXML::LocationAtticVented
@@ -947,9 +947,9 @@ def set_hpxml_floors(hpxml_file, hpxml)
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                      exterior_adjacent_to: exterior_adjacent_to,
                      interior_adjacent_to: HPXML::LocationLivingSpace,
+                     floor_or_ceiling: floor_or_ceiling,
                      area: area,
-                     insulation_assembly_r_value: ceiling_assembly_r,
-                     other_space_above_or_below: other_space_above_or_below)
+                     insulation_assembly_r_value: ceiling_assembly_r)
     # Floor
     if hpxml_file.include?('vented_crawl')
       if hpxml_file.include?('EPA_Tests/SF')
@@ -966,9 +966,9 @@ def set_hpxml_floors(hpxml_file, hpxml)
       hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                        exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                        interior_adjacent_to: HPXML::LocationLivingSpace,
+                       floor_or_ceiling: HPXML::FloorTypeFloor,
                        area: area,
-                       insulation_assembly_r_value: 3.1,
-                       other_space_above_or_below: HPXML::FloorOtherSpaceBelow)
+                       insulation_assembly_r_value: 3.1)
     end
   end
 end
@@ -1684,11 +1684,13 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     # Duct R-val = 0
     # Duct Location = 100% conditioned
     hpxml.hvac_distributions[0].ducts.clear
-    hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
+    hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                          duct_type: HPXML::DuctTypeSupply,
                                           duct_insulation_r_value: 0,
                                           duct_location: HPXML::LocationLivingSpace,
                                           duct_surface_area: 308)
-    hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
+    hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                          duct_type: HPXML::DuctTypeReturn,
                                           duct_insulation_r_value: 0,
                                           duct_location: HPXML::LocationLivingSpace,
                                           duct_surface_area: 77)
@@ -1723,11 +1725,13 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
         return_r = 0
       end
       hpxml.hvac_distributions[0].ducts.clear
-      hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
+      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                            duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: supply_r,
                                             duct_location: location,
                                             duct_surface_area: supply_area.round(2))
-      hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
+      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                            duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: return_r,
                                             duct_location: location,
                                             duct_surface_area: return_area.round(2))
@@ -1748,19 +1752,23 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
         non_attic_rvalue = 6
       end
       hpxml.hvac_distributions[0].ducts.clear
-      hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
+      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                            duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: 8,
                                             duct_location: HPXML::LocationAtticVented,
                                             duct_surface_area: (supply_area * (1.0 - non_attic_frac)).round(2))
-      hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
+      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                            duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: 6,
                                             duct_location: HPXML::LocationAtticVented,
                                             duct_surface_area: (return_area * (1.0 - non_attic_frac)).round(2))
-      hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeSupply,
+      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                            duct_type: HPXML::DuctTypeSupply,
                                             duct_insulation_r_value: non_attic_rvalue,
                                             duct_location: non_attic_location,
                                             duct_surface_area: (supply_area * non_attic_frac).round(2))
-      hpxml.hvac_distributions[0].ducts.add(duct_type: HPXML::DuctTypeReturn,
+      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                            duct_type: HPXML::DuctTypeReturn,
                                             duct_insulation_r_value: non_attic_rvalue,
                                             duct_location: non_attic_location,
                                             duct_surface_area: (return_area * non_attic_frac).round(2))
@@ -2493,8 +2501,18 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_version = 'latest'
     hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
     hpxml.header.utility_bill_scenarios.clear
+    hpxml.header.timestep = nil
+    hpxml.site.site_type = nil
+    hpxml.site.surroundings = nil
+    hpxml.site.vertical_surroundings = nil
+    hpxml.site.shielding_of_home = nil
+    hpxml.site.orientation_of_front_of_home = nil
+    hpxml.site.azimuth_of_front_of_home = nil
+    hpxml.site.ground_conductivity = nil
+    hpxml.building_occupancy.number_of_residents = nil
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
+    hpxml.building_construction.average_ceiling_height = nil
     hpxml.attics.each do |attic|
       if [HPXML::AtticTypeVented,
           HPXML::AtticTypeUnvented].include? attic.attic_type
@@ -2508,7 +2526,24 @@ def create_sample_hpxmls
 
       foundation.within_infiltration_volume = false if foundation.within_infiltration_volume.nil?
     end
+    hpxml.roofs.each do |roof|
+      roof.roof_type = nil
+    end
+    hpxml.rim_joists.each do |rim_joist|
+      rim_joist.siding = nil
+    end
+    hpxml.walls.each do |wall|
+      wall.siding = nil
+      wall.interior_finish_type = nil
+      wall.interior_finish_thickness = nil
+    end
+    hpxml.floors.each do |floor|
+      floor.interior_finish_type = nil
+      floor.interior_finish_thickness = nil
+    end
     hpxml.foundation_walls.each do |fwall|
+      fwall.interior_finish_type = nil
+      fwall.interior_finish_thickness = nil
       fwall.insulation_interior_distance_to_top = 0 if fwall.insulation_interior_distance_to_top.nil?
       if fwall.insulation_interior_distance_to_bottom.nil?
         if fwall.insulation_interior_r_value.to_f > 0
@@ -2526,19 +2561,30 @@ def create_sample_hpxmls
         end
       end
     end
+    hpxml.windows.each do |window|
+      window.interior_shading_factor_winter = nil
+      window.interior_shading_factor_summer = nil
+    end
+    hpxml.cooling_systems.each do |cooling_system|
+      cooling_system.primary_system = nil
+    end
     hpxml.heating_systems.each do |heating_system|
+      heating_system.primary_system = nil
       next unless heating_system.heating_system_type == HPXML::HVACTypeBoiler
       next unless heating_system.is_shared_system.nil?
 
       heating_system.is_shared_system = false
     end
     hpxml.heat_pumps.each do |heat_pump|
+      heat_pump.primary_heating_system = nil
+      heat_pump.primary_cooling_system = nil
       next unless heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       next unless heat_pump.is_shared_system.nil?
 
       heat_pump.is_shared_system = false
     end
     hpxml.water_heating_systems.each do |water_heating_system|
+      water_heating_system.temperature = nil
       next unless water_heating_system.is_shared_system.nil?
 
       water_heating_system.is_shared_system = false
@@ -2590,6 +2636,8 @@ def create_sample_hpxmls
         end
       end
     end
+    hpxml.plug_loads.clear
+    hpxml.fuel_loads.clear
     hpxml.heating_systems.each do |heating_system|
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
 
@@ -2750,6 +2798,8 @@ def create_sample_hpxmls
       dhw_dist.shared_recirculation_motor_efficiency = 0.9
     end
     hpxml.hvac_controls.each do |hvac_control|
+      hvac_control.heating_setpoint_temp = nil
+      hvac_control.cooling_setpoint_temp = nil
       next unless hvac_control.control_type.nil?
 
       hvac_control.control_type = HPXML::HVACControlTypeManual

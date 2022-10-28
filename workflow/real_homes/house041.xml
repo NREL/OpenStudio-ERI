@@ -338,6 +338,7 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct1"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>2.0</DuctInsulationRValue>
                   <DuctLocation>basement - conditioned</DuctLocation>
