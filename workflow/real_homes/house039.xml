@@ -1163,6 +1163,7 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct1"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - unvented</DuctLocation>
@@ -1170,6 +1171,7 @@
                   <DuctSurfaceArea>294.4</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct2"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - unvented</DuctLocation>
@@ -1177,6 +1179,7 @@
                   <DuctSurfaceArea>218.1</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct3"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
@@ -1184,6 +1187,7 @@
                   <DuctSurfaceArea>126.2</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct4"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
@@ -1217,6 +1221,7 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct5"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - unvented</DuctLocation>
@@ -1224,6 +1229,7 @@
                   <DuctSurfaceArea>294.4</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct6"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - unvented</DuctLocation>
@@ -1231,6 +1237,7 @@
                   <DuctSurfaceArea>218.1</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct7"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
@@ -1238,6 +1245,7 @@
                   <DuctSurfaceArea>126.2</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct8"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>

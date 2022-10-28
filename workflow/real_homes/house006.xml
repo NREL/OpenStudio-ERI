@@ -530,24 +530,28 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct1"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - vented</DuctLocation>
                   <DuctSurfaceArea>50.5</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct2"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - vented</DuctLocation>
                   <DuctSurfaceArea>9.4</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct3"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
                   <DuctSurfaceArea>50.5</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct4"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
@@ -580,24 +584,28 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct5"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - vented</DuctLocation>
                   <DuctSurfaceArea>67.4</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct6"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>crawlspace - vented</DuctLocation>
                   <DuctSurfaceArea>12.5</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct7"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
                   <DuctSurfaceArea>67.4</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct8"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>6.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>

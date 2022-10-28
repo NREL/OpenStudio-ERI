@@ -162,27 +162,23 @@
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorOrCeiling>ceiling</FloorOrCeiling>
             <Area>1110.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
               <AssemblyEffectiveRValue>1.67</AssemblyEffectiveRValue>
             </Insulation>
-            <extension>
-              <OtherSpaceAboveOrBelow>above</OtherSpaceAboveOrBelow>
-            </extension>
           </Floor>
           <Floor>
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorOrCeiling>floor</FloorOrCeiling>
             <Area>1110.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation'/>
               <AssemblyEffectiveRValue>2.24</AssemblyEffectiveRValue>
             </Insulation>
-            <extension>
-              <OtherSpaceAboveOrBelow>below</OtherSpaceAboveOrBelow>
-            </extension>
           </Floor>
         </Floors>
         <Windows>
@@ -266,12 +262,14 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct1"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>299.7</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct2"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>

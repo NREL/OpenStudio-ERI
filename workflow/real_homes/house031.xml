@@ -1504,12 +1504,14 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct1"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>162.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct2"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
@@ -1542,12 +1544,14 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct3"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>486.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct4"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
@@ -1580,12 +1584,14 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct5"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>486.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct6"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>

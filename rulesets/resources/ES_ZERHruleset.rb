@@ -483,10 +483,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       new_hpxml.floors.add(id: orig_floor.id,
                            exterior_adjacent_to: ceiling_exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           floor_or_ceiling: orig_floor.floor_or_ceiling,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: insulation_assembly_r_value,
-                           other_space_above_or_below: orig_floor.other_space_above_or_below)
+                           insulation_assembly_r_value: insulation_assembly_r_value)
     end
 
     # Add a floor between the vented attic and living space
@@ -532,10 +532,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       new_hpxml.floors.add(id: orig_floor.id,
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                           floor_or_ceiling: orig_floor.floor_or_ceiling,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: insulation_assembly_r_value,
-                           other_space_above_or_below: orig_floor.other_space_above_or_below)
+                           insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
 
@@ -713,6 +713,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     remaining_cfa_served_cooling = @cfa # init
     remaining_fracload_served_heating = 1.0 # init
     remaining_fracload_served_cooling = 1.0 # init
+    num_ducts = 0
     orig_hpxml.hvac_systems.each do |h|
       next if h.distribution_system_idref.nil?
 
@@ -779,8 +780,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         duct_location_and_surface_area = get_duct_location_and_surface_area(orig_hpxml, total_duct_area)
 
         duct_location_and_surface_area.each do |duct_location, duct_surface_area|
+          num_ducts += 1
           duct_insulation_r_value = get_duct_insulation_r_value(duct_type, duct_location)
-          new_hvac_dist.ducts.add(duct_type: duct_type,
+          new_hvac_dist.ducts.add(id: "TargetDuct#{num_ducts}",
+                                  duct_type: duct_type,
                                   duct_insulation_r_value: duct_insulation_r_value,
                                   duct_location: duct_location,
                                   duct_surface_area: duct_surface_area.round(2))

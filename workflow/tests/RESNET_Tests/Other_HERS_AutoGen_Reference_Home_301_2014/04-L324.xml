@@ -420,10 +420,6 @@
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>1539.0</Area>
-            <InteriorFinish>
-              <Type>gypsum board</Type>
-              <Thickness>0.5</Thickness>
-            </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
               <AssemblyEffectiveRValue>18.45</AssemblyEffectiveRValue>
@@ -564,12 +560,14 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id='Duct1'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>308.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id='Duct2'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>

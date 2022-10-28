@@ -431,10 +431,10 @@ For floors adjacent to "other housing unit", "other heated space", "other multif
   ======================================  ========  =====  ==============  ========  =======  ==========================================
   Element                                 Type      Units  Constraints     Required  Default  Notes
   ======================================  ========  =====  ==============  ========  =======  ==========================================
-  ``extension/OtherSpaceAboveOrBelow``    string           See [#]_        Yes                Specifies if above/below the MF space type
+  ``FloorOrCeiling``                      string           See [#]_        Yes                Specifies whether a floor or ceiling from the perspective of the conditioned space
   ======================================  ========  =====  ==============  ========  =======  ==========================================
 
-  .. [#] OtherSpaceAboveOrBelow choices are "above" or "below".
+  .. [#] FloorOrCeiling choices are "floor" or "ceiling".
 
 HPXML Slabs
 ***********
@@ -1198,6 +1198,7 @@ Additionally, each supply/return duct present is entered in a ``HVACDistribution
   ===========================  =======  ============  ===========  ========  =========  ===============================
   Element                      Type     Units         Constraints  Required  Default    Notes
   ===========================  =======  ============  ===========  ========  =========  ===============================
+  ``SystemIdentifier``         id                                  Yes                  Unique identifier
   ``DuctType``                 string                 See [#]_     Yes                  Supply or return ducts
   ``DuctInsulationRValue``     double   F-ft2-hr/Btu  >= 0         Yes                  R-value of duct insulation [#]_
   ``DuctSurfaceArea``          double   ft2           >= 0         Yes                  Duct surface area

@@ -13,8 +13,10 @@ __New Features__
 - Allows modeling CFIS ventilation systems with a supplemental fan.
   - **Breaking change**: New `CFISControls/AdditionalRuntimeOperatingMode` input required for CFIS ventilation systems.
 - **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+- **Breaking Change**: All `Ducts` must now have a `SystemIdentifier`.
 - **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
 - **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
+- **Breaking Change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
 - **Breaking change**: The `ClimateZoneIECC/Year` is now more strict:
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.

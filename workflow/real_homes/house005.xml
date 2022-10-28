@@ -162,14 +162,12 @@
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorOrCeiling>floor</FloorOrCeiling>
             <Area>591.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
               <AssemblyEffectiveRValue>3.42</AssemblyEffectiveRValue>
             </Insulation>
-            <extension>
-              <OtherSpaceAboveOrBelow>below</OtherSpaceAboveOrBelow>
-            </extension>
           </Floor>
         </Floors>
         <Windows>
@@ -247,12 +245,14 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
+                  <SystemIdentifier id="Duct1"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>1.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>159.6</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
+                  <SystemIdentifier id="Duct2"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>1.0</DuctInsulationRValue>
                   <DuctLocation>living space</DuctLocation>
