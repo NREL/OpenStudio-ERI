@@ -277,6 +277,7 @@
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>basement - unconditioned</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorOrCeiling>floor</FloorOrCeiling>
             <Area>675.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
@@ -287,6 +288,7 @@
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>attic - unvented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorOrCeiling>ceiling</FloorOrCeiling>
             <Area>1350.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation'/>

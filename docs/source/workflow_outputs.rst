@@ -446,7 +446,7 @@ Depending on the outputs requested, CSV files may include:
 
 Timeseries outputs can be one of the following frequencies: hourly, daily, or monthly.
 
-Timestamps in the output use the end-of-hour (or end-of-day for daily frequency, etc.) convention.
+Timestamps in the output use the start-of-period convention.
 Most outputs will be summed over the hour (e.g., energy) but some will be averaged over the hour (e.g., temperatures, airflows).
 
 .. _home_configurations_hpxml:
