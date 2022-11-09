@@ -296,19 +296,6 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <HeatingSystem>
-              <SystemIdentifier id='HeatingSystem1'/>
-              <HeatingSystemType>
-                <PackagedTerminalAirConditionerHeating/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>electricity</HeatingSystemFuel>
-              <HeatingCapacity>36000.0</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>Percent</Units>
-                <Value>1.0</Value>
-              </AnnualHeatingEfficiency>
-              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-            </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
               <CoolingSystemType>packaged terminal air conditioner</CoolingSystemType>
@@ -320,6 +307,13 @@
                 <Value>10.7</Value>
               </AnnualCoolingEfficiency>
               <SensibleHeatFraction>0.65</SensibleHeatFraction>
+              <IntegratedHeatingSystemFuel>electricity</IntegratedHeatingSystemFuel>
+              <IntegratedHeatingSystemCapacity>36000.0</IntegratedHeatingSystemCapacity>
+              <IntegratedHeatingSystemAnnualEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </IntegratedHeatingSystemAnnualEfficiency>
+              <IntegratedHeatingSystemFractionHeatLoadServed>1.0</IntegratedHeatingSystemFractionHeatLoadServed>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>

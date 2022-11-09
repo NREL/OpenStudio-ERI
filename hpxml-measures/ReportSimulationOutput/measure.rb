@@ -1386,6 +1386,15 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       end
     end
     @hpxml.cooling_systems.each do |clg_system|
+      if clg_system.has_integrated_heating && clg_system.integrated_heating_system_fraction_heat_load_served > 0
+        # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
+        htg_ids << clg_system.id
+        htg_seed_id_map[clg_system.id] = clg_system.htg_seed_id
+        htg_fuels[clg_system.id] = clg_system.integrated_heating_system_fuel
+        htg_eecs[clg_system.id] = get_eec_value_numerator('Percent') / clg_system.integrated_heating_system_efficiency_percent
+      end
+    
+    
       next unless clg_system.fraction_cool_load_served > 0
 
       clg_ids << clg_system.id
