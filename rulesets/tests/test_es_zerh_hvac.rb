@@ -50,7 +50,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
     end
   end
 
-  def get_es_zerh_ashp_seer_cz7(program_version)  # FIXME: Check this
+  def get_es_zerh_ashp_seer_cz7(program_version)
     if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
       return 16.0
     end
@@ -70,19 +70,19 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
     end
   end
 
-  def get_es_zerh_ashp_hspf_cz7(program_version)  # FIXME: Check this
+  def get_es_zerh_ashp_hspf_cz7(program_version)
     if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
       return 9.20
     end
   end
 
-  def get_es_zerh_gshp_cop_cz5(program_version)  # FIXME: Check this
+  def get_es_zerh_gshp_cop_cz5(program_version)
     if [ESConstants.MFNationalVer1_2].include? program_version
       return 2.7
     end
   end
 
-  def get_es_zerh_gshp_eer_cz5(program_version)  # FIXME: Check this
+  def get_es_zerh_gshp_eer_cz5(program_version)
     if [ESConstants.MFNationalVer1_2].include? program_version
       return 14.0
     end
@@ -126,7 +126,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
     end
   end
 
-  def get_es_zerh_gas_furnace_afue_cz5(program_version) # FIXME: Check the function name
+  def get_es_zerh_gas_furnace_afue_cz5(program_version)
     if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
         ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
       return 0.95
