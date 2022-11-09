@@ -1128,9 +1128,9 @@ class EnergyRatingIndex301Ruleset
       heating_system = hvac_configuration[:heating_system]
       cooling_system = hvac_configuration[:cooling_system]
       heat_pump = hvac_configuration[:heat_pump]
-      
+
+      created_hp = false
       if not heating_system.nil?
-      
         if heating_system.is_a? HPXML::HeatingSystem
           heating_fuel = heating_system.heating_system_fuel
           fraction_heat_load_served = heating_system.fraction_heat_load_served
@@ -1140,15 +1140,15 @@ class EnergyRatingIndex301Ruleset
           fraction_heat_load_served = cooling_system.integrated_heating_system_fraction_heat_load_served
           heating_system_type = cooling_system.cooling_system_type
         end
-      
         if (heating_fuel == HPXML::FuelTypeElectricity) || is_all_electric
           if not cooling_system.nil?
             fraction_cool_load_served = cooling_system.fraction_cool_load_served
           else
             fraction_cool_load_served = 0.0
           end
+          created_hp = true
           add_reference_heat_pump(orig_hpxml, new_hpxml, fraction_heat_load_served, fraction_cool_load_served, orig_htg_system: heating_system, orig_clg_system: cooling_system)
-        elsif heating_system.heating_system_type == HPXML::HVACTypeBoiler
+        elsif heating_system_type == HPXML::HVACTypeBoiler
           if heating_system.distribution_system.hydronic_type == HPXML::HydronicTypeWaterLoop
             # Maintain same fractions of heating load between boiler and heat pump
             # 301-2019 Section 4.4.7.2.1
@@ -1162,14 +1162,15 @@ class EnergyRatingIndex301Ruleset
           add_reference_gas_furnace(orig_hpxml, new_hpxml, fraction_heat_load_served, orig_system: heating_system)
         end
       end
+
       if not cooling_system.nil?
-        clg_seed_id = cooling_system.clg_seed_id.nil? ? cooling_system.id : cooling_system.clg_seed_id
-        if new_hpxml.heat_pumps.select { |hp| hp.clg_seed_id == clg_seed_id }.size > 0
+        if created_hp
           # Already created HP above
         else
           add_reference_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, orig_system: cooling_system)
         end
       end
+
       if not heat_pump.nil?
         if heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
           # Already handled
@@ -1201,10 +1202,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.get_hvac_configurations(orig_hpxml)
-    # FUTURE: Should really recognize a PTAC w/ heating as a single hvac configuration.
-    # To do this, we would need to update HPXML so that we can associate a PTAC CoolingSystem
-    # with its corresponding HeatingSystem.
-
     hvac_configurations = []
     orig_hpxml.heating_systems.each do |orig_heating_system|
       hvac_configurations << { heating_system: orig_heating_system, cooling_system: orig_heating_system.attached_cooling_system }

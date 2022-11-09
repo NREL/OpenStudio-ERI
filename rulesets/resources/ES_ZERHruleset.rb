@@ -676,22 +676,35 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       heating_system = hvac_configuration[:heating_system]
       cooling_system = hvac_configuration[:cooling_system]
       heat_pump = hvac_configuration[:heat_pump]
+
+      created_hp = false
       if not heating_system.nil?
-        if heating_system.heating_system_type == HPXML::HVACTypeBoiler
+        if heating_system.is_a? HPXML::HeatingSystem
+          heating_fuel = heating_system.heating_system_fuel
+          fraction_heat_load_served = heating_system.fraction_heat_load_served
+          heating_system_type = heating_system.heating_system_type
+        elsif heating_system.is_a? HPXML::CoolingSystem # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
+          heating_fuel = cooling_system.integrated_heating_system_fuel
+          fraction_heat_load_served = cooling_system.integrated_heating_system_fraction_heat_load_served
+          heating_system_type = cooling_system.cooling_system_type
+        end
+        if heating_system_type == HPXML::HVACTypeBoiler
           add_reference_boiler(new_hpxml, heating_system)
-        elsif heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
+        elsif heating_fuel == HPXML::FuelTypeElectricity
           if not cooling_system.nil?
             fraction_cool_load_served = cooling_system.fraction_cool_load_served
           else
             fraction_cool_load_served = 0.0
           end
-          add_reference_heat_pump(orig_hpxml, new_hpxml, heating_system.fraction_heat_load_served, fraction_cool_load_served, heating_system, cooling_system)
+          created_hp = true
+          add_reference_heat_pump(orig_hpxml, new_hpxml, fraction_heat_load_served, fraction_cool_load_served, heating_system, cooling_system)
         else
-          add_reference_furnace(orig_hpxml, new_hpxml, heating_system.fraction_heat_load_served, heating_system)
+          add_reference_furnace(orig_hpxml, new_hpxml, fraction_heat_load_served, heating_system, heating_fuel)
         end
       end
+
       if not cooling_system.nil?
-        if new_hpxml.heat_pumps.select { |hp| hp.clg_seed_id == cooling_system.id }.size > 0
+        if created_hp
           # Already created HP above
         elsif cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower
           add_reference_chiller_or_cooling_tower(new_hpxml, cooling_system)
@@ -699,6 +712,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
           add_reference_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
         end
       end
+
       if not heat_pump.nil?
         add_reference_heat_pump(orig_hpxml, new_hpxml, heat_pump.fraction_heat_load_served, heat_pump.fraction_cool_load_served, heat_pump)
       end
@@ -1187,7 +1201,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       # Exclude cooling systems already added to hvac_configurations
       next if hvac_configurations.any? { |config| config[:cooling_system].id == orig_cooling_system.id if not config[:cooling_system].nil? }
 
-      hvac_configurations << { cooling_system: orig_cooling_system }
+      if orig_cooling_system.has_integrated_heating # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
+        hvac_configurations << { cooling_system: orig_cooling_system, heating_system: orig_cooling_system }
+      else
+        hvac_configurations << { cooling_system: orig_cooling_system }
+      end
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       hvac_configurations << { heat_pump: orig_heat_pump }
@@ -2265,12 +2283,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                   fraction_heat_load_served: orig_system.fraction_heat_load_served)
   end
 
-  def self.add_reference_furnace(orig_hpxml, new_hpxml, load_frac, orig_system)
-    furnace_afue = get_default_furnace_afue(orig_system.heating_system_fuel)
+  def self.add_reference_furnace(orig_hpxml, new_hpxml, load_frac, orig_system, heating_fuel)
+    furnace_afue = get_default_furnace_afue(heating_fuel)
 
-    furnace_fuel_type = orig_system.heating_system_fuel
-    if ([ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version) && (furnace_fuel_type != HPXML::FuelTypeElectricity)
-      furnace_fuel_type = HPXML::FuelTypeNaturalGas
+    if ([ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version) && (heating_fuel != HPXML::FuelTypeElectricity)
+      heating_fuel = HPXML::FuelTypeNaturalGas
     end
 
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
@@ -2284,7 +2301,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     new_hpxml.heating_systems.add(id: "TargetHeatingSystem#{new_hpxml.heating_systems.size + 1}",
                                   distribution_system_idref: dist_id,
                                   heating_system_type: HPXML::HVACTypeFurnace,
-                                  heating_system_fuel: furnace_fuel_type,
+                                  heating_system_fuel: heating_fuel,
                                   heating_capacity: -1, # Use auto-sizing
                                   heating_efficiency_afue: furnace_afue,
                                   fraction_heat_load_served: load_frac,
