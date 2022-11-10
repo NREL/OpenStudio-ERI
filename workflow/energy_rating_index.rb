@@ -811,6 +811,8 @@ def cache_weather
 end
 
 def main(options)
+  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
+  
   # Setup directories
   unless Dir.exist?(options[:output_dir])
     FileUtils.mkdir_p(options[:output_dir])
