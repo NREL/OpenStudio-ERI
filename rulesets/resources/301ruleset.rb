@@ -1128,37 +1128,49 @@ class EnergyRatingIndex301Ruleset
       heating_system = hvac_configuration[:heating_system]
       cooling_system = hvac_configuration[:cooling_system]
       heat_pump = hvac_configuration[:heat_pump]
+
+      created_hp = false
       if not heating_system.nil?
-        if (heating_system.heating_system_fuel == HPXML::FuelTypeElectricity) || is_all_electric
+        if heating_system.is_a? HPXML::HeatingSystem
+          heating_fuel = heating_system.heating_system_fuel
+          fraction_heat_load_served = heating_system.fraction_heat_load_served
+          heating_system_type = heating_system.heating_system_type
+        elsif heating_system.is_a? HPXML::CoolingSystem # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
+          heating_fuel = cooling_system.integrated_heating_system_fuel
+          fraction_heat_load_served = cooling_system.integrated_heating_system_fraction_heat_load_served
+          heating_system_type = cooling_system.cooling_system_type
+        end
+        if (heating_fuel == HPXML::FuelTypeElectricity) || is_all_electric
           if not cooling_system.nil?
             fraction_cool_load_served = cooling_system.fraction_cool_load_served
           else
             fraction_cool_load_served = 0.0
           end
-          add_reference_heat_pump(orig_hpxml, new_hpxml, heating_system.fraction_heat_load_served, fraction_cool_load_served, orig_htg_system: heating_system, orig_clg_system: cooling_system)
-        elsif heating_system.heating_system_type == HPXML::HVACTypeBoiler
-          fraction_heat_load_served = heating_system.fraction_heat_load_served
+          created_hp = true
+          add_reference_heat_pump(orig_hpxml, new_hpxml, fraction_heat_load_served, fraction_cool_load_served, orig_htg_system: heating_system, orig_clg_system: cooling_system)
+        elsif heating_system_type == HPXML::HVACTypeBoiler
           if heating_system.distribution_system.hydronic_type == HPXML::HydronicTypeWaterLoop
             # Maintain same fractions of heating load between boiler and heat pump
             # 301-2019 Section 4.4.7.2.1
             orig_wlhp = orig_hpxml.heat_pumps.select { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir }[0]
-            fraction_heat_load_served = heating_system.fraction_heat_load_served * (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
-            hp_fraction_heat_load_served = heating_system.fraction_heat_load_served * (1.0 / orig_wlhp.heating_efficiency_cop)
+            hp_fraction_heat_load_served = fraction_heat_load_served * (1.0 / orig_wlhp.heating_efficiency_cop)
             add_reference_heat_pump(orig_hpxml, new_hpxml, hp_fraction_heat_load_served, 0.0, orig_htg_system: orig_wlhp)
+            fraction_heat_load_served *= (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
           end
           add_reference_gas_boiler(orig_hpxml, new_hpxml, fraction_heat_load_served, orig_system: heating_system)
         else
-          add_reference_gas_furnace(orig_hpxml, new_hpxml, heating_system.fraction_heat_load_served, orig_system: heating_system)
+          add_reference_gas_furnace(orig_hpxml, new_hpxml, fraction_heat_load_served, orig_system: heating_system)
         end
       end
+
       if not cooling_system.nil?
-        clg_seed_id = cooling_system.clg_seed_id.nil? ? cooling_system.id : cooling_system.clg_seed_id
-        if new_hpxml.heat_pumps.select { |hp| hp.clg_seed_id == clg_seed_id }.size > 0
+        if created_hp
           # Already created HP above
         else
           add_reference_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, orig_system: cooling_system)
         end
       end
+
       if not heat_pump.nil?
         if heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir
           # Already handled
@@ -1190,10 +1202,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.get_hvac_configurations(orig_hpxml)
-    # FUTURE: Should really recognize a PTAC w/ heating as a single hvac configuration.
-    # To do this, we would need to update HPXML so that we can associate a PTAC CoolingSystem
-    # with its corresponding HeatingSystem.
-
     hvac_configurations = []
     orig_hpxml.heating_systems.each do |orig_heating_system|
       hvac_configurations << { heating_system: orig_heating_system, cooling_system: orig_heating_system.attached_cooling_system }
@@ -1202,7 +1210,11 @@ class EnergyRatingIndex301Ruleset
       # Exclude cooling systems already added to hvac_configurations
       next if hvac_configurations.any? { |config| config[:cooling_system].id == orig_cooling_system.id if not config[:cooling_system].nil? }
 
-      hvac_configurations << { cooling_system: orig_cooling_system }
+      if orig_cooling_system.has_integrated_heating # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
+        hvac_configurations << { cooling_system: orig_cooling_system, heating_system: orig_cooling_system }
+      else
+        hvac_configurations << { cooling_system: orig_cooling_system }
+      end
     end
     orig_hpxml.heat_pumps.each do |orig_heat_pump|
       hvac_configurations << { heat_pump: orig_heat_pump }
@@ -1256,6 +1268,9 @@ class EnergyRatingIndex301Ruleset
         airflow_defect_ratio = orig_cooling_system.airflow_defect_ratio
         charge_defect_ratio = orig_cooling_system.charge_defect_ratio
       end
+      if orig_cooling_system.has_integrated_heating
+        htg_seed_id = orig_cooling_system.htg_seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.htg_seed_id
+      end
       new_hpxml.cooling_systems.add(id: orig_cooling_system.id,
                                     is_shared_system: orig_cooling_system.is_shared_system,
                                     number_of_units_served: orig_cooling_system.number_of_units_served,
@@ -1276,7 +1291,12 @@ class EnergyRatingIndex301Ruleset
                                     fan_watts_per_cfm: fan_watts_per_cfm,
                                     airflow_defect_ratio: airflow_defect_ratio,
                                     charge_defect_ratio: charge_defect_ratio,
-                                    clg_seed_id: orig_cooling_system.clg_seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.clg_seed_id)
+                                    clg_seed_id: orig_cooling_system.clg_seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.clg_seed_id,
+                                    integrated_heating_system_fuel: orig_cooling_system.integrated_heating_system_fuel,
+                                    integrated_heating_system_capacity: orig_cooling_system.integrated_heating_system_capacity,
+                                    integrated_heating_system_efficiency_percent: orig_cooling_system.integrated_heating_system_efficiency_percent,
+                                    integrated_heating_system_fraction_heat_load_served: orig_cooling_system.integrated_heating_system_fraction_heat_load_served,
+                                    htg_seed_id: htg_seed_id)
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -2608,7 +2628,11 @@ class EnergyRatingIndex301Ruleset
   def self.add_reference_heat_pump(orig_hpxml, new_hpxml, htg_load_frac, clg_load_frac, orig_htg_system: nil, orig_clg_system: nil, is_all_electric: false)
     # 7.7 HSPF, SEER 13 air source heat pump
     if not orig_htg_system.nil?
-      htg_seed_id = orig_htg_system.htg_seed_id.nil? ? orig_htg_system.id : orig_htg_system.htg_seed_id
+      if orig_htg_system.is_a? HPXML::CoolingSystem # Cooling system w/ integrated heating
+        htg_seed_id = orig_htg_system.clg_seed_id.nil? ? orig_htg_system.id : orig_htg_system.clg_seed_id
+      else
+        htg_seed_id = orig_htg_system.htg_seed_id.nil? ? orig_htg_system.id : orig_htg_system.htg_seed_id
+      end
       dist_id = orig_htg_system.distribution_system.id unless orig_htg_system.distribution_system.nil?
       # Handle backup
       if orig_htg_system.respond_to?(:backup_heating_switchover_temp) && (not orig_htg_system.backup_heating_switchover_temp.nil?)

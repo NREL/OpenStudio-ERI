@@ -22,6 +22,8 @@ __New Features__
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
   - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
   - Zero Energy Ready Homes v1 runs must include a 2015 IECC climate zone.
+- Allows modeling room air conditioners with heating or reverse cycle.
+- **Breaking change**: For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
 - Allows shared dishwasher/clothes washer to be attached to a hot water distribution system instead of a single water heater.
 - Adds HVAC capacities, design loads, and design temperatures to csv output files.
 - Annual/timeseries outputs:
