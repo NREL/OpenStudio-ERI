@@ -2547,6 +2547,12 @@ def create_sample_hpxmls
     hpxml.floors.each do |floor|
       floor.interior_finish_type = nil
       floor.interior_finish_thickness = nil
+      next if [HPXML::LocationOtherHousingUnit,
+               HPXML::LocationOtherHeatedSpace,
+               HPXML::LocationOtherMultifamilyBufferSpace,
+               HPXML::LocationOtherNonFreezingSpace].include? floor.exterior_adjacent_to
+
+      floor.floor_or_ceiling = nil
     end
     hpxml.foundation_walls.each do |fwall|
       fwall.interior_finish_type = nil
@@ -2633,7 +2639,7 @@ def create_sample_hpxmls
         ventilation_fan.delivered_ventilation = nil
       end
       ventilation_fan.cfis_vent_mode_airflow_fraction = 1.0 if ventilation_fan.cfis_vent_mode_airflow_fraction.nil? && ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
-      next unless not ventilation_fan.is_cfis_supplemental_fan?
+      next if ventilation_fan.is_cfis_supplemental_fan?
 
       if ventilation_fan.hours_in_operation.nil?
         if ventilation_fan.fan_type == HPXML::MechVentTypeCFIS

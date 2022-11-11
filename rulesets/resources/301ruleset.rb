@@ -779,7 +779,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
-                           floor_type: orig_floor.floor_type,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -837,7 +837,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
-                           floor_type: orig_floor.floor_type,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)

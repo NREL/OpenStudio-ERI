@@ -208,7 +208,6 @@
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>crawlspace - unvented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <FloorOrCeiling>floor</FloorOrCeiling>
             <FloorType>
               <WoodFrame/>
             </FloorType>
@@ -222,7 +221,6 @@
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>attic - unvented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <FloorOrCeiling>ceiling</FloorOrCeiling>
             <FloorType>
               <WoodFrame/>
             </FloorType>
