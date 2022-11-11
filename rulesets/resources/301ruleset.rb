@@ -779,6 +779,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -794,6 +795,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to,
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: orig_floor.insulation_assembly_r_value)
@@ -835,6 +837,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -850,6 +853,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to,
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: orig_floor.insulation_assembly_r_value)
@@ -863,6 +867,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.floors.add(id: 'FloorAboveCrawlspace',
                          interior_adjacent_to: HPXML::LocationLivingSpace,
                          exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                         floor_type: HPXML::FloorTypeWoodFrame,
                          area: 1200,
                          insulation_assembly_r_value: (1.0 / floor_ufactor).round(3))
   end

@@ -13,6 +13,7 @@ __New Features__
 - Allows modeling CFIS ventilation systems with a supplemental fan.
   - **Breaking change**: New `CFISControls/AdditionalRuntimeOperatingMode` input required for CFIS ventilation systems.
 - **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+- **Breaking change**: `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
 - **Breaking Change**: All `Ducts` must now have a `SystemIdentifier`.
 - **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
 - **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.

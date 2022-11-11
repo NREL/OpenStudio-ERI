@@ -903,6 +903,7 @@ def set_hpxml_floors(hpxml_file, hpxml)
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                      exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
                      interior_adjacent_to: HPXML::LocationLivingSpace,
+                     floor_type: HPXML::FloorTypeWoodFrame,
                      area: 1539,
                      insulation_assembly_r_value: 13.85)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
@@ -920,7 +921,7 @@ def set_hpxml_floors(hpxml_file, hpxml)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('middle_interior')
       exterior_adjacent_to = HPXML::LocationOtherHousingUnit
-      floor_or_ceiling = HPXML::FloorTypeCeiling
+      floor_or_ceiling = HPXML::FloorOrCeilingCeiling
       ceiling_assembly_r = 1.67
     else
       exterior_adjacent_to = HPXML::LocationAtticVented
@@ -947,6 +948,7 @@ def set_hpxml_floors(hpxml_file, hpxml)
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                      exterior_adjacent_to: exterior_adjacent_to,
                      interior_adjacent_to: HPXML::LocationLivingSpace,
+                     floor_type: HPXML::FloorTypeWoodFrame,
                      floor_or_ceiling: floor_or_ceiling,
                      area: area,
                      insulation_assembly_r_value: ceiling_assembly_r)
@@ -960,13 +962,15 @@ def set_hpxml_floors(hpxml_file, hpxml)
       hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                        exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
                        interior_adjacent_to: HPXML::LocationLivingSpace,
+                       floor_type: HPXML::FloorTypeWoodFrame,
                        area: area,
                        insulation_assembly_r_value: floor_assembly_r)
     elsif hpxml_file.include?('top_corner') || hpxml_file.include?('middle_interior')
       hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                        exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                        interior_adjacent_to: HPXML::LocationLivingSpace,
-                       floor_or_ceiling: HPXML::FloorTypeFloor,
+                       floor_type: HPXML::FloorTypeWoodFrame,
+                       floor_or_ceiling: HPXML::FloorOrCeilingFloor,
                        area: area,
                        insulation_assembly_r_value: 3.1)
     end

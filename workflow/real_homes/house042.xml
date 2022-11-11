@@ -333,6 +333,9 @@
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>1268.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
@@ -343,6 +346,9 @@
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>101.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation'/>
@@ -353,6 +359,9 @@
             <SystemIdentifier id='Floor3'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>484.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor3Insulation'/>
@@ -363,6 +372,9 @@
             <SystemIdentifier id='Floor4'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>7.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor4Insulation'/>

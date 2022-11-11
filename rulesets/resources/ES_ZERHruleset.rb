@@ -484,6 +484,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                            exterior_adjacent_to: ceiling_exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -501,6 +502,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       new_hpxml.floors.add(id: 'TargetFloor',
                            exterior_adjacent_to: HPXML::LocationAtticVented,
                            interior_adjacent_to: HPXML::LocationLivingSpace,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: floor_area,
                            insulation_id: 'TargetFloorInsulation',
                            insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
@@ -533,6 +535,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
