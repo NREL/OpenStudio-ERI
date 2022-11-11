@@ -66,8 +66,9 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
 .. warning::
 
   For the IECC ERI compliance calculation, OpenStudio-ERI does not perform additional compliance checks beyond calculating the ERI.
-  For example, it does not check the building thermal envelope (2021 IECC, Section R406.3) nor that the on-site renewable energy is below a specified limit (2021 IECC, Section R406.4).
-  It is the software tool's responsibility to perform these additional steps. 
+  For example, it does not check the building thermal envelope (2021 IECC, Section R406.3).
+  It is the software tool's responsibility to perform these additional steps.
+  It does impose renewable energy limits (2021 IECC, Section R406.4), as applicable.
 
 .. warning::
 

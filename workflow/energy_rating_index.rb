@@ -214,11 +214,8 @@ def retrieve_eri_outputs(designs)
   return design_outputs
 end
 
-def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_limit: nil)
-  # opp_reduction_limit should be:
-  #   - nil if a standard ERI calculation
-  #   - zero if calculating the ENERGY STAR Rated Home ERI w/o OPP
-  #   - non-zero if calculating the ENERGY STAR Rated Home ERI w OPP
+def _calculate_eri(rated_output, ref_output, results_iad: nil,
+                   opp_reduction_limit: nil, renewable_energy_limit: nil)
 
   def get_heating_coefficients(fuel)
     if [HPXML::FuelTypeElectricity].include? fuel
@@ -459,7 +456,11 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil, opp_reduction_lim
   # On-Site Power Production
   # Electricity produced minus equivalent electric energy use calculated in accordance
   # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
-  results[:opp] = -1 * (rated_output['End Use: Electricity: PV (MBtu)'] +
+  renewable_energy = rated_output['End Use: Electricity: PV (MBtu)']
+  if not renewable_energy_limit.nil?
+    renewable_energy = -1 * [-renewable_energy, renewable_energy_limit].min
+  end
+  results[:opp] = -1 * (renewable_energy +
                         rated_output['End Use: Electricity: Generator (MBtu)']) -
                   0.4 * (rated_output['End Use: Natural Gas: Generator (MBtu)'] +
                          rated_output['End Use: Fuel Oil: Generator (MBtu)'] +
@@ -576,11 +577,11 @@ def _calculate_co2e_index(rated_output, ref_output, results)
   return results
 end
 
-def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_reduction_limit: nil, skip_csv: false)
+def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_reduction_limit: nil,
+                  renewable_energy_limit: nil, skip_csv: false)
   if design_outputs.keys.include? Constants.CalcTypeERIIndexAdjustmentDesign
     results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
-                                 design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome],
-                                 opp_reduction_limit: opp_reduction_limit)
+                                 design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
   else
     results_iad = nil
   end
@@ -588,7 +589,8 @@ def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_redu
   results = _calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome],
                            design_outputs[Constants.CalcTypeERIReferenceHome],
                            results_iad: results_iad,
-                           opp_reduction_limit: opp_reduction_limit)
+                           opp_reduction_limit: opp_reduction_limit,
+                           renewable_energy_limit: renewable_energy_limit)
 
   if design_outputs.keys.include? Constants.CalcTypeCO2eRatedHome
     results = _calculate_co2e_index(design_outputs[Constants.CalcTypeCO2eRatedHome],
@@ -812,7 +814,7 @@ end
 
 def main(options)
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  
+
   # Setup directories
   unless Dir.exist?(options[:output_dir])
     FileUtils.mkdir_p(options[:output_dir])
@@ -908,8 +910,10 @@ def main(options)
       iecc_eri_designs = designs.select { |d| !d.iecc_version.nil? }
       iecc_eri_outputs = retrieve_eri_outputs(iecc_eri_designs)
 
+      renewable_energy_limit = calc_renewable_energy_limit(iecc_eri_outputs, iecc_version)
+
       # Calculate and write results
-      iecc_eri_results = calculate_eri(iecc_eri_outputs, resultsdir, csv_filename_prefix: 'IECC')
+      iecc_eri_results = calculate_eri(iecc_eri_outputs, resultsdir, csv_filename_prefix: 'IECC', renewable_energy_limit: renewable_energy_limit)
       puts "IECC ERI: #{iecc_eri_results[:eri].round(2)}"
     end
 
