@@ -308,6 +308,9 @@
             <SystemIdentifier id='Floor3'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>67.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor3Insulation'/>
