@@ -2425,19 +2425,18 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if @program_version == ESConstants.MFNationalVer1_2
         if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir)
           heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
-          cop = get_default_gshp_cop()
-          eer = get_default_gshp_eer()
         else
           heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
-          hspf = get_default_ashp_hspf()
-          seer = get_default_ashp_seer()
         end
       elsif (['7', '8'].include? @iecc_zone) && (@program_version != ESConstants.SFNationalVer3_2)
         heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
-        cop = get_default_gshp_cop()
-        eer = get_default_gshp_eer()
       else
         heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
+      end
+      if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+        cop = get_default_gshp_cop()
+        eer = get_default_gshp_eer()
+      elsif heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
         hspf = get_default_ashp_hspf()
         seer = get_default_ashp_seer()
       end
