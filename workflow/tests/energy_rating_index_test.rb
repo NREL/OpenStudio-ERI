@@ -168,7 +168,7 @@ class EnergyRatingIndexTest < Minitest::Test
     top_dir = File.join(File.dirname(__FILE__), '..', '..')
     command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.join(top_dir, 'tasks.rb')} create_release_zips"
     system(command)
-    assert_equal(2, Dir["#{top_dir}/*.zip"].size)
+    assert_equal(1, Dir["#{top_dir}/*.zip"].size)
 
     # Check successful running of ERI calculation from release zips
     require 'zip'

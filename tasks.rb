@@ -2940,13 +2940,6 @@ end
 if ARGV[0].to_sym == :create_release_zips
   require_relative 'workflow/version'
 
-  release_map = { File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_ERI_Version}-minimal.zip") => false,
-                  File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_ERI_Version}-full.zip") => true }
-
-  release_map.keys.each do |zip_path|
-    File.delete(zip_path) if File.exist? zip_path
-  end
-
   if ENV['CI']
     # CI doesn't have git, so default to everything
     git_files = Dir['**/*.*']
@@ -2996,46 +2989,24 @@ if ARGV[0].to_sym == :create_release_zips
     if Dir.exist? fonts_dir
       FileUtils.rm_r(fonts_dir)
     end
-
-    # Check if we need to download weather files for the full release zip
-    num_epws_expected = 1011
-    num_epws_local = 0
-    files.each do |f|
-      Dir[f].each do |file|
-        next unless file.end_with? '.epw'
-
-        num_epws_local += 1
-      end
-    end
-
-    # Make sure we have the full set of weather files
-    if num_epws_local < num_epws_expected
-      puts 'Fetching all weather files...'
-      command = "#{OpenStudio.getOpenStudioCLI} workflow/energy_rating_index.rb --download-weather"
-      `#{command}`
-    end
   end
 
   # Create zip files
   require 'zip'
-  release_map.each do |zip_path, include_all_epws|
-    puts "Creating #{zip_path}..."
-    Zip::File.open(zip_path, create: true) do |zipfile|
-      files.each do |f|
-        Dir[f].each do |file|
-          if file.start_with? 'documentation'
-            # always include
-          elsif include_all_epws
-            if (not git_files.include? file) && (not file.start_with? 'weather')
-              next
-            end
-          else
-            if not git_files.include? file
-              next
-            end
+  zip_path = File.join(File.dirname(__FILE__), "OpenStudio-ERI-v#{Version::OS_ERI_Version}.zip")
+  File.delete(zip_path) if File.exist? zip_path
+  puts "Creating #{zip_path}..."
+  Zip::File.open(zip_path, create: true) do |zipfile|
+    files.each do |f|
+      Dir[f].each do |file|
+        if file.start_with? 'documentation'
+          # always include
+        else
+          if not git_files.include? file
+            next
           end
-          zipfile.add(File.join('OpenStudio-ERI', file), file)
         end
+        zipfile.add(File.join('OpenStudio-ERI', file), file)
       end
     end
     puts "Wrote file at #{zip_path}."

@@ -758,30 +758,6 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 end
 
-def download_epws
-  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
-
-  require 'tempfile'
-  tmpfile = Tempfile.new('epw')
-
-  UrlResolver.fetch('https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip', tmpfile)
-
-  puts 'Extracting weather files...'
-  weather_dir = File.join(File.dirname(__FILE__), '..', 'weather')
-  require 'zip'
-  Zip.on_exists_proc = true
-  Zip::File.open(tmpfile.path.to_s) do |zip_file|
-    zip_file.each do |f|
-      zip_file.extract(f, File.join(weather_dir, f.name))
-    end
-  end
-
-  num_epws_actual = Dir[File.join(weather_dir, '*.epw')].count
-  puts "#{num_epws_actual} weather files are available in the weather directory."
-  puts 'Completed.'
-  exit!
-end
-
 def cache_weather
   # Process all epw files through weather.rb and serialize objects
   require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/materials'
@@ -1028,10 +1004,6 @@ OptionParser.new do |opts|
     options[:monthly_outputs] << t
   end
 
-  opts.on('-w', '--download-weather', 'Downloads all US TMY3 weather files') do |t|
-    options[:epws] = t
-  end
-
   opts.on('-c', '--cache-weather', 'Caches all weather files') do |t|
     options[:cache] = t
   end
@@ -1100,10 +1072,6 @@ if options[:version]
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
   exit!
-end
-
-if options[:epws]
-  download_epws
 end
 
 if options[:cache]
