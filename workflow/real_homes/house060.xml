@@ -290,6 +290,9 @@
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>10.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
@@ -300,6 +303,9 @@
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>100.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation'/>
@@ -310,6 +316,9 @@
             <SystemIdentifier id='Floor3'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>1198.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor3Insulation'/>
@@ -320,6 +329,9 @@
             <SystemIdentifier id='Floor4'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>240.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor4Insulation'/>
@@ -330,6 +342,9 @@
             <SystemIdentifier id='Floor5'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>172.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor5Insulation'/>
@@ -340,6 +355,9 @@
             <SystemIdentifier id='Floor6'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>392.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor6Insulation'/>

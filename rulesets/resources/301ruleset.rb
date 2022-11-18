@@ -22,14 +22,6 @@ class EnergyRatingIndex301Ruleset
     end
     @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
-    if iecc_version.nil?
-      # Use Year=2006 per ANSI 301
-      @iecc_zone_year = 2006
-    else
-      # Use same year as the IECC version requested
-      @iecc_zone_year = Integer(iecc_version)
-    end
-
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
@@ -325,7 +317,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == @iecc_zone_year }[0]
+    # Always use 2006 IECC climate zone for ERI calculation
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
     new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
                                                             zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
@@ -779,6 +772,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -794,6 +788,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to,
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: orig_floor.insulation_assembly_r_value)
@@ -835,6 +830,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -850,6 +846,7 @@ class EnergyRatingIndex301Ruleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to,
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: orig_floor.insulation_assembly_r_value)
@@ -863,6 +860,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.floors.add(id: 'FloorAboveCrawlspace',
                          interior_adjacent_to: HPXML::LocationLivingSpace,
                          exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                         floor_type: HPXML::FloorTypeWoodFrame,
                          area: 1200,
                          insulation_assembly_r_value: (1.0 / floor_ufactor).round(3))
   end

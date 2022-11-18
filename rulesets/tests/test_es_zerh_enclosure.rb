@@ -314,97 +314,132 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     end
   end
 
-  def test_enclosure_floors
+  def test_enclosure_ceilings
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         rvalue = 1.0 / 0.030
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
-      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1].include? program_version
+      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.026
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif program_version == ESConstants.MFNationalVer1_0
         rvalue = 1.0 / 0.027
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       elsif program_version == ESConstants.MFNationalVer1_1
         rvalue = 1.0 / 0.021
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
-      elsif program_version == ESConstants.SFPacificVer3_0
-        rvalue = 1.0 / 0.035
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.257
-      elsif program_version == ESConstants.SFFloridaVer3_1
-        rvalue = 1.0 / 0.035
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.064
-      elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
-        rvalue = 1.0 / 0.026
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.028
+      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version ==
+                                                                                rvalue = 1.0 / 0.035
       elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
         rvalue = 1.0 / 0.024
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
       end
 
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 1350, rvalue: rvalue)
-
-      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 2700, rvalue: (rvalue * 1350 + rvalue_floors_over_uncond_spaces * 1350) / 2700)
-
-      _convert_to_es_zerh('base-foundation-unconditioned-basement-wall-insulation.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 2700, rvalue: (rvalue * 1350 + rvalue_floors_over_uncond_spaces * 1350) / 2700)
+      _check_ceilings(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-enclosure-garage.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 1950, rvalue: (rvalue * 1350 + 2.1 * 600) / 1950)
+      _check_ceilings(hpxml, area: 1950, rvalue: (rvalue * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
       hpxml = _test_ruleset(program_version)
       if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
-        _check_floors(hpxml)
+        _check_ceilings(hpxml)
       else
-        _check_floors(hpxml, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue)
+        _check_ceilings(hpxml, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
 
       _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 450, rvalue: rvalue)
+      _check_ceilings(hpxml, area: 450, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-atticroof-flat.xml', program_version)
       hpxml = _test_ruleset(program_version)
       if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
-        _check_floors(hpxml)
+        _check_ceilings(hpxml)
       else
-        _check_floors(hpxml, area: 1350, rvalue: rvalue)
+        _check_ceilings(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
     ESConstants.MFVersions.each do |program_version|
+      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
+      hpxml = _test_ruleset(program_version)
+      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+
+      _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
+      hpxml = _test_ruleset(program_version)
+      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+
+      # Check w/ mass ceilings
+      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+      hpxml.floors.each do |floor|
+        next unless floor.is_ceiling
+
+        floor.floor_type = HPXML::FloorTypeConcrete
+      end
+      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+      hpxml = _test_ruleset(program_version)
+      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+    end
+  end
+
+  def test_enclosure_floors
+    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+      if [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0,
+          ESConstants.MFNationalVer1_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+        rvalue = 1.0 / 0.033
+      elsif program_version == ESConstants.SFPacificVer3_0
+        rvalue = 1.0 / 0.257
+      elsif program_version == ESConstants.SFFloridaVer3_1
+        rvalue = 1.0 / 0.064
+      elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+        rvalue = 1.0 / 0.028
+      end
+
+      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
+      hpxml = _test_ruleset(program_version)
+      _check_floors(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+
+      _convert_to_es_zerh('base-foundation-unconditioned-basement-wall-insulation.xml', program_version)
+      hpxml = _test_ruleset(program_version)
+      _check_floors(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+    end
+
+    ESConstants.MFVersions.each do |program_version|
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.033
+        rvalue = 1.0 / 0.033
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.028
+        rvalue = 1.0 / 0.028
       end
 
       _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 1800, rvalue: (2.1 * 900 + 2.1 * 900) / 1800)
+      _check_floors(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 1800, rvalue: (2.1 * 1050 + rvalue_floors_over_uncond_spaces * 750) / 1800)
+      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+
+      # Check w/ mass floors
+      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+      hpxml.floors.each do |floor|
+        floor.floor_type = HPXML::FloorTypeConcrete
+      end
+      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+      hpxml = _test_ruleset(program_version)
+      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
+        rvalue = 1.0 / 0.064
+      elsif [ESConstants.MFNationalVer1_2].include? program_version
+        rvalue = 1.0 / 0.051
+      end
+      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
     end
 
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.MFNationalVer1_0
-        rvalue = 1.0 / 0.027
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.282
+        rvalue = 1.0 / 0.282
       elsif program_version == ESConstants.MFNationalVer1_1
-        rvalue = 1.0 / 0.027
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.066
+        rvalue = 1.0 / 0.066
       else
-        rvalue = 1.0 / 0.035
-        rvalue_floors_over_uncond_spaces = 1.0 / 0.064
+        rvalue = 1.0 / 0.064
       end
 
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
@@ -416,7 +451,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       hpxml.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 2700, rvalue: (rvalue * 1350 + rvalue_floors_over_uncond_spaces * 1350) / 2700)
+      _check_floors(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
     end
   end
 
@@ -807,12 +842,38 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     assert_in_epsilon(depth_bg, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
   end
 
-  def _check_floors(hpxml, area: nil, rvalue: nil)
+  def _check_ceilings(hpxml, area: nil, rvalue: nil, floor_type: nil)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
     hpxml.floors.each do |floor|
+      next unless floor.is_ceiling
+
       area_values << floor.area
       rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
+      assert_equal(floor_type, floor.floor_type)
+    end
+
+    if area.nil?
+      assert(area_values.empty?)
+    else
+      assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    end
+    if rvalue.nil?
+      assert(rvalue_x_area_values.empty?)
+    else
+      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    end
+  end
+
+  def _check_floors(hpxml, area: nil, rvalue: nil, floor_type: nil)
+    area_values = []
+    rvalue_x_area_values = [] # Area-weighted
+    hpxml.floors.each do |floor|
+      next unless floor.is_floor
+
+      area_values << floor.area
+      rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
+      assert_equal(floor_type, floor.floor_type)
     end
 
     if area.nil?

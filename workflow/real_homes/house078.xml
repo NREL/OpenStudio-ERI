@@ -200,6 +200,9 @@
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>543.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
@@ -210,6 +213,9 @@
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>garage</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>216.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation'/>

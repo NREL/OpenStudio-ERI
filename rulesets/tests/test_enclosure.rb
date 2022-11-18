@@ -420,34 +420,19 @@ class ERIEnclosureTest < MiniTest::Test
     end
   end
 
-  def test_enclosure_floors
+  def test_enclosure_ceilings
     hpxml_name = 'base.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_floors(hpxml, area: 1350, rvalue: 39.3)
+        _check_ceilings(hpxml, area: 1350, rvalue: 39.3, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 1350, rvalue: 33.33)
+        _check_ceilings(hpxml, area: 1350, rvalue: 33.33, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 39.3, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
-      end
-    end
-
-    hpxml_name = 'base-foundation-ambient.xml'
-
-    _all_calc_types.each do |calc_type|
-      hpxml = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_floors(hpxml, area: 2700, rvalue: (39.3 * 1350 + 18.7 * 1350) / 2700)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 33.33, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
@@ -456,28 +441,13 @@ class ERIEnclosureTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_floors(hpxml, area: 1950, rvalue: (39.3 * 1350 + 2.1 * 600) / 1950)
+        _check_ceilings(hpxml, area: 1950, rvalue: (39.3 * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 1950, rvalue: (33.33 * 1350 + 2.1 * 600) / 1950)
+        _check_ceilings(hpxml, area: 1950, rvalue: (33.33 * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 39.3, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
-      end
-    end
-
-    hpxml_name = 'base-foundation-unconditioned-basement.xml'
-
-    _all_calc_types.each do |calc_type|
-      hpxml = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_floors(hpxml, area: 2700, rvalue: (39.3 * 1350 + 18.7 * 1350) / 2700)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2700, rvalue: (33.33 * 1350 + 30.3 * 1350) / 2700)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (39.3 * 1200 + 30.3 * 1200) / 2400)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (33.33 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 33.33, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
@@ -486,28 +456,132 @@ class ERIEnclosureTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_floors(hpxml, area: 1800, rvalue: 2.1)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 1800, rvalue: 2.1)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
-    hpxml_name = ['base-bldgtype-multifamily-adjacent-to-multiple.xml']
+    hpxml_name = 'base-bldgtype-multifamily-adjacent-to-multiple.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_floors(hpxml, area: 1800, rvalue: (18.7 * 750 + 2.1 * 1050) / 1800)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 1800, rvalue: (30.3 * 900 + 2.1 * 900) / 1800)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_floors(hpxml, area: 2400, rvalue: (2.1 * 1200 + 30.3 * 1200) / 2400)
+        _check_ceilings(hpxml, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      end
+    end
+
+    # Check w/ mass ceilings
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.floors.each do |floor|
+      next unless floor.is_ceiling
+
+      floor.floor_type = HPXML::FloorTypeConcrete
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_ceilings(hpxml, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_ceilings(hpxml, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      end
+    end
+  end
+
+  def test_enclosure_floors
+    hpxml_name = 'base-foundation-ambient.xml'
+
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 1350, rvalue: 18.7, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1350, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      end
+    end
+
+    hpxml_name = 'base-foundation-unconditioned-basement.xml'
+
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 1350, rvalue: 18.7, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1350, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      end
+    end
+
+    hpxml_name = 'base-bldgtype-multifamily.xml'
+
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      end
+    end
+
+    hpxml_name = 'base-bldgtype-multifamily-adjacent-to-multiple.xml'
+
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 900, rvalue: (18.7 * 750.0 + 2.1 * 150.0) / 900.0, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 900, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      end
+    end
+
+    # Check w/ mass floors
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml.floors.each do |floor|
+      floor.floor_type = HPXML::FloorTypeConcrete
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    _all_calc_types.each do |calc_type|
+      hpxml = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_floors(hpxml, area: 900, rvalue: (18.7 * 750.0 + 2.1 * 150.0) / 900.0, floor_type: HPXML::FloorTypeConcrete)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 900, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_floors(hpxml, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
   end
@@ -1187,12 +1261,30 @@ class ERIEnclosureTest < MiniTest::Test
     assert_in_epsilon(depth_bg, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
   end
 
-  def _check_floors(hpxml, area:, rvalue:)
+  def _check_ceilings(hpxml, area:, rvalue:, floor_type: HPXML::FloorTypeWoodFrame)
     area_values = []
     rvalue_x_area_values = [] # Area-weighted
     hpxml.floors.each do |floor|
+      next unless floor.is_ceiling
+
       area_values << floor.area
       rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
+      assert_equal(floor_type, floor.floor_type)
+    end
+
+    assert_in_epsilon(area, area_values.inject(:+), 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+  end
+
+  def _check_floors(hpxml, area:, rvalue:, floor_type: HPXML::FloorTypeWoodFrame)
+    area_values = []
+    rvalue_x_area_values = [] # Area-weighted
+    hpxml.floors.each do |floor|
+      next unless floor.is_floor
+
+      area_values << floor.area
+      rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
+      assert_equal(floor_type, floor.floor_type)
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.01)

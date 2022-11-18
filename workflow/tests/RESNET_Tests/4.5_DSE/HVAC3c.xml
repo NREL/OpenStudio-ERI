@@ -397,6 +397,9 @@
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <FloorOrCeiling>ceiling</FloorOrCeiling>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>1539.0</Area>
             <InteriorFinish>
               <Type>gypsum board</Type>
@@ -411,6 +414,9 @@
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>basement - unconditioned</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <FloorType>
+              <WoodFrame/>
+            </FloorType>
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation'/>

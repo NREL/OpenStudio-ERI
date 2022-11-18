@@ -2,6 +2,15 @@
 
 __New Features__
 - Updates to OpenStudio 3.5.0/EnergyPlus 22.2.
+- Updates to newer proposed HPXML v4.0:
+  - **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+  - **Breaking change**: `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
+  - **Breaking Change**: All `Ducts` must now have a `SystemIdentifier`.
+  - **Breaking Change**: Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
+  - **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
+  - **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
+  - **Breaking Change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
+  - **Breaking change**: For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
 - **Breaking Change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).
@@ -12,24 +21,19 @@ __New Features__
   - **Breaking change**: The organization of ENERGY STAR output files have changed.
 - Allows modeling CFIS ventilation systems with a supplemental fan.
   - **Breaking change**: New `CFISControls/AdditionalRuntimeOperatingMode` input required for CFIS ventilation systems.
-- **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
-- **Breaking Change**: All `Ducts` must now have a `SystemIdentifier`.
-- **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
-- **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
-- **Breaking Change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
 - **Breaking change**: The `ClimateZoneIECC/Year` is now more strict:
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
   - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
   - Zero Energy Ready Homes v1 runs must include a 2015 IECC climate zone.
 - Allows modeling room air conditioners with heating or reverse cycle.
-- **Breaking change**: For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
 - Allows shared dishwasher/clothes washer to be attached to a hot water distribution system instead of a single water heater.
 - Adds HVAC capacities, design loads, and design temperatures to csv output files.
 - Annual/timeseries outputs:
   - Adds annual emission outputs disaggregated by end use; timeseries emission outputs disaggregated by end use can be requested.
-  - Allows requesting timeseries unmet hours for heating and cooling.
+  - Allows generating timeseries unmet hours for heating and cooling.
   - Adds heating/cooling setpoints to timeseries outputs when requesting zone temperatures.
+- Improves Kiva foundation model heat transfer by providing better initial temperature assumptions based on foundation type and insulation levels.
 
 __Bugfixes__
 - Fixes units for Peak Loads (kBtu/hr, not kBtu) in ERI____Home.csv output files.

@@ -147,11 +147,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    # Set 2006 IECC zone for ERI
-    orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-      new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
-                                                              zone: climate_zone_iecc.zone)
-    end
+    # Set 2006 IECC zone for downstream ERI calculation
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
+    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
+                                                            zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
@@ -484,6 +483,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                            exterior_adjacent_to: ceiling_exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -501,6 +501,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       new_hpxml.floors.add(id: 'TargetFloor',
                            exterior_adjacent_to: HPXML::LocationAtticVented,
                            interior_adjacent_to: HPXML::LocationLivingSpace,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: floor_area,
                            insulation_id: 'TargetFloorInsulation',
                            insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
@@ -508,11 +509,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
-    floor_ufactor = get_enclosure_floors_over_uncond_spc_default_ufactor()
-
     # Exhibit 2 - Floors over unconditioned spaces
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_floor
+
+      floor_ufactor = get_enclosure_floors_over_uncond_spc_default_ufactor(orig_floor.floor_type)
 
       if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
@@ -533,6 +534,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                            exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
+                           floor_type: HPXML::FloorTypeWoodFrame,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
@@ -1507,16 +1509,32 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fail 'Unexpected case.'
   end
 
-  def self.get_enclosure_floors_over_uncond_spc_default_ufactor()
+  def self.get_enclosure_floors_over_uncond_spc_default_ufactor(floor_type)
     if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver1].include? @program_version
-      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return 0.064
-      elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-        return 0.047
-      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
-        return 0.033
-      elsif ['7', '8'].include? @iecc_zone
-        return 0.028
+      if floor_type == HPXML::FloorTypeConcrete && [ESConstants.MFNationalVer1_2].include?(@program_version)
+        if ['1A', '1B', '1C'].include? @iecc_zone
+          return 0.322
+        elsif ['2A', '2B', '2C'].include? @iecc_zone
+          return 0.087
+        elsif ['3A', '3B', '3C'].include? @iecc_zone
+          return 0.074
+        elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
+          return 0.051
+        elsif ['7'].include? @iecc_zone
+          return 0.042
+        elsif ['8'].include? @iecc_zone
+          return 0.038
+        end
+      else
+        if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+          return 0.064
+        elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
+          return 0.047
+        elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
+          return 0.033
+        elsif ['7', '8'].include? @iecc_zone
+          return 0.028
+        end
       end
     elsif [ESConstants.SFPacificVer3_0].include? @program_version
       return 0.257
@@ -1525,18 +1543,52 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       return 0.028
     elsif [ESConstants.MFNationalVer1_0].include? @program_version
-      if ['1A', '1B', '1C'].include? @iecc_zone
-        return 0.282
-      elsif ['2A', '2B', '2C'].include? @iecc_zone
-        return 0.052
+      if floor_type == HPXML::FloorTypeConcrete
+        if ['1A', '1B', '1C'].include? @iecc_zone
+          return 0.322
+        elsif ['2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
+          return 0.087
+        elsif ['4A', '4B'].include? @iecc_zone
+          return 0.074
+        elsif ['4C', '5A', '5B', '5C'].include? @iecc_zone
+          return 0.064
+        elsif ['6A', '6B', '6C'].include? @iecc_zone
+          return 0.057
+        elsif ['7', '8'].include? @iecc_zone
+          return 0.051
+        end
       else
-        return 0.033
+        if ['1A', '1B', '1C'].include? @iecc_zone
+          return 0.282
+        elsif ['2A', '2B', '2C'].include? @iecc_zone
+          return 0.052
+        else
+          return 0.033
+        end
       end
     elsif [ESConstants.MFNationalVer1_1].include? @program_version
-      if ['1A', '1B', '1C'].include? @iecc_zone
-        return 0.066
+      if floor_type == HPXML::FloorTypeConcrete
+        if ['1A', '1B', '1C'].include? @iecc_zone
+          return 0.322
+        elsif ['2A', '2B', '2C'].include? @iecc_zone
+          return 0.087
+        elsif ['3A', '3B', '3C'].include? @iecc_zone
+          return 0.076
+        elsif ['4A', '4B'].include? @iecc_zone
+          return 0.074
+        elsif ['4C', '5A', '5B', '5C'].include? @iecc_zone
+          return 0.064
+        elsif ['6A', '6B', '6C'].include? @iecc_zone
+          return 0.057
+        elsif ['7', '8'].include? @iecc_zone
+          return 0.051
+        end
       else
-        return 0.033
+        if ['1A', '1B', '1C'].include? @iecc_zone
+          return 0.066
+        else
+          return 0.033
+        end
       end
     end
 
@@ -2372,19 +2424,18 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if @program_version == ESConstants.MFNationalVer1_2
         if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir)
           heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
-          cop = get_default_gshp_cop()
-          eer = get_default_gshp_eer()
         else
           heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
-          hspf = get_default_ashp_hspf()
-          seer = get_default_ashp_seer()
         end
       elsif (['7', '8'].include? @iecc_zone) && (@program_version != ESConstants.SFNationalVer3_2)
         heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
-        cop = get_default_gshp_cop()
-        eer = get_default_gshp_eer()
       else
         heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
+      end
+      if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+        cop = get_default_gshp_cop()
+        eer = get_default_gshp_eer()
+      elsif heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
         hspf = get_default_ashp_hspf()
         seer = get_default_ashp_seer()
       end
