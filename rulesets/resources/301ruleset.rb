@@ -22,14 +22,6 @@ class EnergyRatingIndex301Ruleset
     end
     @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
-    if iecc_version.nil?
-      # Use Year=2006 per ANSI 301
-      @iecc_zone_year = 2006
-    else
-      # Use same year as the IECC version requested
-      @iecc_zone_year = Integer(iecc_version)
-    end
-
     # Update HPXML object based on calculation type
     if calc_type == Constants.CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
@@ -325,7 +317,8 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == @iecc_zone_year }[0]
+    # Always use 2006 IECC climate zone for ERI calculation
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
     new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
                                                             zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id

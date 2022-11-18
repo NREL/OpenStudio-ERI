@@ -117,13 +117,6 @@ def run_rulesets(hpxml_input_path, designs)
   end
 
   # Check for duplicate HPXML files
-
-  # First, replace IECC year strings so that we don't miss a duplicate just because the year is different
-  hpxml_strings.keys.each do |k|
-    hpxml_strings[k] = hpxml_strings[k].gsub(/<Year>.*<\/Year>/, '')
-  end
-
-  # Now identify duplicates
   duplicates = {}
   hpxml_strings.each_with_index do |(hpxml_output_path, new_hpxml), i|
     next if i == 0

@@ -147,11 +147,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
-    # Set 2006 IECC zone for ERI
-    orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-      new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
-                                                              zone: climate_zone_iecc.zone)
-    end
+    # Set 2006 IECC zone for downstream ERI calculation
+    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
+    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
+                                                            zone: climate_zone_iecc.zone)
     new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
     new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
     new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
