@@ -116,7 +116,7 @@ Annual energy consumption outputs are listed below.
   Type                                  Notes
   ====================================  ===========================
   Energy Use: Total (MBtu)
-  Energy Use: Net (MBtu)                Subtracts any power produced by PV (including any battery storage) or generators.
+  Energy Use: Net (MBtu)                Subtracts any power produced by PV or generators.
   ====================================  ===========================
 
 Annual Energy Consumption by Fuel Type
