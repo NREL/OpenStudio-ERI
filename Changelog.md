@@ -5,13 +5,13 @@ __New Features__
 - Updates to newer proposed HPXML v4.0:
   - **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
   - **Breaking change**: `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
-  - **Breaking Change**: All `Ducts` must now have a `SystemIdentifier`.
-  - **Breaking Change**: Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
+  - **Breaking change**: All `Ducts` must now have a `SystemIdentifier`.
+  - **Breaking change**: Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
   - **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
   - **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
-  - **Breaking Change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
+  - **Breaking change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
   - **Breaking change**: For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
-- **Breaking Change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
+- **Breaking change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).
 - Adds Zero Energy Ready Homes calculation for v1.
@@ -224,16 +224,16 @@ __New Features__
   - Shared appliances (e.g., clothes dryer in a shared laundry room)
   - Shared ventilation systems (optionally with preconditioning equipment and recirculation)
   - Shared PV systems
-  - **[Breaking Change]** `IsSharedSystem` now required for boilers and ground-to-air heat pumps, water heating systems, ventilation systems, and PV systems
-  - **[Breaking Change]** `IsSharedAppliance` now required for clothes washers, clothes dryers, and dishwashers
-  - **[Breaking Change]** Appliances located in MF spaces (i.e., "other") must now be specified in more detail (i.e., "other heated space", "other non-freezing space", "other multifamily buffer space", or "other housing unit")
+  - **[Breaking change]** `IsSharedSystem` now required for boilers and ground-to-air heat pumps, water heating systems, ventilation systems, and PV systems
+  - **[Breaking change]** `IsSharedAppliance` now required for clothes washers, clothes dryers, and dishwashers
+  - **[Breaking change]** Appliances located in MF spaces (i.e., "other") must now be specified in more detail (i.e., "other heated space", "other non-freezing space", "other multifamily buffer space", or "other housing unit")
 - Allows multiple mechanical ventilation systems (`VentilationFan`)
-- **[Breaking Change]** For hydronic distributions, `HydronicDistributionType` is now required
-- **[Breaking Change]** For DSE distributions, `AnnualHeatingDistributionSystemEfficiency` and `AnnualCoolingDistributionSystemEfficiency` are both always required
-- **[Breaking Change]** Adds `RadiantBarrierGrade` as a required input if a roof has a radiant barrier
-- **[Breaking Change]** Adds `extension/PumpPowerWattsPerTon` as a required input for ground-to-air heat pumps
-- **[Breaking Change]** Renames `DuctLeakageTestingExemption` to `DuctLeakageToOutsideTestingExemption`, to clarify that it is different from the total duct leakage testing exemption in ANSI/RESNET/ACCA 310
-- **[Breaking Change]** New `FanPowerDefaulted` and `FlowRateNotTested` elements must be provided when ventilation systems have defaulted fan power or unmeasured airflow
+- **[Breaking change]** For hydronic distributions, `HydronicDistributionType` is now required
+- **[Breaking change]** For DSE distributions, `AnnualHeatingDistributionSystemEfficiency` and `AnnualCoolingDistributionSystemEfficiency` are both always required
+- **[Breaking change]** Adds `RadiantBarrierGrade` as a required input if a roof has a radiant barrier
+- **[Breaking change]** Adds `extension/PumpPowerWattsPerTon` as a required input for ground-to-air heat pumps
+- **[Breaking change]** Renames `DuctLeakageTestingExemption` to `DuctLeakageToOutsideTestingExemption`, to clarify that it is different from the total duct leakage testing exemption in ANSI/RESNET/ACCA 310
+- **[Breaking change]** New `FanPowerDefaulted` and `FlowRateNotTested` elements must be provided when ventilation systems have defaulted fan power or unmeasured airflow
 - Allows homes without a refrigerator, dishwasher, range/oven, clothes washer, and/or clothes dryer
 - Rated Home equipment capacities now automatically increased if smaller than auto-calculated design loads
 - Updates Reference Home to have a single water heater even when there are multiple water heaters
@@ -259,16 +259,16 @@ __New Features__
   - `ExteriorAdjacentTo` can be "other heated space", "other multifamily buffer space", or "other non-freezing space" for `Wall`, `RimJoist`, `FoundationWall`, and `FrameFloor` elements
   - `DuctLocation` can be "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space"
   - `WaterHeater/Location` can be "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space"
-  - **[Breaking Change]** `Location` is now a required element for dishwashers and cooking ranges.
+  - **[Breaking change]** `Location` is now a required element for dishwashers and cooking ranges.
   - `Location` can be "other" for all appliances
   - **[Breaking change]** `Window/FractionOperable` is required
   - `VentilationFan/TestedFlowRate` is now optional and can be excluded for unmeasured mechanical ventilation flow rates
   - `VentilationFan/FanPower` is now optional and can be excluded for unknown mechanical ventilation fan power
   - **[Breaking change]** `LabelUsage` is required for clothes washers
   - **[Breaking change]** `LabelElectricRate`, `LabelGasRate`, `LabelAnnualGasCost`, and `LabelUsage` are required for dishwashers
-  - **[Breaking Change]** `HVACDistribution/ConditionedFloorAreaServed` is now required for air distribution systems
-  - **[Breaking Change]** For FrameFloors ExteriorAdjacentTo, "other housing unit above" and "other housing unit below" are replaced with "other housing unit"; floors adjacent to any "other ..." MF space type must have the `extension/OtherSpaceAboveOrBelow` element set to "above" or "below".
-- **[Breaking Change]** Lighting inputs now use `LightingType[LightEmittingDiode | CompactFluorescent | FluorescentTube]` instead of `ThirdPartyCertification="ERI Tier I" or ThirdPartyCertification="ERI Tier II"`.
+  - **[Breaking change]** `HVACDistribution/ConditionedFloorAreaServed` is now required for air distribution systems
+  - **[Breaking change]** For FrameFloors ExteriorAdjacentTo, "other housing unit above" and "other housing unit below" are replaced with "other housing unit"; floors adjacent to any "other ..." MF space type must have the `extension/OtherSpaceAboveOrBelow` element set to "above" or "below".
+- **[Breaking change]** Lighting inputs now use `LightingType[LightEmittingDiode | CompactFluorescent | FluorescentTube]` instead of `ThirdPartyCertification="ERI Tier I" or ThirdPartyCertification="ERI Tier II"`.
 - Allows "exterior wall", "under slab", and "roof deck" for `DuctLocation`.
 - Allows `PortableHeater`, `Fireplace`, and `FloorFurnace` for heating system types.
 - Allows "wood" and "wood pellets" as fuel types for HVAC systems, water heaters, and appliances.
@@ -276,9 +276,9 @@ __New Features__
 - Improved inferred infiltration height calculation for homes w/ conditioned basements.
 - Reference Home mechanical ventilation that supplements infiltration is now always a balanced system.
 - Additional runtime improvements.
-- **[Breaking Change]** Many changes to HPXML test files to conform to latest RESNET Publication 002.
+- **[Breaking change]** Many changes to HPXML test files to conform to latest RESNET Publication 002.
 - ERI____Home.xml files:
-  - **[Breaking Change]** `WaterHeatingSystem/PerformanceAdjustment` is now a multiplier (e.g., 0.92) instead of a derate (e.g., 0.08).
+  - **[Breaking change]** `WaterHeatingSystem/PerformanceAdjustment` is now a multiplier (e.g., 0.92) instead of a derate (e.g., 0.08).
    - Adds `AirInfiltrationMeasurement/extension/InfiltrationHeight` and `AirInfiltrationMeasurement/extension/Aext` as diagnostic outputs.
 - Error-checking:
   - Adds more space type-specific error checking of adjacent surfaces.
@@ -301,9 +301,9 @@ __Bugfixes__
 ## OpenStudio-ERI v0.9.0 Beta
 
 __New Features__
-- **[Breaking Change]** Updates to OpenStudio v3.0.0 and EnergyPlus 9.3.
-- **[Breaking Change]** Allows 301-2014 Addenda D & L to be used by providing inputs for A) duct leakage testing exemptions or B) total duct leakage in lieu of leakage to the outside. These inputs should only be used if the conditions specified in ANSI/RESNET/ICC© 301 have been appropriately met. Enumerations for `SoftwareInfo/extension/ERICalculation/Version` are now "latest", "2014ADEGL", "2014ADEG", "2014ADE", "2014AD", "2014A", "2014".
-- **[Breaking Change]** `BuildingConstruction/ResidentialFacilityType` is now required. Valid choices are: "single-family detached", "single-family attached", "apartment unit", "manufactured home".
+- **[Breaking change]** Updates to OpenStudio v3.0.0 and EnergyPlus 9.3.
+- **[Breaking change]** Allows 301-2014 Addenda D & L to be used by providing inputs for A) duct leakage testing exemptions or B) total duct leakage in lieu of leakage to the outside. These inputs should only be used if the conditions specified in ANSI/RESNET/ICC© 301 have been appropriately met. Enumerations for `SoftwareInfo/extension/ERICalculation/Version` are now "latest", "2014ADEGL", "2014ADEG", "2014ADE", "2014AD", "2014A", "2014".
+- **[Breaking change]** `BuildingConstruction/ResidentialFacilityType` is now required. Valid choices are: "single-family detached", "single-family attached", "apartment unit", "manufactured home".
 - Improves inferred infiltration height for conditioned basements (including walkout basements).
 - A new HPXML input `WeatherStation/extension/EPWFilePath` can be used instead of `WeatherStation/WMO` to point directly to the EPW file of interest.
 - Adds hot water outputs (gallons), disaggregated by end use, to annual output. Also available for timeseries outputs.
@@ -312,8 +312,8 @@ __New Features__
 - Small improvement to calculation of component loads.
 - Allows buildings to have HVAC systems that do not condition 100% of the load (i.e., where sum of fraction heat/cool load served is greater than zero and less than one).
 - Populates more information in the ERI___Home.xml files (e.g., plug load kWh/yr).
-- **[Breaking Change]** The `--no-ssl` argument has been deprecated.
-- **[Breaking Change]** Switches from `BuildingConstruction/extension/FractionofOperableWindowArea` to `Window/FractionOperable` in HPXML test files.
+- **[Breaking change]** The `--no-ssl` argument has been deprecated.
+- **[Breaking change]** Switches from `BuildingConstruction/extension/FractionofOperableWindowArea` to `Window/FractionOperable` in HPXML test files.
 
 __Bugfixes__
 - Fixes an unsuccessful simulation for buildings with multiple HVAC air distribution systems, each with multiple duct locations.
@@ -322,7 +322,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v0.8.0 Beta
 
-__Breaking Changes__
+__Breaking changes__
 - The `--skip-validation` or `-s` argument has been removed, it's no longer needed now that the primary runtime bottleneck has been addressed.
 - ERI____Home.csv output files:
   - Disaggregates "Electricity: Heating Fans/Pumps" from "Electricity: Heating", "Electricity: Cooling Fans/Pumps" from "Electricity: Cooling", and "Electricity: Television" from "Electricity: Plug Loads"
@@ -356,7 +356,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v0.7.0 Beta
 
-__Breaking Changes__
+__Breaking changes__
 - OpenStudio version 2.9.1 is now required.
 - The `--hourly-output` argument now only generates hourly output for the Reference/Rated Homes, not the IAD Homes, for faster runtime.
 - Foundation walls described with the `Insulation/Layer` approach now require two layers (i.e., interior and exterior). (Foundation walls described using the `Insulation/AssemblyEffectiveRValue` approach are unchanged.) See [here](https://github.com/NREL/OpenStudio-HPXML/pull/120) for more information.
@@ -383,7 +383,7 @@ __Known Issues__
 
 ## OpenStudio-ERI v0.6.0 Beta
 
-__Breaking Changes__
+__Breaking changes__
 - A `Foundations/Foundation[FoundationType/Basement[Conditioned='false']]/ThermalBoundary` element is now required for all buildings with unconditioned basements.
 - Several reporting changes for results/ERI____Home.csv output files: 
   - "Other Fuel" is now disaggregated into "Fuel Oil" and "Propane"
@@ -409,7 +409,7 @@ __Known Issues__
 
 ## OpenStudio-ERI v0.5.0 Beta
 
-__Breaking Changes__
+__Breaking changes__
 - None
 
 __New Features__
@@ -437,7 +437,7 @@ __Known Issues__
 
 ## OpenStudio-ERI v0.4.0 Beta
 
-__Breaking Changes__
+__Breaking changes__
 - Requires OpenStudio 2.9.0
 - The root `HPXML` element needs to be changed from http://hpxmlonline.com/2014/6 to http://hpxmlonline.com/2019/10 per the latest HPXML v3 schema.
 - `Slab/DepthBelowGrade` is now required when `Slab/InteriorAdjacentTo=’garage’`.
@@ -488,7 +488,7 @@ __Known Issues__
 
 ## OpenStudio-ERI v0.3.0 Beta
 
-__Breaking Changes__
+__Breaking changes__
 - `VentilationFan/RatedFlowRate` is now `TestedFlowRate`.
 - Several reporting changes for results/ERI____Home.csv output files:
   - Disaggregated natural gas from other fuels.
@@ -521,7 +521,7 @@ __Known Issues__
 
 ## OpenStudio-ERI v0.2.0 Beta
 
-__Breaking Changes__
+__Breaking changes__
 - `CoolingSystemType="central air conditioning"` is now `"central air conditioner"` (consistent with `"room air conditioner"`)
 
 __New Features__
