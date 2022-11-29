@@ -403,11 +403,11 @@ def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
 end
 
 def _check_ashrae_140_results(htg_loads, clg_loads)
-  # Proposed acceptance criteria as of 8/17/2022
-  htg_min = [48.06, 74.30, 35.98, 39.74, 45.72, 39.12, 42.16, 48.30, 58.15, 121.75, 126.71, 23.91, 26.93, 55.09, 46.62]
-  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.39, 74.24, 137.68, 146.84, 81.95, 70.53, 92.73, 56.46]
-  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.89, -0.56, -1.95, 8.16, 71.16, 3.20, -26.32, -3.05, 5.87, 5.10]
-  htg_dt_max = [29.62, -9.45, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.75, 11.45, 32.54, 39.08]
+  # Proposed acceptance criteria as of 11/29/2022
+  htg_min = [48.06, 74.30, 35.98, 39.74, 45.72, 39.12, 42.16, 48.30, 58.15, 121.75, 126.71, 24.59, 27.71, 57.57, 48.33]
+  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.39, 74.24, 137.68, 146.84, 81.73, 70.27, 91.66, 56.46]
+  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.89, -0.56, -1.95, 8.16, 71.16, 3.20, -25.77, -3.12, 7.80, 5.50]
+  htg_dt_max = [29.62, -9.45, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.68, 11.47, 32.01, 38.95]
   clg_min = [42.49, 47.72, 41.14, 31.55, 21.03, 50.55, 36.62, 52.25, 34.16, 57.07, 50.19]
   clg_max = [58.66, 61.33, 51.69, 41.84, 29.35, 73.47, 59.72, 68.60, 47.58, 73.51, 60.72]
   clg_dt_min = [0.69, -8.24, -18.53, -30.58, 7.51, -16.52, 6.75, -12.95, 11.62, 5.12]
@@ -1363,7 +1363,7 @@ def _check_method_results(results, test_num, has_tankless_water_heater, version)
 end
 
 def _check_hvac_test_results(energy)
-  # Proposed acceptance criteria as of 8/17/2022
+  # Proposed acceptance criteria as of 11/29/2022
   min = [-24.58, -13.18, -42.75, 57.19]
   max = [-18.18, -12.58, -15.84, 111.39]
 
@@ -1383,9 +1383,9 @@ def _check_hvac_test_results(energy)
 end
 
 def _check_dse_test_results(energy)
-  # Proposed acceptance criteria as of 8/17/2022
-  htg_min = [8.68, 2.87, 6.94]
-  htg_max = [26.12, 6.63, 20.04]
+  # Proposed acceptance criteria as of 11/29/2022
+  htg_min = [9.33, 3.05, 7.29]
+  htg_max = [25.96, 6.65, 19.99]
   clg_min = [19.33, 5.35, 15.96]
   clg_max = [28.08, 8.52, 28.29]
 
@@ -1428,7 +1428,7 @@ def _get_hot_water(results_csv)
 end
 
 def _check_hot_water(energy)
-  # Proposed acceptance criteria as of 8/17/2022
+  # Proposed acceptance criteria as of 11/29/2022
   mn_min = [19.34, 25.76, 17.20, 24.94, 55.93, 22.61, 20.51]
   mn_max = [19.88, 26.55, 17.70, 25.71, 57.58, 23.28, 21.09]
   fl_min = [10.74, 13.37, 8.83, 13.06, 30.84, 12.09, 11.84]
