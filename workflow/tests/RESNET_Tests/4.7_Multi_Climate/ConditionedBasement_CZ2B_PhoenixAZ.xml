@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <AdditionalProperties>
+        <ParentHPXMLFile>BaseCase_CZ2B_PhoenixAZ.xml</ParentHPXMLFile>
+      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -18,7 +21,7 @@
     <Site>
       <SiteID id='SiteID'/>
       <Address>
-        <StateCode>FL</StateCode>
+        <StateCode>AZ</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -35,22 +38,22 @@
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
-          <NumberofConditionedFloors>2.0</NumberofConditionedFloors>
+          <NumberofConditionedFloors>3.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>2.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>3</NumberofBedrooms>
-          <ConditionedFloorArea>2400.0</ConditionedFloorArea>
+          <ConditionedFloorArea>3600.0</ConditionedFloorArea>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>1A</ClimateZone>
+          <ClimateZone>2B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Miami, FL</Name>
+          <Name>Phoenix, AZ</Name>
           <extension>
-            <EPWFilePath>USA_FL_Miami.Intl.AP.722020_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -61,9 +64,9 @@
             <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>5.0</AirLeakage>
+              <AirLeakage>3.33</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>20400.0</InfiltrationVolume>
+            <InfiltrationVolume>30600.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -84,14 +87,10 @@
           <Foundation>
             <SystemIdentifier id='Foundation1'/>
             <FoundationType>
-              <Crawlspace>
-                <Vented>true</Vented>
-              </Crawlspace>
+              <Basement>
+                <Conditioned>true</Conditioned>
+              </Basement>
             </FoundationType>
-            <VentilationRate>
-              <UnitofMeasure>SLA</UnitofMeasure>
-              <Value>0.006667</Value>
-            </VentilationRate>
           </Foundation>
         </Foundations>
         <Roofs>
@@ -143,18 +142,18 @@
           <FoundationWall>
             <SystemIdentifier id='FoundationWall1'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
-            <Height>2.0</Height>
-            <Area>277.2</Area>
-            <Thickness>8.0</Thickness>
-            <DepthBelowGrade>0.0</DepthBelowGrade>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
+            <Height>8.5</Height>
+            <Area>1177.8</Area>
+            <Thickness>6.0</Thickness>
+            <DepthBelowGrade>7.75</DepthBelowGrade>
             <Insulation>
               <SystemIdentifier id='FoundationWall1Insulation'/>
               <Layer>
                 <InstallationType>continuous - exterior</InstallationType>
                 <NominalRValue>0.0</NominalRValue>
                 <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                <DistanceToBottomOfInsulation>0.0</DistanceToBottomOfInsulation>
+                <DistanceToBottomOfInsulation>8.5</DistanceToBottomOfInsulation>
               </Layer>
               <Layer>
                 <InstallationType>continuous - interior</InstallationType>
@@ -173,10 +172,10 @@
             <FloorType>
               <WoodFrame/>
             </FloorType>
-            <Area>1045.6</Area>
+            <Area>982.3</Area>
             <Insulation>
               <SystemIdentifier id='Floor1_CeilingInsulation'/>
-              <AssemblyEffectiveRValue>31.25</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>38.462</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -186,43 +185,17 @@
             <FloorType>
               <WoodFrame/>
             </FloorType>
-            <Area>154.4</Area>
+            <Area>217.7</Area>
             <Insulation>
               <SystemIdentifier id='Floor2_EaveInsulation'/>
-              <AssemblyEffectiveRValue>31.25</AssemblyEffectiveRValue>
-            </Insulation>
-          </Floor>
-          <Floor>
-            <SystemIdentifier id='Floor3_CarpetFloor'/>
-            <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <FloorType>
-              <WoodFrame/>
-            </FloorType>
-            <Area>960.0</Area>
-            <Insulation>
-              <SystemIdentifier id='Floor3_CarpetFloorInsulation'/>
-              <AssemblyEffectiveRValue>16.393</AssemblyEffectiveRValue>
-            </Insulation>
-          </Floor>
-          <Floor>
-            <SystemIdentifier id='Floor4_TileFloor'/>
-            <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-            <FloorType>
-              <WoodFrame/>
-            </FloorType>
-            <Area>240.0</Area>
-            <Insulation>
-              <SystemIdentifier id='Floor4_TileFloorInsulation'/>
-              <AssemblyEffectiveRValue>15.152</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>38.462</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>
         <Slabs>
           <Slab>
             <SystemIdentifier id='Slab1'/>
-            <InteriorAdjacentTo>crawlspace - vented</InteriorAdjacentTo>
+            <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Area>1200.0</Area>
             <Thickness>0.0</Thickness>
             <ExposedPerimeter>138.6</ExposedPerimeter>
@@ -241,8 +214,8 @@
               </Layer>
             </UnderSlabInsulation>
             <extension>
-              <CarpetFraction>0.0</CarpetFraction>
-              <CarpetRValue>0.0</CarpetRValue>
+              <CarpetFraction>1.0</CarpetFraction>
+              <CarpetRValue>2.0</CarpetRValue>
             </extension>
           </Slab>
         </Slabs>
@@ -251,7 +224,7 @@
             <SystemIdentifier id='Window1'/>
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.5</UFactor>
+            <UFactor>0.4</UFactor>
             <SHGC>0.25</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -261,7 +234,7 @@
             <SystemIdentifier id='Window2'/>
             <Area>108.0</Area>
             <Azimuth>90</Azimuth>
-            <UFactor>0.5</UFactor>
+            <UFactor>0.4</UFactor>
             <SHGC>0.25</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -271,7 +244,7 @@
             <SystemIdentifier id='Window3'/>
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.5</UFactor>
+            <UFactor>0.4</UFactor>
             <SHGC>0.25</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -281,7 +254,7 @@
             <SystemIdentifier id='Window4'/>
             <Area>108.0</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.5</UFactor>
+            <UFactor>0.4</UFactor>
             <SHGC>0.25</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -294,7 +267,7 @@
             <AttachedToWall idref='Wall1'/>
             <Area>40.0</Area>
             <Azimuth>0</Azimuth>
-            <RValue>2.0</RValue>
+            <RValue>2.5</RValue>
           </Door>
         </Doors>
       </Enclosure>
@@ -308,7 +281,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>15000.0</HeatingCapacity>
+              <HeatingCapacity>22000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.95</Value>
@@ -324,7 +297,7 @@
               <DistributionSystem idref='HVACDistribution1'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>27000.0</CoolingCapacity>
+              <CoolingCapacity>39000.0</CoolingCapacity>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -377,10 +350,10 @@
                   <DuctLocation>living space</DuctLocation>
                   <DuctSurfaceArea>90.0</DuctSurfaceArea>
                 </Ducts>
-                <NumberofReturnRegisters>2</NumberofReturnRegisters>
+                <NumberofReturnRegisters>3</NumberofReturnRegisters>
               </AirDistribution>
             </DistributionSystemType>
-            <ConditionedFloorAreaServed>2400.0</ConditionedFloorAreaServed>
+            <ConditionedFloorAreaServed>3600.0</ConditionedFloorAreaServed>
           </HVACDistribution>
         </HVAC>
         <MechanicalVentilation>
@@ -388,11 +361,11 @@
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>balanced</FanType>
-              <TestedFlowRate>53.0</TestedFlowRate>
+              <TestedFlowRate>87.0</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>37.1</FanPower>
+              <FanPower>60.9</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>
@@ -412,7 +385,7 @@
             <SystemIdentifier id='HotWaterDstribution1'/>
             <SystemType>
               <Standard>
-                <PipingLength>89.282</PipingLength>
+                <PipingLength>99.282</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>

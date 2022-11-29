@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <AdditionalProperties>
+        <ParentHPXMLFile>BaseCase_CZ1A_MiamiFL.xml</ParentHPXMLFile>
+      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -202,7 +205,7 @@
             <Area>960.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor3_CarpetFloorInsulation'/>
-              <AssemblyEffectiveRValue>16.393</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>100.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -215,7 +218,7 @@
             <Area>240.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor4_TileFloorInsulation'/>
-              <AssemblyEffectiveRValue>15.152</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>100.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>

@@ -106,6 +106,27 @@ def create_test_hpxmls
     'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ3C_SanFranCA.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ1A_MiamiFL.xml',
     'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ1A_MiamiFL.xml',
     'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ1A_MiamiFL.xml',
+    'RESNET_Tests/4.7_Multi_Climate/AdiabaticRaisedFloor_CZ1A_MiamiFL.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ1A_MiamiFL.xml',
+    'RESNET_Tests/4.7_Multi_Climate/AdiabaticRaisedFloor_CZ2B_PhoenixAZ.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ2B_PhoenixAZ.xml',
+    'RESNET_Tests/4.7_Multi_Climate/AdiabaticRaisedFloor_CZ3C_SanFranCA.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ3C_SanFranCA.xml',
+    'RESNET_Tests/4.7_Multi_Climate/AdiabaticRaisedFloor_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ4A_BaltimoreMD.xml',
+    'RESNET_Tests/4.7_Multi_Climate/AdiabaticRaisedFloor_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/CFIS_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/CFISDuctsInAttic_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/CFIS_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ConditionedBasement_CZ2B_PhoenixAZ.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ2B_PhoenixAZ.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ConditionedBasement_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ4A_BaltimoreMD.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ConditionedBasement_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/NoMechVent_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/NoMechVentDuctsInAttic_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ReferenceWindows_CZ1A_MiamiFL.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ1A_MiamiFL.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ReferenceWindows_CZ2B_PhoenixAZ.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ2B_PhoenixAZ.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ReferenceWindows_CZ3C_SanFranCA.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ3C_SanFranCA.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ReferenceWindows_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ4A_BaltimoreMD.xml',
+    'RESNET_Tests/4.7_Multi_Climate/ReferenceWindows_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/SlabOnGrade_CZ1A_MiamiFL.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ1A_MiamiFL.xml',
+    'RESNET_Tests/4.7_Multi_Climate/SlabOnGrade_CZ2B_PhoenixAZ.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ2B_PhoenixAZ.xml',
+    'RESNET_Tests/4.7_Multi_Climate/SlabOnGrade_CZ3C_SanFranCA.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ3C_SanFranCA.xml',
+    'RESNET_Tests/4.7_Multi_Climate/SlabOnGrade_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/BaseCase_CZ4A_BaltimoreMD.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
@@ -363,11 +384,16 @@ def set_hpxml_building_construction(hpxml_file, hpxml)
       hpxml.building_construction.conditioned_floor_area += footprint_area
     end
   elsif hpxml_file.include?('Multi_Climate')
+    if hpxml_file.include?('ConditionedBasement')
+      hpxml.building_construction.number_of_conditioned_floors = 3
+      hpxml.building_construction.conditioned_floor_area = 3600
+    else
+      hpxml.building_construction.number_of_conditioned_floors = 2
+      hpxml.building_construction.conditioned_floor_area = 2400
+    end
     hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFD
-    hpxml.building_construction.number_of_conditioned_floors = 2
-    hpxml.building_construction.number_of_conditioned_floors_above_grade = 2
     hpxml.building_construction.number_of_bedrooms = 3
-    hpxml.building_construction.conditioned_floor_area = 2400
+    hpxml.building_construction.number_of_conditioned_floors_above_grade = 2
   end
 end
 
@@ -533,11 +559,19 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml)
                                             air_leakage: (0.3 * tot_cb_area).round(3),
                                             infiltration_volume: hpxml.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('Multi_Climate')
-    if hpxml_file.include?('MiamiFL') || hpxml_file.include?('PhoenixAZ')
-      ach50 = 5
-    elsif hpxml_file.include?('SanFranCA') || hpxml_file.include?('BaltimoreMD') ||
-          hpxml_file.include?('DuluthMN')
-      ach50 = 3
+    if hpxml_file.include?('ConditionedBasement')
+      if hpxml_file.include?('PhoenixAZ')
+        ach50 = 3.33
+      elsif hpxml_file.include?('BaltimoreMD') || hpxml_file.include?('DuluthMN')
+        ach50 = 2
+      end
+    else
+      if hpxml_file.include?('MiamiFL') || hpxml_file.include?('PhoenixAZ')
+        ach50 = 5
+      elsif hpxml_file.include?('SanFranCA') || hpxml_file.include?('BaltimoreMD') ||
+            hpxml_file.include?('DuluthMN')
+        ach50 = 3
+      end
     end
     hpxml.air_infiltration_measurements.clear
     hpxml.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml.air_infiltration_measurements.size + 1}",
@@ -565,11 +599,23 @@ def set_hpxml_foundations(hpxml_file, hpxml)
     hpxml.foundations.add(id: "Foundation#{hpxml.foundations.size + 1}",
                           foundation_type: HPXML::FoundationTypeCrawlspaceUnvented,
                           within_infiltration_volume: false)
-  elsif hpxml_file.include?('vented_crawl') || hpxml_file.include?('Multi_Climate')
+  elsif hpxml_file.include?('vented_crawl')
     hpxml.foundations.clear
     hpxml.foundations.add(id: "Foundation#{hpxml.foundations.size + 1}",
                           foundation_type: HPXML::FoundationTypeCrawlspaceVented,
                           vented_crawlspace_sla: (1.0 / 150.0).round(6))
+  elsif hpxml_file.include?('Multi_Climate')
+    hpxml.foundations.clear
+    if hpxml_file.include?('SlabOnGrade')
+      return
+    elsif hpxml_file.include?('ConditionedBasement')
+      hpxml.foundations.add(id: "Foundation#{hpxml.foundations.size + 1}",
+                            foundation_type: HPXML::FoundationTypeBasementConditioned)
+    else
+      hpxml.foundations.add(id: "Foundation#{hpxml.foundations.size + 1}",
+                            foundation_type: HPXML::FoundationTypeCrawlspaceVented,
+                            vented_crawlspace_sla: (1.0 / 150.0).round(6))
+    end
   end
 end
 
@@ -626,17 +672,17 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
     if ['EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
         'EPA_Tests/SF_National_3.0/SFNHv3_CZ2_FL_gas_slab.xml',
         'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.082).round(3)
+      assembly_r = 1.0 / 0.082
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ4_MO_elec_vented_crawl.xml',
            'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.057).round(3)
+      assembly_r = 1.0 / 0.057
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.048).round(3)
+      assembly_r = 1.0 / 0.048
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.084).round(3)
+      assembly_r = 1.0 / 0.084
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
            'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.045).round(3)
+      assembly_r = 1.0 / 0.045
     end
     hpxml.rim_joists.clear
     hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
@@ -645,7 +691,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
                          area: 152,
                          solar_absorptance: 0.75,
                          emittance: 0.9,
-                         insulation_assembly_r_value: assembly_r)
+                         insulation_assembly_r_value: assembly_r.round(3))
     if hpxml_file.include?('cond_bsmt')
       interior_adjacent_to = HPXML::LocationBasementConditioned
     elsif hpxml_file.include?('vented_crawl')
@@ -661,23 +707,23 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
                            area: 152,
                            solar_absorptance: 0.75,
                            emittance: 0.9,
-                           insulation_assembly_r_value: assembly_r)
+                           insulation_assembly_r_value: assembly_r.round(3))
     end
   elsif hpxml_file.include?('EPA_Tests/MF')
     if ['EPA_Tests/MF_National_1.0/MFNCv1_CZ2_FL_gas_ground_corner_slab.xml',
         'EPA_Tests/MF_National_1.0/MFNCv1_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.089).round(3)
+      assembly_r = 1.0 / 0.089
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ4_MO_elec_ground_corner_vented_crawl.xml',
            'EPA_Tests/MF_National_1.1/MFNCv11_CZ2_FL_elec_top_corner.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.064).round(3)
+      assembly_r = 1.0 / 0.064
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.051).round(3)
+      assembly_r = 1.0 / 0.051
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.084).round(3)
+      assembly_r = 1.0 / 0.084
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml',
            'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.045).round(3)
+      assembly_r = 1.0 / 0.045
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
       exterior_area = 110
@@ -693,7 +739,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
                          area: exterior_area,
                          solar_absorptance: 0.75,
                          emittance: 0.9,
-                         insulation_assembly_r_value: assembly_r)
+                         insulation_assembly_r_value: assembly_r.round(3))
     hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                          exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                          interior_adjacent_to: HPXML::LocationLivingSpace,
@@ -716,7 +762,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
                            area: exterior_area,
                            solar_absorptance: 0.75,
                            emittance: 0.9,
-                           insulation_assembly_r_value: assembly_r)
+                           insulation_assembly_r_value: assembly_r.round(3))
       hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                            exterior_adjacent_to: interior_adjacent_to,
                            interior_adjacent_to: interior_adjacent_to,
@@ -733,17 +779,17 @@ def set_hpxml_walls(hpxml_file, hpxml)
     if ['EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
         'EPA_Tests/SF_National_3.0/SFNHv3_CZ2_FL_gas_slab.xml',
         'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.082).round(3)
+      assembly_r = 1.0 / 0.082
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ4_MO_elec_vented_crawl.xml',
            'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.057).round(3)
+      assembly_r = 1.0 / 0.057
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.048).round(3)
+      assembly_r = 1.0 / 0.048
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.084).round(3)
+      assembly_r = 1.0 / 0.084
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
            'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.045).round(3)
+      assembly_r = 1.0 / 0.045
     end
     hpxml.walls.clear
     hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
@@ -753,22 +799,22 @@ def set_hpxml_walls(hpxml_file, hpxml)
                     area: 2584,
                     solar_absorptance: 0.75,
                     emittance: 0.9,
-                    insulation_assembly_r_value: assembly_r)
+                    insulation_assembly_r_value: assembly_r.round(3))
   elsif hpxml_file.include?('EPA_Tests/MF')
     if ['EPA_Tests/MF_National_1.0/MFNCv1_CZ2_FL_gas_ground_corner_slab.xml',
         'EPA_Tests/MF_National_1.0/MFNCv1_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.089).round(3)
+      assembly_r = 1.0 / 0.089
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ4_MO_elec_ground_corner_vented_crawl.xml',
            'EPA_Tests/MF_National_1.1/MFNCv11_CZ2_FL_elec_top_corner.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.064).round(3)
+      assembly_r = 1.0 / 0.064
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.051).round(3)
+      assembly_r = 1.0 / 0.051
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.084).round(3)
+      assembly_r = 1.0 / 0.084
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml',
            'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
-      assembly_r = (1.0 / 0.045).round(3)
+      assembly_r = 1.0 / 0.045
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
       exterior_area = 935
@@ -785,7 +831,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
                     area: exterior_area,
                     solar_absorptance: 0.75,
                     emittance: 0.9,
-                    insulation_assembly_r_value: assembly_r)
+                    insulation_assembly_r_value: assembly_r.round(3))
     hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                     interior_adjacent_to: HPXML::LocationLivingSpace,
@@ -796,6 +842,13 @@ def set_hpxml_walls(hpxml_file, hpxml)
                     insulation_assembly_r_value: 3.75)
   elsif hpxml_file.include?('Multi_Climate')
     hpxml.walls.clear
+    if hpxml_file.include?('MiamiFL') || hpxml_file.include?('PhoenixAZ')
+      wall_r = 1.0 / 0.087
+    elsif hpxml_file.include?('SanFranCA') || hpxml_file.include?('BaltimoreMD')
+      wall_r = 1.0 / 0.059
+    elsif hpxml_file.include?('DuluthMN')
+      wall_r = 1.0 / 0.045
+    end
     hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOutside,
                     interior_adjacent_to: HPXML::LocationLivingSpace,
@@ -803,7 +856,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
                     area: 2356,
                     solar_absorptance: 0.75,
                     emittance: 0.9,
-                    insulation_assembly_r_value: 11.49)
+                    insulation_assembly_r_value: wall_r.round(3))
   end
 end
 
@@ -971,19 +1024,44 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml)
     end
   elsif hpxml_file.include?('Multi_Climate')
     hpxml.foundation_walls.clear
-    hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
-                               exterior_adjacent_to: HPXML::LocationGround,
-                               interior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                               height: 2,
-                               area: 277.2,
-                               thickness: 8,
-                               depth_below_grade: 0,
-                               insulation_interior_r_value: 0,
-                               insulation_interior_distance_to_top: 0,
-                               insulation_interior_distance_to_bottom: 0,
-                               insulation_exterior_r_value: 0,
-                               insulation_exterior_distance_to_top: 0,
-                               insulation_exterior_distance_to_bottom: 0)
+    if hpxml_file.include?('SlabOnGrade')
+      return
+    elsif hpxml_file.include?('ConditionedBasement')
+      if hpxml_file.include?('PhoenixAZ')
+        insulation_exterior_r_value = 0
+      elsif hpxml_file.include?('BaltimoreMD')
+        insulation_exterior_r_value = 10
+      elsif hpxml_file.include?('DuluthMN')
+        insulation_exterior_r_value = 15
+      end
+      hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
+                                 exterior_adjacent_to: HPXML::LocationGround,
+                                 interior_adjacent_to: HPXML::LocationBasementConditioned,
+                                 height: 8.5,
+                                 area: 1177.8,
+                                 thickness: 6,
+                                 depth_below_grade: 7.75,
+                                 insulation_interior_r_value: 0,
+                                 insulation_interior_distance_to_top: 0,
+                                 insulation_interior_distance_to_bottom: 0,
+                                 insulation_exterior_r_value: insulation_exterior_r_value,
+                                 insulation_exterior_distance_to_top: 0,
+                                 insulation_exterior_distance_to_bottom: 8.5)
+    else
+      hpxml.foundation_walls.add(id: "FoundationWall#{hpxml.foundation_walls.size + 1}",
+                                 exterior_adjacent_to: HPXML::LocationGround,
+                                 interior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                                 height: 2,
+                                 area: 277.2,
+                                 thickness: 8,
+                                 depth_below_grade: 0,
+                                 insulation_interior_r_value: 0,
+                                 insulation_interior_distance_to_top: 0,
+                                 insulation_interior_distance_to_bottom: 0,
+                                 insulation_exterior_r_value: 0,
+                                 insulation_exterior_distance_to_top: 0,
+                                 insulation_exterior_distance_to_bottom: 0)
+    end
   end
 end
 
@@ -1016,23 +1094,23 @@ def set_hpxml_floors(hpxml_file, hpxml)
     else
       exterior_adjacent_to = HPXML::LocationAtticVented
       if ['EPA_Tests/SF_National_3.0/SFNHv3_CZ2_FL_gas_slab.xml'].include? hpxml_file
-        ceiling_assembly_r = (1.0 / 0.035).round(3)
+        ceiling_assembly_r = 1.0 / 0.035
       elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
              'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml'].include? hpxml_file
-        ceiling_assembly_r = (1.0 / 0.030).round(3)
+        ceiling_assembly_r = 1.0 / 0.030
       elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ2_FL_elec_top_corner.xml',
              'EPA_Tests/MF_National_1.0/MFNCv1_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
-        ceiling_assembly_r = (1.0 / 0.027).round(3)
+        ceiling_assembly_r = 1.0 / 0.027
       elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
              'EPA_Tests/SF_National_3.1/SFNHv31_CZ4_MO_elec_vented_crawl.xml',
              'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
              'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml',
              'EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
-        ceiling_assembly_r = (1.0 / 0.026).round(3)
+        ceiling_assembly_r = 1.0 / 0.026
       elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
              'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
              'EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
-        ceiling_assembly_r = (1.0 / 0.024).round(3)
+        ceiling_assembly_r = 1.0 / 0.024
       end
     end
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
@@ -1041,20 +1119,20 @@ def set_hpxml_floors(hpxml_file, hpxml)
                      floor_type: HPXML::FloorTypeWoodFrame,
                      floor_or_ceiling: floor_or_ceiling,
                      area: area,
-                     insulation_assembly_r_value: ceiling_assembly_r)
+                     insulation_assembly_r_value: ceiling_assembly_r.round(3))
     # Floor
     if hpxml_file.include?('vented_crawl')
       if hpxml_file.include?('EPA_Tests/SF')
-        floor_assembly_r = (1.0 / 0.047).round(3)
+        floor_assembly_r = 1.0 / 0.047
       elsif hpxml_file.include?('EPA_Tests/MF')
-        floor_assembly_r = (1.0 / 0.033).round(3)
+        floor_assembly_r = 1.0 / 0.033
       end
       hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                        exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
                        interior_adjacent_to: HPXML::LocationLivingSpace,
                        floor_type: HPXML::FloorTypeWoodFrame,
                        area: area,
-                       insulation_assembly_r_value: floor_assembly_r)
+                       insulation_assembly_r_value: floor_assembly_r.round(3))
     elsif hpxml_file.include?('top_corner') || hpxml_file.include?('middle_interior')
       hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                        exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
@@ -1066,30 +1144,52 @@ def set_hpxml_floors(hpxml_file, hpxml)
     end
   elsif hpxml_file.include?('Multi_Climate')
     hpxml.floors.clear
+    if hpxml_file.include?('MiamiFL')
+      ceiling_r, eave_area = 1.0 / 0.032, 154.4
+    elsif hpxml_file.include?('PhoenixAZ') || hpxml_file.include?('SanFranCA')
+      ceiling_r, eave_area = 1.0 / 0.026, 217.7
+    elsif hpxml_file.include?('BaltimoreMD') || hpxml_file.include?('DuluthMN')
+      ceiling_r, eave_area = 1.0 / 0.020, 304.8
+    end
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}_Ceiling",
                      exterior_adjacent_to: HPXML::LocationAtticVented,
                      interior_adjacent_to: HPXML::LocationLivingSpace,
                      floor_type: HPXML::FloorTypeWoodFrame,
-                     area: 1045.6,
-                     insulation_assembly_r_value: 31.05)
+                     area: (1200.0 - eave_area).round(1),
+                     insulation_assembly_r_value: ceiling_r.round(3))
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}_Eave",
                      exterior_adjacent_to: HPXML::LocationAtticVented,
                      interior_adjacent_to: HPXML::LocationLivingSpace,
                      floor_type: HPXML::FloorTypeWoodFrame,
-                     area: 154,
-                     insulation_assembly_r_value: 31.05)
-    hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}_Floor",
-                     exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                     interior_adjacent_to: HPXML::LocationLivingSpace,
-                     floor_type: HPXML::FloorTypeWoodFrame,
-                     area: 960,
-                     insulation_assembly_r_value: 16.27)
-    hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}_Floor",
-                     exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                     interior_adjacent_to: HPXML::LocationLivingSpace,
-                     floor_type: HPXML::FloorTypeWoodFrame,
-                     area: 240,
-                     insulation_assembly_r_value: 15.09)
+                     area: eave_area,
+                     insulation_assembly_r_value: ceiling_r.round(3))
+    if hpxml_file.include?('SlabOnGrade') || hpxml_file.include?('ConditionedBasement')
+      return
+    else
+      if hpxml_file.include?('AdiabaticRaisedFloor')
+        floor_carpet_r, floor_tile_r = 1.0 / 0.010, 1.0 / 0.010
+      else
+        if hpxml_file.include?('MiamiFL') || hpxml_file.include?('PhoenixAZ')
+          floor_carpet_r, floor_tile_r = 1.0 / 0.061, 1.0 / 0.066
+        elsif hpxml_file.include?('SanFranCA') || hpxml_file.include?('BaltimoreMD')
+          floor_carpet_r, floor_tile_r = 1.0 / 0.047, 1.0 / 0.050
+        elsif hpxml_file.include?('DuluthMN')
+          floor_carpet_r, floor_tile_r = 1.0 / 0.029, 1.0 / 0.031
+        end
+      end
+      hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}_CarpetFloor",
+                       exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       floor_type: HPXML::FloorTypeWoodFrame,
+                       area: 960,
+                       insulation_assembly_r_value: floor_carpet_r.round(3))
+      hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}_TileFloor",
+                       exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       floor_type: HPXML::FloorTypeWoodFrame,
+                       area: 240,
+                       insulation_assembly_r_value: floor_tile_r.round(3))
+    end
   end
 end
 
@@ -1152,18 +1252,37 @@ def set_hpxml_slabs(hpxml_file, hpxml)
                     carpet_r_value: 2.0)
   elsif hpxml_file.include?('Multi_Climate')
     hpxml.slabs.clear
+    if hpxml_file.include?('SlabOnGrade')
+      location = HPXML::LocationLivingSpace
+      carpet_fraction, carpet_r_value = 0.0, 0.0
+      if hpxml_file.include?('BaltimoreMD')
+        perimeter_insulation_r_value, perimeter_insulation_depth = 10, 2
+      else
+        perimeter_insulation_r_value, perimeter_insulation_depth = 0, 0
+      end
+      depth_below_grade = 0.0
+    elsif hpxml_file.include?('ConditionedBasement')
+      location = HPXML::LocationBasementConditioned
+      carpet_fraction, carpet_r_value = 1.0, 2.0
+      perimeter_insulation_r_value, perimeter_insulation_depth = 0, 0
+    else
+      location = HPXML::LocationCrawlspaceVented
+      carpet_fraction, carpet_r_value = 0.0, 0.0
+      perimeter_insulation_r_value, perimeter_insulation_depth = 0, 0
+    end
     hpxml.slabs.add(id: "Slab#{hpxml.slabs.size + 1}",
-                    interior_adjacent_to: HPXML::LocationCrawlspaceVented,
+                    interior_adjacent_to: location,
                     area: 1200,
                     thickness: 0,
                     exposed_perimeter: 138.6,
-                    perimeter_insulation_depth: 0,
+                    depth_below_grade: depth_below_grade,
+                    perimeter_insulation_depth: perimeter_insulation_depth,
                     under_slab_insulation_width: 0,
                     under_slab_insulation_spans_entire_slab: nil,
-                    perimeter_insulation_r_value: 0,
+                    perimeter_insulation_r_value: perimeter_insulation_r_value,
                     under_slab_insulation_r_value: 0,
-                    carpet_fraction: 0,
-                    carpet_r_value: 0)
+                    carpet_fraction: carpet_fraction,
+                    carpet_r_value: carpet_r_value)
   end
 end
 
@@ -1240,12 +1359,37 @@ def set_hpxml_windows(hpxml_file, hpxml)
     end
   elsif hpxml_file.include?('Multi_Climate')
     hpxml.windows.clear
+    if hpxml_file.include?('ReferenceWindows')
+      if hpxml_file.include?('MiamiFL')
+        ufactor, shgc = 1.30, 0.40
+      elsif hpxml_file.include?('PhoenixAZ')
+        ufactor, shgc = 0.75, 0.40
+      elsif hpxml_file.include?('SanFranCA')
+        ufactor, shgc = 0.65, 0.40
+      elsif hpxml_file.include?('BaltimoreMD')
+        ufactor, shgc = 0.40, 0.40
+      elsif hpxml_file.include?('DuluthMN')
+        ufactor, shgc = 0.35, 0.40
+      end
+    else
+      if hpxml_file.include?('MiamiFL')
+        ufactor, shgc = 0.50, 0.25
+      elsif hpxml_file.include?('PhoenixAZ')
+        ufactor, shgc = 0.4, 0.25
+      elsif hpxml_file.include?('SanFranCA')
+        ufactor, shgc = 0.35, 0.25
+      elsif hpxml_file.include?('BaltimoreMD')
+        ufactor, shgc = 0.35, 0.4
+      elsif hpxml_file.include?('DuluthMN')
+        ufactor, shgc = 0.32, 0.4
+      end
+    end
     [0, 90, 180, 270].each do |azimuth|
       hpxml.windows.add(id: "Window#{hpxml.windows.size + 1}",
                         area: 108,
                         azimuth: azimuth,
-                        ufactor: 0.50,
-                        shgc: 0.25,
+                        ufactor: ufactor,
+                        shgc: shgc,
                         fraction_operable: 0.67,
                         wall_idref: hpxml.walls[0].id,
                         performance_class: HPXML::WindowClassResidential)
@@ -1259,9 +1403,9 @@ end
 def set_hpxml_doors(hpxml_file, hpxml)
   if hpxml_file.include?('EPA_Tests/SF')
     if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1')
-      r_value = (1.0 / 0.17).round(3)
+      r_value = 1.0 / 0.17
     elsif hpxml_file.include?('SF_National_3.0')
-      r_value = (1.0 / 0.21).round(3)
+      r_value = 1.0 / 0.21
     end
     doors = [[0, 21, 'Wall1'],
              [0, 21, 'Wall1']]
@@ -1272,13 +1416,13 @@ def set_hpxml_doors(hpxml_file, hpxml)
                       wall_idref: wall,
                       area: area,
                       azimuth: azimuth,
-                      r_value: r_value)
+                      r_value: r_value.round(3))
     end
   elsif hpxml_file.include?('EPA_Tests/MF')
     if hpxml_file.include?('MF_National_1.0')
-      r_value = (1.0 / 0.21).round(3)
+      r_value = 1.0 / 0.21
     elsif hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.2')
-      r_value = (1.0 / 0.17).round(3)
+      r_value = 1.0 / 0.17
     end
     doors = [[0, 21, 'Wall1']]
     hpxml.doors.clear
@@ -1288,15 +1432,24 @@ def set_hpxml_doors(hpxml_file, hpxml)
                       wall_idref: wall,
                       area: area,
                       azimuth: azimuth,
-                      r_value: r_value)
+                      r_value: r_value.round(3))
     end
   elsif hpxml_file.include?('Multi_Climate')
     hpxml.doors.clear
+    if hpxml_file.include?('MiamiFL')
+      r_value = 1.0 / 0.50
+    elsif hpxml_file.include?('PhoenixAZ')
+      r_value = 1.0 / 0.4
+    elsif hpxml_file.include?('SanFranCA') || hpxml_file.include?('BaltimoreMD')
+      r_value = 1.0 / 0.35
+    elsif hpxml_file.include?('DuluthMN')
+      r_value = 1.0 / 0.32
+    end
     hpxml.doors.add(id: "Door#{hpxml.doors.size + 1}",
                     wall_idref: hpxml.walls[0].id,
                     area: 40,
                     azimuth: 0,
-                    r_value: 2)
+                    r_value: r_value.round(3))
   end
 end
 
@@ -1458,11 +1611,14 @@ def set_hpxml_heating_systems(hpxml_file, hpxml)
                               fan_watts_per_cfm: fan_watts_per_cfm,
                               airflow_defect_ratio: airflow_defect_ratio)
   elsif hpxml_file.include?('Multi_Climate')
-    # FIXME: Double-check installation grade
     if hpxml_file.include?('MiamiFL')
       heating_capacity = 15000
     elsif hpxml_file.include?('PhoenixAZ')
-      heating_capacity = 19000
+      if hpxml_file.include?('ConditionedBasement')
+        heating_capacity = 22000
+      else
+        heating_capacity = 19000
+      end
     elsif hpxml_file.include?('SanFranCA')
       heating_capacity = 17000
     elsif hpxml_file.include?('BaltimoreMD')
@@ -1621,7 +1777,6 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml)
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio)
   elsif hpxml_file.include?('Multi_Climate')
-    # FIXME: Double-check installation grade
     if hpxml_file.include?('MiamiFL')
       cooling_capacity = 27000
     elsif hpxml_file.include?('PhoenixAZ')
@@ -1985,19 +2140,24 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
                                             duct_insulation_r_value: non_attic_rvalue,
                                             duct_location: non_attic_location,
                                             duct_surface_area: (return_area * non_attic_frac).round(2))
-    elsif hpxml_file.include?('Multi_Climate')
-      hpxml.hvac_distributions[0].ducts.clear
-      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
-                                            duct_type: HPXML::DuctTypeSupply,
-                                            duct_insulation_r_value: 4.2,
-                                            duct_location: HPXML::LocationLivingSpace,
-                                            duct_surface_area: 486)
-      hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
-                                            duct_type: HPXML::DuctTypeReturn,
-                                            duct_insulation_r_value: 4.2,
-                                            duct_location: HPXML::LocationLivingSpace,
-                                            duct_surface_area: 90)
     end
+  elsif hpxml_file.include?('Multi_Climate')
+    hpxml.hvac_distributions[0].ducts.clear
+    if hpxml_file.include?('DuctsInAttic')
+      location = HPXML::LocationAtticVented
+    else
+      location = HPXML::LocationLivingSpace
+    end
+    hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                          duct_type: HPXML::DuctTypeSupply,
+                                          duct_insulation_r_value: 4.2,
+                                          duct_location: location,
+                                          duct_surface_area: 486)
+    hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
+                                          duct_type: HPXML::DuctTypeReturn,
+                                          duct_insulation_r_value: 4.2,
+                                          duct_location: location,
+                                          duct_surface_area: 90)
   end
 
   # CFA served
@@ -2072,25 +2232,50 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
                                used_for_whole_building_ventilation: true,
                                is_shared_system: false)
   elsif hpxml_file.include?('Multi_Climate')
-    if hpxml_file.include?('MiamiFL')
-      fan_power, flow_rate = 37.1, 53.0
-    elsif hpxml_file.include?('PhoenixAZ')
-      fan_power, flow_rate = 35.7, 51.0
-    elsif hpxml_file.include?('SanFranCA')
-      fan_power, flow_rate = 41.3, 59.0
-    elsif hpxml_file.include?('BaltimoreMD')
-      fan_power, flow_rate = 46.2, 66.0
-    elsif hpxml_file.include?('DuluthMN')
-      fan_power, flow_rate = 36.4, 52.0
-    end
     hpxml.ventilation_fans.clear
-    hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
-                               fan_type: HPXML::MechVentTypeBalanced,
-                               tested_flow_rate: flow_rate,
-                               hours_in_operation: 24,
-                               fan_power: fan_power,
-                               used_for_whole_building_ventilation: true,
-                               is_shared_system: false)
+    if hpxml_file.include?('NoMechVent')
+      return
+    elsif hpxml_file.include?('CFIS')
+      hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
+                                 fan_type: HPXML::MechVentTypeCFIS,
+                                 tested_flow_rate: 155.4,
+                                 hours_in_operation: 12,
+                                 fan_power: 0.0,
+                                 used_for_whole_building_ventilation: true,
+                                 cfis_addtl_runtime_operating_mode: HPXML::CFISModeAirHandler,
+                                 distribution_system_idref: hpxml.hvac_distributions[0].id,
+                                 cfis_vent_mode_airflow_fraction: 1.0,
+                                 is_shared_system: false)
+    else
+      if hpxml_file.include?('ConditionedBasement')
+        if hpxml_file.include?('PhoenixAZ')
+          fan_power, flow_rate = 60.9, 87.0
+        elsif hpxml_file.include?('BaltimoreMD')
+          fan_power, flow_rate = 71.75, 102.5
+        elsif hpxml_file.include?('DuluthMN')
+          fan_power, flow_rate = 61.67, 88.1
+        end
+      else
+        if hpxml_file.include?('MiamiFL')
+          fan_power, flow_rate = 37.1, 53.0
+        elsif hpxml_file.include?('PhoenixAZ')
+          fan_power, flow_rate = 35.7, 51.0
+        elsif hpxml_file.include?('SanFranCA')
+          fan_power, flow_rate = 41.3, 59.0
+        elsif hpxml_file.include?('BaltimoreMD')
+          fan_power, flow_rate = 46.2, 66.0
+        elsif hpxml_file.include?('DuluthMN')
+          fan_power, flow_rate = 36.4, 52.0
+        end
+      end
+      hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
+                                 fan_type: HPXML::MechVentTypeBalanced,
+                                 tested_flow_rate: flow_rate,
+                                 hours_in_operation: 24,
+                                 fan_power: fan_power,
+                                 used_for_whole_building_ventilation: true,
+                                 is_shared_system: false)
+    end
   end
 end
 
@@ -2339,6 +2524,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
                        capacity: 4.2, # ft^3
                        label_usage: 6.0 } # cyc/week
   else
+    # FIXME: Should the Multi_Climate test cases use the default values or not?
     default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   end
 
@@ -2372,7 +2558,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-03.xml',
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include?(hpxml_file) ||
      (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_'))
-    # Standard gas
+    # Gas
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
@@ -2392,10 +2578,12 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include?(hpxml_file) ||
         (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_')) ||
         hpxml_file.include?('Multi_Climate')
-    # Standard electric
+
+    # Electric
+    # FIXME: Should the Multi_Climate test cases use the default values or not?
+    # FIXME: Is the Multi_Climate appliance gas or electric?
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeElectricity)
     if hpxml_file.include?('Multi_Climate')
-      # FIXME: This or same as Reference Home?
       default_values[:combined_energy_factor] = 3.73
     end
     hpxml.clothes_dryers.clear
@@ -2477,7 +2665,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-03.xml',
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include?(hpxml_file) ||
      (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_'))
-    # Standard gas
+    # Gas
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: "CookingRange#{hpxml.cooking_ranges.size + 1}",
@@ -2493,7 +2681,8 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include?(hpxml_file) ||
         (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_')) ||
         hpxml_file.include?('Multi_Climate')
-    # Standard electric
+    # Electric
+    # FIXME: Is the Multi_Climate appliance gas or electric?
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: "CookingRange#{hpxml.cooking_ranges.size + 1}",
@@ -2560,7 +2749,6 @@ def set_hpxml_lighting(hpxml_file, hpxml)
                   [HPXML::LocationExterior, HPXML::LightingTypeLFL] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLFL] => 0 }
   elsif hpxml_file.include?('Multi_Climate')
-    # FIXME: This or same as Reference Home?
     ltg_fracs = { [HPXML::LocationInterior, HPXML::LightingTypeLED] => 0,
                   [HPXML::LocationExterior, HPXML::LightingTypeLED] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLED] => 0,
