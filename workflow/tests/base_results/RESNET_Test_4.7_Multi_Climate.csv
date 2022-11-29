@@ -1,0 +1,6 @@
+Test Case,ERI,REUL Heating (MBtu),REUL Cooling (MBtu),REUL Hot Water (MBtu),EC_r Heating (MBtu),EC_r Cooling (MBtu),EC_r Hot Water (MBtu),EC_x Heating (MBtu),EC_x Cooling (MBtu),EC_x Hot Water (MBtu),EC_x Dehumid (MBtu),EC_x L&A (MBtu),IAD_Save (%)
+BaseCase_CZ1A_MiamiFL.xml,66.92,0.3,55.59,5.34,0.49,32.79,11.38,0.1,18.97,10.38,0.0,21.96,0.2684
+BaseCase_CZ2B_PhoenixAZ.xml,66.38,3.41,66.37,5.61,5.47,39.09,11.87,3.85,22.79,10.88,0.0,21.92,0.26945
+BaseCase_CZ3C_SanFranCA.xml,82.64,7.6,1.65,9.39,12.14,1.02,16.99,11.57,0.29,16.05,0.0,22.09,0.10408
+BaseCase_CZ4A_BaltimoreMD.xml,76.25,31.68,17.17,9.61,50.7,10.3,17.18,43.2,5.79,16.24,0.0,22.24,0.12311
+BaseCase_CZ7_DuluthMN.xml,84.58,69.42,4.11,13.09,110.59,3.04,21.7,104.83,1.44,20.83,0.0,21.94,-0.00162
