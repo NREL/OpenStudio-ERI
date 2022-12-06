@@ -2600,16 +2600,18 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.get_reference_glazing_ufactor_shgc(orig_window)
     unless orig_window.nil?
-      window_class = orig_window.performance_class
-      if orig_window.fraction_operable > 0
-        window_type = 'operable'
-      else
-        window_type = 'fixed'
+      if orig_window.performance_class == HPXML::WindowClassArchitectural
+        window_class = orig_window.performance_class
+        if orig_window.fraction_operable > 0
+          window_type = 'operable'
+        else
+          window_type = 'fixed'
+        end
       end
     end
-    
+
     window_ufactor = get_reference_value('window_ufactor', window_class, window_type)
-    window_shgc = get_reference_value('window_shgc', window_class, window_type)
+    window_shgc = get_reference_value('window_shgc')
 
     return window_ufactor.to_f, window_shgc.to_f
   end
