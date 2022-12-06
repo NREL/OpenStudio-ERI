@@ -2528,55 +2528,30 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return 122.0 # CFM per Watts
   end
 
-  def self.get_reference_ceiling_ufactor()
-    # Ceiling U-Factor
-    if [ESConstants.SFNationalVer3_0].include? @program_version
-      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-        return 0.035
-      elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-        return 0.030
-      elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.026
-      end
-    elsif [ESConstants.SFNationalVer3_1].include? @program_version
-      if ['1A', '1B', '1C'].include? @iecc_zone
-        return 0.035
-      elsif ['2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-        return 0.030
-      elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.026
-      end
-    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
-      if ['1A', '1B', '1C'].include? @iecc_zone
-        return 0.035
-      elsif ['2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-        return 0.026
-      elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.024
-      end
-    elsif [ESConstants.SFPacificVer3_0].include? @program_version
-      return 0.035
-    elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-      return 0.035
-    elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      return 0.026
-    elsif [ESConstants.MFNationalVer1_0].include? @program_version
-      return 0.027
-    elsif [ESConstants.MFNationalVer1_1].include? @program_version
-      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-        return 0.027
-      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.021
-      end
-    elsif [ZERHConstants.Ver1].include? @program_version
-      if ['1A', '1B', '1C'].include? @iecc_zone
-        return 0.035
-      elsif ['2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-        return 0.030
-      elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.026
-      end
+  def self.get_reference_value(value_type, window_class=nil, window_type=nil)
+    lookup_path = File.join(File.dirname(__FILE__), '../data/es_zerh_lookup.csv')
+
+    CSV.foreach(lookup_path, headers: true) do |row|
+      next unless row['type'] == value_type
+      next unless row['program'] == @program_version
+      next unless row['window_class'] == window_class
+      next unless row['window_type'] == window_type
+
+      value = row[@iecc_zone]
+
+      unless value.nil?
+        return value
+      else
+        puts "\nError: Did not successfully find #{value_type} for #{@program_version}."
+        exit!
+      end 
     end
+  end
+
+  def self.get_reference_ceiling_ufactor()
+    ceiling_ufactor = get_reference_value('ceiling_ufactor')
+
+    return ceiling_ufactor.to_f
   end
 
   def self.get_reference_slab_perimeter_rvalue_depth()
@@ -2624,177 +2599,18 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_reference_glazing_ufactor_shgc(orig_window)
-    # Fenestration U-Factor and SHGC
-    if [ESConstants.SFNationalVer3_0].include? @program_version
-      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return 0.60, 0.27
-      elsif ['3A', '3B', '3C'].include? @iecc_zone
-        return 0.35, 0.30
-      elsif ['4A', '4B'].include? @iecc_zone
-        return 0.32, 0.40
-      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.30, 0.40
-      end
-
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2,
-           ZERHConstants.Ver1].include? @program_version
-      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return 0.40, 0.25
-      elsif ['3A', '3B', '3C'].include? @iecc_zone
-        return 0.30, 0.25
-      elsif ['4A', '4B'].include? @iecc_zone
-        return 0.30, 0.40
-      elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.27, 0.40
-      end
-    elsif [ESConstants.SFPacificVer3_0].include? @program_version
-      return 0.60, 0.27
-    elsif [ESConstants.SFFloridaVer3_1].include? @program_version
-      return 0.65, 0.27
-    elsif [ESConstants.SFOregonWashingtonVer3_2].include? @program_version
-      return 0.27, 0.30
-    elsif [ESConstants.MFNationalVer1_0].include? @program_version
-      if orig_window.performance_class == HPXML::WindowClassArchitectural
-        if orig_window.fraction_operable > 0
-          if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-            return 0.65, 0.27
-          elsif ['3A', '3B', '3C'].include? @iecc_zone
-            return 0.60, 0.30
-          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.45, 0.40
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.43, 0.40
-          elsif ['7', '8'].include? @iecc_zone
-            return 0.37, 0.40
-          end
-        else
-          if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-            return 0.50, 0.27
-          elsif ['3A', '3B', '3C'].include? @iecc_zone
-            return 0.46, 0.30
-          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.38, 0.40
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.36, 0.40
-          elsif ['7', '8'].include? @iecc_zone
-            return 0.29, 0.40
-          end
-        end
+    unless orig_window.nil?
+      window_class = orig_window.performance_class
+      if orig_window.fraction_operable > 0
+        window_type = 'operable'
       else
-        if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-          return 0.60, 0.27
-        elsif ['3A', '3B', '3C'].include? @iecc_zone
-          return 0.35, 0.30
-        elsif ['4A', '4B'].include? @iecc_zone
-          return 0.32, 0.40
-        elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-          return 0.30, 0.40
-        end
-      end
-    elsif [ESConstants.MFNationalVer1_1].include? @program_version
-      if orig_window.performance_class == HPXML::WindowClassArchitectural
-        if orig_window.fraction_operable > 0
-          if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-            return 0.62, 0.25
-          elsif ['3A', '3B', '3C'].include? @iecc_zone
-            return 0.57, 0.25
-          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.43, 0.40
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.41, 0.40
-          elsif ['7', '8'].include? @iecc_zone
-            return 0.35, 0.40
-          end
-        else
-          if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-            return 0.48, 0.25
-          elsif ['3A', '3B', '3C'].include? @iecc_zone
-            return 0.44, 0.25
-          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.36, 0.40
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.34, 0.40
-          elsif ['7', '8'].include? @iecc_zone
-            return 0.28, 0.40
-          end
-        end
-      else
-        if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-          return 0.40, 0.25
-        elsif ['3A', '3B', '3C'].include? @iecc_zone
-          return 0.30, 0.25
-        elsif ['4A', '4B'].include? @iecc_zone
-          return 0.30, 0.40
-        elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-          return 0.27, 0.40
-        end
-      end
-
-    elsif [ESConstants.MFNationalVer1_2].include? @program_version
-      if orig_window.performance_class == HPXML::WindowClassArchitectural
-        if orig_window.fraction_operable > 0
-          if ['1A', '1B', '1C'].include? @iecc_zone
-            return 0.59, 0.25
-          elsif ['2A', '2B', '2C'].include? @iecc_zone
-            return 0.57, 0.25
-          elsif ['3A', '3B', '3C'].include? @iecc_zone
-            return 0.51, 0.25
-          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.43, 0.40
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.40, 0.40
-          elsif @iecc_zone == '7'
-            return 0.34, 0.40
-          elsif @iecc_zone == '8'
-            return 0.30, 0.40
-          end
-        else
-          if ['1A', '1B', '1C'].include? @iecc_zone
-            return 0.48, 0.25
-          elsif ['2A', '2B', '2C'].include? @iecc_zone
-            return 0.43, 0.25
-          elsif ['3A', '3B', '3C'].include? @iecc_zone
-            return 0.40, 0.25
-          elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.34, 0.40
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.32, 0.40
-          elsif @iecc_zone == '7'
-            return 0.28, 0.40
-          elsif @iecc_zone == '8'
-            return 0.27, 0.40
-          end
-        end
-      else
-        if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-          return 0.40, 0.25
-        elsif ['3A', '3B', '3C'].include? @iecc_zone
-          return 0.30, 0.25
-        elsif ['4A', '4B'].include? @iecc_zone
-          return 0.30, 0.40
-        elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-          return 0.27, 0.40
-        end
-      end
-
-    elsif [ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      if orig_window.performance_class == HPXML::WindowClassArchitectural
-        if orig_window.fraction_operable > 0
-          if ['4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.43, 0.30
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.41, 0.30
-          end
-        else
-          if ['4C', '5A', '5B', '5C'].include? @iecc_zone
-            return 0.36, 0.30
-          elsif ['6A', '6B', '6C'].include? @iecc_zone
-            return 0.34, 0.30
-          end
-        end
-      else
-        return 0.27, 0.30
+        window_type = 'fixed'
       end
     end
+    
+    window_ufactor = get_reference_value('window_ufactor', window_class, window_type)
+    window_shgc = get_reference_value('window_shgc', window_class, window_type)
+
+    return window_ufactor.to_f, window_shgc.to_f
   end
 end
