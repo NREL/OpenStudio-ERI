@@ -2,6 +2,7 @@
 
 __Bugfixes__
 - Fixes incorrect warning about zip code not found in eGRID/Cambium lookup table.
+- Fixes error when a non-electric water heater has jacket insulation and the UEF metric is used.
 
 ## OpenStudio-ERI v1.5.0
 
