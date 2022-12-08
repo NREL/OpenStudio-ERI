@@ -65,12 +65,12 @@ def run_rulesets(hpxml_input_path, designs)
     if not eri_version.nil?
       # Obtain egrid subregion & cambium gea region
       egrid_subregion = get_epa_egrid_subregion(zip_code)
-      if not egrid_subregion.nil?
+      if egrid_subregion.nil?
         warnings << "Could not look up eGRID subregion for zip code: '#{zip_code}'. Emissions will not be calculated."
       end
       if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
         cambium_gea = get_cambium_gea_region(zip_code)
-        if not cambium_gea.nil?
+        if cambium_gea.nil?
           warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
         end
       end
