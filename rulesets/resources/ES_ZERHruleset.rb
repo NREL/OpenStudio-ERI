@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EnergyStarZeroEnergyReadyHomeRuleset
-  def self.apply_ruleset(hpxml, calc_type)
+  def self.apply_ruleset(hpxml, calc_type, es_zerh_lookup_table)
     # Use latest version of 301-2019
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
@@ -23,6 +23,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       iecc_year = 2006
     end
     @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }[0].zone
+    @lookup_table = es_zerh_lookup_table
 
     # Update HPXML object based on ESRD configuration
     if [ESConstants.CalcTypeEnergyStarReference,
@@ -2528,14 +2529,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return 122.0 # CFM per Watts
   end
 
-  def self.get_reference_value(value_type, window_class=nil, window_type=nil)
-    lookup_path = File.join(File.dirname(__FILE__), '../data/es_zerh_lookup.csv')
-
-    CSV.foreach(lookup_path, headers: true) do |row|
+  def self.get_reference_value(value_type, subtype=nil)
+    @lookup_table.each do |row|
       next unless row['type'] == value_type
       next unless row['program'] == @program_version
-      next unless row['window_class'] == window_class
-      next unless row['window_type'] == window_type
+      next unless row['subtype'] == subtype
 
       value = row[@iecc_zone]
 
@@ -2551,7 +2549,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.get_reference_ceiling_ufactor()
     ceiling_ufactor = get_reference_value('ceiling_ufactor')
 
-    return ceiling_ufactor.to_f
+    return Float(ceiling_ufactor)
   end
 
   def self.get_reference_slab_perimeter_rvalue_depth()
@@ -2601,18 +2599,17 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.get_reference_glazing_ufactor_shgc(orig_window)
     unless orig_window.nil?
       if orig_window.performance_class == HPXML::WindowClassArchitectural
-        window_class = orig_window.performance_class
         if orig_window.fraction_operable > 0
-          window_type = 'operable'
+          subtype = HPXML::WindowClassArchitectural + '_operable'
         else
-          window_type = 'fixed'
+          subtype = HPXML::WindowClassArchitectural + '_fixed'
         end
       end
     end
 
-    window_ufactor = get_reference_value('window_ufactor', window_class, window_type)
+    window_ufactor = get_reference_value('window_ufactor', subtype)
     window_shgc = get_reference_value('window_shgc')
 
-    return window_ufactor.to_f, window_shgc.to_f
+    return Float(window_ufactor), Float(window_shgc)
   end
 end
