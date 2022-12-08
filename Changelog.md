@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.5.1
+
+__Bugfixes__
+- Fixes incorrect warning about zip code not found in eGRID/Cambium lookup table.
+
 ## OpenStudio-ERI v1.5.0
 
 __New Features__
