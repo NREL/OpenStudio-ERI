@@ -1,3 +1,10 @@
+## OpenStudio-ERI v1.6.0
+
+__New Features__
+
+__Bugfixes__
+- Provide two decimal places in ES/ZERH CSV output files to better prevent user confusion.
+
 ## OpenStudio-ERI v1.5.1
 
 __Bugfixes__
