@@ -460,7 +460,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = _test_ruleset(program_version)
       _check_slabs(hpxml, area: 1350, exp_perim: 150)
-
+      puts program_version
       if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
         perim_ins_depth = 0
         perim_ins_r = 0
@@ -489,22 +489,22 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
                           under_ins_width: under_ins_width, under_ins_r: under_ins_r, depth_below_grade: 0)
     end
 
-    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_slabs(hpxml, area: 1350, exp_perim: 150)
+    # [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
+    #   _convert_to_es_zerh('base.xml', program_version)
+    #   hpxml = _test_ruleset(program_version)
+    #   _check_slabs(hpxml, area: 1350, exp_perim: 150)
 
-      _convert_to_es_zerh('base-foundation-slab.xml', program_version)
-      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-        climate_zone_iecc.zone = '1A'
-      end
-      hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-      hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_slabs(hpxml, area: 1350, exp_perim: 150, depth_below_grade: 0)
-    end
+    #   _convert_to_es_zerh('base-foundation-slab.xml', program_version)
+    #   hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+    #   hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+    #     climate_zone_iecc.zone = '1A'
+    #   end
+    #   hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+    #   hpxml.climate_and_risk_zones.weather_station_wmo = 722020
+    #   XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+    #   hpxml = _test_ruleset(program_version)
+    #   _check_slabs(hpxml, area: 1350, exp_perim: 150, depth_below_grade: 0)
+    # end
   end
 
   def test_enclosure_windows

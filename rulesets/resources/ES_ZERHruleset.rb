@@ -2538,62 +2538,31 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       value = row[@iecc_zone]
 
       unless value.nil?
-        return value
+        return Float(value)
       else
-        puts "\nError: Did not successfully find #{value_type} for #{@program_version}."
-        exit!
-      end 
+        return nil
+      end
     end
   end
 
   def self.get_reference_ceiling_ufactor()
     ceiling_ufactor = get_reference_value('ceiling_ufactor')
 
-    return Float(ceiling_ufactor)
+    return ceiling_ufactor
   end
 
   def self.get_reference_slab_perimeter_rvalue_depth()
-    if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ZERHConstants.Ver1].include? @program_version
-      # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
-      # Slab-on-Grade R-Value & Depth (ft)
-      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-        return 0.0, 0.0
-      elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-        return 10.0, 2.0
-      elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 10.0, 4.0
-      end
-    elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
-      if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return 0.0, 0.0
-      elsif ['3A', '3B', '3C'].include? @iecc_zone
-        return 10.0, 2.0
-      elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 10.0, 4.0
-      end
-    elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
-      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-        return 0.0, 0.0
-      elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-        return 10.0, 2.0
-      elsif ['6A', '6B', '6C', '7'].include? @iecc_zone
-        return 15.0, 2.0
-      elsif ['8'].include? @iecc_zone
-        return 20.0, 2.0
-      end
-    elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
-      return 0.0, 0.0
-    elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      return 10.0, 2.0
-    end
+    slab_perimeter_ins_rvalue = get_reference_value('slab_perimeter_ins_rvalue')
+    slab_perimeter_ins_depth = get_reference_value('slab_perimeter_ins_depth')
+
+    return slab_perimeter_ins_rvalue, slab_perimeter_ins_depth
   end
 
   def self.get_reference_slab_under_rvalue_width()
-    if [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      return 10.0, nil # insulation under the entire slab
-    else
-      return 0.0, 0.0
-    end
+    slab_under_ins_rvalue = get_reference_value('slab_under_ins_rvalue')
+    slab_under_ins_width = get_reference_value('slab_under_ins_width')
+
+    return slab_under_ins_rvalue, slab_under_ins_width
   end
 
   def self.get_reference_glazing_ufactor_shgc(orig_window)
@@ -2610,6 +2579,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     window_ufactor = get_reference_value('window_ufactor', subtype)
     window_shgc = get_reference_value('window_shgc')
 
-    return Float(window_ufactor), Float(window_shgc)
+    return window_ufactor, window_shgc
   end
 end
