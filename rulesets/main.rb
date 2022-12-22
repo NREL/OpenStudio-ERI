@@ -76,7 +76,7 @@ def run_rulesets(hpxml_input_path, designs)
       end
     end
 
-    es_zerh_lookup_table = get_es_zerh_lookup_table()
+    es_zerh_lookup_by_cz = get_es_zerh_lookup_tables()
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
@@ -91,7 +91,7 @@ def run_rulesets(hpxml_input_path, designs)
           ESConstants.CalcTypeEnergyStarRated,
           ZERHConstants.CalcTypeZERHReference,
           ZERHConstants.CalcTypeZERHRated].include? design.init_calc_type
-        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, es_zerh_lookup_table)
+        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, es_zerh_lookup_by_cz)
       end
 
       # Write initial HPXML file
@@ -148,11 +148,17 @@ def get_cambium_gea_region(zip_code)
   return cambium_gea
 end
 
-def get_es_zerh_lookup_table()
-  es_zerh_lookup_path = File.join(File.dirname(__FILE__), 'data/es_zerh_lookup.csv')
-  es_zerh_lookup_table = CSV.parse(File.read(es_zerh_lookup_path), headers: true)
+def get_es_zerh_lookup_tables()
+  es_lookup_by_cz_path = File.join(File.dirname(__FILE__), 'data/es_lookup_by_cz.csv')
+  zerh_lookup_by_cz_path = File.join(File.dirname(__FILE__), 'data/zerh_lookup_by_cz.csv')
+  es_lookup_by_cz = CSV.parse(File.read(es_lookup_by_cz_path), headers: true)
 
-  return es_zerh_lookup_table
+  lookup_by_cz_headers = es_lookup_by_cz.headers()
+  es_zerh_lookup_by_cz = CSV::Table.new([], headers: lookup_by_cz_headers)
+  CSV.foreach(es_lookup_by_cz_path, headers: true) {|row| es_zerh_lookup_by_cz << row.values_at(*lookup_by_cz_headers)}
+  CSV.foreach(zerh_lookup_by_cz_path, headers: true) {|row| es_zerh_lookup_by_cz << row.values_at(*lookup_by_cz_headers)}
+
+  return es_zerh_lookup_by_cz
 end
 
 def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
