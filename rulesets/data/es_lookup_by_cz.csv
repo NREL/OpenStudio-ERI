@@ -22,16 +22,16 @@ infil_air_leakage,,MF_National_1.0,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0
 infil_air_leakage,,MF_National_1.1,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3
 infil_air_leakage,,MF_National_1.2,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3
 infil_air_leakage,,MF_OregonWashington_1.2,,,,,,,,,,,,0.3,0.3,0.3,0.3,0.3,0.3,0.3,,
-mechanical_ventilation_fan_type,,SF_National_3.0,supply,supply,supply,supply,supply,supply,supply,supply,supply,supply,supply,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust
-mechanical_ventilation_fan_type,,SF_National_3.1,,,,,,,,,,,,,,,,,,,,
-mechanical_ventilation_fan_type,,SF_National_3.2,,,,,,,,,,,,,,,,,,,,
-mechanical_ventilation_fan_type,,SF_Pacific_3.0,supply,supply,supply,,,,,,,,,,,,,,,,,
-mechanical_ventilation_fan_type,,SF_Florida_3.1,supply,supply,supply,supply,supply,supply,,,,,,,,,,,,,,
-mechanical_ventilation_fan_type,,SF_OregonWashington_3.2,,,,,,,,,,,,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust,,
-mechanical_ventilation_fan_type,,MF_National_1.0,,,,,,,,,,,,,,,,,,,,
-mechanical_ventilation_fan_type,,MF_National_1.1,,,,,,,,,,,,,,,,,,,,
-mechanical_ventilation_fan_type,,MF_National_1.2,,,,,,,,,,,,,,,,,,,,
-mechanical_ventilation_fan_type,,MF_OregonWashington_1.2,,,,,,,,,,,,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust,exhaust,,
+mechanical_ventilation_fan_type,,SF_National_3.0,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only
+mechanical_ventilation_fan_type,,SF_National_3.1,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only
+mechanical_ventilation_fan_type,,SF_National_3.2,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only
+mechanical_ventilation_fan_type,,SF_Pacific_3.0,supply only,supply only,supply only,,,,,,,,,,,,,,,,,
+mechanical_ventilation_fan_type,,SF_Florida_3.1,supply only,supply only,supply only,supply only,supply only,supply only,,,,,,,,,,,,,,
+mechanical_ventilation_fan_type,,SF_OregonWashington_3.2,,,,,,,,,,,,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,,
+mechanical_ventilation_fan_type,,MF_National_1.0,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only
+mechanical_ventilation_fan_type,,MF_National_1.1,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only
+mechanical_ventilation_fan_type,,MF_National_1.2,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,supply only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only
+mechanical_ventilation_fan_type,,MF_OregonWashington_1.2,,,,,,,,,,,,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,exhaust only,,
 door_ufactor,,SF_National_3.0,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21,0.21
 door_ufactor,,SF_National_3.1,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17
 door_ufactor,,SF_National_3.2,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17,0.17

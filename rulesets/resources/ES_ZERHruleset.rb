@@ -1276,9 +1276,9 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_systems_mechanical_ventilation_default_fan_type()
-    mechanical_ventilation_default_fan_type = get_reference_value_by_cz('mechanical_ventilation_default_fan_type')
-      
-    return mechanical_ventilation_default_fan_type
+    mechanical_ventilation_fan_type = get_reference_value_by_cz('mechanical_ventilation_fan_type')
+
+    return mechanical_ventilation_fan_type
   end
 
   def self.get_mechanical_ventilation_fan_sre()
