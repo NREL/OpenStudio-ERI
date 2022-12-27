@@ -62,7 +62,7 @@ def calc_opp_eri_limit(rd_eri, saf, program_version)
   # Calculates the limit, in ERI points, for On-site Power Production per
   # ENERGY STAR and Zero Energy Ready Home Program Requirements
 
-  if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ZERHConstants.Ver1].include? program_version
+  if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
     # on-site power generation may only be used to meet the ENERGY STAR and Zero Energy Ready Home ERI Target for homes
     # that are larger than the Benchmark Home and only for the incremental change in the ENERGY
     # STAR and Zero Energy Ready Home ERI Target caused by the Size Adjustment Factor

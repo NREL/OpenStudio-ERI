@@ -28,7 +28,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         value, units = 5.0, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1564.8, 'CFM'
-      elsif program_version == ZERHConstants.Ver1
+      elsif [ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
         value, units = 2.0, 'ACH'
       end
 
@@ -50,6 +50,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         value, units = 4.0, 'ACH'
       elsif [ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
         value, units = 3.0, 'ACH'
+      elsif program_version == ZERHConstants.Ver2
+        value, units = 2.75, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1170.0, 'CFM'
       end
@@ -149,9 +151,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.082
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.056
-      elsif program_version == ZERHConstants.Ver1
+      elsif [ZERHConstants.Ver1].include? program_version
         rvalue = 1.0 / 0.060
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -222,9 +224,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.082
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.056
-      elsif program_version == ZERHConstants.Ver1
+      elsif [ZERHConstants.Ver1].include? program_version
         rvalue = 1.0 / 0.060
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -245,7 +247,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       if program_version == ESConstants.SFNationalVer3_0
         rvalue = 1.0 / 0.059
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
-             ZERHConstants.Ver1].include? program_version
+             ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
         rvalue = 1.0 / 0.050
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
         rvalue = 7.5
@@ -324,9 +326,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.027
       elsif program_version == ESConstants.MFNationalVer1_1
         rvalue = 1.0 / 0.021
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version ==
-                                                                                rvalue = 1.0 / 0.035
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
+        rvalue = 1.0 / 0.035
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
         rvalue = 1.0 / 0.024
       end
 
@@ -383,7 +385,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
   def test_enclosure_floors
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0,
+      if [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ZERHConstants.Ver2, ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0,
           ESConstants.MFNationalVer1_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
         rvalue = 1.0 / 0.033
       elsif program_version == ESConstants.SFPacificVer3_0
@@ -470,7 +472,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         perim_ins_r = 10
         under_ins_width = 999
         under_ins_r = 10
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
         perim_ins_depth = 4
         perim_ins_r = 10
         under_ins_width = 0
@@ -512,7 +514,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       if program_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
-             ZERHConstants.Ver1].include? program_version
+             ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
         ufactor, shgc = 0.27, 0.40
       elsif program_version == ESConstants.SFPacificVer3_0
         ufactor, shgc = 0.60, 0.27
@@ -623,6 +625,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [74.55, 74.55, 74.55, 74.55]
+      elsif [ZERHConstants.Ver2].include? program_version
+        ufactor, shgc = 0.40, 0.23
+        areas = [74.55, 74.55, 74.55, 74.55]
       elsif program_version == ESConstants.MFNationalVer1_0
         ufactor, shgc = 0.60, 0.27
         areas = [89.46, 89.46, 59.64, 59.64]
@@ -667,7 +672,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
   def test_enclosure_doors
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
-          ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+          ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
+          ZERHConstants.Ver2].include? program_version
         rvalue = 1.0 / 0.17
       else
         rvalue = 1.0 / 0.21

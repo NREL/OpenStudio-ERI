@@ -166,7 +166,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     new_hpxml.air_infiltration_measurements.add(id: 'TargetInfiltration',
                                                 house_pressure: 50,
                                                 unit_of_measure: infil_unit_of_measure,
-                                                air_leakage: infil_air_leakage.round(1),
+                                                air_leakage: infil_air_leakage.round(2),
                                                 infiltration_volume: @infilvolume,
                                                 infiltration_height: @infilheight)
   end
@@ -369,12 +369,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.walls.each do |orig_wall|
       next if orig_wall.is_exterior_thermal_boundary
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
         if orig_wall.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationGarage].include? orig_wall.exterior_adjacent_to)
           insulation_assembly_r_value = (1.0 / ufactor).round(3)
         end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
         if orig_wall.is_thermal_boundary
           insulation_assembly_r_value = (1.0 / ufactor).round(3)
@@ -453,7 +453,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         # Retain boundary condition of ceilings in the Rated Unit, including adiabatic ceilings.
         ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
         if ([ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2, ZERHConstants.Ver1].include? @program_version) && @has_auto_generated_attic && ([HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to)
@@ -465,7 +465,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
           # Ceilings adjacent to exterior or unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
           insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
         end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
         if [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to
           ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
@@ -516,13 +516,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
       floor_ufactor = get_enclosure_floors_over_uncond_spc_default_ufactor(orig_floor.floor_type)
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
         if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
           # Ceilings adjacent to outdoor environment, non-freezing space, unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
           insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
         end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         # Uninsulated for, e.g., floors between living space and conditioned basement.
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
         # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
@@ -1096,7 +1096,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.set_lighting_reference(new_hpxml)
-    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1, ZERHConstants.Ver1].include? @program_version
+    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1, ZERHConstants.Ver1, ZERHConstants.Ver2].include? @program_version
       fFI_int = 0.8
       fFI_ext = 0.0
       fFI_grg = 0.0
@@ -1263,9 +1263,9 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
       return infil_air_leakage, infil_unit_of_measure
     else
-      if (@program_version == ZERHConstants.Ver1) && ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type)
+      if (ZERHConstants.AllVersions.include? @program_version) && ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type)
         subtype = 'single_family_attached_apartment'
-      elsif (@program_version == ZERHConstants.Ver1) && (@bldg_type == HPXML::ResidentialTypeSFD)
+      elsif (ZERHConstants.AllVersions.include? @program_version) && (@bldg_type == HPXML::ResidentialTypeSFD)
         subtype = 'single_family_detached'
       end
       infil_air_leakage = get_reference_value_by_cz('infil_air_leakage', subtype)
@@ -1282,7 +1282,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_mechanical_ventilation_fan_sre()
-    if @program_version == ZERHConstants.Ver1
+    if ZERHConstants.AllVersions.include? @program_version
       mechanical_ventilation_fan_sre = get_reference_value_by_cz('mechanical_ventilation_fan_sre')
       
       return mechanical_ventilation_fan_sre
@@ -1491,7 +1491,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
       return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
 
-    elsif [ZERHConstants.Ver1].include? @program_version
+    elsif ZERHConstants.AllVersions.include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
         if orig_wh_fuel_type == HPXML::FuelTypeElectricity
           wh_tank_vol = 60.0 # gallon
@@ -1722,7 +1722,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       end
     elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
            ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
-           ZERHConstants.Ver1].include? @program_version
+           ZERHConstants.Ver1, ZERHConstants.Ver2].include? @program_version
       duct_location_and_surface_area[HPXML::LocationLivingSpace] = total_duct_area # Duct location configured to be 100% in conditioned space.
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       if is_ceiling_fully_adiabatic(orig_hpxml)
@@ -1755,7 +1755,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       end
     elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
            ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
-           ZERHConstants.Ver1].include? @program_version
+           ZERHConstants.Ver1, ZERHConstants.Ver2].include? @program_version
       return 0.0
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include?(duct_location) # Ducts in conditioned space
@@ -1769,7 +1769,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.calc_default_duct_leakage_to_outside(cfa)
     if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
         ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
-        ZERHConstants.Ver1].include? @program_version
+        ZERHConstants.Ver1, ZERHConstants.Ver2].include? @program_version
       return 0.0
     else
       return [(0.04 * cfa), 40].max
