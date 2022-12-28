@@ -281,7 +281,7 @@ def set_hpxml_header(hpxml_file, hpxml, orig_parent)
     hpxml.header.transaction = 'create'
     hpxml.header.building_id = 'MyBuilding'
     hpxml.header.event_type = 'proposed workscope'
-    hpxml.header.created_date_and_time = Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
+    hpxml.header.created_date_and_time = Time.new(2000, 1, 1, 0, 0, 0, '-07:00').strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
     if hpxml_file.include?('SF_National_3.2')
       hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
     elsif hpxml_file.include?('SF_National_3.1')
