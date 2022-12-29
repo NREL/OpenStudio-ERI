@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.5.2
+
+__Bugfixes__
+- Fixes incorrect modeling of foundation wall insulation for ENERGY STAR MF National v1.2.
+
 ## OpenStudio-ERI v1.5.1
 
 __Bugfixes__
