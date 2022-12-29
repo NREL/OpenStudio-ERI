@@ -1,5 +1,8 @@
 ## OpenStudio-ERI v1.5.2
 
+__New Features__
+- Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.
+
 __Bugfixes__
 - Fixes incorrect modeling of foundation wall insulation for ENERGY STAR MF National v1.2.
 
