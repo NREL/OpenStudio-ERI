@@ -149,16 +149,28 @@ def get_cambium_gea_region(zip_code)
 end
 
 def get_es_zerh_lookup_tables()
-  es_lookup_by_cz_path = File.join(File.dirname(__FILE__), 'data/es_lookup_by_cz.csv')
-  zerh_lookup_by_cz_path = File.join(File.dirname(__FILE__), 'data/zerh_lookup_by_cz.csv')
-  es_lookup_by_cz = CSV.parse(File.read(es_lookup_by_cz_path), headers: true)
+  programs = [
+    'es_sf_national_3_0',
+    'es_sf_national_3_1',
+    'es_sf_national_3_2',
+    'es_sf_pacific_3_0',
+    'es_sf_florida_3_1',
+    'es_sf_oregonwashington_3_2',
+    'es_mf_national_1_0',
+    'es_mf_national_1_1',
+    'es_mf_national_1_2',
+    'es_mf_oregonwashington_1_2',
+    'zerh_v1_0',
+  ]
 
-  lookup_by_cz_headers = es_lookup_by_cz.headers()
-  es_zerh_lookup_by_cz = CSV::Table.new([], headers: lookup_by_cz_headers)
-  CSV.foreach(es_lookup_by_cz_path, headers: true) {|row| es_zerh_lookup_by_cz << row.values_at(*lookup_by_cz_headers)}
-  CSV.foreach(zerh_lookup_by_cz_path, headers: true) {|row| es_zerh_lookup_by_cz << row.values_at(*lookup_by_cz_headers)}
+  es_zerh_lookup = {}
+  programs.each do |p|
+    program_lookup_path = File.join(File.dirname(__FILE__), "data/#{p}_lookup.csv")
+    lookup_values = CSV.parse(File.read(program_lookup_path), headers: true)
+    es_zerh_lookup[p] = lookup_values
+  end
 
-  return es_zerh_lookup_by_cz
+  return es_zerh_lookup
 end
 
 def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)

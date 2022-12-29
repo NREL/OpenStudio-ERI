@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
 class EnergyStarZeroEnergyReadyHomeRuleset
-  def self.apply_ruleset(hpxml, calc_type, es_zerh_lookup_per_cz)
+  def self.apply_ruleset(hpxml, calc_type, es_zerh_lookup)
     # Use latest version of 301-2019
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
     if calc_type == ESConstants.CalcTypeEnergyStarReference
       @program_version = hpxml.header.energystar_calculation_version
+      lookup_program = 'es_' + @program_version.gsub('.', '_').downcase
     elsif calc_type == ZERHConstants.CalcTypeZERHReference
       @program_version = hpxml.header.zerh_calculation_version
+      lookup_program = 'zerh_v' + @program_version.gsub('.', '_').downcase
     end
 
     if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
@@ -23,7 +25,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       iecc_year = 2006
     end
     @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }[0].zone
-    @es_zerh_lookup_per_cz = es_zerh_lookup_per_cz
+    @es_zerh_lookup = es_zerh_lookup[lookup_program]
 
     # Update HPXML object based on ESRD configuration
     if [ESConstants.CalcTypeEnergyStarReference,
@@ -1225,14 +1227,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       end
     end
 
-    subtype = nil
+    lookup_radiant_barrier_bool = false
     if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? @program_version
       # Assumes there is > 10 linear feet of ductwork anytime there is > 0 sqft. of ductwork.
-      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include?(@iecc_zone)
-        all_ducts.each do |duct|
-          if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
-            subtype = 'has_radiant_barrier'
-          end
+      all_ducts.each do |duct|
+        if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
+          lookup_radiant_barrier_bool = true
         end
       end
     elsif [ESConstants.SFPacificVer3_0].include? @program_version
@@ -1240,23 +1240,28 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         # Assumes there is > 10 linear feet of ductwork anytime there is > 0 sqft. of ductwork.
         all_ducts.each do |duct|
           if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
-            subtype = 'has_radiant_barrier'
+            lookup_radiant_barrier_bool = true
           end
         end
       elsif ['GU', 'MP'].include? @state_code
-        subtype = 'has_radiant_barrier'
+        lookup_radiant_barrier_bool = true
       end
+    elsif [ESConstants.SFFloridaVer3_1].include? @program_version
+      lookup_radiant_barrier_bool = true
     end
 
-    radiant_barrier_bool = get_reference_value_by_cz('radiant_barrier_bool', subtype) == 'TRUE' ? true : false
-
-    return radiant_barrier_bool
+    if lookup_radiant_barrier_bool
+      radiant_barrier_bool = get_reference_value('vented_attic_radiant_barrier_bool') == 'TRUE' ? true : false
+      return radiant_barrier_bool
+    else
+      return false
+    end
   end
 
   def self.get_enclosure_air_infiltration_default(orig_hpxml)
     if ESConstants.MFVersions.include? @program_version
       tot_cb_area, _ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
-      cfm50_per_enclosure_area = get_reference_value_by_cz('infil_air_leakage')
+      cfm50_per_enclosure_area = get_reference_value('infil_air_leakage')
 
       infil_air_leakage = tot_cb_area * cfm50_per_enclosure_area
       infil_unit_of_measure = HPXML::UnitsCFM
@@ -1268,7 +1273,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       elsif (@program_version == ZERHConstants.Ver1) && (@bldg_type == HPXML::ResidentialTypeSFD)
         subtype = 'single_family_detached'
       end
-      infil_air_leakage = get_reference_value_by_cz('infil_air_leakage', subtype)
+      infil_air_leakage = get_reference_value('infil_air_leakage', subtype)
       infil_unit_of_measure = HPXML::UnitsACH
 
       return infil_air_leakage, infil_unit_of_measure
@@ -1276,14 +1281,14 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_systems_mechanical_ventilation_default_fan_type()
-    mechanical_ventilation_fan_type = get_reference_value_by_cz('mechanical_ventilation_fan_type')
+    mechanical_ventilation_fan_type = get_reference_value('mechanical_ventilation_fan_type')
 
     return mechanical_ventilation_fan_type
   end
 
   def self.get_mechanical_ventilation_fan_sre()
     if @program_version == ZERHConstants.Ver1
-      mechanical_ventilation_fan_sre = get_reference_value_by_cz('mechanical_ventilation_fan_sre')
+      mechanical_ventilation_fan_sre = get_reference_value('mechanical_ventilation_fan_sre')
       
       return mechanical_ventilation_fan_sre
     elsif ESConstants.AllVersions.include? @program_version
@@ -1294,7 +1299,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_default_door_ufactor_shgc()
-    door_ufactor = get_reference_value_by_cz('door_ufactor')
+    door_ufactor = get_reference_value('door_ufactor')
     door_shgc = nil
 
     return door_ufactor, door_shgc
@@ -1309,9 +1314,9 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_foundation_walls_default_ufactor_or_rvalue()
-    foundation_walls_ufactor_or_rvalue = get_reference_value_by_cz('foundation_walls_ufactor_or_rvalue')
+    foundation_walls_ufactor_or_rvalue = get_reference_value('foundation_walls_ufactor')
     if @program_version == ESConstants.MFNationalVer1_2
-      foundation_walls_ufactor_or_rvalue = (1 / foundation_walls_ufactor_or_rvalue).round(3)
+      foundation_walls_ufactor_or_rvalue = (1 / get_reference_value('foundation_walls_ufactor')).round(3)
     end
 
     return foundation_walls_ufactor_or_rvalue
@@ -1323,7 +1328,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     else
       subtype = nil
     end
-    walls_ufactor = get_reference_value_by_cz('walls_ufactor', subtype)
+    walls_ufactor = get_reference_value('walls_ufactor', subtype)
 
     return walls_ufactor
   end
@@ -1334,7 +1339,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     else
       subtype = nil
     end
-    floors_over_uncond_spc_ufactor = get_reference_value_by_cz('floors_over_uncond_spc_ufactor', subtype)
+    floors_over_uncond_spc_ufactor = get_reference_value('floors_over_uncond_spc_ufactor', subtype)
 
     return floors_over_uncond_spc_ufactor
   end
@@ -1348,7 +1353,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_hot_water_distribution_pipe_r_value
-    hot_water_distribution_pipe_r_value = get_reference_value_by_cz('hot_water_distribution_pipe_r_value')
+    hot_water_distribution_pipe_r_value = get_reference_value('hot_water_distribution_pipe_r_value')
 
     return hot_water_distribution_pipe_r_value
   end
@@ -1550,7 +1555,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         elsif not fuel_type.nil?
           subtype = (HPXML::FuelTypeNaturalGas + '_' + HPXML::FuelTypePropane + '_' + HPXML::FuelTypeWoodCord + '_' + HPXML::FuelTypeWoodPellets).gsub(' ', '_')
         end
-        boiler_eff = get_reference_value_by_cz('boiler_eff', subtype)
+        boiler_eff = get_reference_value('boiler_eff', subtype)
     
         return boiler_eff
       end
@@ -1563,25 +1568,25 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     elsif not fuel_type.nil?
       subtype = (HPXML::FuelTypeNaturalGas + '_' + HPXML::FuelTypePropane + '_' + HPXML::FuelTypeWoodCord + '_' + HPXML::FuelTypeWoodPellets).gsub(' ', '_')
     end
-    furnace_afue = get_reference_value_by_cz('furnace_afue', subtype)
+    furnace_afue = get_reference_value('furnace_afue', subtype)
 
     return furnace_afue
   end
 
   def self.get_default_ashp_hspf()
-    ashp_hspf = get_reference_value_by_cz('ashp_hspf')
+    ashp_hspf = get_reference_value('ashp_hspf')
 
     return ashp_hspf
   end
 
   def self.get_default_heat_pump_backup_fuel()
-    heat_pump_backup_fuel = get_reference_value_by_cz('heat_pump_backup_fuel')
+    heat_pump_backup_fuel = get_reference_value('heat_pump_backup_fuel')
 
     return heat_pump_backup_fuel
   end
 
   def self.get_default_gshp_cop()
-    gshp_cop = get_reference_value_by_cz('gshp_cop')
+    gshp_cop = get_reference_value('gshp_cop')
 
     return gshp_cop
   end
@@ -1599,25 +1604,25 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_default_ac_seer()
-    ac_seer = get_reference_value_by_cz('ac_seer')
+    ac_seer = get_reference_value('ac_seer')
 
     return ac_seer
   end
 
   def self.get_default_ashp_seer()
-    ashp_seer = get_reference_value_by_cz('ashp_seer')
+    ashp_seer = get_reference_value('ashp_seer')
 
     return ashp_seer
   end
 
   def self.get_default_gshp_eer()
-    gshp_eer = get_reference_value_by_cz('gshp_eer')
+    gshp_eer = get_reference_value('gshp_eer')
 
     return gshp_eer
   end
 
   def self.get_fan_cfm_per_w()
-    fan_cfm_per_w = get_reference_value_by_cz('fan_cfm_per_w')
+    fan_cfm_per_w = get_reference_value('fan_cfm_per_w')
 
     return fan_cfm_per_w
   end
@@ -2026,21 +2031,21 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_reference_ceiling_ufactor()
-    ceiling_ufactor = get_reference_value_by_cz('ceiling_ufactor')
+    ceiling_ufactor = get_reference_value('ceiling_ufactor')
 
     return ceiling_ufactor
   end
 
   def self.get_reference_slab_perimeter_rvalue_depth()
-    slab_perimeter_ins_rvalue = get_reference_value_by_cz('slab_perimeter_ins_rvalue')
-    slab_perimeter_ins_depth = get_reference_value_by_cz('slab_perimeter_ins_depth')
+    slab_perimeter_ins_rvalue = get_reference_value('slab_perimeter_ins_rvalue')
+    slab_perimeter_ins_depth = get_reference_value('slab_perimeter_ins_depth')
 
     return slab_perimeter_ins_rvalue, slab_perimeter_ins_depth
   end
 
   def self.get_reference_slab_under_rvalue_width()
-    slab_under_ins_rvalue = get_reference_value_by_cz('slab_under_ins_rvalue')
-    slab_under_ins_width = get_reference_value_by_cz('slab_under_ins_width')
+    slab_under_ins_rvalue = get_reference_value('slab_under_ins_rvalue')
+    slab_under_ins_width = get_reference_value('slab_under_ins_width')
 
     return slab_under_ins_rvalue, slab_under_ins_width
   end
@@ -2056,16 +2061,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       end
     end
 
-    window_ufactor = get_reference_value_by_cz('window_ufactor', subtype)
-    window_shgc = get_reference_value_by_cz('window_shgc')
+    window_ufactor = get_reference_value('window_ufactor', subtype)
+    window_shgc = get_reference_value('window_shgc')
 
     return window_ufactor, window_shgc
   end
   
-  def self.get_reference_value_by_cz(value_type, subtype=nil)
-    @es_zerh_lookup_per_cz.each do |row|
+  def self.get_reference_value(value_type, subtype=nil)
+    @es_zerh_lookup.each do |row|
       next unless row['type'] == value_type
-      next unless row['program'] == @program_version
       next unless row['subtype'] == subtype
 
       value = row[@iecc_zone]
