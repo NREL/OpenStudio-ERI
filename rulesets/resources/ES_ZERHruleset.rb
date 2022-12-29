@@ -2303,7 +2303,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     if not afue.nil?
       heating_efficiency_afue = afue
     elsif not thermal_eff.nil?
-      heating_efficiency_afue = thermal_eff  # Assumes afue = thermal_eff
+      heating_efficiency_afue = thermal_eff # Assumes afue = thermal_eff
     end
 
     if orig_system.is_shared_system # Retain the shared boiler regardless of its heating capacity.
