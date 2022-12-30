@@ -398,7 +398,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Foundation walls U-factor/R-value
-    fndwall_assembly_uvalue, fndwall_interior_ins_rvalue = get_foundation_walls_default_ufactor_and_rvalue()
+    fndwall_assembly_uvalue = get_foundation_walls_default_ufactor()
+    fndwall_interior_ins_rvalue = get_foundation_walls_default_rvalue()
 
     # Exhibit 2 - Conditioned basement walls
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
@@ -1273,6 +1274,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     common_wall_area = orig_hpxml.common_wall_area()
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
+
     return 0.15 * cfa * fa * f
   end
 
@@ -1337,51 +1339,17 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       else
         wh_tank_vol = orig_water_heater.tank_volume
       end
-
-      if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeNaturalGas
-        ef = 0.69 - (0.002 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
-        re = 0.80
-      elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeElectricity
-        ef = 0.97 - (0.001 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
-        re = 0.98
-      elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeOil
-        ef = 0.61 - (0.002 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
-        re = 0.80
-      end
-
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
-
     elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
-      if not [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeTankless
-        wh_fuel_type = HPXML::FuelTypeNaturalGas
-        uef = 0.90
-      else
+      if [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
         if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
           wh_tank_vol = 60.0 # gallon
         else
           wh_tank_vol = orig_water_heater.tank_volume
         end
-        wh_type = HPXML::WaterHeaterTypeHeatPump
-        wh_fuel_type = HPXML::FuelTypeElectricity
-        if @program_version == ESConstants.SFNationalVer3_2
-          uef = 2.20
-        elsif @program_version == ESConstants.MFNationalVer1_2
-          uef = 1.49
-        end
         # Use rated home FHR if provided, else 63, per EPA
         fhr = orig_water_heater.first_hour_rating
         fhr = 63.0 if fhr.nil?
       end
-
-      return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
-
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
         if orig_wh_fuel_type == HPXML::FuelTypeElectricity
@@ -1392,76 +1360,20 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       else
         wh_tank_vol = orig_water_heater.tank_volume
       end
-
-      if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeNaturalGas
-        if wh_tank_vol <= 55
-          ef = 0.67
-          re = 0.80
-        else
-          ef = 0.77
-          re = 0.80
-        end
-      elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeElectricity
-        ef = 0.95
-        re = 0.98
-      elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeOil
-        ef = 0.70 - (0.002 * wh_tank_vol) # EnergyStar Multifamily New Construction Exhibit 1: Footnote 10
-        re = 0.80
-      end
-
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
-
     elsif [ESConstants.SFPacificVer3_0].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include?(orig_water_heater.water_heater_type) || (orig_wh_fuel_type == HPXML::FuelTypeElectricity)
         wh_tank_vol = 50.0 # gallon
       else
         wh_tank_vol = orig_water_heater.tank_volume
       end
-
-      if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeNaturalGas
-        ef = 0.80 # Gas DHW EF for all storage tank capacities
-        re = 0.80
-      elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeElectricity
-        ef = 0.90
-        re = 0.98
-      end
-
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
-
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeTankless
-        wh_fuel_type = HPXML::FuelTypeNaturalGas
         wh_tank_vol = nil # instantaneous water heater
-        ef = 0.91
-        re = 0.80
-      elsif [HPXML::FuelTypeOil, HPXML::FuelTypeElectricity].include? orig_wh_fuel_type # If Rated Home uses a system with an oil, electric, or other fuel type, model as 60 gallon electric heat pump water heater.
-        wh_type = HPXML::WaterHeaterTypeHeatPump
-        wh_fuel_type = HPXML::FuelTypeElectricity
+      elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type # If Rated Home uses a system with an oil, electric, or other fuel type, model as 60 gallon electric heat pump water heater.
         wh_tank_vol = 60.0 # gallon
-        if ['4C', '5A', '5B', '5C'].include? @iecc_zone
-          ef = 2.50
-          re = 0.98
-        elsif ['6A', '6B', '6C'].include? @iecc_zone
-          ef = 2.00
-          re = 0.98
-        else
-          fail "Unexpected iecc zone: #{@iecc_zone}."
-        end
+      elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
+        wh_tank_vol = 60.0 # gallon
       end
-
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
-
     elsif [ZERHConstants.Ver1].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
         if orig_wh_fuel_type == HPXML::FuelTypeElectricity
@@ -1472,36 +1384,59 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       else
         wh_tank_vol = orig_water_heater.tank_volume
       end
-
-      if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeNaturalGas
-        if wh_tank_vol <= 55
-          ef = 0.67
-        else
-          ef = 0.77
-        end
-        re = 0.80
-      elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeHeatPump
-        wh_fuel_type = HPXML::FuelTypeElectricity
-        if @bldg_type == HPXML::ResidentialTypeSFD
-          ef = 2.0
-        elsif [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type
-          ef = 1.5
-        end
-        re = 0.98
-      elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
-        wh_type = HPXML::WaterHeaterTypeStorage
-        wh_fuel_type = HPXML::FuelTypeOil
-        ef = 0.60
-        re = 0.80
-      end
-
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
     end
 
-    fail 'Unexpected case.'
+    if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? orig_wh_fuel_type
+      wh_type = get_reference_value('gas_water_heater_type')
+      wh_fuel_type = get_reference_value('gas_water_heater_fuel_type')
+      if [ZERHConstants.Ver1, ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
+        if wh_tank_vol <= 55
+          ef = get_reference_value('gas_water_heater_ef', 'less_than_55gal')
+        else
+          ef = get_reference_value('gas_water_heater_ef', 'greater_than_55gal')
+        end
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+        uef = get_reference_value('gas_water_heater_uef')
+      elsif [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1].include? @program_version
+        ef = 0.69 - (0.002 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
+      else
+        ef = get_reference_value('gas_water_heater_ef')
+      end
+      re = get_reference_value('gas_water_heater_re')
+    elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
+      wh_type = get_reference_value('elec_water_heater_type')
+      wh_fuel_type = get_reference_value('elec_water_heater_fuel_type')
+      if [ZERHConstants.Ver1].include? @program_version
+        if @bldg_type == HPXML::ResidentialTypeSFD
+          ef = get_reference_value('elec_water_heater_ef', 'single_family_detached')
+        elsif [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type
+          ef = get_reference_value('elec_water_heater_ef', 'single_family_attached_apartment')
+        end
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+        uef = get_reference_value('elec_water_heater_uef')
+      elsif [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1].include? @program_version
+        ef = 0.97 - (0.001 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
+      else
+        ef = get_reference_value('elec_water_heater_ef')
+      end
+      re = get_reference_value('elec_water_heater_re')
+    elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
+      wh_type = get_reference_value('oil_water_heater_type')
+      wh_fuel_type = get_reference_value('oil_water_heater_fuel_type')
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+        uef = get_reference_value('oil_water_heater_uef')
+      elsif [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1].include? @program_version
+        ef = 0.61 - (0.002 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
+      elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
+        ef = 0.70 - (0.002 * wh_tank_vol) # EnergyStar Multifamily New Construction Exhibit 1: Footnote 10
+      else
+        ef = get_reference_value('oil_water_heater_ef')
+      end
+      re = get_reference_value('oil_water_heater_re')
+    end
+
+    return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
+
   end
 
   def self.get_default_boiler_afue_and_thermal_eff(orig_system)

@@ -37,3 +37,18 @@ regrigerator_rated_annual_kwh,,450,450,450,450,450,450,450,450,450,450,450,450,4
 hvac_charge_defect_ratio,,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25
 hvac_airflow_defect_ratio,,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2
 hvac_fan_watts_per_cfm,,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52,0.52
+gas_water_heater_type,,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater
+elec_water_heater_type,,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater,heat pump water heater
+oil_water_heater_type,,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater,instantaneous water heater
+gas_water_heater_ef,,,,,,,,,,,,,,,,,,,,,
+elec_water_heater_ef,,,,,,,,,,,,,,,,,,,,,
+oil_water_heater_ef,,,,,,,,,,,,,,,,,,,,,
+gas_water_heater_uef,,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9
+elec_water_heater_uef,,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2
+oil_water_heater_uef,,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9
+gas_water_heater_re,,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8
+elec_water_heater_re,,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98
+oil_water_heater_re,,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8
+gas_water_heater_fuel_type,,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas
+elec_water_heater_fuel_type,,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity
+oil_water_heater_fuel_type,,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas

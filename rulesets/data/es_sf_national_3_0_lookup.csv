@@ -37,3 +37,18 @@ regrigerator_rated_annual_kwh,,423,423,423,423,423,423,423,423,423,423,423,423,4
 hvac_charge_defect_ratio,,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25
 hvac_airflow_defect_ratio,,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25
 hvac_fan_watts_per_cfm,,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58,0.58
+gas_water_heater_type,,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater
+elec_water_heater_type,,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater
+oil_water_heater_type,,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater,storage water heater
+gas_water_heater_ef,,,,,,,,,,,,,,,,,,,,,
+elec_water_heater_ef,,,,,,,,,,,,,,,,,,,,,
+oil_water_heater_ef,,,,,,,,,,,,,,,,,,,,,
+gas_water_heater_uef,,,,,,,,,,,,,,,,,,,,,
+elec_water_heater_uef,,,,,,,,,,,,,,,,,,,,,
+oil_water_heater_uef,,,,,,,,,,,,,,,,,,,,,
+gas_water_heater_re,,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8
+elec_water_heater_re,,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98,0.98
+oil_water_heater_re,,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8
+gas_water_heater_fuel_type,,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas,natural gas
+elec_water_heater_fuel_type,,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity,electricity
+oil_water_heater_fuel_type,,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil,fuel oil
