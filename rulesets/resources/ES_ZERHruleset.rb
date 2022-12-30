@@ -398,19 +398,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Foundation walls U-factor/R-value
-    if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      fndwall_interior_ins_rvalue = get_foundation_walls_default_rvalue()
-    else
-      fndwall_assembly_rvalue = (1.0 / get_foundation_walls_default_ufactor()).round(3)
-    end
+    fndwall_assembly_uvalue, fndwall_interior_ins_rvalue = get_foundation_walls_default_ufactor_and_rvalue()
 
     # Exhibit 2 - Conditioned basement walls
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground.
       # Uninsulated for, e.g., crawlspace/unconditioned basement walls adjacent to ground.
       if orig_foundation_wall.is_thermal_boundary
-        if not fndwall_assembly_rvalue.nil?
-          insulation_assembly_r_value = fndwall_assembly_rvalue
+        if not fndwall_assembly_uvalue.nil?
+          insulation_assembly_r_value = (1.0 / fndwall_assembly_uvalue).round(3)
         elsif not fndwall_interior_ins_rvalue.nil?
           insulation_interior_r_value = fndwall_interior_ins_rvalue
           insulation_interior_distance_to_top = 0
@@ -1508,13 +1504,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fail 'Unexpected case.'
   end
 
-  def self.get_default_boiler_eff(orig_system)
+  def self.get_default_boiler_afue_and_thermal_eff(orig_system)
     fuel_type = orig_system.heating_system_fuel
     if orig_system.is_shared_system && orig_system.heating_capacity >= 300000
       if orig_system.distribution_system.hydronic_type == HPXML::HydronicTypeWaterLoop # Central Boiler w/WLHP, >= 300 KBtu/h
-        return 0.89 # Et
+        return nil, 0.89 # Et
       else # Central Boiler, >= 300 KBtu/h
-        return 0.86 # Et
+        return nil, 0.86 # Et
       end
     else
       if fuel_type == HPXML::FuelTypeElectricity
@@ -1774,7 +1770,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.add_reference_boiler(new_hpxml, orig_system)
-    afue = get_default_boiler_eff(orig_system)
+    afue, thermal_eff = get_default_boiler_afue_and_thermal_eff(orig_system)
+
+    if not afue.nil?
+      heating_efficiency_afue = afue
+    elsif not thermal_eff.nil?
+      heating_efficiency_afue = thermal_eff # Assumes afue = thermal_eff
+    end
 
     if orig_system.is_shared_system # Retain the shared boiler regardless of its heating capacity.
       heating_capacity = orig_system.heating_capacity
@@ -1803,7 +1805,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                   heating_capacity: heating_capacity,
                                   shared_loop_watts: shared_loop_watts,
                                   fan_coil_watts: orig_system.fan_coil_watts,
-                                  heating_efficiency_afue: afue,
+                                  heating_efficiency_afue: heating_efficiency_afue,
                                   fraction_heat_load_served: orig_system.fraction_heat_load_served)
   end
 
