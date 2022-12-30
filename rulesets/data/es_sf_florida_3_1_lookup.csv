@@ -33,7 +33,7 @@ fFI_grg,,0,0,0,0,0,0
 fFII_int,,0,0,0,0,0,0
 fFII_ext,,0,0,0,0,0,0
 fFII_grg,,0,0,0,0,0,0
-regrigerator_rated_annual_kwh,,423,423,423,423,423,423
+refrigerator_rated_annual_kwh,,423,423,423,423,423,423
 hvac_charge_defect_ratio,,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25
 hvac_airflow_defect_ratio,,-0.25,-0.25,-0.25,-0.25,-0.25,-0.25
 hvac_fan_watts_per_cfm,,0.58,0.58,0.58,0.58,0.58,0.58
