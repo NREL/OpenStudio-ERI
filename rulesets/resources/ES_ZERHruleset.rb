@@ -398,10 +398,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Foundation walls U-factor/R-value
-    if ESConstants.MFVersions.include? @program_version
-      fndwall_interior_ins_rvalue = get_foundation_walls_default_ufactor_or_rvalue()
+    if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
+      fndwall_interior_ins_rvalue = get_foundation_walls_default_rvalue()
     else
-      fndwall_assembly_rvalue = (1.0 / get_foundation_walls_default_ufactor_or_rvalue()).round(3)
+      fndwall_assembly_rvalue = (1.0 / get_foundation_walls_default_ufactor()).round(3)
     end
 
     # Exhibit 2 - Conditioned basement walls
@@ -1047,11 +1047,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       location = refrigerator.location.gsub('unvented', 'vented')
     end
 
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
-      rated_annual_kwh = 450.0
-    else
-      rated_annual_kwh = 423.0
-    end
+    rated_annual_kwh = get_reference_value('refrigerator_rated_annual_kwh')
 
     new_hpxml.refrigerators.add(id: id,
                                 location: location,
@@ -1098,35 +1094,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.set_lighting_reference(new_hpxml)
-    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1, ZERHConstants.Ver1].include? @program_version
-      fFI_int = 0.8
-      fFI_ext = 0.0
-      fFI_grg = 0.0
-      fFII_int = 0.0
-      fFII_ext = 0.0
-      fFII_grg = 0.0
-    elsif [ESConstants.SFNationalVer3_2].include? @program_version
-      fFI_int = 0.0
-      fFI_ext = 0.0
-      fFI_grg = 0.0
-      fFII_int = 1.0
-      fFII_ext = 1.0
-      fFII_grg = 1.0
-    elsif [ESConstants.MFNationalVer1_2].include? @program_version
-      fFI_int = 1.0
-      fFI_ext = 1.0
-      fFI_grg = 1.0
-      fFII_int = 0.0
-      fFII_ext = 0.0
-      fFII_grg = 0.0
-    else
-      fFI_int = 0.9
-      fFI_ext = 0.0
-      fFI_grg = 0.0
-      fFII_int = 0.0
-      fFII_ext = 0.0
-      fFII_grg = 0.0
-    end
+    fFI_int = get_reference_value('fFI_int')
+    fFI_ext = get_reference_value('fFI_ext')
+    fFI_grg = get_reference_value('fFI_grg')
+    fFII_int = get_reference_value('fFII_int')
+    fFII_ext = get_reference_value('fFII_ext')
+    fFII_grg = get_reference_value('fFII_grg')
 
     new_hpxml.lighting_groups.add(id: 'TargetLightingGroup1',
                                   location: HPXML::LocationInterior,
@@ -1287,15 +1260,9 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_mechanical_ventilation_fan_sre()
-    if @program_version == ZERHConstants.Ver1
-      mechanical_ventilation_fan_sre = get_reference_value('mechanical_ventilation_fan_sre')
+    mechanical_ventilation_fan_sre = get_reference_value('mechanical_ventilation_fan_sre')
       
-      return mechanical_ventilation_fan_sre
-    elsif ESConstants.AllVersions.include? @program_version
-      return
-    end
-
-    fail 'Unexpected case.'
+    return mechanical_ventilation_fan_sre
   end
 
   def self.get_default_door_ufactor_shgc()
@@ -1313,13 +1280,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return 0.15 * cfa * fa * f
   end
 
-  def self.get_foundation_walls_default_ufactor_or_rvalue()
-    foundation_walls_ufactor_or_rvalue = get_reference_value('foundation_walls_ufactor')
-    if @program_version == ESConstants.MFNationalVer1_2
-      foundation_walls_ufactor_or_rvalue = (1 / get_reference_value('foundation_walls_ufactor')).round(3)
-    end
+  def self.get_foundation_walls_default_ufactor()
+    foundation_walls_ufactor = get_reference_value('foundation_walls_ufactor')
 
-    return foundation_walls_ufactor_or_rvalue
+    return foundation_walls_ufactor
+  end
+
+  def self.get_foundation_walls_default_rvalue()
+    foundation_walls_rvalue = get_reference_value('foundation_walls_rvalue')
+
+    return foundation_walls_rvalue
   end
 
   def self.get_enclosure_walls_default_ufactor()
@@ -2015,15 +1985,9 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_hvac_installation_quality()
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
-      return { charge_defect_ratio: -0.25,
-               airflow_defect_ratio: -0.20,
-               fan_watts_per_cfm: 0.52 }
-    else
-      return { charge_defect_ratio: -0.25,
-               airflow_defect_ratio: -0.25,
-               fan_watts_per_cfm: 0.58 }
-    end
+    return { charge_defect_ratio: get_reference_value('hvac_charge_defect_ratio'),
+             airflow_defect_ratio: get_reference_value('hvac_airflow_defect_ratio'),
+             fan_watts_per_cfm: get_reference_value('hvac_fan_watts_per_cfm') }
   end
 
   def self.get_default_ceiling_fan_cfm_per_w()
