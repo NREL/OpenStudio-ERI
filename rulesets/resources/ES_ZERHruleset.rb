@@ -395,19 +395,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Foundation walls U-factor/R-value
-    if ESConstants.MFVersions.include? @program_version
-      fndwall_interior_ins_rvalue = get_foundation_walls_default_ufactor_or_rvalue()
-    else
-      fndwall_assembly_rvalue = (1.0 / get_foundation_walls_default_ufactor_or_rvalue()).round(3)
-    end
+    fndwall_assembly_uvalue, fndwall_interior_ins_rvalue = get_foundation_walls_default_ufactor_and_rvalue()
 
     # Exhibit 2 - Conditioned basement walls
     orig_hpxml.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground.
       # Uninsulated for, e.g., crawlspace/unconditioned basement walls adjacent to ground.
       if orig_foundation_wall.is_thermal_boundary
-        if not fndwall_assembly_rvalue.nil?
-          insulation_assembly_r_value = fndwall_assembly_rvalue
+        if not fndwall_assembly_uvalue.nil?
+          insulation_assembly_r_value = (1.0 / fndwall_assembly_uvalue).round(3)
         elsif not fndwall_interior_ins_rvalue.nil?
           insulation_interior_r_value = fndwall_interior_ins_rvalue
           insulation_interior_distance_to_top = 0
@@ -1381,62 +1377,62 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return 0.15 * cfa * fa * f
   end
 
-  def self.get_foundation_walls_default_ufactor_or_rvalue()
+  def self.get_foundation_walls_default_ufactor_and_rvalue()
     if [ESConstants.SFNationalVer3_0].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return 0.360  # assembly U-value
+        return 0.360, nil  # assembly U-value
       elsif ['3A', '3B', '3C'].include? @iecc_zone
-        return 0.091  # assembly U-value
+        return 0.091, nil  # assembly U-value
       elsif ['4A', '4B', '4C', '5A', '5B', '5C'].include? @iecc_zone
-        return 0.059  # assembly U-value
+        return 0.059, nil  # assembly U-value
       elsif ['6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.050  # assembly U-value
+        return 0.050, nil  # assembly U-value
       end
     elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return 0.360  # assembly U-value
+        return 0.360, nil  # assembly U-value
       elsif ['3A', '3B', '3C'].include? @iecc_zone
-        return 0.091  # assembly U-value
+        return 0.091, nil  # assembly U-value
       elsif ['4A', '4B'].include? @iecc_zone
-        return 0.059  # assembly U-value
+        return 0.059, nil  # assembly U-value
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.050  # assembly U-value
+        return 0.050, nil  # assembly U-value
       end
     elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
-      return 0.360 # assembly U-value
+      return 0.360, nil # assembly U-value
     elsif [ESConstants.SFOregonWashingtonVer3_2].include? @program_version
-      return 0.042 # assembly U-value
+      return 0.042, nil # assembly U-value
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-        return 0.0  # interior insulation R-value
+        return nil, 0.0  # interior insulation R-value
       elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? @iecc_zone
-        return 7.5  # interior insulation R-value
+        return nil, 7.5  # interior insulation R-value
       elsif ['7'].include? @iecc_zone
-        return 10.0  # interior insulation R-value
+        return nil, 10.0  # interior insulation R-value
       elsif ['8'].include? @iecc_zone
-        return 12.5  # interior insulation R-value
+        return nil, 12.5  # interior insulation R-value
       end
     elsif @program_version == ESConstants.MFNationalVer1_2
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return (1 / 0.360).round(3)  # assembly R-value
+        return 0.360, nil  # assembly U-value
       elsif ['3A', '3B', '3C'].include? @iecc_zone
-        return (1 / 0.091).round(3)  # assembly R-value
+        return 0.091, nil  # assembly U-value
       elsif ['4A', '4B'].include? @iecc_zone
-        return (1 / 0.059).round(3)  # assembly R-value
+        return 0.059, nil  # assembly U-value
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return (1 / 0.050).round(3)  # assembly R-value
+        return 0.050, nil  # assembly U-value
       end
     elsif [ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      return 15.0 # interior insulation R-value
+      return nil, 15.0 # interior insulation R-value
     elsif [ZERHConstants.Ver1].include? @program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-        return 0.360  # assembly U-value
+        return 0.360, nil  # assembly U-value
       elsif ['3A', '3B', '3C'].include? @iecc_zone
-        return 0.091  # assembly U-value
+        return 0.091, nil  # assembly U-value
       elsif ['4A', '4B'].include? @iecc_zone
-        return 0.059  # assembly U-value
+        return 0.059, nil  # assembly U-value
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-        return 0.050  # assembly U-value
+        return 0.050, nil  # assembly U-value
       end
     end
 
@@ -1791,78 +1787,78 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fail 'Unexpected case.'
   end
 
-  def self.get_default_boiler_eff(orig_system)
+  def self.get_default_boiler_afue_and_thermal_eff(orig_system)
     fuel_type = orig_system.heating_system_fuel
     if orig_system.is_shared_system && orig_system.heating_capacity >= 300000
       if orig_system.distribution_system.hydronic_type == HPXML::HydronicTypeWaterLoop # Central Boiler w/WLHP, >= 300 KBtu/h
-        return 0.89 # Et
+        return nil, 0.89 # Et
       else # Central Boiler, >= 300 KBtu/h
-        return 0.86 # Et
+        return nil, 0.86 # Et
       end
     else
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
           if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-            return 0.80 # AFUE
+            return 0.80, nil # AFUE
           elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-            return 0.85 # AFUE
+            return 0.85, nil # AFUE
           end
         elsif fuel_type == HPXML::FuelTypeElectricity
-          return 0.98 # AFUE
+          return 0.98, nil # AFUE
         end
       elsif [ESConstants.SFNationalVer3_1, ESConstants.MFNationalVer1_1].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
           if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-            return 0.80 # AFUE
+            return 0.80, nil # AFUE
           elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-            return 0.90 # AFUE
+            return 0.90, nil # AFUE
           end
         elsif fuel_type == HPXML::FuelTypeOil
           if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-            return 0.80 # AFUE
+            return 0.80, nil # AFUE
           elsif ['4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-            return 0.86 # AFUE
+            return 0.86, nil # AFUE
           end
         elsif fuel_type == HPXML::FuelTypeElectricity
-          return 0.98 # AFUE
+          return 0.98, nil # AFUE
         end
       elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
           if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'].include? @iecc_zone
-            return 0.80 # AFUE
+            return 0.80, nil # AFUE
           elsif ['4A', '4B'].include? @iecc_zone
-            return 0.90 # AFUE
+            return 0.90, nil # AFUE
           elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-            return 0.95 # AFUE
+            return 0.95, nil # AFUE
           end
         elsif fuel_type == HPXML::FuelTypeElectricity
-          return 0.98 # AFUE
+          return 0.98, nil # AFUE
         end
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
-          return 0.80 # AFUE
+          return 0.80, nil # AFUE
         elsif fuel_type == HPXML::FuelTypeElectricity
-          return 0.98 # AFUE
+          return 0.98, nil # AFUE
         end
       elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
-          return 0.90 # AFUE
+          return 0.90, nil # AFUE
         elsif fuel_type == HPXML::FuelTypeOil
-          return 0.86 # AFUE
+          return 0.86, nil # AFUE
         elsif fuel_type == HPXML::FuelTypeElectricity
-          return 0.98 # AFUE
+          return 0.98, nil # AFUE
         end
       elsif [ZERHConstants.Ver1].include? @program_version
         if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeOil, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
           if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
-            return 0.80 # AFUE
+            return 0.80, nil # AFUE
           elsif ['3A', '3B', '3C', '4A', '4B'].include? @iecc_zone
-            return 0.90 # AFUE
+            return 0.90, nil # AFUE
           elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
-            return 0.94 # AFUE
+            return 0.94, nil # AFUE
           end
         elsif fuel_type == HPXML::FuelTypeElectricity
-          return 0.98 # AFUE
+          return 0.98, nil # AFUE
         end
       end
 
@@ -2302,7 +2298,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.add_reference_boiler(new_hpxml, orig_system)
-    afue = get_default_boiler_eff(orig_system)
+    afue, thermal_eff = get_default_boiler_afue_and_thermal_eff(orig_system)
+
+    if not afue.nil?
+      heating_efficiency_afue = afue
+    elsif not thermal_eff.nil?
+      heating_efficiency_afue = thermal_eff # Assumes afue = thermal_eff
+    end
 
     if orig_system.is_shared_system # Retain the shared boiler regardless of its heating capacity.
       heating_capacity = orig_system.heating_capacity
@@ -2331,7 +2333,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                   heating_capacity: heating_capacity,
                                   shared_loop_watts: shared_loop_watts,
                                   fan_coil_watts: orig_system.fan_coil_watts,
-                                  heating_efficiency_afue: afue,
+                                  heating_efficiency_afue: heating_efficiency_afue,
                                   fraction_heat_load_served: orig_system.fraction_heat_load_served)
   end
 
