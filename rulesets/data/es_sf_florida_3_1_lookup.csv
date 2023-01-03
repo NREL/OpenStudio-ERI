@@ -8,6 +8,7 @@ foundation_walls_ufactor,,0.36,0.36,0.36,0.36,0.36,0.36
 foundation_walls_rvalue,,,,,,,
 walls_ufactor,,0.082,0.082,0.082,0.082,0.082,0.082
 floors_over_uncond_spc_ufactor,,0.064,0.064,0.064,0.064,0.064,0.064
+floors_over_uncond_spc_ufactor,concrete,0.064,0.064,0.064,0.064,0.064,0.064
 hot_water_distribution_pipe_r_value,,0,0,0,0,0,0
 boiler_eff,fuel_oil,0.8,0.8,0.8,0.8,0.8,0.8
 boiler_eff,natural_gas_propane_wood_wood_pellets,0.8,0.8,0.8,0.8,0.8,0.8
@@ -25,7 +26,9 @@ slab_perimeter_ins_rvalue,,0,0,0,0,0,0
 slab_under_ins_width,,0,0,0,0,0,0
 slab_under_ins_rvalue,,0,0,0,0,0,0
 ceiling_ufactor,,0.035,0.035,0.035,0.035,0.035,0.035
-window_ufactor,,0.65,0.65,0.65,0.65,0.65,0.65
+window_ufactor,residential,0.65,0.65,0.65,0.65,0.65,0.65
+window_ufactor,architectural_operable,0.65,0.65,0.65,0.65,0.65,0.65
+window_ufactor,architectural_fixed,0.65,0.65,0.65,0.65,0.65,0.65
 window_shgc,,0.27,0.27,0.27,0.27,0.27,0.27
 fFI_int,,0.8,0.8,0.8,0.8,0.8,0.8
 fFI_ext,,0,0,0,0,0,0

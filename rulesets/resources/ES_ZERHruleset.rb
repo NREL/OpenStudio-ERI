@@ -549,9 +549,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # Exhibit 2 - Foundations
     orig_hpxml.slabs.each do |orig_slab|
       if orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
-        if [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
+        if slab_under_width >= 999
           is_under_entire_slab_insulated = true
-          # override depth of slab perimeter insulation if slab depth is provided
+          slab_under_width = nil
+        end
+        if (not slab_perim_rvalue.nil?) && slab_perim_depth.nil?
           slab_perim_depth = orig_slab.thickness
         end
         perimeter_insulation_depth = slab_perim_depth
@@ -1221,7 +1223,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     if lookup_radiant_barrier_bool
-      radiant_barrier_bool = get_reference_value('vented_attic_radiant_barrier_bool') == 'TRUE' ? true : false
+      radiant_barrier_bool = get_reference_value('vented_attic_radiant_barrier_bool')
       return radiant_barrier_bool
     else
       return false
@@ -1258,7 +1260,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.get_mechanical_ventilation_fan_sre()
     mechanical_ventilation_fan_sre = get_reference_value('mechanical_ventilation_fan_sre')
-      
+
     return mechanical_ventilation_fan_sre
   end
 
@@ -1302,11 +1304,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_enclosure_floors_over_uncond_spc_default_ufactor(floor_type)
-    if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? @program_version
-      subtype = floor_type == HPXML::FloorTypeConcrete ? 'concrete' : nil
-    else
-      subtype = nil
-    end
+    subtype = floor_type == HPXML::FloorTypeConcrete ? 'concrete' : nil
     floors_over_uncond_spc_ufactor = get_reference_value('floors_over_uncond_spc_ufactor', subtype)
 
     return floors_over_uncond_spc_ufactor
@@ -1436,7 +1434,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
-
   end
 
   def self.get_default_boiler_afue_and_thermal_eff(orig_system)
@@ -1452,12 +1449,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         return 0.98 # AFUE
       else
         if fuel_type == HPXML::FuelTypeOil
-          subtype = (HPXML::FuelTypeOil).gsub(' ', '_')
+          subtype = HPXML::FuelTypeOil.gsub(' ', '_')
         elsif not fuel_type.nil?
           subtype = (HPXML::FuelTypeNaturalGas + '_' + HPXML::FuelTypePropane + '_' + HPXML::FuelTypeWoodCord + '_' + HPXML::FuelTypeWoodPellets).gsub(' ', '_')
         end
         boiler_eff = get_reference_value('boiler_eff', subtype)
-    
+
         return boiler_eff
       end
     end
@@ -1465,7 +1462,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.get_default_furnace_afue(fuel_type)
     if fuel_type == HPXML::FuelTypeOil
-      subtype = (HPXML::FuelTypeOil).gsub(' ', '_')
+      subtype = HPXML::FuelTypeOil.gsub(' ', '_')
     elsif not fuel_type.nil?
       subtype = (HPXML::FuelTypeNaturalGas + '_' + HPXML::FuelTypePropane + '_' + HPXML::FuelTypeWoodCord + '_' + HPXML::FuelTypeWoodPellets).gsub(' ', '_')
     end
@@ -1952,6 +1949,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_reference_glazing_ufactor_shgc(orig_window)
+    subtype = HPXML::WindowClassResidential
     unless orig_window.nil?
       if orig_window.performance_class == HPXML::WindowClassArchitectural
         if orig_window.fraction_operable > 0
@@ -1967,23 +1965,32 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     return window_ufactor, window_shgc
   end
-  
-  def self.get_reference_value(value_type, subtype=nil)
+
+  def self.get_reference_value(value_type, subtype = nil)
     @es_zerh_lookup.each do |row|
       next unless row['type'] == value_type
       next unless row['subtype'] == subtype
 
       value = row[@iecc_zone]
+      return nil if value.nil?
 
-      unless value.nil?
-        begin
-          return Float(value)
-        rescue
+      begin
+        return Float(value)
+      rescue
+        if value.upcase == 'TRUE'
+          return true
+        elsif value.upcase == 'FALSE'
+          return false
+        else
           return value
         end
-      else
-        return nil
       end
+    end
+
+    if not subtype.nil?
+      fail "Unexpected lookup for #{value_type} [subtype: #{subtype}]."
+    else
+      fail "Unexpected lookup for #{value_type}."
     end
   end
 end

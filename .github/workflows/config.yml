@@ -13,7 +13,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.5.0
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
@@ -59,7 +59,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.5.0
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
@@ -82,7 +82,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.5.0
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
@@ -105,7 +105,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.5.0
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
@@ -128,7 +128,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.5.0
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
@@ -149,7 +149,7 @@ jobs:
   run-windows-tests:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
       - name: Install software and run test
@@ -166,7 +166,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [run-eri-tests, run-real-home-tests, run-resnet-tests, run-es-zerh-tests]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.base.sha }}
 
@@ -176,7 +176,7 @@ jobs:
           path: workflow/tests/base_results
           name: base_results
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -239,7 +239,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [run-eri-tests, run-real-home-tests, run-resnet-tests, run-es-zerh-tests]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
