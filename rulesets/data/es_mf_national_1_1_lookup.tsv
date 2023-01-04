@@ -23,9 +23,12 @@ lighting_tier2_ext		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 refrigerator_rated_annual_kwh		423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423
 ceiling_fan_cfm_per_w		122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122
-hvac_boiler_eff	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86
-hvac_boiler_eff	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
-hvac_boiler_eff	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98
+hvac_heating_fuel																					
+hvac_boiler_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86
+hvac_boiler_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
+hvac_boiler_afue	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98
+hvac_central_boiler_et		0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86
+hvac_central_boiler_wlhp_et		0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89
 hvac_furnace_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85
 hvac_furnace_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_heat_pump_backup_fuel		electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
@@ -37,15 +40,16 @@ hvac_ashp_seer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_gshp_eer																				17.1	17.1
 hvac_wlhp_eer		14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14
 hvac_chiller_kw_per_ton		0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78
+hvac_shared_motor_efficiency		0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85
 hvac_charge_defect_ratio		-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25
 hvac_airflow_defect_ratio		-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25
 hvac_fan_watts_per_cfm		0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58	0.58
 hot_water_distribution_pipe_r_value		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 hot_water_distribution_low_flow		TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
-water_heater_type		storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater
 water_heater_fuel_type	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 water_heater_fuel_type	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 water_heater_fuel_type	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil
+water_heater_type		storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater
 water_heater_eff_units		EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF
 water_heater_eff_fixed	"natural gas, <= 55 gal"	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67
 water_heater_eff_fixed	"natural gas, > 55 gal"	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77
@@ -60,6 +64,10 @@ water_heater_re	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8
 water_heater_volume	natural gas	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50
 water_heater_volume	electricity	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
 water_heater_volume	fuel oil	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50
+water_heater_solar_fraction																					
+duct_unconditioned_r_value																					
+duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+duct_lto_cfm25_max		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 infil_air_leakage_units		cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft
 infil_air_leakage		0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only

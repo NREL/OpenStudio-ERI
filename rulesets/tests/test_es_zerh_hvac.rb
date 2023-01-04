@@ -1095,7 +1095,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.95, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      else
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      end
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -1132,7 +1136,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.95, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      else
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      end
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -1173,7 +1181,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.95, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      else
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.86, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      end
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
@@ -1214,7 +1226,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.89, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      else
+        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.89, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      end
       _check_cooling_system(hpxml)
       if [ESConstants.MFNationalVer1_2].include? program_version
         _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.5, eer: 15, heating_capacity: 24000.0 }])

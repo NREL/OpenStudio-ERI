@@ -306,18 +306,14 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < MiniTest::Test
   end
 
   def test_shared_water_heating_recirc
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-multifamily-shared-water-heater-recirc.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1].include? program_version
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 120.0, ef: 0.45, n_units_served: 1 }])
-      elsif program_version == ESConstants.SFPacificVer3_0
-        _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 120.0, ef: 0.80, n_units_served: 1 }])
-      elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      if [ESConstants.MFOregonWashingtonVer1_2].include? program_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, ef: 0.91, n_units_served: 1 }])
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ZERHConstants.Ver1].include? program_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, tank_vol: 120.0, ef: 0.77, n_units_served: 1 }])
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.MFNationalVer1_2].include? program_version
         _check_water_heater(hpxml, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationLivingSpace, uef: 0.90, n_units_served: 1 }])
       end
       _check_hot_water_distribution(hpxml, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version), pipe_l: 70.0, shared_recirc_power: 232.94, shared_recirc_num_units_served: 6, shared_recirc_control_type: HPXML::DHWRecirControlTypeTimer)
