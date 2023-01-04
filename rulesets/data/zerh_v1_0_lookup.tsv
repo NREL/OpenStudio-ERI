@@ -57,9 +57,6 @@ water_heater_eff_fixed	"electricity, single-family attached"	1.5	1.5	1.5	1.5	1.5
 water_heater_eff_fixed	"electricity, apartment unit"	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5
 water_heater_eff_fixed	fuel oil	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
 water_heater_eff_variable		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-water_heater_re	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8
-water_heater_re	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98
-water_heater_re	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8
 water_heater_volume	natural gas	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40
 water_heater_volume	electricity	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
 water_heater_volume	fuel oil	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40

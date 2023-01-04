@@ -50,8 +50,6 @@ water_heater_eff_units		EF	EF	EF
 water_heater_eff_fixed	natural gas	0.8	0.8	0.8
 water_heater_eff_fixed	electricity	0.9	0.9	0.9
 water_heater_eff_variable		0	0	0
-water_heater_re	natural gas	0.8	0.8	0.8
-water_heater_re	electricity	0.98	0.98	0.98
 water_heater_volume		50	50	50
 water_heater_solar_fraction	electricity or solar	0.9	0.9	0.9
 water_heater_solar_fraction	other			

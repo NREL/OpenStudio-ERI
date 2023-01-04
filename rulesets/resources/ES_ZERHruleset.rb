@@ -839,7 +839,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Service water heating systems
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
-      wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr = get_water_heater_properties(orig_water_heater)
+      wh_type, wh_fuel_type, wh_tank_vol, ef, uef, fhr = get_water_heater_properties(orig_water_heater)
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
@@ -850,7 +850,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                           tank_volume: wh_tank_vol,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           energy_factor: ef,
-                                          recovery_efficiency: re,
                                           uniform_energy_factor: uef,
                                           first_hour_rating: fhr)
     end
@@ -1304,10 +1303,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       ef = wh_eff
     end
 
-    re = lookup_reference_value('water_heater_re', wh_fuel_type)
-    re = lookup_reference_value('water_heater_re') if re.nil?
-
-    return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
+    return wh_type, wh_fuel_type, wh_tank_vol, ef, uef, fhr
   end
 
   def self.get_default_boiler_efficiency(orig_system, fuel_type)

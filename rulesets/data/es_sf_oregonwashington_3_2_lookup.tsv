@@ -48,9 +48,6 @@ water_heater_eff_fixed	natural gas	0.91	0.91	0.91	0.91	0.91	0.91	0.91
 water_heater_eff_fixed	electricity	2.5	2.5	2.5	2.5	2	2	2
 water_heater_eff_fixed	fuel oil	2.5	2.5	2.5	2.5	2	2	2
 water_heater_eff_variable		0	0	0	0	0	0	0
-water_heater_re	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8
-water_heater_re	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98
-water_heater_re	fuel oil	0.98	0.98	0.98	0.98	0.98	0.98	0.98
 water_heater_volume		60	60	60	60	60	60	60
 water_heater_solar_fraction								
 duct_unconditioned_r_value		8	8	8	8	8	8	8
