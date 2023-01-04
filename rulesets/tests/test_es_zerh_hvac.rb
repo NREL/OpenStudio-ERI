@@ -1090,7 +1090,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_boiler_baseboard
     hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -1108,13 +1108,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? program_version
+      if [ESConstants.MFNationalVer1_0].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       elsif [ZERHConstants.Ver1].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.94, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.MFNationalVer1_2].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.95, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       else
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
@@ -1129,7 +1127,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_boiler_fan_coil
     hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-fan-coil.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -1138,16 +1136,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
-      end
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
@@ -1157,13 +1147,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? program_version
+      if [ESConstants.MFNationalVer1_0].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       elsif [ZERHConstants.Ver1].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.94, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.MFNationalVer1_2].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.95, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       else
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
@@ -1171,16 +1159,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
-      end
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
@@ -1188,7 +1168,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_boiler_fan_coil_ducted
     hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-fan-coil-ducted.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
@@ -1197,16 +1177,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
-      end
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
@@ -1216,13 +1188,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? program_version
+      if [ESConstants.MFNationalVer1_0].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       elsif [ZERHConstants.Ver1].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.94, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.MFNationalVer1_2].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.95, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
       else
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
@@ -1230,16 +1200,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       _check_cooling_system(hpxml)
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
-      end
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
@@ -1247,25 +1209,21 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_boiler_water_loop_heat_pump
     hpxml_name = 'base-bldgtype-multifamily-shared-boiler-only-water-loop-heat-pump.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
       _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.89, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
-      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.5, eer: 15, heating_capacity: 24000.0 }])
+      else
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
       end
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
@@ -1275,30 +1233,24 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
       hpxml.heating_systems[0].heating_capacity = 290000
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? program_version
+      if [ESConstants.MFNationalVer1_0].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.85, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
-        _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.80, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       elsif [ZERHConstants.Ver1].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.94, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.MFNationalVer1_2].include? program_version
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.95, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       else
         _check_heating_system(hpxml, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.90, num_units_served: 6, frac_load: 1.0, shared_loop_watts: 635.3 }])
       end
       _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
-      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.5, eer: 15, heating_capacity: 24000.0 }])
+      else
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
       end
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
@@ -1306,11 +1258,15 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_chiller_baseboard
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-baseboard.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = _test_ruleset(program_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.75, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      else
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      end
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
       _check_ducts(hpxml)
@@ -1320,23 +1276,19 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_chiller_fan_coil
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = _test_ruleset(program_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.75, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      else
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      end
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
-      end
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
@@ -1344,23 +1296,19 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_chiller_fan_coil_ducted
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = _test_ruleset(program_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.75, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      else
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3, fan_coil_watts: 150.0 }])
+      end
       _check_heat_pump(hpxml)
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
-      end
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
@@ -1368,23 +1316,23 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_chiller_water_loop_heat_pump
     hpxml_name = 'base-bldgtype-multifamily-shared-chiller-only-water-loop-heat-pump.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = _test_ruleset(program_version)
       _check_heating_system(hpxml)
-      _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
-      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.75, frac_load: 1.0, shared_loop_watts: 635.3 }])
+      else
+        _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.78, frac_load: 1.0, shared_loop_watts: 635.3 }])
       end
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.5, eer: 15, heating_capacity: 24000.0 }])
+      else
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
+      end
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
@@ -1392,23 +1340,19 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_cooling_tower_water_loop_heat_pump
     hpxml_name = 'base-bldgtype-multifamily-shared-cooling-tower-only-water-loop-heat-pump.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = _test_ruleset(program_version)
       _check_heating_system(hpxml)
       _check_cooling_system(hpxml, [{ num_units_served: 6, systype: HPXML::HVACTypeCoolingTower, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, shared_loop_watts: 635.3 }])
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
-      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+      if [ESConstants.MFNationalVer1_2].include? program_version
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.5, eer: 15, heating_capacity: 24000.0 }])
+      else
+        _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpWaterLoopToAir, fuel: HPXML::FuelTypeElectricity, cop: 4.2, eer: 14, heating_capacity: 24000.0 }])
       end
+      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
@@ -1416,7 +1360,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
   def test_shared_ground_loop_ground_source
     hpxml_name = 'base-bldgtype-multifamily-shared-ground-loop-ground-to-air-heat-pump.xml'
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
@@ -1428,16 +1372,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
         _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       end
       _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        return_duct_r = (program_version != ESConstants.SFOregonWashingtonVer3_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFFloridaVer3_1, ESConstants.SFNationalVer3_2,
-             ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-             ZERHConstants.Ver1].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
-      end
+      _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
+                           { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 20.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 

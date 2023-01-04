@@ -5,6 +5,7 @@ __New Features__
 
 __Bugfixes__
 - Fixes incorrect modeling of foundation wall insulation for ENERGY STAR MF National v1.2.
+- Fixes WLHP and chiller efficiency values for ENERGY STAR MF National v1.2.
 
 ## OpenStudio-ERI v1.5.1
 

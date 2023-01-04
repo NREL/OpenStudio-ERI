@@ -174,8 +174,8 @@ def get_es_zerh_lookup_tables()
 
   es_zerh_lookup = {}
   programs.each do |p|
-    program_lookup_path = File.join(File.dirname(__FILE__), "data/#{p}_lookup.csv")
-    lookup_values = CSV.parse(File.read(program_lookup_path), headers: true)
+    program_lookup_path = File.join(File.dirname(__FILE__), "data/#{p}_lookup.tsv")
+    lookup_values = CSV.read(program_lookup_path, headers: true, col_sep: "\t")
     es_zerh_lookup[p] = lookup_values
   end
 

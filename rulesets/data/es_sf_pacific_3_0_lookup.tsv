@@ -1,0 +1,58 @@
+type	subtype	1A	1B	1C
+foundation_walls_ufactor		0.36	0.36	0.36
+foundation_walls_rvalue				
+slab_perimeter_ins_depth		0	0	0
+slab_perimeter_ins_rvalue		0	0	0
+slab_under_ins_width		0	0	0
+slab_under_ins_rvalue		0	0	0
+floors_over_uncond_spc_ufactor		0.257	0.257	0.257
+walls_ufactor	HI	0.082	0.082	0.082
+walls_ufactor	GU	0.401	0.401	0.401
+walls_ufactor	MP	0.401	0.401	0.401
+door_ufactor		0.21	0.21	0.21
+window_ufactor		0.6	0.6	0.6
+window_shgc		0.27	0.27	0.27
+ceiling_ufactor		0.035	0.035	0.035
+radiant_barrier		TRUE	TRUE	TRUE
+lighting_tier1_int		0.8	0.8	0.8
+lighting_tier1_ext		0	0	0
+lighting_tier1_grg		0	0	0
+lighting_tier2_int		0	0	0
+lighting_tier2_ext		0	0	0
+lighting_tier2_grg		0	0	0
+refrigerator_rated_annual_kwh		423	423	423
+ceiling_fan_cfm_per_w		122	122	122
+hvac_boiler_eff	fuel oil	0.8	0.8	0.8
+hvac_boiler_eff	natural gas	0.8	0.8	0.8
+hvac_boiler_eff	electricity	0.98	0.98	0.98
+hvac_furnace_afue	fuel oil	0.8	0.8	0.8
+hvac_furnace_afue	natural gas	0.8	0.8	0.8
+hvac_heat_pump_backup_fuel		electricity	electricity	electricity
+hvac_ashp_hspf		8.2	8.2	8.2
+hvac_gshp_cop				
+hvac_ac_seer		14.5	14.5	14.5
+hvac_ashp_seer		14.5	14.5	14.5
+hvac_gshp_eer				
+hvac_charge_defect_ratio		-0.25	-0.25	-0.25
+hvac_airflow_defect_ratio		-0.25	-0.25	-0.25
+hvac_fan_watts_per_cfm		0.58	0.58	0.58
+hot_water_distribution_pipe_r_value		0	0	0
+hot_water_distribution_low_flow		FALSE	FALSE	FALSE
+water_heater_type		storage water heater	storage water heater	storage water heater
+water_heater_fuel_type	natural gas	natural gas	natural gas	natural gas
+water_heater_fuel_type	electricity	electricity	electricity	electricity
+water_heater_fuel_type	fuel oil	natural gas	natural gas	natural gas
+water_heater_eff_units		EF	EF	EF
+water_heater_eff_fixed	natural gas	0.8	0.8	0.8
+water_heater_eff_fixed	electricity	0.9	0.9	0.9
+water_heater_eff_fixed	fuel oil	0.8	0.8	0.8
+water_heater_eff_variable		0	0	0
+water_heater_re	natural gas	0.8	0.8	0.8
+water_heater_re	electricity	0.98	0.98	0.98
+water_heater_re	fuel oil	0.8	0.8	0.8
+water_heater_volume		50	50	50
+infil_air_leakage_units		ACH50	ACH50	ACH50
+infil_air_leakage		6	6	6
+mechanical_ventilation_fan_type		supply only	supply only	supply only
+mechanical_ventilation_fan_sre				
+mechanical_ventilation_fan_cfm_per_w		2.2	2.2	2.2
