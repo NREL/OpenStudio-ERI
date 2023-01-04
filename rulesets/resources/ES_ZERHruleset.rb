@@ -829,7 +829,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
     # Exhibit 2 - Service water heating systems
     orig_hpxml.water_heating_systems.each do |orig_water_heater|
-      wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr = get_water_heater_properties(orig_water_heater)
+      wh_type, wh_fuel_type, wh_tank_vol, ef, uef, fhr = get_water_heater_properties(orig_water_heater)
 
       # New water heater
       new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
@@ -840,7 +840,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                           tank_volume: wh_tank_vol,
                                           fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
                                           energy_factor: ef,
-                                          recovery_efficiency: re,
                                           uniform_energy_factor: uef,
                                           first_hour_rating: fhr)
     end
@@ -1625,20 +1624,17 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeNaturalGas
         ef = 0.69 - (0.002 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
-        re = 0.80
       elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeElectricity
         ef = 0.97 - (0.001 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
-        re = 0.98
       elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeOil
         ef = 0.61 - (0.002 * wh_tank_vol) # EnergyStar Exhibit 2: Footnote 14
-        re = 0.80
       end
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
+      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2)
 
     elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
       if not [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
@@ -1663,7 +1659,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         fhr = 63.0 if fhr.nil?
       end
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef, re, uef, fhr
+      return wh_type, wh_fuel_type, wh_tank_vol, ef, uef, fhr
 
     elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
@@ -1681,24 +1677,20 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         wh_fuel_type = HPXML::FuelTypeNaturalGas
         if wh_tank_vol <= 55
           ef = 0.67
-          re = 0.80
         else
           ef = 0.77
-          re = 0.80
         end
       elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeElectricity
         ef = 0.95
-        re = 0.98
       elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeOil
         ef = 0.70 - (0.002 * wh_tank_vol) # EnergyStar Multifamily New Construction Exhibit 1: Footnote 10
-        re = 0.80
       end
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
+      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2)
 
     elsif [ESConstants.SFPacificVer3_0].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include?(orig_water_heater.water_heater_type) || (orig_wh_fuel_type == HPXML::FuelTypeElectricity)
@@ -1711,15 +1703,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeNaturalGas
         ef = 0.80 # Gas DHW EF for all storage tank capacities
-        re = 0.80
       elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeElectricity
         ef = 0.90
-        re = 0.98
       end
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
+      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2)
 
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
       if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? orig_wh_fuel_type
@@ -1727,23 +1717,20 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         wh_fuel_type = HPXML::FuelTypeNaturalGas
         wh_tank_vol = nil # instantaneous water heater
         ef = 0.91
-        re = 0.80
       elsif [HPXML::FuelTypeOil, HPXML::FuelTypeElectricity].include? orig_wh_fuel_type # If Rated Home uses a system with an oil, electric, or other fuel type, model as 60 gallon electric heat pump water heater.
         wh_type = HPXML::WaterHeaterTypeHeatPump
         wh_fuel_type = HPXML::FuelTypeElectricity
         wh_tank_vol = 60.0 # gallon
         if ['4C', '5A', '5B', '5C'].include? @iecc_zone
           ef = 2.50
-          re = 0.98
         elsif ['6A', '6B', '6C'].include? @iecc_zone
           ef = 2.00
-          re = 0.98
         else
           fail "Unexpected iecc zone: #{@iecc_zone}."
         end
       end
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
+      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2)
 
     elsif [ZERHConstants.Ver1].include? @program_version
       if [HPXML::WaterHeaterTypeTankless, HPXML::WaterHeaterTypeCombiTankless].include? orig_water_heater.water_heater_type
@@ -1764,7 +1751,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         else
           ef = 0.77
         end
-        re = 0.80
       elsif [HPXML::FuelTypeElectricity].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeHeatPump
         wh_fuel_type = HPXML::FuelTypeElectricity
@@ -1773,15 +1759,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         elsif [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type
           ef = 1.5
         end
-        re = 0.98
       elsif [HPXML::FuelTypeOil].include? orig_wh_fuel_type
         wh_type = HPXML::WaterHeaterTypeStorage
         wh_fuel_type = HPXML::FuelTypeOil
         ef = 0.60
-        re = 0.80
       end
+      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2)
 
-      return wh_type, wh_fuel_type, wh_tank_vol, ef.round(2), re
     end
 
     fail 'Unexpected case.'

@@ -1673,7 +1673,7 @@ class EnergyRatingIndex301Ruleset
         fuel_type = orig_water_heater.related_hvac_system.heating_system_fuel
       end
 
-      energy_factor, recovery_efficiency = get_reference_water_heater_ef_and_re(fuel_type, tank_volume)
+      energy_factor = get_reference_water_heater_ef(fuel_type, tank_volume)
 
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_hpxml.water_heating_systems.size) * 1000.0 # Btuh
 
@@ -1694,7 +1694,6 @@ class EnergyRatingIndex301Ruleset
                                           fraction_dhw_load_served: 1.0,
                                           heating_capacity: heating_capacity.round(0),
                                           energy_factor: energy_factor,
-                                          recovery_efficiency: recovery_efficiency,
                                           uses_desuperheater: false,
                                           temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
 
@@ -2739,7 +2738,7 @@ class EnergyRatingIndex301Ruleset
     end
     wh_tank_vol = 40.0
 
-    wh_ef, wh_re = get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+    wh_ef = get_reference_water_heater_ef(wh_fuel_type, wh_tank_vol)
     wh_cap = Waterheater.get_default_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     new_hpxml.water_heating_systems.add(id: 'WaterHeatingSystem',
@@ -2753,7 +2752,6 @@ class EnergyRatingIndex301Ruleset
                                         fraction_dhw_load_served: 1.0,
                                         heating_capacity: wh_cap.round(0),
                                         energy_factor: wh_ef,
-                                        recovery_efficiency: wh_re,
                                         uses_desuperheater: false,
                                         temperature: Waterheater.get_default_hot_water_temperature(@eri_version))
   end
@@ -2789,17 +2787,14 @@ class EnergyRatingIndex301Ruleset
     return
   end
 
-  def self.get_reference_water_heater_ef_and_re(wh_fuel_type, wh_tank_vol)
+  def self.get_reference_water_heater_ef(wh_fuel_type, wh_tank_vol)
     # Table 4.2.2(1) - Service water heating systems
-    ef = nil
-    re = nil
     if wh_fuel_type == HPXML::FuelTypeElectricity
       ef = 0.97 - (0.00132 * wh_tank_vol)
     else
       ef = 0.67 - (0.0019 * wh_tank_vol)
-      re = 0.78
     end
-    return ef.round(2), re
+    return ef.round(2)
   end
 
   def self.get_reference_floor_ufactor()

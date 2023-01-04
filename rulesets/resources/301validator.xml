@@ -1156,7 +1156,9 @@ Temporarily disabled until RESNET allows this.
   <sch:pattern>
     <sch:title>[WaterHeatingSystemType=FuelTank]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:WaterHeatingSystem[h:WaterHeaterType="storage water heater" and h:FuelType!="electricity"]'>
-      <sch:assert role='ERROR' test='count(h:RecoveryEfficiency) = 1'>Expected 1 element(s) for xpath: RecoveryEfficiency</sch:assert>
+      <sch:assert role='ERROR' test='count(h:RecoveryEfficiency) &lt;= 1'>Expected 0 or 1 element(s) for xpath: RecoveryEfficiency</sch:assert>
+      <sch:assert role='ERROR' test='number(h:RecoveryEfficiency) &gt; number(h:EnergyFactor) or not(h:RecoveryEfficiency) or not (h:EnergyFactor)'>Expected RecoveryEfficiency to be greater than EnergyFactor</sch:assert>
+      <sch:assert role='ERROR' test='number(h:RecoveryEfficiency) &gt; number(h:UniformEnergyFactor) or not(h:RecoveryEfficiency) or not (h:UniformEnergyFactor)'>Expected RecoveryEfficiency to be greater than UniformEnergyFactor</sch:assert>
     </sch:rule>
   </sch:pattern>
 
