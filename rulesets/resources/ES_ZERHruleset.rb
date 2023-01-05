@@ -799,7 +799,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         primary_duct_area, secondary_duct_area = HVAC.get_default_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
         total_duct_area = primary_duct_area + secondary_duct_area
 
-        duct_location_and_surface_area = get_duct_location_and_surface_area(orig_hpxml, total_duct_area)
+        duct_location_and_surface_area = get_duct_location_fractions(orig_hpxml, total_duct_area)
 
         duct_location_and_surface_area.each do |duct_location, duct_surface_area|
           num_ducts += 1
@@ -956,28 +956,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       location = clothes_washer.location.gsub('unvented', 'vented')
     end
 
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
-      reference_values = { integrated_modified_energy_factor: 1.57, # ft3/(kWh/cyc)
-                           rated_annual_kwh: 284.0, # kWh/yr
-                           label_electric_rate: 0.12, # $/kWh
-                           label_gas_rate: 1.09, # $/therm
-                           label_annual_gas_cost: 18.0, # $
-                           capacity: 4.2, # ft^3
-                           label_usage: 6.0 } # cyc/week
-    else
-      reference_values = HotWaterAndAppliances.get_clothes_washer_default_values(@eri_version)
-    end
-
     new_hpxml.clothes_washers.add(id: id,
                                   location: location,
                                   is_shared_appliance: false,
-                                  integrated_modified_energy_factor: reference_values[:integrated_modified_energy_factor],
-                                  rated_annual_kwh: reference_values[:rated_annual_kwh],
-                                  label_electric_rate: reference_values[:label_electric_rate],
-                                  label_gas_rate: reference_values[:label_gas_rate],
-                                  label_annual_gas_cost: reference_values[:label_annual_gas_cost],
-                                  label_usage: reference_values[:label_usage],
-                                  capacity: reference_values[:capacity])
+                                  integrated_modified_energy_factor: lookup_reference_value('clothes_washer_imef'),
+                                  rated_annual_kwh: lookup_reference_value('clothes_washer_ler'),
+                                  label_electric_rate: lookup_reference_value('clothes_washer_elec_rate'),
+                                  label_gas_rate: lookup_reference_value('clothes_washer_gas_rate'),
+                                  label_annual_gas_cost: lookup_reference_value('clothes_washer_ghwc'),
+                                  label_usage: lookup_reference_value('clothes_washer_lcy') / 52.0,
+                                  capacity: lookup_reference_value('clothes_washer_capacity'))
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
@@ -1267,19 +1255,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     wh_eff_type = lookup_reference_value('water_heater_eff_units').upcase
 
     if not tankless_types.include? wh_type
-      if [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-        # Use specified volume always
-        wh_tank_vol = lookup_reference_value('water_heater_volume', wh_fuel_type)
-        wh_tank_vol = lookup_reference_value('water_heater_volume') if wh_tank_vol.nil?
-      else
-        # Use specified volume only if home switches from tankless to tank
-        if tankless_types.include? orig_water_heater.water_heater_type
-          wh_tank_vol = lookup_reference_value('water_heater_volume', wh_fuel_type)
-          wh_tank_vol = lookup_reference_value('water_heater_volume') if wh_tank_vol.nil?
-        else
-          wh_tank_vol = orig_water_heater.tank_volume
-        end
+      if tankless_types.include? orig_water_heater.water_heater_type
+        wh_tank_vol = lookup_reference_value('water_heater_volume', "#{wh_fuel_type}, tankless->tank")
+        wh_tank_vol = lookup_reference_value('water_heater_volume', 'tankless->tank') if wh_tank_vol.nil?
       end
+      wh_tank_vol = lookup_reference_value('water_heater_volume', wh_fuel_type) if wh_tank_vol.nil?
+      wh_tank_vol = lookup_reference_value('water_heater_volume') if wh_tank_vol.nil?
+      wh_tank_vol = orig_water_heater.tank_volume if wh_tank_vol.nil?
     end
 
     if not wh_tank_vol.nil?
@@ -1314,7 +1296,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         boiler_eff = lookup_reference_value('hvac_central_boiler_et')
       end
     else
-      boiler_eff = lookup_reference_value('hvac_boiler_afue', fuel_type)
+      if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
+        subtype = HPXML::FuelTypeNaturalGas
+      else
+        subtype = fuel_type
+      end
+      boiler_eff = lookup_reference_value('hvac_boiler_afue', subtype)
       boiler_eff = lookup_reference_value('hvac_boiler_afue') if boiler_eff.nil?
     end
 
@@ -1322,7 +1309,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_default_furnace_afue(fuel_type)
-    furnace_afue = lookup_reference_value('hvac_furnace_afue', fuel_type)
+    if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypePropane, HPXML::FuelTypeWoodCord, HPXML::FuelTypeWoodPellets].include? fuel_type
+      subtype = HPXML::FuelTypeNaturalGas
+    else
+      subtype = fuel_type
+    end
+    furnace_afue = lookup_reference_value('hvac_furnace_afue', subtype)
     furnace_afue = lookup_reference_value('hvac_furnace_afue') if furnace_afue.nil?
 
     return furnace_afue
@@ -1378,76 +1370,43 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return true
   end
 
-  def self.get_duct_location_and_surface_area(orig_hpxml, total_duct_area)
+  def self.get_duct_location_fractions(orig_hpxml, total_duct_area)
     # EPA confirmed that duct percentages apply to ASHRAE 152 *total* duct area
-    duct_location_and_surface_area = {}
+    duct_location_fractions = {}
     predominant_foundation_type = get_predominant_foundation_type(orig_hpxml)
-    if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? @program_version
-      if predominant_foundation_type == 'basement'
-        if @ncfl_ag == 1
-          if @has_cond_bsmnt
-            duct_location_and_surface_area[HPXML::LocationBasementConditioned] = total_duct_area
-          elsif @has_uncond_bsmnt
-            duct_location_and_surface_area[HPXML::LocationBasementUnconditioned] = total_duct_area
-          else
-            fail "Could not find '#{HPXML::LocationBasementConditioned}' or '#{HPXML::LocationBasementUnconditioned}' for duct location in the model."
-          end
-        else # two or more story above-grade
-          if @has_cond_bsmnt
-            duct_location_and_surface_area[HPXML::LocationBasementConditioned] = 0.5 * total_duct_area
-          elsif @has_uncond_bsmnt
-            duct_location_and_surface_area[HPXML::LocationBasementUnconditioned] = 0.5 * total_duct_area
-          else
-            fail "Could not find '#{HPXML::LocationBasementConditioned}' or '#{HPXML::LocationBasementUnconditioned}' for duct location in the model."
-          end
-          duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.5 * total_duct_area
-        end
-      elsif predominant_foundation_type == 'crawlspace'
-        if @ncfl_ag == 1
-          duct_location_and_surface_area[HPXML::LocationCrawlspaceVented] = total_duct_area
-        else # two or more story above-grade
-          duct_location_and_surface_area[HPXML::LocationCrawlspaceVented] = 0.5 * total_duct_area
-          duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.5 * total_duct_area
-        end
-      elsif predominant_foundation_type == 'ambient'
-        if @ncfl_ag == 1
-          duct_location_and_surface_area[HPXML::LocationOutside] = total_duct_area
-        else # two or more story above-grade
-          duct_location_and_surface_area[HPXML::LocationOutside] = 0.5 * total_duct_area
-          duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.5 * total_duct_area
-        end
-      elsif predominant_foundation_type == 'adiabatic'
-        duct_location_and_surface_area[HPXML::LocationAtticVented] = total_duct_area
-      elsif predominant_foundation_type == 'slab'
-        if @ncfl_ag == 1
-          duct_location_and_surface_area[HPXML::LocationAtticVented] = total_duct_area
-        else # two or more story above-grade
-          duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.75 * total_duct_area
-          duct_location_and_surface_area[HPXML::LocationLivingSpace] = 0.25 * total_duct_area
-        end
-      end
-    elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
-           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
-           ZERHConstants.Ver1].include? @program_version
-      duct_location_and_surface_area[HPXML::LocationLivingSpace] = total_duct_area # Duct location configured to be 100% in conditioned space.
-    elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-      if is_ceiling_fully_adiabatic(orig_hpxml)
-        duct_location_and_surface_area[HPXML::LocationLivingSpace] = total_duct_area
+
+    nstory = @ncfl_ag == 1 ? '1' : '2'
+
+    duct_fractions = lookup_reference_value('duct_location_fractions', "#{predominant_foundation_type} foundation, #{nstory} story")
+    duct_fractions = lookup_reference_value('duct_location_fractions', "#{predominant_foundation_type} foundation") if duct_fractions.nil?
+    if is_ceiling_fully_adiabatic(orig_hpxml)
+      duct_fractions = lookup_reference_value('duct_location_fractions', 'adiabatic ceiling') if duct_fractions.nil?
+    end
+    duct_fractions = lookup_reference_value('duct_location_fractions', "#{nstory} story") if duct_fractions.nil?
+    duct_fractions = lookup_reference_value('duct_location_fractions') if duct_fractions.nil?
+
+    fail 'Unexpected case.' if duct_fractions.nil?
+
+    duct_fractions.split(',').each do |data|
+      loc, frac = data.split('=').map(&:strip)
+      if loc == 'attic'
+        duct_location_fractions[HPXML::LocationAtticVented] = Float(frac) * total_duct_area
+      elsif loc == 'crawlspace'
+        duct_location_fractions[HPXML::LocationCrawlspaceVented] = Float(frac) * total_duct_area
+      elsif loc == 'basement' && @has_cond_bsmnt
+        duct_location_fractions[HPXML::LocationBasementConditioned] = Float(frac) * total_duct_area
+      elsif loc == 'basement' && @has_uncond_bsmnt
+        duct_location_fractions[HPXML::LocationBasementUnconditioned] = Float(frac) * total_duct_area
+      elsif loc == 'outside'
+        duct_location_fractions[HPXML::LocationOutside] = Float(frac) * total_duct_area
+      elsif loc == 'conditioned'
+        duct_location_fractions[HPXML::LocationLivingSpace] = Float(frac) * total_duct_area
       else
-        if @ncfl_ag == 1
-          duct_location_and_surface_area[HPXML::LocationAtticVented] = total_duct_area
-        else # all other unit
-          duct_location_and_surface_area[HPXML::LocationAtticVented] = 0.75 * total_duct_area
-          duct_location_and_surface_area[HPXML::LocationLivingSpace] = 0.25 * total_duct_area
-        end
+        fail "Unexpected duct location: #{loc}."
       end
     end
 
-    if duct_location_and_surface_area.empty?
-      fail 'Unexpected case.'
-    end
-
-    return duct_location_and_surface_area
+    return duct_location_fractions
   end
 
   def self.get_duct_insulation_r_value(duct_type, duct_location)

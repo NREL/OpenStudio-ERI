@@ -19,6 +19,13 @@ lighting_tier2_int		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_ext		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 refrigerator_rated_annual_kwh		423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423	423
+clothes_washer_imef		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+clothes_washer_ler		400	400	400	400	400	400	400	400	400	400	400	400	400	400	400	400	400	400	400	400
+clothes_washer_elec_rate		0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
+clothes_washer_gas_rate		1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09
+clothes_washer_ghwc		27	27	27	27	27	27	27	27	27	27	27	27	27	27	27	27	27	27	27	27
+clothes_washer_capacity		3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+clothes_washer_lcy		312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312
 ceiling_fan_cfm_per_w		122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122
 hvac_heating_fuel																					
 hvac_boiler_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.9	0.9	0.94	0.94	0.94	0.94	0.94	0.94	0.94	0.94	0.94
@@ -57,13 +64,14 @@ water_heater_eff_fixed	"electricity, single-family attached"	1.5	1.5	1.5	1.5	1.5
 water_heater_eff_fixed	"electricity, apartment unit"	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5
 water_heater_eff_fixed	fuel oil	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
 water_heater_eff_variable		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-water_heater_volume	natural gas	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40
-water_heater_volume	electricity	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
-water_heater_volume	fuel oil	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40
+water_heater_volume	"natural gas, tankless->tank"	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40
+water_heater_volume	"electricity, tankless->tank"	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
+water_heater_volume	"fuel oil, tankless->tank"	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40
 water_heater_solar_fraction																					
 duct_unconditioned_r_value																					
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_lto_cfm25_max		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
 infil_air_leakage_units		ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50
 infil_air_leakage	single-family detached	3	3	3	3	3	3	2.5	2.5	2.5	2.5	2.5	2	2	2	2	2	2	2	2	1.5
 infil_air_leakage	single-family attached	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3

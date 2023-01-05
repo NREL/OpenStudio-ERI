@@ -22,6 +22,13 @@ lighting_tier2_int		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_ext		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 refrigerator_rated_annual_kwh		450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
+clothes_washer_imef		1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57
+clothes_washer_ler		284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284
+clothes_washer_elec_rate		0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
+clothes_washer_gas_rate		1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09
+clothes_washer_ghwc		18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18
+clothes_washer_capacity		4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2
+clothes_washer_lcy		312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312
 ceiling_fan_cfm_per_w		122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122
 hvac_heating_fuel	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 hvac_heating_fuel		natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
@@ -54,11 +61,12 @@ water_heater_eff_units		UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	
 water_heater_eff_fixed	natural gas	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 water_heater_eff_fixed	electricity	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49	1.49
 water_heater_eff_variable		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-water_heater_volume		60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
+water_heater_volume	tankless->tank	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
 water_heater_solar_fraction																					
 duct_unconditioned_r_value																					
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_lto_cfm25_max		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
 infil_air_leakage_units		cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft
 infil_air_leakage		0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only
