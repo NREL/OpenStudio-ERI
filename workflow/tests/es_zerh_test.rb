@@ -138,7 +138,7 @@ class ESZERHTest < Minitest::Test
   end
 
   def test_opp_limit
-    opp_limit_affected_versions = [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ZERHConstants.Ver1, ZERHConstants.Ver2]
+    opp_limit_affected_versions = [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ZERHConstants.Ver1]
 
     # On-site Power Production limit
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|

@@ -1,3 +1,13 @@
+## OpenStudio-ERI v1.5.2
+
+__New Features__
+- `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
+- Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.
+
+__Bugfixes__
+- Fixes incorrect modeling of basement wall insulation for ENERGY STAR MF National v1.2.
+- Fixes WLHP, chiller, and central boiler efficiencies for ENERGY STAR MF National v1.2.
+
 ## OpenStudio-ERI v1.5.1
 
 __Bugfixes__

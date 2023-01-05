@@ -51,13 +51,22 @@ def run_rulesets(hpxml_input_path, designs)
     end
 
     cache_path = epw_path.gsub('.epw', '-cache.csv')
+    weather = nil
     if not File.exist?(cache_path)
-      errors << "'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather"
-      return false, errors, warnings
+      # Process weather file to create cache .csv
+      begin
+        File.open(cache_path, 'wb') do |file|
+          warnings << "'#{cache_path}' could not be found; regenerating it."
+          weather = WeatherProcess.new(epw_path: epw_path)
+          weather.dump_to_csv(file)
+        end
+      rescue SystemCallError
+        warnings << "#{cache_path} could not be written, skipping."
+      end
+    else
+      # Obtain weather object
+      weather = WeatherProcess.new(csv_path: cache_path)
     end
-
-    # Obtain weather object
-    weather = WeatherProcess.new(nil, nil, cache_path)
 
     eri_version = orig_hpxml.header.eri_calculation_version
     eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
@@ -76,7 +85,7 @@ def run_rulesets(hpxml_input_path, designs)
       end
     end
 
-    es_zerh_lookup_by_cz = get_es_zerh_lookup_tables()
+    es_zerh_lookup_by_cz = {}
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
@@ -91,7 +100,15 @@ def run_rulesets(hpxml_input_path, designs)
           ESConstants.CalcTypeEnergyStarRated,
           ZERHConstants.CalcTypeZERHReference,
           ZERHConstants.CalcTypeZERHRated].include? design.init_calc_type
-        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, es_zerh_lookup_by_cz)
+        if design.init_calc_type == ESConstants.CalcTypeEnergyStarReference
+          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_version.gsub('.', '_').downcase
+        elsif design.init_calc_type == ZERHConstants.CalcTypeZERHReference
+          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_version.gsub('.', '_').downcase
+        end
+        if es_zerh_lookup_by_cz[lookup_program].nil?
+          es_zerh_lookup_by_cz[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
+        end
+        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, es_zerh_lookup_by_cz[lookup_program])
       end
 
       # Write initial HPXML file
@@ -146,19 +163,6 @@ def get_cambium_gea_region(zip_code)
   cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
   cambium_gea = lookup_region_from_zip(zip_code, cambium_zip_filepath, 0, 1)
   return cambium_gea
-end
-
-def get_es_zerh_lookup_tables()
-  es_lookup_by_cz_path = File.join(File.dirname(__FILE__), 'data/es_lookup_by_cz.csv')
-  zerh_lookup_by_cz_path = File.join(File.dirname(__FILE__), 'data/zerh_lookup_by_cz.csv')
-  es_lookup_by_cz = CSV.parse(File.read(es_lookup_by_cz_path), headers: true)
-
-  lookup_by_cz_headers = es_lookup_by_cz.headers()
-  es_zerh_lookup_by_cz = CSV::Table.new([], headers: lookup_by_cz_headers)
-  CSV.foreach(es_lookup_by_cz_path, headers: true) {|row| es_zerh_lookup_by_cz << row.values_at(*lookup_by_cz_headers)}
-  CSV.foreach(zerh_lookup_by_cz_path, headers: true) {|row| es_zerh_lookup_by_cz << row.values_at(*lookup_by_cz_headers)}
-
-  return es_zerh_lookup_by_cz
 end
 
 def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)

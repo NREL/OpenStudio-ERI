@@ -29,7 +29,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? iecc_zone
         return 1.2
       end
-    elsif [ZERHConstants.Ver2].include? program_version
+    elsif [ZERHConstants.SFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return 2.9
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? iecc_zone
@@ -44,7 +44,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
       return HPXML::MechVentTypeSupply
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
       return HPXML::MechVentTypeExhaust
-    elsif [ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
+    elsif [ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return HPXML::MechVentTypeSupply
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
@@ -69,7 +69,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < MiniTest::Test
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
         return 0.6
       end
-    elsif [ZERHConstants.Ver2].include? program_version
+    elsif [ZERHConstants.SFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone

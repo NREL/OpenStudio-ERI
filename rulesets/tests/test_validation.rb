@@ -146,7 +146,7 @@ class ERI301ValidationTest < MiniTest::Test
                                                             zone: zone)
       elsif error_case.include? 'zerh'
         versions = { 'zerh-version_1' => ZERHConstants.Ver1,
-                     'zerh-version_2' => ZERHConstants.Ver2 }
+                     'zerh-version_2' => ZERHConstants.SFVer2 }
         version = versions[error_case]
         hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files', 'base.xml'))
         hpxml.header.zerh_calculation_version = version

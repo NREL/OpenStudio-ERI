@@ -281,7 +281,7 @@ def set_hpxml_header(hpxml_file, hpxml, orig_parent)
     hpxml.header.transaction = 'create'
     hpxml.header.building_id = 'MyBuilding'
     hpxml.header.event_type = 'proposed workscope'
-    hpxml.header.created_date_and_time = Time.new(2000, 1, 1).strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
+    hpxml.header.created_date_and_time = Time.new(2000, 1, 1, 0, 0, 0, '-07:00').strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
     if hpxml_file.include?('SF_National_3.2')
       hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
     elsif hpxml_file.include?('SF_National_3.1')
@@ -1923,7 +1923,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
           water_heater_type = HPXML::WaterHeaterTypeStorage
           tank_volume = 40
           energy_factor = 0.67
-          recovery_efficiency = 0.8
         end
       else
         if hpxml_file.include?('SF_National_3.2')
@@ -1933,7 +1932,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
           water_heater_type = HPXML::WaterHeaterTypeStorage
           tank_volume = 40
           energy_factor = 0.61
-          recovery_efficiency = 0.8
         end
       end
       hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
@@ -1944,7 +1942,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                       tank_volume: tank_volume,
                                       fraction_dhw_load_served: 1,
                                       energy_factor: energy_factor,
-                                      recovery_efficiency: recovery_efficiency,
                                       uniform_energy_factor: uniform_energy_factor)
     elsif hpxml_file.include?('_elec_')
       if hpxml_file.include?('EPA_Tests/MF')
@@ -2787,7 +2784,7 @@ def create_sample_hpxmls
                                                           zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
     end
     if hpxml_path.include? 'base-bldgtype-multifamily'
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1
+      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2
     elsif hpxml.header.state_code == 'FL'
       hpxml.header.energystar_calculation_version = ESConstants.SFFloridaVer3_1
     elsif hpxml.header.state_code == 'HI'
@@ -2795,7 +2792,7 @@ def create_sample_hpxmls
     elsif hpxml.header.state_code == 'OR'
       hpxml.header.energystar_calculation_version = ESConstants.SFOregonWashingtonVer3_2
     else
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_1
+      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
     end
     hpxml.windows.each do |window|
       window.performance_class = HPXML::WindowClassResidential

@@ -28,7 +28,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         value, units = 5.0, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1564.8, 'CFM'
-      elsif [ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
+      elsif [ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
         value, units = 2.0, 'ACH'
       end
 
@@ -50,7 +50,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         value, units = 4.0, 'ACH'
       elsif [ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
         value, units = 3.0, 'ACH'
-      elsif program_version == ZERHConstants.Ver2
+      elsif program_version == ZERHConstants.SFVer2
         value, units = 2.75, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1170.0, 'CFM'
@@ -153,7 +153,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.056
       elsif [ZERHConstants.Ver1].include? program_version
         rvalue = 1.0 / 0.060
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -226,7 +226,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.056
       elsif [ZERHConstants.Ver1].include? program_version
         rvalue = 1.0 / 0.060
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -245,18 +245,18 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
   def test_enclosure_foundation_walls
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
-        rvalue = 1.0 / 0.059
+        assembly_rvalue = 1.0 / 0.059
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
-             ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
-        rvalue = 1.0 / 0.050
+             ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
+        assembly_rvalue = 1.0 / 0.050
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
-        rvalue = 7.5
+        ins_interior_rvalue = 7.5
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
-        rvalue = 15.0
+        ins_interior_rvalue = 15.0
       elsif program_version == ESConstants.SFOregonWashingtonVer3_2
-        rvalue = 1.0 / 0.042
+        assembly_rvalue = 1.0 / 0.042
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
-        rvalue = 1.0 / 0.360
+        assembly_rvalue = 1.0 / 0.360
       end
 
       hpxml_names = ['base.xml',
@@ -269,15 +269,15 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         else
           type = nil
         end
-        _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+        _check_foundation_walls(hpxml, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
     end
 
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
-        rvalue = 0.0
+        ins_interior_rvalue = 0.0
       else
-        rvalue = 1.0 / 0.360
+        assembly_rvalue = 1.0 / 0.360
       end
 
       hpxml_names = ['base.xml',
@@ -297,7 +297,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         else
           type = nil
         end
-        _check_foundation_walls(hpxml, area: 1200, rvalue: rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+        _check_foundation_walls(hpxml, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
     end
 
@@ -328,7 +328,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         rvalue = 1.0 / 0.021
       elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
         rvalue = 1.0 / 0.035
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         rvalue = 1.0 / 0.024
       end
 
@@ -385,7 +385,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
   def test_enclosure_floors
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ZERHConstants.Ver2, ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0,
+      if [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ZERHConstants.SFVer2, ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0,
           ESConstants.MFNationalVer1_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
         rvalue = 1.0 / 0.033
       elsif program_version == ESConstants.SFPacificVer3_0
@@ -472,7 +472,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         perim_ins_r = 10
         under_ins_width = 999
         under_ins_r = 10
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.Ver2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         perim_ins_depth = 4
         perim_ins_r = 10
         under_ins_width = 0
@@ -514,7 +514,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       if program_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
-             ZERHConstants.Ver1, ZERHConstants.Ver2].include? program_version
+             ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
         ufactor, shgc = 0.27, 0.40
       elsif program_version == ESConstants.SFPacificVer3_0
         ufactor, shgc = 0.60, 0.27
@@ -625,7 +625,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif [ZERHConstants.Ver2].include? program_version
+      elsif [ZERHConstants.SFVer2].include? program_version
         ufactor, shgc = 0.40, 0.23
         areas = [74.55, 74.55, 74.55, 74.55]
       elsif program_version == ESConstants.MFNationalVer1_0
@@ -673,7 +673,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
           ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-          ZERHConstants.Ver2].include? program_version
+          ZERHConstants.SFVer2].include? program_version
         rvalue = 1.0 / 0.17
       else
         rvalue = 1.0 / 0.21
@@ -806,9 +806,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     end
   end
 
-  def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
+  def _check_foundation_walls(hpxml, area:, assembly_rvalue: 0, ins_interior_rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
     area_values = []
-    rvalue_x_area_values = [] # Area-weighted
+    assembly_rvalue_x_area_values = [] # Area-weighted
+    ins_interior_rvalue_x_area_values = [] # Area-weighted
     ins_top_x_area_values = [] # Area-weighted
     ins_bottom_x_area_values = [] # Area-weighted
     height_x_area_values = [] # Area-weighted
@@ -816,19 +817,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     hpxml.foundation_walls.each do |foundation_wall|
       area_values << foundation_wall.area
       if not foundation_wall.insulation_assembly_r_value.nil?
-        rvalue_x_area_values << foundation_wall.insulation_assembly_r_value * foundation_wall.area
+        assembly_rvalue_x_area_values << foundation_wall.insulation_assembly_r_value * foundation_wall.area
         ins_top_x_area_values << 0.0
         ins_bottom_x_area_values << foundation_wall.height * foundation_wall.area # Total wall height applies to R-value
       end
       if not foundation_wall.insulation_interior_r_value.nil?
-        rvalue_x_area_values << foundation_wall.insulation_interior_r_value * foundation_wall.area
+        ins_interior_rvalue_x_area_values << foundation_wall.insulation_interior_r_value * foundation_wall.area
         ins_top_x_area_values << foundation_wall.insulation_interior_distance_to_top * foundation_wall.area
         ins_bottom_x_area_values << foundation_wall.insulation_interior_distance_to_bottom * foundation_wall.area
-      end
-      if not foundation_wall.insulation_exterior_r_value.nil?
-        rvalue_x_area_values << foundation_wall.insulation_exterior_r_value * foundation_wall.area
-        ins_top_x_area_values << foundation_wall.insulation_exterior_distance_to_top * foundation_wall.area
-        ins_bottom_x_area_values << foundation_wall.insulation_exterior_distance_to_bottom * foundation_wall.area
       end
       height_x_area_values << foundation_wall.height * foundation_wall.area
       depth_bg_x_area_values << foundation_wall.depth_below_grade * foundation_wall.area
@@ -840,7 +836,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
     end
 
     assert_in_epsilon(area, area_values.inject(:+), 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(assembly_rvalue, assembly_rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01) unless assembly_rvalue_x_area_values.empty?
+    assert_in_epsilon(ins_interior_rvalue, ins_interior_rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01) unless ins_interior_rvalue_x_area_values.empty?
     assert_in_epsilon(ins_top, ins_top_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
     assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.01)

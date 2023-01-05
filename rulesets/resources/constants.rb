@@ -108,14 +108,22 @@ class ZERHConstants
   end
 
   def self.AllVersions
-    return [self.Ver1, self.Ver2]
+    return [self.Ver1, self.SFVer2]
+  end
+
+  def self.SFVersions
+    return [self.Ver1, self.SFVer2]
+  end
+
+  def self.MFVersions
+    return [self.Ver1]
   end
 
   def self.Ver1
     return '1.0'
   end
 
-  def self.Ver2
-    return '2.0'
+  def self.SFVer2
+    return 'SF_2.0'
   end
 end
