@@ -1923,7 +1923,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
           water_heater_type = HPXML::WaterHeaterTypeStorage
           tank_volume = 40
           energy_factor = 0.67
-          recovery_efficiency = 0.8
         end
       else
         if hpxml_file.include?('SF_National_3.2')
@@ -1933,7 +1932,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
           water_heater_type = HPXML::WaterHeaterTypeStorage
           tank_volume = 40
           energy_factor = 0.61
-          recovery_efficiency = 0.8
         end
       end
       hpxml.water_heating_systems.add(id: "WaterHeatingSystem#{hpxml.water_heating_systems.size + 1}",
@@ -1944,7 +1942,6 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                       tank_volume: tank_volume,
                                       fraction_dhw_load_served: 1,
                                       energy_factor: energy_factor,
-                                      recovery_efficiency: recovery_efficiency,
                                       uniform_energy_factor: uniform_energy_factor)
     elsif hpxml_file.include?('_elec_')
       if hpxml_file.include?('EPA_Tests/MF')
