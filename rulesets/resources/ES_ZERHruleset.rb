@@ -1205,16 +1205,19 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.get_enclosure_air_infiltration_default(orig_hpxml)
-    infil_air_leakage_units = lookup_reference_value('infil_air_leakage_units')
-    infil_air_leakage = lookup_reference_value('infil_air_leakage', @bldg_type)
-    infil_air_leakage = lookup_reference_value('infil_air_leakage') if infil_air_leakage.nil?
+    infil_air_leakage_cfm50_per_sqft = lookup_reference_value('infil_air_leakage_cfm50_per_sqft', @bldg_type)
+    infil_air_leakage_cfm50_per_sqft = lookup_reference_value('infil_air_leakage_cfm50_per_sqft') if infil_air_leakage_cfm50_per_sqft.nil?
 
-    if infil_air_leakage_units.upcase == 'CFM50/SQFT'
+    infil_air_leakage_ach50 = lookup_reference_value('infil_air_leakage_ach50', @bldg_type)
+    infil_air_leakage_ach50 = lookup_reference_value('infil_air_leakage_ach50') if infil_air_leakage_ach50.nil?
+
+    if not infil_air_leakage_cfm50_per_sqft.nil?
       tot_cb_area, _ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
-      infil_air_leakage = tot_cb_area * infil_air_leakage
+      infil_air_leakage = tot_cb_area * infil_air_leakage_cfm50_per_sqft
       infil_unit_of_measure = HPXML::UnitsCFM
-    elsif infil_air_leakage_units.upcase == 'ACH50'
+    elsif not infil_air_leakage_ach50.nil?
       infil_unit_of_measure = HPXML::UnitsACH
+      infil_air_leakage = infil_air_leakage_ach50
     end
 
     return infil_air_leakage, infil_unit_of_measure
@@ -1252,8 +1255,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     wh_type = lookup_reference_value('water_heater_type', wh_fuel_type)
     wh_type = lookup_reference_value('water_heater_type') if wh_type.nil?
 
-    wh_eff_type = lookup_reference_value('water_heater_eff_units').upcase
-
     if not tankless_types.include? wh_type
       if tankless_types.include? orig_water_heater.water_heater_type
         wh_tank_vol = lookup_reference_value('water_heater_volume', "#{wh_fuel_type}, tankless->tank")
@@ -1264,25 +1265,30 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       wh_tank_vol = orig_water_heater.tank_volume if wh_tank_vol.nil?
     end
 
-    if not wh_tank_vol.nil?
-      eff_subtype = wh_tank_vol <= 55 ? "#{wh_fuel_type}, <= 55 gal" : "#{wh_fuel_type}, > 55 gal"
-      wh_eff_fixed = lookup_reference_value('water_heater_eff_fixed', eff_subtype)
-    end
-    wh_eff_fixed = lookup_reference_value('water_heater_eff_fixed', "#{wh_fuel_type}, #{@bldg_type}") if wh_eff_fixed.nil?
-    wh_eff_fixed = lookup_reference_value('water_heater_eff_fixed', wh_fuel_type) if wh_eff_fixed.nil?
-    wh_eff_fixed = lookup_reference_value('water_heater_eff_fixed') if wh_eff_fixed.nil?
-    wh_eff_variable = lookup_reference_value('water_heater_eff_variable', wh_fuel_type)
-    wh_eff_variable = lookup_reference_value('water_heater_eff_variable') if wh_eff_variable.nil?
-    wh_eff = wh_eff_fixed + wh_eff_variable.to_f * wh_tank_vol.to_f
-    if wh_eff_type == 'UEF'
-      uef = wh_eff
-      if [HPXML::WaterHeaterTypeStorage, HPXML::WaterHeaterTypeHeatPump].include? wh_type
-        # Use rated home FHR if provided, else 63, per EPA
-        fhr = orig_water_heater.first_hour_rating
-        fhr = 63.0 if fhr.nil?
+    ef, uef, fhr = nil, nil, nil
+    ['ef', 'uef'].each do |wh_eff_type|
+      if not wh_tank_vol.nil?
+        eff_subtype = wh_tank_vol <= 55 ? "#{wh_fuel_type}, <= 55 gal" : "#{wh_fuel_type}, > 55 gal"
+        wh_eff_fixed = lookup_reference_value("water_heater_#{wh_eff_type}_fixed", eff_subtype)
       end
-    elsif wh_eff_type == 'EF'
-      ef = wh_eff
+      wh_eff_fixed = lookup_reference_value("water_heater_#{wh_eff_type}_fixed", "#{wh_fuel_type}, #{@bldg_type}") if wh_eff_fixed.nil?
+      wh_eff_fixed = lookup_reference_value("water_heater_#{wh_eff_type}_fixed", wh_fuel_type) if wh_eff_fixed.nil?
+      wh_eff_fixed = lookup_reference_value("water_heater_#{wh_eff_type}_fixed") if wh_eff_fixed.nil?
+      next if wh_eff_fixed.nil?
+
+      wh_eff_variable = lookup_reference_value("water_heater_#{wh_eff_type}_variable", wh_fuel_type)
+      wh_eff_variable = lookup_reference_value("water_heater_#{wh_eff_type}_variable") if wh_eff_variable.nil?
+      wh_eff = wh_eff_fixed + wh_eff_variable.to_f * wh_tank_vol.to_f
+      if wh_eff_type == 'uef'
+        uef = wh_eff
+        if [HPXML::WaterHeaterTypeStorage, HPXML::WaterHeaterTypeHeatPump].include? wh_type
+          # Use rated home FHR if provided, else 63, per EPA
+          fhr = orig_water_heater.first_hour_rating
+          fhr = 63.0 if fhr.nil?
+        end
+      elsif wh_eff_type == 'ef'
+        ef = wh_eff
+      end
     end
 
     return wh_type, wh_fuel_type, wh_tank_vol, ef, uef, fhr
@@ -1464,10 +1470,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     heating_capacity = -1 if heating_capacity.nil? # Use auto-sizing
 
-    heating_system_fuel = lookup_reference_value('hvac_heating_fuel', orig_system.heating_system_fuel)
-    heating_system_fuel = lookup_reference_value('hvac_heating_fuel') if heating_system_fuel.nil?
-    heating_system_fuel = orig_system.heating_system_fuel if heating_system_fuel.nil?
-
+    heating_system_fuel = get_furnace_boiler_fuel(orig_system.heating_system_fuel)
     heating_efficiency_afue = get_default_boiler_efficiency(orig_system, heating_system_fuel)
 
     new_hpxml.heating_systems.add(id: "TargetHeatingSystem#{new_hpxml.heating_systems.size + 1}",
@@ -1484,10 +1487,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   end
 
   def self.add_reference_furnace(orig_hpxml, new_hpxml, load_frac, orig_system, heating_fuel)
-    heating_system_fuel = lookup_reference_value('hvac_heating_fuel', heating_fuel)
-    heating_system_fuel = lookup_reference_value('hvac_heating_fuel') if heating_system_fuel.nil?
-    heating_system_fuel = heating_fuel if heating_system_fuel.nil?
-
+    heating_system_fuel = get_furnace_boiler_fuel(heating_fuel)
     furnace_afue = get_default_furnace_afue(heating_system_fuel)
 
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
@@ -1683,6 +1683,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     window_shgc = lookup_reference_value('window_shgc')
 
     return window_ufactor, window_shgc
+  end
+
+  def self.get_furnace_boiler_fuel(fuel)
+    heating_system_fuel = lookup_reference_value('hvac_heating_fuel', fuel)
+    heating_system_fuel = lookup_reference_value('hvac_heating_fuel') if heating_system_fuel.nil?
+    heating_system_fuel = fuel if heating_system_fuel.nil?
+    return heating_system_fuel
   end
 
   def self.lookup_reference_value(value_type, subtype = nil)

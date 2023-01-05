@@ -49,13 +49,14 @@ water_heater_fuel_type	natural gas	natural gas	natural gas	natural gas	natural g
 water_heater_fuel_type	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 water_heater_fuel_type	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil
 water_heater_type		storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater
-water_heater_eff_units		EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF
-water_heater_eff_fixed	natural gas	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69
-water_heater_eff_fixed	electricity	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97
-water_heater_eff_fixed	fuel oil	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61
-water_heater_eff_variable	natural gas	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002
-water_heater_eff_variable	electricity	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001
-water_heater_eff_variable	fuel oil	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002
+water_heater_ef_fixed	natural gas	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69	0.69
+water_heater_ef_fixed	electricity	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97	0.97
+water_heater_ef_fixed	fuel oil	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61	0.61
+water_heater_ef_variable	natural gas	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002
+water_heater_ef_variable	electricity	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001	-0.001
+water_heater_ef_variable	fuel oil	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002
+water_heater_uef_fixed																					
+water_heater_uef_variable																					
 water_heater_volume	"natural gas, tankless->tank"	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50
 water_heater_volume	"electricity, tankless->tank"	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
 water_heater_volume	"fuel oil, tankless->tank"	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50
@@ -73,8 +74,8 @@ duct_location_fractions	"basement foundation, 2 story"	"basement=0.5, attic=0.5"
 duct_location_fractions	"ambient foundation, 1 story"	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0	outside=1.0
 duct_location_fractions	"ambient foundation, 2 story"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"	"outside=0.5, attic=0.5"
 duct_location_fractions	adiabatic foundation	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0
-infil_air_leakage_units		ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50
-infil_air_leakage		6	6	6	6	6	6	5	5	5	5	5	4	4	4	4	4	4	4	4	3
+infil_air_leakage_ach50		6	6	6	6	6	6	5	5	5	5	5	4	4	4	4	4	4	4	4	3
+infil_air_leakage_cfm50_per_sqft																					
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only
 mechanical_ventilation_fan_sre																					
 mechanical_ventilation_fan_cfm_per_w		2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2

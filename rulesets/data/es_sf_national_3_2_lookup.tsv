@@ -48,18 +48,19 @@ water_heater_fuel_type	electricity	electricity	electricity	electricity	electrici
 water_heater_fuel_type	fuel oil	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 water_heater_type	natural gas	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater
 water_heater_type	electricity	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater
-water_heater_eff_units		UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF
-water_heater_eff_fixed	natural gas	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
-water_heater_eff_fixed	electricity	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2
-water_heater_eff_variable		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+water_heater_ef_fixed																					
+water_heater_ef_variable																					
+water_heater_uef_fixed	natural gas	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
+water_heater_uef_fixed	electricity	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2	2.2
+water_heater_uef_variable		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 water_heater_volume	tankless->tank	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
 water_heater_solar_fraction																					
 duct_unconditioned_r_value																					
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_lto_cfm25_max		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
-infil_air_leakage_units		ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50
-infil_air_leakage		3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_ach50		3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_cfm50_per_sqft																					
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only
 mechanical_ventilation_fan_sre																					
 mechanical_ventilation_fan_cfm_per_w		2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8

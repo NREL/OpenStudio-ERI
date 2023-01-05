@@ -57,10 +57,11 @@ water_heater_fuel_type	electricity	electricity	electricity	electricity	electrici
 water_heater_fuel_type	fuel oil	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 water_heater_type	natural gas	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater
 water_heater_type	electricity	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater
-water_heater_eff_units		EF	EF	EF	EF	EF	EF	EF
-water_heater_eff_fixed	natural gas	0.91	0.91	0.91	0.91	0.91	0.91	0.91
-water_heater_eff_fixed	electricity	2.5	2.5	2.5	2.5	2	2	2
-water_heater_eff_variable		0	0	0	0	0	0	0
+water_heater_ef_fixed	natural gas	0.91	0.91	0.91	0.91	0.91	0.91	0.91
+water_heater_ef_fixed	electricity	2.5	2.5	2.5	2.5	2	2	2
+water_heater_ef_variable		0	0	0	0	0	0	0
+water_heater_uef_fixed								
+water_heater_uef_variable								
 water_heater_volume		60	60	60	60	60	60	60
 water_heater_solar_fraction								
 duct_unconditioned_r_value		8	8	8	8	8	8	8
@@ -69,8 +70,8 @@ duct_lto_cfm25_max		40	40	40	40	40	40	40
 duct_location_fractions	adiabatic ceiling	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
 duct_location_fractions	1 story	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0
 duct_location_fractions	2 story	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"
-infil_air_leakage_units		cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft
-infil_air_leakage		0.3	0.3	0.3	0.3	0.3	0.3	0.3
+infil_air_leakage_ach50								
+infil_air_leakage_cfm50_per_sqft		0.3	0.3	0.3	0.3	0.3	0.3	0.3
 mechanical_ventilation_fan_type		exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only
 mechanical_ventilation_fan_sre								
 mechanical_ventilation_fan_cfm_per_w		2.8	2.8	2.8	2.8	2.8	2.8	2.8

@@ -57,14 +57,15 @@ water_heater_fuel_type	natural gas	natural gas	natural gas	natural gas	natural g
 water_heater_fuel_type	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 water_heater_fuel_type	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil
 water_heater_type		storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater
-water_heater_eff_units		EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF
-water_heater_eff_fixed	"natural gas, <= 55 gal"	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67
-water_heater_eff_fixed	"natural gas, > 55 gal"	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77
-water_heater_eff_fixed	electricity	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
-water_heater_eff_fixed	fuel oil	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7
-water_heater_eff_variable	natural gas	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-water_heater_eff_variable	electricity	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-water_heater_eff_variable	fuel oil	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002
+water_heater_ef_fixed	"natural gas, <= 55 gal"	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67
+water_heater_ef_fixed	"natural gas, > 55 gal"	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77
+water_heater_ef_fixed	electricity	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
+water_heater_ef_fixed	fuel oil	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7	0.7
+water_heater_ef_variable	natural gas	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+water_heater_ef_variable	electricity	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+water_heater_ef_variable	fuel oil	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002	-0.002
+water_heater_uef_fixed																					
+water_heater_uef_variable																					
 water_heater_volume	"natural gas, tankless->tank"	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50
 water_heater_volume	"electricity, tankless->tank"	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
 water_heater_volume	"fuel oil, tankless->tank"	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50	50
@@ -73,8 +74,8 @@ duct_unconditioned_r_value
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_lto_cfm25_max		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
-infil_air_leakage_units		cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft	cfm50/sqft
-infil_air_leakage		0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
+infil_air_leakage_ach50																					
+infil_air_leakage_cfm50_per_sqft		0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only
 mechanical_ventilation_fan_sre																					
 mechanical_ventilation_fan_cfm_per_w		2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8

@@ -56,14 +56,15 @@ water_heater_fuel_type	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fue
 water_heater_type	natural gas	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater
 water_heater_type	electricity	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater
 water_heater_type	fuel oil	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater	storage water heater
-water_heater_eff_units		EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF	EF
-water_heater_eff_fixed	"natural gas, <= 55 gal"	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67
-water_heater_eff_fixed	"natural gas, > 55 gal"	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77
-water_heater_eff_fixed	"electricity, single-family detached"	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2
-water_heater_eff_fixed	"electricity, single-family attached"	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5
-water_heater_eff_fixed	"electricity, apartment unit"	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5
-water_heater_eff_fixed	fuel oil	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
-water_heater_eff_variable		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+water_heater_ef_fixed	"natural gas, <= 55 gal"	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67	0.67
+water_heater_ef_fixed	"natural gas, > 55 gal"	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77	0.77
+water_heater_ef_fixed	"electricity, single-family detached"	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2	2
+water_heater_ef_fixed	"electricity, single-family attached"	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5
+water_heater_ef_fixed	"electricity, apartment unit"	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5	1.5
+water_heater_ef_fixed	fuel oil	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
+water_heater_ef_variable		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+water_heater_uef_fixed																					
+water_heater_uef_variable																					
 water_heater_volume	"natural gas, tankless->tank"	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40
 water_heater_volume	"electricity, tankless->tank"	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60	60
 water_heater_volume	"fuel oil, tankless->tank"	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40	40
@@ -72,10 +73,10 @@ duct_unconditioned_r_value
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_lto_cfm25_max		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
-infil_air_leakage_units		ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50	ACH50
-infil_air_leakage	single-family detached	3	3	3	3	3	3	2.5	2.5	2.5	2.5	2.5	2	2	2	2	2	2	2	2	1.5
-infil_air_leakage	single-family attached	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
-infil_air_leakage	apartment unit	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_ach50	single-family detached	3	3	3	3	3	3	2.5	2.5	2.5	2.5	2.5	2	2	2	2	2	2	2	2	1.5
+infil_air_leakage_ach50	single-family attached	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_ach50	apartment unit	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_cfm50_per_sqft																					
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator
 mechanical_ventilation_fan_sre													0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6	0.6
 mechanical_ventilation_fan_cfm_per_w		2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	1.2	1.2	1.2	1.2	1.2	1.2	1.2	1.2	1.2
