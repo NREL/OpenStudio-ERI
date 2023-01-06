@@ -1,9 +1,12 @@
-## OpenStudio-ERI v1.6.0
+## OpenStudio-ERI v1.5.2
 
 __New Features__
+- `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
+- Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.
+- Provide two decimal places in ENERGY STARS/ZERH CSV output files to better prevent user confusion.
 
 __Bugfixes__
-- Provide two decimal places in ES/ZERH CSV output files to better prevent user confusion.
+- Fixes incorrect modeling of foundation wall insulation for ENERGY STAR MF National v1.2.
 
 ## OpenStudio-ERI v1.5.1
 
