@@ -13,10 +13,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       @program_version = hpxml.header.zerh_calculation_version
     end
 
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_year = 2021
-    elsif ZERHConstants.AllVersions.include? @program_version
+    elsif @program_version == ZERHConstants.Ver1
       # Use Year=2015 for Reference Home configuration
       iecc_year = 2015
     else
