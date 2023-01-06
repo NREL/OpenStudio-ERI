@@ -85,7 +85,7 @@ def run_rulesets(hpxml_input_path, designs)
       end
     end
 
-    es_zerh_lookup_by_cz = {}
+    lookup_program_data = {}
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
@@ -105,10 +105,10 @@ def run_rulesets(hpxml_input_path, designs)
         elsif design.init_calc_type == ZERHConstants.CalcTypeZERHReference
           lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_version.gsub('.', '_').downcase
         end
-        if es_zerh_lookup_by_cz[lookup_program].nil?
-          es_zerh_lookup_by_cz[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
+        if lookup_program_data[lookup_program].nil?
+          lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
         end
-        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, es_zerh_lookup_by_cz[lookup_program])
+        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, lookup_program_data[lookup_program])
       end
 
       # Write initial HPXML file

@@ -87,9 +87,13 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
     hpxml.header.zerh_calculation_version = program_version
   end
   if [*ESConstants.SFVersions, *ZERHConstants.SFVersions].include? program_version
-    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+    if hpxml.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
+      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+    end
   else
-    hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+    if hpxml.building_construction.residential_facility_type == HPXML::ResidentialTypeSFD
+      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+    end
   end
 
   # Save new file

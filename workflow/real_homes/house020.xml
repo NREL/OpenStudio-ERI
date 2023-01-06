@@ -18,7 +18,7 @@
         <Version>2021</Version>
       </IECCERICalculation>
       <ZERHCalculation>
-        <Version>1.0</Version>
+        <Version>SF_2.0</Version>
       </ZERHCalculation>
     </extension>
   </SoftwareInfo>
@@ -54,10 +54,6 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>5B</ClimateZone>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2015</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>

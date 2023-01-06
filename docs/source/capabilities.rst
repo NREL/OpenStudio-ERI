@@ -23,9 +23,10 @@ The following IECC ERI versions are supported:
 - 2018
 - 2021
 
-The following Zero Energy Ready Homes versions are supported:
+The following DOE ZERH versions are supported:
 
 - 1.0
+- Single Family, 2.0
 
 Accuracy vs Speed
 -----------------
