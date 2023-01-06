@@ -85,7 +85,7 @@ def run_rulesets(hpxml_input_path, designs)
       end
     end
 
-    es_zerh_lookup_by_cz = get_es_zerh_lookup_tables()
+    lookup_program_data = {}
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
@@ -100,7 +100,15 @@ def run_rulesets(hpxml_input_path, designs)
           ESConstants.CalcTypeEnergyStarRated,
           ZERHConstants.CalcTypeZERHReference,
           ZERHConstants.CalcTypeZERHRated].include? design.init_calc_type
-        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, es_zerh_lookup_by_cz)
+        if design.init_calc_type == ESConstants.CalcTypeEnergyStarReference
+          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_version.gsub('.', '_').downcase
+        elsif design.init_calc_type == ZERHConstants.CalcTypeZERHReference
+          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_version.gsub('.', '_').downcase
+        end
+        if lookup_program_data[lookup_program].nil?
+          lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
+        end
+        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, lookup_program_data[lookup_program])
       end
 
       # Write initial HPXML file
@@ -155,31 +163,6 @@ def get_cambium_gea_region(zip_code)
   cambium_zip_filepath = File.join(File.dirname(__FILE__), 'data', 'cambium', 'ZIP_mappings.csv')
   cambium_gea = lookup_region_from_zip(zip_code, cambium_zip_filepath, 0, 1)
   return cambium_gea
-end
-
-def get_es_zerh_lookup_tables()
-  programs = [
-    'es_sf_national_3_0',
-    'es_sf_national_3_1',
-    'es_sf_national_3_2',
-    'es_sf_pacific_3_0',
-    'es_sf_florida_3_1',
-    'es_sf_oregonwashington_3_2',
-    'es_mf_national_1_0',
-    'es_mf_national_1_1',
-    'es_mf_national_1_2',
-    'es_mf_oregonwashington_1_2',
-    'zerh_v1_0',
-  ]
-
-  es_zerh_lookup = {}
-  programs.each do |p|
-    program_lookup_path = File.join(File.dirname(__FILE__), "data/#{p}_lookup.tsv")
-    lookup_values = CSV.read(program_lookup_path, headers: true, col_sep: "\t")
-    es_zerh_lookup[p] = lookup_values
-  end
-
-  return es_zerh_lookup
 end
 
 def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
