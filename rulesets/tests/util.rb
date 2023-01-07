@@ -81,6 +81,8 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
   end
 
   # Change program version to ENERGY STAR or Zero Energy Ready Home
+  hpxml.header.energystar_calculation_version = nil
+  hpxml.header.zerh_calculation_version = nil
   if ESConstants.AllVersions.include? program_version
     hpxml.header.energystar_calculation_version = program_version
   elsif ZERHConstants.AllVersions.include? program_version
@@ -94,6 +96,17 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
     if hpxml.building_construction.residential_facility_type == HPXML::ResidentialTypeSFD
       hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
     end
+  end
+
+  # Change climate zone year if needed
+  if program_version == ZERHConstants.Ver1
+    iecc_year = 2015
+  else
+    iecc_year = 2021
+  end
+  if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }.size == 0
+    hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: iecc_year,
+                                                        zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
   end
 
   # Save new file
