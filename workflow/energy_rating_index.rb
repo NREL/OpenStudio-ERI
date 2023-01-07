@@ -722,14 +722,13 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
 end
 
 def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
-  rd_eri = rd_eri_results[:eri].round(0)
-  target_eri = target_eri.round(0)
-  rated_eri = rated_eri_results[:eri].round(0)
-  rated_wo_opp_eri = rated_eri_results_wo_opp[:eri].round(0)
-
-  if rated_wo_opp_eri - rated_eri > rd_eri - target_eri
-    fail 'Unexpected error.'
-  end
+  # Even though pass/fail is calculated based on rounded integer ERIs,
+  # we provide two decimal places here so that there's less possibility
+  # for user confusion when comparing the actual/target ERIs.
+  rd_eri = rd_eri_results[:eri].round(2)
+  target_eri = target_eri.round(2)
+  rated_eri = rated_eri_results[:eri].round(2)
+  rated_wo_opp_eri = rated_eri_results_wo_opp[:eri].round(2)
 
   if ESConstants.AllVersions.include? ruleset
     program_abbreviation, program_name = 'ES', 'ENERGY STAR'
