@@ -175,7 +175,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
     has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
     set_vented_attic = false
-    # FUTURE: Move this logic into lookup tables
     if (ESConstants.MFVersions.include? @program_version) ||
        ((ZERHConstants.AllVersions.include? @program_version) && ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type))
       if is_ceiling_fully_adiabatic(orig_hpxml)
@@ -371,7 +370,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.walls.each do |orig_wall|
       next if orig_wall.is_exterior_thermal_boundary
 
-      # FUTURE: Move this logic into lookup tables
       if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
         if orig_wall.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationGarage].include? orig_wall.exterior_adjacent_to)
@@ -453,7 +451,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
 
-      # FUTURE: Move this logic into lookup tables
       if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         # Retain boundary condition of ceilings in the Rated Unit, including adiabatic ceilings.
         ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
@@ -519,7 +516,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor', subtype)
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor') if floor_ufactor.nil?
 
-      # FUTURE: Move this logic into lookup tables
       if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
         if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
@@ -611,7 +607,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fraction_operable = Airflow.get_default_fraction_of_windows_operable()
 
     # Calculate the window area
-    # FUTURE: Move this logic into lookup tables
     if [*ESConstants.SFVersions, *ZERHConstants.AllVersions].include? @program_version
       if @has_cond_bsmnt || [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type)
         # For homes with conditioned basements and attached homes:
@@ -1555,7 +1550,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       backup_heating_capacity = orig_htg_system.backup_heating_capacity
       dist_id = orig_htg_system.distribution_system.id
     else
-      # FUTURE: Move this logic into lookup tables
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ZERHConstants.Ver1].include?(@program_version) && ['7', '8'].include?(@iecc_zone)
         # GSHP if CZ 7-8 and home has electric heat
         heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
