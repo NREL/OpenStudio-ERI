@@ -460,7 +460,6 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = _test_ruleset(program_version)
       _check_slabs(hpxml, area: 1350, exp_perim: 150)
-
       if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
         perim_ins_depth = 0
         perim_ins_r = 0

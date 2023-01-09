@@ -83,13 +83,17 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
   # Change program version to ENERGY STAR or Zero Energy Ready Home
   if ESConstants.AllVersions.include? program_version
     hpxml.header.energystar_calculation_version = program_version
-    if ESConstants.SFVersions.include? program_version
-      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
-    else
-      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
-    end
   elsif ZERHConstants.AllVersions.include? program_version
     hpxml.header.zerh_calculation_version = program_version
+  end
+  if [*ESConstants.SFVersions, *ZERHConstants.SFVersions].include? program_version
+    if hpxml.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
+      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+    end
+  else
+    if hpxml.building_construction.residential_facility_type == HPXML::ResidentialTypeSFD
+      hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
+    end
   end
 
   # Save new file
