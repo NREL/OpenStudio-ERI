@@ -9,6 +9,8 @@ floors_over_uncond_spc_ufactor		0.257	0.257	0.257
 walls_ufactor	HI	0.082	0.082	0.082
 walls_ufactor	GU	0.401	0.401	0.401
 walls_ufactor	MP	0.401	0.401	0.401
+walls_solar_abs		0.75	0.75	0.75
+walls_emittance		0.9	0.9	0.9
 door_ufactor		0.21	0.21	0.21
 window_ufactor		0.6	0.6	0.6
 window_shgc		0.27	0.27	0.27
@@ -17,6 +19,8 @@ radiant_barrier	"HI, ducts in unconditioned attic"	TRUE	TRUE	TRUE
 radiant_barrier	GU	TRUE	TRUE	TRUE
 radiant_barrier	MP	TRUE	TRUE	TRUE
 radiant_barrier		FALSE	FALSE	FALSE
+roof_solar_abs		0.92	0.92	0.92
+roof_emittance		0.9	0.9	0.9
 lighting_tier1_int		0.8	0.8	0.8
 lighting_tier1_ext		0	0	0
 lighting_tier1_grg		0	0	0
@@ -31,6 +35,19 @@ clothes_washer_gas_rate		1.09	1.09	1.09
 clothes_washer_ghwc		27	27	27
 clothes_washer_capacity		3	3	3
 clothes_washer_lcy		312	312	312
+clothes_dryer_cef		3.01	3.01	3.01
+dishwasher_ler	compact	203	203	203
+dishwasher_elec_rate	compact	0.12	0.12	0.12
+dishwasher_gas_rate	compact	1.09	1.09	1.09
+dishwasher_ghwc	compact	14.2	14.2	14.2
+dishwasher_lcy	compact	208	208	208
+dishwasher_ler	standard	270	270	270
+dishwasher_elec_rate	standard	0.12	0.12	0.12
+dishwasher_gas_rate	standard	1.09	1.09	1.09
+dishwasher_ghwc	standard	22.23	22.23	22.23
+dishwasher_lcy	standard	208	208	208
+range_induction		FALSE	FALSE	FALSE
+oven_convection		FALSE	FALSE	FALSE
 ceiling_fan_cfm_per_w		122	122	122
 hvac_heating_fuel	electricity	electricity	electricity	electricity
 hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas
@@ -77,7 +94,7 @@ water_heater_solar_fraction	other
 duct_unconditioned_r_value	"supply, attic"	8	8	8
 duct_unconditioned_r_value	other	6	6	6
 duct_lto_cfm25_per_100sqft		4	4	4
-duct_lto_cfm25_max		40	40	40
+duct_lto_cfm25_min		40	40	40
 duct_location_fractions	"slab foundation, 1 story"	attic=1.0	attic=1.0	attic=1.0
 duct_location_fractions	"slab foundation, 2 story"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"
 duct_location_fractions	"crawlspace foundation, 1 story"	crawlspace=1.0	crawlspace=1.0	crawlspace=1.0

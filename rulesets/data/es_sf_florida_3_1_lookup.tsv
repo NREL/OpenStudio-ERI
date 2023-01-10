@@ -7,12 +7,16 @@ slab_under_ins_width		0	0	0	0	0	0
 slab_under_ins_rvalue		0	0	0	0	0	0
 floors_over_uncond_spc_ufactor		0.064	0.064	0.064	0.064	0.064	0.064
 walls_ufactor		0.082	0.082	0.082	0.082	0.082	0.082
+walls_solar_abs		0.75	0.75	0.75	0.75	0.75	0.75
+walls_emittance		0.9	0.9	0.9	0.9	0.9	0.9
 door_ufactor		0.21	0.21	0.21	0.21	0.21	0.21
 window_ufactor		0.65	0.65	0.65	0.65	0.65	0.65
 window_shgc		0.27	0.27	0.27	0.27	0.27	0.27
 ceiling_ufactor		0.035	0.035	0.035	0.035	0.035	0.035
 radiant_barrier	ducts in unconditioned attic	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
 radiant_barrier		TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+roof_solar_abs		0.92	0.92	0.92	0.92	0.92	0.92
+roof_emittance		0.9	0.9	0.9	0.9	0.9	0.9
 lighting_tier1_int		0.8	0.8	0.8	0.8	0.8	0.8
 lighting_tier1_ext		0	0	0	0	0	0
 lighting_tier1_grg		0	0	0	0	0	0
@@ -27,6 +31,19 @@ clothes_washer_gas_rate		1.09	1.09	1.09	1.09	1.09	1.09
 clothes_washer_ghwc		27	27	27	27	27	27
 clothes_washer_capacity		3	3	3	3	3	3
 clothes_washer_lcy		312	312	312	312	312	312
+clothes_dryer_cef		3.01	3.01	3.01	3.01	3.01	3.01
+dishwasher_ler	compact	203	203	203	203	203	203
+dishwasher_elec_rate	compact	0.12	0.12	0.12	0.12	0.12	0.12
+dishwasher_gas_rate	compact	1.09	1.09	1.09	1.09	1.09	1.09
+dishwasher_ghwc	compact	14.2	14.2	14.2	14.2	14.2	14.2
+dishwasher_lcy	compact	208	208	208	208	208	208
+dishwasher_ler	standard	270	270	270	270	270	270
+dishwasher_elec_rate	standard	0.12	0.12	0.12	0.12	0.12	0.12
+dishwasher_gas_rate	standard	1.09	1.09	1.09	1.09	1.09	1.09
+dishwasher_ghwc	standard	22.23	22.23	22.23	22.23	22.23	22.23
+dishwasher_lcy	standard	208	208	208	208	208	208
+range_induction		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+oven_convection		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 ceiling_fan_cfm_per_w		122	122	122	122	122	122
 hvac_heating_fuel	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
@@ -72,7 +89,7 @@ water_heater_solar_fraction
 duct_unconditioned_r_value	"supply, attic"						
 duct_unconditioned_r_value	other						
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0
-duct_lto_cfm25_max		0	0	0	0	0	0
+duct_lto_cfm25_min		0	0	0	0	0	0
 duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
 infil_air_leakage_ach50		5	5	5	5	5	5
 infil_air_leakage_cfm50_per_sqft							

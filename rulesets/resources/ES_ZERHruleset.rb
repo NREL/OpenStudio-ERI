@@ -1,4 +1,3 @@
-# FIXME: Review all use of ZERHConstants.AllVersions
 # frozen_string_literal: true
 
 class EnergyStarZeroEnergyReadyHomeRuleset
@@ -106,7 +105,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
 
     bldg_type = orig_hpxml.building_construction.residential_facility_type
-    if bldg_type == HPXML::ResidentialTypeSFA && (@program_version.include? 'MF')
+    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants.MFVersions.include?(@program_version)
       begin
         # ESRD configured as SF National v3.X
         ref_design_config_mapping = {
@@ -226,8 +225,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     radiant_barrier_bool = get_radiant_barrier_bool(orig_hpxml)
     radiant_barrier_grade = 1 if radiant_barrier_bool
 
-    solar_absorptance = 0.92
-    emittance = 0.90
+    solar_absorptance = lookup_reference_value('roof_solar_abs')
+    emittance = lookup_reference_value('roof_emittance')
     default_roof_pitch = 5.0 # assume 5:12 pitch
     has_vented_attic = (new_hpxml.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
 
@@ -292,8 +291,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     ext_thermal_bndry_rim_joists_bg = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationBasementConditioned }
     sum_gross_area_bg = ext_thermal_bndry_rim_joists_bg.map { |rim_joist| rim_joist.area }.sum(0)
 
-    solar_absorptance = 0.75
-    emittance = 0.90
+    solar_absorptance = lookup_reference_value('walls_solar_abs')
+    emittance = lookup_reference_value('walls_emittance')
 
     # Create insulated rim joists for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be consistent with walls.
@@ -348,8 +347,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
 
-    solar_absorptance = 0.75
-    emittance = 0.90
+    solar_absorptance = lookup_reference_value('walls_solar_abs')
+    emittance = lookup_reference_value('walls_emittance')
 
     # Create thermal boundary wall area
     if sum_gross_area > 0
@@ -783,15 +782,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       end
 
       # Duct leakage to outside calculated based on conditioned floor area served
-      total_duct_leakage_to_outside = calc_default_duct_leakage_to_outside(new_hvac_dist.conditioned_floor_area_served)
+      total_duct_lto_cfm25 = calc_default_duct_lto_cfm25(new_hvac_dist.conditioned_floor_area_served)
 
       [HPXML::DuctTypeSupply, HPXML::DuctTypeReturn].each do |duct_type|
         # Split the total duct leakage to outside evenly and assign it to supply ducts and return ducts
-        duct_leakage_to_outside = total_duct_leakage_to_outside * 0.5
+        duct_lto_cfm25 = total_duct_lto_cfm25 * 0.5
 
         new_hvac_dist.duct_leakage_measurements.add(duct_type: duct_type,
                                                     duct_leakage_units: HPXML::UnitsCFM25,
-                                                    duct_leakage_value: duct_leakage_to_outside,
+                                                    duct_leakage_value: duct_lto_cfm25,
                                                     duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
 
         # ASHRAE 152 duct area calculation based on conditioned floor area served
@@ -982,13 +981,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       fuel_type = clothes_dryer.fuel_type
     end
 
-    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, fuel_type)
-
     new_hpxml.clothes_dryers.add(id: id,
                                  location: location,
                                  is_shared_appliance: false,
                                  fuel_type: fuel_type,
-                                 combined_energy_factor: reference_values[:combined_energy_factor])
+                                 combined_energy_factor: lookup_reference_value('clothes_dryer_cef'))
   end
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
@@ -1005,29 +1002,17 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       place_setting_capacity = dishwasher.place_setting_capacity
     end
 
-    if place_setting_capacity < 8
-      # Compact
-      new_hpxml.dishwashers.add(id: id,
-                                location: location,
-                                is_shared_appliance: false,
-                                rated_annual_kwh: 203.0,
-                                place_setting_capacity: place_setting_capacity,
-                                label_electric_rate: 0.12,
-                                label_gas_rate: 1.09,
-                                label_annual_gas_cost: 14.20,
-                                label_usage: 4.0) # 208 label cycles per year
-    else
-      # Standard
-      new_hpxml.dishwashers.add(id: id,
-                                location: location,
-                                is_shared_appliance: false,
-                                rated_annual_kwh: 270.0,
-                                place_setting_capacity: place_setting_capacity,
-                                label_electric_rate: 0.12,
-                                label_gas_rate: 1.09,
-                                label_annual_gas_cost: 22.23,
-                                label_usage: 4.0) # 208 label cycles per year
-    end
+    subtype = place_setting_capacity < 8 ? 'compact' : 'standard'
+
+    new_hpxml.dishwashers.add(id: id,
+                              location: location,
+                              is_shared_appliance: false,
+                              rated_annual_kwh: lookup_reference_value('dishwasher_ler', subtype),
+                              place_setting_capacity: place_setting_capacity,
+                              label_electric_rate: lookup_reference_value('dishwasher_elec_rate', subtype),
+                              label_gas_rate: lookup_reference_value('dishwasher_gas_rate', subtype),
+                              label_annual_gas_cost: lookup_reference_value('dishwasher_ghwc', subtype),
+                              label_usage: lookup_reference_value('dishwasher_lcy', subtype) / 52.0)
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
@@ -1079,13 +1064,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       oven_id = oven.id
     end
 
-    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: range_id,
                                  location: location,
                                  fuel_type: fuel_type,
-                                 is_induction: reference_values[:is_induction])
+                                 is_induction: lookup_reference_value('range_induction'))
     new_hpxml.ovens.add(id: oven_id,
-                        is_convection: reference_values[:is_convection])
+                        is_convection: lookup_reference_value('oven_convection'))
   end
 
   def self.set_lighting_reference(new_hpxml)
@@ -1409,11 +1393,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return duct_rvalue
   end
 
-  def self.calc_default_duct_leakage_to_outside(cfa)
+  def self.calc_default_duct_lto_cfm25(cfa)
     duct_lto_cfm25_per_100sqft = lookup_reference_value('duct_lto_cfm25_per_100sqft')
-    duct_lto_cfm25_max = lookup_reference_value('duct_lto_cfm25_max')
+    duct_lto_cfm25_min = lookup_reference_value('duct_lto_cfm25_min')
 
-    return [(duct_lto_cfm25_per_100sqft * cfa / 100.0), duct_lto_cfm25_max].max
+    duct_lto_cfm25 = (duct_lto_cfm25_per_100sqft * cfa / 100.0)
+    if not duct_lto_cfm25_min.nil?
+      duct_lto_cfm25 = [duct_lto_cfm25, duct_lto_cfm25_min].max
+    end
+
+    return duct_lto_cfm25
   end
 
   def self.add_air_distribution(orig_hpxml, orig_system)
