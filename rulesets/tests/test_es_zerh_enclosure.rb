@@ -165,11 +165,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
       _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if ESConstants.MFVersions.include? program_version
-        _check_walls(hpxml, area: 1806, rvalue: (rvalue * 1440 + 4.0 * 366) / 1806, sabs: 0.75, emit: 0.9)
-      else
-        _check_walls(hpxml, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
-      end
+      _check_walls(hpxml, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
 
       _convert_to_es_zerh('base-enclosure-garage.xml', program_version)
       hpxml = _test_ruleset(program_version)
@@ -418,7 +414,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
 
       _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeWoodFrame)
 
       # Check w/ mass floors
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -432,7 +428,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       elsif [ESConstants.MFNationalVer1_2].include? program_version
         rvalue = 1.0 / 0.051
       end
-      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeWoodFrame)
     end
 
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|

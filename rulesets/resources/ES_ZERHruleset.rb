@@ -259,7 +259,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # Add a roof above the vented attic that is newly added to Reference Design
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
-      next unless [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace].include? orig_floor.exterior_adjacent_to
+      next unless multifamily_adjacent_locations.include? orig_floor.exterior_adjacent_to
       next unless @has_auto_generated_attic
 
       # Estimate the area of the roof based on the floor area and pitch
@@ -324,9 +324,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.rim_joists.each do |orig_rim_joist|
       next if orig_rim_joist.is_exterior_thermal_boundary
 
-      insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
-      if orig_rim_joist.is_thermal_boundary
+      if orig_rim_joist.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_rim_joist.exterior_adjacent_to))
         insulation_assembly_r_value = (1.0 / ufactor).round(3)
+      else
+        insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
       end
       new_hpxml.rim_joists.add(id: orig_rim_joist.id,
                                exterior_adjacent_to: orig_rim_joist.exterior_adjacent_to.gsub('unvented', 'vented'),
@@ -369,16 +370,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.walls.each do |orig_wall|
       next if orig_wall.is_exterior_thermal_boundary
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
+      if orig_wall.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_wall.exterior_adjacent_to))
+        insulation_assembly_r_value = (1.0 / ufactor).round(3)
+      else
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
-        if orig_wall.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationGarage].include? orig_wall.exterior_adjacent_to)
-          insulation_assembly_r_value = (1.0 / ufactor).round(3)
-        end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
-        insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
-        if orig_wall.is_thermal_boundary
-          insulation_assembly_r_value = (1.0 / ufactor).round(3)
-        end
       end
 
       new_hpxml.walls.add(id: orig_wall.id,
@@ -450,31 +445,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
-        # Retain boundary condition of ceilings in the Rated Unit, including adiabatic ceilings.
-        ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
-        if ([ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2, ZERHConstants.Ver1].include? @program_version) && @has_auto_generated_attic && ([HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to)
-          ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
-        end
+      if orig_floor.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_floor.exterior_adjacent_to))
+        insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
+      else
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
+      end
 
-        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
-        if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
-          # Ceilings adjacent to exterior or unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
-          insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
-        end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
-        ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
-        if [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to
-          ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
-        end
-
-        # Changes the U-factor for a ceiling to be uninsulated if the ceiling is not a thermal boundary.
-        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
-        if orig_floor.is_thermal_boundary
-          insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
-        elsif [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to
-          insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3) # Becomes the ceiling adjacent to the vented attic
-        end
+      ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
+      if @has_auto_generated_attic && multifamily_adjacent_locations.include?(orig_floor.exterior_adjacent_to)
+        ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
       end
 
       new_hpxml.floors.add(id: orig_floor.id,
@@ -515,19 +494,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor', subtype)
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor') if floor_ufactor.nil?
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
+      if orig_floor.is_thermal_boundary && (not (multifamily_adjacent_locations - [HPXML::LocationOtherNonFreezingSpace]).include?(orig_floor.exterior_adjacent_to))
+        insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
+      else
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
-        if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
-          # Ceilings adjacent to outdoor environment, non-freezing space, unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
-          insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
-        end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && (ZERHConstants.AllVersions.include? @program_version))
-        # Uninsulated for, e.g., floors between living space and conditioned basement.
-        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
-        # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
-        if orig_floor.is_thermal_boundary
-          insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
-        end
       end
 
       new_hpxml.floors.add(id: orig_floor.id,
@@ -1665,6 +1635,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     else
       return HPXML::FuelTypeNaturalGas
     end
+  end
+
+  def self.multifamily_adjacent_locations
+    return [HPXML::LocationOtherHousingUnit,
+            HPXML::LocationOtherHeatedSpace,
+            HPXML::LocationOtherMultifamilyBufferSpace,
+            HPXML::LocationOtherNonFreezingSpace]
   end
 
   def self.lookup_reference_value(value_type, subtype = nil)
