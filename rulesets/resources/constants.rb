@@ -111,6 +111,14 @@ class ZERHConstants
     return [self.Ver1]
   end
 
+  def self.SFVersions
+    return [self.Ver1]
+  end
+
+  def self.MFVersions
+    return [self.Ver1]
+  end
+
   def self.Ver1
     return '1.0'
   end

@@ -51,13 +51,22 @@ def run_rulesets(hpxml_input_path, designs)
     end
 
     cache_path = epw_path.gsub('.epw', '-cache.csv')
+    weather = nil
     if not File.exist?(cache_path)
-      errors << "'#{cache_path}' could not be found. Perhaps you need to run: openstudio energy_rating_index.rb --cache-weather"
-      return false, errors, warnings
+      # Process weather file to create cache .csv
+      begin
+        File.open(cache_path, 'wb') do |file|
+          warnings << "'#{cache_path}' could not be found; regenerating it."
+          weather = WeatherProcess.new(epw_path: epw_path)
+          weather.dump_to_csv(file)
+        end
+      rescue SystemCallError
+        warnings << "#{cache_path} could not be written, skipping."
+      end
+    else
+      # Obtain weather object
+      weather = WeatherProcess.new(csv_path: cache_path)
     end
-
-    # Obtain weather object
-    weather = WeatherProcess.new(nil, nil, cache_path)
 
     eri_version = orig_hpxml.header.eri_calculation_version
     eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
@@ -65,16 +74,18 @@ def run_rulesets(hpxml_input_path, designs)
     if not eri_version.nil?
       # Obtain egrid subregion & cambium gea region
       egrid_subregion = get_epa_egrid_subregion(zip_code)
-      if not egrid_subregion.nil?
+      if egrid_subregion.nil?
         warnings << "Could not look up eGRID subregion for zip code: '#{zip_code}'. Emissions will not be calculated."
       end
       if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
         cambium_gea = get_cambium_gea_region(zip_code)
-        if not cambium_gea.nil?
+        if cambium_gea.nil?
           warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
         end
       end
     end
+
+    lookup_program_data = {}
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
@@ -89,7 +100,15 @@ def run_rulesets(hpxml_input_path, designs)
           ESConstants.CalcTypeEnergyStarRated,
           ZERHConstants.CalcTypeZERHReference,
           ZERHConstants.CalcTypeZERHRated].include? design.init_calc_type
-        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type)
+        if design.init_calc_type == ESConstants.CalcTypeEnergyStarReference
+          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_version.gsub('.', '_').downcase
+        elsif design.init_calc_type == ZERHConstants.CalcTypeZERHReference
+          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_version.gsub('.', '_').downcase
+        end
+        if (not lookup_program.nil?) && lookup_program_data[lookup_program].nil?
+          lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
+        end
+        new_hpxml = EnergyStarZeroEnergyReadyHomeRuleset.apply_ruleset(new_hpxml, design.init_calc_type, lookup_program_data[lookup_program])
       end
 
       # Write initial HPXML file

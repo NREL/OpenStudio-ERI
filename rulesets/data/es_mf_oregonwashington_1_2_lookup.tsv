@@ -1,0 +1,86 @@
+type	subtype	4C	5A	5B	5C	6A	6B	6C
+foundation_walls_ufactor								
+foundation_walls_rvalue		15	15	15	15	15	15	15
+slab_perimeter_ins_depth								
+slab_perimeter_ins_rvalue		10	10	10	10	10	10	10
+slab_under_ins_width		999	999	999	999	999	999	999
+slab_under_ins_rvalue		10	10	10	10	10	10	10
+floors_over_uncond_spc_ufactor	wood	0.028	0.028	0.028	0.028	0.028	0.028	0.028
+floors_over_uncond_spc_ufactor	mass	0.028	0.028	0.028	0.028	0.028	0.028	0.028
+walls_ufactor		0.056	0.056	0.056	0.056	0.056	0.056	0.056
+door_ufactor		0.17	0.17	0.17	0.17	0.17	0.17	0.17
+window_ufactor	residential	0.27	0.27	0.27	0.27	0.27	0.27	0.27
+window_ufactor	"architectural, operable"	0.43	0.43	0.43	0.43	0.41	0.41	0.41
+window_ufactor	"architectural, fixed"	0.36	0.36	0.36	0.36	0.34	0.34	0.34
+window_shgc		0.3	0.3	0.3	0.3	0.3	0.3	0.3
+ceiling_ufactor		0.026	0.026	0.026	0.026	0.026	0.026	0.026
+radiant_barrier	ducts in unconditioned attic	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+radiant_barrier		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+lighting_tier1_int		0.9	0.9	0.9	0.9	0.9	0.9	0.9
+lighting_tier1_ext		0	0	0	0	0	0	0
+lighting_tier1_grg		0	0	0	0	0	0	0
+lighting_tier2_int		0	0	0	0	0	0	0
+lighting_tier2_ext		0	0	0	0	0	0	0
+lighting_tier2_grg		0	0	0	0	0	0	0
+refrigerator_rated_annual_kwh		423	423	423	423	423	423	423
+clothes_washer_imef		1	1	1	1	1	1	1
+clothes_washer_ler		400	400	400	400	400	400	400
+clothes_washer_elec_rate		0.12	0.12	0.12	0.12	0.12	0.12	0.12
+clothes_washer_gas_rate		1.09	1.09	1.09	1.09	1.09	1.09	1.09
+clothes_washer_ghwc		27	27	27	27	27	27	27
+clothes_washer_capacity		3	3	3	3	3	3	3
+clothes_washer_lcy		312	312	312	312	312	312	312
+ceiling_fan_cfm_per_w		122	122	122	122	122	122	122
+hvac_heating_fuel	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
+hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
+hvac_heating_fuel	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil
+hvac_boiler_afue	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98
+hvac_boiler_afue	natural gas	0.9	0.9	0.9	0.9	0.9	0.9	0.9
+hvac_boiler_afue	fuel oil	0.86	0.86	0.86	0.86	0.86	0.86	0.86
+hvac_central_boiler_et		0.86	0.86	0.86	0.86	0.86	0.86	0.86
+hvac_central_boiler_wlhp_et		0.89	0.89	0.89	0.89	0.89	0.89	0.89
+hvac_furnace_afue	natural gas	0.95	0.95	0.95	0.95	0.95	0.95	0.95
+hvac_furnace_afue	fuel oil	0.85	0.85	0.85	0.85	0.85	0.85	0.85
+hvac_ashp_hspf		9.5	9.5	9.5	9.5	9.5	9.5	9.5
+hvac_gshp_cop								
+hvac_wlhp_cop		4.2	4.2	4.2	4.2	4.2	4.2	4.2
+hvac_ac_seer		13	13	13	13	13	13	13
+hvac_ashp_seer		15	15	15	15	15	15	15
+hvac_gshp_eer								
+hvac_wlhp_eer		14	14	14	14	14	14	14
+hvac_chiller_kw_per_ton		0.78	0.78	0.78	0.78	0.78	0.78	0.78
+hvac_charge_defect_ratio		-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25
+hvac_airflow_defect_ratio		-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25
+hvac_fan_watts_per_cfm		0.58	0.58	0.58	0.58	0.58	0.58	0.58
+shared_motor_efficiency		0.85	0.85	0.85	0.85	0.85	0.85	0.85
+hot_water_distribution_pipe_r_value		3	3	3	3	3	3	3
+hot_water_distribution_low_flow		TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+water_heater_fuel_type	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
+water_heater_fuel_type	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
+water_heater_fuel_type	fuel oil	electricity	electricity	electricity	electricity	electricity	electricity	electricity
+water_heater_type	electricity	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater
+water_heater_type	natural gas	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater
+water_heater_type	fuel oil	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater	heat pump water heater
+water_heater_eff_units		EF	EF	EF	EF	EF	EF	EF
+water_heater_eff_fixed	electricity	2.5	2.5	2.5	2.5	2	2	2
+water_heater_eff_fixed	natural gas	0.91	0.91	0.91	0.91	0.91	0.91	0.91
+water_heater_eff_fixed	fuel oil	2.5	2.5	2.5	2.5	2	2	2
+water_heater_eff_variable	electricity	0	0	0	0	0	0	0
+water_heater_eff_variable	natural gas	0	0	0	0	0	0	0
+water_heater_eff_variable	fuel oil	0	0	0	0	0	0	0
+water_heater_volume	electricity	60	60	60	60	60	60	60
+water_heater_volume	natural gas	60	60	60	60	60	60	60
+water_heater_volume	fuel oil	60	60	60	60	60	60	60
+water_heater_solar_fraction								
+duct_unconditioned_r_value	"supply, attic"	8	8	8	8	8	8	8
+duct_unconditioned_r_value	other	8	8	8	8	8	8	8
+duct_lto_cfm25_per_100sqft		4	4	4	4	4	4	4
+duct_lto_cfm25_max		40	40	40	40	40	40	40
+duct_location_fractions	adiabatic ceiling	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
+duct_location_fractions	1 story	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0
+duct_location_fractions	2 story	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"
+infil_air_leakage_ach50								
+infil_air_leakage_cfm50_per_sqft		0.3	0.3	0.3	0.3	0.3	0.3	0.3
+mechanical_ventilation_fan_type		exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only	exhaust only
+mechanical_ventilation_fan_sre								
+mechanical_ventilation_fan_cfm_per_w		2.8	2.8	2.8	2.8	2.8	2.8	2.8

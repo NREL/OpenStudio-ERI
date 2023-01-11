@@ -736,7 +736,7 @@ If a central air conditioner is specified, additional information is entered in 
   ``DistributionSystem``                                            idref           See [#]_        Yes                  ID of attached distribution system
   ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0             Yes                  Rated efficiency [#]_
   ``CoolingCapacity``                                               double  Btu/hr  >= 0            Yes                  Cooling output capacity
-  ``SensibleHeatFraction``                                          double  frac    0 - 1           No                   Sensible heat fraction
+  ``SensibleHeatFraction``                                          double  frac    0 - 1           No        See [#]_   Sensible heat fraction
   ``CompressorType``                                                string          See [#]_        No        See [#]_   Type of compressor
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0 [#]_       Yes                  Blower fan efficiency at maximum fan speed [#]_
   ``extension/AirflowDefectRatio``                                  double  frac    -0.9 - 9        Yes                  Deviation between design/installed airflows [#]_
@@ -746,6 +746,7 @@ If a central air conditioner is specified, additional information is entered in 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] If SEER2 provided, converted to SEER using ANSI/RESNET/ICC 301-2022 Addendum C, where SEER = SEER2 / 0.95 (assumed to be a split system).
          If not a split system, provide SEER using the appropriate conversion factor.
+  .. [#] If not provided, defaults to 0.73 for single/two stage and 0.78 for variable speed.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
@@ -774,7 +775,7 @@ If a room air conditioner is specified, additional information is entered in ``C
   ==============================================================  ========  ======  ===========  ========  =========  ==============================
   ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``  double    Btu/Wh  > 0          Yes                  Rated efficiency
   ``CoolingCapacity``                                             double    Btu/hr  >= 0         Yes                  Cooling output capacity
-  ``SensibleHeatFraction``                                        double    frac    0 - 1        No                   Sensible heat fraction
+  ``SensibleHeatFraction``                                        double    frac    0 - 1        No        0.65       Sensible heat fraction
   ``IntegratedHeatingSystemFuel``                                 string            See [#]_     No        <none>     Fuel type of integrated heater
   ==============================================================  ========  ======  ===========  ========  =========  ==============================
 
@@ -803,7 +804,7 @@ If a PTAC is specified, additional information is entered in ``CoolingSystem``.
   ==============================================================  ========  ======  ===========  ========  =========  ==============================
   ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``  double    Btu/Wh  > 0          Yes                  Rated cooling efficiency
   ``CoolingCapacity``                                             double    Btu/hr  >= 0         Yes                  Cooling output capacity
-  ``SensibleHeatFraction``                                        double    frac    0 - 1        No                   Sensible heat fraction
+  ``SensibleHeatFraction``                                        double    frac    0 - 1        No        0.65       Sensible heat fraction
   ``IntegratedHeatingSystemFuel``                                 string            See [#]_     No        <none>     Fuel type of integrated heater
   ==============================================================  ========  ======  ===========  ========  =========  ==============================
 
@@ -847,7 +848,7 @@ If a mini-split air conditioner is specified, additional information is entered 
   ``DistributionSystem``                                            idref           See [#]_        No                 ID of attached distribution system
   ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0             Yes                Rated cooling efficiency [#]_
   ``CoolingCapacity``                                               double  Btu/hr  >= 0            Yes                Cooling output capacity
-  ``SensibleHeatFraction``                                          double  frac    0 - 1           No                 Sensible heat fraction
+  ``SensibleHeatFraction``                                          double  frac    0 - 1           No        0.73     Sensible heat fraction
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0            Yes                Blower fan efficiency at maximum fan speed [#]_
   ``extension/AirflowDefectRatio``                                  double  frac    -0.9 - 9        Yes                Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                                   double  frac    -0.25, 0, 0.25  Yes                Deviation between design/installed charges [#]_
@@ -967,7 +968,7 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   ``HeatingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
   ``HeatingCapacity17F``                                            double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
   ``CoolingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                                   double  frac    0 - 1                     No                   Sensible heat fraction
+  ``CoolingSensibleHeatFraction``                                   double  frac    0 - 1                     No        See [#]_   Sensible heat fraction
   ``FractionHeatLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
   ``FractionCoolLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency [#]_
@@ -980,6 +981,7 @@ If an air-to-air heat pump is specified, additional information is entered in ``
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
   .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
+  .. [#] If not provided, defaults to 0.73 for single/two stage and 0.78 for variable speed.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across all HVAC systems) must be less than or equal to 1.
   .. [#] The sum of all ``FractionCoolLoadServed`` (across all HVAC systems) must be less than or equal to 1.
   .. [#] If SEER2 provided, converted to SEER using ANSI/RESNET/ICC 301-2022 Addendum C, where SEER = SEER2 / 0.95 (assumed to be a split system).
@@ -1013,7 +1015,7 @@ If a mini-split heat pump is specified, additional information is entered in ``H
   ``HeatingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Heating output capacity (excluding any backup heating)
   ``HeatingCapacity17F``                                            double  Btu/hr  >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
   ``CoolingCapacity``                                               double  Btu/hr  >= 0                      Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                                   double  frac    0 - 1                     No                   Sensible heat fraction
+  ``CoolingSensibleHeatFraction``                                   double  frac    0 - 1                     No        0.73       Sensible heat fraction
   ``FractionHeatLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of heating load served
   ``FractionCoolLoadServed``                                        double  frac    0 - 1 [#]_                Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0                       Yes                  Rated cooling efficiency [#]_
@@ -1059,7 +1061,7 @@ If a packaged terminal heat pump is specified, additional information is entered
   ===============================================================  ========  ======  ===========  ========  =========  ==============================================
   ``HeatingCapacity``                                              double    Btu/hr  >= 0         Yes                  Heating output capacity (excluding any backup heating)
   ``CoolingCapacity``                                              double    Btu/hr  >= 0         Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                                  double    frac    0 - 1        No                   Sensible heat fraction
+  ``CoolingSensibleHeatFraction``                                  double    frac    0 - 1        No        0.65       Sensible heat fraction
   ``FractionHeatLoadServed``                                       double    frac    0 - 1 [#]_   Yes                  Fraction of heating load served
   ``FractionCoolLoadServed``                                       double    frac    0 - 1 [#]_   Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``   double    Btu/Wh  > 0          Yes                  Rated cooling efficiency
@@ -1081,7 +1083,7 @@ If a room air conditioner with reverse cycle is specified, additional informatio
   ===============================================================  ========  ======  ===========  ========  =========  ==============================================
   ``HeatingCapacity``                                              double    Btu/hr  >= 0         Yes                  Heating output capacity (excluding any backup heating)
   ``CoolingCapacity``                                              double    Btu/hr  >= 0         Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                                  double    frac    0 - 1        No                   Sensible heat fraction
+  ``CoolingSensibleHeatFraction``                                  double    frac    0 - 1        No        0.65       Sensible heat fraction
   ``FractionHeatLoadServed``                                       double    frac    0 - 1 [#]_   Yes                  Fraction of heating load served
   ``FractionCoolLoadServed``                                       double    frac    0 - 1 [#]_   Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="EER" or Units="CEER"]/Value``   double    Btu/Wh  > 0          Yes                  Rated cooling efficiency
@@ -1103,7 +1105,7 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   ``DistributionSystem``                          idref            See [#]_        Yes                  ID of attached distribution system
   ``HeatingCapacity``                             double   Btu/hr  >= 0            Yes                  Heating output capacity (excluding any backup heating)
   ``CoolingCapacity``                             double   Btu/hr  >= 0            Yes                  Cooling output capacity
-  ``CoolingSensibleHeatFraction``                 double   frac    0 - 1           No                   Sensible heat fraction
+  ``CoolingSensibleHeatFraction``                 double   frac    0 - 1           No        0.73       Sensible heat fraction
   ``FractionHeatLoadServed``                      double   frac    0 - 1 [#]_      Yes                  Fraction of heating load served
   ``FractionCoolLoadServed``                      double   frac    0 - 1 [#]_      Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="EER"]/Value``  double   Btu/Wh  > 0             Yes                  Rated cooling efficiency
@@ -1490,7 +1492,7 @@ If a conventional storage water heater is specified, additional information is e
   ``HeatingCapacity``                            double   Btu/hr        > 0          No        See [#]_  Heating output capacity
   ``UniformEnergyFactor`` or ``EnergyFactor``    double   frac          < 1          Yes                 EnergyGuide label rated efficiency
   ``FirstHourRating``                            double   gal/hr        > 0          See [#]_            EnergyGuide label first hour rating
-  ``RecoveryEfficiency``                         double   frac          0 - 1 [#]_   See [#]_            Recovery efficiency
+  ``RecoveryEfficiency``                         double   frac          0 - 1 [#]_   No        See [#]_  Recovery efficiency
   ``WaterHeaterInsulation/Jacket/JacketRValue``  double   F-ft2-hr/Btu  >= 0         No        0         R-value of additional tank insulation wrap
   =============================================  =======  ============  ===========  ========  ========  ==========================================
   
@@ -1498,7 +1500,11 @@ If a conventional storage water heater is specified, additional information is e
   .. [#] If HeatingCapacity not provided, defaults based on Table 8 in the `2014 BAHSP <https://www.energy.gov/sites/prod/files/2014/03/f13/house_simulation_protocols_2014.pdf>`_.
   .. [#] FirstHourRating only required if UniformEnergyFactor provided.
   .. [#] RecoveryEfficiency must also be greater than the EnergyFactor (or UniformEnergyFactor).
-  .. [#] RecoveryEfficiency only required if FuelType is not electricity.
+  .. [#] If RecoveryEfficiency not provided, defaults as follows based on a regression analysis of `AHRI certified water heaters <https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3>`_:
+  
+         - **Electric**: 0.98
+         - **Non-electric, EnergyFactor < 0.75**: 0.252 * EnergyFactor + 0.608
+         - **Non-electric, EnergyFactor >= 0.75**: 0.561 * EnergyFactor + 0.439
 
 Tankless
 ~~~~~~~~

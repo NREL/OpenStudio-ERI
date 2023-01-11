@@ -1,3 +1,20 @@
+## OpenStudio-ERI v1.5.2
+
+__New Features__
+- Updates to ENERGY STAR SFNH Rev 12 and MFNC Rev 03.
+- `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
+- Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.
+- Provide two decimal places in ENERGY STARS/ZERH CSV output files to better prevent user confusion.
+
+__Bugfixes__
+- Bugfixes for ENERGY STAR and ZERH programs.
+
+## OpenStudio-ERI v1.5.1
+
+__Bugfixes__
+- Fixes incorrect warning about zip code not found in eGRID/Cambium lookup table.
+- Fixes error when a non-electric water heater has jacket insulation and the UEF metric is used.
+
 ## OpenStudio-ERI v1.5.0
 
 __New Features__
