@@ -421,8 +421,8 @@
           <SystemIdentifier id='ClothesDryer1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>living space</Location>
-          <FuelType>electricity</FuelType>
-          <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
+          <FuelType>natural gas</FuelType>
+          <CombinedEnergyFactor>3.3</CombinedEnergyFactor>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
@@ -443,7 +443,7 @@
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
           <Location>living space</Location>
-          <FuelType>electricity</FuelType>
+          <FuelType>natural gas</FuelType>
           <IsInduction>false</IsInduction>
         </CookingRange>
         <Oven>

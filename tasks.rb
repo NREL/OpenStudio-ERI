@@ -2236,11 +2236,12 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml)
     if hpxml_file.include?('NoMechVent')
       return
     elsif hpxml_file.include?('CFIS')
+      cooling_flow_rate = 400.0 * (hpxml.cooling_systems[0].cooling_capacity / 12000) # cfm per 301-2019 Table 4.2.2(1) Note m
       hpxml.ventilation_fans.add(id: "VentilationFan#{hpxml.ventilation_fans.size + 1}",
                                  fan_type: HPXML::MechVentTypeCFIS,
                                  tested_flow_rate: 155.4,
                                  hours_in_operation: 12,
-                                 fan_power: 0.0,
+                                 fan_power: (0.58 * cooling_flow_rate).round(3),
                                  used_for_whole_building_ventilation: true,
                                  cfis_addtl_runtime_operating_mode: HPXML::CFISModeAirHandler,
                                  distribution_system_idref: hpxml.hvac_distributions[0].id,
@@ -2521,7 +2522,6 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
                        capacity: 4.2, # ft^3
                        label_usage: 6.0 } # cyc/week
   else
-    # FIXME: Should the Multi_Climate test cases use the default values or not?
     default_values = HotWaterAndAppliances.get_clothes_washer_default_values(get_eri_version(hpxml))
   end
 
@@ -2554,9 +2554,15 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-02.xml',
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-03.xml',
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include?(hpxml_file) ||
-     (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_'))
+     (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_')) ||
+     hpxml_file.include?('Multi_Climate')
     # Gas
-    default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
+    if hpxml_file.include?('Multi_Climate')
+      # FIXME: Should be identical to reference home? all other appliances are.
+      default_values = { combined_energy_factor: 3.30 }
+    else
+      default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
+    end
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
                              is_shared_appliance: false,
@@ -2573,16 +2579,9 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-04.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include?(hpxml_file) ||
-        (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_')) ||
-        hpxml_file.include?('Multi_Climate')
-
+        (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_'))
     # Electric
-    # FIXME: Should the Multi_Climate test cases use the default values or not?
-    # FIXME: Is the Multi_Climate appliance gas or electric?
     default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeElectricity)
-    if hpxml_file.include?('Multi_Climate')
-      default_values[:combined_energy_factor] = 3.73
-    end
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
                              is_shared_appliance: false,
@@ -2661,7 +2660,8 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-02.xml',
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-03.xml',
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include?(hpxml_file) ||
-     (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_'))
+     (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_')) ||
+     hpxml_file.include?('Multi_Climate')
     # Gas
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
@@ -2676,10 +2676,8 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include?(hpxml_file) ||
-        (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_')) ||
-        hpxml_file.include?('Multi_Climate')
+        (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_'))
     # Electric
-    # FIXME: Is the Multi_Climate appliance gas or electric?
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: "CookingRange#{hpxml.cooking_ranges.size + 1}",
