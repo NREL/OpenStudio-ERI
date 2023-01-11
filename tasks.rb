@@ -2557,12 +2557,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
      (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_')) ||
      hpxml_file.include?('Multi_Climate')
     # Gas
-    if hpxml_file.include?('Multi_Climate')
-      # FIXME: Should be identical to reference home? all other appliances are.
-      default_values = { combined_energy_factor: 3.30 }
-    else
-      default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
-    end
+    default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(get_eri_version(hpxml), HPXML::FuelTypeNaturalGas)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
                              is_shared_appliance: false,
