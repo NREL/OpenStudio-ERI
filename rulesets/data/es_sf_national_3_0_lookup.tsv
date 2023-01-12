@@ -10,11 +10,13 @@ walls_ufactor		0.082	0.082	0.082	0.082	0.082	0.082	0.082	0.082	0.082	0.082	0.082
 walls_solar_abs		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75
 walls_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 door_ufactor		0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21	0.21
+window_area		"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"
 window_ufactor		0.6	0.6	0.6	0.6	0.6	0.6	0.35	0.35	0.35	0.32	0.32	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
 window_shgc		0.27	0.27	0.27	0.27	0.27	0.27	0.3	0.3	0.3	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4
 ceiling_ufactor		0.035	0.035	0.035	0.035	0.035	0.035	0.035	0.035	0.035	0.03	0.03	0.03	0.03	0.03	0.03	0.026	0.026	0.026	0.026	0.026
 radiant_barrier	ducts in unconditioned attic	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 radiant_barrier		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+vented_attic		always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always
 roof_solar_abs		0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92
 roof_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 lighting_tier1_int		0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8
@@ -48,13 +50,13 @@ ceiling_fan_cfm_per_w		122	122	122	122	122	122	122	122	122	122	122	122	122	122	1
 hvac_heating_fuel	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 hvac_heating_fuel	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil
-hvac_boiler_afue	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98
 hvac_boiler_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85
 hvac_boiler_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85
 hvac_central_boiler_et		0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86	0.86
 hvac_central_boiler_wlhp_et		0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89	0.89
 hvac_furnace_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 hvac_furnace_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85
+hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	ground-to-air	ground-to-air
 hvac_ashp_hspf		8.2	8.2	8.2	8.2	8.2	8.2	8.2	8.2	8.2	8.5	8.5	9.25	9.25	9.25	9.25	9.5	9.5	9.5		
 hvac_gshp_cop																				3.5	3.5
 hvac_wlhp_cop		4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2
