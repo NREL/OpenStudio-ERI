@@ -37,10 +37,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _check_infiltration(hpxml, value, units)
     end
 
-    ESConstants.MFVersions.each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_infiltration(hpxml, 834.0, 'CFM')
+      if [ZERHConstants.Ver1].include? program_version
+        _check_infiltration(hpxml, 3.0, 'ACH')
+      else
+        _check_infiltration(hpxml, 834.0, 'CFM')
+      end
     end
 
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
@@ -93,7 +97,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _check_roofs(hpxml, area: 1350, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
     end
 
-    ESConstants.MFVersions.each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
       hpxml = _test_ruleset(program_version)
       _check_roofs(hpxml)
@@ -172,13 +176,15 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _check_walls(hpxml, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
 
-    ESConstants.MFVersions.each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
       elsif program_version == ESConstants.MFNationalVer1_2
         rvalue = 1.0 / 0.045
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.056
+      elsif [ZERHConstants.Ver1].include? program_version
+        rvalue = 1.0 / 0.060
       end
 
       _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
@@ -357,7 +363,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       end
     end
 
-    ESConstants.MFVersions.each do |program_version|
+    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
       hpxml = _test_ruleset(program_version)
       _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
@@ -401,8 +407,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       _check_floors(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
     end
 
-    ESConstants.MFVersions.each do |program_version|
-      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
+    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
+      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ZERHConstants.Ver1].include? program_version
         rvalue = 1.0 / 0.033
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.028

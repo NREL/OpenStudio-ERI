@@ -174,7 +174,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
     has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
 
-    vented_attic = lookup_reference_value('vented_attic')
+    vented_attic = lookup_reference_value('vented_attic', @bldg_type)
+    vented_attic = lookup_reference_value('vented_attic') if vented_attic.nil?
 
     set_vented_attic = false
     if vented_attic == 'if has attic or duct location'
@@ -225,6 +226,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # Exhibit 2 - Roofs
     radiant_barrier_bool = get_radiant_barrier_bool(orig_hpxml)
     radiant_barrier_grade = 1 if radiant_barrier_bool
+    ceiling_ufactor = lookup_reference_value('ceiling_ufactor')
 
     solar_absorptance = lookup_reference_value('roof_solar_abs')
     emittance = lookup_reference_value('roof_emittance')
@@ -234,14 +236,14 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.roofs.each do |orig_roof|
       roof_pitch = orig_roof.pitch
       roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
-      roof_insulation_assembly_r_value = orig_roof.insulation_assembly_r_value
       if orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace && has_vented_attic
         roof_interior_adjacent_to = HPXML::LocationAtticVented
         roof_pitch = default_roof_pitch if roof_pitch == 0
       end
       if roof_interior_adjacent_to != HPXML::LocationLivingSpace
-        # Roof surfaces are over unconditioned spaces and should not be insulated
-        roof_insulation_assembly_r_value = [roof_insulation_assembly_r_value, 2.3].min # uninsulated
+        insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
+      else
+        insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       end
 
       new_hpxml.roofs.add(id: orig_roof.id,
@@ -254,7 +256,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                           radiant_barrier: radiant_barrier_bool,
                           radiant_barrier_grade: radiant_barrier_grade,
                           insulation_id: orig_roof.insulation_id,
-                          insulation_assembly_r_value: roof_insulation_assembly_r_value)
+                          insulation_assembly_r_value: insulation_assembly_r_value)
     end
 
     # Add a roof above the vented attic that is newly added to Reference Design
@@ -450,7 +452,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if orig_floor.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_floor.exterior_adjacent_to))
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       else
-        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
+        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
       end
 
       ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
