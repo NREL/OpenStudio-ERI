@@ -85,7 +85,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         # Ducts remain in living space, so no need to transition roof to vented attic
         adjacent_to = HPXML::LocationLivingSpace
-        rvalue = 25.8
+        if program_version == ESConstants.MFNationalVer1_1
+          rvalue = 1.0 / 0.021
+        elsif [ESConstants.MFNationalVer1_2].include? program_version
+          rvalue = 1.0 / 0.024
+        end
       end
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
