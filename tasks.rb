@@ -2503,7 +2503,7 @@ def create_sample_hpxmls
     # Handle different inputs for ERI
 
     hpxml.header.eri_calculation_version = 'latest'
-    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-2]
+    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-3]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.header.timestep = nil
     hpxml.site.site_type = nil
@@ -2784,7 +2784,7 @@ def create_sample_hpxmls
                                                           zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
     end
     if hpxml_path.include? 'base-bldgtype-multifamily'
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1
+      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_0
     elsif hpxml.header.state_code == 'FL'
       hpxml.header.energystar_calculation_version = ESConstants.SFFloridaVer3_1
     elsif hpxml.header.state_code == 'HI'
@@ -2792,7 +2792,7 @@ def create_sample_hpxmls
     elsif hpxml.header.state_code == 'OR'
       hpxml.header.energystar_calculation_version = ESConstants.SFOregonWashingtonVer3_2
     else
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_1
+      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_0
     end
     hpxml.windows.each do |window|
       window.performance_class = HPXML::WindowClassResidential

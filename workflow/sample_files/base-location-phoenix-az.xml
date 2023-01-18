@@ -12,10 +12,10 @@
         <Version>latest</Version>
       </ERICalculation>
       <EnergyStarCalculation>
-        <Version>SF_National_3.1</Version>
+        <Version>SF_National_3.0</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
-        <Version>2018</Version>
+        <Version>2015</Version>
       </IECCERICalculation>
       <ZERHCalculation>
         <Version>1.0</Version>
@@ -56,10 +56,6 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>2B</ClimateZone>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2018</Year>
           <ClimateZone>2B</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
