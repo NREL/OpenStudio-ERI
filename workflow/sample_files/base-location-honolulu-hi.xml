@@ -15,10 +15,10 @@
         <Version>SF_Pacific_3.0</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
-        <Version>2021</Version>
+        <Version>2018</Version>
       </IECCERICalculation>
       <ZERHCalculation>
-        <Version>SF_2.0</Version>
+        <Version>1.0</Version>
       </ZERHCalculation>
       <AdditionalProperties>
         <ParentHPXMLFile>base-foundation-slab.xml</ParentHPXMLFile>
@@ -59,7 +59,11 @@
           <ClimateZone>1A</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
-          <Year>2021</Year>
+          <Year>2018</Year>
+          <ClimateZone>1A</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2015</Year>
           <ClimateZone>1A</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>

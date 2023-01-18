@@ -12,13 +12,13 @@
         <Version>latest</Version>
       </ERICalculation>
       <EnergyStarCalculation>
-        <Version>SF_National_3.2</Version>
+        <Version>SF_National_3.1</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
-        <Version>2021</Version>
+        <Version>2018</Version>
       </IECCERICalculation>
       <ZERHCalculation>
-        <Version>SF_2.0</Version>
+        <Version>1.0</Version>
       </ZERHCalculation>
       <AdditionalProperties>
         <ParentHPXMLFile>base-foundation-unconditioned-basement.xml</ParentHPXMLFile>
@@ -59,7 +59,11 @@
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
-          <Year>2021</Year>
+          <Year>2018</Year>
+          <ClimateZone>7</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2015</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
