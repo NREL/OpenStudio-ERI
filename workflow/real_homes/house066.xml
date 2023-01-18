@@ -56,6 +56,10 @@
           <ClimateZone>3A</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
+          <Year>2015</Year>
+          <ClimateZone>3A</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
           <Year>2018</Year>
           <ClimateZone>3A</ClimateZone>
         </ClimateZoneIECC>

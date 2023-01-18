@@ -57,6 +57,10 @@
           <ClimateZone>4C</ClimateZone>
         </ClimateZoneIECC>
         <ClimateZoneIECC>
+          <Year>2015</Year>
+          <ClimateZone>4C</ClimateZone>
+        </ClimateZoneIECC>
+        <ClimateZoneIECC>
           <Year>2018</Year>
           <ClimateZone>4C</ClimateZone>
         </ClimateZoneIECC>
