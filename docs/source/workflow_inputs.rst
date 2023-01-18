@@ -178,6 +178,7 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
          IECC ERI 2021                    2021
          ENERGY STAR SFNH National v3.2   2021
          ENERGY STAR MFNC National v1.2   2021
+         ZERH 1.0                         2015
          ZERH SF 2.0                      2021
          ===============================  =============
   
