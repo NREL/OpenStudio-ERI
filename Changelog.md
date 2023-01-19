@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.5.2
 
 __New Features__
+- Adds support for ZERH Single Family v2.
 - Updates to ENERGY STAR SFNH Rev 12 and MFNC Rev 03.
 - `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
 - Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.

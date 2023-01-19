@@ -12,10 +12,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       @program_version = hpxml.header.zerh_calculation_version
     end
 
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? @program_version
+    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_year = 2021
-    elsif ZERHConstants.AllVersions.include? @program_version
+    elsif @program_version == ZERHConstants.Ver1
       # Use Year=2015 for Reference Home configuration
       iecc_year = 2015
     else
@@ -97,15 +97,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
     new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
-    new_hpxml.header.energystar_calculation_version = orig_hpxml.header.energystar_calculation_version
-    new_hpxml.header.zerh_calculation_version = orig_hpxml.header.zerh_calculation_version
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code
     new_hpxml.header.zip_code = orig_hpxml.header.zip_code
 
     bldg_type = orig_hpxml.building_construction.residential_facility_type
-    if bldg_type == HPXML::ResidentialTypeSFA && (@program_version.include? 'MF')
+    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants.MFVersions.include?(@program_version)
       begin
         # ESRD configured as SF National v3.X
         ref_design_config_mapping = {
@@ -173,26 +171,28 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
   def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
     has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
+
+    vented_attic = lookup_reference_value('vented_attic', @bldg_type)
+    vented_attic = lookup_reference_value('vented_attic') if vented_attic.nil?
+
     set_vented_attic = false
-    if (ESConstants.MFVersions.include? @program_version) ||
-       ((ZERHConstants.AllVersions.include? @program_version) && ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? @bldg_type))
-      if is_ceiling_fully_adiabatic(orig_hpxml)
-        return # Where the Rated Unit is entirely located beneath another dwelling unit or unrated conditioned space, no attic is modeled in the Reference Design
+    if vented_attic == 'if has attic or duct location'
+      # A vented unconditioned attic shall only be modeled in the Multifamily Reference Design where attics (of any type)
+      # exist in the Rated Unit or when specified as the Duct Location in the Thermal Distribution Systems section
+      if has_attic
+        set_vented_attic = true
       else
-        if @program_version == ESConstants.MFNationalVer1_1
-          # Attic shall only be modeled if exist. Because Duct Locations shall be configured to be 100% in conditioned space
-          # Check if vented attic (or unvented attic, which will become a vented attic) exists
-          if has_attic
-            set_vented_attic = true
-          end
-        elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? @program_version
-          # With or without an attic in orig_hpxml, there should be an attic in new_hpxml. Because duct Locations shall be configured to be either 100% or 75% in vented attic depending on the number of story of the unit
+        duct_locations = get_duct_location_areas(orig_hpxml, 1.0).keys
+        if duct_locations.include? HPXML::LocationAtticVented
           set_vented_attic = true
         end
       end
-    else
+    elsif vented_attic == 'always'
       set_vented_attic = true
+    else
+      fail 'Unexpected case.'
     end
+
     if set_vented_attic
       new_hpxml.attics.add(id: 'TargetVentedAttic',
                            attic_type: HPXML::AtticTypeVented)
@@ -224,23 +224,24 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # Exhibit 2 - Roofs
     radiant_barrier_bool = get_radiant_barrier_bool(orig_hpxml)
     radiant_barrier_grade = 1 if radiant_barrier_bool
+    ceiling_ufactor = lookup_reference_value('ceiling_ufactor')
 
-    solar_absorptance = 0.92
-    emittance = 0.90
+    solar_absorptance = lookup_reference_value('roof_solar_abs')
+    emittance = lookup_reference_value('roof_emittance')
     default_roof_pitch = 5.0 # assume 5:12 pitch
     has_vented_attic = (new_hpxml.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
 
     orig_hpxml.roofs.each do |orig_roof|
       roof_pitch = orig_roof.pitch
       roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
-      roof_insulation_assembly_r_value = orig_roof.insulation_assembly_r_value
       if orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace && has_vented_attic
         roof_interior_adjacent_to = HPXML::LocationAtticVented
         roof_pitch = default_roof_pitch if roof_pitch == 0
       end
       if roof_interior_adjacent_to != HPXML::LocationLivingSpace
-        # Roof surfaces are over unconditioned spaces and should not be insulated
-        roof_insulation_assembly_r_value = [roof_insulation_assembly_r_value, 2.3].min # uninsulated
+        insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
+      else
+        insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       end
 
       new_hpxml.roofs.add(id: orig_roof.id,
@@ -253,30 +254,31 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                           radiant_barrier: radiant_barrier_bool,
                           radiant_barrier_grade: radiant_barrier_grade,
                           insulation_id: orig_roof.insulation_id,
-                          insulation_assembly_r_value: roof_insulation_assembly_r_value)
+                          insulation_assembly_r_value: insulation_assembly_r_value)
     end
 
     # Add a roof above the vented attic that is newly added to Reference Design
-    orig_hpxml.floors.each do |orig_floor|
-      next unless orig_floor.is_ceiling
-      next unless [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace].include? orig_floor.exterior_adjacent_to
-      next unless @has_auto_generated_attic
+    if @has_auto_generated_attic
+      orig_hpxml.floors.each do |orig_floor|
+        next unless orig_floor.is_ceiling
+        next unless multifamily_adjacent_locations.include? orig_floor.exterior_adjacent_to
 
-      # Estimate the area of the roof based on the floor area and pitch
-      pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
-      roof_area = orig_floor.area / Math.cos(pitch_to_radians)
+        # Estimate the area of the roof based on the floor area and pitch
+        pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
+        roof_area = orig_floor.area / Math.cos(pitch_to_radians)
 
-      new_hpxml.roofs.add(id: 'TargetRoof',
-                          interior_adjacent_to: HPXML::LocationAtticVented,
-                          area: roof_area,
-                          azimuth: nil,
-                          solar_absorptance: solar_absorptance,
-                          emittance: emittance,
-                          pitch: default_roof_pitch,
-                          radiant_barrier: radiant_barrier_bool,
-                          radiant_barrier_grade: radiant_barrier_grade,
-                          insulation_id: 'TargetRoofInsulation',
-                          insulation_assembly_r_value: 2.3) # Assumes that the roof is uninsulated
+        new_hpxml.roofs.add(id: 'TargetRoof',
+                            interior_adjacent_to: HPXML::LocationAtticVented,
+                            area: roof_area,
+                            azimuth: nil,
+                            solar_absorptance: solar_absorptance,
+                            emittance: emittance,
+                            pitch: default_roof_pitch,
+                            radiant_barrier: radiant_barrier_bool,
+                            radiant_barrier_grade: radiant_barrier_grade,
+                            insulation_id: 'TargetRoofInsulation',
+                            insulation_assembly_r_value: 2.3) # Assumes that the roof is uninsulated
+      end
     end
   end
 
@@ -291,8 +293,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     ext_thermal_bndry_rim_joists_bg = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationBasementConditioned }
     sum_gross_area_bg = ext_thermal_bndry_rim_joists_bg.map { |rim_joist| rim_joist.area }.sum(0)
 
-    solar_absorptance = 0.75
-    emittance = 0.90
+    solar_absorptance = lookup_reference_value('walls_solar_abs')
+    emittance = lookup_reference_value('walls_emittance')
 
     # Create insulated rim joists for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be consistent with walls.
@@ -324,9 +326,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.rim_joists.each do |orig_rim_joist|
       next if orig_rim_joist.is_exterior_thermal_boundary
 
-      insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
-      if orig_rim_joist.is_thermal_boundary
+      if orig_rim_joist.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_rim_joist.exterior_adjacent_to))
         insulation_assembly_r_value = (1.0 / ufactor).round(3)
+      else
+        insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
       end
       new_hpxml.rim_joists.add(id: orig_rim_joist.id,
                                exterior_adjacent_to: orig_rim_joist.exterior_adjacent_to.gsub('unvented', 'vented'),
@@ -347,8 +350,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
 
-    solar_absorptance = 0.75
-    emittance = 0.90
+    solar_absorptance = lookup_reference_value('walls_solar_abs')
+    emittance = lookup_reference_value('walls_emittance')
 
     # Create thermal boundary wall area
     if sum_gross_area > 0
@@ -369,16 +372,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.walls.each do |orig_wall|
       next if orig_wall.is_exterior_thermal_boundary
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      if orig_wall.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_wall.exterior_adjacent_to))
+        insulation_assembly_r_value = (1.0 / ufactor).round(3)
+      else
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
-        if orig_wall.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationGarage].include? orig_wall.exterior_adjacent_to)
-          insulation_assembly_r_value = (1.0 / ufactor).round(3)
-        end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
-        insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
-        if orig_wall.is_thermal_boundary
-          insulation_assembly_r_value = (1.0 / ufactor).round(3)
-        end
       end
 
       new_hpxml.walls.add(id: orig_wall.id,
@@ -450,31 +447,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
-        # Retain boundary condition of ceilings in the Rated Unit, including adiabatic ceilings.
-        ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
-        if ([ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2, ZERHConstants.Ver1].include? @program_version) && @has_auto_generated_attic && ([HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to)
-          ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
-        end
-
+      if orig_floor.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_floor.exterior_adjacent_to))
+        insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
+      else
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
-        if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
-          # Ceilings adjacent to exterior or unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
-          insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
-        end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
-        ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
-        if [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to
-          ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
-        end
+      end
 
-        # Changes the U-factor for a ceiling to be uninsulated if the ceiling is not a thermal boundary.
-        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 2.1].min # uninsulated
-        if orig_floor.is_thermal_boundary
-          insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
-        elsif [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherMultifamilyBufferSpace, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace].include? orig_floor.exterior_adjacent_to
-          insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3) # Becomes the ceiling adjacent to the vented attic
-        end
+      ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
+      if @has_auto_generated_attic && multifamily_adjacent_locations.include?(orig_floor.exterior_adjacent_to)
+        ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
       end
 
       new_hpxml.floors.add(id: orig_floor.id,
@@ -488,21 +469,22 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     # Add a floor between the vented attic and living space
-    orig_hpxml.roofs.each do |orig_roof|
-      next unless orig_roof.is_exterior_thermal_boundary
-      next unless @has_auto_generated_attic
+    if @has_auto_generated_attic
+      orig_hpxml.roofs.each do |orig_roof|
+        next unless orig_roof.is_exterior_thermal_boundary
 
-      # Estimate the area of the floor based on the roof area and pitch
-      pitch_to_radians = Math.atan(orig_roof.pitch / 12.0)
-      floor_area = orig_roof.area * Math.cos(pitch_to_radians)
+        # Estimate the area of the floor based on the roof area and pitch
+        pitch_to_radians = Math.atan(orig_roof.pitch / 12.0)
+        floor_area = orig_roof.area * Math.cos(pitch_to_radians)
 
-      new_hpxml.floors.add(id: 'TargetFloor',
-                           exterior_adjacent_to: HPXML::LocationAtticVented,
-                           interior_adjacent_to: HPXML::LocationLivingSpace,
-                           floor_type: HPXML::FloorTypeWoodFrame,
-                           area: floor_area,
-                           insulation_id: 'TargetFloorInsulation',
-                           insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
+        new_hpxml.floors.add(id: 'TargetFloor',
+                             exterior_adjacent_to: HPXML::LocationAtticVented,
+                             interior_adjacent_to: HPXML::LocationLivingSpace,
+                             floor_type: HPXML::FloorTypeWoodFrame,
+                             area: floor_area,
+                             insulation_id: 'TargetFloorInsulation',
+                             insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
+      end
     end
   end
 
@@ -515,19 +497,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor', subtype)
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor') if floor_ufactor.nil?
 
-      if (ESConstants.MFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
+      if orig_floor.is_thermal_boundary && (not (multifamily_adjacent_locations - [HPXML::LocationOtherNonFreezingSpace]).include?(orig_floor.exterior_adjacent_to))
+        insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
+      else
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
-        if orig_floor.is_thermal_boundary && ([HPXML::LocationOutside, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationAtticUnvented, HPXML::LocationAtticVented, HPXML::LocationGarage, HPXML::LocationCrawlspaceUnvented, HPXML::LocationCrawlspaceVented, HPXML::LocationBasementUnconditioned, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to)
-          # Ceilings adjacent to outdoor environment, non-freezing space, unconditioned space volumes (e.g., attic, garage, crawlspace, sunrooms, unconditioned basement, multifamily buffer space)
-          insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
-        end
-      elsif (ESConstants.SFVersions.include? @program_version) || ([HPXML::ResidentialTypeSFD].include?(@bldg_type) && @program_version == ZERHConstants.Ver1)
-        # Uninsulated for, e.g., floors between living space and conditioned basement.
-        insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
-        # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
-        if orig_floor.is_thermal_boundary
-          insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
-        end
       end
 
       new_hpxml.floors.add(id: orig_floor.id,
@@ -605,8 +578,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # Default natural ventilation
     fraction_operable = Airflow.get_default_fraction_of_windows_operable()
 
+    window_area = lookup_reference_value('window_area')
+
     # Calculate the window area
-    if [*ESConstants.SFVersions, *ZERHConstants.AllVersions].include? @program_version
+    if window_area == 'same as rated, with exceptions'
       if @has_cond_bsmnt || [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type)
         # For homes with conditioned basements and attached homes:
         total_win_area = calc_default_total_win_area(orig_hpxml, @cfa)
@@ -633,7 +608,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                               performance_class: HPXML::WindowClassResidential,
                               fraction_operable: fraction_operable)
       end
-    elsif ESConstants.MFVersions.include? @program_version
+    elsif window_area == '0.15 x CFA x FA x F'
       total_win_area = calc_default_total_win_area(orig_hpxml, @cfa)
 
       # Orientation same as Rated Unit, by percentage of area
@@ -652,6 +627,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                               performance_class: win.performance_class,
                               fraction_operable: fraction_operable)
       end
+    else
+      fail 'Unexpected case.'
     end
   end
 
@@ -694,7 +671,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
           fraction_heat_load_served = cooling_system.integrated_heating_system_fraction_heat_load_served
           heating_system_type = cooling_system.cooling_system_type
         end
-        if heating_system_type == HPXML::HVACTypeBoiler
+
+        if heating_system_type == HPXML::HVACTypeBoiler && heating_fuel != HPXML::FuelTypeElectricity
           add_reference_boiler(new_hpxml, heating_system)
         elsif heating_fuel == HPXML::FuelTypeElectricity
           if not cooling_system.nil?
@@ -782,15 +760,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       end
 
       # Duct leakage to outside calculated based on conditioned floor area served
-      total_duct_leakage_to_outside = calc_default_duct_leakage_to_outside(new_hvac_dist.conditioned_floor_area_served)
+      total_duct_lto_cfm25 = calc_default_duct_lto_cfm25(new_hvac_dist.conditioned_floor_area_served)
 
       [HPXML::DuctTypeSupply, HPXML::DuctTypeReturn].each do |duct_type|
         # Split the total duct leakage to outside evenly and assign it to supply ducts and return ducts
-        duct_leakage_to_outside = total_duct_leakage_to_outside * 0.5
+        duct_lto_cfm25 = total_duct_lto_cfm25 * 0.5
 
         new_hvac_dist.duct_leakage_measurements.add(duct_type: duct_type,
                                                     duct_leakage_units: HPXML::UnitsCFM25,
-                                                    duct_leakage_value: duct_leakage_to_outside,
+                                                    duct_leakage_value: duct_lto_cfm25,
                                                     duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
 
         # ASHRAE 152 duct area calculation based on conditioned floor area served
@@ -981,13 +959,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       fuel_type = clothes_dryer.fuel_type
     end
 
-    reference_values = HotWaterAndAppliances.get_clothes_dryer_default_values(@eri_version, fuel_type)
-
     new_hpxml.clothes_dryers.add(id: id,
                                  location: location,
                                  is_shared_appliance: false,
                                  fuel_type: fuel_type,
-                                 combined_energy_factor: reference_values[:combined_energy_factor])
+                                 combined_energy_factor: lookup_reference_value('clothes_dryer_cef'))
   end
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
@@ -1004,29 +980,17 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       place_setting_capacity = dishwasher.place_setting_capacity
     end
 
-    if place_setting_capacity < 8
-      # Compact
-      new_hpxml.dishwashers.add(id: id,
-                                location: location,
-                                is_shared_appliance: false,
-                                rated_annual_kwh: 203.0,
-                                place_setting_capacity: place_setting_capacity,
-                                label_electric_rate: 0.12,
-                                label_gas_rate: 1.09,
-                                label_annual_gas_cost: 14.20,
-                                label_usage: 4.0) # 208 label cycles per year
-    else
-      # Standard
-      new_hpxml.dishwashers.add(id: id,
-                                location: location,
-                                is_shared_appliance: false,
-                                rated_annual_kwh: 270.0,
-                                place_setting_capacity: place_setting_capacity,
-                                label_electric_rate: 0.12,
-                                label_gas_rate: 1.09,
-                                label_annual_gas_cost: 22.23,
-                                label_usage: 4.0) # 208 label cycles per year
-    end
+    subtype = place_setting_capacity < 8 ? 'compact' : 'standard'
+
+    new_hpxml.dishwashers.add(id: id,
+                              location: location,
+                              is_shared_appliance: false,
+                              rated_annual_kwh: lookup_reference_value('dishwasher_ler', subtype),
+                              place_setting_capacity: place_setting_capacity,
+                              label_electric_rate: lookup_reference_value('dishwasher_elec_rate', subtype),
+                              label_gas_rate: lookup_reference_value('dishwasher_gas_rate', subtype),
+                              label_annual_gas_cost: lookup_reference_value('dishwasher_ghwc', subtype),
+                              label_usage: lookup_reference_value('dishwasher_lcy', subtype) / 52.0)
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
@@ -1078,13 +1042,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       oven_id = oven.id
     end
 
-    reference_values = HotWaterAndAppliances.get_range_oven_default_values()
     new_hpxml.cooking_ranges.add(id: range_id,
                                  location: location,
                                  fuel_type: fuel_type,
-                                 is_induction: reference_values[:is_induction])
+                                 is_induction: lookup_reference_value('range_induction'))
     new_hpxml.ovens.add(id: oven_id,
-                        is_convection: reference_values[:is_convection])
+                        is_convection: lookup_reference_value('oven_convection'))
   end
 
   def self.set_lighting_reference(new_hpxml)
@@ -1408,11 +1371,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return duct_rvalue
   end
 
-  def self.calc_default_duct_leakage_to_outside(cfa)
+  def self.calc_default_duct_lto_cfm25(cfa)
     duct_lto_cfm25_per_100sqft = lookup_reference_value('duct_lto_cfm25_per_100sqft')
-    duct_lto_cfm25_max = lookup_reference_value('duct_lto_cfm25_max')
+    duct_lto_cfm25_min = lookup_reference_value('duct_lto_cfm25_min')
 
-    return [(duct_lto_cfm25_per_100sqft * cfa / 100.0), duct_lto_cfm25_max].max
+    duct_lto_cfm25 = (duct_lto_cfm25_per_100sqft * cfa / 100.0)
+    if not duct_lto_cfm25_min.nil?
+      duct_lto_cfm25 = [duct_lto_cfm25, duct_lto_cfm25_min].max
+    end
+
+    return duct_lto_cfm25
   end
 
   def self.add_air_distribution(orig_hpxml, orig_system)
@@ -1549,15 +1517,10 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       backup_heating_capacity = orig_htg_system.backup_heating_capacity
       dist_id = orig_htg_system.distribution_system.id
     else
-      if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0, ZERHConstants.Ver1].include?(@program_version) && ['7', '8'].include?(@iecc_zone)
-        # GSHP if CZ 7-8 and home has electric heat
-        heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
-      elsif ESConstants.MFVersions.include?(@program_version) && orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir)
-        # GSHP if home has GSHP
-        heat_pump_type = HPXML::HVACTypeHeatPumpGroundToAir
-      else
-        heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
+      if orig_htg_system.is_a? HPXML::HeatPump
+        heat_pump_type = lookup_reference_value('hvac_hp_type', orig_htg_system.heat_pump_type)
       end
+      heat_pump_type = lookup_reference_value('hvac_hp_type') if heat_pump_type.nil?
       if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
         cop = lookup_reference_value('hvac_gshp_cop')
         eer = lookup_reference_value('hvac_gshp_eer')
@@ -1675,6 +1638,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     else
       return HPXML::FuelTypeNaturalGas
     end
+  end
+
+  def self.multifamily_adjacent_locations
+    return [HPXML::LocationOtherHousingUnit,
+            HPXML::LocationOtherHeatedSpace,
+            HPXML::LocationOtherMultifamilyBufferSpace,
+            HPXML::LocationOtherNonFreezingSpace]
   end
 
   def self.lookup_reference_value(value_type, subtype = nil)

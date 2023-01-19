@@ -9,11 +9,13 @@ require_relative 'util.rb'
 class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
-    @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
+    @output_dir = File.join(@root_path, 'workflow', 'sample_files')
+    @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
+    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
   end
 
   def test_lighting
@@ -22,9 +24,9 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
       hpxml = _test_ruleset(program_version)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1, ZERHConstants.Ver1].include? program_version
         _check_lighting(hpxml, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-      elsif program_version == ESConstants.SFNationalVer3_2
+      elsif [ESConstants.SFNationalVer3_2, ZERHConstants.SFVer2].include? program_version
         _check_lighting(hpxml, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
-      elsif program_version == ESConstants.MFNationalVer1_2
+      elsif [ESConstants.MFNationalVer1_2].include? program_version
         _check_lighting(hpxml, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
         _check_lighting(hpxml, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -62,9 +64,11 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
   def _test_ruleset(program_version)
     require_relative '../../workflow/design'
     if ESConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
+                            output_dir: @output_dir)]
     elsif ZERHConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference)]
+      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
+                            output_dir: @output_dir)]
     end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
@@ -75,6 +79,12 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal(true, success)
+
+    # validate against 301 schematron
+    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
+    validator = OpenStudio::XMLValidator.new(schematron_path)
+    assert_equal(true, validator.validate(designs[0].init_hpxml_output_path))
+    @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
     return hpxml
   end
