@@ -97,8 +97,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
     new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
-    new_hpxml.header.energystar_calculation_version = orig_hpxml.header.energystar_calculation_version
-    new_hpxml.header.zerh_calculation_version = orig_hpxml.header.zerh_calculation_version
     new_hpxml.header.building_id = orig_hpxml.header.building_id
     new_hpxml.header.event_type = orig_hpxml.header.event_type
     new_hpxml.header.state_code = orig_hpxml.header.state_code

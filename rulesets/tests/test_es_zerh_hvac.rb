@@ -9,11 +9,13 @@ require_relative 'util.rb'
 class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
-    @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
+    @output_dir = File.join(@root_path, 'workflow', 'sample_files')
+    @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
+    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
   end
 
   def get_es_zerh_duct_leakage(program_version, value)
@@ -80,16 +82,20 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
   end
 
   def get_es_zerh_gshp_cop_cz5(program_version)
-    if [ESConstants.MFNationalVer1_2, ESConstants.MFNationalVer1_1].include? program_version
+    if [ESConstants.MFNationalVer1_2, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_0].include? program_version
       return 2.7
+    elsif [ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      return 2.8
     end
   end
 
   def get_es_zerh_gshp_eer_cz5(program_version)
     if [ESConstants.MFNationalVer1_2].include? program_version
       return 14.0
-    elsif [ESConstants.MFNationalVer1_1].include? program_version
+    elsif [ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? program_version
       return 13.0
+    elsif [ESConstants.MFNationalVer1_0].include? program_version
+      return 12.7
     end
   end
 
@@ -1541,9 +1547,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
   def _test_ruleset(program_version)
     require_relative '../../workflow/design'
     if ESConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
+                            output_dir: @output_dir)]
     elsif ZERHConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference)]
+      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
+                            output_dir: @output_dir)]
     end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
@@ -1554,6 +1562,12 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal(true, success)
+
+    # validate against 301 schematron
+    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
+    validator = OpenStudio::XMLValidator.new(schematron_path)
+    assert_equal(true, validator.validate(designs[0].init_hpxml_output_path))
+    @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
     return hpxml
   end

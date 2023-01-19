@@ -9,11 +9,13 @@ require_relative 'util.rb'
 class ERIHVACtest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
-    @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
+    @output_dir = File.join(@root_path, 'workflow', 'sample_files')
+    @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
+    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
   end
 
   def _eri_versions
@@ -923,7 +925,8 @@ class ERIHVACtest < MiniTest::Test
 
   def _test_ruleset(hpxml_name, calc_type)
     require_relative '../../workflow/design'
-    designs = [Design.new(calc_type: calc_type)]
+    designs = [Design.new(calc_type: calc_type,
+                          output_dir: @output_dir)]
 
     hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
     success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs)
@@ -934,6 +937,12 @@ class ERIHVACtest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal(true, success)
+
+    # validate against OS-HPXML schematron
+    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    validator = OpenStudio::XMLValidator.new(schematron_path)
+    assert_equal(true, validator.validate(designs[0].hpxml_output_path))
+    @results_path = File.dirname(designs[0].hpxml_output_path)
 
     return hpxml
   end
