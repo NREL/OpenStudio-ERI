@@ -1206,7 +1206,7 @@ def _get_internal_gains(hpxml)
     end
   end
   int_kwh = Lighting.calc_interior_energy(eri_version, cfa, f_int_cfl, f_int_lfl, f_int_led)
-  grg_kwh = Lighting.calc_interior_energy(eri_version, gfa, f_grg_cfl, f_grg_lfl, f_grg_led)
+  grg_kwh = Lighting.calc_garage_energy(eri_version, gfa, f_grg_cfl, f_grg_lfl, f_grg_led)
   xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
   s += "#{xml_ltg_sens}\n"
 
