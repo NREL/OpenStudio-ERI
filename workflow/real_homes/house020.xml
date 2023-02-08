@@ -1002,9 +1002,13 @@
             <ArrayAzimuth>135</ArrayAzimuth>
             <ArrayTilt>1.2</ArrayTilt>
             <MaxPowerOutput>12000.0</MaxPowerOutput>
-            <InverterEfficiency>0.98</InverterEfficiency>
             <SystemLossesFraction>0.14</SystemLossesFraction>
+            <AttachedToInverter idref='Inverter1'/>
           </PVSystem>
+          <Inverter>
+            <SystemIdentifier id='Inverter1'/>
+            <InverterEfficiency>0.98</InverterEfficiency>
+          </Inverter>
         </Photovoltaics>
       </Systems>
       <Appliances>

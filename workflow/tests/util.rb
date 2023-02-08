@@ -1189,29 +1189,24 @@ def _get_internal_gains(hpxml)
 
   # Lighting
   xml_ltg_sens = 0.0
-  f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led = nil
+  f_int_cfl, f_grg_cfl, f_int_lfl, f_grg_lfl, f_int_led, f_grg_led = nil
   hpxml.lighting_groups.each do |lg|
     if (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationInterior)
       f_int_cfl = lg.fraction_of_units_in_location
-    elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationExterior)
-      f_ext_cfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationGarage)
       f_grg_cfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationInterior)
       f_int_lfl = lg.fraction_of_units_in_location
-    elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationExterior)
-      f_ext_lfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationGarage)
       f_grg_lfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationInterior)
       f_int_led = lg.fraction_of_units_in_location
-    elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationExterior)
-      f_ext_led = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationGarage)
       f_grg_led = lg.fraction_of_units_in_location
     end
   end
-  int_kwh, _ext_kwh, grg_kwh = Lighting.calc_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
+  int_kwh = Lighting.calc_interior_energy(eri_version, cfa, f_int_cfl, f_int_lfl, f_int_led)
+  grg_kwh = Lighting.calc_interior_energy(eri_version, gfa, f_grg_cfl, f_grg_lfl, f_grg_led)
   xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
   s += "#{xml_ltg_sens}\n"
 
