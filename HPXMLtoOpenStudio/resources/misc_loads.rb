@@ -4,7 +4,7 @@ class MiscLoads
   def self.apply_plug(model, runner, plug_load, obj_name, living_space, apply_ashrae140_assumptions, schedules_file, vacancy_periods)
     kwh = 0
     if not plug_load.nil?
-      kwh = plug_load.kWh_per_year * plug_load.usage_multiplier
+      kwh = plug_load.kwh_per_year * plug_load.usage_multiplier
     end
 
     return if kwh <= 0
@@ -140,7 +140,8 @@ class MiscLoads
     if heater_kwh > 0
       if not schedules_file.nil?
         space_design_level = schedules_file.calc_design_level_from_annual_kwh(col_name: col_name, annual_kwh: heater_kwh)
-      else
+      end
+      if space_design_level.nil?
         space_design_level = heater_sch.calc_design_level_from_daily_kwh(heater_kwh / 365.0)
         heater_sch = heater_sch.schedule
       end

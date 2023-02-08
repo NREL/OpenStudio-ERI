@@ -11,9 +11,8 @@
       <SimulationControl>
         <Timestep>60</Timestep>
       </SimulationControl>
-      <SchedulesFilePath>../../HPXMLtoOpenStudio/resources/schedule_files/battery.csv</SchedulesFilePath>
       <AdditionalProperties>
-        <ParentHPXMLFile>base-pv-generators-battery.xml</ParentHPXMLFile>
+        <ParentHPXMLFile>base.xml</ParentHPXMLFile>
       </AdditionalProperties>
       <UtilityBillScenarios>
         <UtilityBillScenario>
@@ -76,11 +75,7 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='AirInfiltrationMeasurement1'/>
-            <HousePressure>50.0</HousePressure>
-            <BuildingAirLeakage>
-              <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>3.0</AirLeakage>
-            </BuildingAirLeakage>
+            <EffectiveLeakageArea>123.0</EffectiveLeakageArea>
             <InfiltrationVolume>21600.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
@@ -435,66 +430,6 @@
             <LowFlow>false</LowFlow>
           </WaterFixture>
         </WaterHeating>
-        <Photovoltaics>
-          <PVSystem>
-            <SystemIdentifier id='PVSystem1'/>
-            <Location>roof</Location>
-            <ModuleType>standard</ModuleType>
-            <Tracking>fixed</Tracking>
-            <ArrayAzimuth>180</ArrayAzimuth>
-            <ArrayTilt>20.0</ArrayTilt>
-            <MaxPowerOutput>4000.0</MaxPowerOutput>
-            <SystemLossesFraction>0.14</SystemLossesFraction>
-            <AttachedToInverter idref='Inverter1'/>
-          </PVSystem>
-          <PVSystem>
-            <SystemIdentifier id='PVSystem2'/>
-            <Location>roof</Location>
-            <ModuleType>premium</ModuleType>
-            <Tracking>fixed</Tracking>
-            <ArrayAzimuth>90</ArrayAzimuth>
-            <ArrayTilt>20.0</ArrayTilt>
-            <MaxPowerOutput>1500.0</MaxPowerOutput>
-            <SystemLossesFraction>0.14</SystemLossesFraction>
-            <AttachedToInverter idref='Inverter1'/>
-          </PVSystem>
-          <Inverter>
-            <SystemIdentifier id='Inverter1'/>
-            <InverterEfficiency>0.96</InverterEfficiency>
-          </Inverter>
-        </Photovoltaics>
-        <Batteries>
-          <Battery>
-            <SystemIdentifier id='Battery1'/>
-            <Location>outside</Location>
-            <BatteryType>Li-ion</BatteryType>
-            <NominalCapacity>
-              <Units>kWh</Units>
-              <Value>20.0</Value>
-            </NominalCapacity>
-            <UsableCapacity>
-              <Units>kWh</Units>
-              <Value>18.0</Value>
-            </UsableCapacity>
-            <RatedPowerOutput>6000.0</RatedPowerOutput>
-          </Battery>
-        </Batteries>
-        <extension>
-          <Generators>
-            <Generator>
-              <SystemIdentifier id='Generator1'/>
-              <FuelType>natural gas</FuelType>
-              <AnnualConsumptionkBtu>8500.0</AnnualConsumptionkBtu>
-              <AnnualOutputkWh>500.0</AnnualOutputkWh>
-            </Generator>
-            <Generator>
-              <SystemIdentifier id='Generator2'/>
-              <FuelType>fuel oil</FuelType>
-              <AnnualConsumptionkBtu>8500.0</AnnualConsumptionkBtu>
-              <AnnualOutputkWh>500.0</AnnualOutputkWh>
-            </Generator>
-          </Generators>
-        </extension>
       </Systems>
       <Appliances>
         <ClothesWasher>
