@@ -257,7 +257,7 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    @infil_volume = get_infiltration_volume(orig_hpxml)
+    _sla, _ach50, _nach, @infil_volume, @infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_hpxml, @cfa, @weather)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
@@ -279,7 +279,7 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    @infil_volume = get_infiltration_volume(orig_hpxml)
+    _sla, _ach50, _nach, @infil_volume, @infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_hpxml, @cfa, @weather)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
@@ -328,11 +328,7 @@ class EnergyRatingIndex301Ruleset
     @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
-  def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
-    @infil_height = get_infiltration_height(orig_hpxml)
-    if @infil_height.nil?
-      @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
-    end
+  def self.set_enclosure_air_infiltration_reference(_orig_hpxml, new_hpxml)
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     sla = 0.00036
@@ -347,10 +343,6 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
-    @infil_height = get_infiltration_height(orig_hpxml)
-    if @infil_height.nil?
-      @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
-    end
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
@@ -2425,24 +2417,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.calc_rated_home_infiltration_ach50(orig_hpxml)
-    air_infiltration_measurements = []
-    orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
-      air_infiltration_measurements << orig_infil_measurement
-    end
-
-    ach50 = nil
-    air_infiltration_measurements.each do |infil_measurement|
-      if (infil_measurement.unit_of_measure == HPXML::UnitsACHNatural) && infil_measurement.house_pressure.nil?
-        nach = infil_measurement.air_leakage
-        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @infil_height, @weather)
-        ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
-      elsif (infil_measurement.unit_of_measure == HPXML::UnitsACH) && (infil_measurement.house_pressure == 50)
-        ach50 = infil_measurement.air_leakage
-      elsif (infil_measurement.unit_of_measure == HPXML::UnitsCFM) && (infil_measurement.house_pressure == 50)
-        ach50 = infil_measurement.air_leakage * 60.0 / @infil_volume
-      end
-      break unless ach50.nil?
-    end
+    _sla, ach50, _nach, _volume, _height = Airflow.get_values_from_air_infiltration_measurements(orig_hpxml, @cfa, @weather)
 
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
@@ -2772,23 +2747,6 @@ class EnergyRatingIndex301Ruleset
       end
     end
     return htg_cap, clg_cap
-  end
-
-  def self.get_infiltration_volume(hpxml)
-    hpxml.air_infiltration_measurements.each do |air_infiltration_measurement|
-      next if air_infiltration_measurement.infiltration_volume.nil?
-
-      return air_infiltration_measurement.infiltration_volume
-    end
-  end
-
-  def self.get_infiltration_height(hpxml)
-    hpxml.air_infiltration_measurements.each do |air_infiltration_measurement|
-      next if air_infiltration_measurement.infiltration_height.nil?
-
-      return air_infiltration_measurement.infiltration_height
-    end
-    return
   end
 
   def self.get_reference_water_heater_ef(wh_fuel_type, wh_tank_vol)
