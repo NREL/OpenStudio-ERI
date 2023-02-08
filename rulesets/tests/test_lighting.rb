@@ -62,16 +62,16 @@ class ERILightingTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, count: 4)
       else
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 4)
       end
     end
 
     # Test w/ 301-2019 and Nfans < Nbr + 1
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.ceiling_fans[0].quantity = 3
+    hpxml.ceiling_fans[0].count = 3
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
@@ -83,16 +83,16 @@ class ERILightingTest < MiniTest::Test
     # Test w/ 301-2014 and Nfans < Nbr + 1
     hpxml_name = _change_eri_version('base-lighting-ceiling-fans.xml', '2014')
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.ceiling_fans[0].quantity = 3
+    hpxml.ceiling_fans[0].count = 3
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, count: 4)
       else
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 4)
       end
     end
 
@@ -100,18 +100,18 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.building_construction.number_of_bedrooms = 5
-    hpxml.ceiling_fans[0].quantity = 6
+    hpxml.ceiling_fans[0].count = 6
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 6)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 6)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 6)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, count: 6)
       else
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 4)
       end
     end
   end
@@ -169,8 +169,8 @@ class ERILightingTest < MiniTest::Test
     end
   end
 
-  def _check_ceiling_fans(hpxml, cfm_per_w: nil, quantity: nil)
-    if cfm_per_w.nil? && quantity.nil?
+  def _check_ceiling_fans(hpxml, cfm_per_w: nil, count: nil)
+    if cfm_per_w.nil? && count.nil?
       assert_equal(0, hpxml.ceiling_fans.size)
       assert_nil(hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
     else
@@ -181,10 +181,10 @@ class ERILightingTest < MiniTest::Test
       else
         assert_equal(cfm_per_w, ceiling_fan.efficiency)
       end
-      if quantity.nil?
-        assert_nil(ceiling_fan.quantity)
+      if count.nil?
+        assert_nil(ceiling_fan.count)
       else
-        assert_equal(quantity, ceiling_fan.quantity)
+        assert_equal(count, ceiling_fan.count)
       end
       assert_equal(0.5, hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
     end

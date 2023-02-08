@@ -1784,19 +1784,32 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   ``ArrayAzimuth``                      integer  deg    0 - 359      Yes                 Direction panels face (clockwise from North)
   ``ArrayTilt``                         double   deg    0 - 90       Yes                 Tilt relative to horizontal
   ``MaxPowerOutput``                    double   W      >= 0         Yes                 Peak power
-  ``InverterEfficiency``                double   frac   0 - 1        Yes                 Inverter efficiency [#]_
   ``SystemLossesFraction``              double   frac   0 - 1        Yes                 System losses [#]_
+  ``AttachedToInverter``                idref           See [#]_     Yes                 ID of attached inverter
   ``extension/NumberofBedroomsServed``  integer         > 1          See [#]_            Number of bedrooms served
   ====================================  =======  =====  ===========  ========  ========  ============================================
   
   .. [#] Location choices are "ground" or "roof" mounted.
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
   .. [#] Tracking choices are "fixed", "1-axis", "1-axis backtracked", or "2-axis".
-  .. [#] Default from PVWatts is 0.96.
   .. [#] System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
          Default from PVWatts is 0.14.
+  .. [#] AttachedToInverter must reference an ``Inverter``.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system.
+
+In addition, an inverter must be entered as a ``/HPXML/Building/BuildingDetails/Systems/Photovoltaics/Inverter``.
+
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+  Element                                                  Type               Units             Constraints          Required  Default   Notes
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+  ``SystemIdentifier``                                     id                                                        Yes                 Unique identifier
+  ``InverterEfficiency``                                   double             frac              0 - 1 [#]_           Yes                 Inverter efficiency [#]_
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+
+  .. [#] For homes with multiple inverters, all InverterEfficiency elements must have the same value.
+  .. [#] Default from PVWatts is 0.96.
+
 
 HPXML Generators
 ****************
@@ -1861,7 +1874,7 @@ If the clothes washer is shared, additional information is entered in ``/HPXML/B
   Element                                                                 Type     Units  Constraints  Required  Default  Notes
   ======================================================================  =======  =====  ===========  ========  =======  ==========================================================
   ``AttachedToWaterHeatingSystem`` or ``AttachedToHotWaterDistribution``  idref           See [#]_     Yes                ID of attached water heater or distribution system
-  ``NumberofUnits``                                                       integer                      Yes                Number of clothes washers in the shared laundry room
+  ``Count``                                                               integer                      Yes                Number of clothes washers in the shared laundry room
   ``NumberofUnitsServed``                                                 integer                      Yes                Number of dwelling units served by the shared laundry room
   ======================================================================  =======  =====  ===========  ========  =======  ==========================================================
 
@@ -1902,9 +1915,9 @@ If the clothes dryer is shared, additional information is entered in ``/HPXML/Bu
   =======================  =======  =====  ===========  ========  =======  ==========================================================
   Element                  Type     Units  Constraints  Required  Default  Notes
   =======================  =======  =====  ===========  ========  =======  ==========================================================
-  ``NumberofUnits``        integer                      Yes                Number of clothes dryers in the shared laundry room
+  ``Count``                integer                      Yes                Number of clothes dryers in the shared laundry room
   ``NumberofUnitsServed``  integer                      Yes                Number of dwelling units served by the shared laundry room
-  ================================  =====  ===========  ========  =======  ==========================================================
+  =======================  =======  =====  ===========  ========  =======  ==========================================================
   
 .. note::
 
@@ -2069,7 +2082,7 @@ Each ceiling fan is entered as a ``/HPXML/Building/BuildingDetails/Lighting/Ceil
   =========================================  =======  =======  ===========  ========  ========  ==============================
   ``SystemIdentifier``                       id                             Yes                 Unique identifier
   ``Airflow[FanSpeed="medium"]/Efficiency``  double   cfm/W    > 0          Yes                 Efficiency at medium speed
-  ``Quantity``                               integer           > 0          Yes                 Number of similar ceiling fans
+  ``Count``                                  integer           > 0          Yes                 Number of similar ceiling fans
   =========================================  =======  =======  ===========  ========  ========  ==============================
 
 .. _hpxmllocations:

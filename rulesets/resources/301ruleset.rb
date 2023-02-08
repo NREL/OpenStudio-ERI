@@ -1864,6 +1864,10 @@ class EnergyRatingIndex301Ruleset
                                system_losses_fraction: orig_pv_system.system_losses_fraction,
                                number_of_bedrooms_served: orig_pv_system.number_of_bedrooms_served)
     end
+    orig_hpxml.inverters.each do |orig_inverter|
+      new_hpxml.inverters.add(id: orig_inverter.id,
+                              inverter_efficiency: orig_inverter.inverter_efficiency)
+    end
   end
 
   def self.set_systems_photovoltaics_iad(orig_hpxml, new_hpxml)
@@ -1920,7 +1924,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_washers.empty?
       clothes_washer = orig_hpxml.clothes_washers[0]
-      if not (clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.number_of_units) > 14)
+      if not (clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.count) > 14)
         id = clothes_washer.id
         location = clothes_washer.location.gsub('unvented', 'vented')
       end
@@ -1947,7 +1951,7 @@ class EnergyRatingIndex301Ruleset
 
     clothes_washer = orig_hpxml.clothes_washers[0]
 
-    if clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.number_of_units) > 14
+    if clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.count) > 14
       set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
       return
     end
@@ -1981,7 +1985,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_dryers.empty?
       clothes_dryer = orig_hpxml.clothes_dryers[0]
-      if not (clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.number_of_units) > 14)
+      if not (clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.count) > 14)
         id = clothes_dryer.id
         location = clothes_dryer.location.gsub('unvented', 'vented')
         fuel_type = clothes_dryer.fuel_type
@@ -2011,7 +2015,7 @@ class EnergyRatingIndex301Ruleset
 
     clothes_dryer = orig_hpxml.clothes_dryers[0]
 
-    if clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.number_of_units) > 14
+    if clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.count) > 14
       set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
       return
     end
@@ -2249,7 +2253,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
-    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.count }.sum(0)
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
       # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
       # is less than Nbr + 1.
@@ -2262,12 +2266,12 @@ class EnergyRatingIndex301Ruleset
     medium_cfm = 3000.0
     new_hpxml.ceiling_fans.add(id: 'CeilingFans',
                                efficiency: medium_cfm / HVAC.get_default_ceiling_fan_power(),
-                               quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
   def self.set_ceiling_fans_rated(orig_hpxml, new_hpxml)
-    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.count }.sum(0)
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
       # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
       # is less than Nbr + 1.
@@ -2282,19 +2286,19 @@ class EnergyRatingIndex301Ruleset
     sum_w = 0.0
     num_cfs = 0
     orig_hpxml.ceiling_fans.each do |orig_ceiling_fan|
-      num_cfs += orig_ceiling_fan.quantity
+      num_cfs += orig_ceiling_fan.count
       cfm_per_w = orig_ceiling_fan.efficiency
       if cfm_per_w.nil?
         fan_power_w = HVAC.get_default_ceiling_fan_power()
         cfm_per_w = medium_cfm / fan_power_w
       end
-      sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.quantity)
+      sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.count)
     end
     avg_w = sum_w / num_cfs
 
     new_hpxml.ceiling_fans.add(id: 'CeilingFans',
                                efficiency: medium_cfm / avg_w,
-                               quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
@@ -2305,18 +2309,18 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_misc_loads_reference(new_hpxml)
     # Misc
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
+    kwh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
     new_hpxml.plug_loads.add(id: 'MiscPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeOther,
-                             kWh_per_year: kWh_per_year,
+                             kwh_per_year: kwh_per_year,
                              frac_sensible: frac_sensible.round(3),
                              frac_latent: frac_latent.round(3))
 
     # Television
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(@cfa, @nbeds)
+    kwh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(@cfa, @nbeds)
     new_hpxml.plug_loads.add(id: 'TelevisionPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeTelevision,
-                             kWh_per_year: kWh_per_year,
+                             kwh_per_year: kwh_per_year,
                              frac_sensible: frac_sensible.round(3),
                              frac_latent: frac_latent.round(3))
   end

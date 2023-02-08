@@ -2421,7 +2421,6 @@ def create_sample_hpxmls
                   'base-hvac-dse.xml',
                   'base-hvac-ducts-leakage-cfm50.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',
-                  'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml',
                   'base-hvac-elec-resistance-only.xml',
                   'base-hvac-evap-cooler-only.xml',
                   'base-hvac-evap-cooler-only-ducted.xml',
@@ -2603,7 +2602,7 @@ def create_sample_hpxmls
     if not hpxml.clothes_washers.empty?
       if hpxml.clothes_washers[0].is_shared_appliance
         hpxml.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
-        hpxml.clothes_washers[0].number_of_units = 2
+        hpxml.clothes_washers[0].count = 2
       else
         hpxml.clothes_washers[0].is_shared_appliance = false
       end
@@ -2611,7 +2610,7 @@ def create_sample_hpxmls
     if not hpxml.clothes_dryers.empty?
       if hpxml.clothes_dryers[0].is_shared_appliance
         hpxml.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
-        hpxml.clothes_dryers[0].number_of_units = 2
+        hpxml.clothes_dryers[0].count = 2
       else
         hpxml.clothes_dryers[0].is_shared_appliance = false
       end
@@ -2622,6 +2621,7 @@ def create_sample_hpxmls
       end
     end
     hpxml.ventilation_fans.each do |ventilation_fan|
+      ventilation_fan.count = nil
       next unless ventilation_fan.used_for_whole_building_ventilation
 
       ventilation_fan.is_shared_system = false if ventilation_fan.is_shared_system.nil?
@@ -2645,6 +2645,12 @@ def create_sample_hpxmls
           ventilation_fan.hours_in_operation = 24.0
         end
       end
+    end
+    hpxml.ventilation_fans.reverse_each do |ventilation_fan|
+      next if ventilation_fan.used_for_whole_building_ventilation
+      next if ventilation_fan.used_for_seasonal_cooling_load_reduction
+
+      ventilation_fan.delete
     end
     hpxml.plug_loads.clear
     hpxml.fuel_loads.clear

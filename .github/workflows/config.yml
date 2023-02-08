@@ -11,7 +11,7 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:3.5.0
+      image: docker://nrel/openstudio:3.5.1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -57,7 +57,7 @@ jobs:
   run-eri-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:3.5.0
+      image: docker://nrel/openstudio:3.5.1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -80,7 +80,7 @@ jobs:
   run-real-home-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:3.5.0
+      image: docker://nrel/openstudio:3.5.1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -103,7 +103,7 @@ jobs:
   run-resnet-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:3.5.0
+      image: docker://nrel/openstudio:3.5.1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -126,7 +126,7 @@ jobs:
   run-es-zerh-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:3.5.0
+      image: docker://nrel/openstudio:3.5.1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -155,7 +155,7 @@ jobs:
       - name: Install software and run test
         shell: pwsh
         run: |
-          $env:OS_VERSION="3.5.0"
+          $env:OS_VERSION="3.5.1"
           $env:OS_SHA="7b14ce1588"
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz

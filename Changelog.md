@@ -1,3 +1,15 @@
+## OpenStudio-ERI v1.6.0
+
+__New Features__
+- Updates to newer proposed HPXML v4.0:
+  - **Breaking change**: Replaces `CeilingFan/Quantity`, `ClothesWasher/NumberofUnits`, and `ClothesDryer/NumberofUnits` with `Count`.
+  - **Breaking change**: Replaces `PVSystem/InverterEfficiency` with `PVSystem/AttachedToInverter` and `Inverter/InverterEfficiency`.
+- **Breaking change**: Updates component loads outputs:
+  - Replaces `Windows` and `Skylights` with `Windows Conduction`, `Windows Solar`, `Skylights Conduction`, and `Skylights Solar`.
+  - Disaggregates `Lighting` from `Internal Gains`.
+
+__Bugfixes__
+
 ## OpenStudio-ERI v1.5.2
 
 __New Features__

@@ -457,30 +457,6 @@
         <MechanicalVentilation>
           <VentilationFans>
             <VentilationFan>
-              <SystemIdentifier id='VentilationFan1'/>
-              <Quantity>1</Quantity>
-              <RatedFlowRate>50.0</RatedFlowRate>
-              <HoursInOperation>1.5</HoursInOperation>
-              <FanLocation>kitchen</FanLocation>
-              <UsedForLocalVentilation>true</UsedForLocalVentilation>
-              <FanPower>15.0</FanPower>
-              <extension>
-                <StartHour>18</StartHour>
-              </extension>
-            </VentilationFan>
-            <VentilationFan>
-              <SystemIdentifier id='VentilationFan2'/>
-              <Quantity>2</Quantity>
-              <RatedFlowRate>25.0</RatedFlowRate>
-              <HoursInOperation>1.5</HoursInOperation>
-              <FanLocation>bath</FanLocation>
-              <UsedForLocalVentilation>true</UsedForLocalVentilation>
-              <FanPower>7.5</FanPower>
-              <extension>
-                <StartHour>7</StartHour>
-              </extension>
-            </VentilationFan>
-            <VentilationFan>
               <SystemIdentifier id='VentilationFan3'/>
               <RatedFlowRate>1000.0</RatedFlowRate>
               <UsedForSeasonalCoolingLoadReduction>true</UsedForSeasonalCoolingLoadReduction>
@@ -586,30 +562,6 @@
               <RatedFlowRate>1000.0</RatedFlowRate>
               <UsedForSeasonalCoolingLoadReduction>true</UsedForSeasonalCoolingLoadReduction>
               <FanPower>75.0</FanPower>
-            </VentilationFan>
-            <VentilationFan>
-              <SystemIdentifier id='VentilationFan15'/>
-              <Quantity>2</Quantity>
-              <RatedFlowRate>25.0</RatedFlowRate>
-              <HoursInOperation>0.5</HoursInOperation>
-              <FanLocation>bath</FanLocation>
-              <UsedForLocalVentilation>true</UsedForLocalVentilation>
-              <FanPower>7.5</FanPower>
-              <extension>
-                <StartHour>6</StartHour>
-              </extension>
-            </VentilationFan>
-            <VentilationFan>
-              <SystemIdentifier id='VentilationFan16'/>
-              <Quantity>1</Quantity>
-              <RatedFlowRate>50.0</RatedFlowRate>
-              <HoursInOperation>0.5</HoursInOperation>
-              <FanLocation>kitchen</FanLocation>
-              <UsedForLocalVentilation>true</UsedForLocalVentilation>
-              <FanPower>15.0</FanPower>
-              <extension>
-                <StartHour>17</StartHour>
-              </extension>
             </VentilationFan>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan17'/>

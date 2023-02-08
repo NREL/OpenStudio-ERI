@@ -332,7 +332,7 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
-          <NumberofUnits>2</NumberofUnits>
+          <Count>2</Count>
           <IsSharedAppliance>true</IsSharedAppliance>
           <NumberofUnitsServed>6</NumberofUnitsServed>
           <AttachedToWaterHeatingSystem idref='WaterHeatingSystem1'/>
@@ -347,7 +347,7 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
-          <NumberofUnits>2</NumberofUnits>
+          <Count>2</Count>
           <IsSharedAppliance>true</IsSharedAppliance>
           <NumberofUnitsServed>6</NumberofUnitsServed>
           <Location>other heated space</Location>

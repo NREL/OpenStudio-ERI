@@ -621,33 +621,6 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < MiniTest::Test
     end
   end
 
-  def test_dual_fuel_heat_pump_elec
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml)
-      _check_cooling_system(hpxml)
-      _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
-      _check_thermostat(hpxml, control_type: HPXML::HVACControlTypeProgrammable)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFOregonWashingtonVer3_2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationBasementConditioned }])
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
-             ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
-             ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
-      else
-        return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 270.0, duct_location: HPXML::LocationAtticVented }])
-      end
-      _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
-    end
-  end
-
   def test_central_air_conditioner
     ['base-hvac-central-ac-only-1-speed.xml', 'base-hvac-central-ac-only-1-speed-seer2.xml'].each do |hpxml_name|
       [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|

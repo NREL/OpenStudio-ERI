@@ -196,8 +196,8 @@ class ERIApplianceTest < MiniTest::Test
     hpxml_name = 'base-bldgtype-multifamily-shared-laundry-room.xml'
     [14, 15].each do |ratio_of_units_to_appliance|
       hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-      hpxml.clothes_washers[0].number_of_units_served = ratio_of_units_to_appliance * hpxml.clothes_washers[0].number_of_units
-      hpxml.clothes_dryers[0].number_of_units_served = ratio_of_units_to_appliance * hpxml.clothes_dryers[0].number_of_units
+      hpxml.clothes_washers[0].number_of_units_served = ratio_of_units_to_appliance * hpxml.clothes_washers[0].count
+      hpxml.clothes_dryers[0].number_of_units_served = ratio_of_units_to_appliance * hpxml.clothes_dryers[0].count
       hpxml_name = File.basename(@tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 

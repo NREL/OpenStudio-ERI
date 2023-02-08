@@ -1122,7 +1122,7 @@ def _get_internal_gains(hpxml)
 
   # Plug loads
   hpxml.plug_loads.each do |plug_load|
-    btu = UnitConversions.convert(plug_load.kWh_per_year, 'kWh', 'Btu')
+    btu = UnitConversions.convert(plug_load.kwh_per_year, 'kWh', 'Btu')
     xml_pl_sens += (plug_load.frac_sensible * btu)
     xml_pl_lat += (plug_load.frac_latent * btu)
     s += "#{xml_pl_sens} #{xml_pl_lat}\n"
