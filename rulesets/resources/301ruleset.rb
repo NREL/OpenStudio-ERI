@@ -1860,7 +1860,7 @@ class EnergyRatingIndex301Ruleset
                                array_azimuth: orig_pv_system.array_azimuth,
                                array_tilt: orig_pv_system.array_tilt,
                                max_power_output: orig_pv_system.max_power_output,
-                               inverter_efficiency: orig_pv_system.inverter_efficiency,
+                               inverter_idref: orig_pv_system.inverter_idref,
                                system_losses_fraction: orig_pv_system.system_losses_fraction,
                                number_of_bedrooms_served: orig_pv_system.number_of_bedrooms_served)
     end
