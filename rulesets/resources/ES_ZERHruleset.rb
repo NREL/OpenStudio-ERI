@@ -462,7 +462,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                            exterior_adjacent_to: ceiling_exterior_adjacent_to,
                            interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
                            floor_or_ceiling: orig_floor.floor_or_ceiling,
-                           floor_type: HPXML::FloorTypeWoodFrame,
+                           floor_type: orig_floor.floor_type,
                            area: orig_floor.area,
                            insulation_id: orig_floor.insulation_id,
                            insulation_assembly_r_value: insulation_assembly_r_value)
