@@ -387,7 +387,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       end
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
     end
   end
 
@@ -440,7 +440,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
       elsif [ESConstants.MFNationalVer1_2].include? program_version
         rvalue = 1.0 / 0.051
       end
-      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeConcrete)
     end
 
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
