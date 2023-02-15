@@ -6,7 +6,7 @@ __New Features__
 - `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
 - Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.
 - Provide two decimal places in ENERGY STARS/ZERH CSV output files to better prevent user confusion.
-- Preserves `Floor/FloorType` in the Rated Home as per EPA's request.
+- Uses the same `Floor/FloorType` in the Reference Design as the Rated Home for ENERGY STAR MFNC, as per EPA's request.
 
 __Bugfixes__
 - Bugfixes for ENERGY STAR and ZERH programs.
