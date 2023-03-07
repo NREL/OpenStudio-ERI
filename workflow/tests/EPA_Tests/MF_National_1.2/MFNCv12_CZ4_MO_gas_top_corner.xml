@@ -192,7 +192,7 @@
             <Area>93.16</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.3</UFactor>
-            <SHGC>0.4</SHGC>
+            <SHGC>0.3</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -202,7 +202,7 @@
             <Area>69.87</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.3</UFactor>
-            <SHGC>0.4</SHGC>
+            <SHGC>0.3</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
