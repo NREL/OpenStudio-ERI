@@ -294,6 +294,13 @@
             <Azimuth>0</Azimuth>
             <RValue>4.4</RValue>
           </Door>
+          <Door>
+            <SystemIdentifier id='Door3'/>
+            <AttachedToWall idref='Wall5'/>
+            <Area>20.0</Area>
+            <Azimuth>0</Azimuth>
+            <RValue>4.4</RValue>
+          </Door>
         </Doors>
       </Enclosure>
       <Systems>

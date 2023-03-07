@@ -168,7 +168,7 @@ def create_test_hpxmls
       hpxml = HPXML.new
       hpxml_files.each do |hpxml_file|
         if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
-          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file), collapse_enclosure: false)
+          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file))
           next
         end
         set_hpxml_header(hpxml_file, hpxml, orig_parent)
@@ -255,7 +255,7 @@ def create_test_hpxmls
 end
 
 def get_standard_140_hpxml(hpxml_path)
-  hpxml = HPXML.new(hpxml_path: hpxml_path, collapse_enclosure: false)
+  hpxml = HPXML.new(hpxml_path: hpxml_path)
 
   return hpxml
 end
