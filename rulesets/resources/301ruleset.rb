@@ -1062,7 +1062,7 @@ class EnergyRatingIndex301Ruleset
     end
     if exterior_area > 0
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: new_hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOutside }[0].id,
+                          wall_idref: new_hpxml.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                           area: exterior_area,
                           azimuth: azimuth,
                           r_value: (1.0 / ufactor).round(3))
@@ -1102,7 +1102,7 @@ class EnergyRatingIndex301Ruleset
     end
     if exterior_area + interior_area > 0
       new_hpxml.doors.add(id: 'DoorArea',
-                          wall_idref: new_hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOutside }[0].id,
+                          wall_idref: new_hpxml.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                           area: exterior_area + interior_area,
                           azimuth: azimuth,
                           r_value: avg_r_value.round(3))
@@ -2851,14 +2851,15 @@ class EnergyRatingIndex301Ruleset
     end
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
       # Calculate portion of door area that is exterior by preserving ratio from rated home
-      orig_total_area = orig_hpxml.doors.map { |d| d.area }.sum(0)
-      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior }.map { |d| d.area }.sum(0)
-      if orig_total_area <= 0
-        exterior_area = 0
+      orig_interior_area = orig_hpxml.doors.select { |d| d.wall.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }.map { |d| d.area }.sum(0)
+      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior_thermal_boundary }.map { |d| d.area }.sum(0)
+      if orig_interior_area + orig_exterior_area <= 0
+        exterior_area = total_area
+        interior_area = 0.0
       else
-        exterior_area = total_area * orig_exterior_area / orig_total_area
+        exterior_area = total_area * orig_exterior_area / (orig_exterior_area + orig_interior_area)
+        interior_area = total_area - exterior_area
       end
-      interior_area = total_area - exterior_area
       return exterior_area, interior_area
     else
       exterior_area = total_area

@@ -991,7 +991,7 @@ class ERIEnclosureTest < MiniTest::Test
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 180 => { area: 20, rvalue: 4.4 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 6.67, rvalue: 2.86 } })
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 10, rvalue: 2.86 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
@@ -1404,7 +1404,7 @@ class ERIEnclosureTest < MiniTest::Test
     azimuth_area_values = {}
     azimuth_rvalue_x_area_values = {} # Area-weighted
     hpxml.doors.each do |door|
-      next unless door.is_exterior
+      next unless door.is_exterior_thermal_boundary
 
       # Init if needed
       azimuth_area_values[door.azimuth] = [] if azimuth_area_values[door.azimuth].nil?
