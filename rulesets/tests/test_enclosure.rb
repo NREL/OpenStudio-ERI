@@ -983,33 +983,20 @@ class ERIEnclosureTest < MiniTest::Test
       end
     end
 
-    # Test MF unit w/ exterior door
-    hpxml_name = 'base-bldgtype-multifamily.xml'
+    # Test MF unit w/ exterior and interior doors
+    hpxml_name = 'base-bldgtype-multifamily-adjacent-to-multiple.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 180 => { area: 20, rvalue: 4.4 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 6.67, rvalue: 2.86 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
       end
-    end
-
-    # Test MF unit w/ interior door
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.doors.each do |door|
-      door.wall_idref = hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id
-    end
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-
-    _all_calc_types.each do |calc_type|
-      hpxml = _test_ruleset(hpxml_name, calc_type)
-      _check_doors(hpxml)
     end
   end
 
@@ -1417,6 +1404,8 @@ class ERIEnclosureTest < MiniTest::Test
     azimuth_area_values = {}
     azimuth_rvalue_x_area_values = {} # Area-weighted
     hpxml.doors.each do |door|
+      next unless door.is_exterior
+
       # Init if needed
       azimuth_area_values[door.azimuth] = [] if azimuth_area_values[door.azimuth].nil?
       azimuth_rvalue_x_area_values[door.azimuth] = [] if azimuth_rvalue_x_area_values[door.azimuth].nil?

@@ -1052,22 +1052,28 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
     ufactor, _shgc = get_reference_glazing_ufactor_shgc()
-    exterior_area, _interior_area = get_reference_door_area(orig_hpxml)
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new exterior door
+    # Create new door
+    if @is_southern_hemisphere
+      azimuth = 180
+    else
+      azimuth = 0
+    end
     if exterior_area > 0
-      if @is_southern_hemisphere
-        azimuth = 180
-      else
-        azimuth = 0
-      end
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: new_hpxml.walls[0].id,
+                          wall_idref: new_hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOutside }[0].id,
                           area: exterior_area,
                           azimuth: azimuth,
                           r_value: (1.0 / ufactor).round(3))
     end
-    # TODO: Create adiabatic wall/door?
+    if interior_area > 0
+      new_hpxml.doors.add(id: 'InteriorDoorArea',
+                          wall_idref: new_hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
+                          area: interior_area,
+                          azimuth: azimuth,
+                          r_value: (1.0 / ufactor).round(3))
+    end
   end
 
   def self.set_enclosure_doors_rated(orig_hpxml, new_hpxml)
@@ -1086,22 +1092,21 @@ class EnergyRatingIndex301Ruleset
     ext_thermal_bndry_doors = orig_hpxml.doors.select { |door| door.is_exterior_thermal_boundary }
     ref_ufactor, _ref_shgc = get_reference_glazing_ufactor_shgc()
     avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: 1.0 / ref_ufactor)
-    exterior_area, _interior_area = get_reference_door_area(orig_hpxml)
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
-    if exterior_area > 0
-      if @is_southern_hemisphere
-        azimuth = 180
-      else
-        azimuth = 0
-      end
-      new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: new_hpxml.walls[0].id,
-                          area: exterior_area,
+    # Create new door (since it's impossible to preserve the Rated Home's door orientation)
+    if @is_southern_hemisphere
+      azimuth = 180
+    else
+      azimuth = 0
+    end
+    if exterior_area + interior_area > 0
+      new_hpxml.doors.add(id: 'DoorArea',
+                          wall_idref: new_hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOutside }[0].id,
+                          area: exterior_area + interior_area,
                           azimuth: azimuth,
                           r_value: avg_r_value.round(3))
     end
-    # TODO: Create adiabatic wall/door?
   end
 
   def self.set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric: false)
