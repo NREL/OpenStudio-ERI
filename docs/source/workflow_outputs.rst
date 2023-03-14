@@ -222,7 +222,6 @@ Annual Emissions
 Annual emissions are listed below.
 
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
-Note that rows below with values of zero will be excluded.
 
    ===============================================================  ===============================================================
    Type                                                             Notes
@@ -284,8 +283,8 @@ Peak building electricity outputs are listed below.
    ==================================  =========================================================
    Type                                Notes
    ==================================  =========================================================
-   Peak Electricity: Winter Total (W)  Winter season defined by operation of the heating system.
-   Peak Electricity: Summer Total (W)  Summer season defined by operation of the cooling system.
+   Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
+   Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
    ==================================  =========================================================
 
 Peak Building Loads
