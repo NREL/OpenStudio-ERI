@@ -8,14 +8,20 @@ slab_under_ins_rvalue		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 floors_over_uncond_spc_ufactor	wood	0.064	0.064	0.064	0.064	0.064	0.064	0.047	0.047	0.047	0.047	0.047	0.033	0.033	0.033	0.033	0.033	0.033	0.033	0.028	0.028
 floors_over_uncond_spc_ufactor	mass	0.322	0.322	0.322	0.087	0.087	0.087	0.074	0.074	0.074	0.051	0.051	0.051	0.051	0.051	0.051	0.051	0.051	0.051	0.042	0.038
 walls_ufactor		0.084	0.084	0.084	0.084	0.084	0.084	0.06	0.06	0.06	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045
+walls_solar_abs		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75
+walls_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 door_ufactor		0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17
+window_area		0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F
 window_ufactor	residential	0.4	0.4	0.4	0.4	0.4	0.4	0.3	0.3	0.3	0.3	0.3	0.27	0.27	0.27	0.27	0.27	0.27	0.27	0.27	0.27
 window_ufactor	"architectural, operable"	0.59	0.59	0.59	0.57	0.57	0.57	0.51	0.51	0.51	0.43	0.43	0.43	0.43	0.43	0.43	0.4	0.4	0.4	0.34	0.3
 window_ufactor	"architectural, fixed"	0.48	0.48	0.48	0.43	0.43	0.43	0.4	0.4	0.4	0.34	0.34	0.34	0.34	0.34	0.34	0.32	0.32	0.32	0.28	0.27
-window_shgc		0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4	0.4
+window_shgc		0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
 ceiling_ufactor		0.035	0.035	0.035	0.026	0.026	0.026	0.026	0.026	0.026	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024
 radiant_barrier	ducts in unconditioned attic	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 radiant_barrier		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+vented_attic		if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location
+roof_solar_abs		0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92
+roof_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 lighting_tier1_int		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier1_ext		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier1_grg		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
@@ -30,15 +36,29 @@ clothes_washer_gas_rate		1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	
 clothes_washer_ghwc		18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18
 clothes_washer_capacity		4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2
 clothes_washer_lcy		312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312
+clothes_dryer_cef		3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01
+dishwasher_ler	compact	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203
+dishwasher_elec_rate	compact	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
+dishwasher_gas_rate	compact	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09
+dishwasher_ghwc	compact	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2	14.2
+dishwasher_lcy	compact	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208
+dishwasher_ler	standard	270	270	270	270	270	270	270	270	270	270	270	270	270	270	270	270	270	270	270	270
+dishwasher_elec_rate	standard	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
+dishwasher_gas_rate	standard	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09
+dishwasher_ghwc	standard	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23	22.23
+dishwasher_lcy	standard	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208
+range_induction		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+oven_convection		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 ceiling_fan_cfm_per_w		122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122	122
 hvac_heating_fuel	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 hvac_heating_fuel	fuel oil	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
-hvac_boiler_afue	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98	0.98
 hvac_boiler_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_boiler_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_central_boiler_et		0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.86	0.86	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_central_boiler_wlhp_et		0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.89	0.89	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
+hvac_hp_type	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air
+hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air
 hvac_furnace_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_furnace_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2
@@ -75,7 +95,7 @@ water_heater_solar_fraction
 duct_unconditioned_r_value	"supply, attic"																				
 duct_unconditioned_r_value	other																				
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-duct_lto_cfm25_max		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+duct_lto_cfm25_min		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
 infil_air_leakage_ach50																					
 infil_air_leakage_cfm50_per_sqft		0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3

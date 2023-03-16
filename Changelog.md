@@ -1,10 +1,13 @@
 ## OpenStudio-ERI v1.5.2
 
 __New Features__
+- Adds support for ZERH Single Family v2.
 - Updates to ENERGY STAR SFNH Rev 12 and MFNC Rev 03.
 - `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
 - Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.
 - Provide two decimal places in ENERGY STARS/ZERH CSV output files to better prevent user confusion.
+- Uses the same `Floor/FloorType` in the Reference Design as the Rated Home for ENERGY STAR MFNC, as per EPA's request.
+- Changes the windows SHGC in CZ4-8 from 0.40 to 0.30 for ENERGY STAR SFNH National v3.2 and MFNC National v1.2 as per EPA's request.
 
 __Bugfixes__
 - Bugfixes for ENERGY STAR and ZERH programs.

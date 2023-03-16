@@ -9,18 +9,20 @@ require_relative 'util.rb'
 class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
-    @tmp_hpxml_path = File.join(@root_path, 'workflow', 'sample_files', 'tmp.xml')
+    @output_dir = File.join(@root_path, 'workflow', 'sample_files')
+    @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
+    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
   end
 
   def test_appliances_electric
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -37,7 +39,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-modified.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -54,7 +56,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-gas.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -83,7 +85,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-none.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -113,7 +115,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-multifamily-shared-laundry-room.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -129,9 +131,11 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
   def _test_ruleset(program_version)
     require_relative '../../workflow/design'
     if ESConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference)]
+      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
+                            output_dir: @output_dir)]
     elsif ZERHConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference)]
+      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
+                            output_dir: @output_dir)]
     end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs)
@@ -142,6 +146,12 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
 
     # assert that it ran correctly
     assert_equal(true, success)
+
+    # validate against 301 schematron
+    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
+    validator = OpenStudio::XMLValidator.new(schematron_path)
+    assert_equal(true, validator.validate(designs[0].init_hpxml_output_path))
+    @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
     return hpxml
   end

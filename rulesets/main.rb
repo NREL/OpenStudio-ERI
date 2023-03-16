@@ -126,7 +126,7 @@ def run_rulesets(hpxml_input_path, designs)
       last_hpxml = new_hpxml
 
       # Write final HPXML file
-      if not design.hpxml_output_path.nil?
+      if (not design.hpxml_output_path.nil?) && (not design.calc_type.nil?)
         hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_oga, design.hpxml_output_path)
       end
     end

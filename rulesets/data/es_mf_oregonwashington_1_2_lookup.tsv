@@ -8,7 +8,10 @@ slab_under_ins_rvalue		10	10	10	10	10	10	10
 floors_over_uncond_spc_ufactor	wood	0.028	0.028	0.028	0.028	0.028	0.028	0.028
 floors_over_uncond_spc_ufactor	mass	0.028	0.028	0.028	0.028	0.028	0.028	0.028
 walls_ufactor		0.056	0.056	0.056	0.056	0.056	0.056	0.056
+walls_solar_abs		0.75	0.75	0.75	0.75	0.75	0.75	0.75
+walls_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9
 door_ufactor		0.17	0.17	0.17	0.17	0.17	0.17	0.17
+window_area		0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F
 window_ufactor	residential	0.27	0.27	0.27	0.27	0.27	0.27	0.27
 window_ufactor	"architectural, operable"	0.43	0.43	0.43	0.43	0.41	0.41	0.41
 window_ufactor	"architectural, fixed"	0.36	0.36	0.36	0.36	0.34	0.34	0.34
@@ -16,6 +19,9 @@ window_shgc		0.3	0.3	0.3	0.3	0.3	0.3	0.3
 ceiling_ufactor		0.026	0.026	0.026	0.026	0.026	0.026	0.026
 radiant_barrier	ducts in unconditioned attic	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 radiant_barrier		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+vented_attic		if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location
+roof_solar_abs		0.92	0.92	0.92	0.92	0.92	0.92	0.92
+roof_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9
 lighting_tier1_int		0.9	0.9	0.9	0.9	0.9	0.9	0.9
 lighting_tier1_ext		0	0	0	0	0	0	0
 lighting_tier1_grg		0	0	0	0	0	0	0
@@ -30,23 +36,37 @@ clothes_washer_gas_rate		1.09	1.09	1.09	1.09	1.09	1.09	1.09
 clothes_washer_ghwc		27	27	27	27	27	27	27
 clothes_washer_capacity		3	3	3	3	3	3	3
 clothes_washer_lcy		312	312	312	312	312	312	312
+clothes_dryer_cef		3.01	3.01	3.01	3.01	3.01	3.01	3.01
+dishwasher_ler	compact	203	203	203	203	203	203	203
+dishwasher_elec_rate	compact	0.12	0.12	0.12	0.12	0.12	0.12	0.12
+dishwasher_gas_rate	compact	1.09	1.09	1.09	1.09	1.09	1.09	1.09
+dishwasher_ghwc	compact	14.2	14.2	14.2	14.2	14.2	14.2	14.2
+dishwasher_lcy	compact	208	208	208	208	208	208	208
+dishwasher_ler	standard	270	270	270	270	270	270	270
+dishwasher_elec_rate	standard	0.12	0.12	0.12	0.12	0.12	0.12	0.12
+dishwasher_gas_rate	standard	1.09	1.09	1.09	1.09	1.09	1.09	1.09
+dishwasher_ghwc	standard	22.23	22.23	22.23	22.23	22.23	22.23	22.23
+dishwasher_lcy	standard	208	208	208	208	208	208	208
+range_induction		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+oven_convection		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 ceiling_fan_cfm_per_w		122	122	122	122	122	122	122
 hvac_heating_fuel	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 hvac_heating_fuel	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil	fuel oil
-hvac_boiler_afue	electricity	0.98	0.98	0.98	0.98	0.98	0.98	0.98
 hvac_boiler_afue	natural gas	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 hvac_boiler_afue	fuel oil	0.86	0.86	0.86	0.86	0.86	0.86	0.86
 hvac_central_boiler_et		0.86	0.86	0.86	0.86	0.86	0.86	0.86
 hvac_central_boiler_wlhp_et		0.89	0.89	0.89	0.89	0.89	0.89	0.89
 hvac_furnace_afue	natural gas	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_furnace_afue	fuel oil	0.85	0.85	0.85	0.85	0.85	0.85	0.85
+hvac_hp_type	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air
+hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air
 hvac_ashp_hspf		9.5	9.5	9.5	9.5	9.5	9.5	9.5
-hvac_gshp_cop								
+hvac_gshp_cop		2.8	2.8	2.8	2.8	2.8	2.8	2.8
 hvac_wlhp_cop		4.2	4.2	4.2	4.2	4.2	4.2	4.2
 hvac_ac_seer		13	13	13	13	13	13	13
 hvac_ashp_seer		15	15	15	15	15	15	15
-hvac_gshp_eer								
+hvac_gshp_eer		13	13	13	13	13	13	13
 hvac_wlhp_eer		14	14	14	14	14	14	14
 hvac_chiller_kw_per_ton		0.78	0.78	0.78	0.78	0.78	0.78	0.78
 hvac_charge_defect_ratio		-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25
@@ -75,7 +95,7 @@ water_heater_solar_fraction
 duct_unconditioned_r_value	"supply, attic"	8	8	8	8	8	8	8
 duct_unconditioned_r_value	other	8	8	8	8	8	8	8
 duct_lto_cfm25_per_100sqft		4	4	4	4	4	4	4
-duct_lto_cfm25_max		40	40	40	40	40	40	40
+duct_lto_cfm25_min		40	40	40	40	40	40	40
 duct_location_fractions	adiabatic ceiling	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
 duct_location_fractions	1 story	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0	attic=1.0
 duct_location_fractions	2 story	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"	"attic=0.75, conditioned=0.25"

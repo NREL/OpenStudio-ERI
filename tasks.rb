@@ -1308,20 +1308,27 @@ def set_hpxml_windows(hpxml_file, hpxml)
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
       ufactor = 0.32
       shgc = 0.40
-    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
-           'EPA_Tests/SF_National_3.1/SFNHv31_CZ4_MO_elec_vented_crawl.xml',
+    elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ4_MO_elec_vented_crawl.xml',
            'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml',
-           'EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml',
            'EPA_Tests/MF_National_1.1/MFNCv11_CZ4_MO_elec_ground_corner_vented_crawl.xml',
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       ufactor = 0.30
       shgc = 0.40
-    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
-           'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
-           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml',
-           'EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml'].include? hpxml_file
+    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
+           'EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
+      ufactor = 0.30
+      shgc = 0.30
+    elsif [
+      'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
+
+      'EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml'
+    ].include? hpxml_file
       ufactor = 0.27
       shgc = 0.40
+    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
+      ufactor = 0.27
+      shgc = 0.30
     end
 
     cfa = hpxml.building_construction.conditioned_floor_area
@@ -3238,10 +3245,18 @@ def create_sample_hpxmls
 
     # Handle different inputs for ENERGY STAR/ZERH
 
-    hpxml.header.zerh_calculation_version = ZERHConstants.Ver1
-    if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2015 }.size == 0
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2015,
-                                                          zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+    if hpxml_path.include? 'base-bldgtype-multifamily'
+      hpxml.header.zerh_calculation_version = ZERHConstants.Ver1
+      if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2015 }.size == 0
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2015,
+                                                            zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+      end
+    else
+      hpxml.header.zerh_calculation_version = ZERHConstants.SFVer2
+      if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
+        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
+                                                            zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+      end
     end
     if hpxml_path.include? 'base-bldgtype-multifamily'
       hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2
