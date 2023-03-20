@@ -1397,7 +1397,7 @@ def set_hpxml_windows(hpxml_file, hpxml)
                         azimuth: azimuth,
                         ufactor: ufactor,
                         shgc: shgc,
-                        fraction_operable: 0.67,
+                        fraction_operable: 1.0,
                         wall_idref: hpxml.walls[0].id,
                         performance_class: HPXML::WindowClassResidential)
     end
