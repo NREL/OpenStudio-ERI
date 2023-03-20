@@ -19,18 +19,18 @@ class ERILightingTest < MiniTest::Test
   end
 
   def test_lighting
-    hpxml_name = 'base.xml'
+    hpxml_name = 'base-enclosure-garage.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
+        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       end
     end
   end
@@ -41,13 +41,13 @@ class ERILightingTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
+        _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
+        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       end
     end
   end
@@ -140,9 +140,20 @@ class ERILightingTest < MiniTest::Test
     return hpxml
   end
 
-  def _check_lighting(hpxml, f_int_cfl: 0, f_ext_cfl: 0, f_grg_cfl: 0, f_int_lfl: 0,
-                      f_ext_lfl: 0, f_grg_lfl: 0, f_int_led: 0, f_ext_led: 0, f_grg_led: 0)
-    assert_equal(9, hpxml.lighting_groups.size)
+  def _check_lighting(hpxml, f_int_cfl: nil, f_ext_cfl: nil, f_grg_cfl: nil, f_int_lfl: nil,
+                      f_ext_lfl: nil, f_grg_lfl: nil, f_int_led: nil, f_ext_led: nil, f_grg_led: nil)
+    n_grps = 0
+    n_grps += 1 unless f_int_cfl.nil?
+    n_grps += 1 unless f_ext_cfl.nil?
+    n_grps += 1 unless f_grg_cfl.nil?
+    n_grps += 1 unless f_int_lfl.nil?
+    n_grps += 1 unless f_ext_lfl.nil?
+    n_grps += 1 unless f_grg_lfl.nil?
+    n_grps += 1 unless f_int_led.nil?
+    n_grps += 1 unless f_ext_led.nil?
+    n_grps += 1 unless f_grg_led.nil?
+    assert_equal(n_grps, hpxml.lighting_groups.size)
+
     hpxml.lighting_groups.each do |lg|
       assert([HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? lg.lighting_type)
       assert([HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? lg.location)
