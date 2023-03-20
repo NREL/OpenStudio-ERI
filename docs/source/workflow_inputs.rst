@@ -1464,7 +1464,7 @@ If the specified system is not a shared system (i.e., not serving multiple dwell
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm    >= 0 or true  Yes                Flow rate [#]_ or whether flow rate unmeasured
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
-  .. [#] For a central fan integrated supply system, TestedFlowRate should equal the amount of outdoor air provided to the distribution system.
+  .. [#] For a central fan integrated supply system, TestedFlowRate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
 
 Shared System
 ~~~~~~~~~~~~~
@@ -1849,7 +1849,20 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
   .. [#] Tracking choices are "fixed", "1-axis", "1-axis backtracked", or "2-axis".
   .. [#] System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
-         Default from PVWatts is 0.14.
+         Default from the `PVWatts documentation <https://www.nrel.gov/docs/fy14osti/62641.pdf>`_ is 0.14, which breaks down as follows.
+         Note that the total loss (14%) is not the sum of the individual losses but is calculated by multiplying the reduction due to each loss.
+         
+         - **Soiling**: 2%
+         - **Shading**: 3%
+         - **Snow**: 0%
+         - **Mismatch**: 2%
+         - **Wiring**: 2%
+         - **Connections**: 0.5%
+         - **Light-induced degradation**: 1.5%
+         - **Nameplate rating**: 1%
+         - **Age**: 0%
+         - **Availability**: 3%
+
   .. [#] AttachedToInverter must reference an ``Inverter``.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system.
@@ -2104,10 +2117,10 @@ Lighting and ceiling fans are entered in ``/HPXML/Building/BuildingDetails/Light
 HPXML Lighting
 **************
 
-Nine ``/HPXML/Building/BuildingDetails/Lighting/LightingGroup`` elements must be provided, each of which is the combination of:
+Multiple ``/HPXML/Building/BuildingDetails/Lighting/LightingGroup`` elements must be provided, each of which is the combination of:
 
 - ``LightingType``: 'LightEmittingDiode', 'CompactFluorescent', and 'FluorescentTube'
-- ``Location``: 'interior', 'garage', and 'exterior'
+- ``Location``: 'interior', 'exterior', and 'garage' (garage lighting groups only required if a garage is present)
 
 Use ``LightEmittingDiode`` for Tier II qualifying light fixtures; use ``CompactFluorescent`` and/or ``FluorescentTube`` for Tier I qualifying light fixtures.
 
@@ -2118,13 +2131,13 @@ Information is entered in each ``LightingGroup``.
   =============================  =======  ======  ===========  ========  =======  ===========================================================================
   ``SystemIdentifier``           id                            Yes                Unique identifier
   ``LightingType``               element          1 [#]_       Yes                Lighting type
-  ``Location``                   string           See [#]_     Yes                See [#]_
+  ``Location``                   string           See [#]_     Yes                Lighting location [#]_
   ``FractionofUnitsInLocation``  double   frac    0 - 1 [#]_   Yes                Fraction of light fixtures in the location with the specified lighting type
   =============================  =======  ======  ===========  ========  =======  ===========================================================================
 
   .. [#] LightingType child element choices are ``LightEmittingDiode``, ``CompactFluorescent``, or ``FluorescentTube``.
   .. [#] Location choices are "interior", "garage", or "exterior".
-  .. [#] Garage lighting is ignored if the building has no garage specified elsewhere.
+  .. [#] Garage lighting location is ignored if the HPXML file has no garage specified elsewhere.
   .. [#] The sum of FractionofUnitsInLocation for a given Location (e.g., interior) must be less than or equal to 1.
          If the fractions sum to less than 1, the remainder is assumed to be incandescent lighting.
 

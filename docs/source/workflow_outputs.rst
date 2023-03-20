@@ -11,6 +11,10 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_configurations_hpxml`
 - :ref:`home_energyplus_files`
 
+.. note::
+
+  MBtu is defined as one million Btu.
+
 .. _summary_outputs_csv:
 
 Summary Outputs (CSV)
@@ -150,9 +154,9 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    ===================================================================  ====================================================
    End Use: Electricity: Heating (MBtu)                                 Excludes heat pump backup and fans/pumps
    End Use: Electricity: Heating Heat Pump Backup (MBtu)
-   End Use: Electricity: Heating Fans/Pumps (MBtu)
+   End Use: Electricity: Heating Fans/Pumps (MBtu)                      Supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
    End Use: Electricity: Cooling (MBtu)                                 Excludes fans/pumps
-   End Use: Electricity: Cooling Fans/Pumps (MBtu)
+   End Use: Electricity: Cooling Fans/Pumps (MBtu)                      Supply fan (air distribution) or circulating pump (geothermal loop)
    End Use: Electricity: Hot Water (MBtu)                               Excludes recirc pump and solar thermal pump
    End Use: Electricity: Hot Water Recirc Pump (MBtu)
    End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)            Non-zero only when using detailed (not simple) solar thermal inputs
