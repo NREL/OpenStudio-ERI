@@ -190,4 +190,8 @@ class EnergyRatingIndexTest < Minitest::Test
       rm_path('OpenStudio-ERI')
     end
   end
+
+  def test_hers_diagnostic_output
+    # FIXME: TODO
+  end
 end

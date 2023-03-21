@@ -1,0 +1,1486 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "HERS Diagnostic Output",
+    "description": "A schema for detailed diagnostic outputs from RESNET Accredited HERS software tools.",
+    "definitions": {
+        "HERSDiagnosticOutput": {
+            "type": "object",
+            "properties": {
+                "project_name": {
+                    "description": "Name of the file or project used to generate this data",
+                    "type": "string"
+                },
+                "home_description": {
+                    "description": "Supplementary descriptive information about the home",
+                    "type": "string"
+                },
+                "software_name": {
+                    "description": "Name of the software used to generate this data",
+                    "type": "string"
+                },
+                "software_version": {
+                    "description": "Version of the software used to generate this data",
+                    "type": "string"
+                },
+                "weather_data_location": {
+                    "description": "Descriptive name of the weather data location",
+                    "type": "string",
+                    "notes": "For example: City, town, or airport name."
+                },
+                "weather_data_state": {
+                    "description": "State",
+                    "type": "string",
+                    "pattern": "[A-Z]{2}"
+                },
+                "conditioned_floor_area": {
+                    "description": "Conditioned floor area",
+                    "type": "number",
+                    "exclusiveMinimum": 0.0,
+                    "units": "ft2"
+                },
+                "number_of_bedrooms": {
+                    "description": "Number of bedrooms",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "number_of_stories": {
+                    "description": "Number of above-grade stories",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "hers_index": {
+                    "description": "HERS Index",
+                    "type": "number",
+                    "units": "-",
+                    "notes": "Unrounded value based on the latest version of MINHERS"
+                },
+                "space_heating_system_output": {
+                    "description": "Array of outputs for space heating systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_heat": {
+                                "description": "Reference home space heating end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "ec_r_heat": {
+                                "description": "Reference home space heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "ec_x_heat": {
+                                "description": "Rated home space heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "eec_r_heat": {
+                                "description": "Reference home space heating equipment efficiency coefficient",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "-"
+                            },
+                            "eec_x_heat": {
+                                "description": "Rated home space heating equipment efficiency coefficient",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "-"
+                            },
+                            "fuel_type_heat": {
+                                "description": "Fuel type used for space heating",
+                                "type": "string",
+                                "enum": [
+                                    "ELECTRIC",
+                                    "FOSSIL_FUEL",
+                                    "BIOMASS"
+                                ],
+                                "descriptions": [
+                                    "Electric",
+                                    "Fossil Fuel",
+                                    "Biomass"
+                                ],
+                                "notes": [
+                                    null,
+                                    "Such as natural gas, liquid propane gas, fuel oil",
+                                    null
+                                ]
+                            }
+                        },
+                        "required": [
+                            "reul_heat",
+                            "ec_r_heat",
+                            "ec_x_heat",
+                            "eec_r_heat",
+                            "eec_x_heat",
+                            "fuel_type_heat"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "space_cooling_system_output": {
+                    "description": "Array of outputs for space cooling systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_cool": {
+                                "description": "Reference home space cooling end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "ec_r_cool": {
+                                "description": "Reference home space cooling energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "ec_x_cool": {
+                                "description": "Rated home space cooling energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "eec_r_cool": {
+                                "description": "Reference home space cooling equipment efficiency coefficient",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "-"
+                            },
+                            "eec_x_cool": {
+                                "description": "Rated home space cooling equipment efficiency coefficient",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "-"
+                            }
+                        },
+                        "required": [
+                            "reul_cool",
+                            "ec_r_cool",
+                            "ec_x_cool",
+                            "eec_r_cool",
+                            "eec_x_cool"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "water_heating_system_output": {
+                    "description": "Array of outputs for water heating systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_hw": {
+                                "description": "Reference home water heating end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "ec_r_hw": {
+                                "description": "Reference home water heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "ec_x_hw": {
+                                "description": "Rated home water heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "MBtu/y"
+                            },
+                            "eec_r_hw": {
+                                "description": "Reference home water heating equipment efficiency coefficient",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "-"
+                            },
+                            "eec_x_hw": {
+                                "description": "Rated home water heating equipment efficiency coefficient",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "-"
+                            },
+                            "fuel_type_hw": {
+                                "description": "Fuel type used for water heating",
+                                "type": "string",
+                                "enum": [
+                                    "ELECTRIC",
+                                    "FOSSIL_FUEL",
+                                    "BIOMASS"
+                                ],
+                                "descriptions": [
+                                    "Electric",
+                                    "Fossil Fuel",
+                                    "Biomass"
+                                ],
+                                "notes": [
+                                    null,
+                                    "Such as natural gas, liquid propane gas, fuel oil",
+                                    null
+                                ]
+                            }
+                        },
+                        "required": [
+                            "reul_hw",
+                            "ec_r_hw",
+                            "ec_x_hw",
+                            "eec_r_hw",
+                            "eec_x_hw",
+                            "fuel_type_hw"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "rec_la": {
+                    "description": "Reference home lighting and appliance energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_la": {
+                    "description": "Rated home lighting and appliance energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "rec_vent": {
+                    "description": "Reference home ventilation energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_vent": {
+                    "description": "Rated home ventilation energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "rec_dh": {
+                    "description": "Reference home dehumidification energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_dh": {
+                    "description": "Rated home dehumidification energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "opp": {
+                    "description": "On-site power production",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kWh/y"
+                },
+                "iad_save": {
+                    "description": "Index adjustment design savings",
+                    "type": "number",
+                    "units": "-"
+                },
+                "hers_hourly_output": {
+                    "description": "HERS hourly output",
+                    "type": "object",
+                    "properties": {
+                        "outdoor_drybulb_temperature": {
+                            "description": "Outdoor drybulb temperature",
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            },
+                            "units": "F"
+                        },
+                        "conditioned_space_temperature": {
+                            "description": "Conditioned space temperature",
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            },
+                            "units": "F"
+                        },
+                        "space_heating_system_output": {
+                            "description": "Array of outputs for space heating systems",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "reul_heat": {
+                                        "description": "Reference home space heating end use loads",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    },
+                                    "ec_r_heat": {
+                                        "description": "Reference home space heating energy consumption",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    },
+                                    "ec_x_heat": {
+                                        "description": "Rated home space heating energy consumption",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    }
+                                },
+                                "required": [
+                                    "reul_heat",
+                                    "ec_r_heat",
+                                    "ec_x_heat"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "space_cooling_system_output": {
+                            "description": "Array of outputs for space cooling systems",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "reul_cool": {
+                                        "description": "Reference home space cooling end use loads",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    },
+                                    "ec_r_cool": {
+                                        "description": "Reference home space cooling energy consumption",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    },
+                                    "ec_x_cool": {
+                                        "description": "Rated home space cooling energy consumption",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    }
+                                },
+                                "required": [
+                                    "reul_cool",
+                                    "ec_r_cool",
+                                    "ec_x_cool"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "water_heating_system_output": {
+                            "description": "Array of outputs for water heating systems",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "reul_hw": {
+                                        "description": "Reference home water heating end use loads",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    },
+                                    "ec_r_hw": {
+                                        "description": "Reference home water heating energy consumption",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    },
+                                    "ec_x_hw": {
+                                        "description": "Rated home water heating energy consumption",
+                                        "type": "number",
+                                        "minimum": 0.0,
+                                        "units": "kBtu"
+                                    }
+                                },
+                                "required": [
+                                    "reul_hw",
+                                    "ec_r_hw",
+                                    "ec_x_hw"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "rec_la": {
+                            "description": "Reference home lighting and appliance energy consumption",
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0
+                            },
+                            "units": "kBtu"
+                        },
+                        "ec_la": {
+                            "description": "Rated home lighting and appliance energy consumption",
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0
+                            },
+                            "units": "kBtu"
+                        },
+                        "rec_vent": {
+                            "description": "Reference home ventilation energy consumption",
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0
+                            },
+                            "units": "kBtu"
+                        },
+                        "ec_vent": {
+                            "description": "Rated home ventilation energy consumption",
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0
+                            },
+                            "units": "kBtu"
+                        },
+                        "rec_dh": {
+                            "description": "Reference home dehumidification energy consumption",
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0
+                            },
+                            "units": "kBtu"
+                        },
+                        "ec_dh": {
+                            "description": "Rated home dehumidification energy consumption",
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0
+                            },
+                            "units": "kBtu"
+                        },
+                        "opp": {
+                            "description": "On-site power production",
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 0.0
+                            },
+                            "units": "kWh"
+                        }
+                    },
+                    "required": [
+                        "outdoor_drybulb_temperature",
+                        "conditioned_space_temperature",
+                        "space_heating_system_output",
+                        "space_cooling_system_output",
+                        "water_heating_system_output",
+                        "rec_la",
+                        "ec_la",
+                        "rec_vent",
+                        "ec_vent",
+                        "rec_dh",
+                        "ec_dh",
+                        "opp"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "project_name",
+                "software_name",
+                "software_version",
+                "weather_data_location",
+                "weather_data_state",
+                "conditioned_floor_area",
+                "number_of_bedrooms",
+                "number_of_stories",
+                "hers_index",
+                "space_heating_system_output",
+                "space_cooling_system_output",
+                "water_heating_system_output",
+                "rec_la",
+                "ec_la",
+                "rec_vent",
+                "ec_vent",
+                "rec_dh",
+                "ec_dh",
+                "opp",
+                "iad_save",
+                "hers_hourly_output"
+            ],
+            "additionalProperties": false
+        },
+        "HeatingFuelType": {
+            "type": "string",
+            "enum": [
+                "ELECTRIC",
+                "FOSSIL_FUEL",
+                "BIOMASS"
+            ],
+            "descriptions": [
+                "Electric",
+                "Fossil Fuel",
+                "Biomass"
+            ],
+            "notes": [
+                null,
+                "Such as natural gas, liquid propane gas, fuel oil",
+                null
+            ]
+        },
+        "SpaceHeatingSystemOutput": {
+            "type": "object",
+            "properties": {
+                "reul_heat": {
+                    "description": "Reference home space heating end use loads",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_r_heat": {
+                    "description": "Reference home space heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_x_heat": {
+                    "description": "Rated home space heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "eec_r_heat": {
+                    "description": "Reference home space heating equipment efficiency coefficient",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "-"
+                },
+                "eec_x_heat": {
+                    "description": "Rated home space heating equipment efficiency coefficient",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "-"
+                },
+                "fuel_type_heat": {
+                    "description": "Fuel type used for space heating",
+                    "type": "string",
+                    "enum": [
+                        "ELECTRIC",
+                        "FOSSIL_FUEL",
+                        "BIOMASS"
+                    ],
+                    "descriptions": [
+                        "Electric",
+                        "Fossil Fuel",
+                        "Biomass"
+                    ],
+                    "notes": [
+                        null,
+                        "Such as natural gas, liquid propane gas, fuel oil",
+                        null
+                    ]
+                }
+            },
+            "required": [
+                "reul_heat",
+                "ec_r_heat",
+                "ec_x_heat",
+                "eec_r_heat",
+                "eec_x_heat",
+                "fuel_type_heat"
+            ],
+            "additionalProperties": false
+        },
+        "SpaceCoolingSystemOutput": {
+            "type": "object",
+            "properties": {
+                "reul_cool": {
+                    "description": "Reference home space cooling end use loads",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_r_cool": {
+                    "description": "Reference home space cooling energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_x_cool": {
+                    "description": "Rated home space cooling energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "eec_r_cool": {
+                    "description": "Reference home space cooling equipment efficiency coefficient",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "-"
+                },
+                "eec_x_cool": {
+                    "description": "Rated home space cooling equipment efficiency coefficient",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "-"
+                }
+            },
+            "required": [
+                "reul_cool",
+                "ec_r_cool",
+                "ec_x_cool",
+                "eec_r_cool",
+                "eec_x_cool"
+            ],
+            "additionalProperties": false
+        },
+        "WaterHeatingSystemOutput": {
+            "type": "object",
+            "properties": {
+                "reul_hw": {
+                    "description": "Reference home water heating end use loads",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_r_hw": {
+                    "description": "Reference home water heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "ec_x_hw": {
+                    "description": "Rated home water heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "MBtu/y"
+                },
+                "eec_r_hw": {
+                    "description": "Reference home water heating equipment efficiency coefficient",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "-"
+                },
+                "eec_x_hw": {
+                    "description": "Rated home water heating equipment efficiency coefficient",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "-"
+                },
+                "fuel_type_hw": {
+                    "description": "Fuel type used for water heating",
+                    "type": "string",
+                    "enum": [
+                        "ELECTRIC",
+                        "FOSSIL_FUEL",
+                        "BIOMASS"
+                    ],
+                    "descriptions": [
+                        "Electric",
+                        "Fossil Fuel",
+                        "Biomass"
+                    ],
+                    "notes": [
+                        null,
+                        "Such as natural gas, liquid propane gas, fuel oil",
+                        null
+                    ]
+                }
+            },
+            "required": [
+                "reul_hw",
+                "ec_r_hw",
+                "ec_x_hw",
+                "eec_r_hw",
+                "eec_x_hw",
+                "fuel_type_hw"
+            ],
+            "additionalProperties": false
+        },
+        "HERSHourlyOutput": {
+            "type": "object",
+            "properties": {
+                "outdoor_drybulb_temperature": {
+                    "description": "Outdoor drybulb temperature",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "F"
+                },
+                "conditioned_space_temperature": {
+                    "description": "Conditioned space temperature",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "F"
+                },
+                "space_heating_system_output": {
+                    "description": "Array of outputs for space heating systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_heat": {
+                                "description": "Reference home space heating end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_r_heat": {
+                                "description": "Reference home space heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_x_heat": {
+                                "description": "Rated home space heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            }
+                        },
+                        "required": [
+                            "reul_heat",
+                            "ec_r_heat",
+                            "ec_x_heat"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "space_cooling_system_output": {
+                    "description": "Array of outputs for space cooling systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_cool": {
+                                "description": "Reference home space cooling end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_r_cool": {
+                                "description": "Reference home space cooling energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_x_cool": {
+                                "description": "Rated home space cooling energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            }
+                        },
+                        "required": [
+                            "reul_cool",
+                            "ec_r_cool",
+                            "ec_x_cool"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "water_heating_system_output": {
+                    "description": "Array of outputs for water heating systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_hw": {
+                                "description": "Reference home water heating end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_r_hw": {
+                                "description": "Reference home water heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_x_hw": {
+                                "description": "Rated home water heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            }
+                        },
+                        "required": [
+                            "reul_hw",
+                            "ec_r_hw",
+                            "ec_x_hw"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "rec_la": {
+                    "description": "Reference home lighting and appliance energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "ec_la": {
+                    "description": "Rated home lighting and appliance energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "rec_vent": {
+                    "description": "Reference home ventilation energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "ec_vent": {
+                    "description": "Rated home ventilation energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "rec_dh": {
+                    "description": "Reference home dehumidification energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "ec_dh": {
+                    "description": "Rated home dehumidification energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "opp": {
+                    "description": "On-site power production",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kWh"
+                }
+            },
+            "required": [
+                "outdoor_drybulb_temperature",
+                "conditioned_space_temperature",
+                "space_heating_system_output",
+                "space_cooling_system_output",
+                "water_heating_system_output",
+                "rec_la",
+                "ec_la",
+                "rec_vent",
+                "ec_vent",
+                "rec_dh",
+                "ec_dh",
+                "opp"
+            ],
+            "additionalProperties": false
+        },
+        "SpaceHeatingSystemHourlyOutput": {
+            "type": "object",
+            "properties": {
+                "reul_heat": {
+                    "description": "Reference home space heating end use loads",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                },
+                "ec_r_heat": {
+                    "description": "Reference home space heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                },
+                "ec_x_heat": {
+                    "description": "Rated home space heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                }
+            },
+            "required": [
+                "reul_heat",
+                "ec_r_heat",
+                "ec_x_heat"
+            ],
+            "additionalProperties": false
+        },
+        "SpaceCoolingSystemHourlyOutput": {
+            "type": "object",
+            "properties": {
+                "reul_cool": {
+                    "description": "Reference home space cooling end use loads",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                },
+                "ec_r_cool": {
+                    "description": "Reference home space cooling energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                },
+                "ec_x_cool": {
+                    "description": "Rated home space cooling energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                }
+            },
+            "required": [
+                "reul_cool",
+                "ec_r_cool",
+                "ec_x_cool"
+            ],
+            "additionalProperties": false
+        },
+        "WaterHeatingSystemHourlyOutput": {
+            "type": "object",
+            "properties": {
+                "reul_hw": {
+                    "description": "Reference home water heating end use loads",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                },
+                "ec_r_hw": {
+                    "description": "Reference home water heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                },
+                "ec_x_hw": {
+                    "description": "Rated home water heating energy consumption",
+                    "type": "number",
+                    "minimum": 0.0,
+                    "units": "kBtu"
+                }
+            },
+            "required": [
+                "reul_hw",
+                "ec_r_hw",
+                "ec_x_hw"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "version": "0.1.0",
+    "type": "object",
+    "properties": {
+        "project_name": {
+            "description": "Name of the file or project used to generate this data",
+            "type": "string"
+        },
+        "home_description": {
+            "description": "Supplementary descriptive information about the home",
+            "type": "string"
+        },
+        "software_name": {
+            "description": "Name of the software used to generate this data",
+            "type": "string"
+        },
+        "software_version": {
+            "description": "Version of the software used to generate this data",
+            "type": "string"
+        },
+        "weather_data_location": {
+            "description": "Descriptive name of the weather data location",
+            "type": "string",
+            "notes": "For example: City, town, or airport name."
+        },
+        "weather_data_state": {
+            "description": "State",
+            "type": "string",
+            "pattern": "[A-Z]{2}"
+        },
+        "conditioned_floor_area": {
+            "description": "Conditioned floor area",
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "units": "ft2"
+        },
+        "number_of_bedrooms": {
+            "description": "Number of bedrooms",
+            "type": "integer",
+            "minimum": 1
+        },
+        "number_of_stories": {
+            "description": "Number of above-grade stories",
+            "type": "integer",
+            "minimum": 1
+        },
+        "hers_index": {
+            "description": "HERS Index",
+            "type": "number",
+            "units": "-",
+            "notes": "Unrounded value based on the latest version of MINHERS"
+        },
+        "space_heating_system_output": {
+            "description": "Array of outputs for space heating systems",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "reul_heat": {
+                        "description": "Reference home space heating end use loads",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "ec_r_heat": {
+                        "description": "Reference home space heating energy consumption",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "ec_x_heat": {
+                        "description": "Rated home space heating energy consumption",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "eec_r_heat": {
+                        "description": "Reference home space heating equipment efficiency coefficient",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "-"
+                    },
+                    "eec_x_heat": {
+                        "description": "Rated home space heating equipment efficiency coefficient",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "-"
+                    },
+                    "fuel_type_heat": {
+                        "description": "Fuel type used for space heating",
+                        "type": "string",
+                        "enum": [
+                            "ELECTRIC",
+                            "FOSSIL_FUEL",
+                            "BIOMASS"
+                        ],
+                        "descriptions": [
+                            "Electric",
+                            "Fossil Fuel",
+                            "Biomass"
+                        ],
+                        "notes": [
+                            null,
+                            "Such as natural gas, liquid propane gas, fuel oil",
+                            null
+                        ]
+                    }
+                },
+                "required": [
+                    "reul_heat",
+                    "ec_r_heat",
+                    "ec_x_heat",
+                    "eec_r_heat",
+                    "eec_x_heat",
+                    "fuel_type_heat"
+                ],
+                "additionalProperties": false
+            }
+        },
+        "space_cooling_system_output": {
+            "description": "Array of outputs for space cooling systems",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "reul_cool": {
+                        "description": "Reference home space cooling end use loads",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "ec_r_cool": {
+                        "description": "Reference home space cooling energy consumption",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "ec_x_cool": {
+                        "description": "Rated home space cooling energy consumption",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "eec_r_cool": {
+                        "description": "Reference home space cooling equipment efficiency coefficient",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "-"
+                    },
+                    "eec_x_cool": {
+                        "description": "Rated home space cooling equipment efficiency coefficient",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "-"
+                    }
+                },
+                "required": [
+                    "reul_cool",
+                    "ec_r_cool",
+                    "ec_x_cool",
+                    "eec_r_cool",
+                    "eec_x_cool"
+                ],
+                "additionalProperties": false
+            }
+        },
+        "water_heating_system_output": {
+            "description": "Array of outputs for water heating systems",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "reul_hw": {
+                        "description": "Reference home water heating end use loads",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "ec_r_hw": {
+                        "description": "Reference home water heating energy consumption",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "ec_x_hw": {
+                        "description": "Rated home water heating energy consumption",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "MBtu/y"
+                    },
+                    "eec_r_hw": {
+                        "description": "Reference home water heating equipment efficiency coefficient",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "-"
+                    },
+                    "eec_x_hw": {
+                        "description": "Rated home water heating equipment efficiency coefficient",
+                        "type": "number",
+                        "minimum": 0.0,
+                        "units": "-"
+                    },
+                    "fuel_type_hw": {
+                        "description": "Fuel type used for water heating",
+                        "type": "string",
+                        "enum": [
+                            "ELECTRIC",
+                            "FOSSIL_FUEL",
+                            "BIOMASS"
+                        ],
+                        "descriptions": [
+                            "Electric",
+                            "Fossil Fuel",
+                            "Biomass"
+                        ],
+                        "notes": [
+                            null,
+                            "Such as natural gas, liquid propane gas, fuel oil",
+                            null
+                        ]
+                    }
+                },
+                "required": [
+                    "reul_hw",
+                    "ec_r_hw",
+                    "ec_x_hw",
+                    "eec_r_hw",
+                    "eec_x_hw",
+                    "fuel_type_hw"
+                ],
+                "additionalProperties": false
+            }
+        },
+        "rec_la": {
+            "description": "Reference home lighting and appliance energy consumption",
+            "type": "number",
+            "minimum": 0.0,
+            "units": "MBtu/y"
+        },
+        "ec_la": {
+            "description": "Rated home lighting and appliance energy consumption",
+            "type": "number",
+            "minimum": 0.0,
+            "units": "MBtu/y"
+        },
+        "rec_vent": {
+            "description": "Reference home ventilation energy consumption",
+            "type": "number",
+            "minimum": 0.0,
+            "units": "MBtu/y"
+        },
+        "ec_vent": {
+            "description": "Rated home ventilation energy consumption",
+            "type": "number",
+            "minimum": 0.0,
+            "units": "MBtu/y"
+        },
+        "rec_dh": {
+            "description": "Reference home dehumidification energy consumption",
+            "type": "number",
+            "minimum": 0.0,
+            "units": "MBtu/y"
+        },
+        "ec_dh": {
+            "description": "Rated home dehumidification energy consumption",
+            "type": "number",
+            "minimum": 0.0,
+            "units": "MBtu/y"
+        },
+        "opp": {
+            "description": "On-site power production",
+            "type": "number",
+            "minimum": 0.0,
+            "units": "kWh/y"
+        },
+        "iad_save": {
+            "description": "Index adjustment design savings",
+            "type": "number",
+            "units": "-"
+        },
+        "hers_hourly_output": {
+            "description": "HERS hourly output",
+            "type": "object",
+            "properties": {
+                "outdoor_drybulb_temperature": {
+                    "description": "Outdoor drybulb temperature",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "F"
+                },
+                "conditioned_space_temperature": {
+                    "description": "Conditioned space temperature",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "units": "F"
+                },
+                "space_heating_system_output": {
+                    "description": "Array of outputs for space heating systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_heat": {
+                                "description": "Reference home space heating end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_r_heat": {
+                                "description": "Reference home space heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_x_heat": {
+                                "description": "Rated home space heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            }
+                        },
+                        "required": [
+                            "reul_heat",
+                            "ec_r_heat",
+                            "ec_x_heat"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "space_cooling_system_output": {
+                    "description": "Array of outputs for space cooling systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_cool": {
+                                "description": "Reference home space cooling end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_r_cool": {
+                                "description": "Reference home space cooling energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_x_cool": {
+                                "description": "Rated home space cooling energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            }
+                        },
+                        "required": [
+                            "reul_cool",
+                            "ec_r_cool",
+                            "ec_x_cool"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "water_heating_system_output": {
+                    "description": "Array of outputs for water heating systems",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "reul_hw": {
+                                "description": "Reference home water heating end use loads",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_r_hw": {
+                                "description": "Reference home water heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            },
+                            "ec_x_hw": {
+                                "description": "Rated home water heating energy consumption",
+                                "type": "number",
+                                "minimum": 0.0,
+                                "units": "kBtu"
+                            }
+                        },
+                        "required": [
+                            "reul_hw",
+                            "ec_r_hw",
+                            "ec_x_hw"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "rec_la": {
+                    "description": "Reference home lighting and appliance energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "ec_la": {
+                    "description": "Rated home lighting and appliance energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "rec_vent": {
+                    "description": "Reference home ventilation energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "ec_vent": {
+                    "description": "Rated home ventilation energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "rec_dh": {
+                    "description": "Reference home dehumidification energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "ec_dh": {
+                    "description": "Rated home dehumidification energy consumption",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kBtu"
+                },
+                "opp": {
+                    "description": "On-site power production",
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "minimum": 0.0
+                    },
+                    "units": "kWh"
+                }
+            },
+            "required": [
+                "outdoor_drybulb_temperature",
+                "conditioned_space_temperature",
+                "space_heating_system_output",
+                "space_cooling_system_output",
+                "water_heating_system_output",
+                "rec_la",
+                "ec_la",
+                "rec_vent",
+                "ec_vent",
+                "rec_dh",
+                "ec_dh",
+                "opp"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "project_name",
+        "software_name",
+        "software_version",
+        "weather_data_location",
+        "weather_data_state",
+        "conditioned_floor_area",
+        "number_of_bedrooms",
+        "number_of_stories",
+        "hers_index",
+        "space_heating_system_output",
+        "space_cooling_system_output",
+        "water_heating_system_output",
+        "rec_la",
+        "ec_la",
+        "rec_vent",
+        "ec_vent",
+        "rec_dh",
+        "ec_dh",
+        "opp",
+        "iad_save",
+        "hers_hourly_output"
+    ],
+    "additionalProperties": false
+}

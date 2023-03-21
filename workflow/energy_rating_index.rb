@@ -192,21 +192,24 @@ def retrieve_eri_outputs(designs)
     CSV.foreach(csv_path) do |row|
       next if row.nil? || (row.size < 2) || row[1].nil?
 
+      output_type = row[0]
+      output_type = output_type.gsub(' (MBtu)', '') # Remove units
+
       if row[1].include? ',' # Array of values
         begin
-          design_outputs[calc_type][row[0]] = row[1].split(',').map { |v| Float(v) }
+          design_outputs[calc_type][output_type] = row[1].split(',').map { |v| Float(v) }
         rescue
-          design_outputs[calc_type][row[0]] = row[1].split(',')
+          design_outputs[calc_type][output_type] = row[1].split(',')
         end
       else # Single value
         begin
-          design_outputs[calc_type][row[0]] = Float(row[1])
+          design_outputs[calc_type][output_type] = Float(row[1])
         rescue
-          design_outputs[calc_type][row[0]] = row[1]
+          design_outputs[calc_type][output_type] = row[1]
         end
-        if (row[0].start_with? 'ERI:') && (not row[0].include? 'Building:')
+        if (output_type.start_with? 'ERI:') && (not output_type.include? 'Building:')
           # Convert to array
-          design_outputs[calc_type][row[0]] = [design_outputs[calc_type][row[0]]]
+          design_outputs[calc_type][output_type] = [design_outputs[calc_type][output_type]]
         end
       end
     end
@@ -307,11 +310,13 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:dse_r_heat] = []
   results[:nec_x_heat] = []
   results[:nmeul_heat] = []
+  results[:fuel_type_heat] = []
 
   rated_output['ERI: Heating: ID'].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output['ERI: Heating: ID'].index(sys_id)
     reul_heat = ref_output['ERI: Heating: Load'][ref_idx]
-    coeff_heat_a, coeff_heat_b = get_heating_coefficients(ref_output['ERI: Heating: FuelType'][ref_idx])
+    fuel_type_heat = ref_output['ERI: Heating: FuelType'][ref_idx]
+    coeff_heat_a, coeff_heat_b = get_heating_coefficients(fuel_type_heat)
     eec_x_heat = rated_output['ERI: Heating: EEC'][rated_idx]
     eec_r_heat = ref_output['ERI: Heating: EEC'][ref_idx]
     ec_x_heat = rated_output['ERI: Heating: EC'][rated_idx]
@@ -336,6 +341,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     results[:dse_r_heat] << dse_r_heat
     results[:nec_x_heat] << nec_x_heat
     results[:nmeul_heat] << nmeul_heat
+    results[:fuel_type_heat] << fuel_type_heat
   end
 
   # ======= #
@@ -367,7 +373,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     if eec_x_cool * reul_cool > 0
       nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
       # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and excluded from eul_la
-      nec_x_cool += (rated_output['End Use: Electricity: Whole House Fan (MBtu)'] * reul_cool / tot_reul_cool)
+      nec_x_cool += (rated_output['End Use: Electricity: Whole House Fan'] * reul_cool / tot_reul_cool)
     end
     nmeul_cool = 0
     if ec_r_cool > 0
@@ -400,6 +406,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:dse_r_dhw] = []
   results[:nec_x_dhw] = []
   results[:nmeul_dhw] = []
+  results[:fuel_type_dhw] = []
 
   # Used to accommodate multiple Reference Home water heaters if the Rated Home has multiple
   # water heaters. Now always just 1 Reference Home water heater.
@@ -412,7 +419,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     rated_dhw_frac_load_served = (rated_output['ERI: Hot Water: Load'][rated_idx] / rated_output['ERI: Hot Water: Load'].sum(0.0))
 
     reul_dhw = ref_output['ERI: Hot Water: Load'][0] * rated_dhw_frac_load_served
-    coeff_dhw_a, coeff_dhw_b = get_dhw_coefficients(ref_output['ERI: Hot Water: FuelType'][0])
+    fuel_type_dhw = ref_output['ERI: Hot Water: FuelType'][0]
+    coeff_dhw_a, coeff_dhw_b = get_dhw_coefficients(fuel_type_dhw)
     eec_x_dhw = rated_output['ERI: Hot Water: EEC'][rated_idx]
     eec_r_dhw = ref_output['ERI: Hot Water: EEC'][0]
     ec_x_dhw = rated_output['ERI: Hot Water: EC'][rated_idx]
@@ -437,6 +445,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     results[:dse_r_dhw] << dse_r_dhw
     results[:nec_x_dhw] << nec_x_dhw
     results[:nmeul_dhw] << nmeul_dhw
+    results[:fuel_type_dhw] << fuel_type_dhw
   end
 
   # ===== #
@@ -446,62 +455,25 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Total Energy Use
   # Fossil fuel site energy uses should be converted to equivalent electric energy use
   # in accordance with Equation 4.1-3. Note: Generator fuel consumption is included here.
-  results[:teu] = rated_output['Fuel Use: Electricity: Total (MBtu)'] +
-                  0.4 * (rated_output['Fuel Use: Natural Gas: Total (MBtu)'] +
-                         rated_output['Fuel Use: Fuel Oil: Total (MBtu)'] +
-                         rated_output['Fuel Use: Propane: Total (MBtu)'] +
-                         rated_output['Fuel Use: Wood Cord: Total (MBtu)'] +
-                         rated_output['Fuel Use: Wood Pellets: Total (MBtu)'])
+  results[:teu] = rated_output['Fuel Use: Electricity: Total'] +
+                  0.4 * (rated_output['Fuel Use: Natural Gas: Total'] +
+                         rated_output['Fuel Use: Fuel Oil: Total'] +
+                         rated_output['Fuel Use: Propane: Total'] +
+                         rated_output['Fuel Use: Wood Cord: Total'] +
+                         rated_output['Fuel Use: Wood Pellets: Total'])
 
-  # On-Site Power Production
-  # Electricity produced minus equivalent electric energy use calculated in accordance
-  # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
-  renewable_energy = rated_output['End Use: Electricity: PV (MBtu)']
-  if not renewable_energy_limit.nil?
-    renewable_energy = -1 * [-renewable_energy, renewable_energy_limit].min
-  end
-  results[:opp] = -1 * (renewable_energy +
-                        rated_output['End Use: Electricity: Generator (MBtu)']) -
-                  0.4 * (rated_output['End Use: Natural Gas: Generator (MBtu)'] +
-                         rated_output['End Use: Fuel Oil: Generator (MBtu)'] +
-                         rated_output['End Use: Propane: Generator (MBtu)'] +
-                         rated_output['End Use: Wood Cord: Generator (MBtu)'] +
-                         rated_output['End Use: Wood Pellets: Generator (MBtu)'])
-
+  results[:opp] = calculate_opp(rated_output, renewable_energy_limit)
   results[:pefrac] = 1.0
   if results[:teu] > 0
     results[:pefrac] = (results[:teu] - results[:opp]) / results[:teu]
   end
 
-  def calculate_la(output)
-    return (output['End Use: Electricity: Lighting Interior (MBtu)'] +
-            output['End Use: Electricity: Lighting Exterior (MBtu)'] +
-            output['End Use: Electricity: Lighting Garage (MBtu)'] +
-            output['End Use: Electricity: Refrigerator (MBtu)'] +
-            output['End Use: Electricity: Dishwasher (MBtu)'] +
-            output['End Use: Electricity: Clothes Washer (MBtu)'] +
-            output['End Use: Electricity: Clothes Dryer (MBtu)'] +
-            output['End Use: Electricity: Plug Loads (MBtu)'] +
-            output['End Use: Electricity: Television (MBtu)'] +
-            output['End Use: Electricity: Range/Oven (MBtu)'] +
-            output['End Use: Electricity: Ceiling Fan (MBtu)'] +
-            output['End Use: Electricity: Mech Vent (MBtu)'] +
-            output['End Use: Natural Gas: Clothes Dryer (MBtu)'] +
-            output['End Use: Natural Gas: Range/Oven (MBtu)'] +
-            output['End Use: Fuel Oil: Clothes Dryer (MBtu)'] +
-            output['End Use: Fuel Oil: Range/Oven (MBtu)'] +
-            output['End Use: Propane: Clothes Dryer (MBtu)'] +
-            output['End Use: Propane: Range/Oven (MBtu)'] +
-            output['End Use: Wood Cord: Clothes Dryer (MBtu)'] +
-            output['End Use: Wood Cord: Range/Oven (MBtu)'] +
-            output['End Use: Wood Pellets: Clothes Dryer (MBtu)'] +
-            output['End Use: Wood Pellets: Range/Oven (MBtu)'])
-  end
-
-  results[:eul_dh] = rated_output['End Use: Electricity: Dehumidifier (MBtu)']
+  results[:eul_dh] = calculate_dh(rated_output)
+  results[:eul_mv] = calculate_mv(rated_output)
   results[:eul_la] = calculate_la(rated_output)
 
-  results[:reul_dh] = ref_output['End Use: Electricity: Dehumidifier (MBtu)']
+  results[:reul_dh] = calculate_dh(ref_output)
+  results[:reul_mv] = calculate_mv(rated_output)
   results[:reul_la] = calculate_la(ref_output)
 
   # === #
@@ -511,13 +483,13 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:trl] = results[:reul_heat].sum(0.0) +
                   results[:reul_cool].sum(0.0) +
                   results[:reul_dhw].sum(0.0) +
-                  results[:reul_la] + results[:reul_dh]
+                  results[:reul_la] + results[:reul_mv] + results[:reul_dh]
   results[:tnml] = results[:nmeul_heat].sum(0.0) +
                    results[:nmeul_cool].sum(0.0) +
                    results[:nmeul_dhw].sum(0.0) +
                    results[:nmeul_vent_preheat].sum(0.0) +
                    results[:nmeul_vent_precool].sum(0.0) +
-                   results[:eul_la] + results[:eul_dh]
+                   results[:eul_la] + results[:eul_mv] + results[:eul_dh]
 
   results[:eri] = results[:tnml] / results[:trl] * 100.0
 
@@ -547,11 +519,62 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   return results
 end
 
+def calculate_opp(output, renewable_energy_limit = nil)
+  # On-Site Power Production
+  # Electricity produced minus equivalent electric energy use calculated in accordance
+  # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
+  renewable_energy = output['End Use: Electricity: PV'].to_f
+  if not renewable_energy_limit.nil?
+    renewable_energy = -1 * [-renewable_energy, renewable_energy_limit].min
+  end
+  opp = -1 * (renewable_energy +
+              output['End Use: Electricity: Generator'].to_f) -
+        0.4 * (output['End Use: Natural Gas: Generator'].to_f +
+               output['End Use: Fuel Oil: Generator'].to_f +
+               output['End Use: Propane: Generator'].to_f +
+               output['End Use: Wood Cord: Generator'].to_f +
+               output['End Use: Wood Pellets: Generator'].to_f)
+  opp *= -1 if opp == -0
+  return opp
+end
+
+def calculate_la(output)
+  return (output['End Use: Electricity: Lighting Interior'].to_f +
+          output['End Use: Electricity: Lighting Exterior'].to_f +
+          output['End Use: Electricity: Lighting Garage'].to_f +
+          output['End Use: Electricity: Refrigerator'].to_f +
+          output['End Use: Electricity: Dishwasher'].to_f +
+          output['End Use: Electricity: Clothes Washer'].to_f +
+          output['End Use: Electricity: Clothes Dryer'].to_f +
+          output['End Use: Electricity: Plug Loads'].to_f +
+          output['End Use: Electricity: Television'].to_f +
+          output['End Use: Electricity: Range/Oven'].to_f +
+          output['End Use: Electricity: Ceiling Fan'].to_f +
+          output['End Use: Natural Gas: Clothes Dryer'].to_f +
+          output['End Use: Natural Gas: Range/Oven'].to_f +
+          output['End Use: Fuel Oil: Clothes Dryer'].to_f +
+          output['End Use: Fuel Oil: Range/Oven'].to_f +
+          output['End Use: Propane: Clothes Dryer'].to_f +
+          output['End Use: Propane: Range/Oven'].to_f +
+          output['End Use: Wood Cord: Clothes Dryer'].to_f +
+          output['End Use: Wood Cord: Range/Oven'].to_f +
+          output['End Use: Wood Pellets: Clothes Dryer'].to_f +
+          output['End Use: Wood Pellets: Range/Oven'].to_f)
+end
+
+def calculate_mv(output)
+  return output['End Use: Electricity: Mech Vent'].to_f
+end
+
+def calculate_dh(output)
+  return output['End Use: Electricity: Dehumidifier'].to_f
+end
+
 def _calculate_co2e_index(rated_output, ref_output, results)
   # Check that CO2e Reference Home doesn't have fossil fuel use.
   ['Natural Gas', 'Fuel Oil', 'Propane',
    'Wood Cord', 'Wood Pellets'].each do |fuel|
-    next if ref_output["Fuel Use: #{fuel}: Total (MBtu)"].to_f == 0
+    next if ref_output["Fuel Use: #{fuel}: Total"].to_f == 0
 
     fail 'CO2e Reference Home found with fossil fuel energy use.'
   end
@@ -565,7 +588,7 @@ def _calculate_co2e_index(rated_output, ref_output, results)
     # emissions factors.
     ['Electricity', 'Natural Gas', 'Fuel Oil',
      'Propane', 'Wood Cord', 'Wood Pellets'].each do |fuel|
-      next unless rated_output["Fuel Use: #{fuel}: Total (MBtu)"].to_f > 0
+      next unless rated_output["Fuel Use: #{fuel}: Total"].to_f > 0
       next unless rated_output["Emissions: CO2e: RESNET: #{fuel}: Total (lb)"].to_f == 0
 
       return results
@@ -624,7 +647,7 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
   results_out << ['EC_x Cooling (MBtu)', results[:ec_x_cool].map { |x| x.round(2) }.join(',')]
   results_out << ['EC_x Hot Water (MBtu)', results[:ec_x_dhw].map { |x| x.round(2) }.join(',')]
   results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(2)]
-  results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(2)]
+  results_out << ['EC_x L&A (MBtu)', (results[:eul_la] + results[:eul_mv]).round(2)]
   if not results_iad.nil?
     results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
   end
@@ -684,29 +707,29 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
     worksheet_out << ['Ref Home NS', ref_output['ERI: Building: NumStories']]
   end
   worksheet_out << ['Ref dehumid', results[:reul_dh].round(2)]
-  worksheet_out << ['Ref L&A resMELs', ref_output['End Use: Electricity: Plug Loads (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A intLgt', (ref_output['End Use: Electricity: Lighting Interior (MBtu)'] +
-                                       ref_output['End Use: Electricity: Lighting Garage (MBtu)']).round(2)]
-  worksheet_out << ['Ref L&A extLgt', ref_output['End Use: Electricity: Lighting Exterior (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A Fridg', ref_output['End Use: Electricity: Refrigerator (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A TVs', ref_output['End Use: Electricity: Television (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A R/O', (ref_output['End Use: Electricity: Range/Oven (MBtu)'] +
-                                    ref_output['End Use: Natural Gas: Range/Oven (MBtu)'] +
-                                    ref_output['End Use: Fuel Oil: Range/Oven (MBtu)'] +
-                                    ref_output['End Use: Propane: Range/Oven (MBtu)'] +
-                                    ref_output['End Use: Wood Cord: Range/Oven (MBtu)'] +
-                                    ref_output['End Use: Wood Pellets: Range/Oven (MBtu)']).round(2)]
-  worksheet_out << ['Ref L&A cDryer', (ref_output['End Use: Electricity: Clothes Dryer (MBtu)'] +
-                                       ref_output['End Use: Natural Gas: Clothes Dryer (MBtu)'] +
-                                       ref_output['End Use: Fuel Oil: Clothes Dryer (MBtu)'] +
-                                       ref_output['End Use: Propane: Clothes Dryer (MBtu)'] +
-                                       ref_output['End Use: Wood Cord: Clothes Dryer (MBtu)'] +
-                                       ref_output['End Use: Wood Pellets: Clothes Dryer (MBtu)']).round(2)]
-  worksheet_out << ['Ref L&A dWash', ref_output['End Use: Electricity: Dishwasher (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A cWash', ref_output['End Use: Electricity: Clothes Washer (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A mechV', ref_output['End Use: Electricity: Mech Vent (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A ceilFan', ref_output['End Use: Electricity: Ceiling Fan (MBtu)'].round(2)]
-  worksheet_out << ['Ref L&A total', results[:reul_la].round(2)]
+  worksheet_out << ['Ref L&A resMELs', ref_output['End Use: Electricity: Plug Loads'].round(2)]
+  worksheet_out << ['Ref L&A intLgt', (ref_output['End Use: Electricity: Lighting Interior'] +
+                                       ref_output['End Use: Electricity: Lighting Garage']).round(2)]
+  worksheet_out << ['Ref L&A extLgt', ref_output['End Use: Electricity: Lighting Exterior'].round(2)]
+  worksheet_out << ['Ref L&A Fridg', ref_output['End Use: Electricity: Refrigerator'].round(2)]
+  worksheet_out << ['Ref L&A TVs', ref_output['End Use: Electricity: Television'].round(2)]
+  worksheet_out << ['Ref L&A R/O', (ref_output['End Use: Electricity: Range/Oven'] +
+                                    ref_output['End Use: Natural Gas: Range/Oven'] +
+                                    ref_output['End Use: Fuel Oil: Range/Oven'] +
+                                    ref_output['End Use: Propane: Range/Oven'] +
+                                    ref_output['End Use: Wood Cord: Range/Oven'] +
+                                    ref_output['End Use: Wood Pellets: Range/Oven']).round(2)]
+  worksheet_out << ['Ref L&A cDryer', (ref_output['End Use: Electricity: Clothes Dryer'] +
+                                       ref_output['End Use: Natural Gas: Clothes Dryer'] +
+                                       ref_output['End Use: Fuel Oil: Clothes Dryer'] +
+                                       ref_output['End Use: Propane: Clothes Dryer'] +
+                                       ref_output['End Use: Wood Cord: Clothes Dryer'] +
+                                       ref_output['End Use: Wood Pellets: Clothes Dryer']).round(2)]
+  worksheet_out << ['Ref L&A dWash', ref_output['End Use: Electricity: Dishwasher'].round(2)]
+  worksheet_out << ['Ref L&A cWash', ref_output['End Use: Electricity: Clothes Washer'].round(2)]
+  worksheet_out << ['Ref L&A mechV', results[:reul_mv].round(2)]
+  worksheet_out << ['Ref L&A ceilFan', ref_output['End Use: Electricity: Ceiling Fan'].round(2)]
+  worksheet_out << ['Ref L&A total', (results[:reul_la] + results[:reul_mv]).round(2)]
   CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
 
   # CO2e Results file
@@ -755,6 +778,133 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
     results_out << ["#{program_name} Certification", 'FAIL']
   end
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+end
+
+def write_hers_diag_output(results, designs, hpxml_path)
+  hpxml = HPXML.new(hpxml_path: hpxml_path)
+  epw_file = File.basename(hpxml.climate_and_risk_zones.weather_station_epw_filepath)
+  _epw_country, epw_state, epw_loc = epw_file.split('.')[0].split('_')
+  epw_state = 'XX' if epw_state.size != 2
+
+  output = {
+    project_name: File.basename(hpxml_path),
+    home_description: '',
+    software_name: hpxml.header.software_program_used.to_s,
+    software_version: hpxml.header.software_program_version.to_s,
+    weather_data_location: epw_loc,
+    weather_data_state: epw_state,
+    conditioned_floor_area: hpxml.building_construction.conditioned_floor_area,
+    number_of_bedrooms: hpxml.building_construction.number_of_bedrooms,
+    number_of_stories: hpxml.building_construction.number_of_conditioned_floors_above_grade,
+    hers_index: results[:eri].round(3),
+    space_heating_system_output: [],
+    space_cooling_system_output: [],
+    water_heating_system_output: [],
+    rec_la: results[:reul_la].round(3),
+    ec_la: results[:eul_la].round(3),
+    rec_vent: results[:reul_mv].round(3),
+    ec_vent: results[:eul_mv].round(3),
+    rec_dh: results[:reul_dh].round(3),
+    ec_dh: results[:eul_dh].round(3),
+    opp: results[:opp].round(3),
+    iad_save: results[:iad_save].round(3),
+    hers_hourly_output: {
+      outdoor_drybulb_temperature: [],
+      conditioned_space_temperature: [],
+      space_heating_system_output: [],
+      space_cooling_system_output: [],
+      water_heating_system_output: [],
+      rec_la: [],
+      ec_la: [],
+      rec_vent: [],
+      ec_vent: [],
+      rec_dh: [],
+      ec_dh: [],
+      opp: []
+    }
+  }
+
+  fuel_map = { HPXML::FuelTypeElectricity => 'ELECTRIC',
+               HPXML::FuelTypeNaturalGas => 'FOSSIL_FUEL',
+               HPXML::FuelTypeOil => 'FOSSIL_FUEL',
+               HPXML::FuelTypePropane => 'FOSSIL_FUEL',
+               HPXML::FuelTypeWoodCord => 'BIOMASS',
+               HPXML::FuelTypeWoodPellets => 'BIOMASS' }
+
+  # Add heating systems
+  heat_data = results[:reul_heat].zip(results[:ec_r_heat], results[:ec_x_heat], results[:eec_r_heat], results[:eec_x_heat], results[:fuel_type_heat])
+  heat_data.each do |reul_heat, ec_r_heat, ec_x_heat, eec_r_heat, eec_x_heat, fuel_type_heat|
+    output[:space_heating_system_output] << { reul_heat: reul_heat,
+                                              ec_r_heat: ec_r_heat,
+                                              ec_x_heat: ec_x_heat,
+                                              eec_r_heat: eec_r_heat,
+                                              eec_x_heat: eec_x_heat,
+                                              fuel_type_heat: fuel_map[fuel_type_heat] }
+  end
+
+  # Add cooling systems
+  cool_data = results[:reul_cool].zip(results[:ec_r_cool], results[:ec_x_cool], results[:eec_r_cool], results[:eec_x_cool])
+  cool_data.each do |reul_cool, ec_r_cool, ec_x_cool, eec_r_cool, eec_x_cool|
+    output[:space_cooling_system_output] << { reul_cool: reul_cool,
+                                              ec_r_cool: ec_r_cool,
+                                              ec_x_cool: ec_x_cool,
+                                              eec_r_cool: eec_r_cool,
+                                              eec_x_cool: eec_x_cool }
+  end
+
+  # Add hot water systems
+  dhw_data = results[:reul_dhw].zip(results[:ec_r_dhw], results[:ec_x_dhw], results[:eec_r_dhw], results[:eec_x_dhw], results[:fuel_type_dhw])
+  dhw_data.each do |reul_dhw, ec_r_dhw, ec_x_dhw, eec_r_dhw, eec_x_dhw, fuel_type_dhw|
+    output[:water_heating_system_output] << { reul_hw: reul_dhw,
+                                              ec_r_hw: ec_r_dhw,
+                                              ec_x_hw: ec_x_dhw,
+                                              eec_r_hw: eec_r_dhw,
+                                              eec_x_hw: eec_x_dhw,
+                                              fuel_type_hw: fuel_map[fuel_type_dhw] }
+  end
+
+  # Add hourly output
+  rated_design = designs.select { |d| d.calc_type == Constants.CalcTypeERIRatedHome }[0]
+  rated_csv_path = File.join(rated_design.output_dir, 'results', File.basename(rated_design.csv_output_path.gsub('.csv', '_Hourly.csv')))
+  rated_data = CSV.read(rated_csv_path, headers: true)
+  rated_data_hashes = rated_data.map(&:to_h)
+  ref_design = designs.select { |d| d.calc_type == Constants.CalcTypeERIReferenceHome }[0]
+  ref_csv_path = File.join(ref_design.output_dir, 'results', File.basename(ref_design.csv_output_path.gsub('.csv', '_Hourly.csv')))
+  ref_data = CSV.read(ref_csv_path, headers: true)
+  ref_data_hashes = ref_data.map(&:to_h)
+  output[:hers_hourly_output][:outdoor_drybulb_temperature] = rated_data['Weather: Drybulb Temperature'][1..-1].map { |v| Float(v) }
+  output[:hers_hourly_output][:conditioned_space_temperature] = rated_data['Temperature: Living Space'][1..-1].map { |v| Float(v) }
+  # FIXME: Need to get heating/cooling/dhw outputs on a per-system basis
+  # output[:hers_hourly_output][:space_heating_system_output] =
+  # output[:hers_hourly_output][:space_cooling_system_output] =
+  # output[:hers_hourly_output][:water_heating_system_output] =
+  output[:hers_hourly_output][:rec_la] = ref_data_hashes[1..-1].map { |h| calculate_la(h) }
+  output[:hers_hourly_output][:ec_la] = rated_data_hashes[1..-1].map { |h| calculate_la(h) }
+  output[:hers_hourly_output][:rec_vent] = ref_data_hashes[1..-1].map { |h| calculate_mv(h) }
+  output[:hers_hourly_output][:ec_vent] = rated_data_hashes[1..-1].map { |h| calculate_mv(h) }
+  output[:hers_hourly_output][:rec_dh] = ref_data_hashes[1..-1].map { |h| calculate_dh(h) }
+  output[:hers_hourly_output][:ec_dh] = rated_data_hashes[1..-1].map { |h| calculate_dh(h) }
+  output[:hers_hourly_output][:opp] = rated_data_hashes[1..-1].map { |h| calculate_opp(h) }
+
+  # Validate JSON
+  # FIXME: gem doesn't load correctly
+  # require 'json-schema'
+  valid = true
+  # begin
+  #   json_schema_path = File.join(File.dirname(__FILE__), '..', 'rulesets', 'resources', 'HERSDiagnosticOutput.schema.json')
+  #   JSON::Validator.validate!(json_schema_path, output)
+  # rescue JSON::Schema::ValidationError => e
+  #   valid = false
+  #   puts 'HERS diagnostic output file did not validate.'
+  #   puts e.message
+  # end
+
+  if valid
+    # Write JSON file
+    output_path = File.join(File.dirname(__FILE__), '..', 'test.json') # FIXME
+    require 'json'
+    File.open(output_path, 'w') { |json| json.write(JSON.pretty_generate(output)) }
+  end
 end
 
 def cache_weather
@@ -873,6 +1023,11 @@ def main(options)
       puts "ERI: #{eri_results[:eri].round(2)}"
       if not eri_results[:co2eindex].nil?
         puts "CO2e Index: #{eri_results[:co2eindex].round(2)}"
+      end
+
+      # Write HERS diagnostic output?
+      if options[:add_hers_diag_output]
+        write_hers_diag_output(eri_results, eri_designs, options[:hpxml])
       end
     end
 
@@ -1008,6 +1163,11 @@ OptionParser.new do |opts|
     options[:add_comp_loads] = true
   end
 
+  options[:add_hers_diag_output] = false
+  opts.on('--add-hers-diagnostic-output', 'Add HERS diagnostic output (overrides timeseries output requests)') do |_t|
+    options[:add_hers_diag_output] = true
+  end
+
   options[:skip_simulation] = false
   opts.on('--skip-simulation', 'Skip the EnergyPlus simulations') do |_t|
     options[:skip_simulation] = true
@@ -1036,31 +1196,38 @@ end.parse!(args)
 
 options[:timeseries_output_freq] = 'none'
 options[:timeseries_outputs] = []
-n_freq = 0
-if not options[:hourly_outputs].empty?
-  n_freq += 1
+if options[:add_hers_diag_output]
+  # Needs hourly output for end uses, weather, and zone temperatures
   options[:timeseries_output_freq] = 'hourly'
-  options[:timeseries_outputs] = options[:hourly_outputs]
-end
-if not options[:daily_outputs].empty?
-  n_freq += 1
-  options[:timeseries_output_freq] = 'daily'
-  options[:timeseries_outputs] = options[:daily_outputs]
-end
-if not options[:monthly_outputs].empty?
-  n_freq += 1
-  options[:timeseries_output_freq] = 'monthly'
-  options[:timeseries_outputs] = options[:monthly_outputs]
+  options[:timeseries_outputs] = ['enduses', 'temperatures', 'weather']
+else
+  n_freq = 0
+  if not options[:hourly_outputs].empty?
+    n_freq += 1
+    options[:timeseries_output_freq] = 'hourly'
+    options[:timeseries_outputs] = options[:hourly_outputs]
+  end
+  if not options[:daily_outputs].empty?
+    n_freq += 1
+    options[:timeseries_output_freq] = 'daily'
+    options[:timeseries_outputs] = options[:daily_outputs]
+  end
+  if not options[:monthly_outputs].empty?
+    n_freq += 1
+    options[:timeseries_output_freq] = 'monthly'
+    options[:timeseries_outputs] = options[:monthly_outputs]
+  end
+
+  if n_freq > 1
+    puts 'Multiple timeseries frequencies (hourly, daily, monthly) are not supported.'
+    exit!
+  end
+
+  if options[:timeseries_outputs].include? 'ALL'
+    options[:timeseries_outputs] = timeseries_types[1..-1]
+  end
 end
 
-if n_freq > 1
-  puts 'Multiple timeseries frequencies (hourly, daily, monthly) are not supported.'
-  exit!
-end
-
-if options[:timeseries_outputs].include? 'ALL'
-  options[:timeseries_outputs] = timeseries_types[1..-1]
-end
 if options[:version]
   require_relative 'version.rb'
   puts "OpenStudio-ERI v#{Version::OS_ERI_Version}"
