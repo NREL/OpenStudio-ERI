@@ -461,7 +461,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:eul_la] = calculate_la(rated_output)
 
   results[:reul_dh] = calculate_dh(ref_output)
-  results[:reul_mv] = calculate_mv(rated_output)
+  results[:reul_mv] = calculate_mv(ref_output)
   results[:reul_la] = calculate_la(ref_output)
 
   # === #
