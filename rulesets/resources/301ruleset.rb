@@ -339,7 +339,7 @@ class EnergyRatingIndex301Ruleset
                                                 air_leakage: ach50.round(2),
                                                 infiltration_volume: @infil_volume,
                                                 infiltration_height: @infil_height,
-                                                type_of_test: HPXML::InfiltrationTestCompartmentalization,
+                                                type_of_test: HPXML::InfiltrationTestGuarded,
                                                 a_ext: @infil_a_ext.round(3))
   end
 
@@ -353,7 +353,7 @@ class EnergyRatingIndex301Ruleset
                                                 air_leakage: ach50.round(2),
                                                 infiltration_volume: @infil_volume,
                                                 infiltration_height: @infil_height,
-                                                type_of_test: HPXML::InfiltrationTestCompartmentalization,
+                                                type_of_test: HPXML::InfiltrationTestGuarded,
                                                 a_ext: @infil_a_ext.round(3))
   end
 
@@ -372,7 +372,7 @@ class EnergyRatingIndex301Ruleset
                                                 air_leakage: ach50,
                                                 infiltration_volume: @infil_volume,
                                                 infiltration_height: @infil_height,
-                                                type_of_test: HPXML::InfiltrationTestCompartmentalization,
+                                                type_of_test: HPXML::InfiltrationTestGuarded,
                                                 a_ext: @infil_a_ext.round(3))
   end
 
