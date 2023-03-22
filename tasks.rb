@@ -2345,6 +2345,7 @@ def create_sample_hpxmls
                   'base-atticroof-unvented-insulated-roof.xml',
                   'base-atticroof-vented.xml',
                   # 'base-battery.xml',
+                  'base-bldgtype-attached.xml',
                   'base-bldgtype-multifamily.xml',
                   'base-bldgtype-multifamily-adjacent-to-multiple.xml',
                   'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml',
@@ -2365,7 +2366,6 @@ def create_sample_hpxmls
                   'base-bldgtype-multifamily-shared-pv.xml',
                   'base-bldgtype-multifamily-shared-water-heater.xml',
                   'base-bldgtype-multifamily-shared-water-heater-recirc.xml',
-                  'base-bldgtype-single-family-attached.xml',
                   'base-dhw-combi-tankless.xml',
                   'base-dhw-desuperheater.xml',
                   'base-dhw-dwhr.xml',
@@ -2527,6 +2527,9 @@ def create_sample_hpxmls
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
     hpxml.building_construction.average_ceiling_height = nil
+    hpxml.air_infiltration_measurements.each do |measurement|
+      measurement.type_of_test = nil
+    end
     hpxml.attics.each do |attic|
       if [HPXML::AtticTypeVented,
           HPXML::AtticTypeUnvented].include? attic.attic_type

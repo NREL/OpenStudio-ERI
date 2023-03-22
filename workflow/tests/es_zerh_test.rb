@@ -123,7 +123,7 @@ class ESZERHTest < Minitest::Test
     end
 
     # Single-family attached
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base-bldgtype-single-family-attached.xml'))
+    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base-bldgtype-attached.xml'))
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
       results = get_results_hash(hpxml)
       assert_equal(1.0, get_saf(results, es_version, hpxml))
