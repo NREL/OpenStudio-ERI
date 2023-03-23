@@ -216,20 +216,76 @@ Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/A
   Element                               Type    Units  Constraints  Required   Default   Notes
   ====================================  ======  =====  ===========  =========  ========  ===============================================
   ``SystemIdentifier``                  id                          Yes                  Unique identifier
-  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                  Units for air leakage
-  ``HousePressure``                     double  Pa     > 0          See [#]_             House pressure with respect to outside [#]_
-  ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                  Value for air leakage [#]_
   ``InfiltrationVolume``                double  ft3    > 0          Yes                  Volume associated with infiltration measurement
   ``InfiltrationHeight``                double  ft     > 0          No         See [#]_  Height associated with infiltration measurement [#]_
   ====================================  ======  =====  ===========  =========  ========  ===============================================
 
-  .. [#] UnitofMeasure choices are "ACH" (air changes per hour at user-specified pressure), "CFM" (cubic feet per minute at user-specified pressure), or "ACHnatural" (natural air changes per hour).
-  .. [#] HousePressure only required if BuildingAirLeakage/UnitofMeasure is not "ACHnatural".
+  .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
+  .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.
+
+In addition, one of the following air leakage types must also be defined:
+
+- :ref:`infil_ach_cfm`
+- :ref:`infil_natural_ach_cfm`
+- :ref:`infil_ela`
+
+.. _infil_ach_cfm:
+
+ACH or CFM
+~~~~~~~~~~
+
+If entering air leakage as ACH or CFM at a user-specific pressure, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
+For example, ACH50 (ACH at 50 Pascals) is a commonly obtained value from a blower door measurement.
+
+  ====================================  ======  =====  ===========  =========  =======  ===============================================
+  Element                               Type    Units  Constraints  Required   Default  Notes
+  ====================================  ======  =====  ===========  =========  =======  ===============================================
+  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                 Units for air leakage
+  ``HousePressure``                     double  Pa     > 0          Yes                 House pressure with respect to outside [#]_
+  ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                 Value for air leakage [#]_
+  ====================================  ======  =====  ===========  =========  =======  ===============================================
+
+  .. [#] UnitofMeasure choices are "ACH" or "CFM".
   .. [#] HousePressure typical value is 50 Pa.
   .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should *not* be adjusted by the Aext reduction factor specified in ANSI/RESNET/ICC 301.
          OpenStudio-ERI will automatically calculate and apply the Aext adjustment (and the Aext value can be found in, e.g., the ERIRatedHome.xml output file).
-  .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
-  .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.
+
+.. _infil_natural_ach_cfm:
+
+Natural ACH or CFM
+~~~~~~~~~~~~~~~~~~
+
+If entering air leakage as natural ACH or CFM, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
+Natural ACH or CFM represents the annual average infiltration that a building will see.
+
+  ====================================  ======  =====  ===========  =========  =======  =================================
+  Element                               Type    Units  Constraints  Required   Default  Notes
+  ====================================  ======  =====  ===========  =========  =======  =================================
+  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                 Units for air leakage
+  ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                 Value for air leakage [#]_
+  ====================================  ======  =====  ===========  =========  =======  =================================
+
+  .. [#] UnitofMeasure choices are "ACHnatural" or "CFMnatural".
+  .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should *not* be adjusted by the Aext reduction factor specified in ANSI/RESNET/ICC 301.
+         OpenStudio-ERI will automatically calculate and apply the Aext adjustment (and the Aext value can be found in, e.g., the ERIRatedHome.xml output file).
+
+.. _infil_ela:
+
+Effective Leakage Area
+~~~~~~~~~~~~~~~~~~~~~~
+
+If entering air leakage as Effective Leakage Area (ELA), additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
+Effective Leakage Area is defined as the area of a special nozzle-shaped hole (similar to the inlet of a blower door fan) that would leak the same amount of air as the building does at a pressure difference of 4 Pascals.
+Note that ELA is different than Equivalent Leakage Area (EqLA), which involves a sharp-edged hole at a pressure difference of 10 Pascals.
+
+  ====================================  ======  =======  ===========  =========  =========================  ===============================================
+  Element                               Type    Units    Constraints  Required   Default                    Notes
+  ====================================  ======  =======  ===========  =========  =========================  ===============================================
+  ``EffectiveLeakageArea``              double  sq. in.  >= 0         Yes                                   Effective leakage area value [#]_
+  ====================================  ======  =======  ===========  =========  =========================  ===============================================
+
+  .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should *not* be adjusted by the Aext reduction factor specified in ANSI/RESNET/ICC 301.
+         OpenStudio-ERI will automatically calculate and apply the Aext adjustment (and the Aext value can be found in, e.g., the ERIRatedHome.xml output file).
 
 HPXML Attics
 ************
@@ -1408,7 +1464,7 @@ If the specified system is not a shared system (i.e., not serving multiple dwell
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm    >= 0 or true  Yes                Flow rate [#]_ or whether flow rate unmeasured
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
-  .. [#] For a central fan integrated supply system, TestedFlowRate should equal the amount of outdoor air provided to the distribution system.
+  .. [#] For a central fan integrated supply system, TestedFlowRate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
 
 Shared System
 ~~~~~~~~~~~~~
@@ -1784,19 +1840,45 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   ``ArrayAzimuth``                      integer  deg    0 - 359      Yes                 Direction panels face (clockwise from North)
   ``ArrayTilt``                         double   deg    0 - 90       Yes                 Tilt relative to horizontal
   ``MaxPowerOutput``                    double   W      >= 0         Yes                 Peak power
-  ``InverterEfficiency``                double   frac   0 - 1        Yes                 Inverter efficiency [#]_
   ``SystemLossesFraction``              double   frac   0 - 1        Yes                 System losses [#]_
+  ``AttachedToInverter``                idref           See [#]_     Yes                 ID of attached inverter
   ``extension/NumberofBedroomsServed``  integer         > 1          See [#]_            Number of bedrooms served
   ====================================  =======  =====  ===========  ========  ========  ============================================
   
   .. [#] Location choices are "ground" or "roof" mounted.
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
   .. [#] Tracking choices are "fixed", "1-axis", "1-axis backtracked", or "2-axis".
-  .. [#] Default from PVWatts is 0.96.
   .. [#] System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
-         Default from PVWatts is 0.14.
+         Default from the `PVWatts documentation <https://www.nrel.gov/docs/fy14osti/62641.pdf>`_ is 0.14, which breaks down as follows.
+         Note that the total loss (14%) is not the sum of the individual losses but is calculated by multiplying the reduction due to each loss.
+         
+         - **Soiling**: 2%
+         - **Shading**: 3%
+         - **Snow**: 0%
+         - **Mismatch**: 2%
+         - **Wiring**: 2%
+         - **Connections**: 0.5%
+         - **Light-induced degradation**: 1.5%
+         - **Nameplate rating**: 1%
+         - **Age**: 0%
+         - **Availability**: 3%
+
+  .. [#] AttachedToInverter must reference an ``Inverter``.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system.
+
+In addition, an inverter must be entered as a ``/HPXML/Building/BuildingDetails/Systems/Photovoltaics/Inverter``.
+
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+  Element                                                  Type               Units             Constraints          Required  Default   Notes
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+  ``SystemIdentifier``                                     id                                                        Yes                 Unique identifier
+  ``InverterEfficiency``                                   double             frac              0 - 1 [#]_           Yes                 Inverter efficiency [#]_
+  =======================================================  =================  ================  ===================  ========  ========  ============================================
+
+  .. [#] For homes with multiple inverters, all InverterEfficiency elements must have the same value.
+  .. [#] Default from PVWatts is 0.96.
+
 
 HPXML Generators
 ****************
@@ -1861,7 +1943,7 @@ If the clothes washer is shared, additional information is entered in ``/HPXML/B
   Element                                                                 Type     Units  Constraints  Required  Default  Notes
   ======================================================================  =======  =====  ===========  ========  =======  ==========================================================
   ``AttachedToWaterHeatingSystem`` or ``AttachedToHotWaterDistribution``  idref           See [#]_     Yes                ID of attached water heater or distribution system
-  ``NumberofUnits``                                                       integer                      Yes                Number of clothes washers in the shared laundry room
+  ``Count``                                                               integer                      Yes                Number of clothes washers in the shared laundry room
   ``NumberofUnitsServed``                                                 integer                      Yes                Number of dwelling units served by the shared laundry room
   ======================================================================  =======  =====  ===========  ========  =======  ==========================================================
 
@@ -1902,9 +1984,9 @@ If the clothes dryer is shared, additional information is entered in ``/HPXML/Bu
   =======================  =======  =====  ===========  ========  =======  ==========================================================
   Element                  Type     Units  Constraints  Required  Default  Notes
   =======================  =======  =====  ===========  ========  =======  ==========================================================
-  ``NumberofUnits``        integer                      Yes                Number of clothes dryers in the shared laundry room
+  ``Count``                integer                      Yes                Number of clothes dryers in the shared laundry room
   ``NumberofUnitsServed``  integer                      Yes                Number of dwelling units served by the shared laundry room
-  ================================  =====  ===========  ========  =======  ==========================================================
+  =======================  =======  =====  ===========  ========  =======  ==========================================================
   
 .. note::
 
@@ -2035,10 +2117,10 @@ Lighting and ceiling fans are entered in ``/HPXML/Building/BuildingDetails/Light
 HPXML Lighting
 **************
 
-Nine ``/HPXML/Building/BuildingDetails/Lighting/LightingGroup`` elements must be provided, each of which is the combination of:
+Multiple ``/HPXML/Building/BuildingDetails/Lighting/LightingGroup`` elements must be provided, each of which is the combination of:
 
 - ``LightingType``: 'LightEmittingDiode', 'CompactFluorescent', and 'FluorescentTube'
-- ``Location``: 'interior', 'garage', and 'exterior'
+- ``Location``: 'interior', 'exterior', and 'garage' (garage lighting groups only required if a garage is present)
 
 Use ``LightEmittingDiode`` for Tier II qualifying light fixtures; use ``CompactFluorescent`` and/or ``FluorescentTube`` for Tier I qualifying light fixtures.
 
@@ -2049,13 +2131,13 @@ Information is entered in each ``LightingGroup``.
   =============================  =======  ======  ===========  ========  =======  ===========================================================================
   ``SystemIdentifier``           id                            Yes                Unique identifier
   ``LightingType``               element          1 [#]_       Yes                Lighting type
-  ``Location``                   string           See [#]_     Yes                See [#]_
+  ``Location``                   string           See [#]_     Yes                Lighting location [#]_
   ``FractionofUnitsInLocation``  double   frac    0 - 1 [#]_   Yes                Fraction of light fixtures in the location with the specified lighting type
   =============================  =======  ======  ===========  ========  =======  ===========================================================================
 
   .. [#] LightingType child element choices are ``LightEmittingDiode``, ``CompactFluorescent``, or ``FluorescentTube``.
   .. [#] Location choices are "interior", "garage", or "exterior".
-  .. [#] Garage lighting is ignored if the building has no garage specified elsewhere.
+  .. [#] Garage lighting location is ignored if the HPXML file has no garage specified elsewhere.
   .. [#] The sum of FractionofUnitsInLocation for a given Location (e.g., interior) must be less than or equal to 1.
          If the fractions sum to less than 1, the remainder is assumed to be incandescent lighting.
 
@@ -2069,7 +2151,7 @@ Each ceiling fan is entered as a ``/HPXML/Building/BuildingDetails/Lighting/Ceil
   =========================================  =======  =======  ===========  ========  ========  ==============================
   ``SystemIdentifier``                       id                             Yes                 Unique identifier
   ``Airflow[FanSpeed="medium"]/Efficiency``  double   cfm/W    > 0          Yes                 Efficiency at medium speed
-  ``Quantity``                               integer           > 0          Yes                 Number of similar ceiling fans
+  ``Count``                                  integer           > 0          Yes                 Number of similar ceiling fans
   =========================================  =======  =======  ===========  ========  ========  ==============================
 
 .. _hpxmllocations:

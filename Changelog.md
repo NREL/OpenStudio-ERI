@@ -1,3 +1,18 @@
+## OpenStudio-ERI v1.6.0
+
+__New Features__
+- **Breaking change**: Updates to newer proposed HPXML v4.0:
+  - Replaces `CeilingFan/Quantity`, `ClothesWasher/NumberofUnits`, and `ClothesDryer/NumberofUnits` with `Count`.
+  - Replaces `PVSystem/InverterEfficiency` with `PVSystem/AttachedToInverter` and `Inverter/InverterEfficiency`.
+- **Breaking change**: Updates component loads outputs:
+  - Replaces `Windows` and `Skylights` with `Windows Conduction`, `Windows Solar`, `Skylights Conduction`, and `Skylights Solar`.
+  - Disaggregates `Lighting` from `Internal Gains`.
+- Allows additional building air leakage inputs (ACH or CFM at user-specified house pressure, Natural CFM, Effective Leakage Area).
+- Window shading seasons now based on calendar dates (e.g., summer: May 1-Sep 30 in northern hemisphere) instead of monthly outdoor temperatures.
+- Peak summer/winter electricity outputs are now based on Jun/July/Aug and Dec/Jan/Feb months, not HVAC heating/cooling operation.
+
+__Bugfixes__
+
 ## OpenStudio-ERI v1.5.2
 
 __New Features__
@@ -22,15 +37,15 @@ __Bugfixes__
 
 __New Features__
 - Updates to OpenStudio 3.5.0/EnergyPlus 22.2.
-- Updates to newer proposed HPXML v4.0:
-  - **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
-  - **Breaking change**: `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
-  - **Breaking change**: All `Ducts` must now have a `SystemIdentifier`.
-  - **Breaking change**: Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
-  - **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
-  - **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
-  - **Breaking change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
-  - **Breaking change**: For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
+- **Breaking change**: Updates to newer proposed HPXML v4.0:
+  - Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+  - `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
+  - All `Ducts` must now have a `SystemIdentifier`.
+  - Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
+  - Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
+  - Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
+  - Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
+  - For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
 - **Breaking change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).

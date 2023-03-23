@@ -85,6 +85,14 @@ class HPXMLTest < MiniTest::Test
       assert(File.exist? osm_path)
       hpxml_defaults_path = File.join(File.dirname(xml), 'run', 'in.xml')
       assert(File.exist? hpxml_defaults_path)
+
+      next unless output_format == 'msgpack'
+
+      # Check timeseries output isn't rounded
+      require 'msgpack'
+      data = MessagePack.unpack(File.read(File.join(File.dirname(xml), 'run', "results_timeseries.#{output_format}"), mode: 'rb'))
+      value = data['Energy Use']['Total (kBtu)'][0]
+      assert_operator((value - value.round(8)).abs, :>, 0)
     end
   end
 
@@ -372,16 +380,20 @@ class HPXMLTest < MiniTest::Test
       total_clg_load_delivered = results['Load: Cooling: Delivered (MBtu)']
       abs_htg_load_delta = (total_htg_load_delivered - sum_component_htg_loads).abs
       abs_clg_load_delta = (total_clg_load_delivered - sum_component_clg_loads).abs
-      avg_htg_load = ([total_htg_load_delivered, abs_htg_load_delta].sum / 2.0)
-      avg_clg_load = ([total_clg_load_delivered, abs_clg_load_delta].sum / 2.0)
-      abs_htg_load_frac = abs_htg_load_delta / avg_htg_load
-      abs_clg_load_frac = abs_clg_load_delta / avg_clg_load
-      # Check that the difference is less than 0.6MBtu or less than 10%
+      avg_htg_load = ([total_htg_load_delivered, sum_component_htg_loads].sum / 2.0)
+      avg_clg_load = ([total_clg_load_delivered, sum_component_clg_loads].sum / 2.0)
+      if avg_htg_load > 0
+        abs_htg_load_frac = abs_htg_load_delta / avg_htg_load
+      end
+      if avg_clg_load > 0
+        abs_clg_load_frac = abs_clg_load_delta / avg_clg_load
+      end
+      # Check that the difference is less than 1.5 MBtu or less than 10%
       if hpxml.total_fraction_heat_load_served > 0
-        assert((abs_htg_load_delta < 0.6) || (abs_htg_load_frac < 0.1))
+        assert((abs_htg_load_delta < 1.5) || (!abs_htg_load_frac.nil? && abs_htg_load_frac < 0.1))
       end
       if hpxml.total_fraction_cool_load_served > 0
-        assert((abs_clg_load_delta < 1.1) || (abs_clg_load_frac < 0.1))
+        assert((abs_clg_load_delta < 1.5) || (!abs_clg_load_frac.nil? && abs_clg_load_frac < 0.1))
       end
     end
 
@@ -412,6 +424,7 @@ class HPXMLTest < MiniTest::Test
       window.fraction_operable = nil
     end
     hpxml.collapse_enclosure_surfaces()
+    hpxml.delete_adiabatic_subsurfaces()
 
     # Check run.log warnings
     File.readlines(File.join(rundir, 'run.log')).each do |log_line|
@@ -455,7 +468,9 @@ class HPXMLTest < MiniTest::Test
         next if log_line.include? "No '#{HPXML::PlugLoadTypeTelevision}' plug loads specified, the model will not include television plug load energy use."
       end
       if hpxml.lighting_groups.empty?
-        next if log_line.include? 'No lighting specified, the model will not include lighting energy use.'
+        next if log_line.include? 'No interior lighting specified, the model will not include interior lighting energy use.'
+        next if log_line.include? 'No exterior lighting specified, the model will not include exterior lighting energy use.'
+        next if log_line.include? 'No garage lighting specified, the model will not include garage lighting energy use.'
       end
       if hpxml.windows.empty?
         next if log_line.include? 'No windows specified, the model will not include window heat transfer.'
@@ -470,6 +485,9 @@ class HPXMLTest < MiniTest::Test
       end
       if !hpxml.hvac_distributions.select { |d| d.distribution_system_type == HPXML::HVACDistributionTypeDSE }.empty?
         next if log_line.include? 'DSE is not currently supported when calculating utility bills.'
+      end
+      if !hpxml.header.power_outage_periods.empty?
+        next if log_line.include? 'It is not possible to eliminate all desired end uses (e.g. crankcase/defrost energy, water heater parasitics) in EnergyPlus during a power outage.'
       end
 
       flunk "Unexpected run.log warning found for #{File.basename(hpxml_path)}: #{log_line}"
@@ -555,6 +573,10 @@ class HPXMLTest < MiniTest::Test
       end
       if hpxml.solar_thermal_systems.size > 0
         next if err_line.include? 'Supply Side is storing excess heat the majority of the time.'
+      end
+      if !hpxml.header.power_outage_periods.empty?
+        next if err_line.include? 'Target water temperature is greater than the hot water temperature'
+        next if err_line.include? 'Target water temperature should be less than or equal to the hot water temperature'
       end
 
       flunk "Unexpected eplusout.err warning found for #{File.basename(hpxml_path)}: #{err_line}"
@@ -688,7 +710,6 @@ class HPXMLTest < MiniTest::Test
                                       'base-enclosure-garage.xml' => 2,                  # additional instance for garage
                                       'base-foundation-walkout-basement.xml' => 4,       # 3 foundation walls plus a no-wall exposed perimeter
                                       'base-foundation-complex.xml' => 10,               # lots of foundations for testing
-                                      'base-enclosure-split-surfaces2.xml' => 81,        # lots of foundations for testing
                                       'base-pv-battery-garage.xml' => 2 }                # additional instance for garage
 
       if not num_expected_kiva_instances[File.basename(hpxml_path)].nil?
@@ -948,11 +969,11 @@ class HPXMLTest < MiniTest::Test
       assert_in_epsilon(hpxml_value, sql_value, 0.01)
 
       # Tilt
-      if subsurface.respond_to? :wall_idref
+      if subsurface.is_a? HPXML::Window
         query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND RowName='#{subsurface_id}' AND ColumnName='Tilt' AND Units='deg'"
         sql_value = sqlFile.execAndReturnFirstDouble(query).get
         assert_in_epsilon(90.0, sql_value, 0.01)
-      elsif subsurface.respond_to? :roof_idref
+      elsif subsurface.is_a? HPXML::Skylight
         hpxml_value = nil
         hpxml.roofs.each do |roof|
           next if roof.id != subsurface.roof_idref
@@ -1045,10 +1066,10 @@ class HPXMLTest < MiniTest::Test
           fan_gj += fan_bal.map { |vent_mech| UnitConversions.convert(vent_mech.unit_fan_power * vent_mech.hours_in_operation * 365.0, 'Wh', 'GJ') }.sum(0.0)
         end
         if not vent_fan_kitchen.empty?
-          fan_gj += vent_fan_kitchen.map { |vent_kitchen| UnitConversions.convert(vent_kitchen.unit_fan_power * vent_kitchen.hours_in_operation * vent_kitchen.quantity * 365.0, 'Wh', 'GJ') }.sum(0.0)
+          fan_gj += vent_fan_kitchen.map { |vent_kitchen| UnitConversions.convert(vent_kitchen.unit_fan_power * vent_kitchen.hours_in_operation * vent_kitchen.count * 365.0, 'Wh', 'GJ') }.sum(0.0)
         end
         if not vent_fan_bath.empty?
-          fan_gj += vent_fan_bath.map { |vent_bath| UnitConversions.convert(vent_bath.unit_fan_power * vent_bath.hours_in_operation * vent_bath.quantity * 365.0, 'Wh', 'GJ') }.sum(0.0)
+          fan_gj += vent_fan_bath.map { |vent_bath| UnitConversions.convert(vent_bath.unit_fan_power * vent_bath.hours_in_operation * vent_bath.count * 365.0, 'Wh', 'GJ') }.sum(0.0)
         end
         # Maximum error that can be caused by rounding
         assert_in_delta(mv_energy, fan_gj, 0.006)
@@ -1077,7 +1098,7 @@ class HPXMLTest < MiniTest::Test
 
     # Lighting
     ltg_energy = results.select { |k, _v| k.include? 'End Use: Electricity: Lighting' }.values.sum(0.0)
-    if not hpxml_path.include?('vacancy-year-round')
+    if not (hpxml_path.include?('vacancy-year-round') || hpxml_path.include?('residents-0'))
       assert_equal(hpxml.lighting_groups.size > 0, ltg_energy > 0)
     else
       assert_operator(hpxml.lighting_groups.size, :>, 0)

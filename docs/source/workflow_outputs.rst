@@ -11,6 +11,10 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_configurations_hpxml`
 - :ref:`home_energyplus_files`
 
+.. note::
+
+  MBtu is defined as one million Btu.
+
 .. _summary_outputs_csv:
 
 Summary Outputs (CSV)
@@ -150,9 +154,9 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    ===================================================================  ====================================================
    End Use: Electricity: Heating (MBtu)                                 Excludes heat pump backup and fans/pumps
    End Use: Electricity: Heating Heat Pump Backup (MBtu)
-   End Use: Electricity: Heating Fans/Pumps (MBtu)
+   End Use: Electricity: Heating Fans/Pumps (MBtu)                      Supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
    End Use: Electricity: Cooling (MBtu)                                 Excludes fans/pumps
-   End Use: Electricity: Cooling Fans/Pumps (MBtu)
+   End Use: Electricity: Cooling Fans/Pumps (MBtu)                      Supply fan (air distribution) or circulating pump (geothermal loop)
    End Use: Electricity: Hot Water (MBtu)                               Excludes recirc pump and solar thermal pump
    End Use: Electricity: Hot Water Recirc Pump (MBtu)
    End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)            Non-zero only when using detailed (not simple) solar thermal inputs
@@ -222,7 +226,6 @@ Annual Emissions
 Annual emissions are listed below.
 
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
-Note that rows below with values of zero will be excluded.
 
    ===============================================================  ===============================================================
    Type                                                             Notes
@@ -284,8 +287,8 @@ Peak building electricity outputs are listed below.
    ==================================  =========================================================
    Type                                Notes
    ==================================  =========================================================
-   Peak Electricity: Winter Total (W)  Winter season defined by operation of the heating system.
-   Peak Electricity: Summer Total (W)  Summer season defined by operation of the cooling system.
+   Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
+   Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
    ==================================  =========================================================
 
 Peak Building Loads
@@ -322,8 +325,10 @@ Component loads disaggregated by Heating/Cooling are listed below.
    Component Load: \*: Rim Joists (MBtu)              Heat gain/loss through HPXML ``RimJoist`` elements adjacent to conditioned space
    Component Load: \*: Foundation Walls (MBtu)        Heat gain/loss through HPXML ``FoundationWall`` elements adjacent to conditioned space
    Component Load: \*: Doors (MBtu)                   Heat gain/loss through HPXML ``Door`` elements adjacent to conditioned space
-   Component Load: \*: Windows (MBtu)                 Heat gain/loss through HPXML ``Window`` elements adjacent to conditioned space, including solar
-   Component Load: \*: Skylights (MBtu)               Heat gain/loss through HPXML ``Skylight`` elements adjacent to conditioned space, including solar
+   Component Load: \*: Windows Conduction (MBtu)      Heat gain/loss attributed to conduction through HPXML ``Window`` elements adjacent to conditioned space
+   Component Load: \*: Windows Solar (MBtu)           Heat gain/loss attributed to solar gains through HPXML ``Window`` elements adjacent to conditioned space
+   Component Load: \*: Skylights Conduction (MBtu)    Heat gain/loss attributed to conduction through HPXML ``Skylight`` elements adjacent to conditioned space
+   Component Load: \*: Skylights Solar (MBtu)         Heat gain/loss attributed to solar gains through HPXML ``Skylight`` elements adjacent to conditioned space
    Component Load: \*: Floors (MBtu)                  Heat gain/loss through HPXML ``Floor`` elements (inferred to be floors) adjacent to conditioned space
    Component Load: \*: Slabs (MBtu)                   Heat gain/loss through HPXML ``Slab`` elements adjacent to conditioned space
    Component Load: \*: Internal Mass (MBtu)           Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
@@ -332,7 +337,8 @@ Component loads disaggregated by Heating/Cooling are listed below.
    Component Load: \*: Mechanical Ventilation (MBtu)  Heat gain/loss from airflow/fan energy from a whole house mechanical ventilation system
    Component Load: \*: Whole House Fan (MBtu)         Heat gain/loss from airflow due to a whole house fan
    Component Load: \*: Ducts (MBtu)                   Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
-   Component Load: \*: Internal Gains (MBtu)          Heat gain/loss from appliances, lighting, plug loads, water heater tank losses, etc. in the conditioned space
+   Component Load: \*: Internal Gains (MBtu)          Heat gain/loss from appliances, plug loads, water heater tank losses, etc. in the conditioned space
+   Component Load: \*: Lighting (MBtu)                Heat gain/loss from lighting in the conditioned space
    =================================================  =========================================================================================================
 
 Annual Hot Water Uses

@@ -257,7 +257,7 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    @infil_volume = get_infiltration_volume(orig_hpxml)
+    _sla, _ach50, _nach, @infil_volume, @infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_hpxml, @cfa, @weather)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
@@ -279,7 +279,7 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_hpxml.building_construction.number_of_bedrooms
     @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    @infil_volume = get_infiltration_volume(orig_hpxml)
+    _sla, _ach50, _nach, @infil_volume, @infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_hpxml, @cfa, @weather)
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
@@ -328,11 +328,7 @@ class EnergyRatingIndex301Ruleset
     @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
-  def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
-    @infil_height = get_infiltration_height(orig_hpxml)
-    if @infil_height.nil?
-      @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
-    end
+  def self.set_enclosure_air_infiltration_reference(_orig_hpxml, new_hpxml)
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     sla = 0.00036
@@ -343,14 +339,11 @@ class EnergyRatingIndex301Ruleset
                                                 air_leakage: ach50.round(2),
                                                 infiltration_volume: @infil_volume,
                                                 infiltration_height: @infil_height,
+                                                type_of_test: HPXML::InfiltrationTestGuarded,
                                                 a_ext: @infil_a_ext.round(3))
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_hpxml, new_hpxml)
-    @infil_height = get_infiltration_height(orig_hpxml)
-    if @infil_height.nil?
-      @infil_height = new_hpxml.inferred_infiltration_height(@infil_volume)
-    end
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_hpxml)
 
     ach50 = calc_rated_home_infiltration_ach50(orig_hpxml)
@@ -360,6 +353,7 @@ class EnergyRatingIndex301Ruleset
                                                 air_leakage: ach50.round(2),
                                                 infiltration_volume: @infil_volume,
                                                 infiltration_height: @infil_height,
+                                                type_of_test: HPXML::InfiltrationTestGuarded,
                                                 a_ext: @infil_a_ext.round(3))
   end
 
@@ -378,6 +372,7 @@ class EnergyRatingIndex301Ruleset
                                                 air_leakage: ach50,
                                                 infiltration_volume: @infil_volume,
                                                 infiltration_height: @infil_height,
+                                                type_of_test: HPXML::InfiltrationTestGuarded,
                                                 a_ext: @infil_a_ext.round(3))
   end
 
@@ -1060,22 +1055,28 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
     ufactor, _shgc = get_reference_glazing_ufactor_shgc()
-    exterior_area, _interior_area = get_reference_door_area(orig_hpxml)
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new exterior door
+    # Create new door
+    if @is_southern_hemisphere
+      azimuth = 180
+    else
+      azimuth = 0
+    end
     if exterior_area > 0
-      if @is_southern_hemisphere
-        azimuth = 180
-      else
-        azimuth = 0
-      end
       new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: new_hpxml.walls[0].id,
+                          wall_idref: new_hpxml.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                           area: exterior_area,
                           azimuth: azimuth,
                           r_value: (1.0 / ufactor).round(3))
     end
-    # TODO: Create adiabatic wall/door?
+    if interior_area > 0
+      new_hpxml.doors.add(id: 'InteriorDoorArea',
+                          wall_idref: new_hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
+                          area: interior_area,
+                          azimuth: azimuth,
+                          r_value: (1.0 / ufactor).round(3))
+    end
   end
 
   def self.set_enclosure_doors_rated(orig_hpxml, new_hpxml)
@@ -1094,22 +1095,21 @@ class EnergyRatingIndex301Ruleset
     ext_thermal_bndry_doors = orig_hpxml.doors.select { |door| door.is_exterior_thermal_boundary }
     ref_ufactor, _ref_shgc = get_reference_glazing_ufactor_shgc()
     avg_r_value = calc_area_weighted_avg(ext_thermal_bndry_doors, :r_value, use_inverse: true, backup_value: 1.0 / ref_ufactor)
-    exterior_area, _interior_area = get_reference_door_area(orig_hpxml)
+    exterior_area, interior_area = get_reference_door_area(orig_hpxml)
 
-    # Create new exterior door (since it's impossible to preserve the Rated Home's door orientation)
-    if exterior_area > 0
-      if @is_southern_hemisphere
-        azimuth = 180
-      else
-        azimuth = 0
-      end
-      new_hpxml.doors.add(id: 'ExteriorDoorArea',
-                          wall_idref: new_hpxml.walls[0].id,
-                          area: exterior_area,
+    # Create new door (since it's impossible to preserve the Rated Home's door orientation)
+    if @is_southern_hemisphere
+      azimuth = 180
+    else
+      azimuth = 0
+    end
+    if exterior_area + interior_area > 0
+      new_hpxml.doors.add(id: 'DoorArea',
+                          wall_idref: new_hpxml.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
+                          area: exterior_area + interior_area,
                           azimuth: azimuth,
                           r_value: avg_r_value.round(3))
     end
-    # TODO: Create adiabatic wall/door?
   end
 
   def self.set_systems_hvac_reference(orig_hpxml, new_hpxml, is_all_electric: false)
@@ -1860,9 +1860,13 @@ class EnergyRatingIndex301Ruleset
                                array_azimuth: orig_pv_system.array_azimuth,
                                array_tilt: orig_pv_system.array_tilt,
                                max_power_output: orig_pv_system.max_power_output,
-                               inverter_efficiency: orig_pv_system.inverter_efficiency,
+                               inverter_idref: orig_pv_system.inverter_idref,
                                system_losses_fraction: orig_pv_system.system_losses_fraction,
                                number_of_bedrooms_served: orig_pv_system.number_of_bedrooms_served)
+    end
+    orig_hpxml.inverters.each do |orig_inverter|
+      new_hpxml.inverters.add(id: orig_inverter.id,
+                              inverter_efficiency: orig_inverter.inverter_efficiency)
     end
   end
 
@@ -1920,7 +1924,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_washers.empty?
       clothes_washer = orig_hpxml.clothes_washers[0]
-      if not (clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.number_of_units) > 14)
+      if not (clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.count) > 14)
         id = clothes_washer.id
         location = clothes_washer.location.gsub('unvented', 'vented')
       end
@@ -1947,7 +1951,7 @@ class EnergyRatingIndex301Ruleset
 
     clothes_washer = orig_hpxml.clothes_washers[0]
 
-    if clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.number_of_units) > 14
+    if clothes_washer.is_shared_appliance && (clothes_washer.number_of_units_served / clothes_washer.count) > 14
       set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
       return
     end
@@ -1981,7 +1985,7 @@ class EnergyRatingIndex301Ruleset
     # Override values?
     if not orig_hpxml.clothes_dryers.empty?
       clothes_dryer = orig_hpxml.clothes_dryers[0]
-      if not (clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.number_of_units) > 14)
+      if not (clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.count) > 14)
         id = clothes_dryer.id
         location = clothes_dryer.location.gsub('unvented', 'vented')
         fuel_type = clothes_dryer.fuel_type
@@ -2011,7 +2015,7 @@ class EnergyRatingIndex301Ruleset
 
     clothes_dryer = orig_hpxml.clothes_dryers[0]
 
-    if clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.number_of_units) > 14
+    if clothes_dryer.is_shared_appliance && (clothes_dryer.number_of_units_served / clothes_dryer.count) > 14
       set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
       return
     end
@@ -2249,7 +2253,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
-    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.count }.sum(0)
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
       # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
       # is less than Nbr + 1.
@@ -2262,12 +2266,12 @@ class EnergyRatingIndex301Ruleset
     medium_cfm = 3000.0
     new_hpxml.ceiling_fans.add(id: 'CeilingFans',
                                efficiency: medium_cfm / HVAC.get_default_ceiling_fan_power(),
-                               quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
   def self.set_ceiling_fans_rated(orig_hpxml, new_hpxml)
-    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.quantity }.sum(0)
+    n_fans = orig_hpxml.ceiling_fans.map { |cf| cf.count }.sum(0)
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
       # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
       # is less than Nbr + 1.
@@ -2282,19 +2286,19 @@ class EnergyRatingIndex301Ruleset
     sum_w = 0.0
     num_cfs = 0
     orig_hpxml.ceiling_fans.each do |orig_ceiling_fan|
-      num_cfs += orig_ceiling_fan.quantity
+      num_cfs += orig_ceiling_fan.count
       cfm_per_w = orig_ceiling_fan.efficiency
       if cfm_per_w.nil?
         fan_power_w = HVAC.get_default_ceiling_fan_power()
         cfm_per_w = medium_cfm / fan_power_w
       end
-      sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.quantity)
+      sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.count)
     end
     avg_w = sum_w / num_cfs
 
     new_hpxml.ceiling_fans.add(id: 'CeilingFans',
                                efficiency: medium_cfm / avg_w,
-                               quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
@@ -2305,18 +2309,18 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_misc_loads_reference(new_hpxml)
     # Misc
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
+    kwh_per_year, frac_sensible, frac_latent = MiscLoads.get_residual_mels_default_values(@cfa)
     new_hpxml.plug_loads.add(id: 'MiscPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeOther,
-                             kWh_per_year: kWh_per_year,
+                             kwh_per_year: kwh_per_year,
                              frac_sensible: frac_sensible.round(3),
                              frac_latent: frac_latent.round(3))
 
     # Television
-    kWh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(@cfa, @nbeds)
+    kwh_per_year, frac_sensible, frac_latent = MiscLoads.get_televisions_default_values(@cfa, @nbeds)
     new_hpxml.plug_loads.add(id: 'TelevisionPlugLoad',
                              plug_load_type: HPXML::PlugLoadTypeTelevision,
-                             kWh_per_year: kWh_per_year,
+                             kwh_per_year: kwh_per_year,
                              frac_sensible: frac_sensible.round(3),
                              frac_latent: frac_latent.round(3))
   end
@@ -2421,24 +2425,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.calc_rated_home_infiltration_ach50(orig_hpxml)
-    air_infiltration_measurements = []
-    orig_hpxml.air_infiltration_measurements.each do |orig_infil_measurement|
-      air_infiltration_measurements << orig_infil_measurement
-    end
-
-    ach50 = nil
-    air_infiltration_measurements.each do |infil_measurement|
-      if (infil_measurement.unit_of_measure == HPXML::UnitsACHNatural) && infil_measurement.house_pressure.nil?
-        nach = infil_measurement.air_leakage
-        sla = Airflow.get_infiltration_SLA_from_ACH(nach, @infil_height, @weather)
-        ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
-      elsif (infil_measurement.unit_of_measure == HPXML::UnitsACH) && (infil_measurement.house_pressure == 50)
-        ach50 = infil_measurement.air_leakage
-      elsif (infil_measurement.unit_of_measure == HPXML::UnitsCFM) && (infil_measurement.house_pressure == 50)
-        ach50 = infil_measurement.air_leakage * 60.0 / @infil_volume
-      end
-      break unless ach50.nil?
-    end
+    _sla, ach50, _nach, _volume, _height = Airflow.get_values_from_air_infiltration_measurements(orig_hpxml, @cfa, @weather)
 
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
@@ -2770,23 +2757,6 @@ class EnergyRatingIndex301Ruleset
     return htg_cap, clg_cap
   end
 
-  def self.get_infiltration_volume(hpxml)
-    hpxml.air_infiltration_measurements.each do |air_infiltration_measurement|
-      next if air_infiltration_measurement.infiltration_volume.nil?
-
-      return air_infiltration_measurement.infiltration_volume
-    end
-  end
-
-  def self.get_infiltration_height(hpxml)
-    hpxml.air_infiltration_measurements.each do |air_infiltration_measurement|
-      next if air_infiltration_measurement.infiltration_height.nil?
-
-      return air_infiltration_measurement.infiltration_height
-    end
-    return
-  end
-
   def self.get_reference_water_heater_ef(wh_fuel_type, wh_tank_vol)
     # Table 4.2.2(1) - Service water heating systems
     if wh_fuel_type == HPXML::FuelTypeElectricity
@@ -2884,14 +2854,15 @@ class EnergyRatingIndex301Ruleset
     end
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
       # Calculate portion of door area that is exterior by preserving ratio from rated home
-      orig_total_area = orig_hpxml.doors.map { |d| d.area }.sum(0)
-      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior }.map { |d| d.area }.sum(0)
-      if orig_total_area <= 0
-        exterior_area = 0
+      orig_interior_area = orig_hpxml.doors.select { |d| d.wall.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }.map { |d| d.area }.sum(0)
+      orig_exterior_area = orig_hpxml.doors.select { |d| d.is_exterior_thermal_boundary }.map { |d| d.area }.sum(0)
+      if orig_interior_area + orig_exterior_area <= 0
+        exterior_area = total_area
+        interior_area = 0.0
       else
-        exterior_area = total_area * orig_exterior_area / orig_total_area
+        exterior_area = total_area * orig_exterior_area / (orig_exterior_area + orig_interior_area)
+        interior_area = total_area - exterior_area
       end
-      interior_area = total_area - exterior_area
       return exterior_area, interior_area
     else
       exterior_area = total_area

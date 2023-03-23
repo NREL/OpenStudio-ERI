@@ -1094,7 +1094,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     new_hpxml.ceiling_fans.add(id: 'TargetCeilingFan',
                                efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
-                               quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
   end
 
   def self.set_misc_loads_reference(orig_hpxml, new_hpxml)

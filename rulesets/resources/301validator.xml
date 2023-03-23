@@ -153,7 +153,7 @@
       <sch:assert role='ERROR' test='count(h:BuildingSummary/h:BuildingConstruction) = 1'>Expected 1 element(s) for xpath: BuildingSummary/BuildingConstruction</sch:assert> <!-- See [BuildingConstruction] -->
       <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:ClimateZoneIECC[h:Year="2006"]/h:ClimateZone) = 1'>Expected 1 element(s) for xpath: ClimateandRiskZones/ClimateZoneIECC[Year="2006"]/ClimateZone</sch:assert>
       <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:WeatherStation) = 1'>Expected 1 element(s) for xpath: ClimateandRiskZones/WeatherStation</sch:assert> <!-- See [WeatherStation] -->
-      <sch:assert role='ERROR' test='count(h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement/h:BuildingAirLeakage/h:UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]) = 1'>Expected 1 element(s) for xpath: Enclosure/AirInfiltration/AirInfiltrationMeasurement/BuildingAirLeakage/UnitofMeasure[text()="ACH" or text()="CFM" or text()="ACHnatural"]</sch:assert> <!-- see [AirInfiltrationUnits=ACHorCFM] or [AirInfiltrationUnits=ACHnatural] -->
+      <sch:assert role='ERROR' test='count(h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:AirLeakage | h:EffectiveLeakageArea]) = 1'>Expected 1 element(s) for xpath: Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/AirLeakage | EffectiveLeakageArea]</sch:assert> <!-- see [AirInfiltrationMeasurement] -->
       <sch:assert role='ERROR' test='count(h:Enclosure/h:Attics/h:Attic) &gt;= 0'>Expected 0 or more element(s) for xpath: Enclosure/Attics/Attic</sch:assert> <!-- see [Attic] -->
       <sch:assert role='ERROR' test='count(h:Enclosure/h:Foundations/h:Foundation) &gt;= 0'>Expected 0 or more element(s) for xpath: Enclosure/Foundations/Foundation</sch:assert> <!-- see [Foundation] -->
       <sch:assert role='ERROR' test='count(h:Enclosure/h:Roofs/h:Roof) &gt;= 0'>Expected 0 or more element(s) for xpath: Enclosure/Roofs/Roof</sch:assert> <!-- see [Roof] -->
@@ -228,10 +228,9 @@ Temporarily disabled until RESNET allows this.
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[AirInfiltrationUnits=ACHorCFM]</sch:title>
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:UnitofMeasure[text()="ACH" or text()="CFM"]]'>
-      <sch:assert role='ERROR' test='count(h:HousePressure[number(text())=50]) = 1'>Expected 1 element(s) for xpath: HousePressure[number(text())=50]</sch:assert>
-      <sch:assert role='ERROR' test='count(h:BuildingAirLeakage/h:AirLeakage) = 1'>Expected 1 element(s) for xpath: BuildingAirLeakage/AirLeakage</sch:assert>
+    <sch:title>[AirInfiltrationMeasurement]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:AirLeakage | h:EffectiveLeakageArea]'>
+      <sch:assert role='ERROR' test='h:BuildingAirLeakage/h:UnitofMeasure[text()="ACH" or text()="ACHnatural" or text()="CFM" or text()="CFMnatural"] or not(h:BuildingAirLeakage/h:UnitofMeasure)'>Expected BuildingAirLeakage/UnitofMeasure to be 'ACH' or 'ACHnatural' or 'CFM' or 'CFMnatural'</sch:assert>
       <sch:assert role='ERROR' test='count(h:InfiltrationVolume) = 1'>Expected 1 element(s) for xpath: InfiltrationVolume</sch:assert>
       <sch:assert role='ERROR' test='count(h:InfiltrationHeight) &lt;= 1'>Expected 0 or 1 element(s) for xpath: InfiltrationHeight</sch:assert>
       <sch:assert role='ERROR' test='number(h:InfiltrationHeight) &gt; 0 or not(h:InfiltrationHeight)'>Expected InfiltrationHeight to be greater than 0</sch:assert>
@@ -239,13 +238,9 @@ Temporarily disabled until RESNET allows this.
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[AirInfiltrationUnits=ACHnatural]</sch:title>
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:UnitofMeasure[text()="ACHnatural"]]'>
-      <sch:assert role='ERROR' test='count(h:HousePressure) = 0'>Expected 0 element(s) for xpath: HousePressure</sch:assert>
-      <sch:assert role='ERROR' test='count(h:BuildingAirLeakage/h:AirLeakage) = 1'>Expected 1 element(s) for xpath: BuildingAirLeakage/AirLeakage</sch:assert>
-      <sch:assert role='ERROR' test='count(h:InfiltrationVolume) = 1'>Expected 1 element(s) for xpath: InfiltrationVolume</sch:assert>
-      <sch:assert role='ERROR' test='count(h:InfiltrationHeight) &lt;= 1'>Expected 0 or 1 element(s) for xpath: InfiltrationHeight</sch:assert>
-      <sch:assert role='ERROR' test='number(h:InfiltrationHeight) &gt; 0 or not(h:InfiltrationHeight)'>Expected InfiltrationHeight to be greater than 0</sch:assert>
+    <sch:title>[AirInfiltrationMeasurement=ACHorCFM]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:UnitofMeasure[text()="ACH" or text()="CFM"]]'>
+      <sch:assert role='ERROR' test='count(h:HousePressure) = 1'>Expected 1 element(s) for xpath: HousePressure</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -1327,8 +1322,8 @@ Temporarily disabled until RESNET allows this.
       <sch:assert role='ERROR' test='count(h:ArrayAzimuth) = 1'>Expected 1 element(s) for xpath: ArrayAzimuth</sch:assert>
       <sch:assert role='ERROR' test='count(h:ArrayTilt) = 1'>Expected 1 element(s) for xpath: ArrayTilt</sch:assert>
       <sch:assert role='ERROR' test='count(h:MaxPowerOutput) = 1'>Expected 1 element(s) for xpath: MaxPowerOutput</sch:assert>
-      <sch:assert role='ERROR' test='count(h:InverterEfficiency) = 1'>Expected 1 element(s) for xpath: InverterEfficiency</sch:assert>
       <sch:assert role='ERROR' test='count(h:SystemLossesFraction) = 1'>Expected 1 element(s) for xpath: SystemLossesFraction</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AttachedToInverter) = 1'>Expected 1 element(s) for xpath: AttachedToInverter</sch:assert> <!-- See [Inverter] -->
     </sch:rule>
   </sch:pattern>
 
@@ -1338,6 +1333,13 @@ Temporarily disabled until RESNET allows this.
       <sch:assert role='ERROR' test='count(../../../h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:NumberofBedroomsServed) = 1'>Expected 1 element(s) for xpath: extension/NumberofBedroomsServed</sch:assert>
       <sch:assert role='ERROR' test='number(h:extension/h:NumberofBedroomsServed) &gt; number(../../../h:BuildingSummary/h:BuildingConstruction/h:NumberofBedrooms) or not(h:extension/h:NumberofBedroomsServed) or not(../../../h:BuildingSummary/h:BuildingConstruction/h:NumberofBedrooms)'>Expected extension/NumberofBedroomsServed to be greater than ../../../BuildingSummary/BuildingConstruction/NumberofBedrooms</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[Inverter]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:Photovoltaics/h:Inverter'>
+      <sch:assert role='ERROR' test='count(h:InverterEfficiency) = 1'>Expected 1 element(s) for xpath: InverterEfficiency</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -1400,7 +1402,7 @@ Temporarily disabled until RESNET allows this.
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:ClothesWasher[h:IsSharedAppliance="true"]'>
       <sch:assert role='ERROR' test='count(../../h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
       <sch:assert role='ERROR' test='count(h:AttachedToWaterHeatingSystem) + count(h:AttachedToHotWaterDistribution) = 1'>Expected 1 element(s) for xpath: AttachedToWaterHeatingSystem | AttachedToHotWaterDistribution</sch:assert>
-      <sch:assert role='ERROR' test='count(h:NumberofUnits) = 1'>Expected 1 element(s) for xpath: NumberofUnits</sch:assert>
+      <sch:assert role='ERROR' test='count(h:Count) = 1'>Expected 1 element(s) for xpath: Count</sch:assert>
       <sch:assert role='ERROR' test='count(h:NumberofUnitsServed) = 1'>Expected 1 element(s) for xpath: NumberofUnitsServed</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -1422,7 +1424,7 @@ Temporarily disabled until RESNET allows this.
     <sch:title>[ClothesDryerType=Shared]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Appliances/h:ClothesDryer[h:IsSharedAppliance="true"]'>
       <sch:assert role='ERROR' test='count(../../h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
-      <sch:assert role='ERROR' test='count(h:NumberofUnits) = 1'>Expected 1 element(s) for xpath: NumberofUnits</sch:assert>
+      <sch:assert role='ERROR' test='count(h:Count) = 1'>Expected 1 element(s) for xpath: Count</sch:assert>
       <sch:assert role='ERROR' test='count(h:NumberofUnitsServed) = 1'>Expected 1 element(s) for xpath: NumberofUnitsServed</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -1497,13 +1499,13 @@ Temporarily disabled until RESNET allows this.
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting'>
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:LightEmittingDiode] and h:Location[text()="garage"]]) = 1 or not (../h:Enclosure/h:Walls/h:Wall[h:InteriorAdjacentTo="garage" or h:ExteriorAdjacentTo="garage"])'>Expected 1 element(s) for xpath: LightingGroup[LightingType[LightEmittingDiode] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:CompactFluorescent] and h:Location[text()="garage"]]) = 1 or not (../h:Enclosure/h:Walls/h:Wall[h:InteriorAdjacentTo="garage" or h:ExteriorAdjacentTo="garage"])'>Expected 1 element(s) for xpath: LightingGroup[LightingType[CompactFluorescent] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="interior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="interior"]]</sch:assert> <!-- See [LightingGroup] -->
       <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="exterior"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="exterior"]]</sch:assert> <!-- See [LightingGroup] -->
-      <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="garage"]]) = 1'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
+      <sch:assert role='ERROR' test='count(h:LightingGroup[h:LightingType[h:FluorescentTube] and h:Location[text()="garage"]]) = 1 or not (../h:Enclosure/h:Walls/h:Wall[h:InteriorAdjacentTo="garage" or h:ExteriorAdjacentTo="garage"])'>Expected 1 element(s) for xpath: LightingGroup[LightingType[FluorescentTube] and Location[text()="garage"]]</sch:assert> <!-- See [LightingGroup] -->
       <!-- Sum Checks -->
       <sch:assert role='ERROR' test='sum(h:LightingGroup[h:Location="interior"]/h:FractionofUnitsInLocation) &lt;= 1.01'>Expected sum(LightingGroup/FractionofUnitsInLocation) for Location="interior" to be less than or equal to 1</sch:assert>
       <sch:assert role='ERROR' test='sum(h:LightingGroup[h:Location="exterior"]/h:FractionofUnitsInLocation) &lt;= 1.01'>Expected sum(LightingGroup/FractionofUnitsInLocation) for Location="exterior" to be less than or equal to 1</sch:assert>
@@ -1522,7 +1524,7 @@ Temporarily disabled until RESNET allows this.
     <sch:title>[CeilingFan]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting/h:CeilingFan'>
       <sch:assert role='ERROR' test='count(h:Airflow[h:FanSpeed="medium"]/h:Efficiency) = 1'>Expected 1 element(s) for xpath: Airflow[FanSpeed="medium"]/Efficiency</sch:assert>
-      <sch:assert role='ERROR' test='count(h:Quantity) = 1'>Expected 1 element(s) for xpath: Quantity</sch:assert>
+      <sch:assert role='ERROR' test='count(h:Count) = 1'>Expected 1 element(s) for xpath: Count</sch:assert>
     </sch:rule>
   </sch:pattern>
   
