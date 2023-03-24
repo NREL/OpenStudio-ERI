@@ -7,6 +7,7 @@ __New Features__
 - **Breaking change**: Updates component loads outputs:
   - Replaces `Windows` and `Skylights` with `Windows Conduction`, `Windows Solar`, `Skylights Conduction`, and `Skylights Solar`.
   - Disaggregates `Lighting` from `Internal Gains`.
+- Adds annual energy outputs per HVAC and water heating system; allows requesting timeseries output.
 - Allows additional building air leakage inputs (ACH or CFM at user-specified house pressure, Natural CFM, Effective Leakage Area).
 - Window shading seasons now based on calendar dates (e.g., summer: May 1-Sep 30 in northern hemisphere) instead of monthly outdoor temperatures.
 - Peak summer/winter electricity outputs are now based on Jun/July/Aug and Dec/Jan/Feb months, not HVAC heating/cooling operation.

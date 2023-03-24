@@ -1158,7 +1158,7 @@ end
 # Check for correct versions of OS
 Version.check_openstudio_version()
 
-timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'emissions', 'emissionfuels',
+timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'systemuses', 'emissions', 'emissionfuels',
                     'emissionenduses', 'hotwater', 'loads', 'componentloads',
                     'unmethours', 'temperatures', 'airflows', 'weather']
 

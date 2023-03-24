@@ -111,10 +111,10 @@ Based on which calculations were requested in the HPXML file, CSV annual output 
 
 Each CSV file includes the following sections of output.
 
-Annual Energy Consumption
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Annual Energy
+~~~~~~~~~~~~~
 
-Annual energy consumption outputs are listed below.
+Annual energy outputs are listed below.
 
   ====================================  ===========================
   Type                                  Notes
@@ -123,8 +123,8 @@ Annual energy consumption outputs are listed below.
   Energy Use: Net (MBtu)                Subtracts any power produced by PV or generators.
   ====================================  ===========================
 
-Annual Energy Consumption by Fuel Type
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Annual Energy by Fuel Type
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Fuel uses are listed below.
 
@@ -141,8 +141,8 @@ Fuel uses are listed below.
    Coal: Total (MBtu)          Not used by OS-ERI
    ==========================  ===========================
 
-Annual Energy Consumption By End Use
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Annual Energy By End Use
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 End uses are listed below.
 
@@ -219,6 +219,21 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    End Use: Coal: Mech Vent Preheating (MBtu)                           Not used by OS-ERI
    End Use: Coal: Generator (MBtu)                                      Not used by OS-ERI
    ===================================================================  ====================================================
+
+Annual Energy By System Use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Results for each HVAC and water heating system defined in the HPXML file are listed as shown below.
+
+   ================================================  =============================================
+   Type                                              Notes
+   ================================================  =============================================
+   System Use: <HeatingSystemID>: Total (MBtu)       Total energy use for the heating system
+   System Use: <CoolingSystemID>: Total (MBtu)       Total energy use for the cooling system
+   System Use: <HeatPumpID>: Total (MBtu)            Total energy use for the heat pump (except when fossil fuel backup, in which case two rows will be reported)
+   System Use: <WaterHeatingSystemID>: Total (MBtu)  Total energy use for the water heating system
+   ================================================  =============================================
+
 
 Annual Emissions
 ~~~~~~~~~~~~~~~~
@@ -440,6 +455,7 @@ Depending on the outputs requested, CSV files may include:
    Total Consumptions                   Energy use for building total.
    Fuel Consumptions                    Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
    End Use Consumptions                 Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
+   System Use Consumptions              Energy use for each HVAC and water heating system (in kBtu).
    Emissions                            Emissions (CO2e, NOx, SO2).
    Emission Fuels                       Emissions (CO2e, NOx, SO2) disaggregated by fuel type.
    Emission End Uses                    Emissions (CO2e, NOx, SO2) disaggregated by end use.
