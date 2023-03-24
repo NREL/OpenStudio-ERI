@@ -52,6 +52,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['include_timeseries_total_consumptions'] = timeseries_outputs.include? 'total'
   args['include_timeseries_fuel_consumptions'] = timeseries_outputs.include? 'fuels'
   args['include_timeseries_end_use_consumptions'] = timeseries_outputs.include? 'enduses'
+  args['include_timeseries_system_use_consumptions'] = timeseries_outputs.include? 'systemuses'
   args['include_timeseries_emissions'] = timeseries_outputs.include? 'emissions'
   args['include_timeseries_emission_fuels'] = timeseries_outputs.include? 'emissionfuels'
   args['include_timeseries_emission_end_uses'] = timeseries_outputs.include? 'emissionenduses'
