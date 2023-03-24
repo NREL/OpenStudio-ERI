@@ -191,7 +191,13 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
-  def test_hers_diagnostic_output
-    # FIXME: TODO
+  def test_diagnostic_output
+    test_name = 'diagnostic_output'
+
+    # Run ERI workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    _run_workflow(xml, test_name, generate_diagnostic_output: true)
+
+    # FIXME: Check for output file
   end
 end

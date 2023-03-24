@@ -300,6 +300,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Heating #
   # ======= #
 
+  results[:ids_heat] = []
+  results[:frac_heat] = []
   results[:reul_heat] = []
   results[:coeff_heat_a] = []
   results[:coeff_heat_b] = []
@@ -315,6 +317,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   rated_output['ERI: Heating: ID'].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output['ERI: Heating: ID'].index(sys_id)
     reul_heat = ref_output['ERI: Heating: Load'][ref_idx]
+    frac_heat = reul_heat / ref_output['ERI: Heating: Load'].sum(0.0)
     fuel_type_heat = ref_output['ERI: Heating: FuelType'][ref_idx]
     coeff_heat_a, coeff_heat_b = get_heating_coefficients(fuel_type_heat)
     eec_x_heat = rated_output['ERI: Heating: EEC'][rated_idx]
@@ -331,6 +334,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
       nmeul_heat = reul_heat * (nec_x_heat / ec_r_heat)
     end
 
+    results[:ids_heat] << sys_id
+    results[:frac_heat] << frac_heat
     results[:reul_heat] << reul_heat
     results[:coeff_heat_a] << coeff_heat_a
     results[:coeff_heat_b] << coeff_heat_b
@@ -348,6 +353,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Cooling #
   # ======= #
 
+  results[:ids_cool] = []
+  results[:frac_cool] = []
   results[:reul_cool] = []
   results[:coeff_cool_a] = []
   results[:coeff_cool_b] = []
@@ -359,10 +366,10 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:nec_x_cool] = []
   results[:nmeul_cool] = []
 
-  tot_reul_cool = ref_output['ERI: Cooling: Load'].sum(0.0)
   rated_output['ERI: Cooling: ID'].each_with_index do |sys_id, rated_idx|
     ref_idx = ref_output['ERI: Cooling: ID'].index(sys_id)
     reul_cool = ref_output['ERI: Cooling: Load'][ref_idx]
+    frac_cool = reul_cool / ref_output['ERI: Cooling: Load'].sum(0.0)
     coeff_cool_a, coeff_cool_b = get_cooling_coefficients()
     eec_x_cool = rated_output['ERI: Cooling: EEC'][rated_idx]
     eec_r_cool = ref_output['ERI: Cooling: EEC'][ref_idx]
@@ -373,13 +380,15 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     if eec_x_cool * reul_cool > 0
       nec_x_cool = (coeff_cool_a * eec_x_cool - coeff_cool_b) * (ec_x_cool * ec_r_cool * dse_r_cool) / (eec_x_cool * reul_cool)
       # Add whole-house fan energy to nec_x_cool per 301 (apportioned by load) and excluded from eul_la
-      nec_x_cool += (rated_output['End Use: Electricity: Whole House Fan'] * reul_cool / tot_reul_cool)
+      nec_x_cool += (rated_output['End Use: Electricity: Whole House Fan'] * frac_cool)
     end
     nmeul_cool = 0
     if ec_r_cool > 0
       nmeul_cool = reul_cool * (nec_x_cool / ec_r_cool)
     end
 
+    results[:ids_cool] << sys_id
+    results[:frac_cool] << frac_cool
     results[:reul_cool] << reul_cool
     results[:coeff_cool_a] << coeff_cool_a
     results[:coeff_cool_b] << coeff_cool_b
@@ -396,6 +405,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # HotWater #
   # ======== #
 
+  results[:ids_dhw] = []
+  results[:frac_dhw] = []
   results[:reul_dhw] = []
   results[:coeff_dhw_a] = []
   results[:coeff_dhw_b] = []
@@ -414,17 +425,17 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     fail 'Unexpected Reference Home results; should only be 1 DHW system.'
   end
 
-  rated_output['ERI: Hot Water: ID'].each_with_index do |_sys_id, rated_idx|
+  rated_output['ERI: Hot Water: ID'].each_with_index do |sys_id, rated_idx|
     # Apportion load/energy from single ref water heater to each rated water heater
-    rated_dhw_frac_load_served = (rated_output['ERI: Hot Water: Load'][rated_idx] / rated_output['ERI: Hot Water: Load'].sum(0.0))
+    frac_dhw = (rated_output['ERI: Hot Water: Load'][rated_idx] / rated_output['ERI: Hot Water: Load'].sum(0.0))
 
-    reul_dhw = ref_output['ERI: Hot Water: Load'][0] * rated_dhw_frac_load_served
+    reul_dhw = ref_output['ERI: Hot Water: Load'][0] * frac_dhw
     fuel_type_dhw = ref_output['ERI: Hot Water: FuelType'][0]
     coeff_dhw_a, coeff_dhw_b = get_dhw_coefficients(fuel_type_dhw)
     eec_x_dhw = rated_output['ERI: Hot Water: EEC'][rated_idx]
     eec_r_dhw = ref_output['ERI: Hot Water: EEC'][0]
     ec_x_dhw = rated_output['ERI: Hot Water: EC'][rated_idx]
-    ec_r_dhw = ref_output['ERI: Hot Water: EC'][0] * rated_dhw_frac_load_served
+    ec_r_dhw = ref_output['ERI: Hot Water: EC'][0] * frac_dhw
     dse_r_dhw = reul_dhw / ec_r_dhw * eec_r_dhw
     nec_x_dhw = 0
     if eec_x_dhw * reul_dhw > 0
@@ -435,6 +446,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
       nmeul_dhw = reul_dhw * (nec_x_dhw / ec_r_dhw)
     end
 
+    results[:ids_dhw] << sys_id
+    results[:frac_dhw] << frac_dhw
     results[:reul_dhw] << reul_dhw
     results[:coeff_dhw_a] << coeff_dhw_a
     results[:coeff_dhw_b] << coeff_dhw_b
@@ -788,7 +801,7 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 end
 
-def write_hers_diag_output(results, designs, hpxml_path)
+def write_diagnostic_output(results, designs, hpxml_path)
   hpxml = HPXML.new(hpxml_path: hpxml_path)
   epw_file = File.basename(hpxml.climate_and_risk_zones.weather_station_epw_filepath)
 
@@ -867,7 +880,7 @@ def write_hers_diag_output(results, designs, hpxml_path)
   kwh_to_kbtu = UnitConversions.convert(1.0, 'kWh', 'kBtu')
 
   # Add heating systems
-  heat_data = results[:reul_heat].zip(results[:ec_r_heat], results[:ec_x_heat], results[:eec_r_heat], results[:eec_x_heat], results[:fuel_type_heat])
+  heat_data = [results[:reul_heat], results[:ec_r_heat], results[:ec_x_heat], results[:eec_r_heat], results[:eec_x_heat], results[:fuel_type_heat]].transpose
   heat_data.each do |reul_heat, ec_r_heat, ec_x_heat, eec_r_heat, eec_x_heat, fuel_type_heat|
     output[:space_heating_system_output] << { reul_heat: reul_heat,
                                               ec_r_heat: ec_r_heat,
@@ -878,7 +891,7 @@ def write_hers_diag_output(results, designs, hpxml_path)
   end
 
   # Add cooling systems
-  cool_data = results[:reul_cool].zip(results[:ec_r_cool], results[:ec_x_cool], results[:eec_r_cool], results[:eec_x_cool])
+  cool_data = [results[:reul_cool], results[:ec_r_cool], results[:ec_x_cool], results[:eec_r_cool], results[:eec_x_cool]].transpose
   cool_data.each do |reul_cool, ec_r_cool, ec_x_cool, eec_r_cool, eec_x_cool|
     output[:space_cooling_system_output] << { reul_cool: reul_cool,
                                               ec_r_cool: ec_r_cool,
@@ -888,7 +901,7 @@ def write_hers_diag_output(results, designs, hpxml_path)
   end
 
   # Add hot water systems
-  dhw_data = results[:reul_dhw].zip(results[:ec_r_dhw], results[:ec_x_dhw], results[:eec_r_dhw], results[:eec_x_dhw], results[:fuel_type_dhw])
+  dhw_data = [results[:reul_dhw], results[:ec_r_dhw], results[:ec_x_dhw], results[:eec_r_dhw], results[:eec_x_dhw], results[:fuel_type_dhw]].transpose
   dhw_data.each do |reul_dhw, ec_r_dhw, ec_x_dhw, eec_r_dhw, eec_x_dhw, fuel_type_dhw|
     output[:water_heating_system_output] << { reul_hw: reul_dhw,
                                               ec_r_hw: ec_r_dhw,
@@ -898,28 +911,106 @@ def write_hers_diag_output(results, designs, hpxml_path)
                                               fuel_type_hw: fuel_map[fuel_type_dhw] }
   end
 
-  # Add hourly output
+  # Get hourly data -- rated home
   rated_design = designs.select { |d| d.calc_type == Constants.CalcTypeERIRatedHome }[0]
   rated_csv_path = File.join(rated_design.output_dir, 'results', File.basename(rated_design.csv_output_path.gsub('.csv', '_Hourly.csv')))
   rated_data = CSV.read(rated_csv_path, headers: true)
+  rated_data.delete(0) # strip units
   rated_data_hashes = rated_data.map(&:to_h)
+  rated_data_keys = rated_data_hashes[0].keys
+
+  # Get hourly data -- reference home
   ref_design = designs.select { |d| d.calc_type == Constants.CalcTypeERIReferenceHome }[0]
   ref_csv_path = File.join(ref_design.output_dir, 'results', File.basename(ref_design.csv_output_path.gsub('.csv', '_Hourly.csv')))
   ref_data = CSV.read(ref_csv_path, headers: true)
+  ref_data.delete(0) # strip units
   ref_data_hashes = ref_data.map(&:to_h)
-  output[:hers_hourly_output][:outdoor_drybulb_temperature] = rated_data['Weather: Drybulb Temperature'][1..-1].map { |v| Float(v) }
-  output[:hers_hourly_output][:conditioned_space_temperature] = rated_data['Temperature: Living Space'][1..-1].map { |v| Float(v) }
-  # FIXME: Need to get heating/cooling/dhw outputs on a per-system basis
-  # output[:hers_hourly_output][:space_heating_system_output] =
-  # output[:hers_hourly_output][:space_cooling_system_output] =
-  # output[:hers_hourly_output][:water_heating_system_output] =
-  output[:hers_hourly_output][:rec_la] = ref_data_hashes[1..-1].map { |h| calculate_la(h, kwh_to_kbtu).round(3) }
-  output[:hers_hourly_output][:ec_la] = rated_data_hashes[1..-1].map { |h| calculate_la(h, kwh_to_kbtu).round(3) }
-  output[:hers_hourly_output][:rec_vent] = ref_data_hashes[1..-1].map { |h| calculate_mv(h, kwh_to_kbtu).round(3) }
-  output[:hers_hourly_output][:ec_vent] = rated_data_hashes[1..-1].map { |h| calculate_mv(h, kwh_to_kbtu).round(3) }
-  output[:hers_hourly_output][:rec_dh] = ref_data_hashes[1..-1].map { |h| calculate_dh(h, kwh_to_kbtu).round(3) }
-  output[:hers_hourly_output][:ec_dh] = rated_data_hashes[1..-1].map { |h| calculate_dh(h, kwh_to_kbtu).round(3) }
-  output[:hers_hourly_output][:opp] = rated_data_hashes[1..-1].map { |h| calculate_opp(h, nil, kbtu_to_kwh).round(3) }
+  ref_data_keys = ref_data_hashes[0].keys
+
+  # Add hourly output -- space heating
+  load_key = 'Load: Heating: Delivered'
+  results[:ids_heat].each_with_index do |sys_id, i|
+    system_use_key = "System Use: #{sys_id}: Heating"
+    hourly_reul_heat = ref_data_keys.include?(load_key) ? ref_data[load_key].map { |v| Float(v) * results[:frac_heat][i] } : [0.0] * 8760
+    hourly_ec_r_heat = ref_data_keys.include?(system_use_key) ? ref_data[system_use_key].map { |v| Float(v) } : [0.0] * 8760
+    hourly_ec_x_heat = rated_data_keys.include?(system_use_key) ? rated_data[system_use_key].map { |v| Float(v) } : [0.0] * 8760
+    output[:hers_hourly_output][:space_heating_system_output] << { reul_heat: hourly_reul_heat,
+                                                                   ec_r_heat: hourly_ec_r_heat,
+                                                                   ec_x_heat: hourly_ec_x_heat }
+  end
+
+  # Add hourly output -- space cooling
+  load_key = 'Load: Cooling: Delivered'
+  results[:ids_cool].each_with_index do |sys_id, i|
+    system_use_key = "System Use: #{sys_id}: Cooling"
+    hourly_reul_cool = ref_data_keys.include?(load_key) ? ref_data[load_key].map { |v| Float(v) * results[:frac_cool][i] } : [0.0] * 8760
+    hourly_ec_r_cool = ref_data_keys.include?(system_use_key) ? ref_data[system_use_key].map { |v| Float(v) } : [0.0] * 8760
+    hourly_ec_x_cool = rated_data_keys.include?(system_use_key) ? rated_data[system_use_key].map { |v| Float(v) } : [0.0] * 8760
+    output[:hers_hourly_output][:space_cooling_system_output] << { reul_cool: hourly_reul_cool,
+                                                                   ec_r_cool: hourly_ec_r_cool,
+                                                                   ec_x_cool: hourly_ec_x_cool }
+  end
+
+  # Add hourly output -- water heating
+  load_key = 'Load: Hot Water: Delivered'
+  system_use_key_ref = ref_data_keys.select { |k| k.start_with?('System Use') && k.end_with?('Hot Water') }[0] # There is just a single reference water heater
+  results[:ids_dhw].each_with_index do |sys_id, i|
+    system_use_key = "System Use: #{sys_id}: Hot Water"
+    hourly_reul_hw = ref_data_keys.include?(load_key) ? ref_data[load_key].map { |v| Float(v) * results[:frac_dhw][i] } : [0.0] * 8760
+    hourly_ec_r_hw = ref_data[system_use_key_ref].map { |v| Float(v) * results[:frac_dhw][i] }
+    hourly_ec_x_hw = rated_data_keys.include?(system_use_key) ? rated_data[system_use_key].map { |v| Float(v) } : [0.0] * 8760
+    output[:hers_hourly_output][:water_heating_system_output] << { reul_hw: hourly_reul_hw,
+                                                                   ec_r_hw: hourly_ec_r_hw,
+                                                                   ec_x_hw: hourly_ec_x_hw }
+  end
+
+  # Add hourly output -- misc
+  output[:hers_hourly_output][:outdoor_drybulb_temperature] = rated_data['Weather: Drybulb Temperature'].map { |v| Float(v) }
+  output[:hers_hourly_output][:conditioned_space_temperature] = rated_data['Temperature: Living Space'].map { |v| Float(v) }
+  output[:hers_hourly_output][:rec_la] = ref_data_hashes.map { |h| calculate_la(h, kwh_to_kbtu).round(3) }
+  output[:hers_hourly_output][:ec_la] = rated_data_hashes.map { |h| calculate_la(h, kwh_to_kbtu).round(3) }
+  output[:hers_hourly_output][:rec_vent] = ref_data_hashes.map { |h| calculate_mv(h, kwh_to_kbtu).round(3) }
+  output[:hers_hourly_output][:ec_vent] = rated_data_hashes.map { |h| calculate_mv(h, kwh_to_kbtu).round(3) }
+  output[:hers_hourly_output][:rec_dh] = ref_data_hashes.map { |h| calculate_dh(h, kwh_to_kbtu).round(3) }
+  output[:hers_hourly_output][:ec_dh] = rated_data_hashes.map { |h| calculate_dh(h, kwh_to_kbtu).round(3) }
+  output[:hers_hourly_output][:opp] = rated_data_hashes.map { |h| calculate_opp(h, nil, kbtu_to_kwh).round(3) }
+
+  # Error-checking
+  tol = 0.1 # MBtu
+  for i in 0..heat_data.size - 1
+    [:reul_heat, :ec_r_heat, :ec_x_heat].each do |output_type|
+      annual_value = output[:space_heating_system_output][i][output_type]
+      sum_hourly_value = output[:hers_hourly_output][:space_heating_system_output][i][output_type].sum / 1000.0
+      if (annual_value - sum_hourly_value).abs > tol
+        fail "Sum of hourly outputs (#{sum_hourly_value}) do not match annual total (#{annual_value}) for #{output_type}."
+      end
+    end
+  end
+  for i in 0..cool_data.size - 1
+    [:reul_cool, :ec_r_cool, :ec_x_cool].each do |output_type|
+      annual_value = output[:space_cooling_system_output][i][output_type]
+      sum_hourly_value = output[:hers_hourly_output][:space_cooling_system_output][i][output_type].sum / 1000.0
+      if (annual_value - sum_hourly_value).abs > tol
+        fail "Sum of hourly outputs (#{sum_hourly_value}) do not match annual total (#{annual_value}) for #{output_type}."
+      end
+    end
+  end
+  for i in 0..dhw_data.size - 1
+    [:reul_hw, :ec_r_hw, :ec_x_hw].each do |output_type|
+      annual_value = output[:water_heating_system_output][i][output_type]
+      sum_hourly_value = output[:hers_hourly_output][:water_heating_system_output][i][output_type].sum / 1000.0
+      if (annual_value - sum_hourly_value).abs > tol
+        fail "Sum of hourly outputs (#{sum_hourly_value}) do not match annual total (#{annual_value}) for #{output_type}."
+      end
+    end
+  end
+  [:rec_la, :ec_la, :rec_vent, :ec_vent, :rec_dh, :ec_dh, :opp].each do |output_type|
+    annual_value = output[output_type]
+    sum_hourly_value = output[:hers_hourly_output][output_type].sum / 1000.0
+    if (annual_value - sum_hourly_value).abs > tol
+      fail "Sum of hourly outputs (#{sum_hourly_value}) do not match annual total (#{annual_value}) for #{output_type}."
+    end
+  end
 
   # Validate JSON
   # FIXME: gem doesn't load correctly
@@ -1061,8 +1152,8 @@ def main(options)
       end
 
       # Write HERS diagnostic output?
-      if options[:add_hers_diag_output]
-        write_hers_diag_output(eri_results, eri_designs, options[:hpxml])
+      if options[:generate_diagnostic_output]
+        write_diagnostic_output(eri_results, eri_designs, options[:hpxml])
       end
     end
 
@@ -1198,9 +1289,9 @@ OptionParser.new do |opts|
     options[:add_comp_loads] = true
   end
 
-  options[:add_hers_diag_output] = false
-  opts.on('--add-hers-diagnostic-output', 'Add HERS diagnostic output (overrides timeseries output requests)') do |_t|
-    options[:add_hers_diag_output] = true
+  options[:generate_diagnostic_output] = false
+  opts.on('--generate-diagnostic-output', 'Generate diagnostic output (overrides other timeseries requests)') do |_t|
+    options[:generate_diagnostic_output] = true
   end
 
   options[:skip_simulation] = false
@@ -1231,10 +1322,10 @@ end.parse!(args)
 
 options[:timeseries_output_freq] = 'none'
 options[:timeseries_outputs] = []
-if options[:add_hers_diag_output]
-  # Needs hourly output for end uses, weather, and zone temperatures
+if options[:generate_diagnostic_output]
+  # Specific hourly outputs needed to generate required output data
   options[:timeseries_output_freq] = 'hourly'
-  options[:timeseries_outputs] = ['enduses', 'temperatures', 'weather']
+  options[:timeseries_outputs] = ['enduses', 'systemuses', 'loads', 'temperatures', 'weather']
 else
   n_freq = 0
   if not options[:hourly_outputs].empty?

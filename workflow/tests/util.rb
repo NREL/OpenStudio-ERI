@@ -24,7 +24,7 @@ def _run_ruleset(design, xml, out_xml)
 end
 
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,
-                  skip_simulation: false, rated_home_only: false)
+                  skip_simulation: false, rated_home_only: false, generate_diagnostic_output: false)
   xml = File.absolute_path(xml)
   hpxml_doc = XMLHelper.parse_file(xml)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
@@ -50,10 +50,14 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   if rated_home_only
     ratedhome = ' --rated-home-only'
   end
+  diagoutput = ''
+  if generate_diagnostic_output
+    diagoutput = ' --generate-diagnostic-output'
+  end
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o \"#{rundir}\" --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome}#{diagoutput} -o \"#{rundir}\" --debug"
   system(command)
 
   hpxmls = {}
