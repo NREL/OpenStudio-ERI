@@ -662,6 +662,11 @@ If a boiler is specified, additional information is entered in ``HeatingSystem``
          For shared boilers, HVACDistribution type must be HydronicDistribution (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or AirDistribution (type: "fan coil").
          If the shared boiler has "water loop" distribution, a :ref:`hvac_heatpump_wlhp` must also be specified.
 
+  .. note::
+
+    The choice of hydronic distribution type (radiator vs baseboard vs radiant panels) does not affect simulation results;
+    it is currently only used to know if there's an attached water loop heat pump or not.
+
 If an in-unit boiler if specified, additional information is entered in ``HeatingSystem``.
 
   ===========================  ========  ======  ===========  ========  ========  =========================
