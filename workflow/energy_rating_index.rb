@@ -193,7 +193,7 @@ def retrieve_eri_outputs(designs)
       next if row.nil? || (row.size < 2) || row[1].nil?
 
       output_type = row[0]
-      output_type = output_type.gsub(' (MBtu)', '') # Remove units
+      output_type = output_type.split(' (')[0].strip # Remove units
 
       if row[1].include? ',' # Array of values
         begin
