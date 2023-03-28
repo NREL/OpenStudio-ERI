@@ -63,7 +63,6 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['include_timeseries_zone_temperatures'] = timeseries_outputs.include? 'temperatures'
   args['include_timeseries_airflows'] = timeseries_outputs.include? 'airflows'
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
-  args['generate_eri_outputs'] = true
   args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.csv_output_path))
   args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.csv_output_path.gsub('.csv', "_#{timeseries_output_freq.capitalize}.csv")))
   update_args_hash(measures, measure_subdir, args)

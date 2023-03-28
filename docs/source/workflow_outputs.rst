@@ -153,10 +153,11 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    Type                                                                 Notes
    ===================================================================  ====================================================
    End Use: Electricity: Heating (MBtu)                                 Excludes heat pump backup and fans/pumps
-   End Use: Electricity: Heating Heat Pump Backup (MBtu)
-   End Use: Electricity: Heating Fans/Pumps (MBtu)                      Supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
+   End Use: Electricity: Heating Fans/Pumps (MBtu)                      Includes supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
+   End Use: Electricity: Heating Heat Pump Backup (MBtu)                Excludes heat pump backup fans/pumps
+   End Use: Electricity: Heating Heat Pump Backup Fans/Pumps (MBtu)     Includes supply fan (air distribution) or circulating pump (hydronic distribution) during heat pump backup
    End Use: Electricity: Cooling (MBtu)                                 Excludes fans/pumps
-   End Use: Electricity: Cooling Fans/Pumps (MBtu)                      Supply fan (air distribution) or circulating pump (geothermal loop)
+   End Use: Electricity: Cooling Fans/Pumps (MBtu)                      Includes supply fan (air distribution) and circulating pump (geothermal loop)
    End Use: Electricity: Hot Water (MBtu)                               Excludes recirc pump and solar thermal pump
    End Use: Electricity: Hot Water Recirc Pump (MBtu)
    End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)            Non-zero only when using detailed (not simple) solar thermal inputs
@@ -225,15 +226,20 @@ Annual Energy By System Use
 
 Results for each HVAC and water heating system defined in the HPXML file are listed as shown below.
 
-   ====================================================  =============================================
-   Type                                                  Notes
-   ====================================================  =============================================
-   System Use: <HeatingSystemID>: Heating (MBtu)         Heating energy use for the heating system
-   System Use: <CoolingSystemID>: Cooling (MBtu)         Cooling energy use for the cooling system
-   System Use: <HeatPumpID>: Heating (MBtu)              Heating energy use for the heat pump (if fossil fuel backup, two rows will be reported)
-   System Use: <HeatPumpID>: Cooling (MBtu)              Cooling energy use for the heat pump
-   System Use: <WaterHeatingSystemID>: Hot Water (MBtu)  Hot water energy use for the water heating system
-   ====================================================  =============================================
+Note that all systems uses are mutually exclusive -- the "<HeatPumpID>: Heating" system use, for example, excludes energy reported in the "<HeatPumpID>: Heating Heat Pump Backup" end use.
+
+   ==============================================================  =============================================
+   Type                                                            Notes
+   ==============================================================  =============================================
+   System Use: <HeatingSystemID>: Heating (MBtu)                   Heating energy use for the heating system
+   System Use: <CoolingSystemID>: Cooling (MBtu)                   Cooling energy use for the cooling system
+   System Use: <HeatPumpID>: Heating (MBtu)                        Heating energy use for the heat pump, excluding heat pump backup
+   System Use: <HeatPumpID>: Heating Heat Pump Backup (MBtu)       Heating energy use for the heat pump backup
+   System Use: <HeatPumpID>: Cooling (MBtu)                        Cooling energy use for the heat pump
+   System Use: <WaterHeatingSystemID>: Hot Water (MBtu)            Hot water energy use for the water heating system
+   System Use: <VentilationFanID>: Mech Vent Preheating (MBtu)     Preheating energy use for the mechanical ventilation system
+   System Use: <VentilationFanID>: Mech Vent Precooling (MBtu)     Precooling energy use for the mechanical ventilation system
+   ==============================================================  =============================================
 
 Annual Emissions
 ~~~~~~~~~~~~~~~~
@@ -267,16 +273,17 @@ Annual Building Loads
 
 Annual building loads are listed below.
 
-   =====================================  ==================================================================
-   Type                                   Notes
-   =====================================  ==================================================================
-   Load: Heating: Delivered (MBtu)        Includes HVAC distribution losses.
-   Load: Cooling: Delivered (MBtu)        Includes HVAC distribution losses.
-   Load: Hot Water: Delivered (MBtu)      Includes contributions by desuperheaters or solar thermal systems.
+   ======================================  ==================================================================
+   Type                                    Notes
+   ======================================  ==================================================================
+   Load: Heating: Delivered (MBtu)         Total heating load delivered, including distribution losses.
+   Load: Heating: Heat Pump Backup (MBtu)  Heating load delivered by the heat pump backup only, including distribution losses.
+   Load: Cooling: Delivered (MBtu)         Total cooling load delivered, including distribution losses.
+   Load: Hot Water: Delivered (MBtu)       Total hot water load delivered, including contributions by desuperheaters or solar thermal systems.
    Load: Hot Water: Tank Losses (MBtu)
-   Load: Hot Water: Desuperheater (MBtu)  Load served by the desuperheater.
-   Load: Hot Water: Solar Thermal (MBtu)  Load served by the solar thermal system.
-   =====================================  ==================================================================
+   Load: Hot Water: Desuperheater (MBtu)   Hot water load delivered by the desuperheater.
+   Load: Hot Water: Solar Thermal (MBtu)   Hot water load delivered by the solar thermal system.
+   ======================================  ==================================================================
 
 Note that the "Delivered" loads represent the energy delivered by the HVAC/DHW system; if a system is significantly undersized, there will be unmet load not reflected by these values.
 
