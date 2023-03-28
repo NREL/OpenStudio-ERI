@@ -13,13 +13,10 @@ class HPXMLtoOpenStudioEnclosureTest < MiniTest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
-    @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
-    FileUtils.mkdir_p(@tmp_output_path)
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    FileUtils.rm_rf(@tmp_output_path)
   end
 
   def test_roofs
@@ -691,41 +688,6 @@ class HPXMLtoOpenStudioEnclosureTest < MiniTest::Test
     _check_surface(hpxml.furniture_mass, os_surface, furniture_mass_layer_names)
   end
 
-  def test_compartmentaliztion_area
-    # Test single-family detached
-    hpxml = _create_hpxml('base.xml')
-    total_area, exterior_area = hpxml.compartmentalization_boundary_areas()
-    a_ext_ratio = exterior_area / total_area
-    assert_equal(1.0, a_ext_ratio)
-
-    hpxml = _create_hpxml('base-foundation-unconditioned-basement.xml')
-    total_area, exterior_area = hpxml.compartmentalization_boundary_areas()
-    a_ext_ratio = exterior_area / total_area
-    assert_equal(1.0, a_ext_ratio)
-
-    hpxml = _create_hpxml('base-atticroof-cathedral.xml')
-    total_area, exterior_area = hpxml.compartmentalization_boundary_areas()
-    a_ext_ratio = exterior_area / total_area
-    assert_equal(1.0, a_ext_ratio)
-
-    # Test single-family attached
-    hpxml = _create_hpxml('base-bldgtype-single-family-attached.xml')
-    total_area, exterior_area = hpxml.compartmentalization_boundary_areas()
-    a_ext_ratio = exterior_area / total_area
-    assert_in_delta(0.840, a_ext_ratio, 0.001)
-
-    hpxml.attics[0].within_infiltration_volume = true
-    total_area, exterior_area = hpxml.compartmentalization_boundary_areas()
-    a_ext_ratio = exterior_area / total_area
-    assert_in_delta(0.817, a_ext_ratio, 0.001)
-
-    # Test multifamily
-    hpxml = _create_hpxml('base-bldgtype-multifamily.xml')
-    total_area, exterior_area = hpxml.compartmentalization_boundary_areas()
-    a_ext_ratio = exterior_area / total_area
-    assert_in_delta(0.247, a_ext_ratio, 0.001)
-  end
-
   def test_kiva_initial_temperatures
     initial_temps = { 'base.xml' => 68.0, # foundation adjacent to conditioned space, IECC zone 5
                       'base-foundation-conditioned-crawlspace.xml' => 68.0, # foundation adjacent to conditioned space, IECC zone 5
@@ -746,9 +708,97 @@ class HPXMLtoOpenStudioEnclosureTest < MiniTest::Test
     end
   end
 
+  def test_collapse_surfaces
+    def split_surfaces(surfaces, should_collapse_surfaces)
+      surf_class = surfaces[0].class
+      for n in 1..surfaces.size
+        surfaces[n - 1].area /= 9.0
+        surfaces[n - 1].exposed_perimeter /= 9.0 if surf_class == HPXML::Slab
+        for i in 2..9
+          surfaces << surfaces[n - 1].dup
+          surfaces[-1].id += "_#{i}"
+          next if should_collapse_surfaces
+
+          # Change a property to a unique value so that it won't collapse
+          # with other properties of the same surface type.
+          if [HPXML::Roof, HPXML::Wall, HPXML::RimJoist, HPXML::Floor].include? surf_class
+            surfaces[-1].insulation_assembly_r_value += 0.01 * i
+          elsif [HPXML::FoundationWall].include? surf_class
+            surfaces[-1].insulation_exterior_r_value += 0.01 * i
+          elsif [HPXML::Slab].include? surf_class
+            if i < 4
+              surfaces[-1].perimeter_insulation_depth += 0.01 * i
+            else
+              surfaces[-1].perimeter_insulation_r_value += 0.01 * i
+            end
+          elsif [HPXML::Window, HPXML::Skylight].include? surf_class
+            if i < 3
+              surfaces[-1].ufactor += 0.01 * i
+            elsif i < 6
+              surfaces[-1].interior_shading_factor_summer -= 0.02 * i
+            else
+              surfaces[-1].interior_shading_factor_winter -= 0.01 * i
+              if surf_class == HPXML::Window
+                surfaces[-1].fraction_operable = 1.0 - surfaces[-1].fraction_operable
+              end
+            end
+          elsif [HPXML::Door].include? surf_class
+            surfaces[-1].r_value += 0.01 * i
+          else
+            fail 'Unexpected surface type.'
+          end
+        end
+      end
+      surfaces << surfaces[-1].dup
+      surfaces[-1].id += '_tiny'
+      surfaces[-1].area = 0.05
+      surfaces[-1].exposed_perimeter = 0.05 if surf_class == HPXML::Slab
+    end
+
+    def get_num_surfaces_by_type(hpxml)
+      return { roofs: hpxml.roofs.size,
+               walls: hpxml.walls.size,
+               rim_joists: hpxml.rim_joists.size,
+               foundation_walls: hpxml.foundation_walls.size,
+               floors: hpxml.floors.size,
+               slabs: hpxml.slabs.size,
+               windows: hpxml.windows.size,
+               skylights: hpxml.skylights.size,
+               doors: hpxml.doors.size }
+    end
+
+    [true, false].each do |should_collapse_surfaces|
+      hpxml = _create_hpxml('base-enclosure-skylights.xml')
+
+      orig_num_surfaces_by_type = get_num_surfaces_by_type(hpxml)
+
+      split_surfaces(hpxml.roofs, should_collapse_surfaces)
+      split_surfaces(hpxml.rim_joists, should_collapse_surfaces)
+      split_surfaces(hpxml.walls, should_collapse_surfaces)
+      split_surfaces(hpxml.foundation_walls, should_collapse_surfaces)
+      split_surfaces(hpxml.floors, should_collapse_surfaces)
+      split_surfaces(hpxml.slabs, should_collapse_surfaces)
+      split_surfaces(hpxml.windows, should_collapse_surfaces)
+      split_surfaces(hpxml.skylights, should_collapse_surfaces)
+      split_surfaces(hpxml.doors, should_collapse_surfaces)
+
+      split_num_surfaces_by_type = get_num_surfaces_by_type(hpxml)
+      hpxml.collapse_enclosure_surfaces()
+      final_num_surfaces_by_type = get_num_surfaces_by_type(hpxml)
+
+      for surf_type in orig_num_surfaces_by_type.keys
+        if should_collapse_surfaces
+          assert_equal(orig_num_surfaces_by_type[surf_type], final_num_surfaces_by_type[surf_type])
+        else
+          assert_equal(split_num_surfaces_by_type[surf_type] - 1, final_num_surfaces_by_type[surf_type])
+        end
+      end
+    end
+  end
+
   def test_aspect_ratios
     # Test single-family attached
-    hpxml = _create_hpxml('base-bldgtype-single-family-attached.xml')
+    hpxml = _create_hpxml('base-bldgtype-attached.xml')
     wall_outside = hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOutside && w.interior_adjacent_to == HPXML::LocationLivingSpace }[0]
     wall_other_housing_unit = hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit && w.interior_adjacent_to == HPXML::LocationLivingSpace }[0]
 
