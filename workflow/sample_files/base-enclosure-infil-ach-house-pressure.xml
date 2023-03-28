@@ -21,7 +21,7 @@
         <Version>SF_2.0</Version>
       </ZERHCalculation>
       <AdditionalProperties>
-        <ParentHPXMLFile>base-hvac-air-to-air-heat-pump-1-speed.xml</ParentHPXMLFile>
+        <ParentHPXMLFile>base.xml</ParentHPXMLFile>
       </AdditionalProperties>
     </extension>
   </SoftwareInfo>
@@ -74,10 +74,10 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='AirInfiltrationMeasurement1'/>
-            <HousePressure>50.0</HousePressure>
+            <HousePressure>45.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>3.0</AirLeakage>
+              <AirLeakage>2.8014</AirLeakage>
             </BuildingAirLeakage>
             <InfiltrationVolume>21600.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
@@ -294,39 +294,43 @@
       <Systems>
         <HVAC>
           <HVACPlant>
-            <HeatPump>
-              <SystemIdentifier id='HeatPump1'/>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem1'/>
               <DistributionSystem idref='HVACDistribution1'/>
-              <HeatPumpType>air-to-air</HeatPumpType>
-              <HeatPumpFuel>electricity</HeatPumpFuel>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
               <HeatingCapacity>36000.0</HeatingCapacity>
-              <HeatingCapacity17F>21600.0</HeatingCapacity17F>
-              <CoolingCapacity>0.0</CoolingCapacity>
-              <CompressorType>single stage</CompressorType>
-              <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
-              <BackupType>integrated</BackupType>
-              <BackupSystemFuel>electricity</BackupSystemFuel>
-              <BackupAnnualHeatingEfficiency>
-                <Units>Percent</Units>
-                <Value>1.0</Value>
-              </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>36000.0</BackupHeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.92</Value>
+              </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <FractionCoolLoadServed>0.0</FractionCoolLoadServed>
+              <extension>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+              </extension>
+            </HeatingSystem>
+            <CoolingSystem>
+              <SystemIdentifier id='CoolingSystem1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
+              <CoolingSystemType>central air conditioner</CoolingSystemType>
+              <CoolingSystemFuel>electricity</CoolingSystemFuel>
+              <CoolingCapacity>24000.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
+              <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>13.0</Value>
               </AnnualCoolingEfficiency>
-              <AnnualHeatingEfficiency>
-                <Units>HSPF</Units>
-                <Value>7.7</Value>
-              </AnnualHeatingEfficiency>
+              <SensibleHeatFraction>0.73</SensibleHeatFraction>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
               </extension>
-            </HeatPump>
+            </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl1'/>

@@ -72,12 +72,12 @@ class ERIMiscTest < MiniTest::Test
     hpxml.plug_loads.each do |plug_load|
       if plug_load.plug_load_type == HPXML::PlugLoadTypeOther
         num_pls += 1
-        assert_in_epsilon(misc_kwh, plug_load.kWh_per_year, 0.01)
+        assert_in_epsilon(misc_kwh, plug_load.kwh_per_year, 0.01)
         assert_in_epsilon(misc_sens, plug_load.frac_sensible, 0.01)
         assert_in_epsilon(misc_lat, plug_load.frac_latent, 0.01)
       elsif plug_load.plug_load_type == HPXML::PlugLoadTypeTelevision
         num_pls += 1
-        assert_in_epsilon(tv_kwh, plug_load.kWh_per_year, 0.01)
+        assert_in_epsilon(tv_kwh, plug_load.kwh_per_year, 0.01)
         assert_in_epsilon(tv_sens, plug_load.frac_sensible, 0.01)
         assert_in_epsilon(tv_lat, plug_load.frac_latent, 0.01)
       end

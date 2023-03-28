@@ -46,7 +46,7 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      _check_ceiling_fans(hpxml, cfm_per_w: 122.0, quantity: 4)
+      _check_ceiling_fans(hpxml, cfm_per_w: 122.0, count: 4)
     end
   end
 
@@ -57,7 +57,7 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
       hpxml.building_construction.number_of_bedrooms = 5
       XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
       hpxml = _test_ruleset(program_version)
-      _check_ceiling_fans(hpxml, cfm_per_w: 122.0, quantity: 6)
+      _check_ceiling_fans(hpxml, cfm_per_w: 122.0, count: 6)
     end
   end
 
@@ -117,7 +117,7 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
     end
   end
 
-  def _check_ceiling_fans(hpxml, cfm_per_w: nil, quantity: nil)
+  def _check_ceiling_fans(hpxml, cfm_per_w: nil, count: nil)
     if cfm_per_w.nil?
       assert_equal(0, hpxml.ceiling_fans.size)
     else
@@ -128,10 +128,10 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
       else
         assert_equal(cfm_per_w, ceiling_fan.efficiency)
       end
-      if quantity.nil?
-        assert_nil(ceiling_fan.quantity)
+      if count.nil?
+        assert_nil(ceiling_fan.count)
       else
-        assert_equal(quantity, ceiling_fan.quantity)
+        assert_equal(count, ceiling_fan.count)
       end
     end
   end

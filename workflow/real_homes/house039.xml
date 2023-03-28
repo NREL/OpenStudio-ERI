@@ -1349,8 +1349,8 @@
             <ArrayAzimuth>180</ArrayAzimuth>
             <ArrayTilt>25.0</ArrayTilt>
             <MaxPowerOutput>3250.0</MaxPowerOutput>
-            <InverterEfficiency>0.95</InverterEfficiency>
             <SystemLossesFraction>0.14</SystemLossesFraction>
+            <AttachedToInverter idref='Inverter1'/>
           </PVSystem>
           <PVSystem>
             <SystemIdentifier id='PVSystem2'/>
@@ -1361,9 +1361,13 @@
             <ArrayAzimuth>90</ArrayAzimuth>
             <ArrayTilt>25.0</ArrayTilt>
             <MaxPowerOutput>6500.0</MaxPowerOutput>
-            <InverterEfficiency>0.95</InverterEfficiency>
             <SystemLossesFraction>0.14</SystemLossesFraction>
+            <AttachedToInverter idref='Inverter1'/>
           </PVSystem>
+          <Inverter>
+            <SystemIdentifier id='Inverter1'/>
+            <InverterEfficiency>0.95</InverterEfficiency>
+          </Inverter>
         </Photovoltaics>
       </Systems>
       <Appliances>

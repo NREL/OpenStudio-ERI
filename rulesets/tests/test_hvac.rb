@@ -309,35 +309,14 @@ class ERIHVACtest < MiniTest::Test
         hpxml = _test_ruleset(hpxml_name, calc_type)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-          _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: 0.95, backup_temp: 25.0, **hvac_iq_values }])
+          _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: 0.95, backup_temp: 30.0, **hvac_iq_values }])
         else
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
           if [Constants.CalcTypeCO2eReferenceHome].include? calc_type # All-electric
             _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, dse: _dse(calc_type), shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
           else
-            _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, dse: _dse(calc_type), shr: 0.73, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: 0.78, backup_temp: 25.0, **hvac_iq_values }])
+            _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, dse: _dse(calc_type), shr: 0.73, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: 0.78, backup_temp: 30.0, **hvac_iq_values }])
           end
-        end
-      end
-    end
-  end
-
-  def test_dual_fuel_heat_pump_electric
-    hpxml_name = 'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml'
-
-    _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _all_calc_types.each do |calc_type|
-        hpxml = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
-          hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-          _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, backup_temp: 25.0, **hvac_iq_values }])
-        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-          hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-          _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, dse: _dse(calc_type), shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
-        else
-          hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-          _check_heat_pump(hpxml, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, dse: _dse(calc_type), shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
         end
       end
     end

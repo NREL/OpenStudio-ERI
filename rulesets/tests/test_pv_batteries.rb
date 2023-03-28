@@ -92,7 +92,7 @@ class ERIPVTest < MiniTest::Test
       assert_equal(expected_values[:azimuth], pv_system.array_azimuth)
       assert_equal(expected_values[:tilt], pv_system.array_tilt)
       assert_equal(expected_values[:power], pv_system.max_power_output.to_f)
-      assert_equal(expected_values[:inv_eff], pv_system.inverter_efficiency)
+      assert_equal(expected_values[:inv_eff], pv_system.inverter.inverter_efficiency)
       assert_equal(expected_values[:losses], pv_system.system_losses_fraction)
       if expected_values[:nbeds_served].nil?
         assert_nil(pv_system.number_of_bedrooms_served)

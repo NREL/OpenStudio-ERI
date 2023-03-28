@@ -690,7 +690,7 @@
             <FanSpeed>medium</FanSpeed>
             <Efficiency>70.4</Efficiency>
           </Airflow>
-          <Quantity>4</Quantity>
+          <Count>4</Count>
         </CeilingFan>
       </Lighting>
     </BuildingDetails>
