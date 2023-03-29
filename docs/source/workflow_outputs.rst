@@ -467,7 +467,7 @@ Depending on the outputs requested, CSV files may include:
    Emission Fuels                       Emissions (CO2e, NOx, SO2) disaggregated by fuel type.
    Emission End Uses                    Emissions (CO2e, NOx, SO2) disaggregated by end use.
    Hot Water Uses                       Water use for each end use type (in gallons).
-   Total Loads                          Heating, cooling, and hot water loads (in kBtu) for the building.
+   Total Loads                          Total heating, cooling, and hot water delivered (in kBtu).
    Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
    Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., living space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
    Airflows                             Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
