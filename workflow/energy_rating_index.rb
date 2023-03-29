@@ -600,6 +600,10 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.is_dual_fuel = is_dfhp_primary
   c.ec_x = calculate_ec(rated_output, c.rated_id, type, is_dfhp_primary)
   c.ec_r = calculate_ec(ref_output, c.ref_id, type, is_dfhp_primary)
+  if type == 'Hot Water'
+    # Only one reference water heater when there are multiple rated water heaters, so multiply by the load fraction
+    c.ec_r *= load_frac
+  end
   c.dse_r = c.reul / c.ec_r * c.eec_r
   c.nec_x = 0
   if c.eec_x * c.reul > 0
