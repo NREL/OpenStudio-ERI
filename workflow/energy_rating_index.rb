@@ -226,7 +226,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
                    opp_reduction_limit: nil, renewable_energy_limit: nil)
 
   def get_coefficients(fuel, type)
-    if (type == 'Heating') || (type == 'Preheating')
+    if (type == 'Heating') || (type == 'Mech Vent Preheating')
       if [HPXML::FuelTypeElectricity].include? fuel
         return 2.2561, 0.0
       elsif [HPXML::FuelTypeNaturalGas,
@@ -236,7 +236,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
              HPXML::FuelTypeWoodPellets].include? fuel
         return 1.0943, 0.4030
       end
-    elsif (type == 'Cooling') || (type == 'Precooling')
+    elsif (type == 'Cooling') || (type == 'Mech Vent Precooling')
       return 3.8090, 0.0
     elsif type == 'Hot Water'
       if [HPXML::FuelTypeElectricity].include? fuel
@@ -274,9 +274,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
       end
     elsif type == 'Hot Water'
       return system.fuel_type
-    elsif type == 'Preheating'
+    elsif type == 'Mech Vent Preheating'
       return system.preheating_fuel
-    elsif type == 'Precooling'
+    elsif type == 'Mech Vent Precooling'
       return system.precooling_fuel
     end
   end
@@ -360,9 +360,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
         ef_uef *= system.performance_adjustment
       end
       return get_eec_numerator('EF') / ef_uef
-    elsif type == 'Preheating'
+    elsif type == 'Mech Vent Preheating'
       return get_eec_numerator('COP') / system.preheating_efficiency_cop
-    elsif type == 'Precooling'
+    elsif type == 'Mech Vent Precooling'
       return get_eec_numerator('COP') / system.precooling_efficiency_cop
     end
   end
@@ -391,14 +391,14 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   rated_hpxml.ventilation_fans.each do |rated_sys|
     next if rated_sys.preheating_fuel.nil?
 
-    results[:eri_vent_preheat] << calculate_eri_component_precond(rated_output, rated_sys, 'Preheating')
+    results[:eri_vent_preheat] << calculate_eri_component_precond(rated_output, rated_sys, 'Mech Vent Preheating')
   end
 
   results[:eri_vent_precool] = []
   rated_hpxml.ventilation_fans.each do |rated_sys|
     next if rated_sys.precooling_fuel.nil?
 
-    results[:eri_vent_precool] << calculate_eri_component_precond(rated_output, rated_sys, 'Precooling')
+    results[:eri_vent_precool] << calculate_eri_component_precond(rated_output, rated_sys, 'Mech Vent Precooling')
   end
 
   # ======= #
