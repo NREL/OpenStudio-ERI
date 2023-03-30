@@ -583,11 +583,7 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.eec_r = get_eec(ref_sys, type, is_dfhp_primary)
   c.is_dual_fuel = is_dfhp_primary
   c.ec_x = calculate_ec(rated_output, c.rated_id, type, is_dfhp_primary)
-  c.ec_r = calculate_ec(ref_output, c.ref_id, type, is_dfhp_primary)
-  if type == 'Hot Water'
-    # Only one reference water heater when there are multiple rated water heaters, so multiply by the load fraction
-    c.ec_r *= load_frac
-  end
+  c.ec_r = calculate_ec(ref_output, c.ref_id, type, is_dfhp_primary, load_frac)
   c.dse_r = c.reul / c.ec_r * c.eec_r
   c.nec_x = 0
   if c.eec_x * c.reul > 0
@@ -627,7 +623,7 @@ def calculate_reul(output, load_frac, type, is_dfhp_primary = nil)
   return load * load_frac
 end
 
-def calculate_ec(output, sys_id, type, is_dfhp_primary = nil)
+def calculate_ec(output, sys_id, type, is_dfhp_primary = nil, load_frac = nil)
   if is_dfhp_primary.nil?
     # Get total system use
     ec = get_system_use(output, sys_id, type) +
@@ -638,6 +634,11 @@ def calculate_ec(output, sys_id, type, is_dfhp_primary = nil)
   else
     # Get backup port of DFHP
     ec = get_system_use(output, sys_id, "#{type} Heat Pump Backup")
+  end
+  if (type == 'Hot Water') && (not load_frac.nil?)
+    # Only one reference water heater when there are multiple rated water heaters,
+    # so multiply by the load fraction
+    ec *= load_frac
   end
   return ec
 end
@@ -981,7 +982,7 @@ def write_diagnostic_output(results, designs, hpxml_path, resultsdir)
   end
   results[:eri_dhw].each do |c|
     hers_hourly_output[:water_heating_system_output] << { reul_hw: ref_data_hashes.map { |h| calculate_reul(h, c.load_frac, 'Hot Water').round(3) },
-                                                          ec_r_hw: ref_data_hashes.map { |h| calculate_ec(h, c.ref_id, 'Hot Water').round(3) },
+                                                          ec_r_hw: ref_data_hashes.map { |h| calculate_ec(h, c.ref_id, 'Hot Water', nil, c.load_frac).round(3) },
                                                           ec_x_hw: rated_data_hashes.map { |h| calculate_ec(h, c.rated_id, 'Hot Water').round(3) } }
   end
   hers_hourly_output[:outdoor_drybulb_temperature] = rated_data["Weather: #{WT::DrybulbTemp}"].map { |v| Float(v) }
