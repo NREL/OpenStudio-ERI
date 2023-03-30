@@ -147,7 +147,7 @@ def run_design_direct(design, options)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   run_design(design, options[:debug], options[:timeseries_output_freq], options[:timeseries_outputs],
-             options[:add_comp_loads])
+             options[:add_comp_loads], options[:generate_diagnostic_output])
 
   return design.design_dir
 end
@@ -169,6 +169,7 @@ def run_design_spawn(design, options)
   command += "\"#{options[:timeseries_output_freq]}\" "
   command += "\"#{options[:timeseries_outputs].join('|')}\" "
   command += "\"#{options[:add_comp_loads]}\" "
+  command += "\"#{options[:generate_diagnostic_output]}\" "
   pid = Process.spawn(command)
 
   return design.design_dir, pid
@@ -194,24 +195,7 @@ def retrieve_eri_outputs(designs)
 
       output_type = row[0]
       output_type = output_type.split(' (')[0].strip # Remove units
-
-      if row[1].include? ',' # Array of values
-        begin
-          design_outputs[calc_type][output_type] = row[1].split(',').map { |v| Float(v) }
-        rescue
-          design_outputs[calc_type][output_type] = row[1].split(',')
-        end
-      else # Single value
-        begin
-          design_outputs[calc_type][output_type] = Float(row[1])
-        rescue
-          design_outputs[calc_type][output_type] = row[1]
-        end
-        if (output_type.start_with? 'ERI:') && (not output_type.include? 'Building:')
-          # Convert to array
-          design_outputs[calc_type][output_type] = [design_outputs[calc_type][output_type]]
-        end
-      end
+      design_outputs[calc_type][output_type] = Float(row[1])
     end
   end
   return design_outputs
@@ -789,7 +773,6 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
   if not results_iad.nil?
     results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
   end
-  # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # ERI Worksheet file
@@ -869,6 +852,195 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
     results_out << ['ARCO2 (lb CO2e)', results[:arco2e].round(2)]
     results_out << ['IAF RH', results[:iaf_rh].round(4)]
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+  end
+end
+
+def write_diagnostic_output(results, designs, hpxml_path, resultsdir)
+  hpxml = HPXML.new(hpxml_path: hpxml_path)
+  epw_file = File.basename(hpxml.climate_and_risk_zones.weather_station_epw_filepath)
+
+  epw_path = epw_file
+  if not File.exist? epw_path
+    test_epw_path = File.join(File.dirname(hpxml_path), epw_path)
+    epw_path = test_epw_path if File.exist? test_epw_path
+  end
+  if not File.exist? epw_path
+    test_epw_path = File.join(File.dirname(__FILE__), '..', 'weather', epw_path)
+    epw_path = test_epw_path if File.exist? test_epw_path
+  end
+  if not File.exist? epw_path
+    # Can't find EPW location, don't fail just because of that.
+    epw_location = File.basename(epw_file)
+    epw_state = 'XX'
+  else
+    epw_header = File.open(epw_path) { |f| f.readline }
+    epw_location = epw_header.split(',')[1]
+    epw_state = epw_header.split(',')[2]
+  end
+
+  if hpxml.header.software_program_used.nil? && hpxml.header.software_program_version.nil?
+    require_relative 'version.rb'
+    software_name = 'OpenStudio-ERI'
+    software_version = Version::OS_ERI_Version
+  else
+    software_name = hpxml.header.software_program_used.to_s
+    software_version = hpxml.header.software_program_version.to_s
+  end
+
+  output = {
+    project_name: File.basename(hpxml_path, File.extname(hpxml_path)),
+    software_name: software_name,
+    software_version: software_version,
+    weather_data_location: epw_location,
+    weather_data_state: epw_state,
+    conditioned_floor_area: hpxml.building_construction.conditioned_floor_area,
+    number_of_bedrooms: hpxml.building_construction.number_of_bedrooms,
+    number_of_stories: hpxml.building_construction.number_of_conditioned_floors_above_grade,
+    hers_index: results[:eri].round(3),
+    space_heating_system_output: [],
+    space_cooling_system_output: [],
+    water_heating_system_output: [],
+    rec_la: results[:reul_la].round(3),
+    ec_la: results[:eul_la].round(3),
+    rec_vent: results[:reul_mv].round(3),
+    ec_vent: results[:eul_mv].round(3),
+    rec_dh: results[:reul_dh].round(3),
+    ec_dh: results[:eul_dh].round(3),
+    opp: results[:opp].round(3),
+    iad_save: results[:iad_save].nil? ? 0.0 : results[:iad_save].round(3),
+    hers_hourly_output: {
+      outdoor_drybulb_temperature: [],
+      conditioned_space_temperature: [],
+      space_heating_system_output: [],
+      space_cooling_system_output: [],
+      water_heating_system_output: [],
+      rec_la: [],
+      ec_la: [],
+      rec_vent: [],
+      ec_vent: [],
+      rec_dh: [],
+      ec_dh: [],
+      opp: []
+    }
+  }
+
+  fuel_map = { HPXML::FuelTypeElectricity => 'ELECTRIC',
+               HPXML::FuelTypeNaturalGas => 'FOSSIL_FUEL',
+               HPXML::FuelTypeOil => 'FOSSIL_FUEL',
+               HPXML::FuelTypePropane => 'FOSSIL_FUEL',
+               HPXML::FuelTypeWoodCord => 'BIOMASS',
+               HPXML::FuelTypeWoodPellets => 'BIOMASS' }
+  kbtu_to_kwh = UnitConversions.convert(1.0, 'kBtu', 'kWh')
+  kwh_to_kbtu = UnitConversions.convert(1.0, 'kWh', 'kBtu')
+
+  # Add systems
+  results[:eri_heat].each do |c|
+    output[:space_heating_system_output] << { reul_heat: c.reul, ec_r_heat: c.ec_r, ec_x_heat: c.ec_x, eec_r_heat: c.eec_r, eec_x_heat: c.eec_x, fuel_type_heat: fuel_map[c.fuel] }
+  end
+  results[:eri_cool].each do |c|
+    output[:space_cooling_system_output] << { reul_cool: c.reul, ec_r_cool: c.ec_r, ec_x_cool: c.ec_x, eec_r_cool: c.eec_r, eec_x_cool: c.eec_x }
+  end
+  results[:eri_dhw].each do |c|
+    output[:water_heating_system_output] << { reul_hw: c.reul, ec_r_hw: c.ec_r, ec_x_hw: c.ec_x, eec_r_hw: c.eec_r, eec_x_hw: c.eec_x, fuel_type_hw: fuel_map[c.fuel] }
+  end
+
+  # Get hourly data
+  rated_design = designs.select { |d| d.calc_type == Constants.CalcTypeERIRatedHome }[0]
+  rated_csv_path = File.join(rated_design.output_dir, 'results', File.basename(rated_design.csv_output_path.gsub('.csv', '_Diagnostic.csv')))
+  rated_data = CSV.read(rated_csv_path, headers: true)
+  rated_data.delete(0) # strip units
+  rated_data_hashes = rated_data.map(&:to_h)
+  ref_design = designs.select { |d| d.calc_type == Constants.CalcTypeERIReferenceHome }[0]
+  ref_csv_path = File.join(ref_design.output_dir, 'results', File.basename(ref_design.csv_output_path.gsub('.csv', '_Diagnostic.csv')))
+  ref_data = CSV.read(ref_csv_path, headers: true)
+  ref_data.delete(0) # strip units
+  ref_data_hashes = ref_data.map(&:to_h)
+
+  hers_hourly_output = output[:hers_hourly_output]
+
+  # Add hourly output
+  is_dfhp_primary = nil
+  results[:eri_heat].each do |c|
+    if c.is_dual_fuel
+      is_dfhp_primary = true
+      hers_hourly_output[:space_heating_system_output] << { reul_heat: ref_data_hashes.map { |h, _i| calculate_reul(h, c.load_frac, 'Heating', is_dfhp_primary).round(3) },
+                                                            ec_r_heat: ref_data_hashes.map { |h| calculate_ec(h, c.ref_id, 'Heating', is_dfhp_primary).round(3) },
+                                                            ec_x_heat: rated_data_hashes.map { |h| calculate_ec(h, c.rated_id, 'Heating', is_dfhp_primary).round(3) } }
+      is_dfhp_primary = false # Next system is fuel backup for dual fuel heat pump
+    else
+      hers_hourly_output[:space_heating_system_output] << { reul_heat: ref_data_hashes.map { |h, _i| calculate_reul(h, c.load_frac, 'Heating', is_dfhp_primary).round(3) },
+                                                            ec_r_heat: ref_data_hashes.map { |h| calculate_ec(h, c.ref_id, 'Heating', is_dfhp_primary).round(3) },
+                                                            ec_x_heat: rated_data_hashes.map { |h| calculate_ec(h, c.rated_id, 'Heating', is_dfhp_primary).round(3) } }
+      is_dfhp_primary = nil # Reset
+    end
+  end
+  results[:eri_cool].each do |c|
+    hers_hourly_output[:space_cooling_system_output] << { reul_cool: ref_data_hashes.map { |h| calculate_reul(h, c.load_frac, 'Cooling').round(3) },
+                                                          ec_r_cool: ref_data_hashes.map { |h| calculate_ec(h, c.ref_id, 'Cooling').round(3) },
+                                                          ec_x_cool: rated_data_hashes.map { |h| calculate_ec(h, c.rated_id, 'Cooling').round(3) } }
+  end
+  results[:eri_dhw].each do |c|
+    hers_hourly_output[:water_heating_system_output] << { reul_hw: ref_data_hashes.map { |h| calculate_reul(h, c.load_frac, 'Hot Water').round(3) },
+                                                          ec_r_hw: ref_data_hashes.map { |h| calculate_ec(h, c.ref_id, 'Hot Water').round(3) },
+                                                          ec_x_hw: rated_data_hashes.map { |h| calculate_ec(h, c.rated_id, 'Hot Water').round(3) } }
+  end
+  hers_hourly_output[:outdoor_drybulb_temperature] = rated_data["Weather: #{WT::DrybulbTemp}"].map { |v| Float(v) }
+  hers_hourly_output[:conditioned_space_temperature] = rated_data['Temperature: Living Space'].map { |v| Float(v) }
+  hers_hourly_output[:rec_la] = ref_data_hashes.map { |h| calculate_la(h, kwh_to_kbtu).round(3) }
+  hers_hourly_output[:ec_la] = rated_data_hashes.map { |h| calculate_la(h, kwh_to_kbtu).round(3) }
+  hers_hourly_output[:rec_vent] = ref_data_hashes.map { |h| calculate_mv(h, kwh_to_kbtu).round(3) }
+  hers_hourly_output[:ec_vent] = rated_data_hashes.map { |h| calculate_mv(h, kwh_to_kbtu).round(3) }
+  hers_hourly_output[:rec_dh] = ref_data_hashes.map { |h| calculate_dh(h, kwh_to_kbtu).round(3) }
+  hers_hourly_output[:ec_dh] = rated_data_hashes.map { |h| calculate_dh(h, kwh_to_kbtu).round(3) }
+  hers_hourly_output[:opp] = rated_data_hashes.map { |h| calculate_opp(h, nil, kbtu_to_kwh).round(3) }
+
+  # Error-checking
+  tol = 0.1 # MBtu
+  output_map = { space_heating_system_output: [:reul_heat, :ec_r_heat, :ec_x_heat],
+                 space_cooling_system_output: [:reul_cool, :ec_r_cool, :ec_x_cool],
+                 water_heating_system_output: [:reul_hw, :ec_r_hw, :ec_x_hw] }
+  output_map.each do |system_output, output_type_list|
+    for i in 0..output[system_output].size - 1
+      output_type_list.each do |output_type|
+        annual_value = output[system_output][i][output_type]
+        sum_hourly_value = UnitConversions.convert(hers_hourly_output[system_output][i][output_type].sum, 'kBtu', 'MBtu')
+        if (annual_value - sum_hourly_value).abs > tol
+          fail "Sum of hourly outputs (#{sum_hourly_value} MBtu) do not match annual total (#{annual_value} MBtu) for #{output_type}."
+        end
+      end
+    end
+  end
+  [:rec_la, :ec_la, :rec_vent, :ec_vent, :rec_dh, :ec_dh, :opp].each do |output_type|
+    if output_type == :opp
+      annual_value = UnitConversions.convert(output[output_type], 'kWh', 'MBtu')
+      sum_hourly_value = UnitConversions.convert(hers_hourly_output[output_type].sum, 'kWh', 'MBtu')
+    else
+      annual_value = output[output_type]
+      sum_hourly_value = UnitConversions.convert(hers_hourly_output[output_type].sum, 'kBtu', 'MBtu')
+    end
+    if (annual_value - sum_hourly_value).abs > tol
+      fail "Sum of hourly outputs (#{sum_hourly_value} MBtu) do not match annual total (#{annual_value} MBtu) for #{output_type}."
+    end
+  end
+
+  # Validate JSON
+  # FIXME: gem doesn't load correctly
+  # require 'json-schema'
+  valid = true
+  # begin
+  #   json_schema_path = File.join(File.dirname(__FILE__), '..', 'rulesets', 'resources', 'HERSDiagnosticOutput.schema.json')
+  #   JSON::Validator.validate!(json_schema_path, output)
+  # rescue JSON::Schema::ValidationError => e
+  #   valid = false
+  #   puts 'HERS diagnostic output file did not validate.'
+  #   puts e.message
+  # end
+
+  if valid
+    # Write JSON file
+    output_path = File.join(resultsdir, 'ERI_Diagnostic.json')
+    require 'json'
+    File.open(output_path, 'w') { |json| json.write(JSON.pretty_generate(output)) }
   end
 end
 
@@ -1025,6 +1197,11 @@ def main(options)
       if not eri_results[:co2eindex].nil?
         puts "CO2e Index: #{eri_results[:co2eindex].round(2)}"
       end
+
+      # Write HERS diagnostic output?
+      if options[:generate_diagnostic_output]
+        write_diagnostic_output(eri_results, eri_designs, options[:hpxml], resultsdir)
+      end
     end
 
     if not iecc_version.nil?
@@ -1157,6 +1334,11 @@ OptionParser.new do |opts|
   options[:add_comp_loads] = false
   opts.on('--add-component-loads', 'Add heating/cooling component loads calculation') do |_t|
     options[:add_comp_loads] = true
+  end
+
+  options[:generate_diagnostic_output] = false
+  opts.on('--generate-diagnostic-output', 'Generate diagnostic output file') do |_t|
+    options[:generate_diagnostic_output] = true
   end
 
   options[:skip_simulation] = false
