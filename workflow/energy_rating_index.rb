@@ -194,24 +194,7 @@ def retrieve_eri_outputs(designs)
 
       output_type = row[0]
       output_type = output_type.split(' (')[0].strip # Remove units
-
-      if row[1].include? ',' # Array of values
-        begin
-          design_outputs[calc_type][output_type] = row[1].split(',').map { |v| Float(v) }
-        rescue
-          design_outputs[calc_type][output_type] = row[1].split(',')
-        end
-      else # Single value
-        begin
-          design_outputs[calc_type][output_type] = Float(row[1])
-        rescue
-          design_outputs[calc_type][output_type] = row[1]
-        end
-        if (output_type.start_with? 'ERI:') && (not output_type.include? 'Building:')
-          # Convert to array
-          design_outputs[calc_type][output_type] = [design_outputs[calc_type][output_type]]
-        end
-      end
+      design_outputs[calc_type][output_type] = Float(row[1])
     end
   end
   return design_outputs
@@ -599,11 +582,7 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.eec_r = get_eec(ref_sys, type, is_dfhp_primary)
   c.is_dual_fuel = is_dfhp_primary
   c.ec_x = calculate_ec(rated_output, c.rated_id, type, is_dfhp_primary)
-  c.ec_r = calculate_ec(ref_output, c.ref_id, type, is_dfhp_primary)
-  if type == 'Hot Water'
-    # Only one reference water heater when there are multiple rated water heaters, so multiply by the load fraction
-    c.ec_r *= load_frac
-  end
+  c.ec_r = calculate_ec(ref_output, c.ref_id, type, is_dfhp_primary, load_frac)
   c.dse_r = c.reul / c.ec_r * c.eec_r
   c.nec_x = 0
   if c.eec_x * c.reul > 0
@@ -643,7 +622,7 @@ def calculate_reul(output, load_frac, type, is_dfhp_primary = nil)
   return load * load_frac
 end
 
-def calculate_ec(output, sys_id, type, is_dfhp_primary = nil)
+def calculate_ec(output, sys_id, type, is_dfhp_primary = nil, load_frac = nil)
   if is_dfhp_primary.nil?
     # Get total system use
     ec = get_system_use(output, sys_id, type) +
@@ -654,6 +633,11 @@ def calculate_ec(output, sys_id, type, is_dfhp_primary = nil)
   else
     # Get backup port of DFHP
     ec = get_system_use(output, sys_id, "#{type} Heat Pump Backup")
+  end
+  if (type == 'Hot Water') && (not load_frac.nil?)
+    # Only one reference water heater when there are multiple rated water heaters,
+    # so multiply by the load fraction
+    ec *= load_frac
   end
   return ec
 end
@@ -789,7 +773,6 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
   if not results_iad.nil?
     results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
   end
-  # TODO: Heating Fuel, Heating MEPR, Cooling Fuel, Cooling MEPR, Hot Water Fuel, Hot Water MEPR
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 
   # ERI Worksheet file
