@@ -547,7 +547,9 @@ end
 
 def get_emissions_co2e(output, fuel = nil)
   if fuel.nil?
-    return output['Emissions: CO2e: RESNET: Total'].to_f
+    return output['Emissions: CO2e: RESNET: Net'].to_f
+  elsif fuel == FT::Elec
+    return output["Emissions: CO2e: RESNET: #{fuel}: Net"].to_f
   else
     return output["Emissions: CO2e: RESNET: #{fuel}: Total"].to_f
   end

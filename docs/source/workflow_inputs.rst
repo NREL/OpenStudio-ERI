@@ -249,6 +249,7 @@ For example, ACH50 (ACH at 50 Pascals) is a commonly obtained value from a blowe
   .. [#] HousePressure typical value is 50 Pa.
   .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should *not* be adjusted by the Aext reduction factor specified in ANSI/RESNET/ICC 301.
          OpenStudio-ERI will automatically calculate and apply the Aext adjustment (and the Aext value can be found in, e.g., the ERIRatedHome.xml output file).
+         Note that all attached surfaces, even adiabatic surfaces, must be defined in the HPXML file.
 
 .. _infil_natural_ach_cfm:
 
