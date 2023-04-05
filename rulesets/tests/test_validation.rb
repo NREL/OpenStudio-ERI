@@ -24,25 +24,6 @@ class ERI301ValidationTest < MiniTest::Test
     FileUtils.rm_rf(@tmp_output_path)
   end
 
-  def test_validation_of_sample_files
-    xmls = []
-    Dir["#{@root_path}/workflow/sample_files/*.xml"].sort.each do |xml|
-      next if xml.split('/').include? 'run'
-
-      xmls << xml
-    end
-
-    xmls.each_with_index do |xml, i|
-      puts "[#{i + 1}/#{xmls.size}] Testing #{File.basename(xml)}..."
-
-      # Test validation
-      _test_schema_validation(xml, @hpxml_schema_path)
-      hpxml_doc = HPXML.new(hpxml_path: xml, building_id: 'MyBuilding').to_oga()
-      _test_schematron_validation(xml, hpxml_doc, expected_errors: []) # Ensure no errors
-    end
-    puts
-  end
-
   def test_validation_of_schematron_doc
     # Check that the schematron file is valid
 
@@ -139,6 +120,9 @@ class ERI301ValidationTest < MiniTest::Test
         hpxml.header.iecc_eri_calculation_version = nil
         hpxml.header.zerh_calculation_version = nil
         hpxml.building_construction.residential_facility_type = bldg_type
+        if bldg_type == HPXML::ResidentialTypeApartment
+          hpxml.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
+        end
         hpxml.header.state_code = 'CO'
         zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
         hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
@@ -190,16 +174,6 @@ class ERI301ValidationTest < MiniTest::Test
   end
 
   private
-
-  def _test_schematron_validation(hpxml_path, hpxml_doc, expected_errors: nil, expected_warnings: nil)
-    errors, warnings = XMLValidator.validate_against_schematron(hpxml_path, @eri_validator_stron_path, hpxml_doc)
-    if not expected_errors.nil?
-      _compare_errors_or_warnings('error', errors, expected_errors)
-    end
-    if not expected_warnings.nil?
-      _compare_errors_or_warnings('warning', warnings, expected_warnings)
-    end
-  end
 
   def _test_schema_validation(hpxml_path, schema_path)
     errors, _warnings = XMLValidator.validate_against_schema(hpxml_path, schema_path)

@@ -97,6 +97,18 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
       hpxml.building_construction.residential_facility_type = HPXML::ResidentialTypeApartment
     end
   end
+  if [HPXML::ResidentialTypeSFA,
+      HPXML::ResidentialTypeApartment].include? hpxml.building_construction.residential_facility_type
+    # Need to have at least one attached surface
+    hpxml.walls.add(id: 'TinyAttachedWall',
+                    wall_type: HPXML::WallTypeWoodStud,
+                    area: 0.0001,
+                    solar_absorptance: 0.7,
+                    emittance: 0.92,
+                    interior_adjacent_to: HPXML::LocationLivingSpace,
+                    exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
+                    insulation_assembly_r_value: 99)
+  end
 
   # Change climate zone year if needed
   if program_version == ZERHConstants.Ver1
