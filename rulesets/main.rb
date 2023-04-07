@@ -50,23 +50,8 @@ def run_rulesets(hpxml_input_path, designs)
       return false, errors, warnings
     end
 
-    cache_path = epw_path.gsub('.epw', '-cache.csv')
-    weather = nil
-    if not File.exist?(cache_path)
-      # Process weather file to create cache .csv
-      begin
-        File.open(cache_path, 'wb') do |file|
-          warnings << "'#{cache_path}' could not be found; regenerating it."
-          weather = WeatherProcess.new(epw_path: epw_path)
-          weather.dump_to_csv(file)
-        end
-      rescue SystemCallError
-        warnings << "#{cache_path} could not be written, skipping."
-      end
-    else
-      # Obtain weather object
-      weather = WeatherProcess.new(csv_path: cache_path)
-    end
+    # Obtain weather object
+    weather = WeatherProcess.new(epw_path: epw_path)
 
     eri_version = orig_hpxml.header.eri_calculation_version
     eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'

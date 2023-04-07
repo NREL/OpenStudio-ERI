@@ -893,32 +893,6 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
 end
 
-def cache_weather
-  # Process all epw files through weather.rb and serialize objects
-  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/materials'
-  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/psychrometrics'
-  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
-  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/util'
-  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/weather'
-  require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/schedules'
-
-  # OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  weather_dir = File.join(File.dirname(__FILE__), '..', 'weather')
-  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
-  puts 'Creating cache *.csv for weather files...'
-  Dir["#{weather_dir}/*.epw"].each do |epw|
-    next if File.exist? epw.gsub('.epw', '-cache.csv')
-
-    puts "Processing #{epw}..."
-    weather = WeatherProcess.new(epw_path: epw)
-    File.open(epw.gsub('.epw', '-cache.csv'), 'wb') do |file|
-      weather.dump_to_csv(file)
-    end
-  end
-  puts 'Completed.'
-  exit!
-end
-
 def main(options)
   OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
 
@@ -1135,10 +1109,6 @@ OptionParser.new do |opts|
     options[:monthly_outputs] << t
   end
 
-  opts.on('-c', '--cache-weather', 'Caches all weather files') do |t|
-    options[:cache] = t
-  end
-
   options[:add_comp_loads] = false
   opts.on('--add-component-loads', 'Add heating/cooling component loads calculation') do |_t|
     options[:add_comp_loads] = true
@@ -1203,10 +1173,6 @@ if options[:version]
   puts "OpenStudio v#{OpenStudio.openStudioLongVersion}"
   puts "EnergyPlus v#{OpenStudio.energyPlusVersion}.#{OpenStudio.energyPlusBuildSHA}"
   exit!
-end
-
-if options[:cache]
-  cache_weather
 end
 
 if not options[:hpxml]
