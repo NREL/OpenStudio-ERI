@@ -255,7 +255,11 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
         return system.heat_pump_fuel
       end
     elsif type == 'Hot Water'
-      return system.fuel_type
+      if not system.related_hvac_system.nil?
+        return system.related_hvac_system.heating_system_fuel
+      else
+        return system.fuel_type
+      end
     elsif type == 'Mech Vent Preheating'
       return system.preheating_fuel
     elsif type == 'Mech Vent Precooling'
@@ -388,7 +392,6 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # ======= #
 
   results[:eri_heat] = []
-
   rated_hpxml.hvac_systems.each do |rated_sys|
     if rated_sys.respond_to? :fraction_heat_load_served
       fraction_heat_load_served = rated_sys.fraction_heat_load_served
@@ -414,7 +417,6 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # ======= #
 
   results[:eri_cool] = []
-
   rated_hpxml.hvac_systems.each do |rated_sys|
     if rated_sys.respond_to? :fraction_cool_load_served
       fraction_cool_load_served = rated_sys.fraction_cool_load_served
@@ -432,7 +434,6 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # ======== #
 
   results[:eri_dhw] = []
-
   # Always just 1 Reference Home water heater.
   if ref_hpxml.water_heating_systems.size != 1
     fail 'Unexpected Reference Home results; should only be 1 DHW system.'
@@ -481,6 +482,25 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:tnml] = results[:nmeul_heat] + results[:nmeul_cool] + results[:nmeul_dhw] +
                    results[:nmeul_vent_preheat] + results[:nmeul_vent_precool] +
                    results[:eul_la] + results[:eul_mv] + results[:eul_dh]
+
+  sum_ec_x = results[:eri_vent_preheat].map{ |c| c.ec_x }.sum(0.0) +
+             results[:eri_vent_precool].map{ |c| c.ec_x }.sum(0.0) +
+             results[:eri_heat].map{ |c| c.ec_x }.sum(0.0) +
+             results[:eri_cool].map{ |c| c.ec_x }.sum(0.0) +
+             results[:eri_dhw].map{ |c| c.ec_x }.sum(0.0) +
+             results[:eul_la] + results[:eul_mv] + results[:eul_dh]
+  total_ec_x = get_fuel_use(rated_output, all_fuels)
+  if (sum_ec_x - total_ec_x).abs > 0.1
+    fail "Sum of energy consumptions (#{sum_ec_x.round(2)}) do not match total (#{total_ec_x.round(2)}) for Rated Home."
+  end
+  sum_ec_r = results[:eri_heat].map{ |c| c.ec_r }.sum(0.0) +
+             results[:eri_cool].map{ |c| c.ec_r }.sum(0.0) +
+             results[:eri_dhw].map{ |c| c.ec_r }.sum(0.0) +
+             results[:reul_la] + results[:reul_mv] + results[:reul_dh]
+  total_ec_r = get_fuel_use(ref_output, all_fuels)
+  if (sum_ec_r - total_ec_r).abs > 0.1
+    fail "Sum of energy consumptions (#{sum_ec_r.round(2)}) do not match total (#{total_ec_r.round(2)}) for Reference Home."
+  end
 
   results[:eri] = results[:tnml] / results[:trl] * 100.0
 
