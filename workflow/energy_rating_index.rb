@@ -453,7 +453,10 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # ===== #
 
   results[:teu] = UnitConversions.convert(calculate_teu(rated_output), 'MBtu', 'kWh')
-  results[:opp] = UnitConversions.convert(calculate_opp(rated_output, renewable_energy_limit), 'MBtu', 'kWh')
+  renewable_energy = get_end_use(rated_output, EUT::PV, FT::Elec)
+  elec_generation = get_end_use(rated_output, EUT::Generator, FT::Elec)
+  fuel_generation = get_end_use(rated_output, EUT::Generator, non_elec_fuels)
+  results[:opp] = UnitConversions.convert(calculate_opp(renewable_energy_limit, renewable_energy, elec_generation, fuel_generation), 'MBtu', 'kWh')
   results[:pefrac] = calculate_pefrac(results[:teu], results[:opp])
 
   results[:eul_dh] = calculate_dh(rated_output)
@@ -488,8 +491,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
              results[:eri_heat].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_cool].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_dhw].map { |c| c.ec_x }.sum(0.0) +
-             results[:eul_la] + results[:eul_mv] + results[:eul_dh]
-  total_ec_x = get_fuel_use(rated_output, all_fuels)
+             results[:eul_la] + results[:eul_mv] + results[:eul_dh] +
+             renewable_energy + elec_generation + fuel_generation
+  total_ec_x = get_fuel_use(rated_output, all_fuels, use_net: true)
   if (sum_ec_x - total_ec_x).abs > 0.1
     fail "Sum of energy consumptions (#{sum_ec_x.round(2)}) do not match total (#{total_ec_x.round(2)}) for Rated Home."
   end
@@ -543,11 +547,15 @@ def get_load(output, load_type)
   return output["Load: #{load_type}"]
 end
 
-def get_fuel_use(output, fuel_types)
+def get_fuel_use(output, fuel_types, use_net: false)
   val = 0.0
   fuel_types = [fuel_types] unless fuel_types.is_a? Array
   fuel_types.each do |fuel_type|
-    val += output["Fuel Use: #{fuel_type}: Total"]
+    if use_net && fuel_type == FT::Elec
+      val += output["Fuel Use: #{fuel_type}: Net"]
+    else
+      val += output["Fuel Use: #{fuel_type}: Total"]
+    end
   end
   return val
 end
@@ -683,16 +691,14 @@ def calculate_teu(output)
   return teu
 end
 
-def calculate_opp(output, renewable_energy_limit, fuel_unit_conv = 1.0)
+def calculate_opp(renewable_energy_limit, renewable_energy, elec_generation, fuel_generation)
   # On-Site Power Production
   # Electricity produced minus equivalent electric energy use calculated in accordance
   # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
-  renewable_energy = get_end_use(output, EUT::PV, FT::Elec)
   if not renewable_energy_limit.nil?
     renewable_energy = -1 * [-renewable_energy, renewable_energy_limit].min
   end
-  opp = -1 * (renewable_energy + get_end_use(output, EUT::Generator, FT::Elec)) -
-        0.4 * fuel_unit_conv * get_end_use(output, EUT::Generator, non_elec_fuels)
+  opp = -1 * (renewable_energy + elec_generation) - 0.4 * fuel_generation
   opp *= -1 if opp == -0
   return opp
 end
@@ -705,28 +711,28 @@ def calculate_pefrac(teu, opp)
   return pefrac
 end
 
-def calculate_la(output, elec_unit_conv = 1.0)
-  return (get_end_use(output, EUT::LightsInterior, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::LightsExterior, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::LightsGarage, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::Refrigerator, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::Dishwasher, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::ClothesWasher, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::ClothesDryer, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::PlugLoads, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::Television, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::RangeOven, FT::Elec) * elec_unit_conv +
-          get_end_use(output, EUT::CeilingFan, FT::Elec) * elec_unit_conv +
+def calculate_la(output)
+  return (get_end_use(output, EUT::LightsInterior, FT::Elec) +
+          get_end_use(output, EUT::LightsExterior, FT::Elec) +
+          get_end_use(output, EUT::LightsGarage, FT::Elec) +
+          get_end_use(output, EUT::Refrigerator, FT::Elec) +
+          get_end_use(output, EUT::Dishwasher, FT::Elec) +
+          get_end_use(output, EUT::ClothesWasher, FT::Elec) +
+          get_end_use(output, EUT::ClothesDryer, FT::Elec) +
+          get_end_use(output, EUT::PlugLoads, FT::Elec) +
+          get_end_use(output, EUT::Television, FT::Elec) +
+          get_end_use(output, EUT::RangeOven, FT::Elec) +
+          get_end_use(output, EUT::CeilingFan, FT::Elec) +
           get_end_use(output, EUT::ClothesDryer, non_elec_fuels) +
           get_end_use(output, EUT::RangeOven, non_elec_fuels))
 end
 
-def calculate_mv(output, elec_unit_conv = 1.0)
-  return get_end_use(output, EUT::MechVent, FT::Elec) * elec_unit_conv
+def calculate_mv(output)
+  return get_end_use(output, EUT::MechVent, FT::Elec)
 end
 
-def calculate_dh(output, elec_unit_conv = 1.0)
-  return get_end_use(output, EUT::Dehumidifier, FT::Elec) * elec_unit_conv
+def calculate_dh(output)
+  return get_end_use(output, EUT::Dehumidifier, FT::Elec)
 end
 
 def _calculate_co2e_index(rated_output, ref_output, results)
