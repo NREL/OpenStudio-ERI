@@ -22,6 +22,13 @@ require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 basedir = File.expand_path(File.dirname(__FILE__))
 
+@fuel_map = { HPXML::FuelTypeElectricity => FT::Elec,
+              HPXML::FuelTypeNaturalGas => FT::Gas,
+              HPXML::FuelTypeOil => FT::Oil,
+              HPXML::FuelTypePropane => FT::Propane,
+              HPXML::FuelTypeWoodCord => FT::WoodCord,
+              HPXML::FuelTypeWoodPellets => FT::WoodPellets }
+
 def get_program_versions(hpxml_doc)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
   if eri_version == 'latest'
@@ -210,25 +217,17 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
 
   def get_coefficients(fuel, type)
     if (type == 'Heating') || (type == 'Mech Vent Preheating')
-      if [HPXML::FuelTypeElectricity].include? fuel
+      if fuel == HPXML::FuelTypeElectricity
         return 2.2561, 0.0
-      elsif [HPXML::FuelTypeNaturalGas,
-             HPXML::FuelTypeOil,
-             HPXML::FuelTypePropane,
-             HPXML::FuelTypeWoodCord,
-             HPXML::FuelTypeWoodPellets].include? fuel
+      else
         return 1.0943, 0.4030
       end
     elsif (type == 'Cooling') || (type == 'Mech Vent Precooling')
       return 3.8090, 0.0
     elsif type == 'Hot Water'
-      if [HPXML::FuelTypeElectricity].include? fuel
+      if fuel == HPXML::FuelTypeElectricity
         return 0.9200, 0.0
-      elsif [HPXML::FuelTypeNaturalGas,
-             HPXML::FuelTypeOil,
-             HPXML::FuelTypePropane,
-             HPXML::FuelTypeWoodCord,
-             HPXML::FuelTypeWoodPellets].include? fuel
+      else
         return 1.1877, 1.0130
       end
     end
@@ -541,8 +540,8 @@ def get_end_use(output, end_use_type, fuel_types)
   return val
 end
 
-def get_system_use(output, sys_id, type)
-  return output["System Use: #{sys_id}: #{type}"].to_f
+def get_system_use(output, sys_id, fuel, type)
+  return output["System Use: #{sys_id}: #{fuel}: #{type}"].to_f
 end
 
 def get_emissions_co2e(output, fuel = nil)
@@ -558,9 +557,9 @@ end
 def calculate_eri_component_precond(rated_output, rated_sys, type)
   c = ERIComponent.new
   c.rated_id = rated_sys.id
-  c.ec_x = calculate_ec(rated_output, c.rated_id, type)
-  c.reul = 1.0 # Arbitrary; doesn't affect results
   c.fuel = get_fuel(rated_sys, type)
+  c.ec_x = calculate_ec(rated_output, c.rated_id, c.fuel, type)
+  c.reul = 1.0 # Arbitrary; doesn't affect results
   c.coeff_a, c.coeff_b = get_coefficients(c.fuel, type)
   c.eec_x = get_eec(rated_sys, type)
   c.dse_r = 0.80 # DSE of Reference Home for space conditioning
@@ -583,8 +582,8 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.eec_x = get_eec(rated_sys, type, is_dfhp_primary)
   c.eec_r = get_eec(ref_sys, type, is_dfhp_primary)
   c.is_dual_fuel = is_dfhp_primary
-  c.ec_x = calculate_ec(rated_output, c.rated_id, type, is_dfhp_primary)
-  c.ec_r = calculate_ec(ref_output, c.ref_id, type, is_dfhp_primary, load_frac)
+  c.ec_x = calculate_ec(rated_output, c.rated_id, c.fuel, type, is_dfhp_primary)
+  c.ec_r = calculate_ec(ref_output, c.ref_id, c.fuel, type, is_dfhp_primary, load_frac)
   c.dse_r = c.reul / c.ec_r * c.eec_r
   c.nec_x = 0
   if c.eec_x * c.reul > 0
@@ -624,17 +623,18 @@ def calculate_reul(output, load_frac, type, is_dfhp_primary = nil)
   return load * load_frac
 end
 
-def calculate_ec(output, sys_id, type, is_dfhp_primary = nil, load_frac = nil)
+def calculate_ec(output, sys_id, fuel, type, is_dfhp_primary = nil, load_frac = nil)
+  fuel = @fuel_map[fuel]
   if is_dfhp_primary.nil?
     # Get total system use
-    ec = get_system_use(output, sys_id, type) +
-         get_system_use(output, sys_id, "#{type} Heat Pump Backup")
+    ec = get_system_use(output, sys_id, fuel, type) +
+         get_system_use(output, sys_id, fuel, "#{type} Heat Pump Backup")
   elsif is_dfhp_primary
     # Get HP portion of DFHP
-    ec = get_system_use(output, sys_id, type)
+    ec = get_system_use(output, sys_id, fuel, type)
   else
     # Get backup port of DFHP
-    ec = get_system_use(output, sys_id, "#{type} Heat Pump Backup")
+    ec = get_system_use(output, sys_id, fuel, "#{type} Heat Pump Backup")
   end
   if (type == 'Hot Water') && (not load_frac.nil?)
     # Only one reference water heater when there are multiple rated water heaters,
