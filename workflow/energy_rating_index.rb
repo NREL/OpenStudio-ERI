@@ -483,19 +483,20 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
                    results[:nmeul_vent_preheat] + results[:nmeul_vent_precool] +
                    results[:eul_la] + results[:eul_mv] + results[:eul_dh]
 
-  sum_ec_x = results[:eri_vent_preheat].map{ |c| c.ec_x }.sum(0.0) +
-             results[:eri_vent_precool].map{ |c| c.ec_x }.sum(0.0) +
-             results[:eri_heat].map{ |c| c.ec_x }.sum(0.0) +
-             results[:eri_cool].map{ |c| c.ec_x }.sum(0.0) +
-             results[:eri_dhw].map{ |c| c.ec_x }.sum(0.0) +
+  sum_ec_x = results[:eri_vent_preheat].map { |c| c.ec_x }.sum(0.0) +
+             results[:eri_vent_precool].map { |c| c.ec_x }.sum(0.0) +
+             results[:eri_heat].map { |c| c.ec_x }.sum(0.0) +
+             results[:eri_cool].map { |c| c.ec_x }.sum(0.0) +
+             results[:eri_dhw].map { |c| c.ec_x }.sum(0.0) +
              results[:eul_la] + results[:eul_mv] + results[:eul_dh]
   total_ec_x = get_fuel_use(rated_output, all_fuels)
   if (sum_ec_x - total_ec_x).abs > 0.1
     fail "Sum of energy consumptions (#{sum_ec_x.round(2)}) do not match total (#{total_ec_x.round(2)}) for Rated Home."
   end
-  sum_ec_r = results[:eri_heat].map{ |c| c.ec_r }.sum(0.0) +
-             results[:eri_cool].map{ |c| c.ec_r }.sum(0.0) +
-             results[:eri_dhw].map{ |c| c.ec_r }.sum(0.0) +
+
+  sum_ec_r = results[:eri_heat].map { |c| c.ec_r }.sum(0.0) +
+             results[:eri_cool].map { |c| c.ec_r }.sum(0.0) +
+             results[:eri_dhw].map { |c| c.ec_r }.sum(0.0) +
              results[:reul_la] + results[:reul_mv] + results[:reul_dh]
   total_ec_r = get_fuel_use(ref_output, all_fuels)
   if (sum_ec_r - total_ec_r).abs > 0.1
@@ -539,14 +540,14 @@ def non_elec_fuels
 end
 
 def get_load(output, load_type)
-  return output["Load: #{load_type}"].to_f
+  return output["Load: #{load_type}"]
 end
 
 def get_fuel_use(output, fuel_types)
   val = 0.0
   fuel_types = [fuel_types] unless fuel_types.is_a? Array
   fuel_types.each do |fuel_type|
-    val += output["Fuel Use: #{fuel_type}: Total"].to_f
+    val += output["Fuel Use: #{fuel_type}: Total"]
   end
   return val
 end
@@ -555,23 +556,30 @@ def get_end_use(output, end_use_type, fuel_types)
   val = 0.0
   fuel_types = [fuel_types] unless fuel_types.is_a? Array
   fuel_types.each do |fuel_type|
-    val += output["End Use: #{fuel_type}: #{end_use_type}"].to_f
+    val += output["End Use: #{fuel_type}: #{end_use_type}"]
   end
   return val
 end
 
 def get_system_use(output, sys_id, fuel, type)
-  return output["System Use: #{sys_id}: #{fuel}: #{type}"].to_f +
-         output["System Use: #{sys_id}: #{FT::Elec}: #{type} Fans/Pumps"].to_f
+  val = output["System Use: #{sys_id}: #{fuel}: #{type}"].to_f
+  # Add fan/pump energy as appropriate
+  if ['Heating', 'Cooling', 'Heating Heat Pump Backup'].include? type
+    val += output["System Use: #{sys_id}: #{FT::Elec}: #{type} Fans/Pumps"].to_f
+  elsif ['Hot Water'].include? type
+    val += output["System Use: #{sys_id}: #{FT::Elec}: #{type} Recirc Pump"].to_f
+    val += output["System Use: #{sys_id}: #{FT::Elec}: #{type} Solar Thermal Pump"].to_f
+  end
+  return val
 end
 
 def get_emissions_co2e(output, fuel = nil)
   if fuel.nil?
-    return output['Emissions: CO2e: RESNET: Net'].to_f
+    return output['Emissions: CO2e: RESNET: Net']
   elsif fuel == FT::Elec
-    return output["Emissions: CO2e: RESNET: #{fuel}: Net"].to_f
+    return output["Emissions: CO2e: RESNET: #{fuel}: Net"]
   else
-    return output["Emissions: CO2e: RESNET: #{fuel}: Total"].to_f
+    return output["Emissions: CO2e: RESNET: #{fuel}: Total"]
   end
 end
 
