@@ -209,7 +209,7 @@ end
 
 class ERIComponent
   attr_accessor(:reul, :coeff_a, :coeff_b, :eec_x, :eec_r, :ec_x, :ec_r, :dse_r,
-                :nec_x, :nmeul, :load_frac, :fuel, :ref_id, :rated_id, :is_dual_fuel)
+                :nec_x, :nmeul, :load_frac, :ref_id, :rated_id, :is_dual_fuel)
 end
 
 def _calculate_eri(rated_output, ref_output, results_iad: nil,
@@ -511,7 +511,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
 end
 
 def all_fuels
-  return [FT::Elec, FT::Gas, FT::Oil, FT::Propane, FT::WoodCord, FT::WoodPellets, FT::Coal]
+  return @fuel_map.values
 end
 
 def non_elec_fuels
@@ -542,7 +542,7 @@ end
 
 def get_system_use(output, sys_id, fuel, type)
   return output["System Use: #{sys_id}: #{fuel}: #{type}"].to_f +
-         output["System Use: #{sys_id}: #{fuel}: #{type} Fans/Pumps"].to_f
+         output["System Use: #{sys_id}: #{FT::Elec}: #{type} Fans/Pumps"].to_f
 end
 
 def get_emissions_co2e(output, fuel = nil)
@@ -558,10 +558,10 @@ end
 def calculate_eri_component_precond(rated_output, rated_sys, type)
   c = ERIComponent.new
   c.rated_id = rated_sys.id
-  c.fuel = get_fuel(rated_sys, type)
-  c.ec_x = calculate_ec(rated_output, c.rated_id, c.fuel, type)
+  fuel = get_fuel(rated_sys, type)
+  c.ec_x = calculate_ec(rated_output, c.rated_id, fuel, type)
   c.reul = 1.0 # Arbitrary; doesn't affect results
-  c.coeff_a, c.coeff_b = get_coefficients(c.fuel, type)
+  c.coeff_a, c.coeff_b = get_coefficients(fuel, type)
   c.eec_x = get_eec(rated_sys, type)
   c.dse_r = 0.80 # DSE of Reference Home for space conditioning
   c.ec_r = c.reul / c.eec_x / c.dse_r
@@ -578,13 +578,14 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.ref_id = ref_sys.id
   c.load_frac = load_frac
   c.reul = calculate_reul(ref_output, c.load_frac, type, is_dfhp_primary)
-  c.fuel = get_fuel(ref_sys, type, is_dfhp_primary)
-  c.coeff_a, c.coeff_b = get_coefficients(c.fuel, type)
+  ref_fuel = get_fuel(ref_sys, type, is_dfhp_primary)
+  rated_fuel = get_fuel(rated_sys, type, is_dfhp_primary)
+  c.coeff_a, c.coeff_b = get_coefficients(ref_fuel, type)
   c.eec_x = get_eec(rated_sys, type, is_dfhp_primary)
   c.eec_r = get_eec(ref_sys, type, is_dfhp_primary)
   c.is_dual_fuel = is_dfhp_primary
-  c.ec_x = calculate_ec(rated_output, c.rated_id, c.fuel, type, is_dfhp_primary)
-  c.ec_r = calculate_ec(ref_output, c.ref_id, c.fuel, type, is_dfhp_primary, load_frac)
+  c.ec_x = calculate_ec(rated_output, c.rated_id, rated_fuel, type, is_dfhp_primary)
+  c.ec_r = calculate_ec(ref_output, c.ref_id, ref_fuel, type, is_dfhp_primary, load_frac)
   c.dse_r = c.reul / c.ec_r * c.eec_r
   c.nec_x = 0
   if c.eec_x * c.reul > 0
