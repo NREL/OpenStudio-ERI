@@ -224,6 +224,11 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.header.allow_increased_fixed_capacities = true
     new_hpxml.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
     new_hpxml.header.natvent_days_per_week = 7
+    new_hpxml.header.manualj_internal_loads_sensible = 1600
+    new_hpxml.header.manualj_internal_loads_latent = 0
+    new_hpxml.header.manualj_num_occupants = orig_hpxml.building_construction.number_of_bedrooms + 1
+    new_hpxml.header.manualj_heating_setpoint = 70
+    new_hpxml.header.manualj_cooling_setpoint = 75
 
     add_emissions_scenarios(new_hpxml)
 

@@ -541,7 +541,8 @@ def get_end_use(output, end_use_type, fuel_types)
 end
 
 def get_system_use(output, sys_id, fuel, type)
-  return output["System Use: #{sys_id}: #{fuel}: #{type}"].to_f
+  return output["System Use: #{sys_id}: #{fuel}: #{type}"].to_f +
+         output["System Use: #{sys_id}: #{fuel}: #{type} Fans/Pumps"].to_f
 end
 
 def get_emissions_co2e(output, fuel = nil)
