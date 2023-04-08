@@ -255,10 +255,10 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
         return system.heat_pump_fuel
       end
     elsif type == 'Hot Water'
-      if not system.related_hvac_system.nil?
-        return system.related_hvac_system.heating_system_fuel
-      else
+      if not system.fuel_type.nil?
         return system.fuel_type
+      else
+        return system.related_hvac_system.heating_system_fuel
       end
     elsif type == 'Mech Vent Preheating'
       return system.preheating_fuel
