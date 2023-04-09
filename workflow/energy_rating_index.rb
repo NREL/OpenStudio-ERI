@@ -417,6 +417,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # ======= #
 
   results[:eri_cool] = []
+  whf_energy = get_end_use(rated_output, EUT::WholeHouseFan, FT::Elec)
   rated_hpxml.hvac_systems.each do |rated_sys|
     if rated_sys.respond_to? :fraction_cool_load_served
       fraction_cool_load_served = rated_sys.fraction_cool_load_served
@@ -426,7 +427,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     # Get corresponding Reference Home system
     ref_sys = ref_hpxml.hvac_systems.select { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == rated_sys.clg_seed_id) }[0]
 
-    results[:eri_cool] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, fraction_cool_load_served, 'Cooling')
+    results[:eri_cool] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, fraction_cool_load_served, 'Cooling', whf_energy: whf_energy)
   end
 
   # ======== #
@@ -452,11 +453,11 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Other #
   # ===== #
 
-  results[:teu] = UnitConversions.convert(calculate_teu(rated_output), 'MBtu', 'kWh')
-  renewable_energy = get_end_use(rated_output, EUT::PV, FT::Elec)
-  elec_generation = get_end_use(rated_output, EUT::Generator, FT::Elec)
-  fuel_generation = get_end_use(rated_output, EUT::Generator, non_elec_fuels)
-  results[:opp] = UnitConversions.convert(calculate_opp(renewable_energy_limit, renewable_energy, elec_generation, fuel_generation), 'MBtu', 'kWh')
+  results[:teu] = calculate_teu(rated_output)
+  renewable_elec_produced = get_end_use(rated_output, EUT::PV, FT::Elec)
+  generation_elec_produced = get_end_use(rated_output, EUT::Generator, FT::Elec)
+  generation_fuel_consumed = get_end_use(rated_output, EUT::Generator, non_elec_fuels)
+  results[:opp] = calculate_opp(renewable_energy_limit, renewable_elec_produced, generation_elec_produced, generation_fuel_consumed)
   results[:pefrac] = calculate_pefrac(results[:teu], results[:opp])
 
   results[:eul_dh] = calculate_dh(rated_output)
@@ -491,8 +492,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
              results[:eri_heat].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_cool].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_dhw].map { |c| c.ec_x }.sum(0.0) +
-             results[:eul_la] + results[:eul_mv] + results[:eul_dh] +
-             renewable_energy + elec_generation + fuel_generation
+             results[:eul_la] + results[:eul_mv] + results[:eul_dh] + whf_energy +
+             renewable_elec_produced + generation_elec_produced + generation_fuel_consumed
   total_ec_x = get_fuel_use(rated_output, all_fuels, use_net: true)
   if (sum_ec_x - total_ec_x).abs > 0.1
     fail "Sum of energy consumptions (#{sum_ec_x.round(2)}) do not match total (#{total_ec_x.round(2)}) for Rated Home."
@@ -606,7 +607,7 @@ def calculate_eri_component_precond(rated_output, rated_sys, type)
   return c
 end
 
-def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_frac, type, is_dfhp_primary = nil)
+def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_frac, type, is_dfhp_primary = nil, whf_energy: nil)
   # is_dfhp_primary = true: The HP portion of the dual-fuel heat pump
   # is_dfhp_primary = false: The backup portion of the dual-fuel heat pump
   c = ERIComponent.new
@@ -626,10 +627,10 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.nec_x = 0
   if c.eec_x * c.reul > 0
     c.nec_x = (c.coeff_a * c.eec_x - c.coeff_b) * (c.ec_x * c.ec_r * c.dse_r) / (c.eec_x * c.reul)
-    if type == 'Cooling'
-      # Add whole-house fan energy to nec_x per 301 (apportioned by load) and excluded from eul_la
-      c.nec_x += (get_end_use(rated_output, EUT::WholeHouseFan, FT::Elec) * c.load_frac)
-    end
+  end
+  if not whf_energy.nil?
+    # Add whole-house fan energy to nec_x per 301 (apportioned by load) and excluded from eul_la
+    c.nec_x += (whf_energy * c.load_frac)
   end
   c.nmeul = 0
   if c.ec_r > 0
@@ -691,14 +692,14 @@ def calculate_teu(output)
   return teu
 end
 
-def calculate_opp(renewable_energy_limit, renewable_energy, elec_generation, fuel_generation)
+def calculate_opp(renewable_energy_limit, renewable_elec_produced, generation_elec_produced, generation_fuel_consumed)
   # On-Site Power Production
   # Electricity produced minus equivalent electric energy use calculated in accordance
   # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
   if not renewable_energy_limit.nil?
-    renewable_energy = -1 * [-renewable_energy, renewable_energy_limit].min
+    renewable_elec_produced = -1 * [-renewable_elec_produced, renewable_energy_limit].min
   end
-  opp = -1 * (renewable_energy + elec_generation) - 0.4 * fuel_generation
+  opp = -1 * (renewable_elec_produced + generation_elec_produced) - 0.4 * generation_fuel_consumed
   opp *= -1 if opp == -0
   return opp
 end
