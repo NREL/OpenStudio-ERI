@@ -20,9 +20,6 @@
       <ZERHCalculation>
         <Version>1.0</Version>
       </ZERHCalculation>
-      <AdditionalProperties>
-        <ParentHPXMLFile>base-bldgtype-multifamily-shared-chiller-only-fan-coil.xml</ParentHPXMLFile>
-      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>

@@ -20,9 +20,6 @@
       <ZERHCalculation>
         <Version>SF_2.0</Version>
       </ZERHCalculation>
-      <AdditionalProperties>
-        <ParentHPXMLFile>base-appliances-dehumidifier-ief-portable.xml</ParentHPXMLFile>
-      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -109,7 +106,7 @@
           <Roof>
             <SystemIdentifier id='Roof1'/>
             <InteriorAdjacentTo>attic - unvented</InteriorAdjacentTo>
-            <Area>1509.4</Area>
+            <Area>1509.3</Area>
             <SolarAbsorptance>0.7</SolarAbsorptance>
             <Emittance>0.92</Emittance>
             <Pitch>6.0</Pitch>
