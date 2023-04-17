@@ -2528,7 +2528,7 @@ def create_sample_hpxmls
     hpxml.building_construction.conditioned_building_volume = nil
     hpxml.building_construction.average_ceiling_height = nil
     hpxml.air_infiltration_measurements.each do |measurement|
-      measurement.type_of_test = nil
+      measurement.infiltration_type = nil
     end
     hpxml.attics.each do |attic|
       if [HPXML::AtticTypeVented,
