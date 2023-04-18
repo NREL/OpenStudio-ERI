@@ -1327,6 +1327,7 @@ class EnergyRatingIndex301Ruleset
                                heat_pump_type: orig_heat_pump.heat_pump_type,
                                heat_pump_fuel: orig_heat_pump.heat_pump_fuel,
                                compressor_type: orig_heat_pump.compressor_type,
+                               compressor_lockout_temp: orig_heat_pump.compressor_lockout_temp,
                                heating_capacity: orig_heat_pump.heating_capacity,
                                heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
                                cooling_capacity: orig_heat_pump.cooling_capacity,
@@ -1336,6 +1337,7 @@ class EnergyRatingIndex301Ruleset
                                backup_heating_capacity: orig_heat_pump.backup_heating_capacity,
                                backup_heating_efficiency_percent: orig_heat_pump.backup_heating_efficiency_percent,
                                backup_heating_efficiency_afue: orig_heat_pump.backup_heating_efficiency_afue,
+                               backup_heating_lockout_temp: orig_heat_pump.backup_heating_lockout_temp,
                                backup_heating_switchover_temp: orig_heat_pump.backup_heating_switchover_temp,
                                fraction_heat_load_served: orig_heat_pump.fraction_heat_load_served,
                                fraction_cool_load_served: orig_heat_pump.fraction_cool_load_served,
@@ -2624,15 +2626,15 @@ class EnergyRatingIndex301Ruleset
       end
       dist_id = orig_htg_system.distribution_system.id unless orig_htg_system.distribution_system.nil?
       # Handle backup
-      if orig_htg_system.respond_to?(:backup_heating_switchover_temp) && (not orig_htg_system.backup_heating_switchover_temp.nil?)
-        if (orig_htg_system.backup_heating_fuel != HPXML::FuelTypeElectricity) && (not is_all_electric)
-          # Dual-fuel HP
-          backup_type = HPXML::HeatPumpBackupTypeIntegrated
-          backup_fuel = orig_htg_system.backup_heating_fuel
-          backup_efficiency_afue = 0.78
-          backup_capacity = -1
-          backup_switchover_temp = orig_htg_system.backup_heating_switchover_temp
-        end
+      if orig_htg_system.is_a?(HPXML::HeatPump) && orig_htg_system.is_dual_fuel && !is_all_electric
+        # Dual-fuel HP in both Rated and Reference homes
+        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp
+        backup_type = HPXML::HeatPumpBackupTypeIntegrated
+        backup_fuel = orig_htg_system.backup_heating_fuel
+        backup_efficiency_afue = 0.78
+        backup_capacity = -1
+        backup_switchover_temp = orig_htg_system.backup_heating_switchover_temp
+        backup_lockout_temp = orig_htg_system.backup_heating_lockout_temp
       end
     end
     if not orig_clg_system.nil?
@@ -2660,6 +2662,7 @@ class EnergyRatingIndex301Ruleset
                              heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                              heat_pump_fuel: HPXML::FuelTypeElectricity,
                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
+                             compressor_lockout_temp: compressor_lockout_temp,
                              cooling_capacity: -1, # Use auto-sizing
                              heating_capacity: -1, # Use auto-sizing
                              backup_type: backup_type,
@@ -2667,6 +2670,7 @@ class EnergyRatingIndex301Ruleset
                              backup_heating_capacity: backup_capacity,
                              backup_heating_efficiency_percent: backup_efficiency_percent,
                              backup_heating_efficiency_afue: backup_efficiency_afue,
+                             backup_heating_lockout_temp: backup_lockout_temp,
                              backup_heating_switchover_temp: backup_switchover_temp,
                              fraction_heat_load_served: htg_load_frac,
                              fraction_cool_load_served: clg_load_frac,

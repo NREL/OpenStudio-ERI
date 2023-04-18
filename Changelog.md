@@ -15,6 +15,10 @@ __New Features__
   - Adds `System Use` outputs (end use outputs for each heating, cooling, and water heating system); allows requesting timeseries output.
   - All annual load outputs are now provided as timeseries outputs; previously only "Delivered" loads were available.
   - Peak summer/winter electricity outputs are now based on Jun/July/Aug and Dec/Jan/Feb months, not HVAC heating/cooling operation.
+- Heat pump enhancements:
+  - Allows `CompressorLockoutTemperature` and `BackupHeatingLockoutTemperature` as optional inputs; alternatives to `BackupHeatingSwitchoverTemperature`.
+  - Defaults for `CompressorLockoutTemperature`: 25F for dual-fuel, -20F for mini-split, 0F for all other heat pumps.
+  - Defaults for `BackupHeatingLockoutTemperature`: 50F for dual-fuel, 40F for all other heat pumps.
 - Allows additional building air leakage inputs (ACH or CFM at user-specified house pressure, Natural CFM, Effective Leakage Area).
 - Window shading seasons now based on calendar dates (e.g., summer: May 1-Sep 30 in northern hemisphere) instead of monthly outdoor temperatures.
 - LightingGroup for garage is no longer required if the home doesn't have a garage.
