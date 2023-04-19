@@ -1249,22 +1249,6 @@ Backup
 
 If a backup type of "integrated" is provided, additional information is entered in ``HeatPump``.
 
-
-If a backup type of "integrated" is provided, additional information is entered in ``HeatPump``.
-
-  ========================================================================  ========  ======  ===========  ========  =========  ==========================================
-  Element                                                                   Type      Units   Constraints  Required  Default    Notes
-  ========================================================================  ========  ======  ===========  ========  =========  ==========================================
-  ``BackupSystemFuel``                                                      string            See [#]_     Yes                  Integrated backup heating fuel type
-  ``BackupAnnualHeatingEfficiency[Units="Percent" or Units="AFUE"]/Value``  double    frac    0 - 1        Yes                  Integrated backup heating efficiency
-  ``BackupHeatingCapacity``                                                 double    Btu/hr  >= 0         Yes                  Integrated backup heating output capacity
-  ``BackupHeatingSwitchoverTemperature``                                    double    F                    No        <none>     Integrated backup heating switchover temperature [#]_
-  ========================================================================  ========  ======  ===========  ========  =========  ==========================================
-
-  .. [#] Provide BackupHeatingSwitchoverTemperature for a situation where there is a discrete outdoor temperature when the heat pump stops operating and the backup heating system starts operating.
-         If not provided, the backup heating system will operate as needed for hours when the heat pump has insufficient capacity.
-
-
   =============================================================================  ========  ======  ===========  ========  ========  ==========================================
   Element                                                                        Type      Units   Constraints  Required  Default   Notes
   =============================================================================  ========  ======  ===========  ========  ========  ==========================================
