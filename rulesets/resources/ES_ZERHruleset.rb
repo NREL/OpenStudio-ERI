@@ -1621,7 +1621,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     window_ufactor = lookup_reference_value('window_ufactor', subtype)
     window_ufactor = lookup_reference_value('window_ufactor') if window_ufactor.nil?
-    window_shgc = lookup_reference_value('window_shgc')
+    window_shgc = lookup_reference_value('window_shgc', subtype)
+    window_shgc = lookup_reference_value('window_shgc') if window_shgc.nil?
 
     return window_ufactor, window_shgc
   end
