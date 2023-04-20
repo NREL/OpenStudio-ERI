@@ -30,19 +30,14 @@ basedir = File.expand_path(File.dirname(__FILE__))
               HPXML::FuelTypeWoodPellets => FT::WoodPellets }
 
 def get_program_versions(hpxml_doc)
-  eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
-  if eri_version == 'latest'
-    eri_version = Constants.ERIVersions[-1]
-  end
-  es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
-  iecc_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
-  zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
+  versions = []
 
-  { [Constants.ERIVersions, 'ERICalculation/Version'] => eri_version,
-    [ESConstants.AllVersions, 'EnergyStarCalculation/Version'] => es_version,
-    [IECCConstants.AllVersions, 'IECCERICalculation/Version'] => iecc_version,
-    [ZERHConstants.AllVersions, 'ZERHCalculation/Version'] => zerh_version }.each do |values, version|
-    all_versions, xpath = values
+  { 'ERICalculation/Version' => Constants.ERIVersions,
+    'EnergyStarCalculation/Version' => ESConstants.AllVersions,
+    'IECCERICalculation/Version' => IECCConstants.AllVersions,
+    'ZERHCalculation/Version' => ZERHConstants.AllVersions }.each do |xpath, all_versions|
+    version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string)
+
     if (not version.nil?) && (not all_versions.include? version)
       puts "Unexpected #{xpath}: '#{version}'"
       exit!
@@ -52,9 +47,11 @@ def get_program_versions(hpxml_doc)
     else
       puts "#{xpath}: None"
     end
+
+    versions << version
   end
 
-  return eri_version, es_version, iecc_version, zerh_version
+  return versions
 end
 
 def apply_rulesets_and_generate_hpxmls(designs, options)
