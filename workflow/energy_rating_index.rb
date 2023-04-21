@@ -37,6 +37,9 @@ def get_program_versions(hpxml_doc)
     'IECCERICalculation/Version' => IECCConstants.AllVersions,
     'ZERHCalculation/Version' => ZERHConstants.AllVersions }.each do |xpath, all_versions|
     version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string)
+    if version == 'latest'
+      version = all_versions[-1]
+    end
 
     if (not version.nil?) && (not all_versions.include? version)
       puts "Unexpected #{xpath}: '#{version}'"
