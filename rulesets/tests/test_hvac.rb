@@ -315,7 +315,7 @@ class ERIHVACtest < MiniTest::Test
     hpxml_names.each do |hpxml_name|
       if hpxml_name == 'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-lockout-temperatures.xml'
         backup_temp = 45.0
-        compressor_temp = 30.0
+        compressor_temp = 25.0
       else
         backup_temp = 30.0
         compressor_temp = 30.0
