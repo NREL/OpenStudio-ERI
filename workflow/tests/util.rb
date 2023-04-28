@@ -79,7 +79,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     end
     if not co2_version.nil?
       hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
-      csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
+      if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv') # Some HPXMLs (e.g., in AK/HI or with wood fuel) won't produce a CO2 Index
+        csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
+      end
     end
     if not es_version.nil?
       # ENERGY STAR
