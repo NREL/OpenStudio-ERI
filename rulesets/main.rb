@@ -54,6 +54,7 @@ def run_rulesets(hpxml_input_path, designs)
     weather = WeatherProcess.new(epw_path: epw_path)
 
     eri_version = orig_hpxml.header.eri_calculation_version
+    eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
     eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
     zip_code = orig_hpxml.header.zip_code
     if not eri_version.nil?

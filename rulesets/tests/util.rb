@@ -6,6 +6,7 @@ def _change_eri_version(hpxml_name, version)
   # Create derivative file w/ changed ERI version
   hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
   hpxml.header.eri_calculation_version = version
+  hpxml.header.co2_calculation_version = version
 
   if Constants.ERIVersions.index(version) < Constants.ERIVersions.index('2019A')
     # Need old input for clothes dryers

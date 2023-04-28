@@ -2515,6 +2515,7 @@ def create_sample_hpxmls
     # Handle different inputs for ERI
 
     hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.co2index_calculation_version = 'latest'
     hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.header.timestep = nil
@@ -2860,16 +2861,26 @@ def create_sample_hpxmls
   Constants.ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.eri_calculation_version = eri_version
+    hpxml.header.co2index_calculation_version = nil
     hpxml.header.iecc_eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     hpxml.header.zerh_calculation_version = nil
-
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
       # Need old input for clothes dryers
       hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
     end
-
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
+  end
+
+  # Older CO2 Index versions
+  Constants.ERIVersions.select { |v| Constants.ERIVersions.index(v) >= Constants.ERIVersions.index('2019ABCD') }.each do |co2_version|
+    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+    hpxml.header.co2index_calculation_version = co2_version
+    hpxml.header.eri_calculation_version = nil
+    hpxml.header.iecc_eri_calculation_version = nil
+    hpxml.header.energystar_calculation_version = nil
+    hpxml.header.zerh_calculation_version = nil
+    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-co2-#{co2_version}.xml")
   end
 
   # All IECC versions
@@ -2877,6 +2888,7 @@ def create_sample_hpxmls
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.iecc_eri_calculation_version = iecc_version
     hpxml.header.eri_calculation_version = nil
+    hpxml.header.co2index_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     hpxml.header.zerh_calculation_version = nil
     zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
