@@ -156,7 +156,7 @@ jobs:
         shell: pwsh
         run: |
           $env:OS_VERSION="3.6.0-rc2"
-          $env:OS_SHA="e8153aa081"
+          $env:OS_SHA="437bf514ff"
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
