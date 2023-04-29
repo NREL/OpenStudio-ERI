@@ -21,7 +21,7 @@
   <sch:pattern>
     <sch:title>[Building]</sch:title>
     <sch:rule context='/h:HPXML/h:Building'>
-      <sch:assert role='ERROR' test='count(h:Site) = 1'>Expected 1 element(s) for xpath: Site]</sch:assert> <!-- See [BuildingSite] -->
+      <sch:assert role='ERROR' test='count(h:Site) = 1'>Expected 1 element(s) for xpath: Site</sch:assert> <!-- See [BuildingSite] -->
       <sch:assert role='ERROR' test='count(h:BuildingDetails) = 1'>Expected 1 element(s) for xpath: BuildingDetails</sch:assert> <!-- See [BuildingDetails] -->
     </sch:rule>
   </sch:pattern>
