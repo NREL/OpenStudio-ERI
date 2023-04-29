@@ -11,6 +11,8 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @output_dir = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
+    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
+    @validator = OpenStudio::XMLValidator.new(schematron_path)
   end
 
   def teardown
@@ -148,9 +150,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     assert_equal(true, success)
 
     # validate against 301 schematron
-    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', '301validator.xml')
-    validator = OpenStudio::XMLValidator.new(schematron_path)
-    assert_equal(true, validator.validate(designs[0].init_hpxml_output_path))
+    assert_equal(true, @validator.validate(designs[0].init_hpxml_output_path))
     @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
     return hpxml

@@ -10,6 +10,8 @@ class ERIMiscTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @output_dir = File.join(@root_path, 'workflow', 'sample_files')
+    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    @validator = OpenStudio::XMLValidator.new(schematron_path)
   end
 
   def teardown
@@ -45,9 +47,7 @@ class ERIMiscTest < MiniTest::Test
     assert_equal(true, success)
 
     # validate against OS-HPXML schematron
-    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
-    validator = OpenStudio::XMLValidator.new(schematron_path)
-    assert_equal(true, validator.validate(designs[0].hpxml_output_path))
+    assert_equal(true, @validator.validate(designs[0].hpxml_output_path))
     @results_path = File.dirname(designs[0].hpxml_output_path)
 
     return hpxml
