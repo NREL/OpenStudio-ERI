@@ -8,6 +8,7 @@ OpenStudio-ERI
 
 The OpenStudio-ERI project allows calculating an Energy Rating Index (ERI) using the Department of Energy's open-source [OpenStudio](https://www.openstudio.net/)/[EnergyPlus](https://energyplus.net/) simulation platform.
 The building description is provided in an [HPXML file](https://hpxml.nrel.gov/) format.
+OpenStudio-ERI is intended to be used by user interfaces or other automated software workflows that automatically produce the HPXML file.
 
 The project supports:
 - ANSI/RESNET/ICC 301© Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
