@@ -26,7 +26,7 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < MiniTest::Test
         _check_lighting(hpxml, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       elsif [ESConstants.SFNationalVer3_2, ZERHConstants.SFVer2].include? program_version
         _check_lighting(hpxml, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
-      elsif [ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
         _check_lighting(hpxml, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
         _check_lighting(hpxml, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)

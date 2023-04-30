@@ -22,7 +22,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -39,7 +39,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-modified.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -56,7 +56,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-gas.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -85,7 +85,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-none.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationLivingSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
@@ -115,7 +115,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < MiniTest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-multifamily-shared-laundry-room.xml', program_version)
       hpxml = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
+      if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_clothes_washer(hpxml, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
         _check_refrigerator(hpxml, annual_kwh: 450.0, location: HPXML::LocationLivingSpace)
       else
