@@ -28,6 +28,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   xml = File.absolute_path(xml)
   hpxml_doc = XMLHelper.parse_file(xml)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
+  co2_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/CO2IndexCalculation/Version', :string)
   iecc_eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
   zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
@@ -75,8 +76,10 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
         csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
         csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
-      if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv')
-        hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
+    end
+    if not co2_version.nil?
+      hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
+      if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv') # Some HPXMLs (e.g., in AK/HI or with wood fuel) won't produce a CO2 Index
         csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
       end
     end

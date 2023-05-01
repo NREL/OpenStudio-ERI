@@ -2,6 +2,7 @@
 
 __New Features__
 - Updates to OpenStudio 3.6.0/EnergyPlus 23.1.
+- **Breaking change**: CO2e Index results must now be requested through a new optional `SoftwareInfo/extension/CO2IndexCalculation/Version` input.
 - **Breaking change**: Updates to newer proposed HPXML v4.0:
   - Replaces `CeilingFan/Quantity`, `ClothesWasher/NumberofUnits`, and `ClothesDryer/NumberofUnits` with `Count`.
   - Replaces `PVSystem/InverterEfficiency` with `PVSystem/AttachedToInverter` and `Inverter/InverterEfficiency`.

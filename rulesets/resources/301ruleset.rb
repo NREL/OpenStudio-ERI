@@ -19,6 +19,7 @@ class EnergyRatingIndex301Ruleset
       end
     else
       @eri_version = hpxml.header.eri_calculation_version
+      @eri_version = hpxml.header.co2index_calculation_version if @eri_version.nil?
     end
     @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
 
