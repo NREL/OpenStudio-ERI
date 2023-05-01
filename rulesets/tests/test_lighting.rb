@@ -11,8 +11,12 @@ class ERILightingTest < MiniTest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @output_dir = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
-    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
-    @validator = OpenStudio::XMLValidator.new(schematron_path)
+    schema_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+    @schema_validator = XMLValidator.get_schema_validator(schema_path)
+    epvalidator_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    @epvalidator = OpenStudio::XMLValidator.new(epvalidator_path)
+    erivalidator_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
+    @erivalidator = OpenStudio::XMLValidator.new(erivalidator_path)
   end
 
   def teardown
@@ -124,7 +128,7 @@ class ERILightingTest < MiniTest::Test
                           output_dir: @output_dir)]
 
     hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs)
+    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -134,7 +138,7 @@ class ERILightingTest < MiniTest::Test
     assert_equal(true, success)
 
     # validate against OS-HPXML schematron
-    assert_equal(true, @validator.validate(designs[0].hpxml_output_path))
+    assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
     @results_path = File.dirname(designs[0].hpxml_output_path)
 
     return hpxml
