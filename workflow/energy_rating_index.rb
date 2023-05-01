@@ -1065,7 +1065,7 @@ def main(options)
     end
 
     if not co2_version.nil?
-      # Calculate ERI & CO2e Index
+      # Calculate CO2e Index
       co2_designs = designs.select { |d| d.init_calc_type.nil? && d.iecc_version.nil? }
       co2_designs = co2_designs.select { |d|
         [Constants.CalcTypeCO2eRatedHome,
