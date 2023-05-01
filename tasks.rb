@@ -14,6 +14,9 @@ def create_test_hpxmls
   FileUtils.rm_f(Dir.glob('workflow/tests/RESNET_Tests/4.1_Standard_140/*.xml'))
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/tests/ASHRAE_Standard_140/*.xml'), 'workflow/tests/RESNET_Tests/4.1_Standard_140')
 
+  schema_path = File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+  schema_validator = XMLValidator.get_schema_validator(schema_path)
+
   # Hash of HPXML -> Parent HPXML
   hpxmls_files = {
     # These are read from OS-HPXML files
@@ -216,8 +219,7 @@ def create_test_hpxmls
       XMLHelper.write_file(hpxml_doc, hpxml_path)
 
       # Validate file against HPXML schema
-      xsd_path = File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-      errors, _ = XMLValidator.validate_against_schema(hpxml_path, xsd_path)
+      errors, _warnings = XMLValidator.validate_against_schema(hpxml_path, schema_validator)
       if errors.size > 0
         fail errors.to_s
       end
