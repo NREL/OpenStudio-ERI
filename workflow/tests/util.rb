@@ -1185,7 +1185,7 @@ def _get_internal_gains(hpxml)
   xml_occ_sens = 0.0
   xml_occ_lat = 0.0
   heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
-  btu = hpxml.building_occupancy.number_of_residents * heat_gain * hrs_per_day * 365.0
+  btu = nbeds * heat_gain * hrs_per_day * 365.0
   xml_occ_sens += (frac_sens * btu)
   xml_occ_lat += (frac_lat * btu)
   s += "#{xml_occ_sens} #{xml_occ_lat}\n"
