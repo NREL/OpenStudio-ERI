@@ -268,8 +268,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
-    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
-
     new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
     new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
@@ -290,8 +288,6 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
 
-    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
-
     new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
     new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
     new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
@@ -311,8 +307,6 @@ class EnergyRatingIndex301Ruleset
 
     new_hpxml.site.fuels = orig_hpxml.site.fuels
     new_hpxml.site.site_type = HPXML::SiteTypeSuburban
-
-    new_hpxml.building_occupancy.number_of_residents = Geometry.get_occupancy_default_num(@nbeds)
 
     new_hpxml.building_construction.number_of_conditioned_floors = @ncfl
     new_hpxml.building_construction.number_of_conditioned_floors_above_grade = @ncfl_ag

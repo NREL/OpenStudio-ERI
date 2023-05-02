@@ -2528,7 +2528,6 @@ def create_sample_hpxmls
     hpxml.site.orientation_of_front_of_home = nil
     hpxml.site.azimuth_of_front_of_home = nil
     hpxml.site.ground_conductivity = nil
-    hpxml.building_occupancy.number_of_residents = nil
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
     hpxml.building_construction.average_ceiling_height = nil
