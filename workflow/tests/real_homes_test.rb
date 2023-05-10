@@ -29,7 +29,7 @@ class EnergyRatingIndexTest < Minitest::Test
     all_results = {}
     xmldir = "#{File.dirname(__FILE__)}/../real_homes"
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
+      rundir, _hpxmls, csvs = _run_workflow(xml, test_name, diagnostic_output: true)
       all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results],
                                                           csvs[:co2e_results],
                                                           csvs[:es_results],

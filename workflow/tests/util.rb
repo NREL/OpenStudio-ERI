@@ -24,7 +24,7 @@ def _run_ruleset(design, xml, out_xml)
 end
 
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,
-                  skip_simulation: false, rated_home_only: false)
+                  skip_simulation: false, rated_home_only: false, diagnostic_output: false)
   xml = File.absolute_path(xml)
   hpxml_doc = XMLHelper.parse_file(xml)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
@@ -35,26 +35,27 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
-  timeseries = ''
+  flags = ''
   if timeseries_frequency != 'none'
-    timeseries = " --#{timeseries_frequency} ALL"
+    flags += " --#{timeseries_frequency} ALL"
   end
-  comploads = ''
   if component_loads
-    comploads = ' --add-component-loads'
+    flags += ' --add-component-loads'
   end
-  skipsim = ''
   if skip_simulation
-    skipsim = ' --skip-simulation'
+    flags += ' --skip-simulation'
   end
-  ratedhome = ''
   if rated_home_only
-    ratedhome = ' --rated-home-only'
+    flags += ' --rated-home-only'
+  end
+  if diagnostic_output && (not eri_version.nil?)
+    # ERI required to generate diagnostic output
+    flags += ' --diagnostic-output'
   end
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o \"#{rundir}\" --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --debug"
   system(command)
 
   hpxmls = {}
@@ -167,6 +168,11 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       puts "Did not find #{csv_path}" unless File.exist?(csv_path)
       assert(File.exist?(csv_path))
     end
+  end
+  if diagnostic_output && (not eri_version.nil?)
+    diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
+    puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
+    assert(File.exist?(diag_output_path))
   end
 
   # Check run.log for OS warnings

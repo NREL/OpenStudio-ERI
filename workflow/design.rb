@@ -30,7 +30,7 @@ class Design
                 :output_dir, :design_dir, :iecc_version)
 end
 
-def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, diagnostic_output)
   measures_dir = File.join(File.dirname(__FILE__), '..')
 
   measures = {}
@@ -67,11 +67,26 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.csv_output_path.gsub('.csv', "_#{timeseries_output_freq.capitalize}.csv")))
   update_args_hash(measures, measure_subdir, args)
 
+  if diagnostic_output
+    # Add OS-HPXML reporting measure to workflow
+    measure_subdir = 'hpxml-measures/ReportSimulationOutput'
+    args = {}
+    args['timeseries_frequency'] = 'hourly'
+    args['include_timeseries_end_use_consumptions'] = true
+    args['include_timeseries_system_use_consumptions'] = true
+    args['include_timeseries_total_loads'] = true
+    args['include_timeseries_zone_temperatures'] = true
+    args['include_timeseries_weather'] = true
+    args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.csv_output_path))
+    args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.csv_output_path.gsub('.csv', '_Diagnostic.csv')))
+    update_args_hash(measures, measure_subdir, args)
+  end
+
   run_hpxml_workflow(design.design_dir, measures, measures_dir, debug: debug,
                                                                 suppress_print: true)
 end
 
-if ARGV.size == 8
+if ARGV.size == 9
   calc_type = ARGV[0]
   init_calc_type = (ARGV[1].empty? ? nil : ARGV[1])
   iecc_version = (ARGV[2].empty? ? nil : ARGV[2])
@@ -82,4 +97,6 @@ if ARGV.size == 8
   timeseries_outputs = ARGV[6].split('|')
   add_comp_loads = (ARGV[7].downcase.to_s == 'true')
   run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
+  diagnostic_output = (ARGV[8].downcase.to_s == 'true')
+  run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, diagnostic_output)
 end
