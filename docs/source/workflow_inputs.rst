@@ -1351,18 +1351,26 @@ When provided, supply and return leakage to the outside are each entered as a ``
 
 Additionally, each supply/return duct present is entered in a ``HVACDistribution/DistributionSystemType/AirDistribution/Ducts``.
 
-  ===========================  =======  ============  ===========  ========  =========  ===============================
-  Element                      Type     Units         Constraints  Required  Default    Notes
-  ===========================  =======  ============  ===========  ========  =========  ===============================
-  ``SystemIdentifier``         id                                  Yes                  Unique identifier
-  ``DuctType``                 string                 See [#]_     Yes                  Supply or return ducts
-  ``DuctInsulationRValue``     double   F-ft2-hr/Btu  >= 0         Yes                  R-value of duct insulation [#]_
-  ``DuctSurfaceArea``          double   ft2           >= 0         Yes                  Duct surface area
-  ``DuctLocation``             string                 See [#]_     Yes                  Duct location
-  ===========================  =======  ============  ===========  ========  =========  ===============================
+  =============================  =======  ============  ===========  ========  ==========  ===============================
+  Element                        Type     Units         Constraints  Required  Default     Notes
+  =============================  =======  ============  ===========  ========  ==========  ===============================
+  ``SystemIdentifier``           id                                  Yes                   Unique identifier
+  ``DuctType``                   string                 See [#]_     Yes                   Supply or return ducts
+  ``DuctInsulationRValue``       double   F-ft2-hr/Btu  >= 0         Yes                   R-value of duct insulation [#]_
+  ``DuctBuriedInsulationLevel``  string                 See [#]_     No        not buried  Duct buried insulation level [#]_
+  ``DuctLocation``               string                 See [#]_     Yes                   Duct location
+  ``DuctSurfaceArea``            double   ft2           >= 0         Yes                   Duct surface area
+  =============================  =======  ============  ===========  ========  ==========  ===============================
 
   .. [#] DuctType choices are "supply" or "return".
-  .. [#] DuctInsulationRValue should not include air films (i.e., use 0 for an uninsulated duct).
+  .. [#] DuctInsulationRValue should not include the exterior air film (i.e., use 0 for an uninsulated duct).
+         For ducts buried in insulation (using DuctBuriedInsulationLevel), DuctInsulationRValue should only represent any surrounding insulation duct wrap and not the entire attic insulation R-value.
+  .. [#] DuctBuriedInsulationLevel choices are "not buried", "partially buried", "fully buried", or "deeply buried".
+  .. [#] Whether the ducts are buried in, e.g., attic loose-fill insulation.
+         Partially buried ducts have insulation that does not cover the top of the ducts.
+         Fully buried ducts have insulation that just covers the top of the ducts.
+         Deeply buried ducts have insulation that continues above the top of the ducts.
+         See the `Building America Solution Center <https://basc.pnnl.gov/resource-guides/ducts-buried-attic-insulation>`_ for more information.
   .. [#] DuctLocation choices are "living space", "basement - conditioned", "basement - unconditioned", "crawlspace - unvented", "crawlspace - vented", "attic - unvented", "attic - vented", "garage", "outside", "exterior wall", "under slab", "roof deck", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
 

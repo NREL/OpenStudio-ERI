@@ -273,7 +273,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
     new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
     new_hpxml.building_construction.residential_facility_type = @bldg_type
-    new_hpxml.building_construction.has_flue_or_chimney = false
+    new_hpxml.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_rated(orig_hpxml, new_hpxml)
@@ -293,7 +293,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
     new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
     new_hpxml.building_construction.residential_facility_type = @bldg_type
-    new_hpxml.building_construction.has_flue_or_chimney = false
+    new_hpxml.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_iad(orig_hpxml, new_hpxml)
@@ -313,7 +313,7 @@ class EnergyRatingIndex301Ruleset
     new_hpxml.building_construction.number_of_bedrooms = @nbeds
     new_hpxml.building_construction.conditioned_floor_area = @cfa
     new_hpxml.building_construction.residential_facility_type = @bldg_type
-    new_hpxml.building_construction.has_flue_or_chimney = false
+    new_hpxml.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_climate(orig_hpxml, new_hpxml)
@@ -1409,7 +1409,8 @@ class EnergyRatingIndex301Ruleset
                                         duct_type: orig_duct.duct_type,
                                         duct_insulation_r_value: orig_duct.duct_insulation_r_value,
                                         duct_location: orig_duct.duct_location,
-                                        duct_surface_area: orig_duct.duct_surface_area)
+                                        duct_surface_area: orig_duct.duct_surface_area,
+                                        duct_buried_insulation_level: orig_duct.duct_buried_insulation_level)
       end
     end
 
