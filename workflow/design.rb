@@ -96,7 +96,6 @@ if ARGV.size == 9
   timeseries_output_freq = ARGV[5]
   timeseries_outputs = ARGV[6].split('|')
   add_comp_loads = (ARGV[7].downcase.to_s == 'true')
-  run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads)
   diagnostic_output = (ARGV[8].downcase.to_s == 'true')
   run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, diagnostic_output)
 end
