@@ -1325,6 +1325,8 @@ class EnergyRatingIndex301Ruleset
                                compressor_lockout_temp: orig_heat_pump.compressor_lockout_temp,
                                heating_capacity: orig_heat_pump.heating_capacity,
                                heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
+                               heating_capacity_retention_fraction: orig_heat_pump.heating_capacity_retention_fraction,
+                               heating_capacity_retention_temp: orig_heat_pump.heating_capacity_retention_temp,
                                cooling_capacity: orig_heat_pump.cooling_capacity,
                                cooling_shr: orig_heat_pump.cooling_shr,
                                backup_type: orig_heat_pump.backup_type,
