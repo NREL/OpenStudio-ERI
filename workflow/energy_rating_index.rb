@@ -1207,7 +1207,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     }
   end
 
-  # FIXME: Add error-checking? Call
+  # FIXME: Add error-checking?
 
   # Validate JSON
   require 'json-schema'
