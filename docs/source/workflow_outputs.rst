@@ -128,18 +128,18 @@ Annual Energy by Fuel Type
 
 Fuel uses are listed below.
 
-   ==========================  ===========================
-   Type                        Notes
-   ==========================  ===========================
-   Electricity: Total (MBtu)   Total electricity consumption
-   Electricity: Net (MBtu)     Subtracts any power produced by PV or generators
-   Natural Gas: Total (MBtu)
-   Fuel Oil: Total (MBtu)
-   Propane: Total (MBtu)
-   Wood Cord: Total (MBtu)         
-   Wood Pellets: Total (MBtu)
-   Coal: Total (MBtu)          Not used by OS-ERI
-   ==========================  ===========================
+   ====================================  ===========================
+   Type                                  Notes
+   ====================================  ===========================
+   Fuel Use: Electricity: Total (MBtu)   Total electricity consumption
+   Fuel Use: Electricity: Net (MBtu)     Subtracts any power produced by PV or generators
+   Fuel Use: Natural Gas: Total (MBtu)
+   Fuel Use: Fuel Oil: Total (MBtu)
+   Fuel Use: Propane: Total (MBtu)
+   Fuel Use: Wood Cord: Total (MBtu)         
+   Fuel Use: Wood Pellets: Total (MBtu)
+   Fuel Use: Coal: Total (MBtu)          Not used by OS-ERI
+   ====================================  ===========================
 
 .. _annualenduses:
 
@@ -151,26 +151,27 @@ End uses are listed below.
 Note that all end uses are mutually exclusive -- the "Electricity: Heating" end use, for example, excludes energy reported in the "Electricity: Heating Fans/Pumps" end use.
 So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural Gas: \*") equal the above reported fuel use (e.g., "Fuel Use: Natural Gas: Total").
 
-   ===================================================================  ====================================================
+   ================================================================  ====================================================
    Type                                                                 Notes
-   ===================================================================  ====================================================
-   End Use: Electricity: Heating (MBtu)                                 Excludes heat pump backup and fans/pumps
-   End Use: Electricity: Heating Fans/Pumps (MBtu)                      Includes supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
-   End Use: Electricity: Heating Heat Pump Backup (MBtu)                Excludes heat pump backup fans/pumps
-   End Use: Electricity: Heating Heat Pump Backup Fans/Pumps (MBtu)     Includes supply fan (air distribution) or circulating pump (hydronic distribution) during heat pump backup
-   End Use: Electricity: Cooling (MBtu)                                 Excludes fans/pumps
-   End Use: Electricity: Cooling Fans/Pumps (MBtu)                      Includes supply fan (air distribution) and circulating pump (geothermal loop)
-   End Use: Electricity: Hot Water (MBtu)                               Excludes recirc pump and solar thermal pump
+   ================================================================  ====================================================
+   End Use: Electricity: Heating (MBtu)                              Excludes heat pump backup and fans/pumps
+   End Use: Electricity: Heating Fans/Pumps (MBtu)                   Includes supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
+   End Use: Electricity: Heating Heat Pump Backup (MBtu)             Excludes heat pump backup fans/pumps
+   End Use: Electricity: Heating Heat Pump Backup Fans/Pumps (MBtu)  Includes supply fan (air distribution) or circulating pump (hydronic distribution) during heat pump backup
+   End Use: Electricity: Cooling (MBtu)                              Excludes fans/pumps
+   End Use: Electricity: Cooling Fans/Pumps (MBtu)                   Includes supply fan (air distribution) and circulating pump (geothermal loop)
+   End Use: Electricity: Hot Water (MBtu)                            Excludes recirc pump and solar thermal pump
    End Use: Electricity: Hot Water Recirc Pump (MBtu)
-   End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)            Non-zero only when using detailed (not simple) solar thermal inputs
+   End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)         Non-zero only when using detailed (not simple) solar thermal inputs
    End Use: Electricity: Lighting Interior (MBtu)
    End Use: Electricity: Lighting Garage (MBtu)
    End Use: Electricity: Lighting Exterior (MBtu)
-   End Use: Electricity: Mech Vent (MBtu)                               Excludes preheating/precooling
-   End Use: Electricity: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
-   End Use: Electricity: Mech Vent Precooling (MBtu)                    Shared ventilation preconditioning system
+   End Use: Electricity: Mech Vent (MBtu)                            Excludes preheating/precooling
+   End Use: Electricity: Mech Vent Preheating (MBtu)                 Shared ventilation preconditioning system
+   End Use: Electricity: Mech Vent Precooling (MBtu)                 Shared ventilation preconditioning system
    End Use: Electricity: Whole House Fan (MBtu)
    End Use: Electricity: Refrigerator (MBtu)
+   End Use: Electricity: Freezer (MBtu)                              Not used by OS-ERI
    End Use: Electricity: Dehumidifier (MBtu)
    End Use: Electricity: Dishwasher (MBtu)
    End Use: Electricity: Clothes Washer (MBtu)
@@ -178,50 +179,79 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
    End Use: Electricity: Range/Oven (MBtu)
    End Use: Electricity: Ceiling Fan (MBtu)
    End Use: Electricity: Television (MBtu)
-   End Use: Electricity: Plug Loads (MBtu)                              Excludes independently reported plug loads (e.g., well pump)
-   End Use: Electricity: PV (MBtu)                                      Negative value for any power produced
-   End Use: Electricity: Generator (MBtu)                               Negative value for any power produced
-   End Use: Electricity: Battery (MBtu)                                 Not used by OS-ERI
-   End Use: Natural Gas: Heating (MBtu)                                 Excludes heat pump backup
+   End Use: Electricity: Plug Loads (MBtu)                           Excludes independently reported plug loads (e.g., well pump)
+   End Use: Electricity: Electric Vehicle Charging (MBtu)            Not used by OS-ERI
+   End Use: Electricity: Well Pump (MBtu)                            Not used by OS-ERI
+   End Use: Electricity: Pool Heater (MBtu)                          Not used by OS-ERI
+   End Use: Electricity: Pool Pump (MBtu)                            Not used by OS-ERI
+   End Use: Electricity: Hot Tub Heater (MBtu)                       Not used by OS-ERI
+   End Use: Electricity: Hot Tub Pump (MBtu)                         Not used by OS-ERI
+   End Use: Electricity: PV (MBtu)                                   Negative value for any power produced
+   End Use: Electricity: Generator (MBtu)                            Negative value for any power produced
+   End Use: Electricity: Battery (MBtu)                              Not used by OS-ERI
+   End Use: Natural Gas: Heating (MBtu)                              Excludes heat pump backup
    End Use: Natural Gas: Heating Heat Pump Backup (MBtu)
    End Use: Natural Gas: Hot Water (MBtu)
    End Use: Natural Gas: Clothes Dryer (MBtu)
    End Use: Natural Gas: Range/Oven (MBtu)
-   End Use: Natural Gas: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
-   End Use: Natural Gas: Generator (MBtu)                               Positive value for any fuel consumed
-   End Use: Fuel Oil: Heating (MBtu)                                    Excludes heat pump backup
+   End Use: Natural Gas: Mech Vent Preheating (MBtu)                 Shared ventilation preconditioning system
+   End Use: Natural Gas: Pool Heater (MBtu)                          Not used by OS-ERI
+   End Use: Natural Gas: Hot Tub Heater (MBtu)                       Not used by OS-ERI
+   End Use: Natural Gas: Grill (MBtu)                                Not used by OS-ERI
+   End Use: Natural Gas: Lighting (MBtu)                             Not used by OS-ERI
+   End Use: Natural Gas: Fireplace (MBtu)                            Not used by OS-ERI
+   End Use: Natural Gas: Generator (MBtu)                            Positive value for any fuel consumed
+   End Use: Fuel Oil: Heating (MBtu)                                 Excludes heat pump backup
    End Use: Fuel Oil: Heating Heat Pump Backup (MBtu)
    End Use: Fuel Oil: Hot Water (MBtu)
    End Use: Fuel Oil: Clothes Dryer (MBtu)
    End Use: Fuel Oil: Range/Oven (MBtu)
-   End Use: Fuel Oil: Mech Vent Preheating (MBtu)                       Shared ventilation preconditioning system
-   End Use: Propane: Heating (MBtu)                                     Excludes heat pump backup
+   End Use: Fuel Oil: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
+   End Use: Fuel Oil: Grill (MBtu)                                   Not used by OS-ERI
+   End Use: Fuel Oil: Lighting (MBtu)                                Not used by OS-ERI
+   End Use: Fuel Oil: Fireplace (MBtu)                               Not used by OS-ERI
+   End Use: Fuel Oil: Generator (MBtu)                               Positive value for any fuel consumed
+   End Use: Propane: Heating (MBtu)                                  Excludes heat pump backup
    End Use: Propane: Heating Heat Pump Backup (MBtu)
    End Use: Propane: Hot Water (MBtu)
    End Use: Propane: Clothes Dryer (MBtu)
    End Use: Propane: Range/Oven (MBtu)
-   End Use: Propane: Mech Vent Preheating (MBtu)                        Shared ventilation preconditioning system
-   End Use: Propane: Generator (MBtu)                                   Positive value for any fuel consumed
-   End Use: Wood Cord: Heating (MBtu)                                   Excludes heat pump backup
+   End Use: Propane: Mech Vent Preheating (MBtu)                     Shared ventilation preconditioning system
+   End Use: Propane: Grill (MBtu)                                    Not used by OS-ERI
+   End Use: Propane: Lighting (MBtu)                                 Not used by OS-ERI
+   End Use: Propane: Fireplace (MBtu)                                Not used by OS-ERI
+   End Use: Propane: Generator (MBtu)                                Positive value for any fuel consumed
+   End Use: Wood Cord: Heating (MBtu)                                Excludes heat pump backup
    End Use: Wood Cord: Heating Heat Pump Backup (MBtu)
    End Use: Wood Cord: Hot Water (MBtu)
    End Use: Wood Cord: Clothes Dryer (MBtu)
    End Use: Wood Cord: Range/Oven (MBtu)
-   End Use: Wood Cord: Mech Vent Preheating (MBtu)                      Shared ventilation preconditioning system
-   End Use: Wood Pellets: Heating (MBtu)                                Excludes heat pump backup
+   End Use: Wood Cord: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+   End Use: Wood Cord: Grill (MBtu)                                  Not used by OS-ERI
+   End Use: Wood Cord: Lighting (MBtu)                               Not used by OS-ERI
+   End Use: Wood Cord: Fireplace (MBtu)                              Not used by OS-ERI
+   End Use: Wood Cord: Generator (MBtu)                              Positive value for any fuel consumed
+   End Use: Wood Pellets: Heating (MBtu)                             Excludes heat pump backup
    End Use: Wood Pellets: Heating Heat Pump Backup (MBtu)
    End Use: Wood Pellets: Hot Water (MBtu)
    End Use: Wood Pellets: Clothes Dryer (MBtu)
    End Use: Wood Pellets: Range/Oven (MBtu)
-   End Use: Wood Pellets: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
-   End Use: Coal: Heating (MBtu)                                        Excludes heat pump backup
+   End Use: Wood Pellets: Mech Vent Preheating (MBtu)                Shared ventilation preconditioning system
+   End Use: Wood Pellets: Grill (MBtu)                               Not used by OS-ERI
+   End Use: Wood Pellets: Lighting (MBtu)                            Not used by OS-ERI
+   End Use: Wood Pellets: Fireplace (MBtu)                           Not used by OS-ERI
+   End Use: Wood Pellets: Generator (MBtu)                           Positive value for any fuel consumed
+   End Use: Coal: Heating (MBtu)                                     Excludes heat pump backup
    End Use: Coal: Heating Heat Pump Backup (MBtu)
-   End Use: Coal: Hot Water (MBtu)                                      Not used by OS-ERI
-   End Use: Coal: Clothes Dryer (MBtu)                                  Not used by OS-ERI
-   End Use: Coal: Range/Oven (MBtu)                                     Not used by OS-ERI
-   End Use: Coal: Mech Vent Preheating (MBtu)                           Not used by OS-ERI
-   End Use: Coal: Generator (MBtu)                                      Not used by OS-ERI
-   ===================================================================  ====================================================
+   End Use: Coal: Hot Water (MBtu)                                   Not used by OS-ERI
+   End Use: Coal: Clothes Dryer (MBtu)                               Not used by OS-ERI
+   End Use: Coal: Range/Oven (MBtu)                                  Not used by OS-ERI
+   End Use: Coal: Mech Vent Preheating (MBtu)                        Not used by OS-ERI
+   End Use: Coal: Grill (MBtu)                                       Not used by OS-ERI
+   End Use: Coal: Lighting (MBtu)                                    Not used by OS-ERI
+   End Use: Coal: Fireplace (MBtu)                                   Not used by OS-ERI
+   End Use: Coal: Generator (MBtu)                                   Not used by OS-ERI
+   ================================================================  ====================================================
 
 Annual Energy By System Use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -317,12 +347,12 @@ Annual Unmet Hours
 
 Annual unmet hours are listed below.
 
-   ==========================  =====
-   Type                        Notes
-   ==========================  =====
-   Unmet Hours: Heating (hr)   Number of hours where the heating setpoint is not maintained.
-   Unmet Hours: Cooling (hr)   Number of hours where the cooling setpoint is not maintained.
-   ==========================  =====
+   =========================  =====
+   Type                       Notes
+   =========================  =====
+   Unmet Hours: Heating (hr)  Number of hours where the heating setpoint is not maintained.
+   Unmet Hours: Cooling (hr)  Number of hours where the cooling setpoint is not maintained.
+   =========================  =====
 
 These numbers reflect the number of hours during the year when the conditioned space temperature is more than 0.2 deg-C (0.36 deg-F) from the setpoint during heating/cooling.
 
@@ -331,12 +361,12 @@ Peak Building Electricity
 
 Peak building electricity outputs are listed below.
 
-   ==================================  =========================================================
+   ==================================  =============================================================
    Type                                Notes
-   ==================================  =========================================================
+   ==================================  =============================================================
    Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
    Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
-   ==================================  =========================================================
+   ==================================  =============================================================
 
 Peak Building Loads
 ~~~~~~~~~~~~~~~~~~~
@@ -381,7 +411,7 @@ Component loads disaggregated by Heating/Cooling are listed below.
    Component Load: \*: Internal Mass (MBtu)           Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
    Component Load: \*: Infiltration (MBtu)            Heat gain/loss from airflow induced by stack and wind effects
    Component Load: \*: Natural Ventilation (MBtu)     Heat gain/loss from airflow through operable windows
-   Component Load: \*: Mechanical Ventilation (MBtu)  Heat gain/loss from airflow/fan energy from a whole house mechanical ventilation system
+   Component Load: \*: Mechanical Ventilation (MBtu)  Heat gain/loss from airflow/fan energy from mechanical ventilation systems
    Component Load: \*: Whole House Fan (MBtu)         Heat gain/loss from airflow due to a whole house fan
    Component Load: \*: Ducts (MBtu)                   Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
    Component Load: \*: Internal Gains (MBtu)          Heat gain/loss from appliances, plug loads, water heater tank losses, etc. in the conditioned space
@@ -393,14 +423,14 @@ Annual Hot Water Uses
 
 Annual hot water uses are listed below.
 
-   ===================================  =====
+   ===================================  ====================
    Type                                 Notes
-   ===================================  =====
+   ===================================  ====================
    Hot Water: Clothes Washer (gal)
    Hot Water: Dishwasher (gal)
    Hot Water: Fixtures (gal)            Showers and faucets.
    Hot Water: Distribution Waste (gal) 
-   ===================================  =====
+   ===================================  ====================
 
 HVAC Capacities
 ~~~~~~~~~~~~~~~

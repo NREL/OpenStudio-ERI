@@ -17,9 +17,14 @@ __New Features__
   - All annual load outputs are now provided as timeseries outputs; previously only "Delivered" loads were available.
   - Peak summer/winter electricity outputs are now based on Jun/July/Aug and Dec/Jan/Feb months, not HVAC heating/cooling operation.
 - Heat pump enhancements:
+  - Allows `HeatingCapacityRetention[Fraction | Temperature]` optional inputs as a more flexible alternative to `HeatingCapacity17F`.
   - Allows `CompressorLockoutTemperature` and `BackupHeatingLockoutTemperature` as optional inputs; alternatives to `BackupHeatingSwitchoverTemperature`.
   - Defaults for `CompressorLockoutTemperature`: 25F for dual-fuel, -20F for mini-split, 0F for all other heat pumps.
   - Defaults for `BackupHeatingLockoutTemperature`: 50F for dual-fuel, 40F for all other heat pumps.
+  - Increased consistency between variable-speed central HP and mini-split HP models for degradation coefficients, gross SHR calculations, etc.
+- Duct enhancements:
+  - Allows modeling ducts buried in attic loose-fill insulation using `Ducts/DuctBuriedInsulationLevel`.
+  - The duct effective R-value can now be found in the ERI___Home.xml files; it accounts for exterior air film, duct shape, and buried insulation level.
 - Allows additional building air leakage inputs (ACH or CFM at user-specified house pressure, Natural CFM, Effective Leakage Area).
 - LightingGroup for garage is no longer required if the home doesn't have a garage.
 - Weather cache files (\*foo-cache.csv) are no longer used/needed.
