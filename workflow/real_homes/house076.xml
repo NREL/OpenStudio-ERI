@@ -14,7 +14,8 @@
       <CO2IndexCalculation>
         <Version>latest</Version>
       </CO2IndexCalculation>
-      <EnergyStarCalculation>        <Version>MF_National_1.2</Version>
+      <EnergyStarCalculation>
+        <Version>MF_National_1.2</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
         <Version>2021</Version>
