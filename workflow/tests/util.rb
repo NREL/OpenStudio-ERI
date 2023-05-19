@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'oga'
+require 'json'
+require 'json-schema'
 require_relative '../design'
 require_relative '../../rulesets/main'
 require_relative '../../rulesets/resources/constants'
@@ -27,7 +29,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
                   skip_simulation: false, rated_home_only: false, diagnostic_output: false)
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
-  
+
   eri_version = hpxml.header.eri_calculation_version
   co2_version = hpxml.header.co2index_calculation_version
   iecc_eri_version = hpxml.header.iecc_eri_calculation_version
@@ -176,6 +178,19 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
       puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
       assert(File.exist?(diag_output_path))
+
+      # Validate JSON
+      valid = true
+      schema_dir = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', 'hers_diagnostic_output')
+      begin
+        json_schema_path = File.join(schema_dir, 'HERSDiagnosticOutput.schema.json')
+        JSON::Validator.validate!(json_schema_path, JSON.parse(File.read(diag_output_path)))
+      rescue JSON::Schema::ValidationError => e
+        valid = false
+        puts "HERS diagnostic output file did not validate: #{diag_output_path}."
+        puts e.message
+      end
+      assert(valid)
     end
   end
 

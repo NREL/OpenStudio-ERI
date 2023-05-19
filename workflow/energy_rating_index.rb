@@ -1065,7 +1065,10 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     design_data[design_type] = CSV.read(csv_path, headers: true)
     design_data[design_type].delete(0) # strip units
     design_data_hashes[design_type] = design_data[design_type].map(&:to_h)
-    design_hpxmls[design_type] = HPXML.new(hpxml_path: design.hpxml_output_path)
+
+    hpxml = HPXML.new(hpxml_path: design.hpxml_output_path)
+    HVAC.apply_shared_systems(hpxml)
+    design_hpxmls[design_type] = hpxml
   end
 
   # Initial JSON output
@@ -1207,26 +1210,10 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     }
   end
 
-  # FIXME: Add error-checking?
-
-  # Validate JSON
-  require 'json-schema'
-  valid = true
-  begin
-    json_schema_path = File.join(File.dirname(__FILE__), '..', 'rulesets', 'resources', 'HERSDiagnosticOutput.schema.json')
-    JSON::Validator.validate!(json_schema_path, json_output)
-  rescue JSON::Schema::ValidationError => e
-    valid = false
-    puts 'HERS diagnostic output file did not validate.'
-    puts e.message
-  end
-
-  if valid
-    # Write JSON file
-    output_path = File.join(resultsdir, 'HERS_Diagnostic.json')
-    require 'json'
-    File.open(output_path, 'w') { |json| json.write(JSON.pretty_generate(json_output)) }
-  end
+  # Write JSON file
+  output_path = File.join(resultsdir, 'HERS_Diagnostic.json')
+  require 'json'
+  File.open(output_path, 'w') { |json| json.write(JSON.pretty_generate(json_output)) }
 end
 
 def main(options)
