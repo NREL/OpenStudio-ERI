@@ -28,8 +28,8 @@ class ERIGeneratorTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_generator(hpxml, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 500, is_shared: false },
-                                 { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 500, is_shared: false }])
+        _check_generator(hpxml, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 1200, is_shared: false },
+                                 { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 1200, is_shared: false }])
       else
         _check_generator(hpxml)
       end
@@ -42,7 +42,7 @@ class ERIGeneratorTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_generator(hpxml, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 5000, is_shared: true, nbeds_served: 18 }])
+        _check_generator(hpxml, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 12000, is_shared: true, nbeds_served: 18 }])
       else
         _check_generator(hpxml)
       end
