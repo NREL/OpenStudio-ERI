@@ -173,12 +173,12 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     end
   end
   if diagnostic_output && (not eri_version.nil?)
-    # FIXME: Temporarily skip files w/ dehumidifiers
-    if hpxml.dehumidifiers.empty?
-      diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
-      puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
-      assert(File.exist?(diag_output_path))
+    diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
+    puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
+    assert(File.exist?(diag_output_path))
 
+    # FIXME: Temporarily skip validation on files w/ dehumidifiers
+    if hpxml.dehumidifiers.empty?
       # Validate JSON
       valid = true
       schema_dir = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', 'hers_diagnostic_output')

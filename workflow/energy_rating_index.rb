@@ -724,13 +724,13 @@ def calculate_teu(output)
   return teu
 end
 
-def calculate_opp(rated_output, renewable_energy_limit)
+def calculate_opp(rated_output, renewable_energy_limit, fuel_conv = 1.0)
   # On-Site Power Production
   # Electricity produced minus equivalent electric energy use calculated in accordance
   # with Equation 4.1-3 of any purchased fossil fuels used to produce the power.
   renewable_elec_produced = get_end_use(rated_output, EUT::PV, FT::Elec)
   generation_elec_produced = get_end_use(rated_output, EUT::Generator, FT::Elec)
-  generation_fuel_consumed = get_end_use(rated_output, EUT::Generator, non_elec_fuels)
+  generation_fuel_consumed = get_end_use(rated_output, EUT::Generator, non_elec_fuels) * fuel_conv
   opp_energy = renewable_elec_produced + generation_elec_produced + generation_fuel_consumed
   if not renewable_energy_limit.nil?
     renewable_elec_produced = -1 * [-renewable_elec_produced, renewable_energy_limit].min
@@ -1154,7 +1154,8 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
 
       json_output[:outdoor_drybulb_temperature] = data["Weather: #{WT::DrybulbTemp}"].map { |v| Float(v) }
 
-      values = data_hashes.map { |h| calculate_opp(h, nil)[0].round(3) }
+      fuel_conv = UnitConversions.convert(1.0, 'kBtu', 'kWh')
+      values = data_hashes.map { |h| calculate_opp(h, nil, fuel_conv)[0].round(3) }
       json_output[:on_site_power_production] = values
     end
 
