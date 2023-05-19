@@ -2786,17 +2786,13 @@ def create_sample_hpxmls
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-multifamily'
-      hpxml.header.zerh_calculation_version = ZERHConstants.Ver1
-      if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2015 }.size == 0
-        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2015,
-                                                            zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
-      end
+      hpxml.header.zerh_calculation_version = ZERHConstants.MFVer2
     else
       hpxml.header.zerh_calculation_version = ZERHConstants.SFVer2
-      if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
-        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
-                                                            zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
-      end
+    end
+    if hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
+      hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
+                                                          zone: hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone)
     end
     if hpxml_path.include? 'base-bldgtype-multifamily'
       hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2

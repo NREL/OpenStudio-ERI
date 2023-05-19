@@ -30,7 +30,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         value, units = 5.0, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1564.8, 'CFM'
-      elsif program_version == ZERHConstants.MFVer2 
+      elsif program_version == ZERHConstants.MFVer2
         value, units = 1303.9, 'CFM'
       elsif [ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
         value, units = 2.0, 'ACH'
@@ -64,7 +64,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < MiniTest::Test
         value, units = 2.75, 'ACH'
       elsif ESConstants.MFVersions.include? program_version
         value, units = 1170.0, 'CFM'
-      elsif program_version == ZERHConstants.MFVer2 
+      elsif program_version == ZERHConstants.MFVer2
         value, units = 975.0, 'CFM'
       end
 
