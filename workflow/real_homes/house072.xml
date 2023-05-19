@@ -11,8 +11,10 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
-      <EnergyStarCalculation>
-        <Version>SF_National_3.2</Version>
+      <CO2IndexCalculation>
+        <Version>latest</Version>
+      </CO2IndexCalculation>
+      <EnergyStarCalculation>        <Version>SF_National_3.2</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
         <Version>2021</Version>
@@ -28,7 +30,7 @@
       <SiteID id='Site'/>
       <Address>
         <StateCode>MN</StateCode>
-        <ZipCode>00000</ZipCode>
+        <ZipCode>55804</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
