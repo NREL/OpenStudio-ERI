@@ -259,7 +259,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:eri_heat] = []
   get_rated_systems(rated_hpxml.hvac_systems, type).each do |rated_sys, load_frac|
     # Get corresponding Reference Home system
-    ref_sys = get_corresponding_system(ref_hpxml.hvac_systems, rated_sys, type)
+    ref_sys = get_corresponding_ref_system(ref_hpxml.hvac_systems, rated_sys, type)
 
     if rated_sys.is_a?(HPXML::HeatPump) && rated_sys.is_dual_fuel
       # Dual fuel heat pump; calculate ERI using two different HVAC systems
@@ -279,7 +279,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   whf_energy = get_end_use(rated_output, EUT::WholeHouseFan, FT::Elec)
   get_rated_systems(rated_hpxml.hvac_systems, type).each do |rated_sys, load_frac|
     # Get corresponding Reference Home system
-    ref_sys = get_corresponding_system(ref_hpxml.hvac_systems, rated_sys, type)
+    ref_sys = get_corresponding_ref_system(ref_hpxml.hvac_systems, rated_sys, type)
 
     results[:eri_cool] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_frac, type, whf_energy: whf_energy)
   end
@@ -292,7 +292,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   results[:eri_dhw] = []
   get_rated_systems(rated_hpxml.water_heating_systems, type).each do |rated_sys, load_frac|
     # Get corresponding Reference Home system
-    ref_sys = get_corresponding_system(ref_hpxml.water_heating_systems, rated_sys, type)
+    ref_sys = get_corresponding_ref_system(ref_hpxml.water_heating_systems, rated_sys, type)
 
     results[:eri_dhw] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_frac, type)
   end
@@ -560,18 +560,18 @@ def get_rated_systems(hpxml_systems, type)
   return systems
 end
 
-def get_corresponding_system(hpxml_systems, sys, type)
+def get_corresponding_ref_system(ref_hpxml_systems, rated_sys, type)
   if type == 'Cooling'
-    return hpxml_systems.find { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == sys.clg_seed_id) }
+    return ref_hpxml_systems.find { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == rated_sys.clg_seed_id) }
   elsif type == 'Heating'
-    return hpxml_systems.find { |h| h.respond_to?(:htg_seed_id) && (h.htg_seed_id == sys.htg_seed_id) }
+    return ref_hpxml_systems.find { |h| h.respond_to?(:htg_seed_id) && (h.htg_seed_id == rated_sys.htg_seed_id) }
   elsif type == 'Hot Water'
     # Always just 1 Reference Home water heater.
-    if hpxml_systems.size != 1
+    if ref_hpxml_systems.size != 1
       fail 'Unexpected Reference Home results; should only be 1 DHW system.'
     end
 
-    return hpxml_systems[0]
+    return ref_hpxml_systems[0]
   end
 end
 
@@ -989,7 +989,13 @@ end
 def _add_diagnostic_system_outputs(json_system_output, data_hashes, rated_hpxml_systems, hpxml_systems, type, design_type, json_units_map, json_fuel_map)
   rated_systems = get_rated_systems(rated_hpxml_systems, type)
   rated_systems.each do |rated_sys, load_frac|
-    sys = get_corresponding_system(hpxml_systems, rated_sys, type)
+    if hpxml_systems == rated_hpxml_systems
+      sys = rated_sys
+    else
+      sys = get_corresponding_ref_system(hpxml_systems, rated_sys, type)
+    end
+    next if sys.nil?
+
     hpxml_fuel = get_system_fuel(sys, type)
     json_system_output << {
       primary_fuel_type: json_fuel_map[hpxml_fuel],
@@ -1346,12 +1352,6 @@ def main(options)
       end
     end
 
-    if options[:diagnostic_output] && (not eri_designs.nil?)
-      # Write HERS diagnostic output?
-      puts 'Generating HERS diagnostic output...'
-      write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, options[:hpxml], resultsdir)
-    end
-
     if not iecc_version.nil?
       # Calculate IECC ERI
       iecc_eri_designs = designs.select { |d| !d.iecc_version.nil? }
@@ -1432,6 +1432,12 @@ def main(options)
       else
         puts 'Zero Energy Ready Home Certification: FAIL'
       end
+    end
+
+    if options[:diagnostic_output] && (not eri_designs.nil?)
+      # Write HERS diagnostic output?
+      puts 'Generating HERS diagnostic output...'
+      write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, options[:hpxml], resultsdir)
     end
 
   end
