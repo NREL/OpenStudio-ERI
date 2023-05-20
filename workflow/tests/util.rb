@@ -172,7 +172,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       assert(File.exist?(csv_path))
     end
   end
-  if diagnostic_output && (not eri_version.nil?)
+  if diagnostic_output && (not eri_version.nil?) && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
     diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
     puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
     assert(File.exist?(diag_output_path))

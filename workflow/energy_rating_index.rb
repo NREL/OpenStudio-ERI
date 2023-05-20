@@ -1438,7 +1438,7 @@ def main(options)
       end
     end
 
-    if options[:diagnostic_output] && (not eri_designs.nil?)
+    if options[:diagnostic_output] && (not eri_designs.nil?) && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
       # Write HERS diagnostic output?
       puts 'Generating HERS diagnostic output...'
       write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, options[:hpxml], resultsdir)
