@@ -1041,7 +1041,10 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   else
     epw_header = File.open(epw_path) { |f| f.readline }
     epw_location = epw_header.split(',')[1]
-    epw_state = epw_header.split(',')[2]
+    epw_state = epw_header.split(',')[2].upcase
+    if epw_state.size != 2 || epw_state.count('A-Z') != 2
+      epw_state = 'XX'
+    end
   end
 
   # Gather software info
