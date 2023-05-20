@@ -31,6 +31,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   hpxml = HPXML.new(hpxml_path: xml)
 
   eri_version = hpxml.header.eri_calculation_version
+  eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
   co2_version = hpxml.header.co2index_calculation_version
   iecc_eri_version = hpxml.header.iecc_eri_calculation_version
   es_version = hpxml.header.energystar_calculation_version
