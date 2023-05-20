@@ -57,7 +57,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     end
 
     # Obtain weather object
-    weather = WeatherProcess.new(epw_path: epw_path)
+    weather = WeatherProcess.new(epw_path: epw_path, runner: nil)
 
     eri_version = orig_hpxml.header.eri_calculation_version
     eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
