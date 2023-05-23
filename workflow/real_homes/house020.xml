@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <CO2IndexCalculation>
+        <Version>latest</Version>
+      </CO2IndexCalculation>
       <EnergyStarCalculation>
         <Version>SF_National_3.2</Version>
       </EnergyStarCalculation>
@@ -28,7 +31,7 @@
       <SiteID id='Site'/>
       <Address>
         <StateCode>CO</StateCode>
-        <ZipCode>00000</ZipCode>
+        <ZipCode>80919</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -805,7 +808,7 @@
                 <Value>7.7</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <AirflowDefectRatio>0.0</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
               </extension>
@@ -1002,9 +1005,13 @@
             <ArrayAzimuth>135</ArrayAzimuth>
             <ArrayTilt>1.2</ArrayTilt>
             <MaxPowerOutput>12000.0</MaxPowerOutput>
-            <InverterEfficiency>0.98</InverterEfficiency>
             <SystemLossesFraction>0.14</SystemLossesFraction>
+            <AttachedToInverter idref='Inverter1'/>
           </PVSystem>
+          <Inverter>
+            <SystemIdentifier id='Inverter1'/>
+            <InverterEfficiency>0.98</InverterEfficiency>
+          </Inverter>
         </Photovoltaics>
       </Systems>
       <Appliances>

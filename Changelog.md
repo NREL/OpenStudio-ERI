@@ -1,3 +1,39 @@
+## OpenStudio-ERI v1.6.0
+
+__New Features__
+- Updates to OpenStudio 3.6.1/EnergyPlus 23.1.
+- **Breaking change**: CO2e Index results must now be requested through a new optional `SoftwareInfo/extension/CO2IndexCalculation/Version` input.
+- **Breaking change**: Updates to newer proposed HPXML v4.0:
+  - Replaces `CeilingFan/Quantity`, `ClothesWasher/NumberofUnits`, and `ClothesDryer/NumberofUnits` with `Count`.
+  - Replaces `PVSystem/InverterEfficiency` with `PVSystem/AttachedToInverter` and `Inverter/InverterEfficiency`.
+- Output updates:
+  - **Breaking change**: Adds `End Use: Heating Heat Pump Backup Fans/Pumps` (disaggregated from `End Use: Heating Fans/Pumps`).
+  - **Breaking change**: Replaces `Component Load: Windows` with `Component Load: Windows Conduction` and `Component Load: Windows Solar`.
+  - **Breaking change**: Replaces `Component Load: Skylights` with `Component Load: Skylights Conduction` and `Component Load: Skylights Solar`.
+  - **Breaking change**: Adds `Component Load: Lighting` (disaggregated from `Component Load: Internal Gains`).
+  - **Breaking change**: Adds "net" values for emissions; "total" values now exclude generation (e.g., PV).
+  - Adds `Load: Heating: Heat Pump Backup` (heating load delivered by heat pump backup systems).
+  - Adds `System Use` outputs (end use outputs for each heating, cooling, and water heating system); allows requesting timeseries output.
+  - All annual load outputs are now provided as timeseries outputs; previously only "Delivered" loads were available.
+  - Peak summer/winter electricity outputs are now based on Jun/July/Aug and Dec/Jan/Feb months, not HVAC heating/cooling operation.
+- Heat pump enhancements:
+  - Allows `HeatingCapacityRetention[Fraction | Temperature]` optional inputs as a more flexible alternative to `HeatingCapacity17F`.
+  - Allows `CompressorLockoutTemperature` and `BackupHeatingLockoutTemperature` as optional inputs; alternatives to `BackupHeatingSwitchoverTemperature`.
+  - Defaults for `CompressorLockoutTemperature`: 25F for dual-fuel, -20F for mini-split, 0F for all other heat pumps.
+  - Defaults for `BackupHeatingLockoutTemperature`: 50F for dual-fuel, 40F for all other heat pumps.
+  - Increased consistency between variable-speed central HP and mini-split HP models for degradation coefficients, gross SHR calculations, etc.
+- Duct enhancements:
+  - Allows modeling ducts buried in attic loose-fill insulation using `Ducts/DuctBuriedInsulationLevel`.
+  - The duct effective R-value can now be found in the ERI___Home.xml files; it accounts for exterior air film, duct shape, and buried insulation level.
+- Allows additional building air leakage inputs (ACH or CFM at user-specified house pressure, Natural CFM, Effective Leakage Area).
+- LightingGroup for garage is no longer required if the home doesn't have a garage.
+- Weather cache files (\*foo-cache.csv) are no longer used/needed.
+
+__Bugfixes__
+- Adds error-checking to ensure that SFA/MF dwelling units have at least one attached wall/ceiling/floor surface.
+- Various Manual J HVAC autosizing calculation bugfixes and improvements.
+- Ensure that ductless HVAC systems do not have a non-zero airflow defect ratio specified.
+
 ## OpenStudio-ERI v1.5.2
 
 __New Features__
@@ -22,15 +58,15 @@ __Bugfixes__
 
 __New Features__
 - Updates to OpenStudio 3.5.0/EnergyPlus 22.2.
-- Updates to newer proposed HPXML v4.0:
-  - **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
-  - **Breaking change**: `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
-  - **Breaking change**: All `Ducts` must now have a `SystemIdentifier`.
-  - **Breaking change**: Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
-  - **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
-  - **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
-  - **Breaking change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
-  - **Breaking change**: For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
+- **Breaking change**: Updates to newer proposed HPXML v4.0:
+  - Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+  - `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
+  - All `Ducts` must now have a `SystemIdentifier`.
+  - Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
+  - Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
+  - Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
+  - Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
+  - For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
 - **Breaking change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).

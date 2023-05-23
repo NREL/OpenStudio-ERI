@@ -11,8 +11,10 @@ class ERI301ValidationTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
-    @hpxml_schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @eri_validator_stron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
+    schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
+    @schema_validator = XMLValidator.get_schema_validator(schema_path)
+    @schematron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
+    @schematron_validator = XMLValidator.get_schematron_validator(@schematron_path)
 
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
@@ -24,30 +26,12 @@ class ERI301ValidationTest < MiniTest::Test
     FileUtils.rm_rf(@tmp_output_path)
   end
 
-  def test_validation_of_sample_files
-    xmls = []
-    Dir["#{@root_path}/workflow/sample_files/*.xml"].sort.each do |xml|
-      next if xml.split('/').include? 'run'
-
-      xmls << xml
-    end
-
-    xmls.each_with_index do |xml, i|
-      puts "[#{i + 1}/#{xmls.size}] Testing #{File.basename(xml)}..."
-
-      # Test validation
-      _test_schema_validation(xml, @hpxml_schema_path)
-      hpxml_doc = HPXML.new(hpxml_path: xml, building_id: 'MyBuilding').to_oga()
-      _test_schematron_validation(xml, hpxml_doc, expected_errors: []) # Ensure no errors
-    end
-    puts
-  end
-
   def test_validation_of_schematron_doc
     # Check that the schematron file is valid
 
     schematron_schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'iso-schematron.xsd'))
-    _test_schema_validation(@eri_validator_stron_path, schematron_schema_path)
+    schematron_schema_validator = XMLValidator.get_schema_validator(schematron_schema_path)
+    _test_schema_validation(@schematron_path, schematron_schema_validator)
   end
 
   def test_role_attributes_in_schematron_doc
@@ -55,10 +39,10 @@ class ERI301ValidationTest < MiniTest::Test
     puts
     puts 'Checking for correct role attributes...'
 
-    epvalidator_stron_doc = XMLHelper.parse_file(@eri_validator_stron_path)
+    schematron_doc = XMLHelper.parse_file(@schematron_path)
 
     # check that every assert element has a role attribute
-    XMLHelper.get_elements(epvalidator_stron_doc, '/sch:schema/sch:pattern/sch:rule/sch:assert').each do |assert_element|
+    XMLHelper.get_elements(schematron_doc, '/sch:schema/sch:pattern/sch:rule/sch:assert').each do |assert_element|
       assert_test = XMLHelper.get_attribute_value(assert_element, 'test').gsub('h:', '')
       role_attribute = XMLHelper.get_attribute_value(assert_element, 'role')
       if role_attribute.nil?
@@ -69,7 +53,7 @@ class ERI301ValidationTest < MiniTest::Test
     end
 
     # check that every report element has a role attribute
-    XMLHelper.get_elements(epvalidator_stron_doc, '/sch:schema/sch:pattern/sch:rule/sch:report').each do |report_element|
+    XMLHelper.get_elements(schematron_doc, '/sch:schema/sch:pattern/sch:rule/sch:report').each do |report_element|
       report_test = XMLHelper.get_attribute_value(report_element, 'test').gsub('h:', '')
       role_attribute = XMLHelper.get_attribute_value(report_element, 'role')
       if role_attribute.nil?
@@ -139,6 +123,9 @@ class ERI301ValidationTest < MiniTest::Test
         hpxml.header.iecc_eri_calculation_version = nil
         hpxml.header.zerh_calculation_version = nil
         hpxml.building_construction.residential_facility_type = bldg_type
+        if bldg_type == HPXML::ResidentialTypeApartment
+          hpxml.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
+        end
         hpxml.header.state_code = 'CO'
         zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
         hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
@@ -191,26 +178,16 @@ class ERI301ValidationTest < MiniTest::Test
 
   private
 
-  def _test_schematron_validation(hpxml_path, hpxml_doc, expected_errors: nil, expected_warnings: nil)
-    errors, warnings = XMLValidator.validate_against_schematron(hpxml_path, @eri_validator_stron_path, hpxml_doc)
-    if not expected_errors.nil?
-      _compare_errors_or_warnings('error', errors, expected_errors)
-    end
-    if not expected_warnings.nil?
-      _compare_errors_or_warnings('warning', warnings, expected_warnings)
-    end
-  end
-
-  def _test_schema_validation(hpxml_path, schema_path)
-    errors, _warnings = XMLValidator.validate_against_schema(hpxml_path, schema_path)
+  def _test_schema_validation(hpxml_path, schema_validator)
+    errors, _warnings = XMLValidator.validate_against_schema(hpxml_path, schema_validator)
     if errors.size > 0
       flunk "#{hpxml_path}: #{errors}"
     end
   end
 
   def _test_schema_and_schematron_validation(hpxml_path, hpxml_doc, expected_errors: nil, expected_warnings: nil)
-    sct_errors, sct_warnings = XMLValidator.validate_against_schematron(hpxml_path, @eri_validator_stron_path, hpxml_doc)
-    xsd_errors, xsd_warnings = XMLValidator.validate_against_schema(hpxml_path, @hpxml_schema_path)
+    sct_errors, sct_warnings = XMLValidator.validate_against_schematron(hpxml_path, @schematron_validator, hpxml_doc)
+    xsd_errors, xsd_warnings = XMLValidator.validate_against_schema(hpxml_path, @schema_validator)
     if not expected_errors.nil?
       _compare_errors_or_warnings('error', sct_errors + xsd_errors, expected_errors)
     end

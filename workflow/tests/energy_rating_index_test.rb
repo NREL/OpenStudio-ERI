@@ -63,21 +63,6 @@ class EnergyRatingIndexTest < Minitest::Test
     puts "Wrote results to #{test_results_csv}."
   end
 
-  def test_weather_cache
-    # Move existing -cache.csv file
-    weather_dir = File.join(File.dirname(__FILE__), '..', '..', 'weather')
-    cache_csv = File.join(weather_dir, 'USA_CO_Denver.Intl.AP.725650_TMY3-cache.csv')
-    FileUtils.mv(cache_csv, "#{cache_csv}.bak")
-
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), '..', 'energy_rating_index.rb')}\" --cache-weather"
-    system(command)
-
-    assert(File.exist?(cache_csv))
-
-    # Restore original and cleanup
-    FileUtils.mv("#{cache_csv}.bak", cache_csv)
-  end
-
   def test_timeseries_output
     { 'hourly' => 8760,
       'daily' => 365,

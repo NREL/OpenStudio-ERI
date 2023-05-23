@@ -14,6 +14,9 @@ def create_test_hpxmls
   FileUtils.rm_f(Dir.glob('workflow/tests/RESNET_Tests/4.1_Standard_140/*.xml'))
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/tests/ASHRAE_Standard_140/*.xml'), 'workflow/tests/RESNET_Tests/4.1_Standard_140')
 
+  schema_path = File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+  schema_validator = XMLValidator.get_schema_validator(schema_path)
+
   # Hash of HPXML -> Parent HPXML
   hpxmls_files = {
     # These are read from OS-HPXML files
@@ -168,7 +171,7 @@ def create_test_hpxmls
       hpxml = HPXML.new
       hpxml_files.each do |hpxml_file|
         if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
-          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file), collapse_enclosure: false)
+          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file))
           next
         end
         set_hpxml_header(hpxml_file, hpxml, orig_parent)
@@ -216,8 +219,7 @@ def create_test_hpxmls
       XMLHelper.write_file(hpxml_doc, hpxml_path)
 
       # Validate file against HPXML schema
-      xsd_path = File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-      errors, _ = XMLValidator.validate_against_schema(hpxml_path, xsd_path)
+      errors, _warnings = XMLValidator.validate_against_schema(hpxml_path, schema_validator)
       if errors.size > 0
         fail errors.to_s
       end
@@ -255,7 +257,7 @@ def create_test_hpxmls
 end
 
 def get_standard_140_hpxml(hpxml_path)
-  hpxml = HPXML.new(hpxml_path: hpxml_path, collapse_enclosure: false)
+  hpxml = HPXML.new(hpxml_path: hpxml_path)
 
   return hpxml
 end
@@ -2345,6 +2347,7 @@ def create_sample_hpxmls
                   'base-atticroof-unvented-insulated-roof.xml',
                   'base-atticroof-vented.xml',
                   # 'base-battery.xml',
+                  'base-bldgtype-attached.xml',
                   'base-bldgtype-multifamily.xml',
                   'base-bldgtype-multifamily-adjacent-to-multiple.xml',
                   'base-bldgtype-multifamily-shared-boiler-only-baseboard.xml',
@@ -2365,7 +2368,6 @@ def create_sample_hpxmls
                   'base-bldgtype-multifamily-shared-pv.xml',
                   'base-bldgtype-multifamily-shared-water-heater.xml',
                   'base-bldgtype-multifamily-shared-water-heater-recirc.xml',
-                  'base-bldgtype-single-family-attached.xml',
                   'base-dhw-combi-tankless.xml',
                   'base-dhw-desuperheater.xml',
                   'base-dhw-dwhr.xml',
@@ -2394,8 +2396,12 @@ def create_sample_hpxmls
                   'base-enclosure-beds-4.xml',
                   'base-enclosure-beds-5.xml',
                   'base-enclosure-garage.xml',
+                  'base-enclosure-infil-ach-house-pressure.xml',
                   'base-enclosure-infil-cfm50.xml',
+                  'base-enclosure-infil-cfm-house-pressure.xml',
+                  'base-enclosure-infil-ela.xml',
                   'base-enclosure-infil-natural-ach.xml',
+                  'base-enclosure-infil-natural-cfm.xml',
                   'base-enclosure-overhangs.xml',
                   'base-enclosure-skylights.xml',
                   'base-foundation-ambient.xml',
@@ -2413,6 +2419,7 @@ def create_sample_hpxmls
                   'base-hvac-air-to-air-heat-pump-1-speed.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml',
+                  'base-hvac-air-to-air-heat-pump-1-speed-lockout-temperatures.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-seer2-hspf2.xml',
                   'base-hvac-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-air-to-air-heat-pump-var-speed.xml',
@@ -2427,8 +2434,9 @@ def create_sample_hpxmls
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dse.xml',
                   'base-hvac-ducts-leakage-cfm50.xml',
+                  'base-hvac-ducts-buried.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',
-                  'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-electric.xml',
+                  'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-lockout-temperatures.xml',
                   'base-hvac-elec-resistance-only.xml',
                   'base-hvac-evap-cooler-only.xml',
                   'base-hvac-evap-cooler-only-ducted.xml',
@@ -2510,6 +2518,7 @@ def create_sample_hpxmls
     # Handle different inputs for ERI
 
     hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.co2index_calculation_version = 'latest'
     hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.header.timestep = nil
@@ -2520,10 +2529,12 @@ def create_sample_hpxmls
     hpxml.site.orientation_of_front_of_home = nil
     hpxml.site.azimuth_of_front_of_home = nil
     hpxml.site.ground_conductivity = nil
-    hpxml.building_occupancy.number_of_residents = nil
     hpxml.building_construction.number_of_bathrooms = nil
     hpxml.building_construction.conditioned_building_volume = nil
     hpxml.building_construction.average_ceiling_height = nil
+    hpxml.air_infiltration_measurements.each do |measurement|
+      measurement.infiltration_type = nil
+    end
     hpxml.attics.each do |attic|
       if [HPXML::AtticTypeVented,
           HPXML::AtticTypeUnvented].include? attic.attic_type
@@ -2610,7 +2621,7 @@ def create_sample_hpxmls
     if not hpxml.clothes_washers.empty?
       if hpxml.clothes_washers[0].is_shared_appliance
         hpxml.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
-        hpxml.clothes_washers[0].number_of_units = 2
+        hpxml.clothes_washers[0].count = 2
       else
         hpxml.clothes_washers[0].is_shared_appliance = false
       end
@@ -2618,7 +2629,7 @@ def create_sample_hpxmls
     if not hpxml.clothes_dryers.empty?
       if hpxml.clothes_dryers[0].is_shared_appliance
         hpxml.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
-        hpxml.clothes_dryers[0].number_of_units = 2
+        hpxml.clothes_dryers[0].count = 2
       else
         hpxml.clothes_dryers[0].is_shared_appliance = false
       end
@@ -2629,6 +2640,7 @@ def create_sample_hpxmls
       end
     end
     hpxml.ventilation_fans.each do |ventilation_fan|
+      ventilation_fan.count = nil
       next unless ventilation_fan.used_for_whole_building_ventilation
 
       ventilation_fan.is_shared_system = false if ventilation_fan.is_shared_system.nil?
@@ -2652,6 +2664,12 @@ def create_sample_hpxmls
           ventilation_fan.hours_in_operation = 24.0
         end
       end
+    end
+    hpxml.ventilation_fans.reverse_each do |ventilation_fan|
+      next if ventilation_fan.used_for_whole_building_ventilation
+      next if ventilation_fan.used_for_seasonal_cooling_load_reduction
+
+      ventilation_fan.delete
     end
     hpxml.plug_loads.clear
     hpxml.fuel_loads.clear
@@ -2841,16 +2859,26 @@ def create_sample_hpxmls
   Constants.ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.eri_calculation_version = eri_version
+    hpxml.header.co2index_calculation_version = nil
     hpxml.header.iecc_eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     hpxml.header.zerh_calculation_version = nil
-
     if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
       # Need old input for clothes dryers
       hpxml.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
     end
-
     XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
+  end
+
+  # Older CO2 Index versions
+  Constants.ERIVersions.select { |v| Constants.ERIVersions.index(v) >= Constants.ERIVersions.index('2019ABCD') }.each do |co2_version|
+    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+    hpxml.header.co2index_calculation_version = co2_version
+    hpxml.header.eri_calculation_version = nil
+    hpxml.header.iecc_eri_calculation_version = nil
+    hpxml.header.energystar_calculation_version = nil
+    hpxml.header.zerh_calculation_version = nil
+    XMLHelper.write_file(hpxml.to_oga, "workflow/sample_files/base-version-co2-#{co2_version}.xml")
   end
 
   # All IECC versions
@@ -2858,6 +2886,7 @@ def create_sample_hpxmls
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.iecc_eri_calculation_version = iecc_version
     hpxml.header.eri_calculation_version = nil
+    hpxml.header.co2index_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     hpxml.header.zerh_calculation_version = nil
     zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone

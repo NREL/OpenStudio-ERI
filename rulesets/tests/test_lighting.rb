@@ -11,6 +11,12 @@ class ERILightingTest < MiniTest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @output_dir = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
+    schema_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+    @schema_validator = XMLValidator.get_schema_validator(schema_path)
+    epvalidator_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    @epvalidator = OpenStudio::XMLValidator.new(epvalidator_path)
+    erivalidator_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
+    @erivalidator = OpenStudio::XMLValidator.new(erivalidator_path)
   end
 
   def teardown
@@ -19,18 +25,18 @@ class ERILightingTest < MiniTest::Test
   end
 
   def test_lighting
-    hpxml_name = 'base.xml'
+    hpxml_name = 'base-enclosure-garage.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
+        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       end
     end
   end
@@ -41,13 +47,13 @@ class ERILightingTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
+        _check_lighting(hpxml, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75)
+        _check_lighting(hpxml, f_int_cfl: 0.75, f_ext_cfl: 0.75, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_lighting(hpxml, f_int_cfl: 0.1)
+        _check_lighting(hpxml, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       end
     end
   end
@@ -62,16 +68,16 @@ class ERILightingTest < MiniTest::Test
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, count: 4)
       else
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 4)
       end
     end
 
     # Test w/ 301-2019 and Nfans < Nbr + 1
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.ceiling_fans[0].quantity = 3
+    hpxml.ceiling_fans[0].count = 3
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
@@ -83,16 +89,16 @@ class ERILightingTest < MiniTest::Test
     # Test w/ 301-2014 and Nfans < Nbr + 1
     hpxml_name = _change_eri_version('base-lighting-ceiling-fans.xml', '2014')
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.ceiling_fans[0].quantity = 3
+    hpxml.ceiling_fans[0].count = 3
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, count: 4)
       else
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 4)
       end
     end
 
@@ -100,18 +106,18 @@ class ERILightingTest < MiniTest::Test
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml.building_construction.number_of_bedrooms = 5
-    hpxml.ceiling_fans[0].quantity = 6
+    hpxml.ceiling_fans[0].count = 6
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 6)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 6)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, quantity: 6)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 30.0, count: 6)
       else
-        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, quantity: 4)
+        _check_ceiling_fans(hpxml, cfm_per_w: 3000.0 / 42.6, count: 4)
       end
     end
   end
@@ -122,7 +128,7 @@ class ERILightingTest < MiniTest::Test
                           output_dir: @output_dir)]
 
     hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs)
+    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -132,17 +138,26 @@ class ERILightingTest < MiniTest::Test
     assert_equal(true, success)
 
     # validate against OS-HPXML schematron
-    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
-    validator = OpenStudio::XMLValidator.new(schematron_path)
-    assert_equal(true, validator.validate(designs[0].hpxml_output_path))
+    assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
     @results_path = File.dirname(designs[0].hpxml_output_path)
 
     return hpxml
   end
 
-  def _check_lighting(hpxml, f_int_cfl: 0, f_ext_cfl: 0, f_grg_cfl: 0, f_int_lfl: 0,
-                      f_ext_lfl: 0, f_grg_lfl: 0, f_int_led: 0, f_ext_led: 0, f_grg_led: 0)
-    assert_equal(9, hpxml.lighting_groups.size)
+  def _check_lighting(hpxml, f_int_cfl: nil, f_ext_cfl: nil, f_grg_cfl: nil, f_int_lfl: nil,
+                      f_ext_lfl: nil, f_grg_lfl: nil, f_int_led: nil, f_ext_led: nil, f_grg_led: nil)
+    n_grps = 0
+    n_grps += 1 unless f_int_cfl.nil?
+    n_grps += 1 unless f_ext_cfl.nil?
+    n_grps += 1 unless f_grg_cfl.nil?
+    n_grps += 1 unless f_int_lfl.nil?
+    n_grps += 1 unless f_ext_lfl.nil?
+    n_grps += 1 unless f_grg_lfl.nil?
+    n_grps += 1 unless f_int_led.nil?
+    n_grps += 1 unless f_ext_led.nil?
+    n_grps += 1 unless f_grg_led.nil?
+    assert_equal(n_grps, hpxml.lighting_groups.size)
+
     hpxml.lighting_groups.each do |lg|
       assert([HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? lg.lighting_type)
       assert([HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? lg.location)
@@ -169,8 +184,8 @@ class ERILightingTest < MiniTest::Test
     end
   end
 
-  def _check_ceiling_fans(hpxml, cfm_per_w: nil, quantity: nil)
-    if cfm_per_w.nil? && quantity.nil?
+  def _check_ceiling_fans(hpxml, cfm_per_w: nil, count: nil)
+    if cfm_per_w.nil? && count.nil?
       assert_equal(0, hpxml.ceiling_fans.size)
       assert_nil(hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
     else
@@ -181,10 +196,10 @@ class ERILightingTest < MiniTest::Test
       else
         assert_equal(cfm_per_w, ceiling_fan.efficiency)
       end
-      if quantity.nil?
-        assert_nil(ceiling_fan.quantity)
+      if count.nil?
+        assert_nil(ceiling_fan.count)
       else
-        assert_equal(quantity, ceiling_fan.quantity)
+        assert_equal(count, ceiling_fan.count)
       end
       assert_equal(0.5, hpxml.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
     end
