@@ -79,7 +79,7 @@ def calc_renewable_energy_limit(eri_outputs, program_version)
   if ['2021'].include? program_version
     # For compliance purposes, any reduction in energy use of the rated design associated with
     # on-site renewable energy shall not exceed 5 percent of the total energy use.
-    return 0.05 * eri_outputs[Constants.CalcTypeERIRatedHome]['Energy Use: Total (MBtu)']
+    return 0.05 * eri_outputs[Constants.CalcTypeERIRatedHome]['Energy Use: Total']
   else
     return
   end

@@ -28,6 +28,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   xml = File.absolute_path(xml)
   hpxml_doc = XMLHelper.parse_file(xml)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
+  co2_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/CO2IndexCalculation/Version', :string)
   iecc_eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
   es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
   zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
@@ -75,8 +76,10 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
         csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
         csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
       end
-      if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv')
-        hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
+    end
+    if not co2_version.nil?
+      hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
+      if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv') # Some HPXMLs (e.g., in AK/HI or with wood fuel) won't produce a CO2 Index
         csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
       end
     end
@@ -385,15 +388,15 @@ end
 def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
   results = _get_csv_results([csv_path])
   if not is_heat
-    hvac = UnitConversions.convert(results['End Use: Electricity: Cooling (MBtu)'], 'MBtu', 'kwh').round(2)
-    hvac_fan = UnitConversions.convert(results['End Use: Electricity: Cooling Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
+    hvac = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::Cooling} (MBtu)"], 'MBtu', 'kwh').round(2)
+    hvac_fan = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::CoolingFanPump} (MBtu)"], 'MBtu', 'kwh').round(2)
   else
     if is_electric_heat
-      hvac = UnitConversions.convert(results['End Use: Electricity: Heating (MBtu)'], 'MBtu', 'kwh').round(2)
+      hvac = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::Heating} (MBtu)"], 'MBtu', 'kwh').round(2)
     else
-      hvac = UnitConversions.convert(results['End Use: Natural Gas: Heating (MBtu)'], 'MBtu', 'therm').round(2)
+      hvac = UnitConversions.convert(results["End Use: #{FT::Gas}: #{EUT::Heating} (MBtu)"], 'MBtu', 'therm').round(2)
     end
-    hvac_fan = UnitConversions.convert(results['End Use: Electricity: Heating Fans/Pumps (MBtu)'], 'MBtu', 'kwh').round(2)
+    hvac_fan = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::HeatingFanPump} (MBtu)"], 'MBtu', 'kwh').round(2)
   end
 
   assert_operator(hvac, :>, 0)
@@ -1122,7 +1125,7 @@ def _get_internal_gains(hpxml)
 
   # Plug loads
   hpxml.plug_loads.each do |plug_load|
-    btu = UnitConversions.convert(plug_load.kWh_per_year, 'kWh', 'Btu')
+    btu = UnitConversions.convert(plug_load.kwh_per_year, 'kWh', 'Btu')
     xml_pl_sens += (plug_load.frac_sensible * btu)
     xml_pl_lat += (plug_load.frac_latent * btu)
     s += "#{xml_pl_sens} #{xml_pl_lat}\n"
@@ -1182,36 +1185,31 @@ def _get_internal_gains(hpxml)
   xml_occ_sens = 0.0
   xml_occ_lat = 0.0
   heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
-  btu = hpxml.building_occupancy.number_of_residents * heat_gain * hrs_per_day * 365.0
+  btu = nbeds * heat_gain * hrs_per_day * 365.0
   xml_occ_sens += (frac_sens * btu)
   xml_occ_lat += (frac_lat * btu)
   s += "#{xml_occ_sens} #{xml_occ_lat}\n"
 
   # Lighting
   xml_ltg_sens = 0.0
-  f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led = nil
+  f_int_cfl, f_grg_cfl, f_int_lfl, f_grg_lfl, f_int_led, f_grg_led = nil
   hpxml.lighting_groups.each do |lg|
     if (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationInterior)
       f_int_cfl = lg.fraction_of_units_in_location
-    elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationExterior)
-      f_ext_cfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationGarage)
       f_grg_cfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationInterior)
       f_int_lfl = lg.fraction_of_units_in_location
-    elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationExterior)
-      f_ext_lfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLFL) && (lg.location == HPXML::LocationGarage)
       f_grg_lfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationInterior)
       f_int_led = lg.fraction_of_units_in_location
-    elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationExterior)
-      f_ext_led = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeLED) && (lg.location == HPXML::LocationGarage)
       f_grg_led = lg.fraction_of_units_in_location
     end
   end
-  int_kwh, _ext_kwh, grg_kwh = Lighting.calc_energy(eri_version, cfa, gfa, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
+  int_kwh = Lighting.calc_interior_energy(eri_version, cfa, f_int_cfl, f_int_lfl, f_int_led)
+  grg_kwh = Lighting.calc_garage_energy(eri_version, gfa, f_grg_cfl, f_grg_lfl, f_grg_led)
   xml_ltg_sens += UnitConversions.convert(int_kwh + grg_kwh, 'kWh', 'Btu')
   s += "#{xml_ltg_sens}\n"
 
@@ -1416,9 +1414,10 @@ def _get_hot_water(results_csv)
   CSV.foreach(results_csv) do |row|
     next if row.nil? || row[0].nil?
 
-    if ['End Use: Electricity: Hot Water (MBtu)', 'End Use: Natural Gas: Hot Water (MBtu)'].include? row[0]
+    if ["End Use: #{FT::Gas}: #{EUT::HotWater} (MBtu)",
+        "End Use: #{FT::Elec}: #{EUT::HotWater} (MBtu)"].include? row[0]
       rated_dhw = Float(row[1]).round(2)
-    elsif row[0] == 'End Use: Electricity: Hot Water Recirc Pump (MBtu)'
+    elsif row[0] == "End Use: #{FT::Elec}: #{EUT::HotWaterRecircPump} (MBtu)"
       rated_recirc = Float(row[1]).round(2)
     elsif row[0].start_with?('Hot Water:') && row[0].include?('(gal)')
       rated_gpd += (Float(row[1]) / 365.0).round

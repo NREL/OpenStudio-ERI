@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <CO2IndexCalculation>
+        <Version>latest</Version>
+      </CO2IndexCalculation>
       <EnergyStarCalculation>
         <Version>MF_National_1.2</Version>
       </EnergyStarCalculation>
@@ -28,7 +31,7 @@
       <SiteID id='Site'/>
       <Address>
         <StateCode>NY</StateCode>
-        <ZipCode>00000</ZipCode>
+        <ZipCode>10001</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -349,7 +352,7 @@
       <Appliances>
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
-          <NumberofUnits>2</NumberofUnits>
+          <Count>2</Count>
           <IsSharedAppliance>true</IsSharedAppliance>
           <NumberofUnitsServed>25</NumberofUnitsServed>
           <AttachedToWaterHeatingSystem idref='WaterHeatingSystem1'/>
@@ -364,7 +367,7 @@
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
-          <NumberofUnits>2</NumberofUnits>
+          <Count>2</Count>
           <IsSharedAppliance>true</IsSharedAppliance>
           <NumberofUnitsServed>25</NumberofUnitsServed>
           <Location>other housing unit</Location>

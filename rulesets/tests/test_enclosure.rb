@@ -11,6 +11,12 @@ class ERIEnclosureTest < MiniTest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @output_dir = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
+    schema_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+    @schema_validator = XMLValidator.get_schema_validator(schema_path)
+    epvalidator_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    @epvalidator = OpenStudio::XMLValidator.new(epvalidator_path)
+    erivalidator_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
+    @erivalidator = OpenStudio::XMLValidator.new(erivalidator_path)
   end
 
   def teardown
@@ -983,33 +989,20 @@ class ERIEnclosureTest < MiniTest::Test
       end
     end
 
-    # Test MF unit w/ exterior door
-    hpxml_name = 'base-bldgtype-multifamily.xml'
+    # Test MF unit w/ exterior and interior doors
+    hpxml_name = 'base-bldgtype-multifamily-adjacent-to-multiple.xml'
 
     _all_calc_types.each do |calc_type|
       hpxml = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 180 => { area: 20, rvalue: 4.4 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
+        _check_doors(hpxml, values_by_azimuth: { 0 => { area: 10, rvalue: 2.86 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_doors(hpxml, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
       end
-    end
-
-    # Test MF unit w/ interior door
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml.doors.each do |door|
-      door.wall_idref = hpxml.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id
-    end
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-
-    _all_calc_types.each do |calc_type|
-      hpxml = _test_ruleset(hpxml_name, calc_type)
-      _check_doors(hpxml)
     end
   end
 
@@ -1109,7 +1102,7 @@ class ERIEnclosureTest < MiniTest::Test
                           output_dir: @output_dir)]
 
     hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs)
+    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -1119,9 +1112,7 @@ class ERIEnclosureTest < MiniTest::Test
     assert_equal(true, success)
 
     # validate against OS-HPXML schematron
-    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
-    validator = OpenStudio::XMLValidator.new(schematron_path)
-    assert_equal(true, validator.validate(designs[0].hpxml_output_path))
+    assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
     @results_path = File.dirname(designs[0].hpxml_output_path)
 
     return hpxml
@@ -1417,6 +1408,8 @@ class ERIEnclosureTest < MiniTest::Test
     azimuth_area_values = {}
     azimuth_rvalue_x_area_values = {} # Area-weighted
     hpxml.doors.each do |door|
+      next unless door.is_exterior_thermal_boundary
+
       # Init if needed
       azimuth_area_values[door.azimuth] = [] if azimuth_area_values[door.azimuth].nil?
       azimuth_rvalue_x_area_values[door.azimuth] = [] if azimuth_rvalue_x_area_values[door.azimuth].nil?

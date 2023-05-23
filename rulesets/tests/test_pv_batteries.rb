@@ -10,6 +10,12 @@ class ERIPVTest < MiniTest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @output_dir = File.join(@root_path, 'workflow', 'sample_files')
+    schema_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+    @schema_validator = XMLValidator.get_schema_validator(schema_path)
+    epvalidator_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    @epvalidator = OpenStudio::XMLValidator.new(epvalidator_path)
+    erivalidator_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
+    @erivalidator = OpenStudio::XMLValidator.new(erivalidator_path)
   end
 
   def teardown
@@ -63,7 +69,7 @@ class ERIPVTest < MiniTest::Test
                           output_dir: @output_dir)]
 
     hpxml_input_path = File.join(@root_path, 'workflow', 'sample_files', hpxml_name)
-    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs)
+    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -73,9 +79,7 @@ class ERIPVTest < MiniTest::Test
     assert_equal(true, success)
 
     # validate against OS-HPXML schematron
-    schematron_path = File.join(File.dirname(__FILE__), '..', '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
-    validator = OpenStudio::XMLValidator.new(schematron_path)
-    assert_equal(true, validator.validate(designs[0].hpxml_output_path))
+    assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
     @results_path = File.dirname(designs[0].hpxml_output_path)
 
     return hpxml
@@ -92,7 +96,7 @@ class ERIPVTest < MiniTest::Test
       assert_equal(expected_values[:azimuth], pv_system.array_azimuth)
       assert_equal(expected_values[:tilt], pv_system.array_tilt)
       assert_equal(expected_values[:power], pv_system.max_power_output.to_f)
-      assert_equal(expected_values[:inv_eff], pv_system.inverter_efficiency)
+      assert_equal(expected_values[:inv_eff], pv_system.inverter.inverter_efficiency)
       assert_equal(expected_values[:losses], pv_system.system_losses_fraction)
       if expected_values[:nbeds_served].nil?
         assert_nil(pv_system.number_of_bedrooms_served)

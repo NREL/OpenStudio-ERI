@@ -1094,7 +1094,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     new_hpxml.ceiling_fans.add(id: 'TargetCeilingFan',
                                efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
-                               quantity: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
   end
 
   def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
@@ -1557,7 +1557,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       heat_pump_backup_fuel = HPXML::FuelTypeElectricity
       heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated unless heat_pump_backup_fuel.nil?
       heat_pump_backup_eff = 1.0 unless heat_pump_backup_fuel.nil?
-      heating_capacity_17F = -1 if heating_capacity_17F.nil? # Use auto-sizing
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = HVAC.get_default_gshp_pump_power()
     end
@@ -1582,7 +1581,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                              heat_pump_fuel: HPXML::FuelTypeElectricity,
                              cooling_capacity: cooling_capacity,
                              heating_capacity: heating_capacity,
-                             heating_capacity_17F: heating_capacity_17F,
                              backup_type: heat_pump_backup_type,
                              backup_heating_fuel: heat_pump_backup_fuel,
                              backup_heating_capacity: backup_heating_capacity,
