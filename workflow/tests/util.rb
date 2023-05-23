@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'oga'
+require 'json'
+require 'json-schema'
 require_relative '../design'
 require_relative '../../rulesets/main'
 require_relative '../../rulesets/resources/constants'
@@ -24,37 +26,40 @@ def _run_ruleset(design, xml, out_xml)
 end
 
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,
-                  skip_simulation: false, rated_home_only: false)
+                  skip_simulation: false, rated_home_only: false, diagnostic_output: false)
   xml = File.absolute_path(xml)
-  hpxml_doc = XMLHelper.parse_file(xml)
-  eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
-  co2_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/CO2IndexCalculation/Version', :string)
-  iecc_eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
-  es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
-  zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
+  hpxml = HPXML.new(hpxml_path: xml)
+
+  eri_version = hpxml.header.eri_calculation_version
+  eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+  co2_version = hpxml.header.co2index_calculation_version
+  iecc_eri_version = hpxml.header.iecc_eri_calculation_version
+  es_version = hpxml.header.energystar_calculation_version
+  zerh_version = hpxml.header.zerh_calculation_version
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
-  timeseries = ''
+  flags = ''
   if timeseries_frequency != 'none'
-    timeseries = " --#{timeseries_frequency} ALL"
+    flags += " --#{timeseries_frequency} ALL"
   end
-  comploads = ''
   if component_loads
-    comploads = ' --add-component-loads'
+    flags += ' --add-component-loads'
   end
-  skipsim = ''
   if skip_simulation
-    skipsim = ' --skip-simulation'
+    flags += ' --skip-simulation'
   end
-  ratedhome = ''
   if rated_home_only
-    ratedhome = ' --rated-home-only'
+    flags += ' --rated-home-only'
+  end
+  if diagnostic_output && (not eri_version.nil?)
+    # ERI required to generate diagnostic output
+    flags += ' --diagnostic-output'
   end
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o \"#{rundir}\" --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --debug"
   system(command)
 
   hpxmls = {}
@@ -166,6 +171,27 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     csvs.values.each do |csv_path|
       puts "Did not find #{csv_path}" unless File.exist?(csv_path)
       assert(File.exist?(csv_path))
+    end
+  end
+  if diagnostic_output && (not eri_version.nil?) && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
+    diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
+    puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
+    assert(File.exist?(diag_output_path))
+
+    # FIXME: Temporarily skip validation on files w/ dehumidifiers
+    if hpxml.dehumidifiers.empty?
+      # Validate JSON
+      valid = true
+      schema_dir = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', 'hers_diagnostic_output')
+      begin
+        json_schema_path = File.join(schema_dir, 'HERSDiagnosticOutput.schema.json')
+        JSON::Validator.validate!(json_schema_path, JSON.parse(File.read(diag_output_path)))
+      rescue JSON::Schema::ValidationError => e
+        valid = false
+        puts "HERS diagnostic output file did not validate: #{diag_output_path}."
+        puts e.message
+      end
+      assert(valid)
     end
   end
 
