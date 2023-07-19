@@ -364,7 +364,11 @@ def _test_resnet_hers_method(test_name, dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
     all_results[xml] = _get_csv_results([csvs[:eri_results]])
-    all_results[xml].delete('EC_x Dehumid (MBtu)') # Not yet included in RESNET spreadsheet
+
+    # Temporary until these are included in the RESNET spreadsheet
+    all_results[xml]['EC_x L&A (MBtu)'] += all_results[xml]['EC_x mechV (MBtu)'] + all_results[xml]['EC_x Dehumid (MBtu)']
+    all_results[xml].delete('EC_x mechV (MBtu)')
+    all_results[xml].delete('EC_x Dehumid (MBtu)')
   end
   assert(all_results.size > 0)
 
