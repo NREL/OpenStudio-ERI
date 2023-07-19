@@ -2,6 +2,7 @@
 
 __New Features__
 - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
+- Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 
 ## OpenStudio-ERI v1.6.0
 

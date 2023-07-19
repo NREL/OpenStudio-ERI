@@ -11,6 +11,8 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_configurations_hpxml`
 - :ref:`home_energyplus_files`
 
+All CSV output files can be alternatively requested in JSON format; see :ref:`running`.
+
 .. note::
 
   MBtu is defined as one million Btu.

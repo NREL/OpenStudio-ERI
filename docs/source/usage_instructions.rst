@@ -38,6 +38,9 @@ Or for example, one or more specific monthly output types can be requested, e.g.
 You can also skip simulations (i.e., just generate the ERI Reference/Rated Home HPXMLs) by using, e.g.:
 ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --skip-simulation``
 
+Or you can request all output files in JSON (instead of CSV) format:
+``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --output-format json``
+
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 
 Output
