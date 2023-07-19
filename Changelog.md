@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.7.0
+
+__New Features__
+- Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
+
 ## OpenStudio-ERI v1.6.0
 
 __New Features__
