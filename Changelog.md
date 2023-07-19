@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.7.0
+
+__New Features__
+- **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
+
 ## OpenStudio-ERI v1.6.0
 
 __New Features__

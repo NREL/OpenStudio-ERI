@@ -832,7 +832,9 @@ def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_file
   results_out << ['EC_x Heating (MBtu)', results[:eri_heat].map { |c| c.ec_x.round(2) }.join(',')]
   results_out << ['EC_x Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_x.round(2) }.join(',')]
   results_out << ['EC_x Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x L&A (MBtu)', (results[:eul_la] + results[:eul_mv] + results[:eul_dh]).round(2)]
+  results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(2)]
+  results_out << ['EC_x Vent (MBtu)', results[:eul_mv].round(2)]
+  results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(2)]
   if not results_iad.nil?
     results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
   end
