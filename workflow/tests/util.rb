@@ -24,7 +24,7 @@ def _run_ruleset(design, xml, out_xml)
 end
 
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,
-                  skip_simulation: false, rated_home_only: false)
+                  skip_simulation: false, rated_home_only: false, output_format: 'csv')
   xml = File.absolute_path(xml)
   hpxml_doc = XMLHelper.parse_file(xml)
   eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
@@ -54,33 +54,33 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o \"#{rundir}\" --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o \"#{rundir}\" --output-format #{output_format} --debug"
   system(command)
 
   hpxmls = {}
-  csvs = {}
+  outputs = {}
   if rated_home_only
     # ERI w/ Rated Home only
     hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-    csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
+    outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
   else
     if not eri_version.nil?
       # ERI
       hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
       hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-      csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
-      csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
-      csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
-      csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
+      outputs[:eri_results] = File.join(rundir, 'results', "ERI_Results.#{output_format}")
+      outputs[:eri_worksheet] = File.join(rundir, 'results', "ERI_Worksheet.#{output_format}")
+      outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
+      outputs[:ref_results] = File.join(rundir, 'results', "ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
     if not co2_version.nil?
       hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
       if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv') # Some HPXMLs (e.g., in AK/HI or with wood fuel) won't produce a CO2 Index
-        csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
+        outputs[:co2e_results] = File.join(rundir, 'results', "CO2e_Results.#{output_format}")
       end
     end
     if not es_version.nil?
@@ -95,22 +95,22 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:esrat_rated] = File.join(rundir, 'results', 'ESRated_ERIRatedHome.xml')
       hpxmls[:esrat_iad] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentDesign.xml')
       hpxmls[:esrat_iadref] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.xml')
-      csvs[:es_results] = File.join(rundir, 'results', 'ES_Results.csv')
-      csvs[:esrd_eri_results] = File.join(rundir, 'results', 'ESReference_ERI_Results.csv')
-      csvs[:esrd_eri_worksheet] = File.join(rundir, 'results', 'ESReference_ERI_Worksheet.csv')
-      csvs[:esrat_eri_results] = File.join(rundir, 'results', 'ESRated_ERI_Results.csv')
-      csvs[:esrat_eri_worksheet] = File.join(rundir, 'results', 'ESRated_ERI_Worksheet.csv')
-      csvs[:esrd_rated_results] = File.join(rundir, 'results', 'ESReference_ERIRatedHome.csv')
-      csvs[:esrd_ref_results] = File.join(rundir, 'results', 'ESReference_ERIReferenceHome.csv')
-      csvs[:esrd_iad_results] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentDesign.csv')
-      csvs[:esrd_iadref_results] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentReferenceHome.csv')
-      csvs[:esrat_rated_results] = File.join(rundir, 'results', 'ESRated_ERIRatedHome.csv')
-      csvs[:esrat_ref_results] = File.join(rundir, 'results', 'ESRated_ERIReferenceHome.csv')
-      csvs[:esrat_iad_results] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentDesign.csv')
-      csvs[:esrat_iadref_results] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.csv')
+      outputs[:es_results] = File.join(rundir, 'results', "ES_Results.#{output_format}")
+      outputs[:esrd_eri_results] = File.join(rundir, 'results', "ESReference_ERI_Results.#{output_format}")
+      outputs[:esrd_eri_worksheet] = File.join(rundir, 'results', "ESReference_ERI_Worksheet.#{output_format}")
+      outputs[:esrat_eri_results] = File.join(rundir, 'results', "ESRated_ERI_Results.#{output_format}")
+      outputs[:esrat_eri_worksheet] = File.join(rundir, 'results', "ESRated_ERI_Worksheet.#{output_format}")
+      outputs[:esrd_rated_results] = File.join(rundir, 'results', "ESReference_ERIRatedHome.#{output_format}")
+      outputs[:esrd_ref_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome.#{output_format}")
+      outputs[:esrd_iad_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:esrd_iadref_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentReferenceHome.#{output_format}")
+      outputs[:esrat_rated_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome.#{output_format}")
+      outputs[:esrat_ref_results] = File.join(rundir, 'results', "ESRated_ERIReferenceHome.#{output_format}")
+      outputs[:esrat_iad_results] = File.join(rundir, 'results', "ESRated_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:esrat_iadref_results] = File.join(rundir, 'results', "ESRated_ERIIndexAdjustmentReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
     if not zerh_version.nil?
@@ -125,34 +125,34 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:zerhrat_rated] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.xml')
       hpxmls[:zerhrat_iad] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.xml')
       hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
-      csvs[:zerh_results] = File.join(rundir, 'results', 'ZERH_Results.csv')
-      csvs[:zerhrd_eri_results] = File.join(rundir, 'results', 'ZERHReference_ERI_Results.csv')
-      csvs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', 'ZERHReference_ERI_Worksheet.csv')
-      csvs[:zerhrat_eri_results] = File.join(rundir, 'results', 'ZERHRated_ERI_Results.csv')
-      csvs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', 'ZERHRated_ERI_Worksheet.csv')
-      csvs[:zerhrd_rated_results] = File.join(rundir, 'results', 'ZERHReference_ERIRatedHome.csv')
-      csvs[:zerhrd_ref_results] = File.join(rundir, 'results', 'ZERHReference_ERIReferenceHome.csv')
-      csvs[:zerhrd_iad_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentDesign.csv')
-      csvs[:zerhrd_iadref_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentReferenceHome.csv')
-      csvs[:zerhrat_rated_results] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.csv')
-      csvs[:zerhrat_ref_results] = File.join(rundir, 'results', 'ZERHRated_ERIReferenceHome.csv')
-      csvs[:zerhrat_iad_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.csv')
-      csvs[:zerhrat_iadref_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.csv')
+      outputs[:zerh_results] = File.join(rundir, 'results', "ZERH_Results.#{output_format}")
+      outputs[:zerhrd_eri_results] = File.join(rundir, 'results', "ZERHReference_ERI_Results.#{output_format}")
+      outputs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', "ZERHReference_ERI_Worksheet.#{output_format}")
+      outputs[:zerhrat_eri_results] = File.join(rundir, 'results', "ZERHRated_ERI_Results.#{output_format}")
+      outputs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', "ZERHRated_ERI_Worksheet.#{output_format}")
+      outputs[:zerhrd_rated_results] = File.join(rundir, 'results', "ZERHReference_ERIRatedHome.#{output_format}")
+      outputs[:zerhrd_ref_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome.#{output_format}")
+      outputs[:zerhrd_iad_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:zerhrd_iadref_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentReferenceHome.#{output_format}")
+      outputs[:zerhrat_rated_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome.#{output_format}")
+      outputs[:zerhrat_ref_results] = File.join(rundir, 'results', "ZERHRated_ERIReferenceHome.#{output_format}")
+      outputs[:zerhrat_iad_results] = File.join(rundir, 'results', "ZERHRated_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:zerhrat_iadref_results] = File.join(rundir, 'results', "ZERHRated_ERIIndexAdjustmentReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:zerhrat_timeseries_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:zerhrd_timeseries_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:zerhrat_timeseries_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:zerhrd_timeseries_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
     if not iecc_eri_version.nil?
       hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
       hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
-      csvs[:iecc_eri_results] = File.join(rundir, 'results', 'IECC_ERI_Results.csv')
-      csvs[:iecc_eri_worksheet] = File.join(rundir, 'results', 'IECC_ERI_Worksheet.csv')
-      csvs[:iecc_eri_rated_results] = File.join(rundir, 'results', 'IECC_ERIRatedHome.csv')
-      csvs[:iecc_eri_ref_results] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.csv')
+      outputs[:iecc_eri_results] = File.join(rundir, 'results', "IECC_ERI_Results.#{output_format}")
+      outputs[:iecc_eri_worksheet] = File.join(rundir, 'results', "IECC_ERI_Worksheet.#{output_format}")
+      outputs[:iecc_eri_rated_results] = File.join(rundir, 'results', "IECC_ERIRatedHome.#{output_format}")
+      outputs[:iecc_eri_ref_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECC_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECC_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
   end
@@ -163,9 +163,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     assert(File.exist?(hpxml_path))
   end
   if not skip_simulation
-    csvs.values.each do |csv_path|
-      puts "Did not find #{csv_path}" unless File.exist?(csv_path)
-      assert(File.exist?(csv_path))
+    outputs.values.each do |output_path|
+      puts "Did not find #{output_path}" unless File.exist?(output_path)
+      assert(File.exist?(output_path))
     end
   end
 
@@ -180,7 +180,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     end
   end
 
-  return rundir, hpxmls, csvs
+  return rundir, hpxmls, outputs
 end
 
 def _run_simulation(xml, test_name)
