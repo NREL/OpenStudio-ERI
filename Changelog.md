@@ -39,6 +39,7 @@ __Bugfixes__
 - Adds error-checking to ensure that SFA/MF dwelling units have at least one attached wall/ceiling/floor surface.
 - Various Manual J HVAC autosizing calculation bugfixes and improvements.
 - Ensure that ductless HVAC systems do not have a non-zero airflow defect ratio specified.
+- ZERH Single Family v2 uses ASRE instead of SRE for mechanical ventilation fans.
 
 ## OpenStudio-ERI v1.5.2
 
