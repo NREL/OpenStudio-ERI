@@ -7,7 +7,7 @@ require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator.rb'
 
-class ERI301ValidationTest < MiniTest::Test
+class ERI301ValidationTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
