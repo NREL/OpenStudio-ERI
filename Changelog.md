@@ -5,7 +5,7 @@ __New Features__
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 
 __Bugfixes__
-- ZERH Single Family v2 should use ASRE instead of SRE for mechanical ventilation fans.
+- ZERH Single Family v2 and Multifamily v2 should use ASRE instead of SRE for mechanical ventilation fans.
 
 ## OpenStudio-ERI v1.6.0
 
