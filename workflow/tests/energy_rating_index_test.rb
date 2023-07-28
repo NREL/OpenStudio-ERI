@@ -85,6 +85,18 @@ class EnergyRatingIndexTest < Minitest::Test
     end
   end
 
+  def test_json_output
+    test_name = 'json_output'
+
+    # Run ERI workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base.xml"
+    rundir, _hpxmls, _outputs = _run_workflow(xml, test_name, timeseries_frequency: 'monthly', output_format: 'json')
+
+    # Check for only JSON files, no CSV files, in the output dir
+    assert_equal(67, Dir["#{rundir}/results/*.json"].size)
+    assert_equal(0, Dir["#{rundir}/results/*.csv"].size)
+  end
+
   def test_component_loads
     test_name = 'component_loads'
 
