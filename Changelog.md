@@ -4,6 +4,9 @@ __New Features__
 - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 
+__Bugfixes__
+- ZERH Single Family v2 should use ASRE instead of SRE for mechanical ventilation fans.
+
 ## OpenStudio-ERI v1.6.0
 
 __New Features__
@@ -39,7 +42,6 @@ __Bugfixes__
 - Adds error-checking to ensure that SFA/MF dwelling units have at least one attached wall/ceiling/floor surface.
 - Various Manual J HVAC autosizing calculation bugfixes and improvements.
 - Ensure that ductless HVAC systems do not have a non-zero airflow defect ratio specified.
-- ZERH Single Family v2 uses ASRE instead of SRE for mechanical ventilation fans.
 
 ## OpenStudio-ERI v1.5.2
 
