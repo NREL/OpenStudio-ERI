@@ -796,6 +796,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fan_type = lookup_reference_value('mechanical_ventilation_fan_type')
     fan_cfm_per_w = lookup_reference_value('mechanical_ventilation_fan_cfm_per_w')
     fan_sre = lookup_reference_value('mechanical_ventilation_fan_sre')
+    fan_asre = lookup_reference_value('mechanical_ventilation_fan_asre')
     fan_power_w = fan_cfm / fan_cfm_per_w
 
     new_hpxml.ventilation_fans.add(id: 'TargetVentilationFan',
@@ -805,6 +806,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                    hours_in_operation: 24,
                                    fan_power: fan_power_w.round(3),
                                    sensible_recovery_efficiency: fan_sre,
+                                   sensible_recovery_efficiency_adjusted: fan_asre,
                                    used_for_whole_building_ventilation: true)
   end
 
