@@ -2553,6 +2553,8 @@ def create_sample_hpxmls
     end
     hpxml.roofs.each do |roof|
       roof.roof_type = nil
+      roof.interior_finish_type = nil
+      roof.interior_finish_thickness = nil
     end
     hpxml.rim_joists.each do |rim_joist|
       rim_joist.siding = nil
@@ -2561,6 +2563,7 @@ def create_sample_hpxmls
     end
     hpxml.walls.each do |wall|
       wall.siding = nil
+      wall.attic_wall_type = nil
       wall.interior_finish_type = nil
       wall.interior_finish_thickness = nil
       wall.color = nil
