@@ -4,8 +4,10 @@ __New Features__
 - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 
+## OpenStudio-ERI v1.6.1
+
 __Bugfixes__
-- ZERH Single Family v2 should use ASRE instead of SRE for mechanical ventilation fans.
+- Fixes ZERH Single Family v2 mechanical ventilation fan efficiency to use ASRE instead of SRE.
 - Fixes error if describing a wall with `WallType/StructuralInsulatedPanel`.
 
 ## OpenStudio-ERI v1.6.0
