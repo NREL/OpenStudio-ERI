@@ -162,7 +162,6 @@
             <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
-            <AtticWallType>gable</AtticWallType>
             <WallType>
               <WoodStud/>
             </WallType>
