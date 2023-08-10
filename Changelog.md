@@ -1,3 +1,9 @@
+## OpenStudio-ERI v1.6.1
+
+__Bugfixes__
+- Fixes ZERH Single Family v2 mechanical ventilation fan efficiency to use ASRE instead of SRE.
+- Fixes error if describing a wall with `WallType/StructuralInsulatedPanel`.
+
 ## OpenStudio-ERI v1.6.0
 
 __New Features__
