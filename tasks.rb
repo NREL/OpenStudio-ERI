@@ -2395,6 +2395,8 @@ def create_sample_hpxmls
                   'base-enclosure-beds-2.xml',
                   'base-enclosure-beds-4.xml',
                   'base-enclosure-beds-5.xml',
+                  'base-enclosure-ceilingtypes.xml',
+                  'base-enclosure-floortypes.xml',
                   'base-enclosure-garage.xml',
                   'base-enclosure-infil-ach-house-pressure.xml',
                   'base-enclosure-infil-cfm50.xml',
@@ -2404,6 +2406,7 @@ def create_sample_hpxmls
                   'base-enclosure-infil-natural-cfm.xml',
                   'base-enclosure-overhangs.xml',
                   'base-enclosure-skylights.xml',
+                  'base-enclosure-walltypes.xml',
                   'base-foundation-ambient.xml',
                   'base-foundation-basement-garage.xml',
                   'base-foundation-conditioned-basement-slab-insulation.xml',
@@ -2553,11 +2556,15 @@ def create_sample_hpxmls
     end
     hpxml.rim_joists.each do |rim_joist|
       rim_joist.siding = nil
+      rim_joist.color = nil
+      rim_joist.solar_absorptance = 0.7 if rim_joist.solar_absorptance.nil?
     end
     hpxml.walls.each do |wall|
       wall.siding = nil
       wall.interior_finish_type = nil
       wall.interior_finish_thickness = nil
+      wall.color = nil
+      wall.solar_absorptance = 0.7 if wall.solar_absorptance.nil?
     end
     hpxml.floors.each do |floor|
       floor.interior_finish_type = nil
