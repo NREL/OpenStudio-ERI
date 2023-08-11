@@ -1150,22 +1150,22 @@ class ERIEnclosureTest < Minitest::Test
     if area.nil?
       assert(area_values.empty?)
     else
-      assert_in_epsilon(area, area_values.inject(:+), 0.01)
+      assert_in_epsilon(area, area_values.sum, 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+      assert_in_epsilon(sabs, sabs_x_area_values.sum / area_values.sum, 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+      assert_in_epsilon(emit, emit_x_area_values.sum / area_values.sum, 0.01)
     end
   end
 
@@ -1180,10 +1180,10 @@ class ERIEnclosureTest < Minitest::Test
       sabs_x_area_values << wall.solar_absorptance * wall.area
       emit_x_area_values << wall.emittance * wall.area
     end
-    assert_in_epsilon(area, area_values.inject(:+), 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(area, area_values.sum, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(sabs, sabs_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(emit, emit_x_area_values.sum / area_values.sum, 0.01)
   end
 
   def _check_rim_joists(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil)
@@ -1201,22 +1201,22 @@ class ERIEnclosureTest < Minitest::Test
     if area.nil?
       assert(area_values.empty?)
     else
-      assert_in_epsilon(area, area_values.inject(:+), 0.01)
+      assert_in_epsilon(area, area_values.sum, 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+      assert_in_epsilon(sabs, sabs_x_area_values.sum / area_values.sum, 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+      assert_in_epsilon(emit, emit_x_area_values.sum / area_values.sum, 0.01)
     end
   end
 
@@ -1253,12 +1253,12 @@ class ERIEnclosureTest < Minitest::Test
       end
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(ins_top, ins_top_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(height, height_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(depth_bg, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(area, area_values.sum, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(ins_top, ins_top_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(height, height_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(depth_bg, depth_bg_x_area_values.sum / area_values.sum, 0.01)
   end
 
   def _check_ceilings(hpxml, area:, rvalue:, floor_type: HPXML::FloorTypeWoodFrame)
@@ -1272,8 +1272,8 @@ class ERIEnclosureTest < Minitest::Test
       assert_equal(floor_type, floor.floor_type)
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(area, area_values.sum, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
   end
 
   def _check_floors(hpxml, area:, rvalue:, floor_type: HPXML::FloorTypeWoodFrame)
@@ -1287,8 +1287,8 @@ class ERIEnclosureTest < Minitest::Test
       assert_equal(floor_type, floor.floor_type)
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(area, area_values.sum, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
   end
 
   def _check_slabs(hpxml, area:, exp_perim:, perim_ins_depth: 0, perim_ins_r: 0, under_ins_width: 0,
@@ -1316,16 +1316,16 @@ class ERIEnclosureTest < Minitest::Test
       end
     end
 
-    assert_in_epsilon(area, area_values.inject(:+), 0.01)
-    assert_in_epsilon(exp_perim, exp_perim_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
-    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+    assert_in_epsilon(area, area_values.sum, 0.01)
+    assert_in_epsilon(exp_perim, exp_perim_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.sum / area_values.sum, 0.01)
     if depth_below_grade.nil?
       assert(depth_bg_x_area_values.empty?)
     else
-      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.inject(:+) / area_values.inject(:+), 0.01)
+      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.sum / area_values.sum, 0.01)
     end
   end
 
@@ -1357,9 +1357,9 @@ class ERIEnclosureTest < Minitest::Test
     assert_in_epsilon(frac_operable, area_operable / area_total, 0.01)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
     end
   end
 
@@ -1398,9 +1398,9 @@ class ERIEnclosureTest < Minitest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_shgc_x_area_values.size)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
     end
   end
 
@@ -1423,8 +1423,8 @@ class ERIEnclosureTest < Minitest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_rvalue_x_area_values.size)
 
     values_by_azimuth.each do |azimuth, values|
-      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].inject(:+), 0.01)
-      assert_in_epsilon(values[:rvalue], azimuth_rvalue_x_area_values[azimuth].inject(:+) / azimuth_area_values[azimuth].inject(:+), 0.01)
+      assert_in_epsilon(values[:area], azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:rvalue], azimuth_rvalue_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
     end
   end
 
