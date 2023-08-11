@@ -1,8 +1,18 @@
 ## OpenStudio-ERI v1.7.0
 
 __New Features__
+
+- **Breaking change**: Updates to newer proposed HPXML v4.0:
+  - Replaces `PortableHeater` and `FixedHeater` with `SpaceHeater`.
 - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
+- Output updates:
+  - Adds "Peak Electricity: Annual Total (W)" output.
+
+__Bugfixes__
+- Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.
+- Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
+- Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
 
 ## OpenStudio-ERI v1.6.1
 

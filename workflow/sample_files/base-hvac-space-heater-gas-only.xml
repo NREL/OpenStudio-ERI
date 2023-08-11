@@ -296,7 +296,7 @@
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem1'/>
               <HeatingSystemType>
-                <PortableHeater/>
+                <SpaceHeater/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
               <HeatingCapacity>36000.0</HeatingCapacity>
