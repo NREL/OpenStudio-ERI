@@ -13,6 +13,7 @@ __Bugfixes__
 - Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.
 - Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
 - Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
+- Minor HVAC design load calculation bugfixes for foundation walls.
 
 ## OpenStudio-ERI v1.6.1
 
