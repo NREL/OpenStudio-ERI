@@ -376,28 +376,26 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
         hpxml = _test_ruleset(program_version)
         _check_ceilings(hpxml, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [*ESConstants.MFVersions, *ZERHConstants.MFVersions].include? program_version
+        _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+
+        _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+
+        # Check w/ mass ceilings
+        hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+        hpxml.floors.each do |floor|
+          next unless floor.is_ceiling
+
+          floor.floor_type = HPXML::FloorTypeConcrete
+        end
+        XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
       end
-    end
-
-    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
-      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-
-      _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-
-      # Check w/ mass ceilings
-      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.floors.each do |floor|
-        next unless floor.is_ceiling
-
-        floor.floor_type = HPXML::FloorTypeConcrete
-      end
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
     end
   end
 
@@ -881,7 +879,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
       assert_equal(floor_type, floor.floor_type)
     end
-    puts rvalue_x_area_values.inject(:+) / area_values.inject(:+)
+
     if area.nil?
       assert(area_values.empty?)
     else
