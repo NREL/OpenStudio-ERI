@@ -371,6 +371,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       else
         _check_ceilings(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
+
+      if [*ESConstants.SFVersions].include? program_version
+        _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      end
     end
 
     [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
@@ -875,7 +881,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
       assert_equal(floor_type, floor.floor_type)
     end
-
+    puts rvalue_x_area_values.inject(:+) / area_values.inject(:+)
     if area.nil?
       assert(area_values.empty?)
     else
