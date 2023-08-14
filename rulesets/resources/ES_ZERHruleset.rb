@@ -456,6 +456,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       ceiling_exterior_adjacent_to = orig_floor.exterior_adjacent_to.gsub('unvented', 'vented')
       if @has_auto_generated_attic && multifamily_adjacent_locations.include?(orig_floor.exterior_adjacent_to)
         ceiling_exterior_adjacent_to = HPXML::LocationAtticVented
+        insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       end
 
       new_hpxml.floors.add(id: orig_floor.id,

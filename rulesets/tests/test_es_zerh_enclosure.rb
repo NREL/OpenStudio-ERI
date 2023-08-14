@@ -371,27 +371,31 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       else
         _check_ceilings(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
-    end
 
-    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
-      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      if [*ESConstants.SFVersions].include? program_version
+        _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif [*ESConstants.MFVersions, *ZERHConstants.MFVersions].include? program_version
+        _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
-      _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+        _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
-      # Check w/ mass ceilings
-      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.floors.each do |floor|
-        next unless floor.is_ceiling
+        # Check w/ mass ceilings
+        hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+        hpxml.floors.each do |floor|
+          next unless floor.is_ceiling
 
-        floor.floor_type = HPXML::FloorTypeConcrete
+          floor.floor_type = HPXML::FloorTypeConcrete
+        end
+        XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
+        hpxml = _test_ruleset(program_version)
+        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
       end
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
     end
   end
 
