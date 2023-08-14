@@ -66,6 +66,9 @@ class HPXMLDefaults
 
     # Do HVAC sizing after all other defaults have been applied
     apply_hvac_sizing(hpxml, weather, cfa)
+
+    # default detailed performance has to be after sizing to have autosized capacity information
+    apply_detailed_performance_data_for_var_speed_systems(hpxml)
   end
 
   def self.get_default_azimuths(hpxml)
@@ -1140,16 +1143,19 @@ class HPXMLDefaults
 
     # Default HP heating capacity retention
     hpxml.heat_pumps.each do |heat_pump|
+      # Ignore heating capacity retention if there's detailed performance data provided
+      if ((not heat_pump.heating_detailed_performance_data.empty?) && (not heat_pump.heating_capacity_retention_fraction.nil?)) ||
+         ((not heat_pump.heating_detailed_performance_data.empty?) && (not heat_pump.heating_capacity_17F.nil?))
+        heat_pump.heating_capacity_retention_temp = nil
+        heat_pump.heating_capacity_retention_fraction = nil
+        heat_pump.heating_capacity_17F = nil
+      end
       next unless heat_pump.heating_capacity_retention_fraction.nil?
       next unless heat_pump.heating_capacity_17F.nil?
       next if [HPXML::HVACTypeHeatPumpGroundToAir, HPXML::HVACTypeHeatPumpWaterLoopToAir].include? heat_pump.heat_pump_type
+      next unless heat_pump.heating_detailed_performance_data.empty?
 
-      heat_pump.heating_capacity_retention_temp = 5.0
-      if [HPXML::HVACCompressorTypeSingleStage, HPXML::HVACCompressorTypeTwoStage].include? heat_pump.compressor_type
-        heat_pump.heating_capacity_retention_fraction = 0.425
-      elsif [HPXML::HVACCompressorTypeVariableSpeed].include? heat_pump.compressor_type
-        heat_pump.heating_capacity_retention_fraction = 0.5
-      end
+      heat_pump.heating_capacity_retention_temp, heat_pump.heating_capacity_retention_fraction = HVAC.get_default_heating_capacity_retention(heat_pump.compressor_type, heat_pump.heating_efficiency_hspf)
       heat_pump.heating_capacity_retention_fraction_isdefaulted = true
       heat_pump.heating_capacity_retention_temp_isdefaulted = true
     end
@@ -1440,6 +1446,7 @@ class HPXMLDefaults
     hpxml.cooling_systems.each do |cooling_system|
       clg_ap = cooling_system.additional_properties
       if [HPXML::HVACTypeCentralAirConditioner,
+          HPXML::HVACTypeMiniSplitAirConditioner,
           HPXML::HVACTypeRoomAirConditioner,
           HPXML::HVACTypePTAC].include? cooling_system.cooling_system_type
         if [HPXML::HVACTypeRoomAirConditioner,
@@ -1450,23 +1457,14 @@ class HPXMLDefaults
         end
         # Note: We use HP cooling curve so that a central AC behaves the same.
         HVAC.set_num_speeds(cooling_system)
-        HVAC.set_fan_power_rated(cooling_system) unless use_eer
-        HVAC.set_cool_c_d(cooling_system, clg_ap.num_speeds)
+        HVAC.set_fan_power_rated(cooling_system, use_eer)
+        HVAC.set_cool_c_d(cooling_system)
         HVAC.set_cool_curves_central_air_source(cooling_system, use_eer)
         HVAC.set_cool_rated_shrs_gross(runner, cooling_system)
-        HVAC.set_cool_rated_eirs(cooling_system) unless use_eer
-
-      elsif [HPXML::HVACTypeMiniSplitAirConditioner].include? cooling_system.cooling_system_type
-        num_speeds = 10
-        HVAC.set_num_speeds(cooling_system)
-        HVAC.set_fan_power_rated(cooling_system)
-
-        HVAC.set_cool_c_d(cooling_system, num_speeds)
-        HVAC.set_cool_curves_mshp(cooling_system, num_speeds)
-        HVAC.set_cool_rated_shrs_gross(runner, cooling_system)
-        HVAC.set_cool_rated_eirs_mshp(cooling_system, num_speeds)
-
-        HVAC.set_mshp_downselected_speed_indices(cooling_system)
+        # variable speed system efficiencies will be defaulted with neep data structure
+        if cooling_system.compressor_type != HPXML::HVACCompressorTypeVariableSpeed
+          HVAC.set_cool_rated_eirs(cooling_system, use_eer)
+        end
 
       elsif [HPXML::HVACTypeEvaporativeCooler].include? cooling_system.cooling_system_type
         clg_ap.effectiveness = 0.72 # Assumption from HEScore
@@ -1480,11 +1478,11 @@ class HPXMLDefaults
                    HPXML::HVACTypeFloorFurnace,
                    HPXML::HVACTypeFireplace].include? heating_system.heating_system_type
 
-      heating_system.additional_properties.heat_rated_cfm_per_ton = HVAC.get_default_heat_cfm_per_ton(1, true)
+      heating_system.additional_properties.heat_rated_cfm_per_ton = HVAC.get_default_heat_cfm_per_ton(HPXML::HVACCompressorTypeSingleStage, true)
     end
     hpxml.heat_pumps.each do |heat_pump|
-      hp_ap = heat_pump.additional_properties
       if [HPXML::HVACTypeHeatPumpAirToAir,
+          HPXML::HVACTypeHeatPumpMiniSplit,
           HPXML::HVACTypeHeatPumpPTHP,
           HPXML::HVACTypeHeatPumpRoom].include? heat_pump.heat_pump_type
         if [HPXML::HVACTypeHeatPumpPTHP, HPXML::HVACTypeHeatPumpRoom].include? heat_pump.heat_pump_type
@@ -1493,34 +1491,20 @@ class HPXMLDefaults
           use_eer_cop = false
         end
         HVAC.set_num_speeds(heat_pump)
-        HVAC.set_fan_power_rated(heat_pump) unless use_eer_cop
+        HVAC.set_fan_power_rated(heat_pump, use_eer_cop)
         HVAC.set_heat_pump_temperatures(heat_pump, runner)
 
-        HVAC.set_cool_c_d(heat_pump, hp_ap.num_speeds)
+        HVAC.set_cool_c_d(heat_pump)
         HVAC.set_cool_curves_central_air_source(heat_pump, use_eer_cop)
         HVAC.set_cool_rated_shrs_gross(runner, heat_pump)
-        HVAC.set_cool_rated_eirs(heat_pump) unless use_eer_cop
 
-        HVAC.set_heat_c_d(heat_pump, hp_ap.num_speeds)
+        HVAC.set_heat_c_d(heat_pump)
         HVAC.set_heat_curves_central_air_source(heat_pump, use_eer_cop)
-        HVAC.set_heat_rated_eirs(heat_pump) unless use_eer_cop
-
-      elsif [HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
-        num_speeds = 10
-        HVAC.set_num_speeds(heat_pump)
-        HVAC.set_fan_power_rated(heat_pump)
-        HVAC.set_heat_pump_temperatures(heat_pump, runner)
-
-        HVAC.set_cool_c_d(heat_pump, num_speeds)
-        HVAC.set_cool_curves_mshp(heat_pump, num_speeds)
-        HVAC.set_cool_rated_shrs_gross(runner, heat_pump)
-        HVAC.set_cool_rated_eirs_mshp(heat_pump, num_speeds)
-
-        HVAC.set_heat_c_d(heat_pump, num_speeds)
-        HVAC.set_heat_curves_mshp(heat_pump, num_speeds)
-        HVAC.set_heat_rated_eirs_mshp(heat_pump, num_speeds)
-
-        HVAC.set_mshp_downselected_speed_indices(heat_pump)
+        # variable speed system efficiencies will be defaulted with neep data structure
+        if heat_pump.compressor_type != HPXML::HVACCompressorTypeVariableSpeed
+          HVAC.set_cool_rated_eirs(heat_pump, use_eer_cop)
+          HVAC.set_heat_rated_eirs(heat_pump, use_eer_cop)
+        end
 
       elsif [HPXML::HVACTypeHeatPumpGroundToAir].include? heat_pump.heat_pump_type
         HVAC.set_gshp_assumptions(heat_pump, weather)
@@ -1529,6 +1513,26 @@ class HPXMLDefaults
       elsif [HPXML::HVACTypeHeatPumpWaterLoopToAir].include? heat_pump.heat_pump_type
         HVAC.set_heat_pump_temperatures(heat_pump, runner)
 
+      end
+    end
+  end
+
+  def self.apply_detailed_performance_data_for_var_speed_systems(hpxml)
+    (hpxml.cooling_systems + hpxml.heat_pumps).each do |hvac_system|
+      is_hp = hvac_system.is_a? HPXML::HeatPump
+      system_type = is_hp ? hvac_system.heat_pump_type : hvac_system.cooling_system_type
+      next unless [HPXML::HVACTypeCentralAirConditioner,
+                   HPXML::HVACTypeMiniSplitAirConditioner,
+                   HPXML::HVACTypeHeatPumpAirToAir,
+                   HPXML::HVACTypeHeatPumpMiniSplit].include? system_type
+
+      next unless hvac_system.compressor_type == HPXML::HVACCompressorTypeVariableSpeed
+
+      if hvac_system.cooling_detailed_performance_data.empty?
+        HVAC.set_cool_detailed_performance_data(hvac_system)
+      end
+      if is_hp && hvac_system.heating_detailed_performance_data.empty?
+        HVAC.set_heat_detailed_performance_data(hvac_system)
       end
     end
   end
@@ -2885,7 +2889,7 @@ class HPXMLDefaults
       if not htg_sys.nil?
 
         # Heating capacities
-        if htg_sys.heating_capacity.nil? || ((htg_sys.heating_capacity - hvac_sizing_values.Heat_Capacity).abs >= 1.0)
+        if (htg_sys.heating_capacity.nil? || ((htg_sys.heating_capacity - hvac_sizing_values.Heat_Capacity).abs >= 1.0)) && htg_sys.heating_detailed_performance_data.empty?
           # Heating capacity @ 17F
           if htg_sys.is_a? HPXML::HeatPump
             if (not htg_sys.heating_capacity.nil?) && (not htg_sys.heating_capacity_17F.nil?)
@@ -2932,7 +2936,7 @@ class HPXMLDefaults
       next unless not clg_sys.nil?
 
       # Cooling capacities
-      if clg_sys.cooling_capacity.nil? || ((clg_sys.cooling_capacity - hvac_sizing_values.Cool_Capacity).abs >= 1.0)
+      if (clg_sys.cooling_capacity.nil? || ((clg_sys.cooling_capacity - hvac_sizing_values.Cool_Capacity).abs >= 1.0)) && clg_sys.cooling_detailed_performance_data.empty?
         clg_sys.cooling_capacity = hvac_sizing_values.Cool_Capacity.round
         clg_sys.cooling_capacity_isdefaulted = true
       end
