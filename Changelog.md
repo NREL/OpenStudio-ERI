@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.6.2
+
+__Bugfixes__
+- Fixes incorrect ESRD ceiling U-factor for SFA unit with adiabatic ceiling when using SFNH program.
+
 ## OpenStudio-ERI v1.6.1
 
 __Bugfixes__
