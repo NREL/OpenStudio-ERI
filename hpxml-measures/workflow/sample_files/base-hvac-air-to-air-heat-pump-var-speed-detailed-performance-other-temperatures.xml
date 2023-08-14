@@ -321,47 +321,108 @@
               <PrimaryHeatingSystem idref='HeatPump1'/>
               <PrimaryCoolingSystem idref='HeatPump1'/>
             </PrimarySystems>
-            <HeatingSystem>
-              <SystemIdentifier id='HeatingSystem1'/>
-              <HeatingSystemType>
-                <Stove/>
-              </HeatingSystemType>
-              <HeatingSystemFuel>fuel oil</HeatingSystemFuel>
-              <HeatingCapacity>60000.0</HeatingCapacity>
-              <AnnualHeatingEfficiency>
-                <Units>Percent</Units>
-                <Value>0.6</Value>
-              </AnnualHeatingEfficiency>
-              <extension>
-                <FanPowerWatts>40.0</FanPowerWatts>
-              </extension>
-            </HeatingSystem>
             <HeatPump>
               <SystemIdentifier id='HeatPump1'/>
-              <HeatPumpType>mini-split</HeatPumpType>
+              <DistributionSystem idref='HVACDistribution1'/>
+              <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
-              <HeatingCapacity>18000.0</HeatingCapacity>
-              <CoolingCapacity>18000.0</CoolingCapacity>
+              <HeatingCapacity>36000.0</HeatingCapacity>
+              <CoolingCapacity>36000.0</CoolingCapacity>
               <CompressorType>variable speed</CompressorType>
-              <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
-              <BackupType>separate</BackupType>
-              <BackupSystem idref='HeatingSystem1'/>
+              <CoolingSensibleHeatFraction>0.78</CoolingSensibleHeatFraction>
+              <BackupType>integrated</BackupType>
+              <BackupSystemFuel>electricity</BackupSystemFuel>
+              <BackupAnnualHeatingEfficiency>
+                <Units>Percent</Units>
+                <Value>1.0</Value>
+              </BackupAnnualHeatingEfficiency>
+              <BackupHeatingCapacity>36000.0</BackupHeatingCapacity>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>19.0</Value>
+                <Value>17.25</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>10.0</Value>
               </AnnualHeatingEfficiency>
-              <extension>
-                <HeatingCapacityRetention>
-                  <Fraction>0.6</Fraction>
-                  <Temperature>17.0</Temperature>
-                </HeatingCapacityRetention>
-              </extension>
+              <CoolingDetailedPerformanceData>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>95.0</OutdoorTemperature>
+                  <Capacity>11700.0</Capacity>
+                  <CapacityDescription>minimum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>4.47</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>95.0</OutdoorTemperature>
+                  <Capacity>36000.0</Capacity>
+                  <CapacityDescription>maximum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>2.71</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>105.0</OutdoorTemperature>
+                  <Capacity>10000.0</Capacity>
+                  <CapacityDescription>minimum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>3.9</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>105.0</OutdoorTemperature>
+                  <Capacity>30000.0</Capacity>
+                  <CapacityDescription>maximum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>2.3</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+              </CoolingDetailedPerformanceData>
+              <HeatingDetailedPerformanceData>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>47.0</OutdoorTemperature>
+                  <Capacity>10000.0</Capacity>
+                  <CapacityDescription>minimum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>4.73</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>47.0</OutdoorTemperature>
+                  <Capacity>36000.0</Capacity>
+                  <CapacityDescription>maximum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>3.44</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>55.0</OutdoorTemperature>
+                  <Capacity>12000.0</Capacity>
+                  <CapacityDescription>minimum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>5.5</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+                <PerformanceDataPoint>
+                  <OutdoorTemperature>55.0</OutdoorTemperature>
+                  <Capacity>45000.0</Capacity>
+                  <CapacityDescription>maximum</CapacityDescription>
+                  <Efficiency>
+                    <Units>COP</Units>
+                    <Value>4.0</Value>
+                  </Efficiency>
+                </PerformanceDataPoint>
+              </HeatingDetailedPerformanceData>
             </HeatPump>
           </HVACPlant>
           <HVACControl>
@@ -369,6 +430,44 @@
             <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
+          <HVACDistribution>
+            <SystemIdentifier id='HVACDistribution1'/>
+            <DistributionSystemType>
+              <AirDistribution>
+                <AirDistributionType>regular velocity</AirDistributionType>
+                <DuctLeakageMeasurement>
+                  <DuctType>supply</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>75.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <DuctLeakageMeasurement>
+                  <DuctType>return</DuctType>
+                  <DuctLeakage>
+                    <Units>CFM25</Units>
+                    <Value>25.0</Value>
+                    <TotalOrToOutside>to outside</TotalOrToOutside>
+                  </DuctLeakage>
+                </DuctLeakageMeasurement>
+                <Ducts>
+                  <SystemIdentifier id='Ducts1'/>
+                  <DuctType>supply</DuctType>
+                  <DuctInsulationRValue>4.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>150.0</DuctSurfaceArea>
+                </Ducts>
+                <Ducts>
+                  <SystemIdentifier id='Ducts2'/>
+                  <DuctType>return</DuctType>
+                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
+                  <DuctLocation>attic - unvented</DuctLocation>
+                  <DuctSurfaceArea>50.0</DuctSurfaceArea>
+                </Ducts>
+              </AirDistribution>
+            </DistributionSystemType>
+          </HVACDistribution>
         </HVAC>
         <WaterHeating>
           <WaterHeatingSystem>

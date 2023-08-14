@@ -1353,9 +1353,15 @@ class HVACSizing
 
       entering_temp = @hpxml.header.manualj_cooling_design_temp
       hvac_cooling_speed = get_sizing_speed(hvac_cooling_ap)
-      coefficients = hvac_cooling_ap.cool_cap_ft_spec[hvac_cooling_speed]
-
-      total_cap_curve_value = MathTools.biquadratic(@wetbulb_indoor_cooling, entering_temp, coefficients)
+      if hvac_cooling.compressor_type == HPXML::HVACCompressorTypeVariableSpeed
+        coefficients_1speed = HVAC.get_cool_cap_eir_ft_spec(HPXML::HVACCompressorTypeSingleStage)[0][0]
+        odb_adj = (1.0 - 1.033) / (95.0 - 82.0) * (entering_temp - 95.0) + 1.0
+        idb_adj = MathTools.biquadratic(@wetbulb_indoor_cooling, entering_temp, coefficients_1speed) / MathTools.biquadratic(67, entering_temp, coefficients_1speed)
+        total_cap_curve_value = odb_adj * idb_adj
+      else
+        coefficients = hvac_cooling_ap.cool_cap_ft_spec[hvac_cooling_speed]
+        total_cap_curve_value = MathTools.biquadratic(@wetbulb_indoor_cooling, entering_temp, coefficients)
+      end
       cool_cap_rated = hvac_sizing_values.Cool_Load_Tot / total_cap_curve_value
 
       hvac_cooling_shr = hvac_cooling_ap.cool_rated_shrs_gross[hvac_cooling_speed]
@@ -1456,9 +1462,11 @@ class HVACSizing
 
       entering_temp = @hpxml.header.manualj_cooling_design_temp
       hvac_cooling_speed = get_sizing_speed(hvac_cooling_ap)
-      coefficients = hvac_cooling_ap.cool_cap_ft_spec[hvac_cooling_speed]
+      coefficients_1speed = HVAC.get_cool_cap_eir_ft_spec(HPXML::HVACCompressorTypeSingleStage)[0][0]
+      odb_adj = (1.0 - 1.033) / (95.0 - 82.0) * (entering_temp - 95.0) + 1.0
+      idb_adj = MathTools.biquadratic(@wetbulb_indoor_cooling, entering_temp, coefficients_1speed) / MathTools.biquadratic(67, entering_temp, coefficients_1speed)
+      total_cap_curve_value = odb_adj * idb_adj
 
-      total_cap_curve_value = MathTools.biquadratic(@wetbulb_indoor_cooling, entering_temp, coefficients)
       hvac_cooling_shr = hvac_cooling_ap.cool_rated_shrs_gross[hvac_cooling_speed]
 
       hvac_sizing_values.Cool_Capacity = (hvac_sizing_values.Cool_Load_Tot / total_cap_curve_value)
@@ -1701,8 +1709,8 @@ class HVACSizing
       if @cooling_type != HPXML::HVACTypeHeatPumpGroundToAir
         cool_cfm_m3s = UnitConversions.convert(hvac_sizing_values.Cool_Airflow, 'cfm', 'm^3/s')
         for speed in 0..(hvac_cooling_ap.cool_rated_cfm_per_ton.size - 1)
-          cool_airflow_rated_ratio << cool_cfm_m3s / HVAC.calc_rated_airflow(hvac_sizing_values.Cool_Capacity, hvac_cooling_ap.cool_rated_cfm_per_ton[speed], hvac_cooling_ap.cool_capacity_ratios[speed])
-          cool_airflow_rated_defect_ratio << cool_cfm_m3s * (1 + cool_airflow_defect_ratio) / HVAC.calc_rated_airflow(hvac_sizing_values.Cool_Capacity, hvac_cooling_ap.cool_rated_cfm_per_ton[speed], hvac_cooling_ap.cool_capacity_ratios[speed])
+          cool_airflow_rated_ratio << cool_cfm_m3s / HVAC.calc_rated_airflow(hvac_sizing_values.Cool_Capacity * hvac_cooling_ap.cool_capacity_ratios[speed], hvac_cooling_ap.cool_rated_cfm_per_ton[speed])
+          cool_airflow_rated_defect_ratio << cool_cfm_m3s * (1 + cool_airflow_defect_ratio) / HVAC.calc_rated_airflow(hvac_sizing_values.Cool_Capacity * hvac_cooling_ap.cool_capacity_ratios[speed], hvac_cooling_ap.cool_rated_cfm_per_ton[speed])
         end
       else
         cool_airflow_rated_ratio = [1.0] # actual air flow is equal to rated (before applying defect ratio) in current methodology
@@ -1773,8 +1781,8 @@ class HVACSizing
       if @heating_type != HPXML::HVACTypeHeatPumpGroundToAir
         heat_cfm_m3s = UnitConversions.convert(hvac_sizing_values.Heat_Airflow, 'cfm', 'm^3/s')
         for speed in 0..(hvac_heating_ap.heat_rated_cfm_per_ton.size - 1)
-          heat_airflow_rated_ratio << heat_cfm_m3s / HVAC.calc_rated_airflow(hvac_sizing_values.Heat_Capacity, hvac_heating_ap.heat_rated_cfm_per_ton[speed], hvac_heating_ap.heat_capacity_ratios[speed])
-          heat_airflow_rated_defect_ratio << heat_cfm_m3s * (1 + heat_airflow_defect_ratio) / HVAC.calc_rated_airflow(hvac_sizing_values.Heat_Capacity, hvac_heating_ap.heat_rated_cfm_per_ton[speed], hvac_heating_ap.heat_capacity_ratios[speed])
+          heat_airflow_rated_ratio << heat_cfm_m3s / HVAC.calc_rated_airflow(hvac_sizing_values.Heat_Capacity * hvac_heating_ap.heat_capacity_ratios[speed], hvac_heating_ap.heat_rated_cfm_per_ton[speed])
+          heat_airflow_rated_defect_ratio << heat_cfm_m3s * (1 + heat_airflow_defect_ratio) / HVAC.calc_rated_airflow(hvac_sizing_values.Heat_Capacity * hvac_heating_ap.heat_capacity_ratios[speed], hvac_heating_ap.heat_rated_cfm_per_ton[speed])
         end
       else
         heat_airflow_rated_ratio = [1.0] # actual air flow is equal to rated (before applying defect ratio) in current methodology
@@ -1836,7 +1844,11 @@ class HVACSizing
 
     # Override HVAC capacities if values are provided
     if not hvac_cooling.nil?
-      fixed_cooling_capacity = hvac_cooling.cooling_capacity
+      if hvac_cooling.cooling_detailed_performance_data.empty?
+        fixed_cooling_capacity = hvac_cooling.cooling_capacity
+      else
+        fixed_cooling_capacity = hvac_cooling.cooling_detailed_performance_data.find { |dp| dp.outdoor_temperature == 95 && dp.capacity_description == HPXML::CapacityDescriptionMaximum }.capacity
+      end
     end
     if (not fixed_cooling_capacity.nil?) && (hvac_sizing_values.Cool_Capacity > 0)
       prev_capacity = hvac_sizing_values.Cool_Capacity
@@ -1848,7 +1860,13 @@ class HVACSizing
       hvac_sizing_values.Cool_Airflow = hvac_sizing_values.Cool_Airflow * hvac_sizing_values.Cool_Capacity / prev_capacity
     end
     if not hvac_heating.nil?
-      fixed_heating_capacity = hvac_heating.heating_capacity
+      if hvac_heating.heating_detailed_performance_data.empty?
+        fixed_heating_capacity = hvac_heating.heating_capacity
+      else
+        fixed_heating_capacity_max = hvac_heating.heating_detailed_performance_data.find { |dp| dp.outdoor_temperature == 47 && dp.capacity_description == HPXML::CapacityDescriptionMaximum }.capacity
+        is_ducted = !hvac_heating.distribution_system_idref.nil?
+        fixed_heating_capacity = HVAC.calc_heat_rated_capacity_from_max_47(fixed_heating_capacity_max, is_ducted)
+      end
     elsif (not hvac_cooling.nil?) && hvac_cooling.has_integrated_heating
       fixed_heating_capacity = hvac_cooling.integrated_heating_system_capacity
     end
@@ -1994,13 +2012,7 @@ class HVACSizing
 
     hvac_heating_ap = hvac_heating.additional_properties
 
-    if hvac_heating_ap.heat_cap_ft_spec.size > 1
-      coefficients = hvac_heating_ap.heat_cap_ft_spec[-1]
-      capacity_ratio = hvac_heating_ap.heat_capacity_ratios[-1]
-    else
-      coefficients = hvac_heating_ap.heat_cap_ft_spec[0]
-      capacity_ratio = 1.0
-    end
+    capacity_ratio = hvac_heating_ap.heat_capacity_ratios[-1]
 
     if hvac_heating.is_a? HPXML::HeatPump
       if not hvac_heating.backup_heating_switchover_temp.nil?
@@ -2022,7 +2034,18 @@ class HVACSizing
       heating_db = @hpxml.header.manualj_heating_design_temp
     end
 
-    heat_cap_rated = (heating_load / MathTools.biquadratic(@heat_setpoint, heating_db, coefficients)) / capacity_ratio
+    if hvac_heating.compressor_type == HPXML::HVACCompressorTypeVariableSpeed
+      capacity_retention_temp_1speed, capacity_retention_fraction_1speed = HVAC.get_default_heating_capacity_retention(HPXML::HVACCompressorTypeSingleStage)
+      coefficients_1speed = HVAC.get_heat_cap_eir_ft_spec(HPXML::HVACCompressorTypeSingleStage, capacity_retention_temp_1speed, capacity_retention_fraction_1speed)[0][0]
+      heating_capacity_retention_temperature, heating_capacity_retention_fraction = HVAC.get_default_heating_capacity_retention(hvac_heating.compressor_type, hvac_heating.heating_efficiency_hspf)
+      odb_adj = (1.0 - heating_capacity_retention_fraction) / (47.0 - heating_capacity_retention_temperature) * (heating_db - 47.0) + 1.0
+      idb_adj = MathTools.biquadratic(@heat_setpoint, heating_db, coefficients_1speed) / MathTools.biquadratic(60, heating_db, coefficients_1speed)
+      adj_factor = odb_adj * idb_adj
+    else
+      coefficients = hvac_heating_ap.heat_cap_ft_spec[-1]
+      adj_factor = MathTools.biquadratic(@heat_setpoint, heating_db, coefficients)
+    end
+    heat_cap_rated = (heating_load / adj_factor) / capacity_ratio
 
     if total_cap_curve_value.nil? # Heat pump has no cooling
       if @hpxml.header.heat_pump_sizing_methodology == HPXML::HeatPumpSizingMaxLoad
