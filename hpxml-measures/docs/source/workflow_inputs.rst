@@ -1793,9 +1793,9 @@ If an air-to-air heat pump is specified, additional information is entered in ``
          HeatingDetailedPerformanceData must also be provided.
   .. [#] If HeatingDetailedPerformanceData is provided, see :ref:`htg_detailed_perf_data`.
          CoolingDetailedPerformanceData must also be provided.
-  .. [#] | If neither extension/HeatingCapacityRetention nor HeatingCapacity17F provided, heating capacity retention defaults based on CompressorType:
-         | - **single/two stage**: 0.425 at 5F
-         | - **variable speed**: 0.5 at 5F
+  .. [#] | If neither extension/HeatingCapacityRetention nor HeatingCapacity17F nor HeatingDetailedPerformanceData provided, heating capacity retention defaults based on CompressorType:
+         | - **single/two stage**: 0.425 (at 5F)
+         | - **variable speed**: 0.0461 * HSPF + 0.1594 (at 5F)
   .. [#] The extension/HeatingCapacityRetention input is a more flexible alternative to HeatingCapacity17F, as it can apply to autosized systems and allows the heating capacity retention to be defined at a user-specified temperature (instead of 17F).
          Either input approach can be used, but not both.
   .. [#] If FanPowerWattsPerCFM not provided, defaulted to 0.5 W/cfm if HSPF <= 8.75, else 0.375 W/cfm.
@@ -1826,7 +1826,7 @@ If a mini-split heat pump is specified, additional information is entered in ``H
   ``AnnualHeatingEfficiency[Units="HSPF" or Units="HSPF2"]/Value``  double    Btu/Wh    > 0                       Yes                       Rated heating efficiency [#]_
   ``CoolingDetailedPerformanceData``                                element                                       No        <none>          Cooling detailed performance data [#]_
   ``HeatingDetailedPerformanceData``                                element                                       No        <none>          Heating detailed performance data [#]_
-  ``extension/HeatingCapacityRetention[Fraction | Temperature]``    double    frac | F  >= 0, < 1 | <= 17         No        0.5 | 5         Heating output capacity retention at cold temperature [#]_
+  ``extension/HeatingCapacityRetention[Fraction | Temperature]``    double    frac | F  >= 0, < 1 | <= 17         No        See [#]_        Heating output capacity retention at cold temperature [#]_
   ``extension/FanPowerWattsPerCFM``                                 double    W/cfm     >= 0                      No        See [#]_        Blower fan efficiency at maximum fan speed
   ``extension/AirflowDefectRatio``                                  double    frac      -0.9 - 9                  No        0.0             Deviation between design/installed airflows [#]_
   ``extension/ChargeDefectRatio``                                   double    frac      -0.9 - 9                  No        0.0             Deviation between design/installed refrigerant charges [#]_
@@ -1846,6 +1846,9 @@ If a mini-split heat pump is specified, additional information is entered in ``H
          HeatingDetailedPerformanceData must also be provided.
   .. [#] If HeatingDetailedPerformanceData is provided, see :ref:`htg_detailed_perf_data`.
          CoolingDetailedPerformanceData must also be provided.
+  .. [#] | If neither extension/HeatingCapacityRetention nor HeatingCapacity17F nor HeatingDetailedPerformanceData provided, heating capacity retention defaults based on CompressorType:
+         | - **single/two stage**: 0.425 (at 5F)
+         | - **variable speed**: 0.0461 * HSPF + 0.1594 (at 5F)
   .. [#] The extension/HeatingCapacityRetention input is a more flexible alternative to HeatingCapacity17F, as it can apply to autosized systems and allows the heating capacity retention to be defined at a user-specified temperature (instead of 17F).
          Either input approach can be used, but not both.
   .. [#] FanPowerWattsPerCFM defaults to 0.07 W/cfm for ductless systems and 0.18 W/cfm for ducted systems.
@@ -2050,7 +2053,7 @@ HPXML HVAC Detailed Perf. Data
 Some air-source HVAC system types allow detailed heating/cooling performance data to be provided using the ``CoolingDetailedPerformanceData`` and ``HeatingDetailedPerformanceData`` elements, as described above.
 One source of detailed performance data is `NEEP's Cold Climate Air Source Heat Pump List <https://ashp.neep.org>`_.
 
-Linear interpolation/extrapolation is assumed for the capacity/efficiency performance outside of the given datapoints.
+Currently detailed performance data can only be provided for variable-speed HVAC systems.
 
 .. _clg_detailed_perf_data:
 
@@ -2072,7 +2075,7 @@ For air-source HVAC systems with detailed cooling performance data, two or more 
          The other datapoint pairs can be at any temperature.
   .. [#] CapacityDescription choices are "minimum" and "maximum".
 
-In addition, the parent object must have the ``CoolingCapacity`` specified.
+In addition, the parent object must provide the ``CoolingCapacity`` and the ``CompressorType`` must be set to "variable speed".
 For heat pumps, :ref:`htg_detailed_perf_data` must also be provided.
 Note that when detailed cooling performance data is provided, some other inputs (like SEER) are ignored.
 
@@ -2096,7 +2099,7 @@ For air-source HVAC systems with detailed heating performance data, two or more 
          The other datapoint pairs can be at any temperature.
   .. [#] CapacityDescription choices are "minimum" and "maximum".
 
-In addition, the parent object must have the ``HeatingCapacity`` specified.
+In addition, the parent object must provide the ``HeatingCapacity`` and the ``CompressorType`` must be set to "variable speed".
 For heat pumps, :ref:`clg_detailed_perf_data` must also be provided.
 Note that when detailed cooling performance data is provided, some other inputs (like HSPF and HeatingCapacityRetention) are ignored.
 
