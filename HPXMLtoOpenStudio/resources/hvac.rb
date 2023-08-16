@@ -2676,7 +2676,7 @@ class HVAC
       outdoor_dry_bulbs = [5.0, 10.0, 17.0, 47.0, 60.0]
     end
     data_array.each do |data|
-      data = data.sort_by { |dp| dp.outdoor_temperature }
+      data.sort_by! { |dp| dp.outdoor_temperature }
       user_out_db = data.map { |dp| dp.outdoor_temperature }
       outdoor_dry_bulbs.each do |new_pt|
         next if user_out_db.include? new_pt
@@ -2720,7 +2720,7 @@ class HVAC
       retention_temp, retention_fraction = get_default_heating_capacity_retention(HPXML::HVACCompressorTypeSingleStage)
       cap_ft_spec_ss, eir_ft_spec_ss = get_heat_cap_eir_ft_spec(HPXML::HVACCompressorTypeSingleStage, retention_temp, retention_fraction)
       indoor_t = [60.0, 70.0, 80.0]
-      rated_t_i = 60.0
+      rated_t_i = 70.0
     end
     data_array.each do |data|
       data.each do |dp|
@@ -2824,7 +2824,7 @@ class HVAC
         cap_ft_output_values = data_speed.map { |dp| dp.gross_capacity / rated_cap }
         eir_ft_output_values = data_speed.map { |dp| (1.0 / dp.gross_efficiency_cop) / rated_eir }
         cap_fff_curve = create_table_lookup_constant(model, 1, "Cool-CAP-fFF#{i + 1}")
-        eir_fff_curve = create_table_lookup_constant(model, 1, "Cool-CAP-fFF#{i + 1}")
+        eir_fff_curve = create_table_lookup_constant(model, 1, "Cool-EIR-fFF#{i + 1}")
       else
         cap_ft_spec_si = convert_curve_biquadratic(clg_ap.cool_cap_ft_spec[i])
         eir_ft_spec_si = convert_curve_biquadratic(clg_ap.cool_eir_ft_spec[i])
@@ -2910,7 +2910,7 @@ class HVAC
     var_fff = { name: 'air_flow_rate_ratio', min: 0.0, max: 2.0, values: [], sample_low: 0, sample_high: 2, sample_step: 0.1 }
     var_fplr = { name: 'part_load_ratio', min: 0.0, max: 1.0, values: [], sample_low: 0, sample_high: 1, sample_step: 0.1 }
 
-    rated_idb = 60.0
+    rated_idb = 70.0
     rated_odb = 47.0
     if heating_system.heating_detailed_performance_data.empty?
       max_cfm = UnitConversions.convert(heating_system.heating_capacity * htg_ap.heat_capacity_ratios[-1], 'Btu/hr', 'ton') * htg_ap.heat_rated_cfm_per_ton[-1]
@@ -2944,7 +2944,7 @@ class HVAC
         cap_ft_output_values = data_speed.map { |dp| dp.gross_capacity / rated_cap }
         eir_ft_output_values = data_speed.map { |dp| (1.0 / dp.gross_efficiency_cop) / rated_eir }
         cap_fff_curve = create_table_lookup_constant(model, 1, "Heat-CAP-fFF#{i + 1}")
-        eir_fff_curve = create_table_lookup_constant(model, 1, "Heat-CAP-fFF#{i + 1}")
+        eir_fff_curve = create_table_lookup_constant(model, 1, "Heat-EIR-fFF#{i + 1}")
       else
         cap_ft_spec_si = convert_curve_biquadratic(htg_ap.heat_cap_ft_spec[i])
         eir_ft_spec_si = convert_curve_biquadratic(htg_ap.heat_eir_ft_spec[i])
