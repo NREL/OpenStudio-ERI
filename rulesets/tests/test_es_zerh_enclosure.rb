@@ -529,9 +529,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     [*ESConstants.SFVersions, *ZERHConstants.AllVersions].each do |program_version|
       if program_version == ESConstants.SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
-      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
+      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1].include? program_version
         ufactor, shgc = 0.27, 0.40
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
         ufactor, shgc = 0.27, 0.30
       elsif program_version == ESConstants.SFPacificVer3_0
         ufactor, shgc = 0.60, 0.27

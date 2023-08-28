@@ -3,6 +3,7 @@
 __New Features__
 - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
+- Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
 
 ## OpenStudio-ERI v1.6.2
 
