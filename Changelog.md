@@ -5,6 +5,9 @@ __New Features__
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 - Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
 
+__Bugfixes__
+- Fixes `EEC_r` calculation for a water heater w/ UEF entered.
+
 ## OpenStudio-ERI v1.6.2
 
 __Bugfixes__
