@@ -234,11 +234,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     orig_hpxml.roofs.each do |orig_roof|
       roof_pitch = orig_roof.pitch
       roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
-      if orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace && has_vented_attic
+      if orig_roof.interior_adjacent_to == HPXML::LocationConditionedSpace && has_vented_attic
         roof_interior_adjacent_to = HPXML::LocationAtticVented
         roof_pitch = default_roof_pitch if roof_pitch == 0
       end
-      if roof_interior_adjacent_to != HPXML::LocationLivingSpace
+      if roof_interior_adjacent_to != HPXML::LocationConditionedSpace
         insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
       else
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
@@ -287,7 +287,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
 
-    ext_thermal_bndry_rim_joists_ag = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationLivingSpace }
+    ext_thermal_bndry_rim_joists_ag = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationConditionedSpace }
     sum_gross_area_ag = ext_thermal_bndry_rim_joists_ag.map { |rim_joist| rim_joist.area }.sum(0)
 
     ext_thermal_bndry_rim_joists_bg = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationBasementConditioned }
@@ -302,7 +302,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     if sum_gross_area_ag > 0
       new_hpxml.rim_joists.add(id: 'TargetRimJoist',
                                exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: HPXML::LocationLivingSpace,
+                               interior_adjacent_to: HPXML::LocationConditionedSpace,
                                area: sum_gross_area_ag,
                                azimuth: nil,
                                solar_absorptance: solar_absorptance,
@@ -357,7 +357,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     if sum_gross_area > 0
       new_hpxml.walls.add(id: 'TargetWall',
                           exterior_adjacent_to: HPXML::LocationOutside,
-                          interior_adjacent_to: HPXML::LocationLivingSpace,
+                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                           wall_type: HPXML::WallTypeWoodStud,
                           area: sum_gross_area,
                           azimuth: nil,
@@ -367,7 +367,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     # Preserve exterior walls that are not thermal boundary walls (e.g., unconditioned attic gable walls or exterior garage walls). These walls are specified as uninsulated.
-    # Preserve thermal boundary walls that are not exterior (e.g., garage wall adjacent to living space). These walls are assigned the appropriate U-factor from the Energy Star Exhibit 2 (Expanded ENERGY STAR Reference Design Definition).
+    # Preserve thermal boundary walls that are not exterior (e.g., garage wall adjacent to conditioned space). These walls are assigned the appropriate U-factor from the Energy Star Exhibit 2 (Expanded ENERGY STAR Reference Design Definition).
     # The purpose of this is to be consistent with other software tools.
     orig_hpxml.walls.each do |orig_wall|
       next if orig_wall.is_exterior_thermal_boundary
@@ -469,7 +469,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                            insulation_assembly_r_value: insulation_assembly_r_value)
     end
 
-    # Add a floor between the vented attic and living space
+    # Add a floor between the vented attic and conditioned space
     if @has_auto_generated_attic
       orig_hpxml.roofs.each do |orig_roof|
         next unless orig_roof.is_exterior_thermal_boundary
@@ -480,7 +480,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
         new_hpxml.floors.add(id: 'TargetFloor',
                              exterior_adjacent_to: HPXML::LocationAtticVented,
-                             interior_adjacent_to: HPXML::LocationLivingSpace,
+                             interior_adjacent_to: HPXML::LocationConditionedSpace,
                              floor_type: HPXML::FloorTypeWoodFrame,
                              area: floor_area,
                              insulation_id: 'TargetFloorInsulation',
@@ -524,7 +524,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     # Exhibit 2 - Foundations
     orig_hpxml.slabs.each do |orig_slab|
-      if orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
+      if orig_slab.interior_adjacent_to == HPXML::LocationConditionedSpace
         if slab_under_width >= 999
           is_under_entire_slab_insulated = true
           slab_under_width = nil
@@ -543,7 +543,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         under_slab_insulation_r_value = 0
       end
 
-      if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? orig_slab.interior_adjacent_to
+      if [HPXML::LocationConditionedSpace, HPXML::LocationBasementConditioned].include? orig_slab.interior_adjacent_to
         carpet_fraction = 0.8
         carpet_r_value = 2.0
       else
@@ -927,7 +927,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
     # Default values
     id = 'ClothesWasher'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
 
     # Override values?
     if not orig_hpxml.clothes_washers.empty?
@@ -951,7 +951,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
     # Default values
     id = 'ClothesDryer'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
     fuel_type = HPXML::FuelTypeElectricity
 
     # Override values?
@@ -972,7 +972,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     # Default values
     id = 'Dishwasher'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
     place_setting_capacity = 12
 
     # Override values?
@@ -999,7 +999,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     # Default values
     id = 'Refrigerator'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
 
     # Override values?
     if not orig_hpxml.refrigerators.empty?
@@ -1031,7 +1031,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
     # Default values
     range_id = 'CookingRange'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
     fuel_type = HPXML::FuelTypeElectricity
     oven_id = 'Oven'
 
@@ -1281,7 +1281,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # calculate floor area by floor type
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_floor
-      next unless orig_floor.interior_adjacent_to == HPXML::LocationLivingSpace
+      next unless orig_floor.interior_adjacent_to == HPXML::LocationConditionedSpace
 
       if [HPXML::LocationOtherHousingUnit].include? orig_floor.exterior_adjacent_to
         floor_areas['adiabatic'] += orig_floor.area
@@ -1296,7 +1296,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     # calculate floor area by slab type
     orig_hpxml.slabs.each do |orig_slab|
-      next unless orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
+      next unless orig_slab.interior_adjacent_to == HPXML::LocationConditionedSpace
 
       floor_areas['slab'] += orig_slab.area
     end
@@ -1307,13 +1307,13 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.is_ceiling_fully_adiabatic(orig_hpxml)
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
-      next unless orig_floor.interior_adjacent_to == HPXML::LocationLivingSpace
+      next unless orig_floor.interior_adjacent_to == HPXML::LocationConditionedSpace
       next unless orig_floor.exterior_adjacent_to != HPXML::LocationOtherHousingUnit
 
       return false # Found a thermal boundary ceiling not adjacent to other housing unit
     end
     orig_hpxml.roofs.each do |orig_roof|
-      next unless orig_roof.interior_adjacent_to == HPXML::LocationLivingSpace
+      next unless orig_roof.interior_adjacent_to == HPXML::LocationConditionedSpace
 
       return false # Found a thermal boundary roof (which, by definition, is adjacent to outside)
     end
@@ -1351,7 +1351,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       elsif loc == 'outside'
         duct_location_areas[HPXML::LocationOutside] = Float(frac) * total_duct_area
       elsif loc == 'conditioned'
-        duct_location_areas[HPXML::LocationLivingSpace] = Float(frac) * total_duct_area
+        duct_location_areas[HPXML::LocationConditionedSpace] = Float(frac) * total_duct_area
       else
         fail "Unexpected duct location: #{loc}."
       end
@@ -1365,7 +1365,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       # Supply ducts located in unconditioned attic
       duct_rvalue = lookup_reference_value('duct_unconditioned_r_value', 'supply, attic')
     end
-    if not [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include?(duct_location)
+    if not [HPXML::LocationConditionedSpace, HPXML::LocationBasementConditioned].include?(duct_location)
       # Ducts in unconditioned space
       duct_rvalue = lookup_reference_value('duct_unconditioned_r_value', 'other') if duct_rvalue.nil?
     end

@@ -213,8 +213,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -253,8 +253,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -280,8 +280,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -307,8 +307,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -334,8 +334,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -361,8 +361,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -398,8 +398,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -426,8 +426,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
                ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
                ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
         else
           return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
           _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -463,8 +463,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
                ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
                ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
         else
           return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
           _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -491,8 +491,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -518,8 +518,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -549,8 +549,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -586,8 +586,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -613,8 +613,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -641,8 +641,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
                ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
                ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
         else
           return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
           _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -674,8 +674,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
                ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
                ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
         else
           return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
           _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -706,8 +706,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
                ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
                ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
         else
           return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
           _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -736,8 +736,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }] * 2)
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }] * 2)
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -767,8 +767,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
                ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
                ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+          _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                               { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
         else
           return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
           _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -795,8 +795,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -822,8 +822,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -849,8 +849,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 135.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -876,8 +876,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -900,8 +900,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.5, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.5, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 364.5, duct_location: HPXML::LocationAtticVented },
@@ -924,8 +924,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.5, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.5, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 364.5, duct_location: HPXML::LocationAtticVented },
@@ -951,12 +951,12 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 820.12, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 273.37, duct_location: HPXML::LocationLivingSpace },
+                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 273.37, duct_location: HPXML::LocationConditionedSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 455.63, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 151.88, duct_location: HPXML::LocationLivingSpace }])
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 151.88, duct_location: HPXML::LocationConditionedSpace }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 1093.51, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 607.51, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 1093.51, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 607.51, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -982,12 +982,12 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 273.375, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 91.125, duct_location: HPXML::LocationLivingSpace },
+                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 91.125, duct_location: HPXML::LocationConditionedSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 50.625, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 16.875, duct_location: HPXML::LocationLivingSpace }])
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 16.875, duct_location: HPXML::LocationConditionedSpace }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.51, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.51, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1013,12 +1013,12 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.MFNationalVer1_0, ESConstants.MFOregonWashingtonVer1_2].include? program_version
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 273.375, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 91.125, duct_location: HPXML::LocationLivingSpace },
+                             { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 91.125, duct_location: HPXML::LocationConditionedSpace },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_r, duct_area: 50.625, duct_location: HPXML::LocationAtticVented },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 16.875, duct_location: HPXML::LocationLivingSpace }])
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 16.875, duct_location: HPXML::LocationConditionedSpace }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.51, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 364.51, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 67.5, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1083,8 +1083,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFFloridaVer3_1,
              ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2,
              ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 270.0, duct_location: HPXML::LocationConditionedSpace }])
       else
         return_r = (program_version != ESConstants.MFOregonWashingtonVer1_2 ? 6.0 : 8.0)
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 729.0, duct_location: HPXML::LocationAtticVented },
@@ -1158,8 +1158,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1189,8 +1189,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1217,8 +1217,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1248,8 +1248,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1280,8 +1280,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1315,8 +1315,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1359,8 +1359,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1385,8 +1385,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1415,8 +1415,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1441,8 +1441,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1468,8 +1468,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
@@ -1500,8 +1500,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 8.0, duct_area: 243.0, duct_location: HPXML::LocationAtticVented },
                              { duct_type: HPXML::DuctTypeReturn, duct_rvalue: return_duct_r, duct_area: 45.0, duct_location: HPXML::LocationAtticVented }])
       else
-        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationLivingSpace },
-                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationLivingSpace }])
+        _check_ducts(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 243.0, duct_location: HPXML::LocationConditionedSpace },
+                             { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 45.0, duct_location: HPXML::LocationConditionedSpace }])
       end
       _check_duct_leakage(hpxml, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
                                   { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])

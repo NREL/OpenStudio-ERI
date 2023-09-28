@@ -453,7 +453,7 @@ class EnergyRatingIndex301Ruleset
     # Area is equally distributed to each direction to be consistent with walls.
     if sum_gross_area > 0
       new_hpxml.roofs.add(id: 'RoofArea',
-                          interior_adjacent_to: HPXML::LocationLivingSpace,
+                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                           area: sum_gross_area,
                           azimuth: nil,
                           solar_absorptance: solar_abs,
@@ -518,7 +518,7 @@ class EnergyRatingIndex301Ruleset
 
     ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
 
-    ext_thermal_bndry_rim_joists_ag = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationLivingSpace }
+    ext_thermal_bndry_rim_joists_ag = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationConditionedSpace }
     sum_gross_area_ag = ext_thermal_bndry_rim_joists_ag.map { |rim_joist| rim_joist.area }.sum(0)
 
     ext_thermal_bndry_rim_joists_bg = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationBasementConditioned }
@@ -533,7 +533,7 @@ class EnergyRatingIndex301Ruleset
     if sum_gross_area_ag > 0
       new_hpxml.rim_joists.add(id: 'RimJoistArea',
                                exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: HPXML::LocationLivingSpace,
+                               interior_adjacent_to: HPXML::LocationConditionedSpace,
                                area: sum_gross_area_ag,
                                azimuth: nil,
                                solar_absorptance: solar_absorptance,
@@ -608,7 +608,7 @@ class EnergyRatingIndex301Ruleset
     if sum_gross_area > 0
       new_hpxml.walls.add(id: 'WallArea',
                           exterior_adjacent_to: HPXML::LocationOutside,
-                          interior_adjacent_to: HPXML::LocationLivingSpace,
+                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                           wall_type: HPXML::WallTypeWoodStud,
                           area: sum_gross_area,
                           azimuth: nil,
@@ -618,7 +618,7 @@ class EnergyRatingIndex301Ruleset
     end
 
     # Preserve other walls:
-    # 1. Interior thermal boundary surfaces (e.g., between living space and garage)
+    # 1. Interior thermal boundary surfaces (e.g., between conditioned space and garage)
     # 2. Exterior non-thermal boundary surfaces (e.g., between garage and outside)
     orig_hpxml.walls.each do |orig_wall|
       next if orig_wall.is_exterior_thermal_boundary
@@ -667,7 +667,7 @@ class EnergyRatingIndex301Ruleset
     # Add 2355.52 sqft of exterior thermal boundary wall area
     new_hpxml.walls.add(id: 'WallArea',
                         exterior_adjacent_to: HPXML::LocationOutside,
-                        interior_adjacent_to: HPXML::LocationLivingSpace,
+                        interior_adjacent_to: HPXML::LocationConditionedSpace,
                         wall_type: HPXML::WallTypeWoodStud,
                         area: 2355.52,
                         azimuth: nil,
@@ -757,7 +757,7 @@ class EnergyRatingIndex301Ruleset
       next unless orig_floor.is_ceiling
 
       if orig_floor.is_thermal_boundary
-        # Insulated for, e.g., ceilings between vented attic and living space.
+        # Insulated for, e.g., ceilings between vented attic and conditioned space.
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       else
         # Uninsulated for, e.g., ceilings between vented attic and garage.
@@ -813,8 +813,8 @@ class EnergyRatingIndex301Ruleset
     orig_hpxml.floors.each do |orig_floor|
       next unless orig_floor.is_floor
 
-      # Insulated for, e.g., floors between living space and crawlspace/unconditioned basement.
-      # Uninsulated for, e.g., floors between living space and conditioned basement.
+      # Insulated for, e.g., floors between conditioned space and crawlspace/unconditioned basement.
+      # Uninsulated for, e.g., floors between conditioned space and conditioned basement.
       if orig_floor.is_thermal_boundary
         insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
       else
@@ -853,7 +853,7 @@ class EnergyRatingIndex301Ruleset
 
     # Add crawlspace floor
     new_hpxml.floors.add(id: 'FloorAboveCrawlspace',
-                         interior_adjacent_to: HPXML::LocationLivingSpace,
+                         interior_adjacent_to: HPXML::LocationConditionedSpace,
                          exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
                          floor_type: HPXML::FloorTypeWoodFrame,
                          area: 1200,
@@ -865,8 +865,8 @@ class EnergyRatingIndex301Ruleset
     slab_under_rvalue, slab_under_width = get_reference_slab_under_rvalue_width()
 
     orig_hpxml.slabs.each do |orig_slab|
-      if orig_slab.interior_adjacent_to == HPXML::LocationLivingSpace
-        # Insulated for slabs below living space.
+      if orig_slab.interior_adjacent_to == HPXML::LocationConditionedSpace
+        # Insulated for slabs below conditioned space.
         perimeter_insulation_depth = slab_perim_depth
         under_slab_insulation_width = slab_under_width
         perimeter_insulation_r_value = slab_perim_rvalue
@@ -878,7 +878,7 @@ class EnergyRatingIndex301Ruleset
         perimeter_insulation_r_value = 0
         under_slab_insulation_r_value = 0
       end
-      if [HPXML::LocationLivingSpace, HPXML::LocationBasementConditioned].include? orig_slab.interior_adjacent_to
+      if [HPXML::LocationConditionedSpace, HPXML::LocationBasementConditioned].include? orig_slab.interior_adjacent_to
         carpet_fraction = 0.8
         carpet_r_value = 2.0
       else
@@ -1685,7 +1685,7 @@ class EnergyRatingIndex301Ruleset
       location = orig_water_heater.location
       if in_conditioned_space
         # Hot water equipment shall be located in conditioned space.
-        location = HPXML::LocationLivingSpace
+        location = HPXML::LocationConditionedSpace
       end
 
       # New water heater
@@ -1924,7 +1924,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
     # Default values
     id = 'ClothesWasher'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
 
     # Override values?
     if not orig_hpxml.clothes_washers.empty?
@@ -1978,13 +1978,13 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_washer_iad(orig_hpxml, new_hpxml)
     set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
-    new_hpxml.clothes_washers[0].location = HPXML::LocationLivingSpace
+    new_hpxml.clothes_washers[0].location = HPXML::LocationConditionedSpace
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml, is_all_electric: false)
     # Default values
     id = 'ClothesDryer'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
     fuel_type = HPXML::FuelTypeElectricity
 
     # Override values?
@@ -2038,13 +2038,13 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_clothes_dryer_iad(orig_hpxml, new_hpxml)
     set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
-    new_hpxml.clothes_dryers[0].location = HPXML::LocationLivingSpace
+    new_hpxml.clothes_dryers[0].location = HPXML::LocationConditionedSpace
   end
 
   def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
     # Default values
     id = 'Dishwasher'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
 
     # Override values?
     if not orig_hpxml.dishwashers.empty?
@@ -2090,13 +2090,13 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_dishwasher_iad(orig_hpxml, new_hpxml)
     set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
-    new_hpxml.dishwashers[0].location = HPXML::LocationLivingSpace
+    new_hpxml.dishwashers[0].location = HPXML::LocationConditionedSpace
   end
 
   def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
     # Default values
     id = 'Refrigerator'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
 
     # Override values?
     if not orig_hpxml.refrigerators.empty?
@@ -2125,7 +2125,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_refrigerator_iad(orig_hpxml, new_hpxml)
     set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
-    new_hpxml.refrigerators[0].location = HPXML::LocationLivingSpace
+    new_hpxml.refrigerators[0].location = HPXML::LocationConditionedSpace
   end
 
   def self.set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
@@ -2165,7 +2165,7 @@ class EnergyRatingIndex301Ruleset
   def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml, is_all_electric: false)
     # Default values
     range_id = 'CookingRange'
-    location = HPXML::LocationLivingSpace
+    location = HPXML::LocationConditionedSpace
     fuel_type = HPXML::FuelTypeElectricity
     oven_id = 'Oven'
 
@@ -2210,7 +2210,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_appliances_cooking_range_oven_iad(orig_hpxml, new_hpxml)
     set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
-    new_hpxml.cooking_ranges[0].location = HPXML::LocationLivingSpace
+    new_hpxml.cooking_ranges[0].location = HPXML::LocationConditionedSpace
   end
 
   def self.set_lighting_reference(orig_hpxml, new_hpxml)
@@ -2740,7 +2740,7 @@ class EnergyRatingIndex301Ruleset
                                         number_of_units_served: 1,
                                         fuel_type: wh_fuel_type,
                                         water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                        location: HPXML::LocationLivingSpace,
+                                        location: HPXML::LocationConditionedSpace,
                                         performance_adjustment: 1.0,
                                         tank_volume: wh_tank_vol,
                                         fraction_dhw_load_served: 1.0,

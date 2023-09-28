@@ -89,8 +89,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
       if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
-        # Ducts remain in living space, so no need to transition roof to vented attic
-        adjacent_to = HPXML::LocationLivingSpace
+        # Ducts remain in conditioned space, so no need to transition roof to vented attic
+        adjacent_to = HPXML::LocationConditionedSpace
         if program_version == ESConstants.MFNationalVer1_1
           rvalue = 1.0 / 0.021
         elsif [ESConstants.MFNationalVer1_2].include? program_version

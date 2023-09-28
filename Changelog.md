@@ -2,12 +2,14 @@
 
 __New Features__
 
-- **Breaking change**: Updates to newer proposed HPXML v4.0:
+- **Breaking change**: Updates to official HPXML v4.0:
+  - HPXML namespace changed from http://hpxmlonline.com/2019/10 to http://hpxmlonline.com/2023/09
+  - Replaces "living space" with "conditioned space", which better represents what is modeled.
   - Replaces `PortableHeater` and `FixedHeater` with `SpaceHeater`.
-- **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 - Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
 - Output updates:
+  - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
   - Adds "Peak Electricity: Annual Total (W)" output.
 
 __Bugfixes__
