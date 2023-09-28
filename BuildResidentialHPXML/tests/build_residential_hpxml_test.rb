@@ -51,6 +51,12 @@ class BuildResidentialHPXMLTest < Minitest::Test
       'extra-emissions-fossil-fuel-factors.xml' => 'base-sfd.xml',
       'extra-bills-fossil-fuel-rates.xml' => 'base-sfd.xml',
       'extra-seasons-building-america.xml' => 'base-sfd.xml',
+      'extra-ducts-crawlspace.xml' => 'base-sfd.xml',
+      'extra-ducts-attic.xml' => 'base-sfd.xml',
+      'extra-water-heater-crawlspace.xml' => 'base-sfd.xml',
+      'extra-water-heater-attic.xml' => 'base-sfd.xml',
+      'extra-battery-crawlspace.xml' => 'base-sfd.xml',
+      'extra-battery-attic.xml' => 'base-sfd.xml',
 
       'extra-sfa-atticroof-flat.xml' => 'base-sfa.xml',
       'extra-sfa-atticroof-conditioned-eaves-gable.xml' => 'extra-sfa-slab.xml',
@@ -330,6 +336,7 @@ class BuildResidentialHPXMLTest < Minitest::Test
   def _set_measure_argument_values(hpxml_file, args)
     args['hpxml_path'] = File.join(File.dirname(__FILE__), "extra_files/#{hpxml_file}")
     args['apply_defaults'] = true
+    args['apply_validation'] = true
 
     # Base
     if ['base-sfd.xml'].include? hpxml_file
@@ -493,7 +500,7 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['whole_house_fan_present'] = false
       args['water_heater_type'] = HPXML::WaterHeaterTypeStorage
       args['water_heater_fuel_type'] = HPXML::FuelTypeElectricity
-      args['water_heater_location'] = HPXML::LocationLivingSpace
+      args['water_heater_location'] = HPXML::LocationConditionedSpace
       args['water_heater_tank_volume'] = 40
       args['water_heater_efficiency_type'] = 'EnergyFactor'
       args['water_heater_efficiency'] = 0.95
@@ -551,7 +558,7 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['dehumidifier_rh_setpoint'] = 0.5
       args['dehumidifier_fraction_dehumidification_load_served'] = 1
       args['clothes_washer_present'] = true
-      args['clothes_washer_location'] = HPXML::LocationLivingSpace
+      args['clothes_washer_location'] = HPXML::LocationConditionedSpace
       args['clothes_washer_efficiency_type'] = 'IntegratedModifiedEnergyFactor'
       args['clothes_washer_efficiency'] = 1.21
       args['clothes_washer_rated_annual_kwh'] = 380.0
@@ -561,13 +568,13 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['clothes_washer_label_usage'] = 6.0
       args['clothes_washer_capacity'] = 3.2
       args['clothes_dryer_present'] = true
-      args['clothes_dryer_location'] = HPXML::LocationLivingSpace
+      args['clothes_dryer_location'] = HPXML::LocationConditionedSpace
       args['clothes_dryer_fuel_type'] = HPXML::FuelTypeElectricity
       args['clothes_dryer_efficiency_type'] = 'CombinedEnergyFactor'
       args['clothes_dryer_efficiency'] = 3.73
       args['clothes_dryer_vented_flow_rate'] = 150.0
       args['dishwasher_present'] = true
-      args['dishwasher_location'] = HPXML::LocationLivingSpace
+      args['dishwasher_location'] = HPXML::LocationConditionedSpace
       args['dishwasher_efficiency_type'] = 'RatedAnnualkWh'
       args['dishwasher_efficiency'] = 307
       args['dishwasher_label_electric_rate'] = 0.12
@@ -576,12 +583,12 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['dishwasher_label_usage'] = 4.0
       args['dishwasher_place_setting_capacity'] = 12
       args['refrigerator_present'] = true
-      args['refrigerator_location'] = HPXML::LocationLivingSpace
+      args['refrigerator_location'] = HPXML::LocationConditionedSpace
       args['refrigerator_rated_annual_kwh'] = 650.0
       args['extra_refrigerator_present'] = false
       args['freezer_present'] = false
       args['cooking_range_oven_present'] = true
-      args['cooking_range_oven_location'] = HPXML::LocationLivingSpace
+      args['cooking_range_oven_location'] = HPXML::LocationConditionedSpace
       args['cooking_range_oven_fuel_type'] = HPXML::FuelTypeElectricity
       args['cooking_range_oven_is_induction'] = false
       args['cooking_range_oven_is_convection'] = false
@@ -601,8 +608,8 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['misc_fuel_loads_fireplace_fuel_type'] = HPXML::FuelTypeNaturalGas
       args['pool_present'] = false
       args['pool_heater_type'] = HPXML::HeaterTypeElectricResistance
-      args['hot_tub_present'] = false
-      args['hot_tub_heater_type'] = HPXML::HeaterTypeElectricResistance
+      args['permanent_spa_present'] = false
+      args['permanent_spa_heater_type'] = HPXML::HeaterTypeElectricResistance
     elsif ['base-sfa.xml'].include? hpxml_file
       args['geometry_unit_type'] = HPXML::ResidentialTypeSFA
       args['geometry_unit_cfa'] = 1800.0
@@ -635,8 +642,8 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['window_area_right'] = 0
       args['ducts_supply_leakage_to_outside_value'] = 0.0
       args['ducts_return_leakage_to_outside_value'] = 0.0
-      args['ducts_supply_location'] = HPXML::LocationLivingSpace
-      args['ducts_return_location'] = HPXML::LocationLivingSpace
+      args['ducts_supply_location'] = HPXML::LocationConditionedSpace
+      args['ducts_return_location'] = HPXML::LocationConditionedSpace
       args['ducts_supply_insulation_r'] = 0.0
       args['ducts_return_insulation_r'] = 0.0
       args['ducts_number_of_return_registers'] = 1
@@ -669,15 +676,15 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['solar_thermal_system_type'] = HPXML::SolarThermalSystemType
       args['solar_thermal_collector_tilt'] = 'latitude-15'
     elsif ['extra-second-refrigerator.xml'].include? hpxml_file
-      args['extra_refrigerator_location'] = HPXML::LocationLivingSpace
+      args['extra_refrigerator_location'] = HPXML::LocationConditionedSpace
     elsif ['extra-second-heating-system-portable-heater-to-heating-system.xml'].include? hpxml_file
       args['heating_system_fuel'] = HPXML::FuelTypeElectricity
       args['heating_system_heating_capacity'] = 48000.0
       args['heating_system_fraction_heat_load_served'] = 0.75
       args['ducts_supply_leakage_to_outside_value'] = 0.0
       args['ducts_return_leakage_to_outside_value'] = 0.0
-      args['ducts_supply_location'] = HPXML::LocationLivingSpace
-      args['ducts_return_location'] = HPXML::LocationLivingSpace
+      args['ducts_supply_location'] = HPXML::LocationConditionedSpace
+      args['ducts_return_location'] = HPXML::LocationConditionedSpace
       args['heating_system_2_type'] = HPXML::HVACTypeSpaceHeater
       args['heating_system_2_heating_capacity'] = 16000.0
     elsif ['extra-second-heating-system-fireplace-to-heating-system.xml'].include? hpxml_file
@@ -703,8 +710,8 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['heat_pump_fraction_heat_load_served'] = 0.75
       args['ducts_supply_leakage_to_outside_value'] = 0.0
       args['ducts_return_leakage_to_outside_value'] = 0.0
-      args['ducts_supply_location'] = HPXML::LocationLivingSpace
-      args['ducts_return_location'] = HPXML::LocationLivingSpace
+      args['ducts_supply_location'] = HPXML::LocationConditionedSpace
+      args['ducts_return_location'] = HPXML::LocationConditionedSpace
       args['heating_system_2_type'] = HPXML::HVACTypeSpaceHeater
       args['heating_system_2_heating_capacity'] = 16000.0
     elsif ['extra-second-heating-system-fireplace-to-heat-pump.xml'].include? hpxml_file
@@ -767,9 +774,9 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['pool_heater_type'] = HPXML::HeaterTypeGas
       args['pool_heater_annual_kwh'] = 0
     elsif ['extra-gas-hot-tub-heater-with-zero-kwh.xml'].include? hpxml_file
-      args['hot_tub_present'] = true
-      args['hot_tub_heater_type'] = HPXML::HeaterTypeGas
-      args['hot_tub_heater_annual_kwh'] = 0
+      args['permanent_spa_present'] = true
+      args['permanent_spa_heater_type'] = HPXML::HeaterTypeGas
+      args['permanent_spa_heater_annual_kwh'] = 0
     elsif ['extra-no-rim-joists.xml'].include? hpxml_file
       args.delete('geometry_rim_joist_height')
       args.delete('rim_joist_assembly_r')
@@ -805,6 +812,34 @@ class BuildResidentialHPXMLTest < Minitest::Test
     elsif ['extra-seasons-building-america.xml'].include? hpxml_file
       args['hvac_control_heating_season_period'] = HPXML::BuildingAmerica
       args['hvac_control_cooling_season_period'] = HPXML::BuildingAmerica
+    elsif ['extra-ducts-crawlspace.xml'].include? hpxml_file
+      args['geometry_foundation_type'] = HPXML::FoundationTypeCrawlspaceUnvented
+      args['geometry_foundation_height'] = 4
+      args['floor_over_foundation_assembly_r'] = 18.7
+      args['foundation_wall_insulation_distance_to_bottom'] = 4
+      args['ducts_supply_location'] = HPXML::LocationCrawlspace
+      args['ducts_return_location'] = HPXML::LocationCrawlspace
+    elsif ['extra-ducts-attic.xml'].include? hpxml_file
+      args['ducts_supply_location'] = HPXML::LocationAttic
+      args['ducts_return_location'] = HPXML::LocationAttic
+    elsif ['extra-water-heater-crawlspace.xml'].include? hpxml_file
+      args['geometry_foundation_type'] = HPXML::FoundationTypeCrawlspaceUnvented
+      args['geometry_foundation_height'] = 4
+      args['floor_over_foundation_assembly_r'] = 18.7
+      args['foundation_wall_insulation_distance_to_bottom'] = 4
+      args['water_heater_location'] = HPXML::LocationCrawlspace
+    elsif ['extra-water-heater-attic.xml'].include? hpxml_file
+      args['water_heater_location'] = HPXML::LocationAttic
+    elsif ['extra-battery-crawlspace.xml'].include? hpxml_file
+      args['geometry_foundation_type'] = HPXML::FoundationTypeCrawlspaceUnvented
+      args['geometry_foundation_height'] = 4
+      args['floor_over_foundation_assembly_r'] = 18.7
+      args['foundation_wall_insulation_distance_to_bottom'] = 4
+      args['battery_present'] = true
+      args['battery_location'] = HPXML::LocationCrawlspace
+    elsif ['extra-battery-attic.xml'].include? hpxml_file
+      args['battery_present'] = true
+      args['battery_location'] = HPXML::LocationAttic
     elsif ['extra-sfa-atticroof-flat.xml'].include? hpxml_file
       args['geometry_attic_type'] = HPXML::AtticTypeFlatRoof
       args['ducts_supply_leakage_to_outside_value'] = 0.0
@@ -815,8 +850,8 @@ class BuildResidentialHPXMLTest < Minitest::Test
       args['geometry_unit_num_floors_above_grade'] = 2
       args['geometry_attic_type'] = HPXML::AtticTypeConditioned
       args['geometry_eaves_depth'] = 2
-      args['ducts_supply_location'] = HPXML::LocationLivingSpace
-      args['ducts_return_location'] = HPXML::LocationLivingSpace
+      args['ducts_supply_location'] = HPXML::LocationConditionedSpace
+      args['ducts_return_location'] = HPXML::LocationConditionedSpace
     elsif ['extra-sfa-atticroof-conditioned-eaves-hip.xml'].include? hpxml_file
       args['geometry_roof_type'] = 'hip'
     elsif ['extra-mf-eaves.xml'].include? hpxml_file
@@ -1146,8 +1181,8 @@ class BuildResidentialHPXMLTest < Minitest::Test
     elsif ['warning-conditioned-attic-with-floor-insulation.xml'].include? hpxml_file
       args['geometry_unit_num_floors_above_grade'] = 2
       args['geometry_attic_type'] = HPXML::AtticTypeConditioned
-      args['ducts_supply_location'] = HPXML::LocationLivingSpace
-      args['ducts_return_location'] = HPXML::LocationLivingSpace
+      args['ducts_supply_location'] = HPXML::LocationConditionedSpace
+      args['ducts_return_location'] = HPXML::LocationConditionedSpace
     end
   end
 
