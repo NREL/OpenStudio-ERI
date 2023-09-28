@@ -278,7 +278,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   end
 
   def get_eec_numerator(unit)
-    if ['HSPF', 'HSPF2', 'SEER', 'SEER2', 'EER', 'CEER'].include? unit
+    # Newer metrics (SEER2, HSPF2, UEF, CEER) should be converted
+    # to older metrics (SEER, HSPF, EF, EER)
+    if ['HSPF', 'SEER', 'EER'].include? unit
       return 3.413
     elsif ['AFUE', 'COP', 'Percent', 'EF'].include? unit
       return 1.0
@@ -303,7 +305,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
         elsif system.respond_to?(:heating_efficiency_hspf) && (not system.heating_efficiency_hspf.nil?)
           return get_eec_numerator('HSPF') / system.heating_efficiency_hspf
         elsif system.respond_to?(:heating_efficiency_hspf2) && (not system.heating_efficiency_hspf2.nil?)
-          return get_eec_numerator('HSPF2') / system.heating_efficiency_hspf2
+          hspf = HVAC.calc_hspf_from_hspf2(system.heating_efficiency_hspf2, !system.distribution_system_idref.nil?)
+          return get_eec_numerator('HSPF') / hspf
         elsif system.respond_to?(:heating_efficiency_cop) && (not system.heating_efficiency_cop.nil?)
           return get_eec_numerator('COP') / system.heating_efficiency_cop
         end
@@ -312,26 +315,28 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
       if system.respond_to?(:cooling_efficiency_seer) && (not system.cooling_efficiency_seer.nil?)
         return get_eec_numerator('SEER') / system.cooling_efficiency_seer
       elsif system.respond_to?(:cooling_efficiency_seer2) && (not system.cooling_efficiency_seer2.nil?)
-        return get_eec_numerator('SEER2') / system.cooling_efficiency_seer2
+        seer = HVAC.calc_seer_from_seer2(system.cooling_efficiency_seer2, !system.distribution_system_idref.nil?)
+        return get_eec_numerator('SEER') / seer
       elsif system.respond_to?(:cooling_efficiency_eer) && (not system.cooling_efficiency_eer.nil?)
         return get_eec_numerator('EER') / system.cooling_efficiency_eer
       elsif system.respond_to?(:cooling_efficiency_ceer) && (not system.cooling_efficiency_ceer.nil?)
-        return get_eec_numerator('CEER') / system.cooling_efficiency_ceer
+        eer = system.cooling_efficiency_ceer * 1.01 # FIXME: Move to hvac.rb
+        return get_eec_numerator('EER') / eer
       elsif system.cooling_system_type == HPXML::HVACTypeEvaporativeCooler
         return get_eec_numerator('SEER') / 15.0 # Arbitrary
       end
     elsif type == 'Hot Water'
       if not system.energy_factor.nil?
-        ef_uef = system.energy_factor
+        ef = system.energy_factor
       elsif not system.uniform_energy_factor.nil?
-        ef_uef = system.uniform_energy_factor
+        ef = Waterheater.calc_ef_from_uef(system)
       end
-      if ef_uef.nil?
+      if ef.nil?
         # Get assumed EF for combi system
 
         eta_c = system.related_hvac_system.heating_efficiency_afue
         if system.water_heater_type == HPXML::WaterHeaterTypeCombiTankless
-          ef_uef = eta_c
+          ef = eta_c
         elsif system.water_heater_type == HPXML::WaterHeaterTypeCombiStorage
           # Calculates the energy factor based on UA of the tank and conversion efficiency (eta_c)
           # Source: Burch and Erickson 2004 - http://www.nrel.gov/docs/gen/fy04/36035.pdf
@@ -349,13 +354,13 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
           t_env = 67.5 # F
           q_load = draw_mass * cp * (t - t_in) # Btu/day
 
-          ef_uef = q_load / ((ua * (t - t_env) * 24.0 + q_load) / eta_c)
+          ef = q_load / ((ua * (t - t_env) * 24.0 + q_load) / eta_c)
         end
       end
       if not system.performance_adjustment.nil?
-        ef_uef *= system.performance_adjustment
+        ef *= system.performance_adjustment
       end
-      return get_eec_numerator('EF') / ef_uef
+      return get_eec_numerator('EF') / ef
     elsif type == 'Mech Vent Preheating'
       return get_eec_numerator('COP') / system.preheating_efficiency_cop
     elsif type == 'Mech Vent Precooling'

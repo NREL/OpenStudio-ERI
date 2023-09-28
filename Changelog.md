@@ -6,6 +6,7 @@ __New Features__
   - Replaces `PortableHeater` and `FixedHeater` with `SpaceHeater`.
 - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
+- Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
 - Output updates:
   - Adds "Peak Electricity: Annual Total (W)" output.
 
@@ -14,6 +15,12 @@ __Bugfixes__
 - Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
 - Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
 - Minor HVAC design load calculation bugfixes for foundation walls.
+- Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
+
+## OpenStudio-ERI v1.6.2
+
+__Bugfixes__
+- Fixes incorrect ESRD ceiling U-factor for SFA unit with adiabatic ceiling when using SFNH program.
 
 ## OpenStudio-ERI v1.6.1
 
