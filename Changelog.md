@@ -1,9 +1,9 @@
 ## OpenStudio-ERI v1.7.0
 
 __New Features__
-
+- Updates to OpenStudio 3.7.0/EnergyPlus 23.2.
 - **Breaking change**: Updates to official HPXML v4.0:
-  - HPXML namespace changed from http://hpxmlonline.com/2019/10 to http://hpxmlonline.com/2023/09
+  - HPXML namespace changed from http://hpxmlonline.com/2019/10 to http://hpxmlonline.com/2023/09.
   - Replaces "living space" with "conditioned space", which better represents what is modeled.
   - Replaces `PortableHeater` and `FixedHeater` with `SpaceHeater`.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
@@ -17,6 +17,7 @@ __Bugfixes__
 - Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
 - Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
 - Fixes ground source heat pump fan/pump adjustment to rated efficiency.
+- Fixes missing radiation exchange between window and sky.
 - Minor HVAC design load calculation bugfixes for foundation walls.
 - Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
 
