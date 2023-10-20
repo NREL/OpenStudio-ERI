@@ -20,6 +20,7 @@ __Bugfixes__
 - Fixes missing radiation exchange between window and sky.
 - Minor HVAC design load calculation bugfixes for foundation walls.
 - Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
+- Improvements to AC/HP sizing in the ERI Reference Home.
 
 ## OpenStudio-ERI v1.6.2
 
