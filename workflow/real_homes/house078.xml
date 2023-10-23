@@ -156,8 +156,6 @@
               <WoodStud/>
             </WallType>
             <Area>359.8</Area>
-            <SolarAbsorptance>0.75</SolarAbsorptance>
-            <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall2Insulation'/>
               <AssemblyEffectiveRValue>11.611</AssemblyEffectiveRValue>

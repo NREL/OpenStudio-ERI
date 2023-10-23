@@ -166,8 +166,6 @@
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Area>31.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation'/>
               <AssemblyEffectiveRValue>21.14</AssemblyEffectiveRValue>
@@ -202,8 +200,6 @@
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>23.5</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist4Insulation'/>
               <AssemblyEffectiveRValue>21.14</AssemblyEffectiveRValue>
@@ -214,8 +210,6 @@
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>43.5</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist5Insulation'/>
               <AssemblyEffectiveRValue>21.14</AssemblyEffectiveRValue>
@@ -231,8 +225,6 @@
               <WoodStud/>
             </WallType>
             <Area>310.0</Area>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.55</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation'/>
               <AssemblyEffectiveRValue>17.13</AssemblyEffectiveRValue>
@@ -276,8 +268,6 @@
               <WoodStud/>
             </WallType>
             <Area>317.0</Area>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.55</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall4Insulation'/>
               <AssemblyEffectiveRValue>17.13</AssemblyEffectiveRValue>

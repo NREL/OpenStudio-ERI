@@ -136,8 +136,6 @@
               <SolidConcrete/>
             </WallType>
             <Area>750.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall2Insulation'/>
               <AssemblyEffectiveRValue>19.33</AssemblyEffectiveRValue>

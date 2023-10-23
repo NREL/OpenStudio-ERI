@@ -397,8 +397,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If Azimuth not provided, and it's an *exterior* rim joist, modeled as four surfaces of equal area facing every direction.
          Azimuth is irrelevant for *interior* rim joists.
-  .. [#] SolarAbsorptance only required/used for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
-  .. [#] Emittance only required/used for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
+  .. [#] SolarAbsorptance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
+  .. [#] Emittance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
 HPXML Walls
@@ -428,8 +428,8 @@ Each wall surface not attached to a foundation space is entered as an ``/HPXML/B
   .. [#] WallType child element choices are ``WoodStud``, ``DoubleWoodStud``, ``ConcreteMasonryUnit``, ``StructuralInsulatedPanel``, ``InsulatedConcreteForms``, ``SteelFrame``, ``SolidConcrete``, ``StructuralBrick``, ``StrawBale``, ``Stone``, ``LogWall``, or ``Adobe``.
   .. [#] If Azimuth not provided, and it's an *exterior* wall, modeled as four surfaces of equal area facing every direction.
          Azimuth is irrelevant for *interior* walls (e.g., between living space and garage).
-  .. [#] SolarAbsorptance only required/used for exterior walls (i.e., ExteriorAdjacentTo=outside).
-  .. [#] Emittance only required/used for exterior walls (i.e., ExteriorAdjacentTo=outside).
+  .. [#] SolarAbsorptance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
+  .. [#] Emittance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
 HPXML Foundation Walls

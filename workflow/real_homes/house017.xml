@@ -179,8 +179,6 @@
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>crawlspace - unvented</InteriorAdjacentTo>
             <Area>36.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist3Insulation'/>
               <AssemblyEffectiveRValue>28.71</AssemblyEffectiveRValue>
@@ -256,8 +254,6 @@
               <WoodStud/>
             </WallType>
             <Area>322.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall5Insulation'/>
               <AssemblyEffectiveRValue>18.67</AssemblyEffectiveRValue>
