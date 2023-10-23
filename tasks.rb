@@ -2556,18 +2556,21 @@ def create_sample_hpxmls
       roof.interior_finish_type = nil
       roof.interior_finish_thickness = nil
     end
-    hpxml.rim_joists.each do |rim_joist|
-      rim_joist.siding = nil
-      rim_joist.color = nil
-      rim_joist.solar_absorptance = 0.7 if rim_joist.solar_absorptance.nil?
-    end
-    hpxml.walls.each do |wall|
-      wall.siding = nil
-      wall.attic_wall_type = nil
-      wall.interior_finish_type = nil
-      wall.interior_finish_thickness = nil
-      wall.color = nil
-      wall.solar_absorptance = 0.7 if wall.solar_absorptance.nil?
+    (hpxml.rim_joists + hpxml.walls).each do |wall_or_rim_joist|
+      wall_or_rim_joist.siding = nil
+      wall_or_rim_joist.color = nil
+      if wall_or_rim_joist.is_exterior
+        wall_or_rim_joist.solar_absorptance = 0.7 if wall_or_rim_joist.solar_absorptance.nil?
+        wall_or_rim_joist.emittance = 0.92 if wall_or_rim_joist.emittance.nil?
+      else
+        wall_or_rim_joist.solar_absorptance = nil
+        wall_or_rim_joist.emittance = nil
+      end
+      next unless wall_or_rim_joist.is_a? HPXML::Wall
+
+      wall_or_rim_joist.attic_wall_type = nil
+      wall_or_rim_joist.interior_finish_type = nil
+      wall_or_rim_joist.interior_finish_thickness = nil
     end
     hpxml.floors.each do |floor|
       floor.interior_finish_type = nil
@@ -2836,9 +2839,6 @@ def create_sample_hpxmls
       hpxml.header.energystar_calculation_version = ESConstants.SFOregonWashingtonVer3_2
     else
       hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
-    end
-    hpxml.windows.each do |window|
-      window.performance_class = HPXML::WindowClassResidential
     end
     hpxml.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?
