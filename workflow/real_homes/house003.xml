@@ -193,8 +193,6 @@
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
             <Area>97.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist2Insulation'/>
               <AssemblyEffectiveRValue>3.74</AssemblyEffectiveRValue>
@@ -267,8 +265,6 @@
               <WoodStud/>
             </WallType>
             <Area>207.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall4Insulation'/>
               <AssemblyEffectiveRValue>13.37</AssemblyEffectiveRValue>
@@ -282,8 +278,6 @@
               <WoodStud/>
             </WallType>
             <Area>16.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall5Insulation'/>
               <AssemblyEffectiveRValue>17.14</AssemblyEffectiveRValue>
@@ -297,8 +291,6 @@
               <WoodStud/>
             </WallType>
             <Area>38.8</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall6Insulation'/>
               <AssemblyEffectiveRValue>13.37</AssemblyEffectiveRValue>
