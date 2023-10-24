@@ -214,8 +214,6 @@
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
             <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>40.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist2Insulation'/>
               <AssemblyEffectiveRValue>14.58</AssemblyEffectiveRValue>
@@ -246,8 +244,6 @@
               <WoodStud/>
             </WallType>
             <Area>360.0</Area>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.55</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall2Insulation'/>
               <AssemblyEffectiveRValue>12.25</AssemblyEffectiveRValue>
@@ -261,8 +257,6 @@
               <WoodStud/>
             </WallType>
             <Area>276.0</Area>
-            <SolarAbsorptance>0.9</SolarAbsorptance>
-            <Emittance>0.95</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall3Insulation'/>
               <AssemblyEffectiveRValue>16.8</AssemblyEffectiveRValue>

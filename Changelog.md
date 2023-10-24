@@ -11,6 +11,9 @@ __New Features__
 - Output updates:
   - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
   - Adds "Peak Electricity: Annual Total (W)" output.
+- Relaxes requirements for some inputs:
+  - `SolarAbsorptance` and `Emittance` now only required for *exterior* walls & rim joists (i.e., ExteriorAdjacentTo=outside).
+  - `Window/PerformanceClass` no longer required (defaults to "residential").
 
 __Bugfixes__
 - Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.

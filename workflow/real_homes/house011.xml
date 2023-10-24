@@ -152,8 +152,6 @@
               <SteelFrame/>
             </WallType>
             <Area>906.7</Area>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.55</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall3Insulation'/>
               <AssemblyEffectiveRValue>3.52</AssemblyEffectiveRValue>

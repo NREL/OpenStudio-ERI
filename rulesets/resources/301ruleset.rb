@@ -991,7 +991,7 @@ class EnergyRatingIndex301Ruleset
                             interior_shading_factor_summer: shade_summer,
                             interior_shading_factor_winter: shade_winter,
                             fraction_operable: orig_window.fraction_operable,
-                            performance_class: orig_window.performance_class,
+                            performance_class: orig_window.performance_class.nil? ? HPXML::WindowClassResidential : orig_window.performance_class,
                             wall_idref: orig_window.wall_idref)
     end
   end

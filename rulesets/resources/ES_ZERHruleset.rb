@@ -625,7 +625,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                               ufactor: win_ufactor,
                               shgc: win_shgc,
                               wall_idref: 'TargetWall',
-                              performance_class: win.performance_class,
+                              performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
                               fraction_operable: fraction_operable)
       end
     else

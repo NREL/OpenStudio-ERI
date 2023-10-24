@@ -385,8 +385,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
   ``InteriorAdjacentTo``                  string                 See [#]_     Yes                    Interior adjacent space type
   ``Area``                                double   ft2           > 0          Yes                    Gross area
   ``Azimuth``                             integer  deg           0 - 359      No        See [#]_     Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                 0 - 1        Yes                    Solar absorptance
-  ``Emittance``                           double                 0 - 1        Yes                    Emittance
+  ``SolarAbsorptance``                    double                 0 - 1        See [#]_               Solar absorptance
+  ``Emittance``                           double                 0 - 1        See [#]_               Emittance
   ``Insulation/SystemIdentifier``         id                                  Yes                    Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double   F-ft2-hr/Btu  > 0          Yes                    Assembly R-value [#]_
   ======================================  =======  ============  ===========  ========  ===========  ==============================
@@ -397,6 +397,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If Azimuth not provided, and it's an *exterior* rim joist, modeled as four surfaces of equal area facing every direction.
          Azimuth is irrelevant for *interior* rim joists.
+  .. [#] SolarAbsorptance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
+  .. [#] Emittance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
 HPXML Walls
@@ -413,8 +415,8 @@ Each wall surface not attached to a foundation space is entered as an ``/HPXML/B
   ``WallType``                            element                1 [#]_       Yes                    Wall type (for thermal mass)
   ``Area``                                double   ft2           > 0          Yes                    Gross area (including doors/windows)
   ``Azimuth``                             integer  deg           0 - 359      No        See [#]_     Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                 0 - 1        Yes                    Solar absorptance
-  ``Emittance``                           double                 0 - 1        Yes                    Emittance
+  ``SolarAbsorptance``                    double                 0 - 1        See [#]_               Solar absorptance
+  ``Emittance``                           double                 0 - 1        See [#]_               Emittance
   ``Insulation/SystemIdentifier``         id                                  Yes                    Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double   F-ft2-hr/Btu  > 0          Yes                    Assembly R-value [#]_
   ======================================  =======  ============  ===========  ========  ===========  ====================================
@@ -426,6 +428,8 @@ Each wall surface not attached to a foundation space is entered as an ``/HPXML/B
   .. [#] WallType child element choices are ``WoodStud``, ``DoubleWoodStud``, ``ConcreteMasonryUnit``, ``StructuralInsulatedPanel``, ``InsulatedConcreteForms``, ``SteelFrame``, ``SolidConcrete``, ``StructuralBrick``, ``StrawBale``, ``Stone``, ``LogWall``, or ``Adobe``.
   .. [#] If Azimuth not provided, and it's an *exterior* wall, modeled as four surfaces of equal area facing every direction.
          Azimuth is irrelevant for *interior* walls (e.g., between conditioned space and garage).
+  .. [#] SolarAbsorptance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
+  .. [#] Emittance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
 HPXML Foundation Walls
@@ -555,19 +559,19 @@ HPXML Windows
 
 Each window or glass door area is entered as an ``/HPXML/Building/BuildingDetails/Enclosure/Windows/Window``.
 
-  ============================================  ========  ============  ===========  ========  =========  ==============================================
-  Element                                       Type      Units         Constraints  Required  Default    Notes
-  ============================================  ========  ============  ===========  ========  =========  ==============================================
-  ``SystemIdentifier``                          id                                   Yes                  Unique identifier
-  ``Area``                                      double    ft2           > 0          Yes                  Total area
-  ``Azimuth``                                   integer   deg           0 - 359      Yes                  Azimuth (clockwise from North)
-  ``UFactor``                                   double    Btu/F-ft2-hr  > 0          Yes                  Full-assembly NFRC U-factor
-  ``SHGC``                                      double                  0 - 1        Yes                  Full-assembly NFRC solar heat gain coefficient
-  ``Overhangs``                                 element                 0 - 1        No        <none>     Presence of overhangs (including roof eaves)
-  ``FractionOperable``                          double    frac          0 - 1        Yes                  Operable fraction [#]_
-  ``PerformanceClass``                          string                  See [#]_     Yes                  Performance class
-  ``AttachedToWall``                            idref                   See [#]_     Yes                  ID of attached wall
-  ============================================  ========  ============  ===========  ========  =========  ==============================================
+  ============================================  ========  ============  ===========  ========  ===========  ==============================================
+  Element                                       Type      Units         Constraints  Required  Default      Notes
+  ============================================  ========  ============  ===========  ========  ===========  ==============================================
+  ``SystemIdentifier``                          id                                   Yes                    Unique identifier
+  ``Area``                                      double    ft2           > 0          Yes                    Total area
+  ``Azimuth``                                   integer   deg           0 - 359      Yes                    Azimuth (clockwise from North)
+  ``UFactor``                                   double    Btu/F-ft2-hr  > 0          Yes                    Full-assembly NFRC U-factor
+  ``SHGC``                                      double                  0 - 1        Yes                    Full-assembly NFRC solar heat gain coefficient
+  ``Overhangs``                                 element                 0 - 1        No        <none>       Presence of overhangs (including roof eaves)
+  ``FractionOperable``                          double    frac          0 - 1        Yes                    Operable fraction [#]_
+  ``PerformanceClass``                          string                  See [#]_     No        residential  Performance class
+  ``AttachedToWall``                            idref                   See [#]_     Yes                    ID of attached wall
+  ============================================  ========  ============  ===========  ========  ===========  ==============================================
 
   .. [#] FractionOperable reflects whether the windows are operable (can be opened), not how they are used by the occupants.
          If a ``Window`` represents a single window, the value should be 0 or 1.
