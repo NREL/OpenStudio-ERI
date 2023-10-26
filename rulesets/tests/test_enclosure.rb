@@ -1129,12 +1129,10 @@ class ERIEnclosureTest < Minitest::Test
   end
 
   def _check_roofs(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil, rb_grade: nil)
-    area_values = []
-    rvalue_x_area_values = [] # Area-weighted
-    sabs_x_area_values = [] # Area-weighted
-    emit_x_area_values = [] # Area-weighted
+    tot_area = 0
+    rvalue_x_area_values, sabs_x_area_values, emit_x_area_values = [], [], [] # Area-weighted
     hpxml.roofs.each do |roof|
-      area_values << roof.area
+      tot_area += roof.area
       rvalue_x_area_values << roof.insulation_assembly_r_value * roof.area
       sabs_x_area_values << roof.solar_absorptance * roof.area
       emit_x_area_values << roof.emittance * roof.area
@@ -1148,87 +1146,86 @@ class ERIEnclosureTest < Minitest::Test
     end
 
     if area.nil?
-      assert(area_values.empty?)
+      assert_equal(0, tot_area)
     else
-      assert_in_epsilon(area, area_values.sum, 0.01)
+      assert_in_epsilon(area, tot_area, 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.sum / tot_area, 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.sum / area_values.sum, 0.01)
+      assert_in_epsilon(sabs, sabs_x_area_values.sum / tot_area, 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.sum / area_values.sum, 0.01)
+      assert_in_epsilon(emit, emit_x_area_values.sum / tot_area, 0.01)
     end
   end
 
   def _check_walls(hpxml, area:, rvalue:, sabs:, emit:)
-    area_values = []
-    rvalue_x_area_values = [] # Area-weighted
-    sabs_x_area_values = [] # Area-weighted
-    emit_x_area_values = [] # Area-weighted
+    tot_area, ext_area = 0, 0
+    rvalue_x_area_values, sabs_x_area_values, emit_x_area_values = [], [], [] # Area-weighted
     hpxml.walls.each do |wall|
-      area_values << wall.area
+      tot_area += wall.area
       rvalue_x_area_values << wall.insulation_assembly_r_value * wall.area
+      next unless wall.is_exterior
+
+      ext_area += wall.area
       sabs_x_area_values << wall.solar_absorptance * wall.area
       emit_x_area_values << wall.emittance * wall.area
     end
-    assert_in_epsilon(area, area_values.sum, 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(sabs, sabs_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(emit, emit_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(area, tot_area, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(sabs, sabs_x_area_values.sum / ext_area, 0.01)
+    assert_in_epsilon(emit, emit_x_area_values.sum / ext_area, 0.01)
   end
 
   def _check_rim_joists(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil)
-    area_values = []
-    rvalue_x_area_values = [] # Area-weighted
-    sabs_x_area_values = [] # Area-weighted
-    emit_x_area_values = [] # Area-weighted
+    tot_area, ext_area = 0, 0
+    rvalue_x_area_values, sabs_x_area_values, emit_x_area_values = [], [], [] # Area-weighted
     hpxml.rim_joists.each do |rim_joist|
-      area_values << rim_joist.area
+      tot_area += rim_joist.area
       rvalue_x_area_values << rim_joist.insulation_assembly_r_value * rim_joist.area
+      next unless rim_joist.is_exterior
+
+      ext_area += rim_joist.area
       sabs_x_area_values << rim_joist.solar_absorptance * rim_joist.area
       emit_x_area_values << rim_joist.emittance * rim_joist.area
     end
 
     if area.nil?
-      assert(area_values.empty?)
+      assert_equal(0, tot_area)
     else
-      assert_in_epsilon(area, area_values.sum, 0.01)
+      assert_in_epsilon(area, tot_area, 0.01)
     end
     if rvalue.nil?
       assert(rvalue_x_area_values.empty?)
     else
-      assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
+      assert_in_epsilon(rvalue, rvalue_x_area_values.sum / tot_area, 0.01)
     end
     if sabs.nil?
       assert(sabs_x_area_values.empty?)
     else
-      assert_in_epsilon(sabs, sabs_x_area_values.sum / area_values.sum, 0.01)
+      assert_in_epsilon(sabs, sabs_x_area_values.sum / ext_area, 0.01)
     end
     if emit.nil?
       assert(emit_x_area_values.empty?)
     else
-      assert_in_epsilon(emit, emit_x_area_values.sum / area_values.sum, 0.01)
+      assert_in_epsilon(emit, emit_x_area_values.sum / ext_area, 0.01)
     end
   end
 
   def _check_foundation_walls(hpxml, area:, rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
-    area_values = []
-    rvalue_x_area_values = [] # Area-weighted
-    ins_top_x_area_values = [] # Area-weighted
-    ins_bottom_x_area_values = [] # Area-weighted
-    height_x_area_values = [] # Area-weighted
-    depth_bg_x_area_values = [] # Area-weighted
+    tot_area = 0
+    rvalue_x_area_values, ins_top_x_area_values, ins_bottom_x_area_values = [], [], [] # Area-weighted
+    height_x_area_values, depth_bg_x_area_values = [], [] # Area-weighted
     hpxml.foundation_walls.each do |foundation_wall|
-      area_values << foundation_wall.area
+      tot_area += foundation_wall.area
       if not foundation_wall.insulation_assembly_r_value.nil?
         rvalue_x_area_values << foundation_wall.insulation_assembly_r_value * foundation_wall.area
         ins_top_x_area_values << 0.0
@@ -1253,55 +1250,51 @@ class ERIEnclosureTest < Minitest::Test
       end
     end
 
-    assert_in_epsilon(area, area_values.sum, 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(ins_top, ins_top_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(height, height_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(depth_bg, depth_bg_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(area, tot_area, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(ins_top, ins_top_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(ins_bottom, ins_bottom_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(height, height_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(depth_bg, depth_bg_x_area_values.sum / tot_area, 0.01)
   end
 
   def _check_ceilings(hpxml, area:, rvalue:, floor_type: HPXML::FloorTypeWoodFrame)
-    area_values = []
+    tot_area = 0
     rvalue_x_area_values = [] # Area-weighted
     hpxml.floors.each do |floor|
       next unless floor.is_ceiling
 
-      area_values << floor.area
+      tot_area += floor.area
       rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
       assert_equal(floor_type, floor.floor_type)
     end
 
-    assert_in_epsilon(area, area_values.sum, 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(area, tot_area, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / tot_area, 0.01)
   end
 
   def _check_floors(hpxml, area:, rvalue:, floor_type: HPXML::FloorTypeWoodFrame)
-    area_values = []
+    tot_area = 0
     rvalue_x_area_values = [] # Area-weighted
     hpxml.floors.each do |floor|
       next unless floor.is_floor
 
-      area_values << floor.area
+      tot_area += floor.area
       rvalue_x_area_values << floor.insulation_assembly_r_value * floor.area
       assert_equal(floor_type, floor.floor_type)
     end
 
-    assert_in_epsilon(area, area_values.sum, 0.01)
-    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(area, tot_area, 0.01)
+    assert_in_epsilon(rvalue, rvalue_x_area_values.sum / tot_area, 0.01)
   end
 
   def _check_slabs(hpxml, area:, exp_perim:, perim_ins_depth: 0, perim_ins_r: 0, under_ins_width: 0,
                    under_ins_r: 0, depth_below_grade: nil)
-    area_values = []
-    exp_perim_x_area_values = [] # Area-weighted
-    perim_ins_depth_x_area_values = [] # Area-weighted
-    perim_ins_r_x_area_values = [] # Area-weighted
-    under_ins_width_x_area_values = [] # Area-weighted
-    under_ins_r_x_area_values = [] # Area-weighted
-    depth_bg_x_area_values = [] # Area-weighted
+    tot_area = 0
+    exp_perim_x_area_values, perim_ins_depth_x_area_values, perim_ins_r_x_area_values = [], [], [] # Area-weighted
+    under_ins_width_x_area_values, under_ins_r_x_area_values, depth_bg_x_area_values = [], [], [] # Area-weighted
     hpxml.slabs.each do |slab|
-      area_values << slab.area
+      tot_area += slab.area
       exp_perim_x_area_values << slab.exposed_perimeter * slab.area
       perim_ins_depth_x_area_values << slab.perimeter_insulation_depth * slab.area
       perim_ins_r_x_area_values << slab.perimeter_insulation_r_value * slab.area
@@ -1316,28 +1309,26 @@ class ERIEnclosureTest < Minitest::Test
       end
     end
 
-    assert_in_epsilon(area, area_values.sum, 0.01)
-    assert_in_epsilon(exp_perim, exp_perim_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.sum / area_values.sum, 0.01)
-    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.sum / area_values.sum, 0.01)
+    assert_in_epsilon(area, tot_area, 0.01)
+    assert_in_epsilon(exp_perim, exp_perim_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(perim_ins_depth, perim_ins_depth_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.sum / tot_area, 0.01)
     if depth_below_grade.nil?
       assert(depth_bg_x_area_values.empty?)
     else
-      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.sum / area_values.sum, 0.01)
+      assert_in_epsilon(depth_below_grade, depth_bg_x_area_values.sum / tot_area, 0.01)
     end
   end
 
   def _check_windows(hpxml, frac_operable:, values_by_azimuth: {})
-    area_total = 0.0
-    area_operable = 0.0
+    tot_area, operable_area = 0, 0
     azimuth_area_values = {}
-    azimuth_ufactor_x_area_values = {} # Area-weighted
-    azimuth_shgc_x_area_values = {} # Area-weighted
+    azimuth_ufactor_x_area_values, azimuth_shgc_x_area_values = {}, {} # Area-weighted
     hpxml.windows.each do |window|
-      area_total += window.area
-      area_operable += (window.area * window.fraction_operable)
+      tot_area += window.area
+      operable_area += (window.area * window.fraction_operable)
 
       # Init if needed
       azimuth_area_values[window.azimuth] = [] if azimuth_area_values[window.azimuth].nil?
@@ -1354,7 +1345,7 @@ class ERIEnclosureTest < Minitest::Test
     assert_equal(values_by_azimuth.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_shgc_x_area_values.size)
 
-    assert_in_epsilon(frac_operable, area_operable / area_total, 0.01)
+    assert_in_epsilon(frac_operable, operable_area / tot_area, 0.01)
 
     values_by_azimuth.each do |azimuth, values|
       assert_in_epsilon(values[:area], azimuth_area_values[azimuth].sum, 0.01)
@@ -1379,8 +1370,7 @@ class ERIEnclosureTest < Minitest::Test
 
   def _check_skylights(hpxml, values_by_azimuth: {})
     azimuth_area_values = {}
-    azimuth_ufactor_x_area_values = {} # Area-weighted
-    azimuth_shgc_x_area_values = {} # Area-weighted
+    azimuth_ufactor_x_area_values, azimuth_shgc_x_area_values = {}, {} # Area-weighted
     hpxml.skylights.each do |skylight|
       # Init if needed
       azimuth_area_values[skylight.azimuth] = [] if azimuth_area_values[skylight.azimuth].nil?

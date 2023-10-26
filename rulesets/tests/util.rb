@@ -110,7 +110,7 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
                     area: 0.0001,
                     solar_absorptance: 0.7,
                     emittance: 0.92,
-                    interior_adjacent_to: HPXML::LocationLivingSpace,
+                    interior_adjacent_to: HPXML::LocationConditionedSpace,
                     exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                     insulation_assembly_r_value: 99)
   end

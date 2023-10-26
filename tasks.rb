@@ -578,7 +578,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
     hpxml.rim_joists.clear
     hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                          exterior_adjacent_to: HPXML::LocationOutside,
-                         interior_adjacent_to: HPXML::LocationLivingSpace,
+                         interior_adjacent_to: HPXML::LocationConditionedSpace,
                          area: 152,
                          solar_absorptance: 0.75,
                          emittance: 0.9,
@@ -626,14 +626,14 @@ def set_hpxml_rim_joists(hpxml_file, hpxml)
     hpxml.rim_joists.clear
     hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                          exterior_adjacent_to: HPXML::LocationOutside,
-                         interior_adjacent_to: HPXML::LocationLivingSpace,
+                         interior_adjacent_to: HPXML::LocationConditionedSpace,
                          area: exterior_area,
                          solar_absorptance: 0.75,
                          emittance: 0.9,
                          insulation_assembly_r_value: assembly_r)
     hpxml.rim_joists.add(id: "RimJoist#{hpxml.rim_joists.size + 1}",
                          exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
-                         interior_adjacent_to: HPXML::LocationLivingSpace,
+                         interior_adjacent_to: HPXML::LocationConditionedSpace,
                          area: common_area,
                          solar_absorptance: 0.75,
                          emittance: 0.9,
@@ -685,7 +685,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
     hpxml.walls.clear
     hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOutside,
-                    interior_adjacent_to: HPXML::LocationLivingSpace,
+                    interior_adjacent_to: HPXML::LocationConditionedSpace,
                     wall_type: HPXML::WallTypeWoodStud,
                     area: 2584,
                     solar_absorptance: 0.75,
@@ -717,7 +717,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
     hpxml.walls.clear
     hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOutside,
-                    interior_adjacent_to: HPXML::LocationLivingSpace,
+                    interior_adjacent_to: HPXML::LocationConditionedSpace,
                     wall_type: HPXML::WallTypeWoodStud,
                     area: exterior_area,
                     solar_absorptance: 0.75,
@@ -725,7 +725,7 @@ def set_hpxml_walls(hpxml_file, hpxml)
                     insulation_assembly_r_value: assembly_r)
     hpxml.walls.add(id: "Wall#{hpxml.walls.size + 1}",
                     exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
-                    interior_adjacent_to: HPXML::LocationLivingSpace,
+                    interior_adjacent_to: HPXML::LocationConditionedSpace,
                     wall_type: HPXML::WallTypeWoodStud,
                     area: common_area,
                     solar_absorptance: 0.75,
@@ -904,7 +904,7 @@ def set_hpxml_floors(hpxml_file, hpxml)
     # R-11 floor from ASHRAE 140 but with 13% framing factor instead of 10%
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                      exterior_adjacent_to: HPXML::LocationBasementUnconditioned,
-                     interior_adjacent_to: HPXML::LocationLivingSpace,
+                     interior_adjacent_to: HPXML::LocationConditionedSpace,
                      floor_type: HPXML::FloorTypeWoodFrame,
                      area: 1539,
                      insulation_assembly_r_value: 13.85)
@@ -949,7 +949,7 @@ def set_hpxml_floors(hpxml_file, hpxml)
     end
     hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                      exterior_adjacent_to: exterior_adjacent_to,
-                     interior_adjacent_to: HPXML::LocationLivingSpace,
+                     interior_adjacent_to: HPXML::LocationConditionedSpace,
                      floor_type: HPXML::FloorTypeWoodFrame,
                      floor_or_ceiling: floor_or_ceiling,
                      area: area,
@@ -963,14 +963,14 @@ def set_hpxml_floors(hpxml_file, hpxml)
       end
       hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                        exterior_adjacent_to: HPXML::LocationCrawlspaceVented,
-                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       interior_adjacent_to: HPXML::LocationConditionedSpace,
                        floor_type: HPXML::FloorTypeWoodFrame,
                        area: area,
                        insulation_assembly_r_value: floor_assembly_r)
     elsif hpxml_file.include?('top_corner') || hpxml_file.include?('middle_interior')
       hpxml.floors.add(id: "Floor#{hpxml.floors.size + 1}",
                        exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
-                       interior_adjacent_to: HPXML::LocationLivingSpace,
+                       interior_adjacent_to: HPXML::LocationConditionedSpace,
                        floor_type: HPXML::FloorTypeWoodFrame,
                        floor_or_ceiling: HPXML::FloorOrCeilingFloor,
                        area: area,
@@ -998,7 +998,7 @@ def set_hpxml_slabs(hpxml_file, hpxml)
     hpxml.slabs[0].interior_adjacent_to = HPXML::LocationBasementUnconditioned
   elsif hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('slab')
-      interior_adjacent_to = HPXML::LocationLivingSpace
+      interior_adjacent_to = HPXML::LocationConditionedSpace
       depth_below_grade = 0
       carpet_fraction = 0.8
       thickness = 4
@@ -1700,12 +1700,12 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
     hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
                                           duct_type: HPXML::DuctTypeSupply,
                                           duct_insulation_r_value: 0,
-                                          duct_location: HPXML::LocationLivingSpace,
+                                          duct_location: HPXML::LocationConditionedSpace,
                                           duct_surface_area: 308)
     hpxml.hvac_distributions[0].ducts.add(id: "Duct#{hpxml.hvac_distributions[0].ducts.size + 1}",
                                           duct_type: HPXML::DuctTypeReturn,
                                           duct_insulation_r_value: 0,
-                                          duct_location: HPXML::LocationLivingSpace,
+                                          duct_location: HPXML::LocationConditionedSpace,
                                           duct_surface_area: 77)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to Duct Location = 100% in basement
@@ -1733,7 +1733,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
         supply_r = 8
         return_r = 6
       else
-        location = HPXML::LocationLivingSpace
+        location = HPXML::LocationConditionedSpace
         supply_r = 0
         return_r = 0
       end
@@ -1750,7 +1750,7 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml)
                                             duct_surface_area: return_area.round(2))
     elsif hpxml_file.include?('SF_National_3.0')
       if hpxml_file.include?('slab')
-        non_attic_location = HPXML::LocationLivingSpace
+        non_attic_location = HPXML::LocationConditionedSpace
         non_attic_frac = 0.25
       elsif hpxml_file.include?('vented_crawl')
         non_attic_location = HPXML::LocationCrawlspaceVented
@@ -1870,7 +1870,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                    location: HPXML::LocationLivingSpace,
+                                    location: HPXML::LocationConditionedSpace,
                                     tank_volume: 40,
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.88)
@@ -1881,7 +1881,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeTankless,
-                                    location: HPXML::LocationLivingSpace,
+                                    location: HPXML::LocationConditionedSpace,
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.82)
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml',
@@ -1892,7 +1892,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                    location: HPXML::LocationLivingSpace,
+                                    location: HPXML::LocationConditionedSpace,
                                     tank_volume: 40,
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.56,
@@ -1905,7 +1905,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeNaturalGas,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                    location: HPXML::LocationLivingSpace,
+                                    location: HPXML::LocationConditionedSpace,
                                     tank_volume: 40,
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.62,
@@ -1917,7 +1917,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                     is_shared_system: false,
                                     fuel_type: HPXML::FuelTypeElectricity,
                                     water_heater_type: HPXML::WaterHeaterTypeStorage,
-                                    location: HPXML::LocationLivingSpace,
+                                    location: HPXML::LocationConditionedSpace,
                                     tank_volume: 40,
                                     fraction_dhw_load_served: 1,
                                     energy_factor: 0.92)
@@ -1947,7 +1947,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                       is_shared_system: false,
                                       fuel_type: HPXML::FuelTypeNaturalGas,
                                       water_heater_type: water_heater_type,
-                                      location: HPXML::LocationLivingSpace,
+                                      location: HPXML::LocationConditionedSpace,
                                       tank_volume: tank_volume,
                                       fraction_dhw_load_served: 1,
                                       energy_factor: energy_factor,
@@ -1980,7 +1980,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml)
                                       is_shared_system: false,
                                       fuel_type: HPXML::FuelTypeElectricity,
                                       water_heater_type: water_heater_type,
-                                      location: HPXML::LocationLivingSpace,
+                                      location: HPXML::LocationConditionedSpace,
                                       tank_volume: tank_volume,
                                       fraction_dhw_load_served: 1,
                                       energy_factor: energy_factor,
@@ -2099,7 +2099,7 @@ def set_hpxml_clothes_washer(hpxml_file, hpxml)
   hpxml.clothes_washers.clear
   hpxml.clothes_washers.add(id: "ClothesWasher#{hpxml.clothes_washers.size + 1}",
                             is_shared_appliance: false,
-                            location: HPXML::LocationLivingSpace,
+                            location: HPXML::LocationConditionedSpace,
                             integrated_modified_energy_factor: default_values[:integrated_modified_energy_factor],
                             rated_annual_kwh: default_values[:rated_annual_kwh],
                             label_electric_rate: default_values[:label_electric_rate],
@@ -2129,7 +2129,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
                              is_shared_appliance: false,
-                             location: HPXML::LocationLivingSpace,
+                             location: HPXML::LocationConditionedSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              control_type: default_values[:control_type],
                              combined_energy_factor: default_values[:combined_energy_factor])
@@ -2148,7 +2148,7 @@ def set_hpxml_clothes_dryer(hpxml_file, hpxml)
     hpxml.clothes_dryers.clear
     hpxml.clothes_dryers.add(id: "ClothesDryer#{hpxml.clothes_dryers.size + 1}",
                              is_shared_appliance: false,
-                             location: HPXML::LocationLivingSpace,
+                             location: HPXML::LocationConditionedSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              control_type: default_values[:control_type],
                              combined_energy_factor: default_values[:combined_energy_factor])
@@ -2160,7 +2160,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
     hpxml.dishwashers.clear
     hpxml.dishwashers.add(id: "Dishwasher#{hpxml.dishwashers.size + 1}",
                           is_shared_appliance: false,
-                          location: HPXML::LocationLivingSpace,
+                          location: HPXML::LocationConditionedSpace,
                           place_setting_capacity: 12,
                           rated_annual_kwh: 270,
                           label_electric_rate: 0.12,
@@ -2172,7 +2172,7 @@ def set_hpxml_dishwasher(hpxml_file, hpxml)
     hpxml.dishwashers.clear
     hpxml.dishwashers.add(id: "Dishwasher#{hpxml.dishwashers.size + 1}",
                           is_shared_appliance: false,
-                          location: HPXML::LocationLivingSpace,
+                          location: HPXML::LocationConditionedSpace,
                           place_setting_capacity: default_values[:place_setting_capacity],
                           rated_annual_kwh: default_values[:rated_annual_kwh],
                           label_electric_rate: default_values[:label_electric_rate],
@@ -2193,14 +2193,14 @@ def set_hpxml_refrigerator(hpxml_file, hpxml)
     end
 
     hpxml.refrigerators.add(id: "Refrigerator#{hpxml.refrigerators.size + 1}",
-                            location: HPXML::LocationLivingSpace,
+                            location: HPXML::LocationConditionedSpace,
                             rated_annual_kwh: rated_annual_kwh)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     # Standard
     default_values = HotWaterAndAppliances.get_refrigerator_default_values(hpxml.building_construction.number_of_bedrooms)
     hpxml.refrigerators.clear
     hpxml.refrigerators.add(id: "Refrigerator#{hpxml.refrigerators.size + 1}",
-                            location: HPXML::LocationLivingSpace,
+                            location: HPXML::LocationConditionedSpace,
                             rated_annual_kwh: default_values[:rated_annual_kwh])
   end
 end
@@ -2224,7 +2224,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: "CookingRange#{hpxml.cooking_ranges.size + 1}",
-                             location: HPXML::LocationLivingSpace,
+                             location: HPXML::LocationConditionedSpace,
                              fuel_type: HPXML::FuelTypeNaturalGas,
                              is_induction: default_values[:is_induction])
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
@@ -2239,7 +2239,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml)
     default_values = HotWaterAndAppliances.get_range_oven_default_values()
     hpxml.cooking_ranges.clear
     hpxml.cooking_ranges.add(id: "CookingRange#{hpxml.cooking_ranges.size + 1}",
-                             location: HPXML::LocationLivingSpace,
+                             location: HPXML::LocationConditionedSpace,
                              fuel_type: HPXML::FuelTypeElectricity,
                              is_induction: default_values[:is_induction])
   end
@@ -2555,18 +2555,21 @@ def create_sample_hpxmls
       roof.interior_finish_type = nil
       roof.interior_finish_thickness = nil
     end
-    hpxml.rim_joists.each do |rim_joist|
-      rim_joist.siding = nil
-      rim_joist.color = nil
-      rim_joist.solar_absorptance = 0.7 if rim_joist.solar_absorptance.nil?
-    end
-    hpxml.walls.each do |wall|
-      wall.siding = nil
-      wall.attic_wall_type = nil
-      wall.interior_finish_type = nil
-      wall.interior_finish_thickness = nil
-      wall.color = nil
-      wall.solar_absorptance = 0.7 if wall.solar_absorptance.nil?
+    (hpxml.rim_joists + hpxml.walls).each do |wall_or_rim_joist|
+      wall_or_rim_joist.siding = nil
+      wall_or_rim_joist.color = nil
+      if wall_or_rim_joist.is_exterior
+        wall_or_rim_joist.solar_absorptance = 0.7 if wall_or_rim_joist.solar_absorptance.nil?
+        wall_or_rim_joist.emittance = 0.92 if wall_or_rim_joist.emittance.nil?
+      else
+        wall_or_rim_joist.solar_absorptance = nil
+        wall_or_rim_joist.emittance = nil
+      end
+      next unless wall_or_rim_joist.is_a? HPXML::Wall
+
+      wall_or_rim_joist.attic_wall_type = nil
+      wall_or_rim_joist.interior_finish_type = nil
+      wall_or_rim_joist.interior_finish_thickness = nil
     end
     hpxml.floors.each do |floor|
       floor.interior_finish_type = nil
@@ -2835,9 +2838,6 @@ def create_sample_hpxmls
       hpxml.header.energystar_calculation_version = ESConstants.SFOregonWashingtonVer3_2
     else
       hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
-    end
-    hpxml.windows.each do |window|
-      window.performance_class = HPXML::WindowClassResidential
     end
     hpxml.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?

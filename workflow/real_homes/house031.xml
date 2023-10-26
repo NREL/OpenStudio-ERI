@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>redacted</XMLGeneratedBy>
@@ -85,7 +85,7 @@
         <Roofs>
           <Roof>
             <SystemIdentifier id='Roof1'/>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>3302.0</Area>
             <SolarAbsorptance>0.8</SolarAbsorptance>
             <Emittance>0.75</Emittance>
@@ -114,7 +114,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>422.2</Area>
             <SolarAbsorptance>0.8</SolarAbsorptance>
             <Emittance>0.75</Emittance>
@@ -126,10 +126,8 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist2'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>13.5</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist2Insulation'/>
               <AssemblyEffectiveRValue>24.05</AssemblyEffectiveRValue>
@@ -140,7 +138,7 @@
           <Wall>
             <SystemIdentifier id='Wall1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -155,13 +153,11 @@
           <Wall>
             <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
             <Area>135.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall2Insulation'/>
               <AssemblyEffectiveRValue>19.05</AssemblyEffectiveRValue>
@@ -170,7 +166,7 @@
           <Wall>
             <SystemIdentifier id='Wall3'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -280,7 +276,7 @@
           </Slab>
           <Slab>
             <SystemIdentifier id='Slab3'/>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>1199.0</Area>
             <Thickness>4.0</Thickness>
             <ExposedPerimeter>150.3</ExposedPerimeter>
@@ -1506,14 +1502,14 @@
                   <SystemIdentifier id="Duct1"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>162.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id="Duct2"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>90.0</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>1</NumberofReturnRegisters>
@@ -1546,14 +1542,14 @@
                   <SystemIdentifier id="Duct3"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>486.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id="Duct4"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>450.0</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>1</NumberofReturnRegisters>
@@ -1586,14 +1582,14 @@
                   <SystemIdentifier id="Duct5"/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>486.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id="Duct6"/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>450.0</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>1</NumberofReturnRegisters>
@@ -1621,7 +1617,7 @@
             <SystemIdentifier id='WaterHeatingSystem1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>heat pump water heater</WaterHeaterType>
-            <Location>living space</Location>
+            <Location>conditioned space</Location>
             <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>120.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
@@ -1659,7 +1655,7 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <IntegratedModifiedEnergyFactor>3.06</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>96.0</RatedAnnualkWh>
           <LabelElectricRate>0.1065</LabelElectricRate>
@@ -1671,7 +1667,7 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.93</CombinedEnergyFactor>
           <ControlType>moisture</ControlType>
@@ -1679,7 +1675,7 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <RatedAnnualkWh>270.0</RatedAnnualkWh>
           <PlaceSettingCapacity>14</PlaceSettingCapacity>
           <LabelElectricRate>0.12</LabelElectricRate>
@@ -1689,12 +1685,12 @@
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <RatedAnnualkWh>2000.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <IsInduction>true</IsInduction>
         </CookingRange>

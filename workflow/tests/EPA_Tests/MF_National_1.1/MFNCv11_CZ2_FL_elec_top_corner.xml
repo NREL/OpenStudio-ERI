@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -98,7 +98,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>110.0</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -110,7 +110,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist2'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>30.0</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
@@ -124,7 +124,7 @@
           <Wall>
             <SystemIdentifier id='Wall1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -139,7 +139,7 @@
           <Wall>
             <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -156,7 +156,7 @@
           <Floor>
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorType>
               <WoodFrame/>
             </FloorType>
@@ -169,7 +169,7 @@
           <Floor>
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorOrCeiling>floor</FloorOrCeiling>
             <FloorType>
               <WoodFrame/>
@@ -276,14 +276,14 @@
                   <SystemIdentifier id='Duct1'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>324.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id='Duct2'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>60.0</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>1</NumberofReturnRegisters>
@@ -310,7 +310,7 @@
             <SystemIdentifier id='WaterHeatingSystem1'/>
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>living space</Location>
+            <Location>conditioned space</Location>
             <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
@@ -343,7 +343,7 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <IntegratedModifiedEnergyFactor>1.0</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>400.0</RatedAnnualkWh>
           <LabelElectricRate>0.12</LabelElectricRate>
@@ -355,14 +355,14 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <RatedAnnualkWh>270.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
           <LabelElectricRate>0.12</LabelElectricRate>
@@ -372,12 +372,12 @@
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <RatedAnnualkWh>423.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <IsInduction>false</IsInduction>
         </CookingRange>
