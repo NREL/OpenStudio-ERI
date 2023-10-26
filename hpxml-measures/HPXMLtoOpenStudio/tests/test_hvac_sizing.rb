@@ -31,6 +31,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
                   'skip_validation' => true }
     Dir["#{@sample_files_path}/base-hvac*.xml"].each do |hvac_hpxml|
       next if hvac_hpxml.include? 'autosize'
+      next if hvac_hpxml.include? 'detailed-performance' # Autosizing not allowed
 
       { 'USA_CO_Denver.Intl.AP.725650_TMY3.epw' => 'denver',
         'USA_TX_Houston-Bush.Intercontinental.AP.722430_TMY3.epw' => 'houston' }.each do |epw_path, location|
