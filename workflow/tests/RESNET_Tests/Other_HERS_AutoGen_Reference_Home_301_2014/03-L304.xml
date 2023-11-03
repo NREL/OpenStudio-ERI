@@ -11,9 +11,6 @@
       <ERICalculation>
         <Version>2014A</Version>
       </ERICalculation>
-      <AdditionalProperties>
-        <ParentHPXMLFile>L304XC.xml</ParentHPXMLFile>
-      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -45,6 +42,11 @@
           <NumberofBedrooms>2</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
         </BuildingConstruction>
+        <extension>
+          <AdditionalProperties>
+            <ParentHPXMLFile>L304XC.xml</ParentHPXMLFile>
+          </AdditionalProperties>
+        </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>

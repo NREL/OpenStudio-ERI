@@ -11,9 +11,6 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
-      <AdditionalProperties>
-        <ParentHPXMLFile>L100AD-HW-05.xml</ParentHPXMLFile>
-      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -45,6 +42,11 @@
           <NumberofBedrooms>4</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
         </BuildingConstruction>
+        <extension>
+          <AdditionalProperties>
+            <ParentHPXMLFile>L100AD-HW-05.xml</ParentHPXMLFile>
+          </AdditionalProperties>
+        </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>

@@ -9,12 +9,11 @@ require_relative 'util.rb'
 class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
-    @output_dir = File.join(@root_path, 'workflow', 'sample_files')
-    @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
-    schema_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-    @schema_validator = XMLValidator.get_schema_validator(schema_path)
-    erivalidator_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
-    @erivalidator = OpenStudio::XMLValidator.new(erivalidator_path)
+    @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
+    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
+    @schema_validator = XMLValidator.get_schema_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
+    @epvalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
+    @erivalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
   end
 
   def teardown
@@ -25,15 +24,15 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   def test_lighting
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1, ZERHConstants.Ver1].include? program_version
-        _check_lighting(hpxml, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        _check_lighting(hpxml_bldg, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       elsif [ESConstants.SFNationalVer3_2, ZERHConstants.SFVer2].include? program_version
-        _check_lighting(hpxml, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+        _check_lighting(hpxml_bldg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
       elsif [ESConstants.MFNationalVer1_2].include? program_version
-        _check_lighting(hpxml, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        _check_lighting(hpxml_bldg, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
-        _check_lighting(hpxml, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        _check_lighting(hpxml_bldg, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       end
     end
   end
@@ -41,16 +40,16 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   def test_ceiling_fans_none
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceiling_fans(hpxml)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_ceiling_fans(hpxml_bldg)
     end
   end
 
   def test_ceiling_fans
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceiling_fans(hpxml, cfm_per_w: 122.0, count: 4)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_ceiling_fans(hpxml_bldg, cfm_per_w: 122.0, count: 4)
     end
   end
 
@@ -58,10 +57,11 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.building_construction.number_of_bedrooms = 5
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_ceiling_fans(hpxml, cfm_per_w: 122.0, count: 6)
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.building_construction.number_of_bedrooms = 5
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_ceiling_fans(hpxml_bldg, cfm_per_w: 122.0, count: 6)
     end
   end
 
@@ -69,10 +69,10 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
     require_relative '../../workflow/design'
     if ESConstants.AllVersions.include? program_version
       designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
-                            output_dir: @output_dir)]
+                            output_dir: @sample_files_path)]
     elsif ZERHConstants.AllVersions.include? program_version
       designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
-                            output_dir: @output_dir)]
+                            output_dir: @sample_files_path)]
     end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
@@ -88,12 +88,12 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
     assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
     @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
-    return hpxml
+    return hpxml, hpxml.buildings[0]
   end
 
-  def _check_lighting(hpxml, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
-    assert_equal(9, hpxml.lighting_groups.size)
-    hpxml.lighting_groups.each do |lg|
+  def _check_lighting(hpxml_bldg, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
+    assert_equal(9, hpxml_bldg.lighting_groups.size)
+    hpxml_bldg.lighting_groups.each do |lg|
       assert([HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED].include? lg.lighting_type)
       assert([HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage].include? lg.location)
 
@@ -119,12 +119,12 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
     end
   end
 
-  def _check_ceiling_fans(hpxml, cfm_per_w: nil, count: nil)
+  def _check_ceiling_fans(hpxml_bldg, cfm_per_w: nil, count: nil)
     if cfm_per_w.nil?
-      assert_equal(0, hpxml.ceiling_fans.size)
+      assert_equal(0, hpxml_bldg.ceiling_fans.size)
     else
-      assert_equal(1, hpxml.ceiling_fans.size)
-      ceiling_fan = hpxml.ceiling_fans[0]
+      assert_equal(1, hpxml_bldg.ceiling_fans.size)
+      ceiling_fan = hpxml_bldg.ceiling_fans[0]
       if cfm_per_w.nil?
         assert_nil(ceiling_fan.efficiency)
       else

@@ -42,7 +42,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     return false, errors, warnings unless orig_hpxml.errors.empty?
 
     # Weather file
-    epw_path = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
+    epw_path = orig_hpxml.buildings[0].climate_and_risk_zones.weather_station_epw_filepath
     if not File.exist? epw_path
       test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
       epw_path = test_epw_path if File.exist? test_epw_path
@@ -62,7 +62,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     eri_version = orig_hpxml.header.eri_calculation_version
     eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
     eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
-    zip_code = orig_hpxml.header.zip_code
+    zip_code = orig_hpxml.buildings[0].zip_code
     if not eri_version.nil?
       # Obtain egrid subregion & cambium gea region
       egrid_subregion = get_epa_egrid_subregion(zip_code)
@@ -106,7 +106,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       # Write initial HPXML file
       if not design.init_hpxml_output_path.nil?
         if not File.exist? design.init_hpxml_output_path
-          XMLHelper.write_file(new_hpxml.to_oga, design.init_hpxml_output_path)
+          XMLHelper.write_file(new_hpxml.to_doc, design.init_hpxml_output_path)
         end
       end
 
@@ -119,7 +119,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
 
       # Write final HPXML file
       if (not design.hpxml_output_path.nil?) && (not design.calc_type.nil?)
-        hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_oga, design.hpxml_output_path)
+        hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_doc, design.hpxml_output_path)
       end
     end
   rescue Exception => e

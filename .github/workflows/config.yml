@@ -11,7 +11,7 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.7.0-rc1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -57,7 +57,7 @@ jobs:
   run-eri-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.7.0-rc1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -80,7 +80,7 @@ jobs:
   run-real-home-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.7.0-rc1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -103,7 +103,7 @@ jobs:
   run-resnet-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.7.0-rc1
     steps:
       - uses: actions/checkout@v3
         with:
@@ -126,7 +126,7 @@ jobs:
   run-es-zerh-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker://nrel/openstudio:develop
+      image: docker://nrel/openstudio:3.7.0-rc1
     steps:
       - uses: actions/checkout@v3
         with:

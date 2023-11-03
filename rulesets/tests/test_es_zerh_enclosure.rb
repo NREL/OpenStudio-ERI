@@ -9,12 +9,11 @@ require_relative 'util.rb'
 class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
-    @output_dir = File.join(@root_path, 'workflow', 'sample_files')
-    @tmp_hpxml_path = File.join(@output_dir, 'tmp.xml')
-    schema_path = File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-    @schema_validator = XMLValidator.get_schema_validator(schema_path)
-    erivalidator_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
-    @erivalidator = OpenStudio::XMLValidator.new(erivalidator_path)
+    @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
+    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
+    @schema_validator = XMLValidator.get_schema_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
+    @epvalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
+    @erivalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
   end
 
   def teardown
@@ -39,17 +38,17 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_infiltration(hpxml, value, units)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_infiltration(hpxml_bldg, value, units)
     end
 
     [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
-      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-      hpxml = _test_ruleset(program_version)
+      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ZERHConstants.Ver1].include? program_version
-        _check_infiltration(hpxml, 3.0, 'ACH')
+        _check_infiltration(hpxml_bldg, 3.0, 'ACH')
       else
-        _check_infiltration(hpxml, 834.0, 'CFM')
+        _check_infiltration(hpxml_bldg, 834.0, 'CFM')
       end
     end
 
@@ -67,8 +66,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base-location-miami-fl.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_infiltration(hpxml, value, units)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_infiltration(hpxml_bldg, value, units)
     end
   end
 
@@ -85,8 +84,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       rvalue = 2.3
 
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_roofs(hpxml_bldg, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
       if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
         # Ducts remain in conditioned space, so no need to transition roof to vented attic
@@ -99,37 +98,38 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_roofs(hpxml, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_roofs(hpxml_bldg, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
       _convert_to_es_zerh('base-atticroof-flat.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_roofs(hpxml, area: 1350, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_roofs(hpxml_bldg, area: 1350, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
     end
 
     [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
-      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_roofs(hpxml)
+      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_roofs(hpxml_bldg)
     end
 
     # Radiant barrier: In climate zones 1-3, if > 10 linear ft. of ductwork are located in unconditioned attic
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
         climate_zone_iecc.zone = '1A'
       end
-      hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-      hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
+      hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+      hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? program_version
         rb_grade = 1
       else
         rb_grade = nil
       end
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
+      _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
 
     # SFPacificVer3_0 - Regional test
@@ -142,16 +142,16 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       # In both HI and GU, if > 10 linear ft. of ductwork are located in unconditioned attic, place radiant barrier
       _convert_to_es_zerh('base.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_ruleset(ESConstants.SFPacificVer3_0)
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1, adjacent_to: HPXML::LocationAtticVented)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_ruleset(ESConstants.SFPacificVer3_0)
-      _check_roofs(hpxml, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
       _convert_to_es_zerh('base-atticroof-flat.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_ruleset(ESConstants.SFPacificVer3_0)
-      _check_roofs(hpxml, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _check_roofs(hpxml_bldg, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
   end
 
@@ -174,16 +174,16 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_walls(hpxml, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_walls(hpxml_bldg, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
       _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_walls(hpxml, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_walls(hpxml_bldg, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
 
       _convert_to_es_zerh('base-enclosure-garage.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_walls(hpxml, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_walls(hpxml_bldg, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
 
     [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
@@ -197,13 +197,13 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rvalue = 1.0 / 0.060
       end
 
-      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_walls(hpxml, area: 980, rvalue: (rvalue * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
+      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_walls(hpxml_bldg, area: 980, rvalue: (rvalue * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_walls(hpxml, area: 1086, rvalue: (rvalue * 686 + 4.0 * 400) / 1086, sabs: 0.75, emit: 0.9)
+      _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_walls(hpxml_bldg, area: 1086, rvalue: (rvalue * 686 + 4.0 * 400) / 1086, sabs: 0.75, emit: 0.9)
     end
 
     # SFPacificVer3_0 - Regional test
@@ -215,16 +215,16 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_ruleset(ESConstants.SFPacificVer3_0)
-      _check_walls(hpxml, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _check_walls(hpxml_bldg, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
       _convert_to_es_zerh('base-atticroof-conditioned.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_ruleset(ESConstants.SFPacificVer3_0)
-      _check_walls(hpxml, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _check_walls(hpxml_bldg, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
 
       _convert_to_es_zerh('base-enclosure-garage.xml', ESConstants.SFPacificVer3_0, state_code)
-      hpxml = _test_ruleset(ESConstants.SFPacificVer3_0)
-      _check_walls(hpxml, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _check_walls(hpxml_bldg, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
   end
 
@@ -245,12 +245,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_rim_joists(hpxml, area: 116, rvalue: rvalue, sabs: 0.75, emit: 0.90)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_rim_joists(hpxml_bldg, area: 116, rvalue: rvalue, sabs: 0.75, emit: 0.90)
 
       _convert_to_es_zerh('base-foundation-multiple.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_rim_joists(hpxml, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.90)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_rim_joists(hpxml_bldg, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.90)
     end
   end
 
@@ -275,13 +275,13 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
                      'base-foundation-conditioned-basement-wall-insulation.xml']
       hpxml_names.each do |hpxml_name|
         _convert_to_es_zerh(hpxml_name, program_version)
-        hpxml = _test_ruleset(program_version)
+        _hpxml, hpxml_bldg = _test_ruleset(program_version)
         if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
           type = nil
         end
-        _check_foundation_walls(hpxml, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+        _check_foundation_walls(hpxml_bldg, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
     end
 
@@ -297,33 +297,34 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       hpxml_names.each do |hpxml_name|
         _convert_to_es_zerh(hpxml_name, program_version)
         hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-        hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+        hpxml_bldg = hpxml.buildings[0]
+        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
           climate_zone_iecc.zone = '1A'
         end
-        hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-        hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-        XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-        hpxml = _test_ruleset(program_version)
+        hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+        hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
+        XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+        _hpxml, hpxml_bldg = _test_ruleset(program_version)
         if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
           type = nil
         end
-        _check_foundation_walls(hpxml, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
+        _check_foundation_walls(hpxml_bldg, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
     end
 
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_foundation_walls(hpxml, area: 1200, height: 8, depth_bg: 7)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7)
 
       hpxml_names = ['base-foundation-unvented-crawlspace.xml',
                      'base-foundation-vented-crawlspace.xml']
       hpxml_names.each do |name|
         _convert_to_es_zerh(name, program_version)
-        hpxml = _test_ruleset(program_version)
-        _check_foundation_walls(hpxml, area: 600, height: 4, depth_bg: 3)
+        _hpxml, hpxml_bldg = _test_ruleset(program_version)
+        _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3)
       end
     end
   end
@@ -345,56 +346,57 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_ceilings(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-enclosure-garage.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 1950, rvalue: (rvalue * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_ceilings(hpxml_bldg, area: 1950, rvalue: (rvalue * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
-      hpxml = _test_ruleset(program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
-        _check_ceilings(hpxml)
+        _check_ceilings(hpxml_bldg)
       else
-        _check_ceilings(hpxml, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
 
       _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_ceilings(hpxml, area: 450, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_ceilings(hpxml_bldg, area: 450, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-atticroof-flat.xml', program_version)
-      hpxml = _test_ruleset(program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
-        _check_ceilings(hpxml)
+        _check_ceilings(hpxml_bldg)
       else
-        _check_ceilings(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
 
       if [*ESConstants.SFVersions].include? program_version
-        _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-        hpxml = _test_ruleset(program_version)
-        _check_ceilings(hpxml, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+        _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+        _hpxml, hpxml_bldg = _test_ruleset(program_version)
+        _check_ceilings(hpxml_bldg, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [*ESConstants.MFVersions, *ZERHConstants.MFVersions].include? program_version
-        _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-        hpxml = _test_ruleset(program_version)
-        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+        _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+        _hpxml, hpxml_bldg = _test_ruleset(program_version)
+        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
-        _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
-        hpxml = _test_ruleset(program_version)
-        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+        _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+        _hpxml, hpxml_bldg = _test_ruleset(program_version)
+        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
         # Check w/ mass ceilings
         hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-        hpxml.floors.each do |floor|
+        hpxml_bldg = hpxml.buildings[0]
+        hpxml_bldg.floors.each do |floor|
           next unless floor.is_ceiling
 
           floor.floor_type = HPXML::FloorTypeConcrete
         end
-        XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-        hpxml = _test_ruleset(program_version)
-        _check_ceilings(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
+        XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+        _hpxml, hpxml_bldg = _test_ruleset(program_version)
+        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
       end
     end
   end
@@ -413,12 +415,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-foundation-unconditioned-basement-wall-insulation.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
     end
 
     [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
@@ -428,27 +430,28 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rvalue = 1.0 / 0.028
       end
 
-      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_floors(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
-      _convert_to_es_zerh('base-bldgtype-multifamily-adjacent-to-multiple.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_floors(hpxml_bldg, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeWoodFrame)
 
       # Check w/ mass floors
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.floors.each do |floor|
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.floors.each do |floor|
         floor.floor_type = HPXML::FloorTypeConcrete
       end
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
       elsif [ESConstants.MFNationalVer1_2].include? program_version
         rvalue = 1.0 / 0.051
       end
-      _check_floors(hpxml, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeConcrete)
+      _check_floors(hpxml_bldg, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeConcrete)
     end
 
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
@@ -462,22 +465,23 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
         climate_zone_iecc.zone = '1A'
       end
-      hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-      hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_floors(hpxml, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+      hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
     end
   end
 
   def test_enclosure_slabs
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_slabs(hpxml, area: 1350, exp_perim: 150)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
       if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
         perim_ins_depth = 0
         perim_ins_r = 0
@@ -501,26 +505,27 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base-foundation-slab.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_slabs(hpxml, area: 1350, exp_perim: 150, perim_ins_depth: perim_ins_depth, perim_ins_r: perim_ins_r,
-                          under_ins_width: under_ins_width, under_ins_r: under_ins_r)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150, perim_ins_depth: perim_ins_depth, perim_ins_r: perim_ins_r,
+                               under_ins_width: under_ins_width, under_ins_r: under_ins_r)
     end
 
     [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_slabs(hpxml, area: 1350, exp_perim: 150)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
 
       _convert_to_es_zerh('base-foundation-slab.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
         climate_zone_iecc.zone = '1A'
       end
-      hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-      hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_slabs(hpxml, area: 1350, exp_perim: 150)
+      hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+      hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
     end
   end
 
@@ -542,36 +547,36 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: 74.55, ufactor: ufactor, shgc: shgc },
-                                                 180 => { area: 74.55, ufactor: ufactor, shgc: shgc },
-                                                 90 => { area: 74.55, ufactor: ufactor, shgc: shgc },
-                                                 270 => { area: 74.55, ufactor: ufactor, shgc: shgc } })
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: 74.55, ufactor: ufactor, shgc: shgc },
+                                                      180 => { area: 74.55, ufactor: ufactor, shgc: shgc },
+                                                      90 => { area: 74.55, ufactor: ufactor, shgc: shgc },
+                                                      270 => { area: 74.55, ufactor: ufactor, shgc: shgc } })
 
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: 50.63, ufactor: ufactor, shgc: shgc },
-                                                 180 => { area: 50.63, ufactor: ufactor, shgc: shgc },
-                                                 90 => { area: 50.63, ufactor: ufactor, shgc: shgc },
-                                                 270 => { area: 50.63, ufactor: ufactor, shgc: shgc } })
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: 50.63, ufactor: ufactor, shgc: shgc },
+                                                      180 => { area: 50.63, ufactor: ufactor, shgc: shgc },
+                                                      90 => { area: 50.63, ufactor: ufactor, shgc: shgc },
+                                                      270 => { area: 50.63, ufactor: ufactor, shgc: shgc } })
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: 77.95, ufactor: ufactor, shgc: shgc },
-                                                 180 => { area: 77.95, ufactor: ufactor, shgc: shgc },
-                                                 90 => { area: 77.95, ufactor: ufactor, shgc: shgc },
-                                                 270 => { area: 77.95, ufactor: ufactor, shgc: shgc } })
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: 77.95, ufactor: ufactor, shgc: shgc },
+                                                      180 => { area: 77.95, ufactor: ufactor, shgc: shgc },
+                                                      90 => { area: 77.95, ufactor: ufactor, shgc: shgc },
+                                                      270 => { area: 77.95, ufactor: ufactor, shgc: shgc } })
 
       _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: 107.17, ufactor: ufactor, shgc: shgc },
-                                                 180 => { area: 107.17, ufactor: ufactor, shgc: shgc },
-                                                 90 => { area: 107.17, ufactor: ufactor, shgc: shgc },
-                                                 270 => { area: 107.17, ufactor: ufactor, shgc: shgc } })
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: 107.17, ufactor: ufactor, shgc: shgc },
+                                                      180 => { area: 107.17, ufactor: ufactor, shgc: shgc },
+                                                      90 => { area: 107.17, ufactor: ufactor, shgc: shgc },
+                                                      270 => { area: 107.17, ufactor: ufactor, shgc: shgc } })
     end
 
     # MF tests
@@ -586,12 +591,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       elsif program_version == ESConstants.MFOregonWashingtonVer1_2
         ufactor, shgc = 0.27, 0.30
       end
-      _convert_to_es_zerh('base-bldgtype-multifamily.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor, shgc: shgc },
-                                                 180 => { area: 33.34, ufactor: ufactor, shgc: shgc },
-                                                 270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
+      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor, shgc: shgc },
+                                                      180 => { area: 33.34, ufactor: ufactor, shgc: shgc },
+                                                      270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
 
       # Test w/ structural fixed windows
       if program_version == ESConstants.MFNationalVer1_0
@@ -602,18 +607,19 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         ufactor2 = 0.34
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.windows.each do |window|
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.windows.each do |window|
         next unless window.azimuth == 0
 
         window.performance_class = HPXML::WindowClassArchitectural
         window.fraction_operable = 0.0
       end
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
-                                                 180 => { area: 33.34, ufactor: ufactor, shgc: shgc },
-                                                 270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
+                                                      180 => { area: 33.34, ufactor: ufactor, shgc: shgc },
+                                                      270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
 
       # Test w/ structural operable windows
       if program_version == ESConstants.MFNationalVer1_0
@@ -622,18 +628,19 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         ufactor3 = 0.43
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.windows.each do |window|
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.windows.each do |window|
         next unless window.azimuth == 180
 
         window.performance_class = HPXML::WindowClassArchitectural
         window.fraction_operable = 1.0
       end
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
-                                                 180 => { area: 33.34, ufactor: ufactor3, shgc: shgc },
-                                                 270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
+                                                      180 => { area: 33.34, ufactor: ufactor3, shgc: shgc },
+                                                      270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
     end
 
     # Test in Climate Zone 1A
@@ -657,34 +664,35 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
-      hpxml.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
         climate_zone_iecc.zone = '1A'
       end
-      hpxml.climate_and_risk_zones.weather_station_name = 'Miami, FL'
-      hpxml.climate_and_risk_zones.weather_station_wmo = 722020
-      XMLHelper.write_file(hpxml.to_oga, @tmp_hpxml_path)
-      hpxml = _test_ruleset(program_version)
-      _check_windows(hpxml, frac_operable: 0.67,
-                            values_by_azimuth: { 0 => { area: areas[0], ufactor: ufactor, shgc: shgc },
-                                                 180 => { area: areas[1], ufactor: ufactor, shgc: shgc },
-                                                 90 => { area: areas[2], ufactor: ufactor, shgc: shgc },
-                                                 270 => { area: areas[3], ufactor: ufactor, shgc: shgc } })
+      hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
+      hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                 values_by_azimuth: { 0 => { area: areas[0], ufactor: ufactor, shgc: shgc },
+                                                      180 => { area: areas[1], ufactor: ufactor, shgc: shgc },
+                                                      90 => { area: areas[2], ufactor: ufactor, shgc: shgc },
+                                                      270 => { area: areas[3], ufactor: ufactor, shgc: shgc } })
     end
   end
 
   def test_enclosure_skylights
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-enclosure-skylights.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_skylights(hpxml)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_skylights(hpxml_bldg)
     end
   end
 
   def test_enclosure_overhangs
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-enclosure-overhangs.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_overhangs(hpxml)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_overhangs(hpxml_bldg)
     end
   end
 
@@ -699,8 +707,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       _convert_to_es_zerh('base.xml', program_version)
-      hpxml = _test_ruleset(program_version)
-      _check_doors(hpxml, values_by_azimuth: { 180 => { area: 40, rvalue: rvalue } })
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 40, rvalue: rvalue } })
     end
   end
 
@@ -708,10 +716,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     require_relative '../../workflow/design'
     if ESConstants.AllVersions.include? program_version
       designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
-                            output_dir: @output_dir)]
+                            output_dir: @sample_files_path)]
     elsif ZERHConstants.AllVersions.include? program_version
       designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
-                            output_dir: @output_dir)]
+                            output_dir: @sample_files_path)]
     end
 
     success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
@@ -727,21 +735,21 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
     @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
-    return hpxml
+    return hpxml, hpxml.buildings[0]
   end
 
-  def _check_infiltration(hpxml, value, units)
-    assert_equal(1, hpxml.air_infiltration_measurements.size)
-    air_infiltration_measurement = hpxml.air_infiltration_measurements[0]
+  def _check_infiltration(hpxml_bldg, value, units)
+    assert_equal(1, hpxml_bldg.air_infiltration_measurements.size)
+    air_infiltration_measurement = hpxml_bldg.air_infiltration_measurements[0]
     assert_equal(units, air_infiltration_measurement.unit_of_measure)
     assert_equal(50.0, air_infiltration_measurement.house_pressure)
     assert_in_epsilon(value, air_infiltration_measurement.air_leakage, 0.01)
   end
 
-  def _check_roofs(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil, rb_grade: nil, adjacent_to: nil)
+  def _check_roofs(hpxml_bldg, area: nil, rvalue: nil, sabs: nil, emit: nil, rb_grade: nil, adjacent_to: nil)
     tot_area = 0
     rvalue_x_area_values, sabs_x_area_values, emit_x_area_values = [], [], [] # Area-weighted
-    hpxml.roofs.each do |roof|
+    hpxml_bldg.roofs.each do |roof|
       tot_area += roof.area
       rvalue_x_area_values << roof.insulation_assembly_r_value * roof.area
       sabs_x_area_values << roof.solar_absorptance * roof.area
@@ -778,10 +786,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
   end
 
-  def _check_walls(hpxml, area:, rvalue:, sabs:, emit:)
+  def _check_walls(hpxml_bldg, area:, rvalue:, sabs:, emit:)
     tot_area, ext_area = 0, 0
     rvalue_x_area_values, sabs_x_area_values, emit_x_area_values = [], [], [] # Area-weighted
-    hpxml.walls.each do |wall|
+    hpxml_bldg.walls.each do |wall|
       tot_area += wall.area
       rvalue_x_area_values << wall.insulation_assembly_r_value * wall.area
       next unless wall.is_exterior
@@ -796,10 +804,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     assert_in_epsilon(emit, emit_x_area_values.sum / ext_area, 0.01)
   end
 
-  def _check_rim_joists(hpxml, area: nil, rvalue: nil, sabs: nil, emit: nil)
+  def _check_rim_joists(hpxml_bldg, area: nil, rvalue: nil, sabs: nil, emit: nil)
     tot_area, ext_area = 0, 0
     rvalue_x_area_values, sabs_x_area_values, emit_x_area_values = [], [], [] # Area-weighted
-    hpxml.rim_joists.each do |rim_joist|
+    hpxml_bldg.rim_joists.each do |rim_joist|
       tot_area += rim_joist.area
       rvalue_x_area_values << rim_joist.insulation_assembly_r_value * rim_joist.area
       next unless rim_joist.is_exterior
@@ -831,11 +839,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
   end
 
-  def _check_foundation_walls(hpxml, area:, assembly_rvalue: 0, ins_interior_rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
+  def _check_foundation_walls(hpxml_bldg, area:, assembly_rvalue: 0, ins_interior_rvalue: 0, ins_top: 0, ins_bottom: 0, height:, depth_bg: 0, type: nil)
     tot_area = 0
     assembly_rvalue_x_area_values, ins_interior_rvalue_x_area_values, ins_top_x_area_values = [], [], [] # Area-weighted
     ins_bottom_x_area_values, height_x_area_values, depth_bg_x_area_values = [], [], [] # Area-weighted
-    hpxml.foundation_walls.each do |foundation_wall|
+    hpxml_bldg.foundation_walls.each do |foundation_wall|
       tot_area += foundation_wall.area
       if not foundation_wall.insulation_assembly_r_value.nil?
         assembly_rvalue_x_area_values << foundation_wall.insulation_assembly_r_value * foundation_wall.area
@@ -865,10 +873,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     assert_in_epsilon(depth_bg, depth_bg_x_area_values.sum / tot_area, 0.01)
   end
 
-  def _check_ceilings(hpxml, area: nil, rvalue: nil, floor_type: nil)
+  def _check_ceilings(hpxml_bldg, area: nil, rvalue: nil, floor_type: nil)
     tot_area = 0
     rvalue_x_area_values = [] # Area-weighted
-    hpxml.floors.each do |floor|
+    hpxml_bldg.floors.each do |floor|
       next unless floor.is_ceiling
 
       tot_area += floor.area
@@ -888,10 +896,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
   end
 
-  def _check_floors(hpxml, area: nil, rvalue: nil, floor_type: nil)
+  def _check_floors(hpxml_bldg, area: nil, rvalue: nil, floor_type: nil)
     tot_area = 0
     rvalue_x_area_values = [] # Area-weighted
-    hpxml.floors.each do |floor|
+    hpxml_bldg.floors.each do |floor|
       next unless floor.is_floor
 
       tot_area += floor.area
@@ -911,12 +919,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
   end
 
-  def _check_slabs(hpxml, area:, exp_perim:, perim_ins_depth: 0, perim_ins_r: 0, under_ins_width: 0,
+  def _check_slabs(hpxml_bldg, area:, exp_perim:, perim_ins_depth: 0, perim_ins_r: 0, under_ins_width: 0,
                    under_ins_r: 0, depth_below_grade: nil)
     tot_area = 0
     exp_perim_x_area_values, perim_ins_depth_x_area_values, perim_ins_r_x_area_values = [], [], [] # Area-weighted
     under_ins_width_x_area_values, under_ins_r_x_area_values, depth_bg_x_area_values = [], [], [] # Area-weighted
-    hpxml.slabs.each do |slab|
+    hpxml_bldg.slabs.each do |slab|
       tot_area += slab.area
       exp_perim_x_area_values << slab.exposed_perimeter * slab.area
       perim_ins_depth_x_area_values << slab.perimeter_insulation_depth * slab.area
@@ -945,11 +953,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
   end
 
-  def _check_windows(hpxml, frac_operable:, values_by_azimuth: {})
+  def _check_windows(hpxml_bldg, frac_operable:, values_by_azimuth: {})
     tot_area, operable_area = 0, 0
     azimuth_area_values = {}
     azimuth_ufactor_x_area_values, azimuth_shgc_x_area_values = {}, {} # Area-weighted
-    hpxml.windows.each do |window|
+    hpxml_bldg.windows.each do |window|
       tot_area += window.area
       operable_area += (window.area * window.fraction_operable)
 
@@ -977,9 +985,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
   end
 
-  def _check_overhangs(hpxml)
+  def _check_overhangs(hpxml_bldg)
     num_overhangs = 0
-    hpxml.windows.each do |window|
+    hpxml_bldg.windows.each do |window|
       next if window.overhangs_depth.nil?
 
       num_overhangs += 1
@@ -987,14 +995,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     assert_equal(0, num_overhangs)
   end
 
-  def _check_skylights(hpxml)
-    assert_equal(0, hpxml.skylights.size)
+  def _check_skylights(hpxml_bldg)
+    assert_equal(0, hpxml_bldg.skylights.size)
   end
 
-  def _check_doors(hpxml, values_by_azimuth: {})
+  def _check_doors(hpxml_bldg, values_by_azimuth: {})
     azimuth_area_values = {}
     azimuth_rvalue_x_area_values = {} # Area-weighted
-    hpxml.doors.each do |door|
+    hpxml_bldg.doors.each do |door|
       # Init if needed
       azimuth_area_values[door.azimuth] = [] if azimuth_area_values[door.azimuth].nil?
       azimuth_rvalue_x_area_values[door.azimuth] = [] if azimuth_rvalue_x_area_values[door.azimuth].nil?

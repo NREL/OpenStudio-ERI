@@ -22,7 +22,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       # Use Year=2006 for Reference Home configuration
       iecc_year = 2006
     end
-    @iecc_zone = hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }[0].zone
+    @iecc_zone = hpxml.buildings[0].climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }[0].zone
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
@@ -37,59 +37,61 @@ class EnergyStarZeroEnergyReadyHomeRuleset
   def self.apply_ruleset_reference(orig_hpxml)
     new_hpxml = create_new_hpxml(orig_hpxml)
 
+    new_bldg = new_hpxml.buildings[0]
+    orig_bldg = orig_hpxml.buildings[0]
+
     # BuildingSummary
-    set_summary_reference(orig_hpxml, new_hpxml)
+    set_summary_reference(orig_bldg, new_bldg)
 
     # ClimateAndRiskZones
-    set_climate(orig_hpxml, new_hpxml)
+    set_climate(orig_bldg, new_bldg)
 
     # Enclosure
-    set_enclosure_attics_reference(orig_hpxml, new_hpxml)
-    set_enclosure_foundations_reference(orig_hpxml, new_hpxml)
-    set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
-    set_enclosure_rim_joists_reference(orig_hpxml, new_hpxml)
-    set_enclosure_walls_reference(orig_hpxml, new_hpxml)
-    set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
-    set_enclosure_ceilings_reference(orig_hpxml, new_hpxml)
-    set_enclosure_floors_reference(orig_hpxml, new_hpxml)
-    set_enclosure_slabs_reference(orig_hpxml, new_hpxml)
-    set_enclosure_windows_reference(orig_hpxml, new_hpxml)
-    set_enclosure_skylights_reference(orig_hpxml, new_hpxml)
-    set_enclosure_doors_reference(orig_hpxml, new_hpxml)
-    set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
+    set_enclosure_attics_reference(orig_bldg, new_bldg)
+    set_enclosure_foundations_reference(orig_bldg, new_bldg)
+    set_enclosure_roofs_reference(orig_bldg, new_bldg)
+    set_enclosure_rim_joists_reference(orig_bldg, new_bldg)
+    set_enclosure_walls_reference(orig_bldg, new_bldg)
+    set_enclosure_foundation_walls_reference(orig_bldg, new_bldg)
+    set_enclosure_ceilings_reference(orig_bldg, new_bldg)
+    set_enclosure_floors_reference(orig_bldg, new_bldg)
+    set_enclosure_slabs_reference(orig_bldg, new_bldg)
+    set_enclosure_windows_reference(orig_bldg, new_bldg)
+    set_enclosure_skylights_reference(orig_bldg, new_bldg)
+    set_enclosure_doors_reference(orig_bldg, new_bldg)
+    set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
 
     # Systems
-    set_systems_hvac_reference(orig_hpxml, new_hpxml)
-    set_systems_mechanical_ventilation_reference(new_hpxml)
-    set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
-    set_systems_water_heater_reference(orig_hpxml, new_hpxml)
-    set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
-    set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
-    set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
-    set_systems_batteries_reference(orig_hpxml, new_hpxml)
-    set_systems_generators_reference(orig_hpxml, new_hpxml)
+    set_systems_hvac_reference(orig_bldg, new_bldg)
+    set_systems_mechanical_ventilation_reference(new_bldg)
+    set_systems_whole_house_fan_reference(orig_bldg, new_bldg)
+    set_systems_water_heater_reference(orig_bldg, new_bldg)
+    set_systems_water_heating_use_reference(orig_bldg, new_bldg)
+    set_systems_solar_thermal_reference(orig_bldg, new_bldg)
+    set_systems_photovoltaics_reference(orig_bldg, new_bldg)
+    set_systems_batteries_reference(orig_bldg, new_bldg)
+    set_systems_generators_reference(orig_bldg, new_bldg)
 
     # Appliances
-    set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
-    set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
-    set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
-    set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
-    set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
-    set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+    set_appliances_clothes_washer_reference(orig_bldg, new_bldg)
+    set_appliances_clothes_dryer_reference(orig_bldg, new_bldg)
+    set_appliances_dishwasher_reference(orig_bldg, new_bldg)
+    set_appliances_refrigerator_reference(orig_bldg, new_bldg)
+    set_appliances_dehumidifier_reference(orig_bldg, new_bldg)
+    set_appliances_cooking_range_oven_reference(orig_bldg, new_bldg)
 
     # Lighting
-    set_lighting_reference(new_hpxml)
-    set_ceiling_fans_reference(orig_hpxml, new_hpxml)
+    set_lighting_reference(new_bldg)
+    set_ceiling_fans_reference(orig_bldg, new_bldg)
 
     # MiscLoads
-    set_misc_loads_reference(orig_hpxml, new_hpxml)
+    set_misc_loads_reference(orig_bldg, new_bldg)
 
     return new_hpxml
   end
 
   def self.create_new_hpxml(orig_hpxml)
     new_hpxml = HPXML.new
-    @state_code = orig_hpxml.header.state_code
 
     new_hpxml.header.xml_type = orig_hpxml.header.xml_type
     new_hpxml.header.xml_generated_by = File.basename(__FILE__)
@@ -97,12 +99,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
     new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
-    new_hpxml.header.building_id = orig_hpxml.header.building_id
-    new_hpxml.header.event_type = orig_hpxml.header.event_type
-    new_hpxml.header.state_code = orig_hpxml.header.state_code
-    new_hpxml.header.zip_code = orig_hpxml.header.zip_code
 
-    bldg_type = orig_hpxml.building_construction.residential_facility_type
+    orig_bldg = orig_hpxml.buildings[0]
+    new_hpxml.buildings.add(building_id: orig_bldg.building_id)
+    new_bldg = new_hpxml.buildings[0]
+
+    new_bldg.event_type = orig_bldg.event_type
+    new_bldg.state_code = orig_bldg.state_code
+    new_bldg.zip_code = orig_bldg.zip_code
+
+    bldg_type = orig_bldg.building_construction.residential_facility_type
     if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants.MFVersions.include?(@program_version)
       begin
         # ESRD configured as SF National v3.X
@@ -117,60 +123,61 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         fail "Need to handle program version '#{@program_version}'."
       end
     end
+    @state_code = orig_bldg.state_code
 
     return new_hpxml
   end
 
-  def self.set_summary_reference(orig_hpxml, new_hpxml)
+  def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
-    @bldg_type = orig_hpxml.building_construction.residential_facility_type
-    @cfa = orig_hpxml.building_construction.conditioned_floor_area
-    @nbeds = orig_hpxml.building_construction.number_of_bedrooms
-    @ncfl = orig_hpxml.building_construction.number_of_conditioned_floors
-    @ncfl_ag = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    @cvolume = orig_hpxml.building_construction.conditioned_building_volume
-    @infilvolume = get_infiltration_volume(orig_hpxml)
-    @infilheight = get_infiltration_height(orig_hpxml)
-    @has_cond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementConditioned)
-    @has_uncond_bsmnt = orig_hpxml.has_location(HPXML::LocationBasementUnconditioned)
+    @bldg_type = orig_bldg.building_construction.residential_facility_type
+    @cfa = orig_bldg.building_construction.conditioned_floor_area
+    @nbeds = orig_bldg.building_construction.number_of_bedrooms
+    @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
+    @ncfl_ag = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
+    @cvolume = orig_bldg.building_construction.conditioned_building_volume
+    @infilvolume = get_infiltration_volume(orig_bldg)
+    @infilheight = get_infiltration_height(orig_bldg)
+    @has_cond_bsmnt = orig_bldg.has_location(HPXML::LocationBasementConditioned)
+    @has_uncond_bsmnt = orig_bldg.has_location(HPXML::LocationBasementUnconditioned)
     @has_auto_generated_attic = false
 
-    new_hpxml.site.fuels = orig_hpxml.site.fuels
+    new_bldg.site.fuels = orig_bldg.site.fuels
 
-    new_hpxml.building_construction.residential_facility_type = orig_hpxml.building_construction.residential_facility_type
-    new_hpxml.building_construction.number_of_conditioned_floors = orig_hpxml.building_construction.number_of_conditioned_floors
-    new_hpxml.building_construction.number_of_conditioned_floors_above_grade = orig_hpxml.building_construction.number_of_conditioned_floors_above_grade
-    new_hpxml.building_construction.number_of_bedrooms = orig_hpxml.building_construction.number_of_bedrooms
-    new_hpxml.building_construction.conditioned_floor_area = orig_hpxml.building_construction.conditioned_floor_area
-    new_hpxml.building_construction.conditioned_building_volume = orig_hpxml.building_construction.conditioned_building_volume
+    new_bldg.building_construction.residential_facility_type = orig_bldg.building_construction.residential_facility_type
+    new_bldg.building_construction.number_of_conditioned_floors = orig_bldg.building_construction.number_of_conditioned_floors
+    new_bldg.building_construction.number_of_conditioned_floors_above_grade = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
+    new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
+    new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
+    new_bldg.building_construction.conditioned_building_volume = orig_bldg.building_construction.conditioned_building_volume
   end
 
-  def self.set_climate(orig_hpxml, new_hpxml)
+  def self.set_climate(orig_bldg, new_bldg)
     # Set 2006 IECC zone for downstream ERI calculation
-    climate_zone_iecc = orig_hpxml.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
-    new_hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
-                                                            zone: climate_zone_iecc.zone)
-    new_hpxml.climate_and_risk_zones.weather_station_id = orig_hpxml.climate_and_risk_zones.weather_station_id
-    new_hpxml.climate_and_risk_zones.weather_station_name = orig_hpxml.climate_and_risk_zones.weather_station_name
-    new_hpxml.climate_and_risk_zones.weather_station_wmo = orig_hpxml.climate_and_risk_zones.weather_station_wmo
-    new_hpxml.climate_and_risk_zones.weather_station_epw_filepath = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
+    climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
+    new_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
+                                                           zone: climate_zone_iecc.zone)
+    new_bldg.climate_and_risk_zones.weather_station_id = orig_bldg.climate_and_risk_zones.weather_station_id
+    new_bldg.climate_and_risk_zones.weather_station_name = orig_bldg.climate_and_risk_zones.weather_station_name
+    new_bldg.climate_and_risk_zones.weather_station_wmo = orig_bldg.climate_and_risk_zones.weather_station_wmo
+    new_bldg.climate_and_risk_zones.weather_station_epw_filepath = orig_bldg.climate_and_risk_zones.weather_station_epw_filepath
   end
 
-  def self.set_enclosure_air_infiltration_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Infiltration
-    infil_air_leakage, infil_unit_of_measure = get_enclosure_air_infiltration_default(orig_hpxml)
+    infil_air_leakage, infil_unit_of_measure = get_enclosure_air_infiltration_default(orig_bldg)
 
     # Air Infiltration
-    new_hpxml.air_infiltration_measurements.add(id: 'TargetInfiltration',
-                                                house_pressure: 50,
-                                                unit_of_measure: infil_unit_of_measure,
-                                                air_leakage: infil_air_leakage.round(2),
-                                                infiltration_volume: @infilvolume,
-                                                infiltration_height: @infilheight)
+    new_bldg.air_infiltration_measurements.add(id: 'TargetInfiltration',
+                                               house_pressure: 50,
+                                               unit_of_measure: infil_unit_of_measure,
+                                               air_leakage: infil_air_leakage.round(2),
+                                               infiltration_volume: @infilvolume,
+                                               infiltration_height: @infilheight)
   end
 
-  def self.set_enclosure_attics_reference(orig_hpxml, new_hpxml)
-    has_attic = (orig_hpxml.has_location(HPXML::LocationAtticVented) || orig_hpxml.has_location(HPXML::LocationAtticUnvented))
+  def self.set_enclosure_attics_reference(orig_bldg, new_bldg)
+    has_attic = (orig_bldg.has_location(HPXML::LocationAtticVented) || orig_bldg.has_location(HPXML::LocationAtticUnvented))
 
     vented_attic = lookup_reference_value('vented_attic', @bldg_type)
     vented_attic = lookup_reference_value('vented_attic') if vented_attic.nil?
@@ -182,7 +189,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if has_attic
         set_vented_attic = true
       else
-        duct_locations = get_duct_location_areas(orig_hpxml, 1.0).keys
+        duct_locations = get_duct_location_areas(orig_bldg, 1.0).keys
         if duct_locations.include? HPXML::LocationAtticVented
           set_vented_attic = true
         end
@@ -194,44 +201,44 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     if set_vented_attic
-      new_hpxml.attics.add(id: 'TargetVentedAttic',
-                           attic_type: HPXML::AtticTypeVented)
+      new_bldg.attics.add(id: 'TargetVentedAttic',
+                          attic_type: HPXML::AtticTypeVented)
       @has_auto_generated_attic = true unless has_attic
     end
   end
 
-  def self.set_enclosure_foundations_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_foundations_reference(orig_bldg, new_bldg)
     # Check if vented crawlspace (or unvented crawlspace, which will become a vented crawlspace) exists
-    orig_hpxml.floors.each do |orig_floor|
+    orig_bldg.floors.each do |orig_floor|
       next unless orig_floor.interior_adjacent_to.include?('crawlspace') || orig_floor.exterior_adjacent_to.include?('crawlspace')
 
-      new_hpxml.foundations.add(id: 'TargetVentedCrawlspace',
-                                foundation_type: HPXML::FoundationTypeCrawlspaceVented)
+      new_bldg.foundations.add(id: 'TargetVentedCrawlspace',
+                               foundation_type: HPXML::FoundationTypeCrawlspaceVented)
       break
     end
 
     # For unconditioned basement, set within infiltration volume input
-    orig_hpxml.foundations.each do |orig_foundation|
+    orig_bldg.foundations.each do |orig_foundation|
       next unless orig_foundation.foundation_type == HPXML::FoundationTypeBasementUnconditioned
 
-      new_hpxml.foundations.add(id: orig_foundation.id,
-                                foundation_type: orig_foundation.foundation_type,
-                                within_infiltration_volume: false)
+      new_bldg.foundations.add(id: orig_foundation.id,
+                               foundation_type: orig_foundation.foundation_type,
+                               within_infiltration_volume: false)
     end
   end
 
-  def self.set_enclosure_roofs_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_roofs_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Roofs
-    radiant_barrier_bool = get_radiant_barrier_bool(orig_hpxml)
+    radiant_barrier_bool = get_radiant_barrier_bool(orig_bldg)
     radiant_barrier_grade = 1 if radiant_barrier_bool
     ceiling_ufactor = lookup_reference_value('ceiling_ufactor')
 
     solar_absorptance = lookup_reference_value('roof_solar_abs')
     emittance = lookup_reference_value('roof_emittance')
     default_roof_pitch = 5.0 # assume 5:12 pitch
-    has_vented_attic = (new_hpxml.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
+    has_vented_attic = (new_bldg.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
 
-    orig_hpxml.roofs.each do |orig_roof|
+    orig_bldg.roofs.each do |orig_roof|
       roof_pitch = orig_roof.pitch
       roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
       if orig_roof.interior_adjacent_to == HPXML::LocationConditionedSpace && has_vented_attic
@@ -244,22 +251,22 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       end
 
-      new_hpxml.roofs.add(id: orig_roof.id,
-                          interior_adjacent_to: roof_interior_adjacent_to,
-                          area: orig_roof.area,
-                          azimuth: orig_roof.azimuth,
-                          solar_absorptance: solar_absorptance,
-                          emittance: emittance,
-                          pitch: roof_pitch,
-                          radiant_barrier: radiant_barrier_bool,
-                          radiant_barrier_grade: radiant_barrier_grade,
-                          insulation_id: orig_roof.insulation_id,
-                          insulation_assembly_r_value: insulation_assembly_r_value)
+      new_bldg.roofs.add(id: orig_roof.id,
+                         interior_adjacent_to: roof_interior_adjacent_to,
+                         area: orig_roof.area,
+                         azimuth: orig_roof.azimuth,
+                         solar_absorptance: solar_absorptance,
+                         emittance: emittance,
+                         pitch: roof_pitch,
+                         radiant_barrier: radiant_barrier_bool,
+                         radiant_barrier_grade: radiant_barrier_grade,
+                         insulation_id: orig_roof.insulation_id,
+                         insulation_assembly_r_value: insulation_assembly_r_value)
     end
 
     # Add a roof above the vented attic that is newly added to Reference Design
     if @has_auto_generated_attic
-      orig_hpxml.floors.each do |orig_floor|
+      orig_bldg.floors.each do |orig_floor|
         next unless orig_floor.is_ceiling
         next unless multifamily_adjacent_locations.include? orig_floor.exterior_adjacent_to
 
@@ -267,25 +274,25 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
         roof_area = orig_floor.area / Math.cos(pitch_to_radians)
 
-        new_hpxml.roofs.add(id: 'TargetRoof',
-                            interior_adjacent_to: HPXML::LocationAtticVented,
-                            area: roof_area,
-                            azimuth: nil,
-                            solar_absorptance: solar_absorptance,
-                            emittance: emittance,
-                            pitch: default_roof_pitch,
-                            radiant_barrier: radiant_barrier_bool,
-                            radiant_barrier_grade: radiant_barrier_grade,
-                            insulation_id: 'TargetRoofInsulation',
-                            insulation_assembly_r_value: 2.3) # Assumes that the roof is uninsulated
+        new_bldg.roofs.add(id: 'TargetRoof',
+                           interior_adjacent_to: HPXML::LocationAtticVented,
+                           area: roof_area,
+                           azimuth: nil,
+                           solar_absorptance: solar_absorptance,
+                           emittance: emittance,
+                           pitch: default_roof_pitch,
+                           radiant_barrier: radiant_barrier_bool,
+                           radiant_barrier_grade: radiant_barrier_grade,
+                           insulation_id: 'TargetRoofInsulation',
+                           insulation_assembly_r_value: 2.3) # Assumes that the roof is uninsulated
       end
     end
   end
 
-  def self.set_enclosure_rim_joists_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_rim_joists_reference(orig_bldg, new_bldg)
     ufactor = get_enclosure_walls_default_ufactor()
 
-    ext_thermal_bndry_rim_joists = orig_hpxml.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
+    ext_thermal_bndry_rim_joists = orig_bldg.rim_joists.select { |rim_joist| rim_joist.is_exterior && rim_joist.is_thermal_boundary }
 
     ext_thermal_bndry_rim_joists_ag = ext_thermal_bndry_rim_joists.select { |rim_joist| rim_joist.interior_adjacent_to == HPXML::LocationConditionedSpace }
     sum_gross_area_ag = ext_thermal_bndry_rim_joists_ag.map { |rim_joist| rim_joist.area }.sum(0)
@@ -300,30 +307,30 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # Area is equally distributed to each direction to be consistent with walls.
     # Need to preserve above-grade vs below-grade for inferred infiltration height.
     if sum_gross_area_ag > 0
-      new_hpxml.rim_joists.add(id: 'TargetRimJoist',
-                               exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: HPXML::LocationConditionedSpace,
-                               area: sum_gross_area_ag,
-                               azimuth: nil,
-                               solar_absorptance: solar_absorptance,
-                               emittance: emittance,
-                               insulation_assembly_r_value: (1.0 / ufactor).round(3))
+      new_bldg.rim_joists.add(id: 'TargetRimJoist',
+                              exterior_adjacent_to: HPXML::LocationOutside,
+                              interior_adjacent_to: HPXML::LocationConditionedSpace,
+                              area: sum_gross_area_ag,
+                              azimuth: nil,
+                              solar_absorptance: solar_absorptance,
+                              emittance: emittance,
+                              insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
     if sum_gross_area_bg > 0
-      new_hpxml.rim_joists.add(id: 'TargetRimJoistBasement',
-                               exterior_adjacent_to: HPXML::LocationOutside,
-                               interior_adjacent_to: HPXML::LocationBasementConditioned,
-                               area: sum_gross_area_bg,
-                               azimuth: nil,
-                               solar_absorptance: solar_absorptance,
-                               emittance: emittance,
-                               insulation_assembly_r_value: (1.0 / ufactor).round(3))
+      new_bldg.rim_joists.add(id: 'TargetRimJoistBasement',
+                              exterior_adjacent_to: HPXML::LocationOutside,
+                              interior_adjacent_to: HPXML::LocationBasementConditioned,
+                              area: sum_gross_area_bg,
+                              azimuth: nil,
+                              solar_absorptance: solar_absorptance,
+                              emittance: emittance,
+                              insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
 
     # Preserve other rim joists:
     # 1. Interior thermal boundary surfaces (e.g., between conditioned basement and crawlspace)
     # 2. Exterior non-thermal boundary surfaces (e.g., between unconditioned basement and outside)
-    orig_hpxml.rim_joists.each do |orig_rim_joist|
+    orig_bldg.rim_joists.each do |orig_rim_joist|
       next if orig_rim_joist.is_exterior_thermal_boundary
 
       if orig_rim_joist.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_rim_joist.exterior_adjacent_to))
@@ -331,23 +338,23 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       else
         insulation_assembly_r_value = [orig_rim_joist.insulation_assembly_r_value, 4.0].min # uninsulated
       end
-      new_hpxml.rim_joists.add(id: orig_rim_joist.id,
-                               exterior_adjacent_to: orig_rim_joist.exterior_adjacent_to.gsub('unvented', 'vented'),
-                               interior_adjacent_to: orig_rim_joist.interior_adjacent_to.gsub('unvented', 'vented'),
-                               area: orig_rim_joist.area,
-                               azimuth: orig_rim_joist.azimuth,
-                               solar_absorptance: solar_absorptance,
-                               emittance: emittance,
-                               insulation_id: orig_rim_joist.insulation_id,
-                               insulation_assembly_r_value: insulation_assembly_r_value)
+      new_bldg.rim_joists.add(id: orig_rim_joist.id,
+                              exterior_adjacent_to: orig_rim_joist.exterior_adjacent_to.gsub('unvented', 'vented'),
+                              interior_adjacent_to: orig_rim_joist.interior_adjacent_to.gsub('unvented', 'vented'),
+                              area: orig_rim_joist.area,
+                              azimuth: orig_rim_joist.azimuth,
+                              solar_absorptance: solar_absorptance,
+                              emittance: emittance,
+                              insulation_id: orig_rim_joist.insulation_id,
+                              insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
 
-  def self.set_enclosure_walls_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_walls_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Above-grade Walls U-factor
     ufactor = get_enclosure_walls_default_ufactor()
 
-    ext_thermal_bndry_walls = orig_hpxml.walls.select { |wall| wall.is_exterior_thermal_boundary }
+    ext_thermal_bndry_walls = orig_bldg.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
 
     solar_absorptance = lookup_reference_value('walls_solar_abs')
@@ -355,21 +362,21 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     # Create thermal boundary wall area
     if sum_gross_area > 0
-      new_hpxml.walls.add(id: 'TargetWall',
-                          exterior_adjacent_to: HPXML::LocationOutside,
-                          interior_adjacent_to: HPXML::LocationConditionedSpace,
-                          wall_type: HPXML::WallTypeWoodStud,
-                          area: sum_gross_area,
-                          azimuth: nil,
-                          solar_absorptance: solar_absorptance,
-                          emittance: emittance,
-                          insulation_assembly_r_value: (1.0 / ufactor).round(3))
+      new_bldg.walls.add(id: 'TargetWall',
+                         exterior_adjacent_to: HPXML::LocationOutside,
+                         interior_adjacent_to: HPXML::LocationConditionedSpace,
+                         wall_type: HPXML::WallTypeWoodStud,
+                         area: sum_gross_area,
+                         azimuth: nil,
+                         solar_absorptance: solar_absorptance,
+                         emittance: emittance,
+                         insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
 
     # Preserve exterior walls that are not thermal boundary walls (e.g., unconditioned attic gable walls or exterior garage walls). These walls are specified as uninsulated.
     # Preserve thermal boundary walls that are not exterior (e.g., garage wall adjacent to conditioned space). These walls are assigned the appropriate U-factor from the Energy Star Exhibit 2 (Expanded ENERGY STAR Reference Design Definition).
     # The purpose of this is to be consistent with other software tools.
-    orig_hpxml.walls.each do |orig_wall|
+    orig_bldg.walls.each do |orig_wall|
       next if orig_wall.is_exterior_thermal_boundary
 
       if orig_wall.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_wall.exterior_adjacent_to))
@@ -378,26 +385,26 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         insulation_assembly_r_value = [orig_wall.insulation_assembly_r_value, 4.0].min # uninsulated
       end
 
-      new_hpxml.walls.add(id: orig_wall.id,
-                          exterior_adjacent_to: orig_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
-                          interior_adjacent_to: orig_wall.interior_adjacent_to.gsub('unvented', 'vented'),
-                          wall_type: orig_wall.wall_type,
-                          area: orig_wall.area,
-                          azimuth: orig_wall.azimuth,
-                          solar_absorptance: solar_absorptance,
-                          emittance: emittance,
-                          insulation_id: orig_wall.insulation_id,
-                          insulation_assembly_r_value: insulation_assembly_r_value)
+      new_bldg.walls.add(id: orig_wall.id,
+                         exterior_adjacent_to: orig_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
+                         interior_adjacent_to: orig_wall.interior_adjacent_to.gsub('unvented', 'vented'),
+                         wall_type: orig_wall.wall_type,
+                         area: orig_wall.area,
+                         azimuth: orig_wall.azimuth,
+                         solar_absorptance: solar_absorptance,
+                         emittance: emittance,
+                         insulation_id: orig_wall.insulation_id,
+                         insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
 
-  def self.set_enclosure_foundation_walls_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_foundation_walls_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Foundation walls U-factor/R-value
     fndwall_assembly_uvalue = lookup_reference_value('foundation_walls_ufactor')
     fndwall_interior_ins_rvalue = lookup_reference_value('foundation_walls_rvalue')
 
     # Exhibit 2 - Conditioned basement walls
-    orig_hpxml.foundation_walls.each do |orig_foundation_wall|
+    orig_bldg.foundation_walls.each do |orig_foundation_wall|
       # Insulated for, e.g., conditioned basement walls adjacent to ground.
       # Uninsulated for, e.g., crawlspace/unconditioned basement walls adjacent to ground.
       if orig_foundation_wall.is_thermal_boundary
@@ -420,31 +427,31 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         insulation_exterior_distance_to_top = 0
         insulation_exterior_distance_to_bottom = 0
       end
-      new_hpxml.foundation_walls.add(id: orig_foundation_wall.id,
-                                     exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
-                                     interior_adjacent_to: orig_foundation_wall.interior_adjacent_to.gsub('unvented', 'vented'),
-                                     type: orig_foundation_wall.type,
-                                     height: orig_foundation_wall.height,
-                                     area: orig_foundation_wall.area,
-                                     azimuth: orig_foundation_wall.azimuth,
-                                     thickness: orig_foundation_wall.thickness,
-                                     depth_below_grade: orig_foundation_wall.depth_below_grade,
-                                     insulation_id: orig_foundation_wall.insulation_id,
-                                     insulation_interior_r_value: insulation_interior_r_value,
-                                     insulation_interior_distance_to_top: insulation_interior_distance_to_top,
-                                     insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
-                                     insulation_exterior_r_value: insulation_exterior_r_value,
-                                     insulation_exterior_distance_to_top: insulation_exterior_distance_to_top,
-                                     insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom,
-                                     insulation_assembly_r_value: insulation_assembly_r_value)
+      new_bldg.foundation_walls.add(id: orig_foundation_wall.id,
+                                    exterior_adjacent_to: orig_foundation_wall.exterior_adjacent_to.gsub('unvented', 'vented'),
+                                    interior_adjacent_to: orig_foundation_wall.interior_adjacent_to.gsub('unvented', 'vented'),
+                                    type: orig_foundation_wall.type,
+                                    height: orig_foundation_wall.height,
+                                    area: orig_foundation_wall.area,
+                                    azimuth: orig_foundation_wall.azimuth,
+                                    thickness: orig_foundation_wall.thickness,
+                                    depth_below_grade: orig_foundation_wall.depth_below_grade,
+                                    insulation_id: orig_foundation_wall.insulation_id,
+                                    insulation_interior_r_value: insulation_interior_r_value,
+                                    insulation_interior_distance_to_top: insulation_interior_distance_to_top,
+                                    insulation_interior_distance_to_bottom: insulation_interior_distance_to_bottom,
+                                    insulation_exterior_r_value: insulation_exterior_r_value,
+                                    insulation_exterior_distance_to_top: insulation_exterior_distance_to_top,
+                                    insulation_exterior_distance_to_bottom: insulation_exterior_distance_to_bottom,
+                                    insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
 
-  def self.set_enclosure_ceilings_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_ceilings_reference(orig_bldg, new_bldg)
     ceiling_ufactor = lookup_reference_value('ceiling_ufactor')
 
     # Exhibit 2 - Ceilings
-    orig_hpxml.floors.each do |orig_floor|
+    orig_bldg.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
 
       if orig_floor.is_thermal_boundary && (not multifamily_adjacent_locations.include?(orig_floor.exterior_adjacent_to))
@@ -459,39 +466,39 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       end
 
-      new_hpxml.floors.add(id: orig_floor.id,
-                           exterior_adjacent_to: ceiling_exterior_adjacent_to,
-                           interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
-                           floor_or_ceiling: orig_floor.floor_or_ceiling,
-                           floor_type: orig_floor.floor_type,
-                           area: orig_floor.area,
-                           insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: insulation_assembly_r_value)
+      new_bldg.floors.add(id: orig_floor.id,
+                          exterior_adjacent_to: ceiling_exterior_adjacent_to,
+                          interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                          floor_or_ceiling: orig_floor.floor_or_ceiling,
+                          floor_type: orig_floor.floor_type,
+                          area: orig_floor.area,
+                          insulation_id: orig_floor.insulation_id,
+                          insulation_assembly_r_value: insulation_assembly_r_value)
     end
 
     # Add a floor between the vented attic and conditioned space
     if @has_auto_generated_attic
-      orig_hpxml.roofs.each do |orig_roof|
+      orig_bldg.roofs.each do |orig_roof|
         next unless orig_roof.is_exterior_thermal_boundary
 
         # Estimate the area of the floor based on the roof area and pitch
         pitch_to_radians = Math.atan(orig_roof.pitch / 12.0)
         floor_area = orig_roof.area * Math.cos(pitch_to_radians)
 
-        new_hpxml.floors.add(id: 'TargetFloor',
-                             exterior_adjacent_to: HPXML::LocationAtticVented,
-                             interior_adjacent_to: HPXML::LocationConditionedSpace,
-                             floor_type: HPXML::FloorTypeWoodFrame,
-                             area: floor_area,
-                             insulation_id: 'TargetFloorInsulation',
-                             insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
+        new_bldg.floors.add(id: 'TargetFloor',
+                            exterior_adjacent_to: HPXML::LocationAtticVented,
+                            interior_adjacent_to: HPXML::LocationConditionedSpace,
+                            floor_type: HPXML::FloorTypeWoodFrame,
+                            area: floor_area,
+                            insulation_id: 'TargetFloorInsulation',
+                            insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
       end
     end
   end
 
-  def self.set_enclosure_floors_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_floors_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Floors over unconditioned spaces
-    orig_hpxml.floors.each do |orig_floor|
+    orig_bldg.floors.each do |orig_floor|
       next unless orig_floor.is_floor
 
       subtype = orig_floor.floor_type == HPXML::FloorTypeConcrete ? 'mass' : 'wood'
@@ -504,18 +511,18 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
       end
 
-      new_hpxml.floors.add(id: orig_floor.id,
-                           exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
-                           interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
-                           floor_or_ceiling: orig_floor.floor_or_ceiling,
-                           floor_type: orig_floor.floor_type,
-                           area: orig_floor.area,
-                           insulation_id: orig_floor.insulation_id,
-                           insulation_assembly_r_value: insulation_assembly_r_value)
+      new_bldg.floors.add(id: orig_floor.id,
+                          exterior_adjacent_to: orig_floor.exterior_adjacent_to.gsub('unvented', 'vented'),
+                          interior_adjacent_to: orig_floor.interior_adjacent_to.gsub('unvented', 'vented'),
+                          floor_or_ceiling: orig_floor.floor_or_ceiling,
+                          floor_type: orig_floor.floor_type,
+                          area: orig_floor.area,
+                          insulation_id: orig_floor.insulation_id,
+                          insulation_assembly_r_value: insulation_assembly_r_value)
     end
   end
 
-  def self.set_enclosure_slabs_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_slabs_reference(orig_bldg, new_bldg)
     slab_perim_rvalue = lookup_reference_value('slab_perimeter_ins_rvalue')
     slab_perim_depth = lookup_reference_value('slab_perimeter_ins_depth')
     slab_under_rvalue = lookup_reference_value('slab_under_ins_rvalue')
@@ -523,7 +530,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     is_under_entire_slab_insulated = nil
 
     # Exhibit 2 - Foundations
-    orig_hpxml.slabs.each do |orig_slab|
+    orig_bldg.slabs.each do |orig_slab|
       if orig_slab.interior_adjacent_to == HPXML::LocationConditionedSpace
         if slab_under_width >= 999
           is_under_entire_slab_insulated = true
@@ -550,29 +557,29 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         carpet_fraction = orig_slab.carpet_fraction
         carpet_r_value = orig_slab.carpet_r_value
       end
-      new_hpxml.slabs.add(id: orig_slab.id,
-                          interior_adjacent_to: orig_slab.interior_adjacent_to.gsub('unvented', 'vented'),
-                          area: orig_slab.area,
-                          thickness: orig_slab.thickness,
-                          exposed_perimeter: orig_slab.exposed_perimeter,
-                          perimeter_insulation_depth: perimeter_insulation_depth,
-                          under_slab_insulation_width: under_slab_insulation_width,
-                          under_slab_insulation_spans_entire_slab: is_under_entire_slab_insulated,
-                          depth_below_grade: orig_slab.depth_below_grade,
-                          carpet_fraction: carpet_fraction,
-                          carpet_r_value: carpet_r_value,
-                          perimeter_insulation_id: orig_slab.perimeter_insulation_id,
-                          perimeter_insulation_r_value: perimeter_insulation_r_value,
-                          under_slab_insulation_id: orig_slab.under_slab_insulation_id,
-                          under_slab_insulation_r_value: under_slab_insulation_r_value)
+      new_bldg.slabs.add(id: orig_slab.id,
+                         interior_adjacent_to: orig_slab.interior_adjacent_to.gsub('unvented', 'vented'),
+                         area: orig_slab.area,
+                         thickness: orig_slab.thickness,
+                         exposed_perimeter: orig_slab.exposed_perimeter,
+                         perimeter_insulation_depth: perimeter_insulation_depth,
+                         under_slab_insulation_width: under_slab_insulation_width,
+                         under_slab_insulation_spans_entire_slab: is_under_entire_slab_insulated,
+                         depth_below_grade: orig_slab.depth_below_grade,
+                         carpet_fraction: carpet_fraction,
+                         carpet_r_value: carpet_r_value,
+                         perimeter_insulation_id: orig_slab.perimeter_insulation_id,
+                         perimeter_insulation_r_value: perimeter_insulation_r_value,
+                         under_slab_insulation_id: orig_slab.under_slab_insulation_id,
+                         under_slab_insulation_r_value: under_slab_insulation_r_value)
     end
   end
 
-  def self.set_enclosure_windows_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_windows_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Glazing
 
     # Calculate the ratio of the glazing area to the conditioned floor area
-    ext_thermal_bndry_windows = orig_hpxml.windows.select { |window| window.wall.is_exterior_thermal_boundary }
+    ext_thermal_bndry_windows = orig_bldg.windows.select { |window| window.wall.is_exterior_thermal_boundary }
     orig_total_win_area = ext_thermal_bndry_windows.map { |window| window.area }.sum(0)
     window_to_cfa_ratio = orig_total_win_area / @cfa
 
@@ -585,7 +592,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     if window_area == 'same as rated, with exceptions'
       if @has_cond_bsmnt || [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type)
         # For homes with conditioned basements and attached homes:
-        total_win_area = calc_default_total_win_area(orig_hpxml, @cfa)
+        total_win_area = calc_default_total_win_area(orig_bldg, @cfa)
         each_win_area = total_win_area * 0.25 # equally distributed to North, East, South, and West
       else
         if window_to_cfa_ratio < 0.15
@@ -600,61 +607,61 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
         next if each_win_area <= 0.1
 
-        new_hpxml.windows.add(id: "TargetWindow#{orientation}",
-                              area: each_win_area.round(2),
-                              azimuth: azimuth,
-                              ufactor: win_ufactor,
-                              shgc: win_shgc,
-                              wall_idref: 'TargetWall',
-                              performance_class: HPXML::WindowClassResidential,
-                              fraction_operable: fraction_operable)
+        new_bldg.windows.add(id: "TargetWindow#{orientation}",
+                             area: each_win_area.round(2),
+                             azimuth: azimuth,
+                             ufactor: win_ufactor,
+                             shgc: win_shgc,
+                             wall_idref: 'TargetWall',
+                             performance_class: HPXML::WindowClassResidential,
+                             fraction_operable: fraction_operable)
       end
     elsif window_area == '0.15 x CFA x FA x F'
-      total_win_area = calc_default_total_win_area(orig_hpxml, @cfa)
+      total_win_area = calc_default_total_win_area(orig_bldg, @cfa)
 
       # Orientation same as Rated Unit, by percentage of area
-      orig_hpxml.windows.each do |win|
+      orig_bldg.windows.each do |win|
         next unless win.wall.is_exterior_thermal_boundary
 
         win_area = win.area * total_win_area / orig_total_win_area
         win_ufactor, win_shgc = get_reference_glazing_ufactor_shgc(win)
 
-        new_hpxml.windows.add(id: win.id,
-                              area: win_area.round(2),
-                              azimuth: win.azimuth,
-                              ufactor: win_ufactor,
-                              shgc: win_shgc,
-                              wall_idref: 'TargetWall',
-                              performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
-                              fraction_operable: fraction_operable)
+        new_bldg.windows.add(id: win.id,
+                             area: win_area.round(2),
+                             azimuth: win.azimuth,
+                             ufactor: win_ufactor,
+                             shgc: win_shgc,
+                             wall_idref: 'TargetWall',
+                             performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
+                             fraction_operable: fraction_operable)
       end
     else
       fail 'Unexpected case.'
     end
   end
 
-  def self.set_enclosure_skylights_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_skylights_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Skylights
     # nop
   end
 
-  def self.set_enclosure_doors_reference(orig_hpxml, new_hpxml)
+  def self.set_enclosure_doors_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Doors
     # The door type is assumed to be opaque
     door_ufactor = lookup_reference_value('door_ufactor')
 
-    orig_hpxml.doors.each do |orig_door|
-      new_hpxml.doors.add(id: orig_door.id,
-                          wall_idref: 'TargetWall',
-                          area: orig_door.area,
-                          azimuth: orig_door.azimuth,
-                          r_value: (1.0 / door_ufactor).round(3))
+    orig_bldg.doors.each do |orig_door|
+      new_bldg.doors.add(id: orig_door.id,
+                         wall_idref: 'TargetWall',
+                         area: orig_door.area,
+                         azimuth: orig_door.azimuth,
+                         r_value: (1.0 / door_ufactor).round(3))
     end
   end
 
-  def self.set_systems_hvac_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_hvac_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Heating and Cooling Systems
-    hvac_configurations = get_hvac_configurations(orig_hpxml)
+    hvac_configurations = get_hvac_configurations(orig_bldg)
 
     hvac_configurations.each do |hvac_configuration|
       heating_system = hvac_configuration[:heating_system]
@@ -674,7 +681,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         end
 
         if heating_system_type == HPXML::HVACTypeBoiler && heating_fuel != HPXML::FuelTypeElectricity
-          add_reference_boiler(new_hpxml, heating_system)
+          add_reference_boiler(new_bldg, heating_system)
         elsif heating_fuel == HPXML::FuelTypeElectricity
           if not cooling_system.nil?
             fraction_cool_load_served = cooling_system.fraction_cool_load_served
@@ -682,9 +689,9 @@ class EnergyStarZeroEnergyReadyHomeRuleset
             fraction_cool_load_served = 0.0
           end
           created_hp = true
-          add_reference_heat_pump(orig_hpxml, new_hpxml, fraction_heat_load_served, fraction_cool_load_served, heating_system, cooling_system)
+          add_reference_heat_pump(orig_bldg, new_bldg, fraction_heat_load_served, fraction_cool_load_served, heating_system, cooling_system)
         else
-          add_reference_furnace(orig_hpxml, new_hpxml, fraction_heat_load_served, heating_system, heating_fuel)
+          add_reference_furnace(orig_bldg, new_bldg, fraction_heat_load_served, heating_system, heating_fuel)
         end
       end
 
@@ -692,20 +699,20 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         if created_hp
           # Already created HP above
         elsif cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower
-          add_reference_chiller_or_cooling_tower(new_hpxml, cooling_system)
+          add_reference_chiller_or_cooling_tower(new_bldg, cooling_system)
         else
-          add_reference_air_conditioner(orig_hpxml, new_hpxml, cooling_system.fraction_cool_load_served, cooling_system)
+          add_reference_air_conditioner(orig_bldg, new_bldg, cooling_system.fraction_cool_load_served, cooling_system)
         end
       end
 
       if not heat_pump.nil?
-        add_reference_heat_pump(orig_hpxml, new_hpxml, heat_pump.fraction_heat_load_served, heat_pump.fraction_cool_load_served, heat_pump)
+        add_reference_heat_pump(orig_bldg, new_bldg, heat_pump.fraction_heat_load_served, heat_pump.fraction_cool_load_served, heat_pump)
       end
     end
 
     # Exhibit 2 - Thermostat
-    new_hpxml.hvac_controls.add(id: 'TargetHVACControl',
-                                control_type: HPXML::HVACControlTypeProgrammable)
+    new_bldg.hvac_controls.add(id: 'TargetHVACControl',
+                               control_type: HPXML::HVACControlTypeProgrammable)
 
     # Exhibit 2 - Thermal distribution systems
     remaining_cfa_served_heating = @cfa # init
@@ -713,7 +720,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     remaining_fracload_served_heating = 1.0 # init
     remaining_fracload_served_cooling = 1.0 # init
     num_ducts = 0
-    orig_hpxml.hvac_systems.each do |h|
+    orig_bldg.hvac_systems.each do |h|
       next if h.distribution_system_idref.nil?
 
       if h.respond_to?(:fraction_heat_load_served) && h.fraction_heat_load_served.to_f > 0
@@ -725,16 +732,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         remaining_fracload_served_cooling -= h.fraction_cool_load_served
       end
     end
-    orig_hpxml.hvac_distributions.each do |orig_hvac_distribution|
-      new_hpxml.hvac_distributions.add(id: orig_hvac_distribution.id,
-                                       distribution_system_type: orig_hvac_distribution.distribution_system_type,
-                                       conditioned_floor_area_served: orig_hvac_distribution.conditioned_floor_area_served,
-                                       number_of_return_registers: orig_hvac_distribution.number_of_return_registers,
-                                       hydronic_type: orig_hvac_distribution.hydronic_type,
-                                       air_type: orig_hvac_distribution.air_type,
-                                       annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
-                                       annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
-      new_hvac_dist = new_hpxml.hvac_distributions[-1]
+    orig_bldg.hvac_distributions.each do |orig_hvac_distribution|
+      new_bldg.hvac_distributions.add(id: orig_hvac_distribution.id,
+                                      distribution_system_type: orig_hvac_distribution.distribution_system_type,
+                                      conditioned_floor_area_served: orig_hvac_distribution.conditioned_floor_area_served,
+                                      number_of_return_registers: orig_hvac_distribution.number_of_return_registers,
+                                      hydronic_type: orig_hvac_distribution.hydronic_type,
+                                      air_type: orig_hvac_distribution.air_type,
+                                      annual_heating_dse: orig_hvac_distribution.annual_heating_dse,
+                                      annual_cooling_dse: orig_hvac_distribution.annual_cooling_dse)
+      new_hvac_dist = new_bldg.hvac_distributions[-1]
 
       next unless new_hvac_dist.distribution_system_type == HPXML::HVACDistributionTypeAir
 
@@ -776,7 +783,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         primary_duct_area, secondary_duct_area = HVAC.get_default_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
         total_duct_area = primary_duct_area + secondary_duct_area
 
-        duct_location_areas = get_duct_location_areas(orig_hpxml, total_duct_area)
+        duct_location_areas = get_duct_location_areas(orig_bldg, total_duct_area)
 
         duct_location_areas.each do |duct_location, duct_surface_area|
           num_ducts += 1
@@ -791,7 +798,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
   end
 
-  def self.set_systems_mechanical_ventilation_reference(new_hpxml)
+  def self.set_systems_mechanical_ventilation_reference(new_bldg)
     # Exhibit 2 - Whole-House Mechanical ventilation
     fan_cfm = 0.01 * @cfa + 7.5 * (@nbeds + 1) # cfm
     fan_type = lookup_reference_value('mechanical_ventilation_fan_type')
@@ -800,57 +807,57 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     fan_asre = lookup_reference_value('mechanical_ventilation_fan_asre')
     fan_power_w = fan_cfm / fan_cfm_per_w
 
-    new_hpxml.ventilation_fans.add(id: 'TargetVentilationFan',
-                                   is_shared_system: false,
-                                   fan_type: fan_type,
-                                   tested_flow_rate: fan_cfm.round(2),
-                                   hours_in_operation: 24,
-                                   fan_power: fan_power_w.round(3),
-                                   sensible_recovery_efficiency: fan_sre,
-                                   sensible_recovery_efficiency_adjusted: fan_asre,
-                                   used_for_whole_building_ventilation: true)
+    new_bldg.ventilation_fans.add(id: 'TargetVentilationFan',
+                                  is_shared_system: false,
+                                  fan_type: fan_type,
+                                  tested_flow_rate: fan_cfm.round(2),
+                                  hours_in_operation: 24,
+                                  fan_power: fan_power_w.round(3),
+                                  sensible_recovery_efficiency: fan_sre,
+                                  sensible_recovery_efficiency_adjusted: fan_asre,
+                                  used_for_whole_building_ventilation: true)
   end
 
-  def self.set_systems_whole_house_fan_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_whole_house_fan_reference(orig_bldg, new_bldg)
     # nop
   end
 
-  def self.set_systems_water_heater_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_water_heater_reference(orig_bldg, new_bldg)
     # Exhibit 2 - Service water heating systems
-    orig_hpxml.water_heating_systems.each do |orig_water_heater|
+    orig_bldg.water_heating_systems.each do |orig_water_heater|
       wh_type, wh_fuel_type, wh_tank_vol, ef, uef, fhr = get_water_heater_properties(orig_water_heater)
 
       # New water heater
-      new_hpxml.water_heating_systems.add(id: orig_water_heater.id,
-                                          is_shared_system: orig_water_heater.is_shared_system,
-                                          number_of_units_served: orig_water_heater.number_of_units_served,
-                                          fuel_type: wh_fuel_type,
-                                          water_heater_type: wh_type,
-                                          location: orig_water_heater.location.gsub('unvented', 'vented'),
-                                          tank_volume: wh_tank_vol,
-                                          fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
-                                          energy_factor: ef,
-                                          uniform_energy_factor: uef,
-                                          first_hour_rating: fhr)
+      new_bldg.water_heating_systems.add(id: orig_water_heater.id,
+                                         is_shared_system: orig_water_heater.is_shared_system,
+                                         number_of_units_served: orig_water_heater.number_of_units_served,
+                                         fuel_type: wh_fuel_type,
+                                         water_heater_type: wh_type,
+                                         location: orig_water_heater.location.gsub('unvented', 'vented'),
+                                         tank_volume: wh_tank_vol,
+                                         fraction_dhw_load_served: orig_water_heater.fraction_dhw_load_served,
+                                         energy_factor: ef,
+                                         uniform_energy_factor: uef,
+                                         first_hour_rating: fhr)
     end
   end
 
-  def self.set_systems_water_heating_use_reference(orig_hpxml, new_hpxml)
-    return if orig_hpxml.water_heating_systems.size == 0
+  def self.set_systems_water_heating_use_reference(orig_bldg, new_bldg)
+    return if orig_bldg.water_heating_systems.size == 0
 
     # Exhibit 2 - Service Water Heating Systems: Use the same Gallons per Day as Table 4.2.2(1) - Service water heating systems
     standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl).round(3)
 
-    if orig_hpxml.hot_water_distributions.size == 0
+    if orig_bldg.hot_water_distributions.size == 0
       sys_id = 'HotWaterDistribution'
     else
-      sys_id = orig_hpxml.hot_water_distributions[0].id
+      sys_id = orig_bldg.hot_water_distributions[0].id
     end
 
     bool_low_flow = lookup_reference_value('hot_water_distribution_low_flow')
     pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value')
 
-    orig_dist = orig_hpxml.hot_water_distributions[0]
+    orig_dist = orig_bldg.hot_water_distributions[0]
 
     # New hot water distribution
     if orig_dist.has_shared_recirculation
@@ -860,45 +867,45 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         shared_recirculation_pump_power *= orig_dist.shared_recirculation_motor_efficiency / lookup_reference_value('shared_motor_efficiency')
       end
 
-      new_hpxml.hot_water_distributions.add(id: sys_id,
-                                            system_type: HPXML::DHWDistTypeStandard,
-                                            pipe_r_value: pipe_r_value,
-                                            standard_piping_length: standard_piping_length,
-                                            has_shared_recirculation: true,
-                                            shared_recirculation_number_of_units_served: orig_dist.shared_recirculation_number_of_units_served,
-                                            shared_recirculation_pump_power: shared_recirculation_pump_power,
-                                            shared_recirculation_control_type: orig_dist.shared_recirculation_control_type)
+      new_bldg.hot_water_distributions.add(id: sys_id,
+                                           system_type: HPXML::DHWDistTypeStandard,
+                                           pipe_r_value: pipe_r_value,
+                                           standard_piping_length: standard_piping_length,
+                                           has_shared_recirculation: true,
+                                           shared_recirculation_number_of_units_served: orig_dist.shared_recirculation_number_of_units_served,
+                                           shared_recirculation_pump_power: shared_recirculation_pump_power,
+                                           shared_recirculation_control_type: orig_dist.shared_recirculation_control_type)
     else
-      new_hpxml.hot_water_distributions.add(id: sys_id,
-                                            system_type: HPXML::DHWDistTypeStandard,
-                                            pipe_r_value: pipe_r_value,
-                                            standard_piping_length: standard_piping_length)
+      new_bldg.hot_water_distributions.add(id: sys_id,
+                                           system_type: HPXML::DHWDistTypeStandard,
+                                           pipe_r_value: pipe_r_value,
+                                           standard_piping_length: standard_piping_length)
     end
 
     # New water fixtures
-    if orig_hpxml.water_fixtures.size == 0
+    if orig_bldg.water_fixtures.size == 0
       # Shower Head
-      new_hpxml.water_fixtures.add(id: 'TargetWaterFixture1',
-                                   water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
-                                   low_flow: bool_low_flow)
+      new_bldg.water_fixtures.add(id: 'TargetWaterFixture1',
+                                  water_fixture_type: HPXML::WaterFixtureTypeShowerhead,
+                                  low_flow: bool_low_flow)
 
       # Faucet
-      new_hpxml.water_fixtures.add(id: 'TargetWaterFixture2',
-                                   water_fixture_type: HPXML::WaterFixtureTypeFaucet,
-                                   low_flow: bool_low_flow)
+      new_bldg.water_fixtures.add(id: 'TargetWaterFixture2',
+                                  water_fixture_type: HPXML::WaterFixtureTypeFaucet,
+                                  low_flow: bool_low_flow)
     else
-      orig_hpxml.water_fixtures.each do |orig_water_fixture|
+      orig_bldg.water_fixtures.each do |orig_water_fixture|
         next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
 
-        new_hpxml.water_fixtures.add(id: orig_water_fixture.id,
-                                     water_fixture_type: orig_water_fixture.water_fixture_type,
-                                     low_flow: bool_low_flow)
+        new_bldg.water_fixtures.add(id: orig_water_fixture.id,
+                                    water_fixture_type: orig_water_fixture.water_fixture_type,
+                                    low_flow: bool_low_flow)
       end
     end
   end
 
-  def self.set_systems_solar_thermal_reference(orig_hpxml, new_hpxml)
-    if orig_hpxml.water_heating_systems.any? { |wh| (wh.fuel_type == HPXML::FuelTypeElectricity || orig_hpxml.solar_thermal_systems.size > 0) }
+  def self.set_systems_solar_thermal_reference(orig_bldg, new_bldg)
+    if orig_bldg.water_heating_systems.any? { |wh| (wh.fuel_type == HPXML::FuelTypeElectricity || orig_bldg.solar_thermal_systems.size > 0) }
       solar_fraction = lookup_reference_value('water_heater_solar_fraction', 'electricity or solar')
     else
       solar_fraction = lookup_reference_value('water_heater_solar_fraction', 'other')
@@ -906,78 +913,78 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     solar_fraction = lookup_reference_value('water_heater_solar_fraction') if solar_fraction.nil?
 
     if not solar_fraction.nil?
-      new_hpxml.solar_thermal_systems.add(id: 'TargetSolarThermalSystem',
-                                          system_type: 'hot water',
-                                          solar_fraction: solar_fraction)
+      new_bldg.solar_thermal_systems.add(id: 'TargetSolarThermalSystem',
+                                         system_type: 'hot water',
+                                         solar_fraction: solar_fraction)
     end
   end
 
-  def self.set_systems_photovoltaics_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_photovoltaics_reference(orig_bldg, new_bldg)
     # nop
   end
 
-  def self.set_systems_batteries_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_batteries_reference(orig_bldg, new_bldg)
     # nop
   end
 
-  def self.set_systems_generators_reference(orig_hpxml, new_hpxml)
+  def self.set_systems_generators_reference(orig_bldg, new_bldg)
     # nop
   end
 
-  def self.set_appliances_clothes_washer_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_clothes_washer_reference(orig_bldg, new_bldg)
     # Default values
     id = 'ClothesWasher'
     location = HPXML::LocationConditionedSpace
 
     # Override values?
-    if not orig_hpxml.clothes_washers.empty?
-      clothes_washer = orig_hpxml.clothes_washers[0]
+    if not orig_bldg.clothes_washers.empty?
+      clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
     end
 
-    new_hpxml.clothes_washers.add(id: id,
-                                  location: location,
-                                  is_shared_appliance: false,
-                                  integrated_modified_energy_factor: lookup_reference_value('clothes_washer_imef'),
-                                  rated_annual_kwh: lookup_reference_value('clothes_washer_ler'),
-                                  label_electric_rate: lookup_reference_value('clothes_washer_elec_rate'),
-                                  label_gas_rate: lookup_reference_value('clothes_washer_gas_rate'),
-                                  label_annual_gas_cost: lookup_reference_value('clothes_washer_ghwc'),
-                                  label_usage: lookup_reference_value('clothes_washer_lcy') / 52.0,
-                                  capacity: lookup_reference_value('clothes_washer_capacity'))
+    new_bldg.clothes_washers.add(id: id,
+                                 location: location,
+                                 is_shared_appliance: false,
+                                 integrated_modified_energy_factor: lookup_reference_value('clothes_washer_imef'),
+                                 rated_annual_kwh: lookup_reference_value('clothes_washer_ler'),
+                                 label_electric_rate: lookup_reference_value('clothes_washer_elec_rate'),
+                                 label_gas_rate: lookup_reference_value('clothes_washer_gas_rate'),
+                                 label_annual_gas_cost: lookup_reference_value('clothes_washer_ghwc'),
+                                 label_usage: lookup_reference_value('clothes_washer_lcy') / 52.0,
+                                 capacity: lookup_reference_value('clothes_washer_capacity'))
   end
 
-  def self.set_appliances_clothes_dryer_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_clothes_dryer_reference(orig_bldg, new_bldg)
     # Default values
     id = 'ClothesDryer'
     location = HPXML::LocationConditionedSpace
     fuel_type = HPXML::FuelTypeElectricity
 
     # Override values?
-    if not orig_hpxml.clothes_dryers.empty?
-      clothes_dryer = orig_hpxml.clothes_dryers[0]
+    if not orig_bldg.clothes_dryers.empty?
+      clothes_dryer = orig_bldg.clothes_dryers[0]
       id = clothes_dryer.id
       location = clothes_dryer.location.gsub('unvented', 'vented')
       fuel_type = clothes_dryer.fuel_type
     end
 
-    new_hpxml.clothes_dryers.add(id: id,
-                                 location: location,
-                                 is_shared_appliance: false,
-                                 fuel_type: fuel_type,
-                                 combined_energy_factor: lookup_reference_value('clothes_dryer_cef'))
+    new_bldg.clothes_dryers.add(id: id,
+                                location: location,
+                                is_shared_appliance: false,
+                                fuel_type: fuel_type,
+                                combined_energy_factor: lookup_reference_value('clothes_dryer_cef'))
   end
 
-  def self.set_appliances_dishwasher_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_dishwasher_reference(orig_bldg, new_bldg)
     # Default values
     id = 'Dishwasher'
     location = HPXML::LocationConditionedSpace
     place_setting_capacity = 12
 
     # Override values?
-    if not orig_hpxml.dishwashers.empty?
-      dishwasher = orig_hpxml.dishwashers[0]
+    if not orig_bldg.dishwashers.empty?
+      dishwasher = orig_bldg.dishwashers[0]
       id = dishwasher.id
       location = dishwasher.location.gsub('unvented', 'vented')
       place_setting_capacity = dishwasher.place_setting_capacity
@@ -985,50 +992,50 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     subtype = place_setting_capacity < 8 ? 'compact' : 'standard'
 
-    new_hpxml.dishwashers.add(id: id,
-                              location: location,
-                              is_shared_appliance: false,
-                              rated_annual_kwh: lookup_reference_value('dishwasher_ler', subtype),
-                              place_setting_capacity: place_setting_capacity,
-                              label_electric_rate: lookup_reference_value('dishwasher_elec_rate', subtype),
-                              label_gas_rate: lookup_reference_value('dishwasher_gas_rate', subtype),
-                              label_annual_gas_cost: lookup_reference_value('dishwasher_ghwc', subtype),
-                              label_usage: lookup_reference_value('dishwasher_lcy', subtype) / 52.0)
+    new_bldg.dishwashers.add(id: id,
+                             location: location,
+                             is_shared_appliance: false,
+                             rated_annual_kwh: lookup_reference_value('dishwasher_ler', subtype),
+                             place_setting_capacity: place_setting_capacity,
+                             label_electric_rate: lookup_reference_value('dishwasher_elec_rate', subtype),
+                             label_gas_rate: lookup_reference_value('dishwasher_gas_rate', subtype),
+                             label_annual_gas_cost: lookup_reference_value('dishwasher_ghwc', subtype),
+                             label_usage: lookup_reference_value('dishwasher_lcy', subtype) / 52.0)
   end
 
-  def self.set_appliances_refrigerator_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_refrigerator_reference(orig_bldg, new_bldg)
     # Default values
     id = 'Refrigerator'
     location = HPXML::LocationConditionedSpace
 
     # Override values?
-    if not orig_hpxml.refrigerators.empty?
-      refrigerator = orig_hpxml.refrigerators[0]
+    if not orig_bldg.refrigerators.empty?
+      refrigerator = orig_bldg.refrigerators[0]
       id = refrigerator.id
       location = refrigerator.location.gsub('unvented', 'vented')
     end
 
     rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
 
-    new_hpxml.refrigerators.add(id: id,
-                                location: location,
-                                rated_annual_kwh: rated_annual_kwh)
+    new_bldg.refrigerators.add(id: id,
+                               location: location,
+                               rated_annual_kwh: rated_annual_kwh)
   end
 
-  def self.set_appliances_dehumidifier_reference(orig_hpxml, new_hpxml)
-    orig_hpxml.dehumidifiers.each do |dehumidifier|
+  def self.set_appliances_dehumidifier_reference(orig_bldg, new_bldg)
+    orig_bldg.dehumidifiers.each do |dehumidifier|
       reference_values = HVAC.get_dehumidifier_default_values(dehumidifier.capacity)
-      new_hpxml.dehumidifiers.add(id: dehumidifier.id,
-                                  type: dehumidifier.type, # Per RESNET 55i
-                                  capacity: dehumidifier.capacity,
-                                  integrated_energy_factor: reference_values[:ief],
-                                  rh_setpoint: reference_values[:rh_setpoint],
-                                  fraction_served: dehumidifier.fraction_served,
-                                  location: dehumidifier.location)
+      new_bldg.dehumidifiers.add(id: dehumidifier.id,
+                                 type: dehumidifier.type, # Per RESNET 55i
+                                 capacity: dehumidifier.capacity,
+                                 integrated_energy_factor: reference_values[:ief],
+                                 rh_setpoint: reference_values[:rh_setpoint],
+                                 fraction_served: dehumidifier.fraction_served,
+                                 location: dehumidifier.location)
     end
   end
 
-  def self.set_appliances_cooking_range_oven_reference(orig_hpxml, new_hpxml)
+  def self.set_appliances_cooking_range_oven_reference(orig_bldg, new_bldg)
     # Default values
     range_id = 'CookingRange'
     location = HPXML::LocationConditionedSpace
@@ -1036,71 +1043,71 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     oven_id = 'Oven'
 
     # Override values?
-    if not orig_hpxml.cooking_ranges.empty?
-      cooking_range = orig_hpxml.cooking_ranges[0]
+    if not orig_bldg.cooking_ranges.empty?
+      cooking_range = orig_bldg.cooking_ranges[0]
       range_id = cooking_range.id
       location = cooking_range.location.gsub('unvented', 'vented')
       fuel_type = cooking_range.fuel_type
-      oven = orig_hpxml.ovens[0]
+      oven = orig_bldg.ovens[0]
       oven_id = oven.id
     end
 
-    new_hpxml.cooking_ranges.add(id: range_id,
-                                 location: location,
-                                 fuel_type: fuel_type,
-                                 is_induction: lookup_reference_value('range_induction'))
-    new_hpxml.ovens.add(id: oven_id,
-                        is_convection: lookup_reference_value('oven_convection'))
+    new_bldg.cooking_ranges.add(id: range_id,
+                                location: location,
+                                fuel_type: fuel_type,
+                                is_induction: lookup_reference_value('range_induction'))
+    new_bldg.ovens.add(id: oven_id,
+                       is_convection: lookup_reference_value('oven_convection'))
   end
 
-  def self.set_lighting_reference(new_hpxml)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup1',
-                                  location: HPXML::LocationInterior,
-                                  fraction_of_units_in_location: lookup_reference_value('lighting_tier2_int'),
-                                  lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup2',
-                                  location: HPXML::LocationExterior,
-                                  fraction_of_units_in_location: lookup_reference_value('lighting_tier2_ext'),
-                                  lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup3',
-                                  location: HPXML::LocationGarage,
-                                  fraction_of_units_in_location: lookup_reference_value('lighting_tier2_grg'),
-                                  lighting_type: HPXML::LightingTypeLED)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup4',
-                                  location: HPXML::LocationInterior,
-                                  fraction_of_units_in_location: lookup_reference_value('lighting_tier1_int'),
-                                  lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup5',
-                                  location: HPXML::LocationExterior,
-                                  fraction_of_units_in_location: lookup_reference_value('lighting_tier1_ext'),
-                                  lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup6',
-                                  location: HPXML::LocationGarage,
-                                  fraction_of_units_in_location: lookup_reference_value('lighting_tier1_grg'),
-                                  lighting_type: HPXML::LightingTypeCFL)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup7',
-                                  location: HPXML::LocationInterior,
-                                  fraction_of_units_in_location: 0,
-                                  lighting_type: HPXML::LightingTypeLFL)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup8',
-                                  location: HPXML::LocationExterior,
-                                  fraction_of_units_in_location: 0,
-                                  lighting_type: HPXML::LightingTypeLFL)
-    new_hpxml.lighting_groups.add(id: 'TargetLightingGroup9',
-                                  location: HPXML::LocationGarage,
-                                  fraction_of_units_in_location: 0,
-                                  lighting_type: HPXML::LightingTypeLFL)
+  def self.set_lighting_reference(new_bldg)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup1',
+                                 location: HPXML::LocationInterior,
+                                 fraction_of_units_in_location: lookup_reference_value('lighting_tier2_int'),
+                                 lighting_type: HPXML::LightingTypeLED)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup2',
+                                 location: HPXML::LocationExterior,
+                                 fraction_of_units_in_location: lookup_reference_value('lighting_tier2_ext'),
+                                 lighting_type: HPXML::LightingTypeLED)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup3',
+                                 location: HPXML::LocationGarage,
+                                 fraction_of_units_in_location: lookup_reference_value('lighting_tier2_grg'),
+                                 lighting_type: HPXML::LightingTypeLED)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup4',
+                                 location: HPXML::LocationInterior,
+                                 fraction_of_units_in_location: lookup_reference_value('lighting_tier1_int'),
+                                 lighting_type: HPXML::LightingTypeCFL)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup5',
+                                 location: HPXML::LocationExterior,
+                                 fraction_of_units_in_location: lookup_reference_value('lighting_tier1_ext'),
+                                 lighting_type: HPXML::LightingTypeCFL)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup6',
+                                 location: HPXML::LocationGarage,
+                                 fraction_of_units_in_location: lookup_reference_value('lighting_tier1_grg'),
+                                 lighting_type: HPXML::LightingTypeCFL)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup7',
+                                 location: HPXML::LocationInterior,
+                                 fraction_of_units_in_location: 0,
+                                 lighting_type: HPXML::LightingTypeLFL)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup8',
+                                 location: HPXML::LocationExterior,
+                                 fraction_of_units_in_location: 0,
+                                 lighting_type: HPXML::LightingTypeLFL)
+    new_bldg.lighting_groups.add(id: 'TargetLightingGroup9',
+                                 location: HPXML::LocationGarage,
+                                 fraction_of_units_in_location: 0,
+                                 lighting_type: HPXML::LightingTypeLFL)
   end
 
-  def self.set_ceiling_fans_reference(orig_hpxml, new_hpxml)
-    return if orig_hpxml.ceiling_fans.size == 0
+  def self.set_ceiling_fans_reference(orig_bldg, new_bldg)
+    return if orig_bldg.ceiling_fans.size == 0
 
-    new_hpxml.ceiling_fans.add(id: 'TargetCeilingFan',
-                               efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
-                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+    new_bldg.ceiling_fans.add(id: 'TargetCeilingFan',
+                              efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
+                              count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
   end
 
-  def self.set_misc_loads_reference(orig_hpxml, new_hpxml)
+  def self.set_misc_loads_reference(orig_bldg, new_bldg)
     # nop
   end
 
@@ -1123,12 +1130,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return
   end
 
-  def self.get_hvac_configurations(orig_hpxml)
+  def self.get_hvac_configurations(orig_bldg)
     hvac_configurations = []
-    orig_hpxml.heating_systems.each do |orig_heating_system|
+    orig_bldg.heating_systems.each do |orig_heating_system|
       hvac_configurations << { heating_system: orig_heating_system, cooling_system: orig_heating_system.attached_cooling_system }
     end
-    orig_hpxml.cooling_systems.each do |orig_cooling_system|
+    orig_bldg.cooling_systems.each do |orig_cooling_system|
       # Exclude cooling systems already added to hvac_configurations
       next if hvac_configurations.any? { |config| config[:cooling_system].id == orig_cooling_system.id if not config[:cooling_system].nil? }
 
@@ -1138,16 +1145,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         hvac_configurations << { cooling_system: orig_cooling_system }
       end
     end
-    orig_hpxml.heat_pumps.each do |orig_heat_pump|
+    orig_bldg.heat_pumps.each do |orig_heat_pump|
       hvac_configurations << { heat_pump: orig_heat_pump }
     end
 
     return hvac_configurations
   end
 
-  def self.get_radiant_barrier_bool(orig_hpxml)
+  def self.get_radiant_barrier_bool(orig_bldg)
     all_ducts = []
-    orig_hpxml.hvac_distributions.each do |hvac_dist|
+    orig_bldg.hvac_distributions.each do |hvac_dist|
       hvac_dist.ducts.each do |duct|
         all_ducts << duct
       end
@@ -1169,7 +1176,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return has_radiant_barrier
   end
 
-  def self.get_enclosure_air_infiltration_default(orig_hpxml)
+  def self.get_enclosure_air_infiltration_default(orig_bldg)
     infil_air_leakage_cfm50_per_sqft = lookup_reference_value('infil_air_leakage_cfm50_per_sqft', @bldg_type)
     infil_air_leakage_cfm50_per_sqft = lookup_reference_value('infil_air_leakage_cfm50_per_sqft') if infil_air_leakage_cfm50_per_sqft.nil?
 
@@ -1177,7 +1184,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     infil_air_leakage_ach50 = lookup_reference_value('infil_air_leakage_ach50') if infil_air_leakage_ach50.nil?
 
     if not infil_air_leakage_cfm50_per_sqft.nil?
-      tot_cb_area, _ext_cb_area = orig_hpxml.compartmentalization_boundary_areas()
+      tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
       infil_air_leakage = tot_cb_area * infil_air_leakage_cfm50_per_sqft
       infil_unit_of_measure = HPXML::UnitsCFM
     elsif not infil_air_leakage_ach50.nil?
@@ -1188,9 +1195,9 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return infil_air_leakage, infil_unit_of_measure
   end
 
-  def self.calc_default_total_win_area(orig_hpxml, cfa)
-    ag_bndry_wall_area, bg_bndry_wall_area = orig_hpxml.thermal_boundary_wall_areas()
-    common_wall_area = orig_hpxml.common_wall_area()
+  def self.calc_default_total_win_area(orig_bldg, cfa)
+    ag_bndry_wall_area, bg_bndry_wall_area = orig_bldg.thermal_boundary_wall_areas()
+    common_wall_area = orig_bldg.common_wall_area()
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
@@ -1271,7 +1278,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return furnace_afue
   end
 
-  def self.get_predominant_foundation_type(orig_hpxml)
+  def self.get_predominant_foundation_type(orig_bldg)
     floor_areas = { 'basement' => 0.0,
                     'crawlspace' => 0.0,
                     'slab' => 0.0,
@@ -1279,7 +1286,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                     'adiabatic' => 0.0 }
 
     # calculate floor area by floor type
-    orig_hpxml.floors.each do |orig_floor|
+    orig_bldg.floors.each do |orig_floor|
       next unless orig_floor.is_floor
       next unless orig_floor.interior_adjacent_to == HPXML::LocationConditionedSpace
 
@@ -1295,7 +1302,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     # calculate floor area by slab type
-    orig_hpxml.slabs.each do |orig_slab|
+    orig_bldg.slabs.each do |orig_slab|
       next unless orig_slab.interior_adjacent_to == HPXML::LocationConditionedSpace
 
       floor_areas['slab'] += orig_slab.area
@@ -1304,15 +1311,15 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return floor_areas.max_by { |_k, v| v }[0] # find the key of the largest area
   end
 
-  def self.is_ceiling_fully_adiabatic(orig_hpxml)
-    orig_hpxml.floors.each do |orig_floor|
+  def self.is_ceiling_fully_adiabatic(orig_bldg)
+    orig_bldg.floors.each do |orig_floor|
       next unless orig_floor.is_ceiling
       next unless orig_floor.interior_adjacent_to == HPXML::LocationConditionedSpace
       next unless orig_floor.exterior_adjacent_to != HPXML::LocationOtherHousingUnit
 
       return false # Found a thermal boundary ceiling not adjacent to other housing unit
     end
-    orig_hpxml.roofs.each do |orig_roof|
+    orig_bldg.roofs.each do |orig_roof|
       next unless orig_roof.interior_adjacent_to == HPXML::LocationConditionedSpace
 
       return false # Found a thermal boundary roof (which, by definition, is adjacent to outside)
@@ -1321,16 +1328,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return true
   end
 
-  def self.get_duct_location_areas(orig_hpxml, total_duct_area)
+  def self.get_duct_location_areas(orig_bldg, total_duct_area)
     # EPA confirmed that duct percentages apply to ASHRAE 152 *total* duct area
     duct_location_areas = {}
-    predominant_foundation_type = get_predominant_foundation_type(orig_hpxml)
+    predominant_foundation_type = get_predominant_foundation_type(orig_bldg)
 
     nstory = @ncfl_ag == 1 ? '1' : '2'
 
     duct_fractions = lookup_reference_value('duct_location_fractions', "#{predominant_foundation_type} foundation, #{nstory} story")
     duct_fractions = lookup_reference_value('duct_location_fractions', "#{predominant_foundation_type} foundation") if duct_fractions.nil?
-    if is_ceiling_fully_adiabatic(orig_hpxml)
+    if is_ceiling_fully_adiabatic(orig_bldg)
       duct_fractions = lookup_reference_value('duct_location_fractions', 'adiabatic ceiling') if duct_fractions.nil?
     end
     duct_fractions = lookup_reference_value('duct_location_fractions', "#{nstory} story") if duct_fractions.nil?
@@ -1386,16 +1393,16 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return duct_lto_cfm25
   end
 
-  def self.add_air_distribution(orig_hpxml, orig_system)
+  def self.add_air_distribution(orig_bldg, orig_system)
     i = 0
     while true
       i += 1
       dist_id = "TargetHVACDistribution#{i}"
-      next if orig_hpxml.hvac_distributions.select { |d| d.id == dist_id }.size > 0
+      next if orig_bldg.hvac_distributions.select { |d| d.id == dist_id }.size > 0
 
-      orig_hpxml.hvac_distributions.add(id: dist_id,
-                                        distribution_system_type: HPXML::HVACDistributionTypeAir,
-                                        air_type: HPXML::AirTypeRegularVelocity)
+      orig_bldg.hvac_distributions.add(id: dist_id,
+                                       distribution_system_type: HPXML::HVACDistributionTypeAir,
+                                       air_type: HPXML::AirTypeRegularVelocity)
 
       # Remove existing distribution system, if one exists
       if not orig_system.distribution_system.nil?
@@ -1406,7 +1413,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
   end
 
-  def self.add_reference_boiler(new_hpxml, orig_system)
+  def self.add_reference_boiler(new_bldg, orig_system)
     if orig_system.is_shared_system
       # Retain the shared boiler regardless of its heating capacity
       heating_capacity = orig_system.heating_capacity
@@ -1424,67 +1431,67 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     heating_system_fuel = get_furnace_boiler_fuel(orig_system.heating_system_fuel)
     heating_efficiency_afue = get_default_boiler_efficiency(orig_system, heating_system_fuel)
 
-    new_hpxml.heating_systems.add(id: "TargetHeatingSystem#{new_hpxml.heating_systems.size + 1}",
-                                  distribution_system_idref: orig_system.distribution_system.id,
-                                  is_shared_system: orig_system.is_shared_system,
-                                  number_of_units_served: number_of_units_served,
-                                  heating_system_type: HPXML::HVACTypeBoiler,
-                                  heating_system_fuel: heating_system_fuel,
-                                  heating_capacity: heating_capacity,
-                                  shared_loop_watts: shared_loop_watts,
-                                  fan_coil_watts: orig_system.fan_coil_watts,
-                                  heating_efficiency_afue: heating_efficiency_afue,
-                                  fraction_heat_load_served: orig_system.fraction_heat_load_served)
+    new_bldg.heating_systems.add(id: "TargetHeatingSystem#{new_bldg.heating_systems.size + 1}",
+                                 distribution_system_idref: orig_system.distribution_system.id,
+                                 is_shared_system: orig_system.is_shared_system,
+                                 number_of_units_served: number_of_units_served,
+                                 heating_system_type: HPXML::HVACTypeBoiler,
+                                 heating_system_fuel: heating_system_fuel,
+                                 heating_capacity: heating_capacity,
+                                 shared_loop_watts: shared_loop_watts,
+                                 fan_coil_watts: orig_system.fan_coil_watts,
+                                 heating_efficiency_afue: heating_efficiency_afue,
+                                 fraction_heat_load_served: orig_system.fraction_heat_load_served)
   end
 
-  def self.add_reference_furnace(orig_hpxml, new_hpxml, load_frac, orig_system, heating_fuel)
+  def self.add_reference_furnace(orig_bldg, new_bldg, load_frac, orig_system, heating_fuel)
     heating_system_fuel = get_furnace_boiler_fuel(heating_fuel)
     furnace_afue = get_default_furnace_afue(heating_system_fuel)
 
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
-      dist_id = add_air_distribution(orig_hpxml, orig_system)
+      dist_id = add_air_distribution(orig_bldg, orig_system)
     end
 
     hvac_installation = get_hvac_installation_quality()
 
-    new_hpxml.heating_systems.add(id: "TargetHeatingSystem#{new_hpxml.heating_systems.size + 1}",
-                                  distribution_system_idref: dist_id,
-                                  heating_system_type: HPXML::HVACTypeFurnace,
-                                  heating_system_fuel: heating_system_fuel,
-                                  heating_capacity: -1, # Use auto-sizing
-                                  heating_efficiency_afue: furnace_afue,
-                                  fraction_heat_load_served: load_frac,
-                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
-                                  fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
+    new_bldg.heating_systems.add(id: "TargetHeatingSystem#{new_bldg.heating_systems.size + 1}",
+                                 distribution_system_idref: dist_id,
+                                 heating_system_type: HPXML::HVACTypeFurnace,
+                                 heating_system_fuel: heating_system_fuel,
+                                 heating_capacity: -1, # Use auto-sizing
+                                 heating_efficiency_afue: furnace_afue,
+                                 fraction_heat_load_served: load_frac,
+                                 airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
+                                 fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
   end
 
-  def self.add_reference_air_conditioner(orig_hpxml, new_hpxml, load_frac, orig_system)
+  def self.add_reference_air_conditioner(orig_bldg, new_bldg, load_frac, orig_system)
     seer = lookup_reference_value('hvac_ac_seer')
     shr = orig_system.cooling_shr
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
-      dist_id = add_air_distribution(orig_hpxml, orig_system)
+      dist_id = add_air_distribution(orig_bldg, orig_system)
     end
 
     hvac_installation = get_hvac_installation_quality()
 
-    new_hpxml.cooling_systems.add(id: "TargetCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
-                                  distribution_system_idref: dist_id,
-                                  cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
-                                  cooling_system_fuel: HPXML::FuelTypeElectricity,
-                                  cooling_capacity: -1, # Use auto-sizing
-                                  fraction_cool_load_served: load_frac,
-                                  cooling_efficiency_seer: seer,
-                                  cooling_shr: shr,
-                                  charge_defect_ratio: hvac_installation[:charge_defect_ratio],
-                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
-                                  fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
+    new_bldg.cooling_systems.add(id: "TargetCoolingSystem#{new_bldg.cooling_systems.size + 1}",
+                                 distribution_system_idref: dist_id,
+                                 cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
+                                 cooling_system_fuel: HPXML::FuelTypeElectricity,
+                                 cooling_capacity: -1, # Use auto-sizing
+                                 fraction_cool_load_served: load_frac,
+                                 cooling_efficiency_seer: seer,
+                                 cooling_shr: shr,
+                                 charge_defect_ratio: hvac_installation[:charge_defect_ratio],
+                                 airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
+                                 fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
   end
 
-  def self.add_reference_chiller_or_cooling_tower(new_hpxml, orig_system)
+  def self.add_reference_chiller_or_cooling_tower(new_bldg, orig_system)
     if orig_system.cooling_system_type == HPXML::HVACTypeChiller
       kw_per_ton = lookup_reference_value('hvac_chiller_kw_per_ton')
     end
@@ -1495,20 +1502,20 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       shared_loop_watts *= orig_system.shared_loop_motor_efficiency / lookup_reference_value('shared_motor_efficiency')
     end
 
-    new_hpxml.cooling_systems.add(id: "TargetCoolingSystem#{new_hpxml.cooling_systems.size + 1}",
-                                  is_shared_system: orig_system.is_shared_system,
-                                  number_of_units_served: orig_system.number_of_units_served,
-                                  distribution_system_idref: orig_system.distribution_system.id,
-                                  cooling_system_type: orig_system.cooling_system_type,
-                                  cooling_system_fuel: orig_system.cooling_system_fuel,
-                                  cooling_capacity: orig_system.cooling_capacity,
-                                  fraction_cool_load_served: orig_system.fraction_cool_load_served,
-                                  cooling_efficiency_kw_per_ton: kw_per_ton,
-                                  shared_loop_watts: shared_loop_watts,
-                                  fan_coil_watts: orig_system.fan_coil_watts)
+    new_bldg.cooling_systems.add(id: "TargetCoolingSystem#{new_bldg.cooling_systems.size + 1}",
+                                 is_shared_system: orig_system.is_shared_system,
+                                 number_of_units_served: orig_system.number_of_units_served,
+                                 distribution_system_idref: orig_system.distribution_system.id,
+                                 cooling_system_type: orig_system.cooling_system_type,
+                                 cooling_system_fuel: orig_system.cooling_system_fuel,
+                                 cooling_capacity: orig_system.cooling_capacity,
+                                 fraction_cool_load_served: orig_system.fraction_cool_load_served,
+                                 cooling_efficiency_kw_per_ton: kw_per_ton,
+                                 shared_loop_watts: shared_loop_watts,
+                                 fan_coil_watts: orig_system.fan_coil_watts)
   end
 
-  def self.add_reference_heat_pump(orig_hpxml, new_hpxml, heat_load_frac, cool_load_frac, orig_htg_system, orig_clg_system = nil)
+  def self.add_reference_heat_pump(orig_bldg, new_bldg, heat_load_frac, cool_load_frac, orig_htg_system, orig_clg_system = nil)
     # Heat pump type and efficiency
 
     if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir)
@@ -1548,7 +1555,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       if (not orig_htg_system.distribution_system.nil?) && (orig_htg_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
         dist_id = orig_htg_system.distribution_system.id
       else
-        dist_id = add_air_distribution(orig_hpxml, orig_htg_system)
+        dist_id = add_air_distribution(orig_bldg, orig_htg_system)
       end
     end
 
@@ -1576,30 +1583,30 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       hvac_installation = get_hvac_installation_quality()
     end
 
-    new_hpxml.heat_pumps.add(id: "TargetHeatPump#{new_hpxml.heat_pumps.size + 1}",
-                             is_shared_system: is_shared_system,
-                             number_of_units_served: number_of_units_served,
-                             distribution_system_idref: dist_id,
-                             heat_pump_type: heat_pump_type,
-                             heat_pump_fuel: HPXML::FuelTypeElectricity,
-                             cooling_capacity: cooling_capacity,
-                             heating_capacity: heating_capacity,
-                             backup_type: heat_pump_backup_type,
-                             backup_heating_fuel: heat_pump_backup_fuel,
-                             backup_heating_capacity: backup_heating_capacity,
-                             backup_heating_efficiency_percent: heat_pump_backup_eff,
-                             fraction_heat_load_served: heat_load_frac,
-                             fraction_cool_load_served: cool_load_frac,
-                             cooling_efficiency_seer: seer,
-                             cooling_efficiency_eer: eer,
-                             heating_efficiency_hspf: hspf,
-                             heating_efficiency_cop: cop,
-                             pump_watts_per_ton: pump_watts_per_ton,
-                             cooling_shr: shr,
-                             charge_defect_ratio: hvac_installation[:charge_defect_ratio],
-                             airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
-                             fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm],
-                             shared_loop_watts: shared_loop_watts)
+    new_bldg.heat_pumps.add(id: "TargetHeatPump#{new_bldg.heat_pumps.size + 1}",
+                            is_shared_system: is_shared_system,
+                            number_of_units_served: number_of_units_served,
+                            distribution_system_idref: dist_id,
+                            heat_pump_type: heat_pump_type,
+                            heat_pump_fuel: HPXML::FuelTypeElectricity,
+                            cooling_capacity: cooling_capacity,
+                            heating_capacity: heating_capacity,
+                            backup_type: heat_pump_backup_type,
+                            backup_heating_fuel: heat_pump_backup_fuel,
+                            backup_heating_capacity: backup_heating_capacity,
+                            backup_heating_efficiency_percent: heat_pump_backup_eff,
+                            fraction_heat_load_served: heat_load_frac,
+                            fraction_cool_load_served: cool_load_frac,
+                            cooling_efficiency_seer: seer,
+                            cooling_efficiency_eer: eer,
+                            heating_efficiency_hspf: hspf,
+                            heating_efficiency_cop: cop,
+                            pump_watts_per_ton: pump_watts_per_ton,
+                            cooling_shr: shr,
+                            charge_defect_ratio: hvac_installation[:charge_defect_ratio],
+                            airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
+                            fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm],
+                            shared_loop_watts: shared_loop_watts)
   end
 
   def self.get_hvac_installation_quality()

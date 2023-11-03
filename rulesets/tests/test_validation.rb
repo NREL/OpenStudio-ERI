@@ -11,12 +11,11 @@ class ERI301ValidationTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
-    schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @schema_validator = XMLValidator.get_schema_validator(schema_path)
+    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
+    @schema_validator = XMLValidator.get_schema_validator(File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')))
     @schematron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
     @schematron_validator = XMLValidator.get_schematron_validator(@schematron_path)
 
-    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
     FileUtils.mkdir_p(@tmp_output_path)
   end
@@ -93,19 +92,19 @@ class ERI301ValidationTest < Minitest::Test
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
       # Create HPXML object
       if ['dhw-frac-load-served'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-dhw-multiple.xml'))
-        hpxml.water_heating_systems[0].fraction_dhw_load_served = 0.35
+        hpxml, hpxml_bldg = _create_hpxml('base-dhw-multiple.xml')
+        hpxml_bldg.water_heating_systems[0].fraction_dhw_load_served = 0.35
       elsif ['hvac-frac-load-served'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-hvac-multiple.xml'))
-        hpxml.heating_systems[0].fraction_heat_load_served += 0.1
-        hpxml.cooling_systems[0].fraction_cool_load_served += 0.2
-        hpxml.heating_systems[0].primary_system = true
-        hpxml.cooling_systems[0].primary_system = true
-        hpxml.heat_pumps[-1].primary_heating_system = false
-        hpxml.heat_pumps[-1].primary_cooling_system = false
+        hpxml, hpxml_bldg = _create_hpxml('base-hvac-multiple.xml')
+        hpxml_bldg.heating_systems[0].fraction_heat_load_served += 0.1
+        hpxml_bldg.cooling_systems[0].fraction_cool_load_served += 0.2
+        hpxml_bldg.heating_systems[0].primary_system = true
+        hpxml_bldg.cooling_systems[0].primary_system = true
+        hpxml_bldg.heat_pumps[-1].primary_heating_system = false
+        hpxml_bldg.heat_pumps[-1].primary_cooling_system = false
       elsif ['enclosure-floor-area-exceeds-cfa'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
-        hpxml.building_construction.conditioned_floor_area = 1348.8
+        hpxml, hpxml_bldg = _create_hpxml('base.xml')
+        hpxml_bldg.building_construction.conditioned_floor_area = 1348.8
       elsif error_case.include? 'energy-star'
         props = { 'energy-star-SF_Florida_3.1' => [ESConstants.SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
                   'energy-star-SF_National_3.0' => [ESConstants.SFNationalVer3_0, HPXML::ResidentialTypeApartment],
@@ -118,36 +117,36 @@ class ERI301ValidationTest < Minitest::Test
                   'energy-star-MF_National_1.2' => [ESConstants.MFNationalVer1_2, HPXML::ResidentialTypeSFD],
                   'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
         version, bldg_type = props[error_case]
-        hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files', 'base.xml'))
+        hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml.header.energystar_calculation_version = version
         hpxml.header.iecc_eri_calculation_version = nil
         hpxml.header.zerh_calculation_version = nil
-        hpxml.building_construction.residential_facility_type = bldg_type
+        hpxml_bldg.building_construction.residential_facility_type = bldg_type
         if bldg_type == HPXML::ResidentialTypeApartment
-          hpxml.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
+          hpxml_bldg.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
         end
-        hpxml.header.state_code = 'CO'
-        zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
-        hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
-        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
-                                                            zone: zone)
+        hpxml_bldg.state_code = 'CO'
+        zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
+        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
+        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                                 zone: zone)
       elsif error_case.include? 'zerh'
         versions = { 'zerh-version_1' => ZERHConstants.Ver1,
                      'zerh-version_2' => ZERHConstants.SFVer2 }
         version = versions[error_case]
-        hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files', 'base.xml'))
+        hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml.header.zerh_calculation_version = version
         hpxml.header.iecc_eri_calculation_version = nil
         hpxml.header.energystar_calculation_version = nil
-        zone = hpxml.climate_and_risk_zones.climate_zone_ieccs[0].zone
-        hpxml.climate_and_risk_zones.climate_zone_ieccs.clear
-        hpxml.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
-                                                            zone: zone)
+        zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
+        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
+        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                                 zone: zone)
       else
         fail "Unhandled case: #{error_case}."
       end
 
-      hpxml_doc = hpxml.to_oga()
+      hpxml_doc = hpxml.to_doc()
 
       # Test against schematron
       XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
@@ -163,13 +162,13 @@ class ERI301ValidationTest < Minitest::Test
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
       # Create HPXML object
       if ['invalid-epw-filepath'].include? error_case
-        hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
-        hpxml.climate_and_risk_zones.weather_station_epw_filepath = 'foo.epw'
+        hpxml, hpxml_bldg = _create_hpxml('base.xml')
+        hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'foo.epw'
       else
         fail "Unhandled case: #{error_case}."
       end
 
-      hpxml_doc = hpxml.to_oga()
+      hpxml_doc = hpxml.to_doc()
 
       XMLHelper.write_file(hpxml_doc, @tmp_hpxml_path)
       _test_ruleset(expected_errors)
@@ -236,5 +235,10 @@ class ERI301ValidationTest < Minitest::Test
         flunk "Found extra #{type} messages:\n#{actual_msgs}"
       end
     end
+  end
+
+  def _create_hpxml(hpxml_name)
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, hpxml_name))
+    return hpxml, hpxml.buildings[0]
   end
 end
