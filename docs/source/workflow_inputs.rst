@@ -178,11 +178,17 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
          Additional climate zones of other years may be required based on the programs selected for calculation:
          
          \- **IECC ERI 2015**: 2015
+
          \- **IECC ERI 2018**: 2018
+
          \- **IECC ERI 2021**: 2021
+
          \- **ENERGY STAR SFNH National v3.2**: 2021
+
          \- **ENERGY STAR MFNC National v1.2**: 2021
+
          \- **ZERH 1.0**: 2015
+
          \- **ZERH SF 2.0**: 2021
   
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
