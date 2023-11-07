@@ -92,11 +92,16 @@ Site information is entered in ``/HPXML/Building/Site``.
   ``Address/ZipCode``    string             See [#]_     Yes                ZIP Code where the home is located [#]_
   =====================  ========  =======  ===========  ========  =======  ============================
 
-  .. [#] | For ENERGY STAR calculations, allowed StateCode choices depend on the ENERGY STAR version:
-         | - **National**: <anything>
-         | - **Pacific**: HI, GU, MP
-         | - **Florida**: FL
-         | - **OregonWashington**: OR, WA
+  .. [#] For ENERGY STAR calculations, allowed StateCode choices depend on the ENERGY STAR version:
+         
+         \- **National**: <anything>
+         
+         \- **Pacific**: HI, GU, MP
+         
+         \- **Florida**: FL
+         
+         \- **OregonWashington**: OR, WA
+         
   .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
   .. [#] ZipCode is only currently used to look up the eGrid subregion (see ``rulesets/data/egrid/ZIP_mappings.csv``) and Cambium region (see ``rulesets/data/cambium/ZIP_mappings.csv``) for emissions calculations and the CO2e Index.
 
@@ -172,17 +177,13 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
   .. [#] The IECC climate zone for 2006 is always required.
          Additional climate zones of other years may be required based on the programs selected for calculation:
          
-         ===============================  =============
-         Program                          IECC ClimateZone Year Required
-         ===============================  =============
-         IECC ERI 2015                    2015
-         IECC ERI 2018                    2018
-         IECC ERI 2021                    2021
-         ENERGY STAR SFNH National v3.2   2021
-         ENERGY STAR MFNC National v1.2   2021
-         ZERH 1.0                         2015
-         ZERH SF 2.0                      2021
-         ===============================  =============
+         \- **IECC ERI 2015**: 2015
+         \- **IECC ERI 2018**: 2018
+         \- **IECC ERI 2021**: 2021
+         \- **ENERGY STAR SFNH National v3.2**: 2021
+         \- **ENERGY STAR MFNC National v1.2**: 2021
+         \- **ZERH 1.0**: 2015
+         \- **ZERH SF 2.0**: 2021
   
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
 
@@ -736,9 +737,11 @@ If an in-unit boiler if specified, additional information is entered in ``Heatin
   ``ElectricAuxiliaryEnergy``  double    kWh/yr  >= 0         No        See [#]_  Electric auxiliary energy
   ===========================  ========  ======  ===========  ========  ========  =========================
   
-  .. [#] | If ElectricAuxiliaryEnergy not provided, defaults as follows:
-         | - **Oil boiler**: 330 kWh/yr
-         | - **Gas boiler**: 170 kWh/yr
+  .. [#] If ElectricAuxiliaryEnergy not provided, defaults as follows:
+         
+         \- **Oil boiler**: 330 kWh/yr
+         
+         \- **Gas boiler**: 170 kWh/yr
 
 If instead a shared boiler is specified, additional information is entered in ``HeatingSystem``.
 
@@ -1059,9 +1062,12 @@ If an air-to-air heat pump is specified, additional information is entered in ``
          If not a split system, provide SEER using the appropriate conversion factor.
   .. [#] If HSPF2 provided, converted to HSPF using ANSI/RESNET/ICC 301-2022 Addendum C, where HSPF = HSPF2 / 0.85 (assumed to be a split system).
          If not a split system, provide SEER using the appropriate conversion factor.
-  .. [#] | If neither extension/HeatingCapacityRetention nor HeatingCapacity17F provided, heating capacity retention defaults based on CompressorType:
-         | - **single/two stage**: 0.425 at 5F
-         | - **variable speed**: 0.5 at 5F
+  .. [#] If neither extension/HeatingCapacityRetention nor HeatingCapacity17F provided, heating capacity retention defaults based on CompressorType:
+         
+         \- **single/two stage**: 0.425 at 5F
+         
+         \- **variable speed**: 0.5 at 5F
+         
   .. [#] The extension/HeatingCapacityRetention input is a more flexible alternative to HeatingCapacity17F.
          Either input approach can be used, but not both.
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
@@ -1629,10 +1635,13 @@ If a conventional storage water heater is specified, additional information is e
   .. [#] If HeatingCapacity not provided, defaults based on Table 8 in the `2014 BAHSP <https://www.energy.gov/sites/prod/files/2014/03/f13/house_simulation_protocols_2014.pdf>`_.
   .. [#] FirstHourRating only required if UniformEnergyFactor provided.
   .. [#] RecoveryEfficiency must also be greater than the EnergyFactor (or UniformEnergyFactor).
-  .. [#] | If RecoveryEfficiency not provided, defaults as follows based on a regression analysis of `AHRI certified water heaters <https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3>`_:
-         | - **Electric**: 0.98
-         | - **Non-electric, EnergyFactor < 0.75**: 0.252 * EnergyFactor + 0.608
-         | - **Non-electric, EnergyFactor >= 0.75**: 0.561 * EnergyFactor + 0.439
+  .. [#] If RecoveryEfficiency not provided, defaults as follows based on a regression analysis of `AHRI certified water heaters <https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3>`_:
+         
+         \- **Electric**: 0.98
+         
+         \- **Non-electric, EnergyFactor < 0.75**: 0.252 * EnergyFactor + 0.608
+         
+         \- **Non-electric, EnergyFactor >= 0.75**: 0.561 * EnergyFactor + 0.439
 
 Tankless
 ~~~~~~~~
@@ -1901,19 +1910,30 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   .. [#] Location choices are "ground" or "roof" mounted.
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
   .. [#] Tracking choices are "fixed", "1-axis", "1-axis backtracked", or "2-axis".
-  .. [#] | System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
-         | Default from the `PVWatts documentation <https://www.nrel.gov/docs/fy14osti/62641.pdf>`_ is 0.14, which breaks down as follows.
-         | Note that the total loss (14%) is not the sum of the individual losses but is calculated by multiplying the reduction due to each loss.
-         | - **Soiling**: 2%
-         | - **Shading**: 3%
-         | - **Snow**: 0%
-         | - **Mismatch**: 2%
-         | - **Wiring**: 2%
-         | - **Connections**: 0.5%
-         | - **Light-induced degradation**: 1.5%
-         | - **Nameplate rating**: 1%
-         | - **Age**: 0%
-         | - **Availability**: 3%
+  .. [#] System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
+         Default from the `PVWatts documentation <https://www.nrel.gov/docs/fy14osti/62641.pdf>`_ is 0.14, which breaks down as follows.
+         Note that the total loss (14%) is not the sum of the individual losses but is calculated by multiplying the reduction due to each loss.
+         
+         \- **Soiling**: 2%
+         
+         \- **Shading**: 3%
+         
+         \- **Snow**: 0%
+         
+         \- **Mismatch**: 2%
+         
+         \- **Wiring**: 2%
+         
+         \- **Connections**: 0.5%
+         
+         \- **Light-induced degradation**: 1.5%
+         
+         \- **Nameplate rating**: 1%
+         
+         \- **Age**: 0%
+         
+         \- **Availability**: 3%
+         
   .. [#] AttachedToInverter must reference an ``Inverter``.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system.
