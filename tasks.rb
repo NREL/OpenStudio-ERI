@@ -2417,6 +2417,7 @@ def create_sample_hpxmls
                   'base-foundation-unconditioned-basement-wall-insulation.xml',
                   'base-foundation-unvented-crawlspace.xml',
                   'base-foundation-vented-crawlspace.xml',
+                  'base-foundation-vented-crawlspace-above-grade.xml',
                   'base-foundation-walkout-basement.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml',
