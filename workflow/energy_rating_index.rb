@@ -368,19 +368,19 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     end
   end
 
-  rated_hpxml = rated_output['HPXML']
-  HVAC.apply_shared_systems(rated_hpxml)
-  ref_hpxml = ref_output['HPXML']
+  rated_bldg = rated_output['HPXML'].buildings[0]
+  HVAC.apply_shared_systems(rated_bldg)
+  reg_bldg = ref_output['HPXML'].buildings[0]
 
   results = {}
 
   # ======== #
   # Building #
   # ======== #
-  results[:rated_cfa] = rated_hpxml.building_construction.conditioned_floor_area
-  results[:rated_nbr] = rated_hpxml.building_construction.number_of_bedrooms
-  results[:rated_nst] = rated_hpxml.building_construction.number_of_conditioned_floors_above_grade
-  results[:rated_facility_type] = rated_hpxml.building_construction.residential_facility_type
+  results[:rated_cfa] = rated_bldg.building_construction.conditioned_floor_area
+  results[:rated_nbr] = rated_bldg.building_construction.number_of_bedrooms
+  results[:rated_nst] = rated_bldg.building_construction.number_of_conditioned_floors_above_grade
+  results[:rated_facility_type] = rated_bldg.building_construction.residential_facility_type
 
   # =========================== #
   # Ventilation Preconditioning #
@@ -389,14 +389,14 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Calculate independent nMEUL for ventilation preconditioning
 
   results[:eri_vent_preheat] = []
-  rated_hpxml.ventilation_fans.each do |rated_sys|
+  rated_bldg.ventilation_fans.each do |rated_sys|
     next if rated_sys.preheating_fuel.nil?
 
     results[:eri_vent_preheat] << calculate_eri_component_precond(rated_output, rated_sys, 'Mech Vent Preheating')
   end
 
   results[:eri_vent_precool] = []
-  rated_hpxml.ventilation_fans.each do |rated_sys|
+  rated_bldg.ventilation_fans.each do |rated_sys|
     next if rated_sys.precooling_fuel.nil?
 
     results[:eri_vent_precool] << calculate_eri_component_precond(rated_output, rated_sys, 'Mech Vent Precooling')
@@ -407,7 +407,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # ======= #
 
   results[:eri_heat] = []
-  rated_hpxml.hvac_systems.each do |rated_sys|
+  rated_bldg.hvac_systems.each do |rated_sys|
     if rated_sys.respond_to? :fraction_heat_load_served
       fraction_heat_load_served = rated_sys.fraction_heat_load_served
     elsif rated_sys.respond_to? :integrated_heating_system_fraction_heat_load_served
@@ -416,7 +416,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     next if fraction_heat_load_served.to_f <= 0
 
     # Get corresponding Reference Home system
-    ref_sys = ref_hpxml.hvac_systems.select { |h| h.respond_to?(:htg_seed_id) && (h.htg_seed_id == rated_sys.htg_seed_id) }[0]
+    ref_sys = reg_bldg.hvac_systems.select { |h| h.respond_to?(:htg_seed_id) && (h.htg_seed_id == rated_sys.htg_seed_id) }[0]
 
     if rated_sys.is_a?(HPXML::HeatPump) && rated_sys.is_dual_fuel
       # Dual fuel heat pump; calculate ERI using two different HVAC systems
@@ -433,14 +433,14 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
 
   results[:eri_cool] = []
   whf_energy = get_end_use(rated_output, EUT::WholeHouseFan, FT::Elec)
-  rated_hpxml.hvac_systems.each do |rated_sys|
+  rated_bldg.hvac_systems.each do |rated_sys|
     if rated_sys.respond_to? :fraction_cool_load_served
       fraction_cool_load_served = rated_sys.fraction_cool_load_served
     end
     next if fraction_cool_load_served.to_f <= 0
 
     # Get corresponding Reference Home system
-    ref_sys = ref_hpxml.hvac_systems.select { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == rated_sys.clg_seed_id) }[0]
+    ref_sys = reg_bldg.hvac_systems.select { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == rated_sys.clg_seed_id) }[0]
 
     results[:eri_cool] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, fraction_cool_load_served, 'Cooling', whf_energy: whf_energy)
   end
@@ -451,15 +451,15 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
 
   results[:eri_dhw] = []
   # Always just 1 Reference Home water heater.
-  if ref_hpxml.water_heating_systems.size != 1
+  if reg_bldg.water_heating_systems.size != 1
     fail 'Unexpected Reference Home results; should only be 1 DHW system.'
   end
 
-  rated_hpxml.water_heating_systems.each do |rated_sys|
+  rated_bldg.water_heating_systems.each do |rated_sys|
     next if rated_sys.fraction_dhw_load_served <= 0
 
     # Get corresponding Reference Home system
-    ref_sys = ref_hpxml.water_heating_systems[0]
+    ref_sys = reg_bldg.water_heating_systems[0]
 
     results[:eri_dhw] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, rated_sys.fraction_dhw_load_served, 'Hot Water')
   end
@@ -760,13 +760,13 @@ def _calculate_co2e_index(rated_output, ref_output, results_iad)
     fail 'CO2e Reference Home found with fossil fuel energy use.'
   end
 
-  rated_hpxml = rated_output['HPXML']
+  rated_bldg = rated_output['HPXML'].buildings[0]
 
   results = {}
 
-  results[:rated_cfa] = rated_hpxml.building_construction.conditioned_floor_area
-  results[:rated_nbr] = rated_hpxml.building_construction.number_of_bedrooms
-  results[:rated_nst] = rated_hpxml.building_construction.number_of_conditioned_floors_above_grade
+  results[:rated_cfa] = rated_bldg.building_construction.conditioned_floor_area
+  results[:rated_nbr] = rated_bldg.building_construction.number_of_bedrooms
+  results[:rated_nst] = rated_bldg.building_construction.number_of_conditioned_floors_above_grade
 
   results[:aco2e] = get_emissions_co2e(rated_output)
   results[:arco2e] = get_emissions_co2e(ref_output)
