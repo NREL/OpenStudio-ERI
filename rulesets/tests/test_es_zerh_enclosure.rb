@@ -47,8 +47,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants.Ver1].include? program_version
+      if program_version == ZERHConstants.Ver1
         _check_infiltration(hpxml_bldg, 3.0, 'ACH')
+      elsif program_version == ZERHConstants.MFVer2
+        _check_infiltration(hpxml_bldg, 695.0, 'CFM')
       else
         _check_infiltration(hpxml_bldg, 834.0, 'CFM')
       end
