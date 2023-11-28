@@ -1,11 +1,45 @@
 ## OpenStudio-ERI v1.7.0
 
 __New Features__
-- **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
+- Updates to OpenStudio 3.7.0/EnergyPlus 23.2.
+- **Breaking change**: Updates to HPXML v4.0-rc2:
+  - HPXML namespace changed from http://hpxmlonline.com/2019/10 to http://hpxmlonline.com/2023/09.
+  - Replaces "living space" with "conditioned space", which better represents what is modeled.
+  - Replaces `PortableHeater` and `FixedHeater` with `SpaceHeater`.
+- HVAC updates:
+  - Updated assumptions for variable-speed air conditioners, heat pumps, and mini-splits based on NEEP data. Expect results to change, potentially significantly so depending on the scenario.
+  - Updates deep ground temperatures (used for modeling ground-source heat pumps) using L. Xing's simplified design model (2014).
+  - Replaces inverse calculations, used to calculate COPs from rated efficiencies, with regressions for single/two-speed central ACs and ASHPs.
+- Output updates:
+  - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
+  - Adds "Peak Electricity: Annual Total (W)" output.
+- Relaxes requirements for some inputs:
+  - `SolarAbsorptance` and `Emittance` now only required for *exterior* walls & rim joists (i.e., ExteriorAdjacentTo=outside).
+  - `Window/PerformanceClass` no longer required (defaults to "residential").
+  - Allows above-grade basements/crawlspaces defined solely with Wall (not FoundationWall) elements.
+- Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 
 __Bugfixes__
-- ZERH Single Family v2 and Multifamily v2 should use ASRE instead of SRE for mechanical ventilation fans.
+- Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.
+- Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
+- Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
+- Fixes ground source heat pump fan/pump adjustment to rated efficiency.
+- Fixes missing radiation exchange between window and sky.
+- Minor HVAC design load calculation bugfixes for foundation walls.
+- Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
+- Various HVAC sizing bugfixes and improvements.
+
+## OpenStudio-ERI v1.6.2
+
+__Bugfixes__
+- Fixes incorrect ESRD ceiling U-factor for SFA unit with adiabatic ceiling when using SFNH program.
+
+## OpenStudio-ERI v1.6.1
+
+__Bugfixes__
+- Fixes ZERH Single Family v2 mechanical ventilation fan efficiency to use ASRE instead of SRE.
+- Fixes error if describing a wall with `WallType/StructuralInsulatedPanel`.
 
 ## OpenStudio-ERI v1.6.0
 

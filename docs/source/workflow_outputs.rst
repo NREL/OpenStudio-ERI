@@ -368,6 +368,7 @@ Peak building electricity outputs are listed below.
    ==================================  =============================================================
    Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
    Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
+   Peak Electricity: Annual Total (W)  Maximum value in any month
    ==================================  =============================================================
 
 Peak Building Loads
@@ -432,6 +433,17 @@ Annual hot water uses are listed below.
    Hot Water: Dishwasher (gal)
    Hot Water: Fixtures (gal)            Showers and faucets.
    Hot Water: Distribution Waste (gal) 
+   ===================================  ====================
+
+Resilience
+~~~~~~~~~~
+
+Resilience outputs are listed below.
+
+   ===================================  ====================
+   Type                                 Notes
+   ===================================  ====================
+   Resilience: Battery (hr)             Not used by OS-ERI
    ===================================  ====================
 
 HVAC Capacities
@@ -526,7 +538,7 @@ Depending on the outputs requested, CSV files may include:
    Hot Water Uses                       Water use for each end use type (in gallons).
    Total Loads                          Heating, cooling, and hot water loads (in kBtu).
    Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
-   Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., living space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+   Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
    Airflows                             Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
    Weather                              Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
    ===================================  =====
