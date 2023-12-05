@@ -17,6 +17,7 @@ __New Features__
   - `SolarAbsorptance` and `Emittance` now only required for *exterior* walls & rim joists (i.e., ExteriorAdjacentTo=outside).
   - `Window/PerformanceClass` no longer required (defaults to "residential").
   - Allows above-grade basements/crawlspaces defined solely with Wall (not FoundationWall) elements.
+- Adds ZERH Multifamily v2.
 - Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 
