@@ -22,6 +22,7 @@ __New Features__
 
 __Bugfixes__
 - Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.
+- Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
 - Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
 - Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
 - Fixes ground source heat pump fan/pump adjustment to rated efficiency.
