@@ -22,7 +22,6 @@ __New Features__
 
 __Bugfixes__
 - Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.
-- Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
 - Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
 - Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
 - Fixes ground source heat pump fan/pump adjustment to rated efficiency.
@@ -30,6 +29,11 @@ __Bugfixes__
 - Minor HVAC design load calculation bugfixes for foundation walls.
 - Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
 - Various HVAC sizing bugfixes and improvements.
+
+## OpenStudio-ERI v1.6.3
+
+__Bugfixes__
+- Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
 
 ## OpenStudio-ERI v1.6.2
 
