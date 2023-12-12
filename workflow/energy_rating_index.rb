@@ -399,7 +399,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     elsif rated_sys.respond_to? :integrated_heating_system_fraction_heat_load_served
       fraction_heat_load_served = rated_sys.integrated_heating_system_fraction_heat_load_served
     end
-    next if fraction_heat_load_served.to_f <= 0
+    next if fraction_heat_load_served.nil?
 
     # Get corresponding Reference Home system
     ref_sys = ref_hpxml.hvac_systems.select { |h| h.respond_to?(:htg_seed_id) && (h.htg_seed_id == rated_sys.htg_seed_id) }[0]
@@ -423,7 +423,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
     if rated_sys.respond_to? :fraction_cool_load_served
       fraction_cool_load_served = rated_sys.fraction_cool_load_served
     end
-    next if fraction_cool_load_served.to_f <= 0
+    next if fraction_cool_load_served.nil?
 
     # Get corresponding Reference Home system
     ref_sys = ref_hpxml.hvac_systems.select { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == rated_sys.clg_seed_id) }[0]
@@ -442,7 +442,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   end
 
   rated_hpxml.water_heating_systems.each do |rated_sys|
-    next if rated_sys.fraction_dhw_load_served <= 0
+    next if rated_sys.fraction_dhw_load_served.nil?
 
     # Get corresponding Reference Home system
     ref_sys = ref_hpxml.water_heating_systems[0]
