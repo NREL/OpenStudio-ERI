@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.6.3
 
 __Bugfixes__
-Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
+- Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
 
 ## OpenStudio-ERI v1.6.2
 
