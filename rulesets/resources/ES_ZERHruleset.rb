@@ -855,7 +855,14 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     bool_low_flow = lookup_reference_value('hot_water_distribution_low_flow')
-    pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value')
+
+    has_shared_water_heater = orig_bldg.water_heating_systems.count { |wh| wh.is_shared_system && wh.fraction_dhw_load_served > 0 } > 0
+    if has_shared_water_heater
+      pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value', 'shared water heater')
+    else
+      pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value', 'in-unit water heater')
+    end
+    pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value') if pipe_r_value.nil?
 
     orig_dist = orig_bldg.hot_water_distributions[0]
 
