@@ -456,7 +456,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   end
 
   rated_bldg.water_heating_systems.each do |rated_sys|
-    next if rated_sys.fraction_dhw_load_served <= 0
+    next if rated_sys.fraction_dhw_load_served.nil?
 
     # Get corresponding Reference Home system
     ref_sys = reg_bldg.water_heating_systems[0]

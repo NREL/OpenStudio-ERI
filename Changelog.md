@@ -30,6 +30,11 @@ __Bugfixes__
 - Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
 - Various HVAC sizing bugfixes and improvements.
 
+## OpenStudio-ERI v1.6.3
+
+__Bugfixes__
+- Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
+
 ## OpenStudio-ERI v1.6.2
 
 __Bugfixes__
