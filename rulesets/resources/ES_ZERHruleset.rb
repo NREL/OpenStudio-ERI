@@ -12,7 +12,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       @program_version = hpxml.header.zerh_calculation_version
     end
 
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? @program_version
+    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_year = 2021
     elsif @program_version == ZERHConstants.Ver1
@@ -855,7 +855,14 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     end
 
     bool_low_flow = lookup_reference_value('hot_water_distribution_low_flow')
-    pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value')
+
+    has_shared_water_heater = orig_bldg.water_heating_systems.count { |wh| wh.is_shared_system && wh.fraction_dhw_load_served > 0 } > 0
+    if has_shared_water_heater
+      pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value', 'shared water heater')
+    else
+      pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value', 'in-unit water heater')
+    end
+    pipe_r_value = lookup_reference_value('hot_water_distribution_pipe_r_value') if pipe_r_value.nil?
 
     orig_dist = orig_bldg.hot_water_distributions[0]
 
@@ -1629,7 +1636,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     window_ufactor = lookup_reference_value('window_ufactor', subtype)
     window_ufactor = lookup_reference_value('window_ufactor') if window_ufactor.nil?
-    window_shgc = lookup_reference_value('window_shgc')
+    window_shgc = lookup_reference_value('window_shgc', subtype)
+    window_shgc = lookup_reference_value('window_shgc') if window_shgc.nil?
 
     return window_ufactor, window_shgc
   end

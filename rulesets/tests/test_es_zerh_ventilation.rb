@@ -34,7 +34,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? iecc_zone
         return 1.2
       end
-    elsif [ZERHConstants.SFVer2].include? program_version
+    elsif [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return 2.9
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? iecc_zone
@@ -49,7 +49,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
       return HPXML::MechVentTypeSupply
     elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
       return HPXML::MechVentTypeExhaust
-    elsif [ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
+    elsif [ZERHConstants.Ver1, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return HPXML::MechVentTypeSupply
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
@@ -74,14 +74,14 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
         return 0.6
       end
-    elsif [ZERHConstants.SFVer2].include? program_version
+    elsif [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
       return
     end
   end
 
   def asre(program_version, hpxml_bldg)
     iecc_zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    if [ZERHConstants.SFVer2].include? program_version
+    if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
@@ -96,7 +96,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.SFVer2
+      if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
       else
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
@@ -108,7 +108,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     ESConstants.AllVersions.each do |program_version|
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.SFVer2
+      if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
       else
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
@@ -120,7 +120,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-mechvent-erv.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.SFVer2
+      if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
       else
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
@@ -132,7 +132,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-mechvent-hrv.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.SFVer2
+      if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
       else
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
@@ -144,7 +144,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-enclosure-beds-5.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.SFVer2
+      if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 72.0, hours: 24, power: (72.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
       else
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 72.0, hours: 24, power: (72.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
@@ -156,7 +156,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-location-miami-fl.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.SFVer2
+      if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 43.5, hours: 24, power: (43.5 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
       else
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 43.5, hours: 24, power: (43.5 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
@@ -178,7 +178,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.SFVer2
+      if [ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
       else
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])

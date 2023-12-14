@@ -65,7 +65,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
   .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
-  .. [#] ZERHCalculation/Version choices are "SF_2.0" or "1.0".
+  .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
 
 .. warning::
 
@@ -189,7 +189,7 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
 
          \- **ZERH 1.0**: 2015
 
-         \- **ZERH SF 2.0**: 2021
+         \- **ZERH SF/MF 2.0**: 2021
   
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
 

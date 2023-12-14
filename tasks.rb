@@ -2825,9 +2825,9 @@ def create_sample_hpxmls
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.zerh_calculation_version = ZERHConstants.Ver1
-      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2015 }.size == 0
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2015,
+      hpxml.header.zerh_calculation_version = ZERHConstants.MFVer2
+      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
+        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
                                                                  zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
       end
     else
