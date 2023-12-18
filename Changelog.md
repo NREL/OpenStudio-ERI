@@ -1,3 +1,9 @@
+## OpenStudio-ERI v1.8.0
+
+__New Features__
+- Ground source heat pump model enhancements.
+- Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
+
 ## OpenStudio-ERI v1.7.0
 
 __New Features__
