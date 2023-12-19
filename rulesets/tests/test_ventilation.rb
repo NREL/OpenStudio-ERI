@@ -543,7 +543,7 @@ class ERIMechVentTest < Minitest::Test
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 0.2 }])
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, power: 400.0, cfis_airflow_fraction: 1.0,
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, power: 464.0, cfis_airflow_fraction: 1.0,
                                         cfis_mode: HPXML::CFISModeAirHandler }])
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
