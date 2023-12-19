@@ -58,7 +58,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   =================================  ========  =======  ===========  ========  =======  ==================================
   
   .. [#] ERICalculation/Version choices are "latest", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
-         For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC© 301-2019 with both Addendum A and Addendum B included.
+         For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
   .. [#] CO2IndexCalculation/Version choices are "latest", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
@@ -689,11 +689,11 @@ If a furnace is specified, additional information is entered in ``HeatingSystem`
 
   .. [#] HVACDistribution type must be AirDistribution (type: "regular velocity" or "gravity") or DSE.
   .. [#] If there is a cooling system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
-  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   
 .. warning::
 
@@ -844,15 +844,15 @@ If a central air conditioner is specified, additional information is entered in 
          If not a split system, provide SEER using the appropriate conversion factor.
   .. [#] If SensibleHeatFraction not provided, defaults to 0.73 for single/two stage and 0.78 for variable speed.
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
-  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
@@ -952,15 +952,15 @@ If a mini-split air conditioner is specified, additional information is entered 
   .. [#] If provided, HVACDistribution type must be AirDistribution (type: "regular velocity") or DSE.
   .. [#] CompressorType only choices is "variable speed" (i.e., they are assumed to be inverter driven).
   .. [#] If SEER2 provided, converted to SEER using ANSI/RESNET/ICC 301-2022 Addendum C, where SEER = SEER2 / 0.95 if ducted and SEER = SEER2 if ductless.  
-  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
@@ -1075,15 +1075,15 @@ If an air-to-air heat pump is specified, additional information is entered in ``
          
   .. [#] The extension/HeatingCapacityRetention input is a more flexible alternative to HeatingCapacity17F.
          Either input approach can be used, but not both.
-  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
@@ -1130,15 +1130,15 @@ If a mini-split heat pump is specified, additional information is entered in ``H
          
   .. [#] The extension/HeatingCapacityRetention input is a more flexible alternative to HeatingCapacity17F.
          Either input approach can be used, but not both.
-  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
@@ -1237,15 +1237,15 @@ If a ground-to-air heat pump is specified, additional information is entered in 
   .. [#] SharedLoopWatts only required if IsSharedSystem is true.
   .. [#] Shared loop pump power attributed to the dwelling unit is calculated as SharedLoopWatts / NumberofUnitsServed.
   .. [#] SharedLoopMotorEfficiency only used if IsSharedSystem is true.
-  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+  .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
          See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
-         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to ANSI/RESNET/ICC© 301-2019 Addendum B.
+         If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
@@ -2112,7 +2112,7 @@ A single dishwasher can be entered as a ``/HPXML/Building/BuildingDetails/Applia
   .. [#] For example, a dishwasher in a shared mechanical room of a MF building.
   .. [#] Location choices are "conditioned space", "basement - conditioned", "basement - unconditioned", "garage", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
-  .. [#] If EnergyFactor (EF) provided instead of RatedAnnualkWh, it will be converted using the following equation based on `ANSI/RESNET/ICC 301-2014 <https://codes.iccsafe.org/content/document/843>`_:
+  .. [#] If EnergyFactor (EF) provided instead of RatedAnnualkWh, it will be converted using the following equation based on `ANSI/RESNET/ICC 301-2014 <https://codes.iccsafe.org/content/RESNET3012014P1>`_:
          RatedAnnualkWh = 215.0 / EF.
 
 If the dishwasher is shared, additional information is entered in ``/HPXML/Building/BuildingDetails/Appliances/Dishwasher``.
@@ -2172,7 +2172,7 @@ Each dehumidifier can be entered as a ``/HPXML/Building/BuildingDetails/Applianc
 
 .. note::
 
-  Dehumidifiers only affect ERI scores if Version 2019AB or newer is used, as dehumidifiers were incorporated into the ERI calculation as of 301-2019 Addendum B.
+  Dehumidifiers only affect ERI scores if Version 2019AB or newer is used, as dehumidifiers were incorporated into the ERI calculation as of `301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. note::
 
