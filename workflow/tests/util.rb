@@ -824,7 +824,7 @@ def _check_reference_home_components(results, test_num, version)
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2019A'
+  if version == '2022'
     # Pub 002-2020 (June 2020)
     if test_num == 1
       assert_in_epsilon(55115, results['Sensible Internal gains (Btu/day)'], epsilon)
@@ -882,15 +882,14 @@ def _check_reference_home_components(results, test_num, version)
       mv_kwh_yr = 379.1
     end
   else
-    # Pub 002-2020 (June 2020)
     if test_num == 1
       mv_kwh_yr = 0.0
     elsif test_num == 2
       mv_kwh_yr = 222.1
     elsif test_num == 3
-      mv_kwh_yr = 287.8
+      mv_kwh_yr = 288.1
     else
-      mv_kwh_yr = 762.8
+      mv_kwh_yr = 763.4
     end
   end
   assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], epsilon)

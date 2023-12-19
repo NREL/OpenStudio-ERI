@@ -1460,7 +1460,7 @@ class EnergyRatingIndex301Ruleset
       q_fan_airflow = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
-      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
+      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, true) # cfm for airflow
     end
 
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1503,7 +1503,7 @@ class EnergyRatingIndex301Ruleset
 
       # Airflow and fan power
       new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
-                                    fan_type: HPXML::MechVentTypeBalanced, # Per RESNET 55i
+                                    fan_type: HPXML::MechVentTypeBalanced,
                                     tested_flow_rate: q_fan_airflow.round(2),
                                     hours_in_operation: 24,
                                     fan_power: fan_power_w.round(3),
@@ -1635,7 +1635,7 @@ class EnergyRatingIndex301Ruleset
       sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
       break
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, 0.0)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, true)
     fan_power_w = 0.70 * q_fan
 
     new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -2533,7 +2533,7 @@ class EnergyRatingIndex301Ruleset
 
   def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
-    q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+    q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       if is_balanced
         phi = 1.0
