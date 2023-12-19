@@ -31,7 +31,7 @@ Air Distribution System Efficiency,0.8,0.8,0.8,0.8
 Thermostat Type,manual,manual,manual,manual
 Heating thermostat settings,68,68,68,68
 Cooling thermostat settings,78,78,78,78
-Mechanical ventilation (kWh/y),0.0,222.09,287.79,762.63
+Mechanical ventilation (kWh/y),0.0,222.14,288.07,763.41
 DHW pipe length refPipeL,88.5,88.5,88.5,98.5
 DHW loop length refLoopL,156.9,156.9,156.9,176.9
-e-Ratio,0.9999885,1.0000045,1.0000058,0.9999858
+e-Ratio,0.9999742,1.0000045,1.0000202,0.9999929
