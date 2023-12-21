@@ -366,7 +366,7 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   ``SolarAbsorptance``                    double                   >= 0, <= 1    Yes                  Solar absorptance
   ``Emittance``                           double                   >= 0, <= 1    Yes                  Emittance
   ``Pitch``                               integer    ?:12          >= 0          Yes                  Pitch
-  ``RadiantBarrier``                      boolean                                Yes                  Presence of radiant barrier
+  ``RadiantBarrier``                      boolean                                No         false     Presence of radiant barrier
   ``RadiantBarrierGrade``                 integer                  >= 1, <= 3    See [#]_             Radiant barrier installation grade
   ``Insulation/SystemIdentifier``         id                                     Yes                  Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double     F-ft2-hr/Btu  > 0           Yes                  Assembly R-value [#]_
@@ -376,7 +376,7 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If Azimuth not provided, and it's a *pitched* roof, modeled as four surfaces of equal area facing every direction.
          Azimuth is irrelevant for *flat* roofs.
-  .. [#] RadiantBarrierGrade only required if RadiantBarrier is provided.
+  .. [#] RadiantBarrierGrade only required if RadiantBarrier=true.
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
 HPXML Rim Joists

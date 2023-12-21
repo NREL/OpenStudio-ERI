@@ -107,7 +107,6 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
-            <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
               <SystemIdentifier id='Roof1Insulation'/>
               <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
@@ -122,7 +121,6 @@
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
-            <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
               <SystemIdentifier id='Roof2Insulation'/>
               <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
