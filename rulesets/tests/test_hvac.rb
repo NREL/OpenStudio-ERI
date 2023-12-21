@@ -863,7 +863,11 @@ class ERIHVACtest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable, htg_sp: 68, clg_sp: 78, htg_setback: 66, htg_setback_hrs: 49, htg_setback_start_hr: 23, clg_setup: 80, clg_setup_hrs: 42, clg_setup_start_hr: 9)
+        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable, 
+                          htg_weekday_sp: "66, 66, 66, 66, 66, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66",
+                          htg_weekend_sp: "66, 66, 66, 66, 66, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66",
+                          clg_weekday_sp: "78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 79, 78, 78, 78, 78, 78, 78, 78, 78, 78",
+                          clg_weekend_sp: "78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 79, 78, 78, 78, 78, 78, 78, 78, 78, 78")
       else
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
       end
@@ -1245,8 +1249,9 @@ class ERIHVACtest < Minitest::Test
     end
   end
 
-  def _check_thermostat(hpxml_bldg, control_type:, htg_sp:, clg_sp:, htg_setback: nil, htg_setback_hrs: nil, htg_setback_start_hr: nil,
-                        clg_setup: nil, clg_setup_hrs: nil, clg_setup_start_hr: nil)
+  def _check_thermostat(hpxml_bldg, control_type:, htg_sp: nil, clg_sp: nil, htg_setback: nil, htg_setback_hrs: nil, htg_setback_start_hr: nil,
+                        clg_setup: nil, clg_setup_hrs: nil, clg_setup_start_hr: nil,
+                        htg_weekday_sp: nil, htg_weekend_sp: nil, clg_weekday_sp: nil, clg_weekend_sp: nil)
     assert_equal(1, hpxml_bldg.hvac_controls.size)
     hvac_control = hpxml_bldg.hvac_controls[0]
     assert_equal(control_type, hvac_control.control_type)
@@ -1291,6 +1296,31 @@ class ERIHVACtest < Minitest::Test
       assert_nil(hvac_control.cooling_setup_start_hour)
     else
       assert_equal(clg_setup_start_hr, hvac_control.cooling_setup_start_hour)
+    end
+    if htg_weekday_sp.nil?
+      assert_nil(hvac_control.weekday_heating_setpoints)
+    else
+      assert_equal(htg_weekday_sp, hvac_control.weekday_heating_setpoints)
+    end
+    if htg_weekday_sp.nil?
+      assert_nil(hvac_control.weekday_heating_setpoints)
+    else
+      assert_equal(htg_weekday_sp, hvac_control.weekday_heating_setpoints)
+    end
+    if htg_weekend_sp.nil?
+      assert_nil(hvac_control.weekend_heating_setpoints)
+    else
+      assert_equal(htg_weekend_sp, hvac_control.weekend_heating_setpoints)
+    end
+    if clg_weekday_sp.nil?
+      assert_nil(hvac_control.weekday_cooling_setpoints)
+    else
+      assert_equal(clg_weekday_sp, hvac_control.weekday_cooling_setpoints)
+    end
+    if clg_weekend_sp.nil?
+      assert_nil(hvac_control.weekend_cooling_setpoints)
+    else
+      assert_equal(clg_weekend_sp, hvac_control.weekend_cooling_setpoints)
     end
   end
 
