@@ -286,7 +286,7 @@ Temporarily disabled until RESNET allows this.
       <sch:assert role='ERROR' test='count(h:SolarAbsorptance) = 1'>Expected 1 element(s) for xpath: SolarAbsorptance</sch:assert>
       <sch:assert role='ERROR' test='count(h:Emittance) = 1'>Expected 1 element(s) for xpath: Emittance</sch:assert>
       <sch:assert role='ERROR' test='count(h:Pitch) = 1'>Expected 1 element(s) for xpath: Pitch</sch:assert>
-      <sch:assert role='ERROR' test='count(h:RadiantBarrier) = 1'>Expected 1 element(s) for xpath: RadiantBarrier</sch:assert> <!-- See [RadiantBarrier] -->
+      <sch:assert role='ERROR' test='count(h:RadiantBarrier) &lt;= 1'>Expected 0 or 1 element(s) for xpath: RadiantBarrier</sch:assert> <!-- See [RadiantBarrier] -->
       <sch:assert role='ERROR' test='count(h:Insulation/h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: Insulation/AssemblyEffectiveRValue</sch:assert>
     </sch:rule>
   </sch:pattern>
