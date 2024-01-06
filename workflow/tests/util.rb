@@ -327,8 +327,6 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
         vent_fan.fan_power = 0.70 * vent_fan.tested_flow_rate
       elsif (vent_fan.fan_type == HPXML::MechVentTypeERV) || (vent_fan.fan_type == HPXML::MechVentTypeHRV)
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
-      elsif vent_fan.fan_type == HPXML::MechVentTypeCFIS
-        vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
       end
     end
     XMLHelper.write_file(new_hpxml.to_doc, out_xml)
@@ -885,7 +883,7 @@ def _check_reference_home_components(results, test_num, version)
     if test_num == 1
       mv_kwh_yr = 0.0
     elsif test_num == 2
-      mv_kwh_yr = 222.1
+      mv_kwh_yr = 223.9
     elsif test_num == 3
       mv_kwh_yr = 288.1
     else

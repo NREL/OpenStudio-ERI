@@ -342,7 +342,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_reference(new_bldg)
-    @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+      @infil_a_ext = 1.0
+    else
+      @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
+    end
 
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
@@ -358,6 +362,17 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_enclosure_air_infiltration_rated(orig_bldg, new_bldg)
     @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
+
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
+      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+        _sla, ach50, _nach, _volume, _height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+        cfm50 = ach50 * @infil_volume / 60.0
+        tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+        if cfm50 / tot_cb_area > 0.30
+          @infil_a_ext = 1.0
+        end
+      end
+    end
 
     ach50 = calc_rated_home_infiltration_ach50(orig_bldg)
     new_bldg.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
@@ -1460,7 +1475,7 @@ class EnergyRatingIndex301Ruleset
       q_fan_airflow = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
-      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, true) # cfm for airflow
+      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, true, 0.0) # cfm for airflow
     end
 
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1493,8 +1508,8 @@ class EnergyRatingIndex301Ruleset
       end
 
       # Calculate fan power
-      is_balanced = calc_mech_vent_is_balanced(orig_bldg.ventilation_fans)
-      q_fan_power = calc_rated_home_qfan(orig_bldg, is_balanced) # cfm for energy use calculation; Use Rated Home fan type
+      is_balanced, frac_imbal = get_mech_vent_imbal_properties(orig_bldg.ventilation_fans)
+      q_fan_power = calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal) # cfm for energy use calculation; Use Rated Home fan type
       if sum_fan_cfm > 0
         fan_power_w = sum_fan_w / sum_fan_cfm * q_fan_power
       else
@@ -1621,6 +1636,10 @@ class EnergyRatingIndex301Ruleset
         new_vent_fan.precooling_fraction_load_served = orig_vent_fan.precooling_fraction_load_served
       end
     end
+
+    # FIXME: Where the resulting dwelling unit total air exchange rate is less than
+    # Qtot = 0.03 x CFA + 7.5 x (Nbr+1) cfm, a supplemental balanced ventilation system
+    # shall be added to the Rated Home to meet Qtot.
   end
 
   def self.set_systems_mechanical_ventilation_iad(new_bldg)
@@ -1635,7 +1654,7 @@ class EnergyRatingIndex301Ruleset
       sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
       break
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, true)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, true, 0.0)
     fan_power_w = 0.70 * q_fan
 
     new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -2363,8 +2382,8 @@ class EnergyRatingIndex301Ruleset
     balanced_fans = mech_vent_fans.select { |f| f.is_balanced? }
 
     # Calculate min airflow rate requirement
-    is_balanced = calc_mech_vent_is_balanced(mech_vent_fans)
-    min_q_fan = calc_rated_home_qfan(orig_bldg, is_balanced)
+    is_balanced, frac_imbal = get_mech_vent_imbal_properties(mech_vent_fans)
+    min_q_fan = calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
 
     # Calculate total supply/exhaust cfm (across all mech vent systems)
     cfm_oa_supply, cfm_oa_exhaust = calc_mech_vent_supply_exhaust_cfms(mech_vent_fans, :oa)
@@ -2445,15 +2464,7 @@ class EnergyRatingIndex301Ruleset
   def self.calc_rated_home_infiltration_ach50(orig_bldg)
     _sla, ach50, _nach, _volume, _height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
 
-    if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-      if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
-        cfm50 = ach50 * @infil_volume / 60.0
-        tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
-        if cfm50 / tot_cb_area <= 0.30
-          ach50 *= @infil_a_ext
-        end
-      end
-    end
+    ach50 *= @infil_a_ext
 
     # Apply min Natural ACH?
     min_nach = nil
@@ -2504,64 +2515,60 @@ class EnergyRatingIndex301Ruleset
     return cfm_supply, cfm_exhaust
   end
 
-  def self.calc_mech_vent_is_balanced(ventilation_fans)
-    unmeasured_types = ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.flow_rate_not_tested }
-    if unmeasured_types.size > 0 # Some mech vent systems are not measured
+  def self.get_mech_vent_imbal_properties(mech_vent_fans)
+    # Returns (is_imbalanced, frac_imbalanced)
+    whole_fans = mech_vent_fans.select { |f| f.used_for_whole_building_ventilation && !f.is_cfis_supplemental_fan? }
+
+    if whole_fans.count { |f| !f.is_balanced? && f.hours_in_operation < 24 } > 1
+      return false, 1.0 # Multiple intermittent unbalanced fans, assume imbalanced per ANSI 301-2022
+    end
+
+    unmeasured_types = whole_fans.select { |f| f.flow_rate_not_tested }
+    if unmeasured_types.size > 0
       if unmeasured_types.all? { |f| f.is_balanced? }
-        return true # All types are balanced, assume balanced
+        return true, 0.0 # All types are balanced, assume balanced
       else
-        return false # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced
+        return false, 1.0 # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced
       end
     end
 
-    cfm_total_supply, cfm_total_exhaust = calc_mech_vent_supply_exhaust_cfms(ventilation_fans, :total)
+    cfm_total_supply, cfm_total_exhaust = calc_mech_vent_supply_exhaust_cfms(mech_vent_fans, :total)
     q_avg = (cfm_total_supply + cfm_total_exhaust) / 2.0
     if (cfm_total_supply - q_avg).abs / q_avg <= 0.1
-      return true # Supply/exhaust within 10% of average; balanced
+      is_balanced = true # Supply/exhaust within 10% of average; balanced
+    else
+      is_balanced = false
+    end
+    if cfm_total_supply + cfm_total_exhaust > 0
+      frac_imbal = (cfm_total_supply - cfm_total_exhaust).abs / [cfm_total_supply, cfm_total_exhaust].max
+    else
+      frac_imbal = 1.0
     end
 
-    return false # imbalanced
+    return is_balanced, frac_imbal
   end
 
-  def self.calc_rated_home_qfan(orig_bldg, is_balanced)
+  def self.calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
     ach50 = calc_rated_home_infiltration_ach50(orig_bldg)
     sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
-    q_fan_power = calc_mech_vent_q_fan(q_tot, sla, is_balanced)
-    return q_fan_power
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, is_balanced, frac_imbal)
+    return q_fan
   end
 
-  def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)
+  def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced, frac_imbal)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
     q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
-      if is_balanced
-        phi = 1.0
-      else
-        phi = q_inf / q_tot
-      end
-      q_fan = q_tot - phi * (q_inf * @infil_a_ext)
-    else
-      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-        # No infiltration credit for attached/multifamily
-        return q_tot
-      end
-
-      if q_inf > 2.0 / 3.0 * q_tot
-        q_fan = q_tot - 2.0 / 3.0 * q_tot
-      else
-        q_fan = q_tot - q_inf
-      end
-    end
-
-    return [q_fan, 0].max
+    q_fan = Airflow.get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, @infil_a_ext, @bldg_type, @eri_version, nil)
+    return q_fan
   end
 
-  def self.calc_mech_vent_Aext_ratio(hpxml)
-    tot_cb_area, ext_cb_area = hpxml.compartmentalization_boundary_areas()
+  def self.calc_mech_vent_Aext_ratio(orig_bldg)
     if @bldg_type == HPXML::ResidentialTypeSFD
       return 1.0
     end
+
+    tot_cb_area, ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
 
     return ext_cb_area / tot_cb_area
   end
