@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
+
 Dir["#{File.dirname(__FILE__)}/hpxml-measures/HPXMLtoOpenStudio/resources/*.rb"].each do |resource_file|
   next if resource_file.include? 'minitest_helper.rb'
 
@@ -2532,6 +2534,7 @@ def create_sample_hpxmls
     hpxml_bldg.site.orientation_of_front_of_home = nil
     hpxml_bldg.site.azimuth_of_front_of_home = nil
     hpxml_bldg.site.ground_conductivity = nil
+    hpxml_bldg.building_construction.number_of_units_in_building = nil
     hpxml_bldg.building_construction.number_of_bathrooms = nil
     hpxml_bldg.building_construction.conditioned_building_volume = nil
     hpxml_bldg.building_construction.average_ceiling_height = nil
