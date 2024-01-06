@@ -217,28 +217,20 @@ class Airflow
     return sla, ach50, nach, volume, height, a_ext
   end
 
-  def self.get_default_mech_vent_flow_rate(hpxml_bldg, vent_fan, weather, cfa, nbeds)
-    # Calculates Qfan cfm requirement per ASHRAE 62.2-2019
+  def self.get_default_mech_vent_flow_rate(hpxml_bldg, vent_fan, weather, cfa, nbeds, eri_version)
+    # Calculates Qfan cfm requirement per ASHRAE 62.2 / ANSI 301
     sla, _ach50, _nach, _volume, height, a_ext = get_values_from_air_infiltration_measurements(hpxml_bldg, cfa, weather)
+    bldg_type = hpxml_bldg.building_construction.residential_facility_type
 
     nl = get_infiltration_NL_from_SLA(sla, height)
     q_inf = get_infiltration_Qinf_from_NL(nl, weather, cfa)
-
     q_tot = get_mech_vent_qtot_cfm(nbeds, cfa)
-
     if vent_fan.is_balanced?
-      phi = 1.0
+      is_balanced, frac_imbal = true, 0.0
     else
-      phi = q_inf / q_tot
+      is_balanced, frac_imbal = false, 1.0
     end
-    q_fan = q_tot - phi * (q_inf * a_ext)
-    q_fan = [q_fan, 0].max
-
-    if not vent_fan.hours_in_operation.nil?
-      # Convert from hourly average requirement to actual fan flow rate
-      q_fan *= 24.0 / vent_fan.hours_in_operation
-    end
-
+    q_fan = get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, a_ext, bldg_type, eri_version, vent_fan.hours_in_operation)
     return q_fan
   end
 
@@ -1623,7 +1615,10 @@ class Airflow
     infil_program.addLine('Set Qexhaust = Qrange + Qbath + Qdryer + QWHV_exh + QWHV_cfis_suppl_exh')
     infil_program.addLine('Set Qsupply = QWHV_sup + QWHV_cfis_sup + QWHV_cfis_suppl_sup')
     infil_program.addLine('Set Qfan = (@Max Qexhaust Qsupply)')
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+      infil_program.addLine('Set Qimb = (@Abs (Qsupply - Qexhaust))')
+      infil_program.addLine('Set Qinf_adj = (Qinf^2) / (Qinf + Qimb)')
+    elsif Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       # Follow ASHRAE 62.2-2016, Normative Appendix C equations for time-varying total airflow
       infil_program.addLine('If Qfan > 0')
       # Balanced system if the total supply airflow and total exhaust airflow are within 10% of their average.
@@ -2006,12 +2001,12 @@ class Airflow
 
   def self.get_infiltration_SLA_from_ACH50(ach50, n_i, floor_area, volume)
     # Returns the infiltration SLA given a ACH50.
-    return ((ach50 * 0.283316478 * 4.0**n_i * volume) / (floor_area * UnitConversions.convert(1.0, 'ft^2', 'in^2') * 50.0**n_i * 60.0))
+    return ((ach50 * 0.283316 * 4.0**n_i * volume) / (floor_area * UnitConversions.convert(1.0, 'ft^2', 'in^2') * 50.0**n_i * 60.0))
   end
 
   def self.get_infiltration_ACH50_from_SLA(sla, n_i, floor_area, volume)
     # Returns the infiltration ACH50 given a SLA.
-    return ((sla * floor_area * UnitConversions.convert(1.0, 'ft^2', 'in^2') * 50.0**n_i * 60.0) / (0.283316478 * 4.0**n_i * volume))
+    return ((sla * floor_area * UnitConversions.convert(1.0, 'ft^2', 'in^2') * 50.0**n_i * 60.0) / (0.283316 * 4.0**n_i * volume))
   end
 
   def self.get_infiltration_Qinf_from_NL(nl, weather, cfa)
@@ -2090,6 +2085,43 @@ class Airflow
   def self.get_mech_vent_qtot_cfm(nbeds, cfa)
     # Returns Qtot cfm per ASHRAE 62.2-2019
     return (nbeds + 1.0) * 7.5 + 0.03 * cfa
+  end
+
+  def self.get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, a_ext, bldg_type, eri_version, hours_in_operation)
+    q_inf_eff = q_inf * a_ext
+    if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022')
+      if frac_imbal == 0
+        q_fan = q_tot - q_inf_eff
+      else
+        q_inf_eff = q_inf * a_ext
+        q_fan = ((frac_imbal**2.0 * q_tot**2.0 - 4.0 * frac_imbal * q_inf_eff**2.0 + 2.0 * frac_imbal * q_inf_eff * q_tot + q_inf_eff**2.0)**0.5 + frac_imbal * q_tot - q_inf_eff) / (2.0 * frac_imbal)
+      end
+    elsif Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019')
+      if is_balanced
+        phi = 1.0
+      else
+        phi = q_inf / q_tot
+      end
+      q_fan = q_tot - phi * q_inf_eff
+    else
+      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? bldg_type
+        # No infiltration credit for attached/multifamily
+        return q_tot
+      end
+
+      if q_inf > 2.0 / 3.0 * q_tot
+        q_fan = q_tot - 2.0 / 3.0 * q_tot
+      else
+        q_fan = q_tot - q_inf
+      end
+    end
+
+    # Convert from hourly average requirement to actual fan flow rate
+    if not hours_in_operation.nil?
+      q_fan *= 24.0 / hours_in_operation
+    end
+
+    return [q_fan, 0.0].max
   end
 end
 
