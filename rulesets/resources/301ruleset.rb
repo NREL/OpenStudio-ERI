@@ -342,11 +342,11 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_air_infiltration_reference(new_bldg)
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
-      @infil_a_ext = 1.0
-    else
-      @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
-    end
+    # if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+    #   @infil_a_ext = 1.0
+    # else
+    @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
+    # end
 
     sla = 0.00036
     ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
