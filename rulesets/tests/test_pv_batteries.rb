@@ -49,13 +49,12 @@ class ERIPVTest < Minitest::Test
   end
 
   def test_pv_batteries
-    skip # Temporarily disabled until RESNET allows this.
     hpxml_name = 'base-pv-battery.xml'
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0, usable_capacity_kwh: 18.0 }])
+        _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0, usable_capacity_kwh: 18.0, rated_power_output: 6000, round_trip_efficiency: 0.925 }])
       else
         _check_battery(hpxml_bldg)
       end
@@ -113,6 +112,8 @@ class ERIPVTest < Minitest::Test
       assert_equal(expected_values[:location], battery.location)
       assert_equal(expected_values[:nominal_capacity_kwh], battery.nominal_capacity_kwh)
       assert_equal(expected_values[:usable_capacity_kwh], battery.usable_capacity_kwh)
+      assert_equal(expected_values[:rated_power_output], battery.rated_power_output)
+      assert_equal(expected_values[:round_trip_efficiency], battery.round_trip_efficiency)
     end
   end
 end

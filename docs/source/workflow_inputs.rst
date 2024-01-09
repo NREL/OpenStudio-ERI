@@ -1976,6 +1976,35 @@ In addition, an inverter must be entered as a ``/HPXML/Building/BuildingDetails/
   .. [#] For homes with multiple inverters, all InverterEfficiency elements must have the same value.
   .. [#] Default from PVWatts is 0.96.
 
+HPXML Batteries
+***************
+
+A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/Batteries/Battery``.
+
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+  Element                                               Type     Units      Constraints              Required  Default   Notes
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+  ``SystemIdentifier``                                  id                                           Yes                 Unique identifier
+  ``Location``                                          string              See [#]_                 No        See [#]_  Location
+  ``BatteryType``                                       string              See [#]_                 Yes                 Battery type
+  ``NominalCapacity[Units="kWh"]/Value``                double   kWh        >= 0                     Yes                 Nominal (total) capacity
+  ``UsableCapacity[Units="kWh"]/Value``                 double   kWh        >= 0, < NominalCapacity  Yes                 Usable capacity
+  ``RatedPowerOutput``                                  double   W          >= 0                     Yes                 Power output under non-peak conditions
+  ``RoundTripEfficiency``                               double   frac       >0, <= 1                 Yes                 Round trip efficiency
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+
+  .. [#] Location choices are "conditioned space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
+  .. [#] If Location not provided, defaults to "garage" if a garage is present, otherwise "outside".
+  .. [#] BatteryType only choice is "Li-ion".
+
+.. note::
+
+  The battery will charge if PV production is greater than the building load and the battery is below its maximum capacity.
+  The battery will discharge if the building load is greater than the PV production and the battery is above its minimum capacity.
+  A battery in a home without PV is not modeled.
+  
+  For ERI calculations, batteries will result in a small penalty because ERI is calculated using annual energy consumption and batteries increase annual electricity consumption (due to round trip efficiency).
+  For CO2e Index calculations, batteries can result in a credit because CO2e Index is calculated using hourly electricity emissions factors and batteries shift when electricity consumption occurs.
 
 HPXML Generators
 ****************
