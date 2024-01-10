@@ -2649,32 +2649,28 @@ If not entered, the simulation will not include mechanical ventilation.
 
   .. [#] For central fan integrated supply systems, IsSharedSystem must be false.
   .. [#] FanType choices are "energy recovery ventilator", "heat recovery ventilator", "exhaust only", "supply only", "balanced", or "central fan integrated supply".
-  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per ANSI/RESNET/ICC 301-2022:
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_:
          
-         \- **balanced, energy recovery ventilator, or heat recovery ventilator**: Qfan = Qtot - Qinf_eff
+         Qfan = Qtot - Φ*(Qinf * Aext)
          
-         \- **exhaust only, supply only, or central fan integrated supply**: Qfan = ((Qtot^2 – 4*Qinf_eff^2 + 2*Qinf_eff*Qtot + Qinf_eff^2)^0.5 + Qtot - Qinf_eff) / 2
-
          where
          
          Qfan = required mechanical ventilation rate (cfm)
          
          Qtot = total required ventilation rate (cfm) = 0.03 * ConditionedFloorArea + 7.5*(NumberofBedrooms + 1)
          
-         Qinf_eff = Qinf * Aext
-         
          Qinf = infiltration rate (cfm)
          
          Aext = 1 if single-family detached or TypeOfInfiltrationLeakage is "unit exterior only", otherwise ratio of SFA/MF exterior envelope surface area to total envelope surface area as described in :ref:`air_infiltration`
          
-         OpenStudio-HPXML does not currently support defaulting flow rates for multiple mechanical ventilation fans.
+         Φ = 1 for balanced ventilation systems, and Qinf/Qtot otherwise
          
   .. [#] For a central fan integrated supply system, the flow rate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
   .. [#] HoursInOperation is optional unless the VentilationFan refers to the supplemental fan of a CFIS system, in which case it is not allowed.
   .. [#] If HoursInOperation not provided, defaults to 24 (i.e., running continuously) for all system types other than central fan integrated supply (CFIS), and 8.0 (i.e., running intermittently) for CFIS systems.
          For a CFIS system, the HoursInOperation and the flow rate are combined to form the hourly target ventilation rate (e.g., inputs of 90 cfm and 8 hrs/day produce an hourly target ventilation rate of 30 cfm).
          For a CFIS system with a supplemental fan, the supplemental fan's runtime is automatically calculated for each hour (based on the air handler runtime) to maintain the hourly target ventilation rate.
-  .. [#] If FanPower not provided, defaults based on ANSI/RESNET/ICC 301-2022:
+  .. [#] If FanPower not provided, defaults based on ANSI/RESNET/ICC 301-2012:
          
          \- **energy recovery ventilator, heat recovery ventilator, or shared system**: 1.0 W/cfm
          
@@ -2682,7 +2678,7 @@ If not entered, the simulation will not include mechanical ventilation.
          
          \- **central fan integrated supply**: 0.58 W/cfm
          
-         \- **exhaust only or supply only**: 0.35 W/cfm
+         \- **exhaust only" or "supply only**: 0.35 W/cfm
 
 **Exhaust/Supply Only**
 
