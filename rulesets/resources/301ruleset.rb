@@ -73,7 +73,7 @@ class EnergyRatingIndex301Ruleset
     set_enclosure_windows_reference(orig_bldg, new_bldg)
     set_enclosure_skylights_reference(orig_bldg, new_bldg)
     set_enclosure_doors_reference(orig_bldg, new_bldg)
-    set_enclosure_air_infiltration_reference(new_bldg)
+    set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
 
     # Systems
     set_systems_hvac_reference(orig_bldg, new_bldg, is_all_electric: is_all_electric)
@@ -276,7 +276,6 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
-    _sla, _ach50, _nach, @infil_volume, @infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
 
     new_bldg.site.fuels = orig_bldg.site.fuels
     new_bldg.site.site_type = HPXML::SiteTypeSuburban
@@ -296,7 +295,6 @@ class EnergyRatingIndex301Ruleset
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
-    _sla, _ach50, _nach, @infil_volume, @infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
 
     new_bldg.site.fuels = orig_bldg.site.fuels
     new_bldg.site.site_type = HPXML::SiteTypeSuburban
@@ -316,7 +314,6 @@ class EnergyRatingIndex301Ruleset
     @nbeds = 3
     @ncfl = 2.0
     @ncfl_ag = 2.0
-    @infil_volume = 20400.0
 
     new_bldg.site.fuels = orig_bldg.site.fuels
     new_bldg.site.site_type = HPXML::SiteTypeSuburban
@@ -341,53 +338,37 @@ class EnergyRatingIndex301Ruleset
     @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
-  def self.set_enclosure_air_infiltration_reference(new_bldg)
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
-      @infil_a_ext = 1.0
-    else
-      @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
-    end
-
+  def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
+    _sla, _ach50, _nach, infil_volume, infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
     sla = 0.00036
-    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, @infil_volume)
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, infil_volume)
     new_bldg.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
                                                air_leakage: ach50.round(2),
-                                               infiltration_volume: @infil_volume,
-                                               infiltration_height: @infil_height,
+                                               infiltration_volume: infil_volume,
+                                               infiltration_height: infil_height,
                                                infiltration_type: HPXML::InfiltrationTypeUnitExterior,
-                                               a_ext: @infil_a_ext.round(3))
+                                               a_ext: 1.0)
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_bldg, new_bldg)
-    @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
-
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
-      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-        _sla, ach50, _nach, _volume, _height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
-        cfm50 = ach50 * @infil_volume / 60.0
-        tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
-        if cfm50 / tot_cb_area > 0.30
-          @infil_a_ext = 1.0
-        end
-      end
-    end
-
-    ach50 = calc_rated_home_infiltration_ach50(orig_bldg)
+    _sla, _ach50, _nach, infil_volume, infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+    a_ext = calc_rated_home_mech_vent_Aext_ratio(orig_bldg, infil_volume)
+    ach50 = calc_rated_home_infiltration_ach50(orig_bldg, a_ext)
     new_bldg.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
                                                air_leakage: ach50.round(2),
-                                               infiltration_volume: @infil_volume,
-                                               infiltration_height: @infil_height,
+                                               infiltration_volume: infil_volume,
+                                               infiltration_height: infil_height,
                                                infiltration_type: HPXML::InfiltrationTypeUnitExterior,
-                                               a_ext: @infil_a_ext.round(3))
+                                               a_ext: a_ext.round(3))
   end
 
   def self.set_enclosure_air_infiltration_iad(new_bldg)
-    @infil_height = new_bldg.inferred_infiltration_height(@infil_volume)
-    @infil_a_ext = calc_mech_vent_Aext_ratio(new_bldg)
+    infil_volume = 20400
+    infil_height = new_bldg.inferred_infiltration_height(infil_volume)
 
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
@@ -398,10 +379,10 @@ class EnergyRatingIndex301Ruleset
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
                                                air_leakage: ach50,
-                                               infiltration_volume: @infil_volume,
-                                               infiltration_height: @infil_height,
+                                               infiltration_volume: infil_volume,
+                                               infiltration_height: infil_height,
                                                infiltration_type: HPXML::InfiltrationTypeUnitExterior,
-                                               a_ext: @infil_a_ext.round(3))
+                                               a_ext: 1.0)
   end
 
   def self.set_enclosure_attics_reference(orig_bldg, new_bldg)
@@ -1475,7 +1456,8 @@ class EnergyRatingIndex301Ruleset
       q_fan_airflow = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
-      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, true, 0.0) # cfm for airflow
+      infil_height = new_bldg.air_infiltration_measurements[0].infiltration_height
+      q_fan_airflow = calc_mech_vent_qfan(q_tot, ref_sla, true, 0.0, 1.0, infil_height) # cfm for airflow
     end
 
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1646,15 +1628,9 @@ class EnergyRatingIndex301Ruleset
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
 
     # Calculate fan cfm
-    sla = nil
-    new_bldg.air_infiltration_measurements.each do |new_infil_measurement|
-      next unless (new_infil_measurement.unit_of_measure == HPXML::UnitsACH) && (new_infil_measurement.house_pressure == 50)
-
-      ach50 = new_infil_measurement.air_leakage
-      sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
-      break
-    end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, true, 0.0)
+    _sla, ach50, _nach, infil_volume, infil_height = Airflow.get_values_from_air_infiltration_measurements(new_bldg, @cfa, @weather)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, infil_volume)
+    q_fan = calc_mech_vent_qfan(q_tot, sla, true, 0.0, 1.0, infil_height)
     fan_power_w = 0.70 * q_fan
 
     new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -2461,10 +2437,9 @@ class EnergyRatingIndex301Ruleset
     return q_fans
   end
 
-  def self.calc_rated_home_infiltration_ach50(orig_bldg)
-    _sla, ach50, _nach, _volume, _height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
-
-    ach50 *= @infil_a_ext
+  def self.calc_rated_home_infiltration_ach50(orig_bldg, a_ext)
+    _sla, ach50, _nach, infil_volume, infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+    ach50 *= a_ext
 
     # Apply min Natural ACH?
     min_nach = nil
@@ -2474,15 +2449,15 @@ class EnergyRatingIndex301Ruleset
     elsif Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       has_non_exhaust_systems = (mech_vent_fans.select { |f| f.fan_type != HPXML::MechVentTypeExhaust }.size > 0)
       mech_vent_fans.each do |orig_vent_fan|
-        if orig_vent_fan.flow_rate_not_tested || ((@infil_a_ext < 0.5) && !has_non_exhaust_systems)
+        if orig_vent_fan.flow_rate_not_tested || ((a_ext < 0.5) && !has_non_exhaust_systems)
           min_nach = 0.30
         end
       end
     end
 
     if not min_nach.nil?
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @infil_height, @weather)
-      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infil_volume)
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_height, @weather)
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, infil_volume)
       if ach50 < min_ach50
         ach50 = min_ach50
       end
@@ -2548,29 +2523,43 @@ class EnergyRatingIndex301Ruleset
     return is_balanced, frac_imbal
   end
 
-  def self.calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
-    ach50 = calc_rated_home_infiltration_ach50(orig_bldg)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
-    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, is_balanced, frac_imbal)
-    return q_fan
-  end
-
-  def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced, frac_imbal)
-    nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
-    q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
-    q_fan = Airflow.get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, @infil_a_ext, @bldg_type, @eri_version, nil)
-    return q_fan
-  end
-
-  def self.calc_mech_vent_Aext_ratio(orig_bldg)
+  def self.calc_rated_home_mech_vent_Aext_ratio(orig_bldg, infil_volume)
     if @bldg_type == HPXML::ResidentialTypeSFD
       return 1.0
     end
 
     tot_cb_area, ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+    a_ext = ext_cb_area / tot_cb_area
 
-    return ext_cb_area / tot_cb_area
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
+      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
+        _sla, ach50, _nach, _volume, _height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+        cfm50 = ach50 * infil_volume / 60.0
+        tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+        if cfm50 / tot_cb_area > 0.30
+          a_ext = 1.0
+        end
+      end
+    end
+
+    return a_ext
+  end
+
+  def self.calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
+    _sla, _ach50, _nach, infil_volume, infil_height = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+    a_ext = calc_rated_home_mech_vent_Aext_ratio(orig_bldg, infil_volume)
+    ach50 = calc_rated_home_infiltration_ach50(orig_bldg, a_ext)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, infil_volume)
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
+    q_fan = calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, a_ext, infil_height)
+    return q_fan
+  end
+
+  def self.calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, a_ext, infil_height)
+    nl = Airflow.get_infiltration_NL_from_SLA(sla, infil_height)
+    q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
+    q_fan = Airflow.get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, a_ext, @bldg_type, @eri_version, nil)
+    return q_fan
   end
 
   def self.get_new_distribution_id(orig_bldg, new_bldg)
