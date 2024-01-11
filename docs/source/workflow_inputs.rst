@@ -300,52 +300,52 @@ Note that ELA is different than Equivalent Leakage Area (EqLA), which involves a
 HPXML Attics
 ************
 
-If the dwelling unit has an unvented attic, whether it is within the infiltration volume is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="false"]]``.
+If the dwelling unit has an unvented attic, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="false"]]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                In accordance with ANSI/RESNET/ICC Standard 380
+  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
-If the dwelling unit has a vented attic, attic ventilation information can be optionally entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]/VentilationRate``.
+If the dwelling unit has a vented attic, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]``.
 
-  =================  ======  =====  ===========  ========  =======  ==========================
-  Element            Type    Units  Constraints  Required  Default  Notes
-  =================  ======  =====  ===========  ========  =======  ==========================
-  ``UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
-  ``Value``          double         > 0          No        1/300    Value for ventilation rate
-  =================  ======  =====  ===========  ========  =======  ==========================
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  Element                            Type    Units  Constraints  Required  Default  Notes
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  ``VentilationRate/UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
+  ``VentilationRate/Value``          double         > 0          No        1/300    Value for ventilation rate
+  =================================  ======  =====  ===========  ========  =======  ==========================
 
   .. [#] UnitofMeasure choices are "SLA" (specific leakage area) or "ACHnatural" (natural air changes per hour).
 
 HPXML Foundations
 *****************
 
-If the dwelling unit has an unconditioned basement, whether it is within the infiltration volume is entered in ``Enclosure/Foundations/Foundation/FoundationType/Basement[Conditioned='false']``.
+If the dwelling unit has an unconditioned basement, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement[Conditioned='false']]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                In accordance with ANSI/RESNET/ICC Standard 380
+  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
-If the dwelling unit has an unvented crawlspace, whether it is within the infiltration volume is entered in ``Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='false']``.
+If the dwelling unit has an unvented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                In accordance with ANSI/RESNET/ICC Standard 380
+  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
-If the dwelling unit has a vented crawlspace, crawlspace ventilation information can be optionally entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]/VentilationRate``.
+If the dwelling unit has a vented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]``.
 
-  =================  ======  =====  ===========  ========  =======  ==========================
-  Element            Type    Units  Constraints  Required  Default  Notes
-  =================  ======  =====  ===========  ========  =======  ==========================
-  ``UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
-  ``Value``          double         > 0          No        1/150    Value for ventilation rate
-  =================  ======  =====  ===========  ========  =======  ==========================
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  Element                            Type    Units  Constraints  Required  Default  Notes
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  ``VentilationRate/UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
+  ``VentilationRate/Value``          double         > 0          No        1/150    Value for ventilation rate
+  =================================  ======  =====  ===========  ========  =======  ==========================
 
   .. [#] UnitofMeasure only choice is "SLA" (specific leakage area).
 
