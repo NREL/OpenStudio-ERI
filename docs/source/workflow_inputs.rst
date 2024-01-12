@@ -1442,13 +1442,32 @@ To define a DSE system, additional information is entered in ``HVACDistribution`
 HPXML Ventilation Fan
 *********************
 
-Each mechanical ventilation system that provides ventilation to the whole dwelling unit is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
+Each ventilation fan system is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
+
+  =============================================================================================================================================  ========  =======  ===========  ========  =========  ========================
+  Element                                                                                                                                        Type      Units    Constraints  Required  Default    Notes
+  =============================================================================================================================================  ========  =======  ===========  ========  =========  ========================
+  ``SystemIdentifier``                                                                                                                           id                              Yes                  Unique identifier
+  ``UsedForWholeBuildingVentilation`` or ``UsedForLocalVentilation`` or ``UsedForSeasonalCoolingLoadReduction`` or ``UsedForGarageVentilation``  boolean            See [#]_     See [#]_             Ventilation fan use case
+  =============================================================================================================================================  ========  =======  ===========  ========  =========  ========================
+
+  .. [#] One (and only one) of the ``UsedFor...`` elements must have a value of true.
+         If UsedForWholeBuildingVentilation is true, see :ref:`wholeventilation`.
+         If UsedForLocalVentilation is true, local ventilation is ignored.
+         If UsedForSeasonalCoolingLoadReduction is true, see :ref:`wholehousefan`.
+         If UsedForGarageVentilation is true, garage ventilation is ignored.
+  .. [#] Only the ``UsedFor...`` element that is true is required.
+
+.. _wholeventilation:
+
+Whole Ventilation Fan
+~~~~~~~~~~~~~~~~~~~~~
+
+Each mechanical ventilation system that provides ventilation to the whole dwelling unit is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForWholeBuildingVentilation=true]``.
 
   ====================================================  =================  =======  ============  ========  =========  =========================================
   Element                                               Type               Units    Constraints   Required  Default    Notes
   ====================================================  =================  =======  ============  ========  =========  =========================================
-  ``SystemIdentifier``                                  id                                        Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                   boolean                     true          Yes                  Must be set to true
   ``IsSharedSystem``                                    boolean                     See [#]_      Yes                  Whether it serves multiple dwelling units
   ``FanType``                                           string                      See [#]_      Yes                  Type of ventilation system
   ``HoursInOperation``                                  double             hrs/day  >= 0, <= 24   See [#]_             Hours per day of operation [#]_
@@ -1461,18 +1480,15 @@ Each mechanical ventilation system that provides ventilation to the whole dwelli
   .. [#] For a CFIS system, the HoursInOperation and the flow rate are combined to form the expected/required hourly ventilation rate (e.g., 90 cfm and 8 hrs/day produce an hourly ventilation rate of 30 cfm).
          For a CFIS system with a supplemental fan, the supplemental fan's runtime is automatically calculated for each hour (based on the air handler runtime) to maintain the hourly ventilation rate.
 
-Exhaust/Supply Only
-~~~~~~~~~~~~~~~~~~~
+**Exhaust/Supply Only**
 
 If a supply only or exhaust only system is specified, no additional information is entered.
 
-Balanced
-~~~~~~~~
+**Balanced**
 
 If a balanced system is specified, no additional information is entered.
 
-Heat Recovery Ventilator
-~~~~~~~~~~~~~~~~~~~~~~~~
+**Heat Recovery Ventilator**
 
 If a heat recovery ventilator system is specified, additional information is entered in ``VentilationFan``.
 
@@ -1482,8 +1498,7 @@ If a heat recovery ventilator system is specified, additional information is ent
   ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac   > 0, <= 1     Yes                (Adjusted) Sensible recovery efficiency
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
-Energy Recovery Ventilator
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Energy Recovery Ventilator**
 
 If an energy recovery ventilator system is specified, additional information is entered in ``VentilationFan``.
 
@@ -1494,8 +1509,7 @@ If an energy recovery ventilator system is specified, additional information is 
   ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac   > 0, <= 1     Yes                (Adjusted) Sensible recovery efficiency
   ========================================================================  =================  =====  ============  ========  =======  =======================================
 
-Central Fan Integrated Supply
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Central Fan Integrated Supply**
 
 If a central fan integrated supply (CFIS) system is specified, additional information is entered in ``VentilationFan``.
 
@@ -1522,8 +1536,7 @@ If a central fan integrated supply (CFIS) system is specified, additional inform
   CFIS systems are automated controllers that use the HVAC system's air handler fan to draw in outdoor air to meet an hourly ventilation target.
   CFIS systems are modeled as assuming they A) maximize the use of normal heating/cooling runtime operation to meet the hourly ventilation target, B) block the flow of outdoor air when the hourly ventilation target has been met, and C) provide additional runtime operation (via air handler fan or supplemental fan) to meet the remainder of the hourly ventilation target when space heating/cooling runtime alone is not sufficient.
 
-In-Unit System
-~~~~~~~~~~~~~~
+**In-Unit System**
 
 If the specified system is not a shared system (i.e., not serving multiple dwelling units), additional information is entered in ``VentilationFan``.
 
@@ -1535,8 +1548,7 @@ If the specified system is not a shared system (i.e., not serving multiple dwell
 
   .. [#] For a central fan integrated supply system, TestedFlowRate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
 
-Shared System
-~~~~~~~~~~~~~
+**Shared System**
 
 If the specified system is a shared system (i.e., serving multiple dwelling units), additional information is entered in ``VentilationFan``.
 
@@ -1556,7 +1568,7 @@ If the specified system is a shared system (i.e., serving multiple dwelling unit
   .. [#] PreHeating not allowed for exhaust only systems.
   .. [#] PreCooling not allowed for exhaust only systems.
 
-If pre-heating is specified, additional information is entered in ``extension/PreHeating``.
+If pre-heating is specified for the shared system, additional information is entered in ``extension/PreHeating``.
 
   ==============================================  =======  =====  ===========  ========  =======  ====================================================================
   Element                                         Type     Units  Constraints  Required  Default  Notes
@@ -1568,7 +1580,7 @@ If pre-heating is specified, additional information is entered in ``extension/Pr
 
   .. [#] Fuel choices are "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
 
-If pre-cooling is specified, additional information is entered in ``extension/PreCooling``.
+If pre-cooling is specified for the shared system, additional information is entered in ``extension/PreCooling``.
 
   ==============================================  =======  =====  ===========  ========  =======  ====================================================================
   Element                                         Type     Units  Constraints  Required  Default  Notes
@@ -1580,16 +1592,16 @@ If pre-cooling is specified, additional information is entered in ``extension/Pr
 
   .. [#] Fuel only choice is "electricity".
 
-HPXML Whole House Fan
-*********************
+.. _wholehousefan:
 
-Each whole house fan that provides cooling load reduction is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
+HPXML Whole House Fan
+~~~~~~~~~~~~~~~~~~~~~
+
+Each whole house fan that provides cooling load reduction is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan[UsedForSeasonalCoolingLoadReduction=true]``.
 
   =======================================  =======  =======  ===========  ========  ========  ==========================
   Element                                  Type     Units    Constraints  Required  Default   Notes
   =======================================  =======  =======  ===========  ========  ========  ==========================
-  ``SystemIdentifier``                     id                             Yes                 Unique identifier
-  ``UsedForSeasonalCoolingLoadReduction``  boolean           true         Yes                 Must be set to true
   ``RatedFlowRate``                        double   cfm      >= 0         Yes                 Flow rate
   ``FanPower``                             double   W        >= 0         Yes                 Fan power
   =======================================  =======  =======  ===========  ========  ========  ==========================
