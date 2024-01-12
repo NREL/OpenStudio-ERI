@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.8.0
+
+__New Features__
+- **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
+
 ## OpenStudio-ERI v1.7.0
 
 __New Features__
