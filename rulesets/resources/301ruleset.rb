@@ -1473,7 +1473,7 @@ class EnergyRatingIndex301Ruleset
     else
 
       # Calculate weighted-average fan W/cfm
-      q_fans = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
+      q_fans, q_fan_bal_remain = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
       sum_fan_w = 0.0
       sum_fan_cfm = 0.0
       q_fans.each do |fan_id, flow_rate|
@@ -1487,6 +1487,8 @@ class EnergyRatingIndex301Ruleset
         end
         sum_fan_cfm += flow_rate
       end
+      sum_fan_w += 0.70 * q_fan_bal_remain
+      sum_fan_cfm += q_fan_bal_remain
 
       # Calculate fan power
       is_balanced, frac_imbal = get_mech_vent_imbal_properties(orig_bldg.ventilation_fans)
@@ -1515,7 +1517,7 @@ class EnergyRatingIndex301Ruleset
         (f.flow_rate_not_tested || f.flow_rate > 0)
     }
 
-    q_fans = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
+    q_fans, q_fan_bal_remain = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
 
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     mech_vent_fans.each do |orig_vent_fan|
@@ -1618,9 +1620,16 @@ class EnergyRatingIndex301Ruleset
       end
     end
 
-    # FIXME: Where the resulting dwelling unit total air exchange rate is less than
-    # Qtot = 0.03 x CFA + 7.5 x (Nbr+1) cfm, a supplemental balanced ventilation system
-    # shall be added to the Rated Home to meet Qtot.
+    if q_fan_bal_remain > 0
+      fan_power_w = 0.70 * q_fan_bal_remain
+      new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
+                                    fan_type: HPXML::MechVentTypeBalanced,
+                                    tested_flow_rate: q_fan_bal_remain.round(2),
+                                    hours_in_operation: 24,
+                                    fan_power: fan_power_w.round(3),
+                                    used_for_whole_building_ventilation: true,
+                                    is_shared_system: false)
+    end
   end
 
   def self.set_systems_mechanical_ventilation_iad(new_bldg)
@@ -2433,7 +2442,17 @@ class EnergyRatingIndex301Ruleset
       q_fans[orig_vent_fan.id] = q_fans[parent_cfis_fan.id]
     end
 
-    return q_fans
+    q_fan_bal_remain = 0
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+      # Check if supplemental balanced ventilation is needed
+      # This should only happen when the home has no mechanical ventilation, because
+      # otherwise the existing ventilation fans would have been increased instead.
+      if min_q_fan > q_fans.values.sum
+        q_fan_bal_remain = min_q_fan - q_fans.values.sum
+      end
+    end
+
+    return q_fans, q_fan_bal_remain
   end
 
   def self.calc_rated_home_infiltration_ach50(orig_bldg)
