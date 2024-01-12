@@ -2933,6 +2933,7 @@ def create_sample_hpxmls
   hpxml_bldg.state_code = 'OR'
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-bldgtype-mf-unit-location-portland-or.xml')
 
+  # Reformat real_homes HPXMLs
   puts 'Reformatting real_homes HPXMLs...'
   Dir['workflow/real_homes/*.xml'].each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
