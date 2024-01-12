@@ -49,10 +49,10 @@
         <BuildingConstruction>
           <ResidentialFacilityType>apartment unit</ResidentialFacilityType>
           <NumberofUnits>1</NumberofUnits>
-          <NumberofConditionedFloors>1</NumberofConditionedFloors>
-          <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+          <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>1</NumberofBedrooms>
-          <ConditionedFloorArea>566</ConditionedFloorArea>
+          <ConditionedFloorArea>566.0</ConditionedFloorArea>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -80,12 +80,12 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='AirInfiltrationMeasurement1'/>
-            <HousePressure>50</HousePressure>
+            <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>CFM</UnitofMeasure>
               <AirLeakage>426.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>5943</InfiltrationVolume>
+            <InfiltrationVolume>5943.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <RimJoists>
@@ -98,7 +98,7 @@
             <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation'/>
-              <AssemblyEffectiveRValue>18.50</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>18.5</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
           <RimJoist>
@@ -185,29 +185,29 @@
               </Layer>
             </UnderSlabInsulation>
             <extension>
-              <CarpetRValue>0.0</CarpetRValue>
               <CarpetFraction>0.0</CarpetFraction>
+              <CarpetRValue>0.0</CarpetRValue>
             </extension>
           </Slab>
         </Slabs>
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
-            <Area>16.40</Area>
+            <Area>16.4</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.28</SHGC>
-            <FractionOperable>1</FractionOperable>
+            <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window2'/>
-            <Area>32.30</Area>
+            <Area>32.3</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.27</UFactor>
             <SHGC>0.28</SHGC>
-            <FractionOperable>1</FractionOperable>
+            <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -217,7 +217,7 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.29</UFactor>
             <SHGC>0.24</SHGC>
-            <FractionOperable>1</FractionOperable>
+            <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -244,23 +244,23 @@
               <HeatingCapacity>10600.0</HeatingCapacity>
               <HeatingCapacity17F>6500.0</HeatingCapacity17F>
               <CoolingCapacity>11500.0</CoolingCapacity>
-              <CoolingSensibleHeatFraction>0.70</CoolingSensibleHeatFraction>
+              <CoolingSensibleHeatFraction>0.7</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
                 <Units>Percent</Units>
                 <Value>1.0</Value>
               </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>11604.20</BackupHeatingCapacity>
+              <BackupHeatingCapacity>11604.2</BackupHeatingCapacity>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>11.10</Value>
+                <Value>11.1</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>9.50</Value>
+                <Value>9.5</Value>
               </AnnualHeatingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
@@ -319,7 +319,7 @@
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>exhaust only</FanType>
-              <TestedFlowRate>24</TestedFlowRate>
+              <TestedFlowRate>24.0</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
@@ -358,11 +358,11 @@
                 <ControlType>temperature</ControlType>
                 <RecirculationPipingLoopLength>29.0</RecirculationPipingLoopLength>
                 <BranchPipingLength>21.0</BranchPipingLength>
-                <PumpPower>3</PumpPower>
+                <PumpPower>3.0</PumpPower>
               </Recirculation>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>3</PipeRValue>
+              <PipeRValue>3.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>
@@ -385,13 +385,13 @@
           <NumberofUnitsServed>11</NumberofUnitsServed>
           <AttachedToWaterHeatingSystem idref='WaterHeatingSystem2'/>
           <Location>other housing unit</Location>
-          <IntegratedModifiedEnergyFactor>1.570</IntegratedModifiedEnergyFactor>
-          <RatedAnnualkWh>187</RatedAnnualkWh>
+          <IntegratedModifiedEnergyFactor>1.57</IntegratedModifiedEnergyFactor>
+          <RatedAnnualkWh>187.0</RatedAnnualkWh>
           <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
           <LabelAnnualGasCost>12.0</LabelAnnualGasCost>
-          <LabelUsage>6</LabelUsage>
-          <Capacity>3.800</Capacity>
+          <LabelUsage>6.0</LabelUsage>
+          <Capacity>3.8</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
@@ -406,17 +406,17 @@
           <IsSharedAppliance>true</IsSharedAppliance>
           <AttachedToWaterHeatingSystem idref='WaterHeatingSystem2'/>
           <Location>other housing unit</Location>
-          <RatedAnnualkWh>270</RatedAnnualkWh>
+          <RatedAnnualkWh>270.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
           <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
           <LabelAnnualGasCost>22.23</LabelAnnualGasCost>
-          <LabelUsage>4</LabelUsage>
+          <LabelUsage>4.0</LabelUsage>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
           <Location>conditioned space</Location>
-          <RatedAnnualkWh>352</RatedAnnualkWh>
+          <RatedAnnualkWh>352.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>

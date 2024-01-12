@@ -965,21 +965,21 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
-                  <SystemIdentifier id="Duct1"/>
+                  <SystemIdentifier id='Duct1'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>378.75</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
-                  <SystemIdentifier id="Duct2"/>
+                  <SystemIdentifier id='Duct2'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>32.7</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
                   <DuctSurfaceArea>126.25</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
-                  <SystemIdentifier id="Duct3"/>
+                  <SystemIdentifier id='Duct3'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>20.7</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>

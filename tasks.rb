@@ -2932,6 +2932,12 @@ def create_sample_hpxmls
   hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_OR_Portland.Intl.AP.726980_TMY3.epw'
   hpxml_bldg.state_code = 'OR'
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-bldgtype-mf-unit-location-portland-or.xml')
+
+  puts 'Reformatting real_homes HPXMLs...'
+  Dir['workflow/real_homes/*.xml'].each do |hpxml_path|
+    hpxml = HPXML.new(hpxml_path: hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, hpxml_path)
+  end
 end
 
 command_list = [:update_measures, :create_release_zips]

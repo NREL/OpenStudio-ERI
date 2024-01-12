@@ -46,10 +46,10 @@
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>apartment unit</ResidentialFacilityType>
-          <NumberofConditionedFloors>1</NumberofConditionedFloors>
-          <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+          <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
+          <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
           <NumberofBedrooms>1</NumberofBedrooms>
-          <ConditionedFloorArea>588</ConditionedFloorArea>
+          <ConditionedFloorArea>588.0</ConditionedFloorArea>
         </BuildingConstruction>
       </BuildingSummary>
       <ClimateandRiskZones>
@@ -73,12 +73,12 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='AirInfiltrationMeasurement1'/>
-            <HousePressure>50</HousePressure>
+            <HousePressure>50.0</HousePressure>
             <BuildingAirLeakage>
               <UnitofMeasure>ACH</UnitofMeasure>
               <AirLeakage>3.0</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>5341</InfiltrationVolume>
+            <InfiltrationVolume>5341.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <RimJoists>
@@ -166,8 +166,8 @@
               </Layer>
             </UnderSlabInsulation>
             <extension>
-              <CarpetRValue>0.05</CarpetRValue>
               <CarpetFraction>1.0</CarpetFraction>
+              <CarpetRValue>0.05</CarpetRValue>
             </extension>
           </Slab>
         </Slabs>
@@ -183,7 +183,7 @@
               <DistanceToTopOfWindow>22.6</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>28.6</DistanceToBottomOfWindow>
             </Overhangs>
-            <FractionOperable>1</FractionOperable>
+            <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -198,13 +198,13 @@
               <DistanceToTopOfWindow>1.2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>7.2</DistanceToBottomOfWindow>
             </Overhangs>
-            <FractionOperable>1</FractionOperable>
+            <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
           <Window>
             <SystemIdentifier id='Window3'/>
-            <Area>13.30</Area>
+            <Area>13.3</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.32</UFactor>
             <SHGC>0.25</SHGC>
@@ -213,7 +213,7 @@
               <DistanceToTopOfWindow>1.2</DistanceToTopOfWindow>
               <DistanceToBottomOfWindow>7.9</DistanceToBottomOfWindow>
             </Overhangs>
-            <FractionOperable>1</FractionOperable>
+            <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -257,16 +257,16 @@
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
-                <Value>16.20</Value>
+                <Value>16.2</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>9.20</Value>
+                <Value>9.2</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
               </extension>
             </HeatPump>
           </HVACPlant>
@@ -283,7 +283,7 @@
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>9.20</Value>
+                    <Value>9.2</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -291,12 +291,12 @@
                   <DuctType>return</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>13.80</Value>
+                    <Value>13.8</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
-                  <SystemIdentifier id="Duct1"/>
+                  <SystemIdentifier id='Duct1'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
                   <DuctLocation>other housing unit</DuctLocation>
@@ -313,7 +313,7 @@
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>supply only</FanType>
-              <TestedFlowRate>30</TestedFlowRate>
+              <TestedFlowRate>30.0</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
@@ -341,7 +341,7 @@
               </Standard>
             </SystemType>
             <PipeInsulation>
-              <PipeRValue>0</PipeRValue>
+              <PipeRValue>0.0</PipeRValue>
             </PipeInsulation>
           </HotWaterDistribution>
           <WaterFixture>
@@ -361,13 +361,13 @@
           <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>conditioned space</Location>
-          <IntegratedModifiedEnergyFactor>1.570</IntegratedModifiedEnergyFactor>
-          <RatedAnnualkWh>284</RatedAnnualkWh>
-          <LabelElectricRate>0.1200</LabelElectricRate>
+          <IntegratedModifiedEnergyFactor>1.57</IntegratedModifiedEnergyFactor>
+          <RatedAnnualkWh>284.0</RatedAnnualkWh>
+          <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
           <LabelAnnualGasCost>18.0</LabelAnnualGasCost>
-          <LabelUsage>6</LabelUsage>
-          <Capacity>4.200</Capacity>
+          <LabelUsage>6.0</LabelUsage>
+          <Capacity>4.2</Capacity>
         </ClothesWasher>
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
@@ -381,17 +381,17 @@
           <SystemIdentifier id='Dishwasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
           <Location>conditioned space</Location>
-          <RatedAnnualkWh>270</RatedAnnualkWh>
+          <RatedAnnualkWh>270.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
-          <LabelElectricRate>0.1200</LabelElectricRate>
+          <LabelElectricRate>0.12</LabelElectricRate>
           <LabelGasRate>1.09</LabelGasRate>
           <LabelAnnualGasCost>22.23</LabelAnnualGasCost>
-          <LabelUsage>4</LabelUsage>
+          <LabelUsage>4.0</LabelUsage>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
           <Location>conditioned space</Location>
-          <RatedAnnualkWh>470</RatedAnnualkWh>
+          <RatedAnnualkWh>470.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
