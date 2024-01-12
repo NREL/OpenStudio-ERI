@@ -524,6 +524,7 @@
               <FanType>exhaust only</FanType>
               <TestedFlowRate>100.0</TestedFlowRate>
               <HoursInOperation>19.7</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
               <FanPower>54.2</FanPower>
             </VentilationFan>
