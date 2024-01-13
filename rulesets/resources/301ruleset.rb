@@ -464,7 +464,7 @@ class EnergyRatingIndex301Ruleset
 
     # Create insulated roofs for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be consistent with walls.
-    if sum_gross_area > 0
+    if sum_gross_area > 0.1
       new_bldg.roofs.add(id: 'RoofArea',
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                          area: sum_gross_area,
@@ -618,7 +618,7 @@ class EnergyRatingIndex301Ruleset
     # Create insulated walls for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be able to accommodate windows,
     # which are also equally distributed.
-    if sum_gross_area > 0
+    if sum_gross_area > 0.1
       new_bldg.walls.add(id: 'WallArea',
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
@@ -1076,14 +1076,14 @@ class EnergyRatingIndex301Ruleset
     else
       azimuth = 0
     end
-    if exterior_area > 0
+    if exterior_area > 0.1
       new_bldg.doors.add(id: 'ExteriorDoorArea',
                          wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
     end
-    if interior_area > 0
+    if interior_area > 0.1
       new_bldg.doors.add(id: 'InteriorDoorArea',
                          wall_idref: new_bldg.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
                          area: interior_area,
@@ -1116,7 +1116,7 @@ class EnergyRatingIndex301Ruleset
     else
       azimuth = 0
     end
-    if exterior_area + interior_area > 0
+    if exterior_area + interior_area > 0.1
       new_bldg.doors.add(id: 'DoorArea',
                          wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area + interior_area,
