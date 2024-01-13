@@ -338,7 +338,7 @@
               <SystemIdentifier id='Slab1PerimeterInsulation'/>
               <Layer>
                 <NominalRValue>0.0</NominalRValue>
-                <InsulationDepth>0</InsulationDepth>
+                <InsulationDepth>0.0</InsulationDepth>
               </Layer>
             </PerimeterInsulation>
             <UnderSlabInsulation>
@@ -364,7 +364,7 @@
               <SystemIdentifier id='Slab2PerimeterInsulation'/>
               <Layer>
                 <NominalRValue>1.0</NominalRValue>
-                <InsulationDepth>0</InsulationDepth>
+                <InsulationDepth>0.0</InsulationDepth>
               </Layer>
             </PerimeterInsulation>
             <UnderSlabInsulation>

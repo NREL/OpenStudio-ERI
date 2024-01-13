@@ -3,6 +3,9 @@
 __New Features__
 - **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
 
+__Bugfixes__
+- Fixes possible 301ruleset.rb error due to floating point arithmetic.
+
 ## OpenStudio-ERI v1.7.0
 
 __New Features__
