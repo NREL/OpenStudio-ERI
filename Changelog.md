@@ -8,6 +8,9 @@ __New Features__
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
 - Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
 
+__Bugfixes__
+- Fixes possible 301ruleset.rb error due to floating point arithmetic.
+
 ## OpenStudio-ERI v1.7.0
 
 __New Features__

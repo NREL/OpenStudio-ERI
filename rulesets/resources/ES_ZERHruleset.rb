@@ -274,7 +274,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         pitch_to_radians = Math.atan(default_roof_pitch / 12.0)
         roof_area = orig_floor.area / Math.cos(pitch_to_radians)
 
-        new_bldg.roofs.add(id: 'TargetRoof',
+        new_bldg.roofs.add(id: "TargetRoof#{new_bldg.roofs.size + 1}",
                            interior_adjacent_to: HPXML::LocationAtticVented,
                            area: roof_area,
                            azimuth: nil,
@@ -283,7 +283,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                            pitch: default_roof_pitch,
                            radiant_barrier: radiant_barrier_bool,
                            radiant_barrier_grade: radiant_barrier_grade,
-                           insulation_id: 'TargetRoofInsulation',
+                           insulation_id: "TargetRoof#{new_bldg.roofs.size + 1}Insulation",
                            insulation_assembly_r_value: 2.3) # Assumes that the roof is uninsulated
       end
     end
@@ -485,12 +485,12 @@ class EnergyStarZeroEnergyReadyHomeRuleset
         pitch_to_radians = Math.atan(orig_roof.pitch / 12.0)
         floor_area = orig_roof.area * Math.cos(pitch_to_radians)
 
-        new_bldg.floors.add(id: 'TargetFloor',
+        new_bldg.floors.add(id: "TargetFloor#{new_bldg.floors.size + 1}",
                             exterior_adjacent_to: HPXML::LocationAtticVented,
                             interior_adjacent_to: HPXML::LocationConditionedSpace,
                             floor_type: HPXML::FloorTypeWoodFrame,
                             area: floor_area,
-                            insulation_id: 'TargetFloorInsulation',
+                            insulation_id: "TargetFloor#{new_bldg.floors.size + 1}Insulation",
                             insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
       end
     end
@@ -588,6 +588,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     window_area = lookup_reference_value('window_area')
 
+    wall = new_bldg.walls.find { |w| w.interior_adjacent_to == HPXML::LocationConditionedSpace && w.exterior_adjacent_to == HPXML::LocationOutside }
+
     # Calculate the window area
     if window_area == 'same as rated, with exceptions'
       if @has_cond_bsmnt || [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include?(@bldg_type)
@@ -612,7 +614,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                              azimuth: azimuth,
                              ufactor: win_ufactor,
                              shgc: win_shgc,
-                             wall_idref: 'TargetWall',
+                             wall_idref: wall.id,
                              performance_class: HPXML::WindowClassResidential,
                              fraction_operable: fraction_operable)
       end
@@ -631,7 +633,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                              azimuth: win.azimuth,
                              ufactor: win_ufactor,
                              shgc: win_shgc,
-                             wall_idref: 'TargetWall',
+                             wall_idref: wall.id,
                              performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
                              fraction_operable: fraction_operable)
       end
@@ -650,9 +652,11 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     # The door type is assumed to be opaque
     door_ufactor = lookup_reference_value('door_ufactor')
 
+    wall = new_bldg.walls.find { |w| w.interior_adjacent_to == HPXML::LocationConditionedSpace && w.exterior_adjacent_to == HPXML::LocationOutside }
+
     orig_bldg.doors.each do |orig_door|
       new_bldg.doors.add(id: orig_door.id,
-                         wall_idref: 'TargetWall',
+                         wall_idref: wall.id,
                          area: orig_door.area,
                          azimuth: orig_door.azimuth,
                          r_value: (1.0 / door_ufactor).round(3))
