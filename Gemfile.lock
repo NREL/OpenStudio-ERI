@@ -15,6 +15,7 @@ GEM
     oga (3.3)
       ast
       ruby-ll (~> 2.1)
+    parallel (1.24.0)
     rake (13.0.6)
     ruby-ll (2.1.2)
       ansi
@@ -36,6 +37,7 @@ DEPENDENCIES
   minitest-reporters
   msgpack
   oga
+  parallel
   rake
   rubyzip
   simplecov
