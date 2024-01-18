@@ -1373,7 +1373,7 @@ class EnergyRatingIndex301Ruleset
     if orig_bldg.hvac_controls.size > 0
       hvac_control = orig_bldg.hvac_controls[0]
       control_type = hvac_control.control_type
-      hvac_control_id = hvac_control_id
+      hvac_control_id = hvac_control.id
     else
       control_type = HPXML::HVACControlTypeManual
       hvac_control_id = 'HVACControl'
