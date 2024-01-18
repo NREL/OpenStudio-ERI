@@ -532,6 +532,7 @@ def _get_reference_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Above-grade walls
   wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml_bldg)
@@ -629,7 +630,7 @@ def _get_reference_home_components(hpxml, test_num)
   results['Air Distribution System Efficiency'] = dse.round(2)
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml_bldg)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp.round(0)
   results['Cooling thermostat settings'] = clg_sp.round(0)
@@ -650,6 +651,7 @@ def _get_iad_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Geometry
   results['Number of Stories'] = hpxml_bldg.building_construction.number_of_conditioned_floors
@@ -709,7 +711,7 @@ def _get_iad_home_components(hpxml, test_num)
   results['Labeled cooling system rating and efficiency'] = seer
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml_bldg)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp
   results['Cooling thermostat settings'] = clg_sp
@@ -1228,11 +1230,23 @@ def _get_hvac(hpxml_bldg)
   return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
 end
 
-def _get_tstat(hpxml_bldg)
+def _get_tstat(eri_version, hpxml_bldg)
   hvac_control = hpxml_bldg.hvac_controls[0]
   tstat = hvac_control.control_type.gsub(' thermostat', '')
-  htg_sp, _htg_setback_sp, _htg_setback_hrs_per_week, _htg_setback_start_hr = HVAC.get_default_heating_setpoint(hvac_control.control_type)
-  clg_sp, _clg_setup_sp, _clg_setup_hrs_per_week, _clg_setup_start_hr = HVAC.get_default_cooling_setpoint(hvac_control.control_type)
+  htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(hvac_control.control_type, eri_version)
+  clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
+
+  htg_weekday_setpoints = htg_weekday_setpoints.split(', ').map(&:to_f)
+  htg_weekend_setpoints = htg_weekend_setpoints.split(', ').map(&:to_f)
+  clg_weekday_setpoints = clg_weekday_setpoints.split(', ').map(&:to_f)
+  clg_weekend_setpoints = clg_weekend_setpoints.split(', ').map(&:to_f)
+
+  if htg_weekday_setpoints.uniq.size == 1 && htg_weekend_setpoints.uniq.size == 1 && htg_weekday_setpoints.uniq[0] == htg_weekend_setpoints.uniq[0]
+    htg_sp = htg_weekday_setpoints.uniq[0]
+  end
+  if clg_weekday_setpoints.uniq.size == 1 && clg_weekend_setpoints.uniq.size == 1 && clg_weekday_setpoints.uniq[0] == clg_weekend_setpoints.uniq[0]
+    clg_sp = clg_weekday_setpoints.uniq[0]
+  end
   return tstat, htg_sp, clg_sp
 end
 
