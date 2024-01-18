@@ -853,7 +853,9 @@ class ERIHVACtest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+      _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual,
+                                    htg_setpoints: '68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68',
+                                    clg_setpoints: '78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78')
     end
   end
 
@@ -863,9 +865,28 @@ class ERIHVACtest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable, htg_sp: 68, clg_sp: 78, htg_setback: 66, htg_setback_hrs: 49, htg_setback_start_hr: 23, clg_setup: 80, clg_setup_hrs: 42, clg_setup_start_hr: 9)
+        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable,
+                                      htg_setpoints: '66, 66, 66, 66, 66, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66',
+                                      clg_setpoints: '78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 79, 78, 78, 78, 78, 78, 78, 78, 78, 78')
       else
-        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual, htg_sp: 68, clg_sp: 78)
+        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual,
+                                      htg_setpoints: '68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68',
+                                      clg_setpoints: '78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78')
+      end
+    end
+
+    hpxml_name = _change_eri_version(hpxml_name, '2019ABCD')
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable,
+                                      htg_setpoints: '66, 66, 66, 66, 66, 66, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66',
+                                      clg_setpoints: '78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 80, 78, 78, 78, 78, 78, 78, 78, 78, 78')
+      else
+        _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual,
+                                      htg_setpoints: '68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68',
+                                      clg_setpoints: '78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78')
       end
     end
   end
@@ -1245,52 +1266,25 @@ class ERIHVACtest < Minitest::Test
     end
   end
 
-  def _check_thermostat(hpxml_bldg, control_type:, htg_sp:, clg_sp:, htg_setback: nil, htg_setback_hrs: nil, htg_setback_start_hr: nil,
-                        clg_setup: nil, clg_setup_hrs: nil, clg_setup_start_hr: nil)
+  def _check_thermostat(hpxml_bldg, control_type:, htg_setpoints:, clg_setpoints:)
     assert_equal(1, hpxml_bldg.hvac_controls.size)
     hvac_control = hpxml_bldg.hvac_controls[0]
     assert_equal(control_type, hvac_control.control_type)
 
-    if htg_sp.nil?
-      assert_nil(hvac_control.heating_setpoint_temp)
+    if htg_setpoints.nil?
+      assert_nil(hvac_control.weekday_heating_setpoints)
+      assert_nil(hvac_control.weekend_heating_setpoints)
     else
-      assert_equal(htg_sp, hvac_control.heating_setpoint_temp)
-    end
-    if htg_setback.nil?
-      assert_nil(hvac_control.heating_setback_temp)
-    else
-      assert_equal(htg_setback, hvac_control.heating_setback_temp)
-    end
-    if htg_setback_hrs.nil?
-      assert_nil(hvac_control.heating_setback_hours_per_week)
-    else
-      assert_equal(htg_setback_hrs, hvac_control.heating_setback_hours_per_week)
-    end
-    if htg_setback_start_hr.nil?
-      assert_nil(hvac_control.heating_setback_start_hour)
-    else
-      assert_equal(htg_setback_start_hr, hvac_control.heating_setback_start_hour)
+      assert_equal(htg_setpoints.split(', ').map(&:to_f), hvac_control.weekday_heating_setpoints.split(', ').map(&:to_f))
+      assert_equal(htg_setpoints.split(', ').map(&:to_f), hvac_control.weekend_heating_setpoints.split(', ').map(&:to_f))
     end
 
-    if clg_sp.nil?
-      assert_nil(hvac_control.cooling_setpoint_temp)
+    if clg_setpoints.nil?
+      assert_nil(hvac_control.weekday_cooling_setpoints)
+      assert_nil(hvac_control.weekend_cooling_setpoints)
     else
-      assert_equal(clg_sp, hvac_control.cooling_setpoint_temp)
-    end
-    if clg_setup.nil?
-      assert_nil(hvac_control.cooling_setup_temp)
-    else
-      assert_equal(clg_setup, hvac_control.cooling_setup_temp)
-    end
-    if clg_setup_hrs.nil?
-      assert_nil(hvac_control.cooling_setup_hours_per_week)
-    else
-      assert_equal(clg_setup_hrs, hvac_control.cooling_setup_hours_per_week)
-    end
-    if clg_setup_start_hr.nil?
-      assert_nil(hvac_control.cooling_setup_start_hour)
-    else
-      assert_equal(clg_setup_start_hr, hvac_control.cooling_setup_start_hour)
+      assert_equal(clg_setpoints.split(', ').map(&:to_f), hvac_control.weekday_cooling_setpoints.split(', ').map(&:to_f))
+      assert_equal(clg_setpoints.split(', ').map(&:to_f), hvac_control.weekend_cooling_setpoints.split(', ').map(&:to_f))
     end
   end
 
