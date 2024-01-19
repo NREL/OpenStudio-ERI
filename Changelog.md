@@ -4,9 +4,13 @@ __New Features__
 - Implements ANSI/RESNET/ICC Standard 301-2022 and Addendum C.
   - ERICalculation/Version and CO2IndexCalculation/Version can now be "2022C" or "2022".
   - Allows modeling electric battery storage, including shared batteries ("2022C" or newer).
+- **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
 - Ground source heat pump model enhancements.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
 - Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
+
+__Bugfixes__
+- Fixes possible 301ruleset.rb error due to floating point arithmetic.
 
 ## OpenStudio-ERI v1.7.0
 

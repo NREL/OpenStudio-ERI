@@ -464,7 +464,7 @@ class EnergyRatingIndex301Ruleset
 
     # Create insulated roofs for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be consistent with walls.
-    if sum_gross_area > 0
+    if sum_gross_area > 0.1
       new_bldg.roofs.add(id: 'RoofArea',
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                          area: sum_gross_area,
@@ -618,7 +618,7 @@ class EnergyRatingIndex301Ruleset
     # Create insulated walls for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be able to accommodate windows,
     # which are also equally distributed.
-    if sum_gross_area > 0
+    if sum_gross_area > 0.1
       new_bldg.walls.add(id: 'WallArea',
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
@@ -1076,14 +1076,14 @@ class EnergyRatingIndex301Ruleset
     else
       azimuth = 0
     end
-    if exterior_area > 0
+    if exterior_area > 0.1
       new_bldg.doors.add(id: 'ExteriorDoorArea',
                          wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
     end
-    if interior_area > 0
+    if interior_area > 0.1
       new_bldg.doors.add(id: 'InteriorDoorArea',
                          wall_idref: new_bldg.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
                          area: interior_area,
@@ -1116,7 +1116,7 @@ class EnergyRatingIndex301Ruleset
     else
       azimuth = 0
     end
-    if exterior_area + interior_area > 0
+    if exterior_area + interior_area > 0.1
       new_bldg.doors.add(id: 'DoorArea',
                          wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area + interior_area,
@@ -1203,10 +1203,14 @@ class EnergyRatingIndex301Ruleset
 
     # Table 303.4.1(1) - Thermostat
     control_type = HPXML::HVACControlTypeManual
+    htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(control_type, @eri_version)
+    clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(control_type, @eri_version)
     new_bldg.hvac_controls.add(id: 'HVACControl',
                                control_type: control_type,
-                               heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
-                               cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
+                               weekday_heating_setpoints: htg_weekday_setpoints,
+                               weekend_heating_setpoints: htg_weekend_setpoints,
+                               weekday_cooling_setpoints: clg_weekday_setpoints,
+                               weekend_cooling_setpoints: clg_weekend_setpoints)
 
     # Distribution system
     add_reference_distribution_system(new_bldg)
@@ -1374,26 +1378,19 @@ class EnergyRatingIndex301Ruleset
     if orig_bldg.hvac_controls.size > 0
       hvac_control = orig_bldg.hvac_controls[0]
       control_type = hvac_control.control_type
-      htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
-      clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
-      new_bldg.hvac_controls.add(id: hvac_control.id,
-                                 control_type: control_type,
-                                 heating_setpoint_temp: htg_sp,
-                                 heating_setback_temp: htg_setback_sp,
-                                 heating_setback_hours_per_week: htg_setback_hrs_per_week,
-                                 heating_setback_start_hour: htg_setback_start_hr,
-                                 cooling_setpoint_temp: clg_sp,
-                                 cooling_setup_temp: clg_setup_sp,
-                                 cooling_setup_hours_per_week: clg_setup_hrs_per_week,
-                                 cooling_setup_start_hour: clg_setup_start_hr)
-
+      hvac_control_id = hvac_control.id
     else
       control_type = HPXML::HVACControlTypeManual
-      new_bldg.hvac_controls.add(id: 'HVACControl',
-                                 control_type: control_type,
-                                 heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
-                                 cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
+      hvac_control_id = 'HVACControl'
     end
+    htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(control_type, @eri_version)
+    clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(control_type, @eri_version)
+    new_bldg.hvac_controls.add(id: hvac_control_id,
+                               control_type: control_type,
+                               weekday_heating_setpoints: htg_weekday_setpoints,
+                               weekend_heating_setpoints: htg_weekend_setpoints,
+                               weekday_cooling_setpoints: clg_weekday_setpoints,
+                               weekend_cooling_setpoints: clg_weekend_setpoints)
 
     # Table 4.2.2(1) - Thermal distribution systems
     orig_bldg.hvac_distributions.each do |orig_hvac_distribution|
