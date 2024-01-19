@@ -2250,21 +2250,21 @@ Each solar electric photovoltaic (PV) system is entered as a ``/HPXML/Building/B
 
 Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_.
 
-  ====================================  =======  =====  ============  ========  ========  ============================================
-  Element                               Type     Units  Constraints   Required  Default   Notes
-  ====================================  =======  =====  ============  ========  ========  ============================================
-  ``SystemIdentifier``                  id                            Yes                 Unique identifier
-  ``IsSharedSystem``                    boolean                       Yes                 Whether it serves multiple dwelling units
-  ``Location``                          string          See [#]_      Yes                 Mounting location
-  ``ModuleType``                        string          See [#]_      Yes                 Type of module
-  ``Tracking``                          string          See [#]_      Yes                 Type of tracking
-  ``ArrayAzimuth``                      integer  deg    >= 0, <= 359  Yes                 Direction panels face (clockwise from North)
-  ``ArrayTilt``                         double   deg    >= 0, <= 90   Yes                 Tilt relative to horizontal
-  ``MaxPowerOutput``                    double   W      >= 0          Yes                 Peak power
-  ``SystemLossesFraction``              double   frac   >= 0, <= 1    Yes                 System losses [#]_
-  ``AttachedToInverter``                idref           See [#]_      Yes                 ID of attached inverter
-  ``extension/NumberofBedroomsServed``  integer         > 1           See [#]_            Number of bedrooms served
-  ====================================  =======  =====  ============  ========  ========  ============================================
+  ====================================  =======  =====  ==================  ========  ========  ============================================
+  Element                               Type     Units  Constraints         Required  Default   Notes
+  ====================================  =======  =====  ==================  ========  ========  ============================================
+  ``SystemIdentifier``                  id                                  Yes                 Unique identifier
+  ``IsSharedSystem``                    boolean                             Yes                 Whether it serves multiple dwelling units
+  ``Location``                          string          See [#]_            Yes                 Mounting location
+  ``ModuleType``                        string          See [#]_            Yes                 Type of module
+  ``Tracking``                          string          See [#]_            Yes                 Type of tracking
+  ``ArrayAzimuth``                      integer  deg    >= 0, <= 359        Yes                 Direction panels face (clockwise from North)
+  ``ArrayTilt``                         double   deg    >= 0, <= 90         Yes                 Tilt relative to horizontal
+  ``MaxPowerOutput``                    double   W      >= 0                Yes                 Peak power
+  ``SystemLossesFraction``              double   frac   >= 0, <= 1          Yes                 System losses [#]_
+  ``AttachedToInverter``                idref           See [#]_            Yes                 ID of attached inverter
+  ``extension/NumberofBedroomsServed``  integer         > NumberofBedrooms  See [#]_            Number of bedrooms served
+  ====================================  =======  =====  ==================  ========  ========  ============================================
   
   .. [#] Location choices are "ground" or "roof" mounted.
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
@@ -2294,8 +2294,8 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
          \- **Availability**: 3%
          
   .. [#] AttachedToInverter must reference an ``Inverter``.
-  .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
-         PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system.
+  .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
+         PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
 
 In addition, an inverter must be entered as a ``/HPXML/Building/BuildingDetails/Systems/Photovoltaics/Inverter``.
 
@@ -2309,27 +2309,60 @@ In addition, an inverter must be entered as a ``/HPXML/Building/BuildingDetails/
   .. [#] For homes with multiple inverters, all InverterEfficiency elements must have the same value.
   .. [#] Default from PVWatts is 0.96.
 
+HPXML Batteries
+***************
+
+A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/Batteries/Battery``.
+
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+  Element                                               Type     Units      Constraints              Required  Default   Notes
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+  ``SystemIdentifier``                                  id                                           Yes                 Unique identifier
+  ``IsSharedSystem``                                    boolean                                      Yes                 Whether it serves multiple dwelling units
+  ``Location``                                          string              See [#]_                 No        See [#]_  Location
+  ``BatteryType``                                       string              See [#]_                 Yes                 Battery type
+  ``NominalCapacity[Units="kWh"]/Value``                double   kWh        >= 0                     Yes                 Nominal (total) capacity
+  ``UsableCapacity[Units="kWh"]/Value``                 double   kWh        >= 0, < NominalCapacity  Yes                 Usable capacity
+  ``RatedPowerOutput``                                  double   W          >= 0                     Yes                 Power output under non-peak conditions
+  ``RoundTripEfficiency``                               double   frac       > 0, <= 1                Yes                 Round trip efficiency
+  ``extension/NumberofBedroomsServed``                  integer             > NumberofBedrooms       See [#]_            Number of bedrooms served
+  ====================================================  =======  =========  =======================  ========  ========  ============================================
+
+  .. [#] Location choices are "conditioned space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", "attic - vented", "attic - unvented", "garage", or "outside".
+  .. [#] If Location not provided, defaults to "garage" if a garage is present, otherwise "outside".
+  .. [#] BatteryType only choice is "Li-ion".
+  .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
+         Battery charging/discharging will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the battery per ANSI/RESNET/ICC 301-2022 Addendum C.
+
+.. note::
+
+  The battery will charge if PV production is greater than the building electrical load and the battery is below its maximum capacity.
+  The battery will discharge if the building electrical load is greater than the PV production and the battery is above its minimum capacity.
+  A battery in a home without PV is not modeled.
+  
+  For ERI calculations, batteries will result in a small penalty because ERI is calculated using annual energy consumption and batteries increase annual electricity consumption (due to round trip efficiency).
+  For CO2e Index calculations, batteries can result in a credit because CO2e Index is calculated using hourly electricity emissions factors and batteries shift when electricity consumption occurs.
 
 HPXML Generators
 ****************
 
 Each generator that provides on-site power is entered as a ``/HPXML/Building/BuildingDetails/Systems/extension/Generators/Generator``.
 
-  ==========================  =======  =======  ===========  ========  =======  ============================================
-  Element                     Type     Units    Constraints  Required  Default  Notes
-  ==========================  =======  =======  ===========  ========  =======  ============================================
-  ``SystemIdentifier``        id                             Yes                Unique identifier
-  ``IsSharedSystem``          boolean                        Yes                Whether it serves multiple dwelling units
-  ``FuelType``                string            See [#]_     Yes                Fuel type
-  ``AnnualConsumptionkBtu``   double   kBtu/yr  > 0          Yes                Annual fuel consumed
-  ``AnnualOutputkWh``         double   kWh/yr   > 0 [#]_     Yes                Annual electricity produced
-  ``NumberofBedroomsServed``  integer           > 1          See [#]_           Number of bedrooms served
-  ==========================  =======  =======  ===========  ========  =======  ============================================
+  ==========================  =======  =======  ==================  ========  =======  ============================================
+  Element                     Type     Units    Constraints         Required  Default  Notes
+  ==========================  =======  =======  ==================  ========  =======  ============================================
+  ``SystemIdentifier``        id                                    Yes                Unique identifier
+  ``IsSharedSystem``          boolean                               Yes                Whether it serves multiple dwelling units
+  ``FuelType``                string            See [#]_            Yes                Fuel type
+  ``AnnualConsumptionkBtu``   double   kBtu/yr  > 0                 Yes                Annual fuel consumed
+  ``AnnualOutputkWh``         double   kWh/yr   > 0 [#]_            Yes                Annual electricity produced
+  ``NumberofBedroomsServed``  integer           > NumberofBedrooms  See [#]_           Number of bedrooms served
+  ==========================  =======  =======  ==================  ========  =======  ============================================
 
   .. [#] FuelType choices are "natural gas", "fuel oil", "propane", "wood", or "wood pellets".
   .. [#] AnnualOutputkWh must also be < AnnualConsumptionkBtu*3.412 (i.e., the generator must consume more energy than it produces).
-  .. [#] NumberofBedroomsServed only required if IsSharedSystem is true, in which case it must be > NumberofBedrooms.
-         Annual consumption and annual production will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the generator.
+  .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
+         Annual consumption and annual production will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the generator per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
 
 .. note::
 

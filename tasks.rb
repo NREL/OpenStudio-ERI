@@ -2347,7 +2347,7 @@ def create_sample_hpxmls
                   'base-atticroof-radiant-barrier.xml',
                   'base-atticroof-unvented-insulated-roof.xml',
                   'base-atticroof-vented.xml',
-                  # 'base-battery.xml',
+                  'base-battery.xml',
                   'base-bldgtype-mf-unit.xml',
                   'base-bldgtype-mf-unit-adjacent-to-multiple.xml',
                   'base-bldgtype-mf-unit-shared-boiler-only-baseboard.xml',
@@ -2366,6 +2366,7 @@ def create_sample_hpxmls
                   'base-bldgtype-mf-unit-shared-mechvent.xml',
                   'base-bldgtype-mf-unit-shared-mechvent-preconditioning.xml',
                   'base-bldgtype-mf-unit-shared-pv.xml',
+                  'base-bldgtype-mf-unit-shared-pv-battery.xml',
                   'base-bldgtype-mf-unit-shared-water-heater.xml',
                   'base-bldgtype-mf-unit-shared-water-heater-recirc.xml',
                   'base-bldgtype-sfa-unit.xml',
@@ -2500,8 +2501,8 @@ def create_sample_hpxmls
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
                   'base-misc-generators.xml',
-                  'base-pv.xml']
-  # 'base-pv-battery.xml']
+                  'base-pv.xml',
+                  'base-pv-battery.xml']
   include_list.each do |include_file|
     if File.exist? "hpxml-measures/workflow/sample_files/#{include_file}"
       FileUtils.cp("hpxml-measures/workflow/sample_files/#{include_file}", "workflow/sample_files/#{include_file}")
@@ -2752,14 +2753,15 @@ def create_sample_hpxmls
       heating_system.heating_capacity = 300000
     end
     hpxml_bldg.pv_systems.each do |pv_system|
-      next unless pv_system.is_shared_system.nil?
-
-      pv_system.is_shared_system = false
+      pv_system.is_shared_system = false if pv_system.is_shared_system.nil?
     end
     hpxml_bldg.generators.each do |generator|
-      next unless generator.is_shared_system.nil?
-
-      generator.is_shared_system = false
+      generator.is_shared_system = false if generator.is_shared_system.nil?
+    end
+    hpxml_bldg.batteries.each do |battery|
+      battery.is_shared_system = false if battery.is_shared_system.nil?
+      battery.location = nil
+      battery.round_trip_efficiency = 0.925
     end
     n_htg_systems = (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.size
     n_clg_systems = (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_cool_load_served.to_f > 0 }.size

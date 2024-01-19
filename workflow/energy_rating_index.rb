@@ -473,7 +473,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   generation_elec_produced = get_end_use(rated_output, EUT::Generator, FT::Elec)
   generation_fuel_consumed = get_end_use(rated_output, EUT::Generator, non_elec_fuels)
   results[:opp] = calculate_opp(renewable_energy_limit, renewable_elec_produced, generation_elec_produced, generation_fuel_consumed)
-  results[:pefrac] = calculate_pefrac(results[:teu], results[:opp])
+  results[:bsl] = get_end_use(rated_output, EUT::Battery, FT::Elec)
+  results[:pefrac] = calculate_pefrac(results[:teu], results[:opp], results[:bsl])
 
   results[:eul_dh] = calculate_dh(rated_output)
   results[:eul_mv] = calculate_mv(rated_output)
@@ -508,7 +509,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
              results[:eri_cool].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_dhw].map { |c| c.ec_x }.sum(0.0) +
              results[:eul_la] + results[:eul_mv] + results[:eul_dh] + whf_energy +
-             renewable_elec_produced + generation_elec_produced + generation_fuel_consumed
+             renewable_elec_produced + generation_elec_produced + generation_fuel_consumed +
+             results[:bsl]
   total_ec_x = get_fuel_use(rated_output, all_fuels, use_net: true)
   if (sum_ec_x - total_ec_x).abs > 0.1
     fail "Sum of energy consumptions (#{sum_ec_x.round(2)}) do not match total (#{total_ec_x.round(2)}) for Rated Home."
@@ -722,10 +724,10 @@ def calculate_opp(renewable_energy_limit, renewable_elec_produced, generation_el
   return opp
 end
 
-def calculate_pefrac(teu, opp)
+def calculate_pefrac(teu, opp, bsl)
   pefrac = 1.0
   if teu > 0
-    pefrac = (teu - opp) / teu
+    pefrac = (teu - opp + bsl) / teu
   end
   return pefrac
 end

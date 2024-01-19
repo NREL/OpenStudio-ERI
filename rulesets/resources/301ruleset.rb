@@ -1896,14 +1896,19 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_batteries_rated(orig_bldg, new_bldg)
-    # Temporarily disabled until RESNET allows this.
-    # orig_bldg.batteries.each do |orig_battery|
-    #   new_bldg.batteries.add(id: orig_battery.id,
-    #                           type: orig_battery.type,
-    #                           location: orig_battery.location,
-    #                           nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
-    #                           usable_capacity_kwh: orig_battery.usable_capacity_kwh)
-    # end
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+      orig_bldg.batteries.each do |orig_battery|
+        new_bldg.batteries.add(id: orig_battery.id,
+                               is_shared_system: orig_battery.is_shared_system,
+                               type: orig_battery.type,
+                               location: orig_battery.location,
+                               nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
+                               usable_capacity_kwh: orig_battery.usable_capacity_kwh,
+                               rated_power_output: orig_battery.rated_power_output,
+                               round_trip_efficiency: orig_battery.round_trip_efficiency,
+                               number_of_bedrooms_served: orig_battery.number_of_bedrooms_served)
+      end
+    end
   end
 
   def self.set_systems_batteries_iad(orig_bldg, new_bldg)
