@@ -2324,7 +2324,7 @@ A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/B
   ``NominalCapacity[Units="kWh"]/Value``                double   kWh        >= 0                     Yes                 Nominal (total) capacity
   ``UsableCapacity[Units="kWh"]/Value``                 double   kWh        >= 0, < NominalCapacity  Yes                 Usable capacity
   ``RatedPowerOutput``                                  double   W          >= 0                     Yes                 Power output under non-peak conditions
-  ``RoundTripEfficiency``                               double   frac       >0, <= 1                 Yes                 Round trip efficiency
+  ``RoundTripEfficiency``                               double   frac       > 0, <= 1                Yes                 Round trip efficiency
   ``extension/NumberofBedroomsServed``                  integer             > NumberofBedrooms       See [#]_            Number of bedrooms served
   ====================================================  =======  =========  =======================  ========  ========  ============================================
 
