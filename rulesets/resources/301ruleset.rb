@@ -1248,9 +1248,6 @@ class EnergyRatingIndex301Ruleset
 
     # Retain heating system(s)
     orig_bldg.heating_systems.each do |orig_heating_system|
-      if [HPXML::HVACTypeBoiler].include? orig_heating_system.heating_system_type
-        orig_heating_system.electric_auxiliary_energy = HVAC.get_default_boiler_eae(orig_heating_system)
-      end
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
         fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
         airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
@@ -1265,7 +1262,8 @@ class EnergyRatingIndex301Ruleset
                                    heating_efficiency_afue: orig_heating_system.heating_efficiency_afue,
                                    heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                    fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
-                                   electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
+                                   shared_loop_watts: orig_heating_system.shared_loop_watts,
+                                   fan_coil_watts: orig_heating_system.fan_coil_watts,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    fan_watts: orig_heating_system.fan_watts,
                                    airflow_defect_ratio: airflow_defect_ratio,
@@ -2626,7 +2624,6 @@ class EnergyRatingIndex301Ruleset
                                  heating_efficiency_afue: 0.80,
                                  fraction_heat_load_served: load_frac,
                                  htg_seed_id: seed_id)
-    new_bldg.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_boiler_eae(new_bldg.heating_systems[-1])
   end
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, htg_load_frac, clg_load_frac, orig_htg_system: nil, orig_clg_system: nil, is_all_electric: false)
