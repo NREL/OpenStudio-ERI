@@ -942,6 +942,30 @@ class ERIHVACtest < Minitest::Test
     end
   end
 
+  def test_duct_fraction_area
+    hpxml_name = 'base.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.hvac_distributions.each do |hvac_distribution|
+      hvac_distribution.ducts.each do |duct|
+        duct.duct_surface_area = nil
+        duct.duct_fraction_area = 0.7
+      end
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 510.3, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 189.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone }])
+      else
+        _check_ducts(hpxml_bldg)
+      end
+    end
+  end
+
   def test_dse
     hpxml_name = 'base-hvac-dse.xml'
 

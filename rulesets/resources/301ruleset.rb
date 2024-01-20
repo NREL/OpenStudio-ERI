@@ -1415,12 +1415,23 @@ class EnergyRatingIndex301Ruleset
 
       # Ducts
       orig_hvac_distribution.ducts.each do |orig_duct|
+        if orig_duct.duct_surface_area.nil?
+          # Default duct surface area(s)
+          cfa_served = orig_hvac_distribution.conditioned_floor_area_served
+          n_returns = orig_hvac_distribution.number_of_return_registers
+          total_duct_area = HVAC.get_default_duct_surface_area(orig_duct.duct_type, @ncfl_ag, cfa_served, n_returns).sum()
+          duct_surface_area = total_duct_area * orig_duct.duct_fraction_area
+          duct_surface_area_isdefaulted = true
+        else
+          duct_surface_area = orig_duct.duct_surface_area
+        end
         new_hvac_distribution.ducts.add(id: orig_duct.id,
                                         duct_type: orig_duct.duct_type,
                                         duct_insulation_r_value: orig_duct.duct_insulation_r_value,
                                         duct_location: orig_duct.duct_location,
-                                        duct_surface_area: orig_duct.duct_surface_area,
-                                        duct_buried_insulation_level: orig_duct.duct_buried_insulation_level)
+                                        duct_surface_area: duct_surface_area,
+                                        duct_buried_insulation_level: orig_duct.duct_buried_insulation_level,
+                                        duct_surface_area_isdefaulted: duct_surface_area_isdefaulted)
       end
     end
 
