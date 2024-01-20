@@ -774,18 +774,12 @@ Each in-unit boiler is entered as a ``/HPXML/Building/BuildingDetails/Systems/HV
   ``HeatingCapacity``                              double    Btu/hr  >= 0             Yes                 Heating output capacity
   ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double    frac    > 0, <= 1        Yes                 Rated efficiency
   ``FractionHeatLoadServed``                       double    frac    >= 0, <= 1 [#]_  Yes                 Fraction of heating load served
-  ``ElectricAuxiliaryEnergy``                      double    kWh/yr  >= 0             No        See [#]_  Electric auxiliary energy
   ===============================================  ========  ======  ===============  ========  ========  =========================================
 
   .. [#] HVACDistribution type must be :ref:`hvac_distribution_hydronic` (type: "radiator", "baseboard", "radiant floor", or "radiant ceiling") or :ref:`hvac_distribution_dse`.
          Note: The choice of hydronic distribution type does not currently affect simulation results.
   .. [#] HeatingSystemFuel choices are  "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
   .. [#] The sum of all ``FractionHeatLoadServed`` (across all HVAC systems) must be less than or equal to 1.
-  .. [#] If ElectricAuxiliaryEnergy not provided, defaults as follows:
-         
-         \- **Oil boiler**: 330 kWh/yr
-         
-         \- **Gas boiler**: 170 kWh/yr
 
 .. _hvac_heating_shared_boiler:
 

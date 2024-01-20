@@ -2699,6 +2699,7 @@ def create_sample_hpxmls
     hpxml_bldg.plug_loads.clear
     hpxml_bldg.fuel_loads.clear
     hpxml_bldg.heating_systems.each do |heating_system|
+      heating_system.electric_auxiliary_energy = nil
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
 
       if heating_system.fan_watts_per_cfm.nil?

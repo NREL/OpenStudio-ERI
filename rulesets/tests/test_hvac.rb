@@ -110,7 +110,7 @@ class ERIHVACtest < Minitest::Test
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
-          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 200 }])
+          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 170 }])
         elsif [Constants.CalcTypeCO2eReferenceHome].include? calc_type # All-electric
           _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 0.0, dse: _dse(calc_type), shr: 0.73, compressor_temp: 0.0, heat_cap_retention_frac: 0.425, heat_cap_retention_temp: 5.0, backup_temp: 40.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
         else
@@ -581,7 +581,7 @@ class ERIHVACtest < Minitest::Test
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 0.1, **ac_furn_hvac_iq_values },
                                              { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 0.1, **ac_furn_hvac_iq_values },
                                              { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 0.1, eae: 170 },
-                                             { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 0.1, eae: 200 },
+                                             { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 0.1, eae: 170 },
                                              { systype: HPXML::HVACTypeElectricResistance, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 0.1 },
                                              { systype: HPXML::HVACTypeStove, fuel: HPXML::FuelTypeOil, eff: 0.8, frac_load: 0.1 },
                                              { systype: HPXML::HVACTypeWallFurnace, fuel: HPXML::FuelTypePropane, eff: 0.8, frac_load: 0.1 }])
@@ -669,7 +669,7 @@ class ERIHVACtest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
-          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 208, num_units_served: 6 }])
+          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, shared_loop_watts: 600 }])
         else
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
           if [Constants.CalcTypeCO2eReferenceHome].include? calc_type # All-electric
@@ -690,7 +690,7 @@ class ERIHVACtest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
-          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 520, num_units_served: 6 }])
+          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, shared_loop_watts: 600, fan_coil_watts: 150 }])
         else
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
           if [Constants.CalcTypeCO2eReferenceHome].include? calc_type # All-electric
@@ -711,7 +711,7 @@ class ERIHVACtest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
-          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 520, num_units_served: 6 }])
+          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, shared_loop_watts: 600, fan_coil_watts: 150 }])
         else
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
           if [Constants.CalcTypeCO2eReferenceHome].include? calc_type # All-electric
@@ -732,7 +732,7 @@ class ERIHVACtest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
-          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 208, num_units_served: 6 }])
+          _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, shared_loop_watts: 600 }])
         else
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
           if [Constants.CalcTypeCO2eReferenceHome].include? calc_type # All-electric
