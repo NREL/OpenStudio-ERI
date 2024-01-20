@@ -1359,7 +1359,6 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     duct_fractions.split(',').each do |data|
       loc, frac = data.split('=').map(&:strip)
-      puts loc
       if loc == 'attic'
         duct_location_areas[HPXML::LocationAtticVented] = Float(frac) * total_duct_area
       elsif loc == 'crawlspace'
