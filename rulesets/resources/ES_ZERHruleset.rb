@@ -1173,8 +1173,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     ducts_in_uncond_attic = false
     all_ducts.each do |duct|
-      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && 
-          (!duct.duct_surface_area.to_f.zero? || !duct.duct_fraction_area.to_f.zero?)
+      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) &&
+         (!duct.duct_surface_area.to_f.zero? || !duct.duct_fraction_area.to_f.zero?)
         ducts_in_uncond_attic = true
       end
     end
