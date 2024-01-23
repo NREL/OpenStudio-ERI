@@ -1532,16 +1532,16 @@ Additional information is entered in each ``DuctLeakageMeasurement``.
 
 Additional information is entered in each ``Ducts``.
 
-  =============================  =======  ============  ===========  ========  ==========  ===============================
-  Element                        Type     Units         Constraints  Required  Default     Notes
-  =============================  =======  ============  ===========  ========  ==========  ===============================
-  ``SystemIdentifier``           id                                  Yes                   Unique identifier
-  ``DuctType``                   string                 See [#]_     Yes                   Supply or return ducts
-  ``DuctInsulationRValue``       double   F-ft2-hr/Btu  >= 0         Yes                   R-value of duct insulation [#]_
-  ``DuctBuriedInsulationLevel``  string                 See [#]_     No        not buried  Duct buried insulation level [#]_
-  ``DuctLocation``               string                 See [#]_     Yes                   Duct location
-  ``DuctSurfaceArea``            double   ft2           >= 0         Yes                   Duct surface area
-  =============================  =======  ============  ===========  ========  ==========  ===============================
+  ===============================================  =======  ============  ================  ========  ==========  ======================================
+  Element                                          Type     Units         Constraints       Required  Default     Notes
+  ===============================================  =======  ============  ================  ========  ==========  ======================================
+  ``SystemIdentifier``                             id                                       Yes                   Unique identifier
+  ``DuctType``                                     string                 See [#]_          Yes                   Supply or return ducts
+  ``DuctInsulationRValue``                         double   F-ft2-hr/Btu  >= 0              Yes                   R-value of duct insulation [#]_
+  ``DuctBuriedInsulationLevel``                    string                 See [#]_          No        not buried  Duct buried insulation level [#]_
+  ``DuctLocation``                                 string                 See [#]_          Yes                   Duct location
+  ``FractionDuctArea`` and/or ``DuctSurfaceArea``  double   frac or ft2   0-1 or >= 0 [#]_  See [#]_  See [#]_    Duct fraction/surface area in location
+  ===============================================  =======  ============  ================  ========  ==========  ======================================
 
   .. [#] DuctType choices are "supply" or "return".
   .. [#] DuctInsulationRValue should not include the exterior air film (i.e., use 0 for an uninsulated duct).
@@ -1554,6 +1554,25 @@ Additional information is entered in each ``Ducts``.
          See the `Building America Solution Center <https://basc.pnnl.gov/resource-guides/ducts-buried-attic-insulation>`_ for more information.
   .. [#] DuctLocation choices are "conditioned space", "basement - conditioned", "basement - unconditioned", "crawlspace - unvented", "crawlspace - vented", "attic - unvented", "attic - vented", "garage", "outside", "exterior wall", "under slab", "roof deck", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
+  .. [#] The sum of all FractionDuctArea must each equal to 1, both for the supply side and return side.
+  .. [#] FractionDuctArea or DuctSurfaceArea are required if DuctLocation is provided. If both are provided, DuctSurfaceArea will be used in the model.
+  .. [#] If neither DuctSurfaceArea nor FractionDuctArea provided, duct surface areas will be calculated based on `ASHRAE Standard 152 <https://www.energy.gov/eere/buildings/downloads/ashrae-standard-152-spreadsheet>`_:
+         
+         \- **Primary supply duct area**: 0.27 * F_out * ConditionedFloorAreaServed
+         
+         \- **Secondary supply duct area**: 0.27 * (1 - F_out) * ConditionedFloorAreaServed
+
+         \- **Total supply duct area**: **Primary supply duct area** + **Secondary supply duct area**
+         
+         \- **Primary return duct area**: b_r * F_out * ConditionedFloorAreaServed
+         
+         \- **Secondary return duct area**: b_r * (1 - F_out) * ConditionedFloorAreaServed
+
+         \- **Total return duct area**: **Primary return duct area** + **Secondary return duct area**
+         
+         where F_out is 1.0 when NumberofConditionedFloorsAboveGrade <= 1 and 0.75 when NumberofConditionedFloorsAboveGrade > 1, and b_r is 0.05 * NumberofReturnRegisters with a maximum value of 0.25.
+         
+         If FractionDuctArea is provided, each duct surface area will be FractionDuctArea times total duct area, which is calculated using the sum of primary and secondary duct areas from the equations above.
 
 .. _hvac_distribution_hydronic:
 
