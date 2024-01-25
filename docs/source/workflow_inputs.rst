@@ -1556,7 +1556,7 @@ Additional information is entered in each ``Ducts``.
          See :ref:`hpxmllocations` for descriptions.
   .. [#] The sum of all FractionDuctArea must each equal to 1, both for the supply side and return side.
   .. [#] If both are provided, DuctSurfaceArea will be used in the model.
-  .. [#] Duct surface areas will be calculated based on BSR/RESNET/ICC 301-2022 Table 4.2.2(1) footnote z. aa.:
+  .. [#] If DuctSurfaceArea not provided, duct surface areas will be calculated based on ANSI/RESNET/ICC 301-2022:
 
          \- **Supply duct area**: 0.27 * ConditionedFloorAreaServed
 
