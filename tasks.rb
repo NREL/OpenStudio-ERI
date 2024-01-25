@@ -2439,6 +2439,7 @@ def create_sample_hpxmls
                   'base-hvac-central-ac-only-var-speed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dse.xml',
+                  'base-hvac-ducts-area-fractions.xml',
                   'base-hvac-ducts-leakage-cfm50.xml',
                   'base-hvac-ducts-buried.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',

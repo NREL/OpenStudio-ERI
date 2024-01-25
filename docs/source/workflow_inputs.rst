@@ -1540,7 +1540,7 @@ Additional information is entered in each ``Ducts``.
   ``DuctInsulationRValue``                         double   F-ft2-hr/Btu  >= 0              Yes                   R-value of duct insulation [#]_
   ``DuctBuriedInsulationLevel``                    string                 See [#]_          No        not buried  Duct buried insulation level [#]_
   ``DuctLocation``                                 string                 See [#]_          Yes                   Duct location
-  ``FractionDuctArea`` and/or ``DuctSurfaceArea``  double   frac or ft2   0-1 or >= 0 [#]_  See [#]_  See [#]_    Duct fraction/surface area in location
+  ``FractionDuctArea`` and/or ``DuctSurfaceArea``  double   frac or ft2   0-1 or >= 0 [#]_  Yes [#]_  See [#]_    Duct fraction/surface area in location
   ===============================================  =======  ============  ================  ========  ==========  ======================================
 
   .. [#] DuctType choices are "supply" or "return".
@@ -1555,23 +1555,13 @@ Additional information is entered in each ``Ducts``.
   .. [#] DuctLocation choices are "conditioned space", "basement - conditioned", "basement - unconditioned", "crawlspace - unvented", "crawlspace - vented", "attic - unvented", "attic - vented", "garage", "outside", "exterior wall", "under slab", "roof deck", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] The sum of all FractionDuctArea must each equal to 1, both for the supply side and return side.
-  .. [#] FractionDuctArea or DuctSurfaceArea are required if DuctLocation is provided. If both are provided, DuctSurfaceArea will be used in the model.
-  .. [#] If neither DuctSurfaceArea nor FractionDuctArea provided, duct surface areas will be calculated based on `ASHRAE Standard 152 <https://www.energy.gov/eere/buildings/downloads/ashrae-standard-152-spreadsheet>`_:
-         
-         \- **Primary supply duct area**: 0.27 * F_out * ConditionedFloorAreaServed
-         
-         \- **Secondary supply duct area**: 0.27 * (1 - F_out) * ConditionedFloorAreaServed
+  .. [#] If both are provided, DuctSurfaceArea will be used in the model.
+  .. [#] Duct surface areas will be calculated based on BSR/RESNET/ICC 301-2022 Table 4.2.2(1) footnote z. aa.:
 
-         \- **Total supply duct area**: **Primary supply duct area** + **Secondary supply duct area**
-         
-         \- **Primary return duct area**: b_r * F_out * ConditionedFloorAreaServed
-         
-         \- **Secondary return duct area**: b_r * (1 - F_out) * ConditionedFloorAreaServed
+         \- **Supply duct area**: 0.27 * ConditionedFloorAreaServed
 
-         \- **Total return duct area**: **Primary return duct area** + **Secondary return duct area**
-         
-         where F_out is 1.0 when NumberofConditionedFloorsAboveGrade <= 1 and 0.75 when NumberofConditionedFloorsAboveGrade > 1, and b_r is 0.05 * NumberofReturnRegisters with a maximum value of 0.25.
-         
+         \- **Return duct area**: (if Number of Returns < 6, 0.05 * Number of Returns, 0.25 otherwise) * ConditionedFloorAreaServed
+
          If FractionDuctArea is provided, each duct surface area will be FractionDuctArea times total duct area, which is calculated using the sum of primary and secondary duct areas from the equations above.
 
 .. _hvac_distribution_hydronic:
