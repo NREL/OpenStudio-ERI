@@ -1420,6 +1420,7 @@ class EnergyRatingIndex301Ruleset
                                         duct_insulation_r_value: orig_duct.duct_insulation_r_value,
                                         duct_location: orig_duct.duct_location,
                                         duct_surface_area: orig_duct.duct_surface_area,
+                                        duct_fraction_area: orig_duct.duct_fraction_area,
                                         duct_buried_insulation_level: orig_duct.duct_buried_insulation_level)
       end
     end

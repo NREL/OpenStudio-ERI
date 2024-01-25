@@ -9,6 +9,7 @@ __New Features__
 - Ground source heat pump model enhancements.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
 - Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
+- Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
 
 __Bugfixes__
 - Fixes possible 301ruleset.rb error due to floating point arithmetic.

@@ -2439,6 +2439,7 @@ def create_sample_hpxmls
                   'base-hvac-central-ac-only-var-speed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dse.xml',
+                  'base-hvac-ducts-area-fractions.xml',
                   'base-hvac-ducts-leakage-cfm50.xml',
                   'base-hvac-ducts-buried.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',
@@ -2947,7 +2948,7 @@ def create_sample_hpxmls
   end
 end
 
-command_list = [:update_measures, :create_release_zips]
+command_list = [:update_measures, :update_hpxmls, :create_release_zips]
 
 def display_usage(command_list)
   puts "Usage: openstudio #{File.basename(__FILE__)} [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
@@ -2968,15 +2969,9 @@ elsif not command_list.include? ARGV[0].to_sym
 end
 
 if ARGV[0].to_sym == :update_measures
-  require 'oga'
-  require_relative 'rulesets/resources/constants'
-
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
   ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
-
-  create_test_hpxmls
-  create_sample_hpxmls
 
   # Apply rubocop
   cops = ['Layout',
@@ -3011,6 +3006,20 @@ if ARGV[0].to_sym == :update_measures
   system(command)
 
   puts 'Done.'
+end
+
+if ARGV[0].to_sym == :update_hpxmls
+  require 'oga'
+  require_relative 'rulesets/resources/constants'
+
+  # Prevent NREL error regarding U: drive when not VPNed in
+  ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
+  ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
+
+  t = Time.now
+  create_test_hpxmls
+  create_sample_hpxmls
+  puts "Completed in #{(Time.now - t).round(1)}s"
 end
 
 if ARGV[0].to_sym == :create_release_zips
