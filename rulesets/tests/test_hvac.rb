@@ -943,32 +943,19 @@ class ERIHVACtest < Minitest::Test
   end
 
   def test_duct_fraction_area
-    hpxml_name = 'base.xml'
+    hpxml_name = 'base-hvac-ducts-area-fractions.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    hpxml_bldg.hvac_distributions.each do |hvac_distribution|
-      hvac_distribution.ducts.each do |duct|
-        duct.duct_surface_area = nil
-        duct.duct_fraction_area = 0.7
-      end
-    end
-    [HPXML::DuctTypeSupply, HPXML::DuctTypeReturn].each do |duct_type|
-      hpxml_bldg.hvac_distributions[-1].ducts.add(id: "Ducts#{hpxml_bldg.hvac_distributions[-1].ducts.size + 1}",
-                                                  duct_type: duct_type,
-                                                  duct_insulation_r_value: 0,
-                                                  duct_location: HPXML::LocationConditionedSpace,
-                                                  duct_fraction_area: 0.3)
-    end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 510.3, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 189.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 218.7, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 81.0, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone }])
+        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 820.1, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 455.6, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 273.4, duct_location: HPXML::LocationExteriorWall, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 151.9, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone }])
       else
         _check_ducts(hpxml_bldg)
       end

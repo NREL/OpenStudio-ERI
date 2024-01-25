@@ -1562,7 +1562,7 @@ Additional information is entered in each ``Ducts``.
 
          \- **Return duct area**: (if Number of Returns < 6, 0.05 * Number of Returns, 0.25 otherwise) * ConditionedFloorAreaServed
 
-         If FractionDuctArea is provided, each duct surface area will be FractionDuctArea times total duct area, which is calculated using the sum of primary and secondary duct areas from the equations above.
+         If FractionDuctArea is provided, each duct surface area will be FractionDuctArea times duct area.
 
 .. _hvac_distribution_hydronic:
 
