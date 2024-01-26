@@ -131,3 +131,9 @@ class ZERHConstants
     return 'MF_2.0'
   end
 end
+
+class Schedule
+  def self.ConstantMonthlyMultipliers
+    return '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0'
+  end
+end
