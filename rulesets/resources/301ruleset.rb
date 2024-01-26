@@ -39,6 +39,9 @@ class EnergyRatingIndex301Ruleset
       hpxml = apply_reference_home_ruleset(hpxml, is_all_electric: true)
     end
 
+    # Set constant monthly multipliers for components
+    set_schedules(hpxml.buildings[0])
+
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
     HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, convert_shared_systems: false)
 
@@ -1959,8 +1962,7 @@ class EnergyRatingIndex301Ruleset
                                  label_gas_rate: reference_values[:label_gas_rate],
                                  label_annual_gas_cost: reference_values[:label_annual_gas_cost],
                                  label_usage: reference_values[:label_usage],
-                                 capacity: reference_values[:capacity],
-                                 monthly_multipliers: Schedule.ConstantMonthlyMultipliers)
+                                 capacity: reference_values[:capacity])
   end
 
   def self.set_appliances_clothes_washer_rated(orig_bldg, new_bldg)
@@ -1988,8 +1990,7 @@ class EnergyRatingIndex301Ruleset
                                  label_gas_rate: clothes_washer.label_gas_rate,
                                  label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
                                  label_usage: clothes_washer.label_usage,
-                                 capacity: clothes_washer.capacity,
-                                 monthly_multipliers: Schedule.ConstantMonthlyMultipliers)
+                                 capacity: clothes_washer.capacity)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_bldg, new_bldg)
@@ -2352,6 +2353,24 @@ class EnergyRatingIndex301Ruleset
 
   def self.set_misc_loads_iad(new_bldg)
     set_misc_loads_reference(new_bldg)
+  end
+
+  def self.set_schedules(hpxml_bldg)
+    hpxml_bldg.clothes_washers.each do |clothes_washer|
+      clothes_washer.monthly_multipliers = Schedule.ConstantMonthlyMultipliers
+    end
+    hpxml_bldg.clothes_dryers.each do |clothes_dryer|
+      clothes_dryer.monthly_multipliers = Schedule.ConstantMonthlyMultipliers
+    end
+    hpxml_bldg.dishwashers.each do |dishwasher|
+      dishwasher.monthly_multipliers = Schedule.ConstantMonthlyMultipliers
+    end
+    hpxml_bldg.cooking_ranges.each do |cooking_range|
+      cooking_range.monthly_multipliers = Schedule.ConstantMonthlyMultipliers
+    end
+    hpxml_bldg.plug_loads.each do |plug_load|
+      plug_load.monthly_multipliers = Schedule.ConstantMonthlyMultipliers
+    end
   end
 
   private
