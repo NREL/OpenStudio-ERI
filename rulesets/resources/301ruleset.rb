@@ -1959,7 +1959,8 @@ class EnergyRatingIndex301Ruleset
                                  label_gas_rate: reference_values[:label_gas_rate],
                                  label_annual_gas_cost: reference_values[:label_annual_gas_cost],
                                  label_usage: reference_values[:label_usage],
-                                 capacity: reference_values[:capacity])
+                                 capacity: reference_values[:capacity],
+                                 monthly_multipliers: Schedule.ConstantMonthlyMultipliers)
   end
 
   def self.set_appliances_clothes_washer_rated(orig_bldg, new_bldg)
@@ -1987,7 +1988,8 @@ class EnergyRatingIndex301Ruleset
                                  label_gas_rate: clothes_washer.label_gas_rate,
                                  label_annual_gas_cost: clothes_washer.label_annual_gas_cost,
                                  label_usage: clothes_washer.label_usage,
-                                 capacity: clothes_washer.capacity)
+                                 capacity: clothes_washer.capacity,
+                                 monthly_multipliers: Schedule.ConstantMonthlyMultipliers)
   end
 
   def self.set_appliances_clothes_washer_iad(orig_bldg, new_bldg)
