@@ -34,16 +34,9 @@ Rake::TestTask.new('test_real_homes') do |t|
   t.verbose = true
 end
 
-desc 'Run RESNET tests'
-Rake::TestTask.new('test_resnet') do |t|
-  t.test_files = Dir['workflow/tests/resnet*test.rb']
-  t.warning = false
-  t.verbose = true
-end
-
-desc 'Run ES & ZERH tests'
-Rake::TestTask.new('test_es_zerh') do |t|
-  t.test_files = Dir['workflow/tests/es_zerh_test.rb']
+desc 'Run RESNET/ES/ZERH tests'
+Rake::TestTask.new('test_resnet_es_zerh') do |t|
+  t.test_files = Dir['workflow/tests/*test.rb'] - Dir['workflow/tests/real_homes_test.rb'] - Dir['workflow/tests/energy_rating_index_test.rb']
   t.warning = false
   t.verbose = true
 end

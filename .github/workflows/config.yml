@@ -100,7 +100,7 @@ jobs:
           path: workflow/tests/test_results
           name: test_results_real_homes
 
-  run-resnet-tests:
+  run-resnet-es-zerh-tests:
     runs-on: ubuntu-latest
     container:
       image: docker://nrel/openstudio:3.7.0
@@ -113,38 +113,15 @@ jobs:
         run: |
           rm -f Gemfile.lock && bundle install
 
-      - name: Run RESNET tests
+      - name: Run RESNET/ES/ZERH tests
         run: |
-          bundle exec rake test_resnet
+          bundle exec rake test_resnet_es_zerh
 
       - name: Store results
         uses: actions/upload-artifact@v3
         with:
           path: workflow/tests/test_results
           name: test_results_resnet
-
-  run-es-zerh-tests:
-    runs-on: ubuntu-latest
-    container:
-      image: docker://nrel/openstudio:3.7.0
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref }}
-
-      - name: Install software
-        run: |
-          rm -f Gemfile.lock && bundle install
-
-      - name: Run ES & ZERH tests
-        run: |
-          bundle exec rake test_es_zerh
-
-      - name: Store results
-        uses: actions/upload-artifact@v3
-        with:
-          path: workflow/tests/test_results
-          name: test_results_es_zerh
 
   run-windows-tests:
     runs-on: windows-latest
@@ -164,7 +141,7 @@ jobs:
   compare-results:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: [run-eri-tests, run-real-home-tests, run-resnet-tests, run-es-zerh-tests]
+    needs: [run-eri-tests, run-real-home-tests, run-resnet-es-zerh-tests]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -237,7 +214,7 @@ jobs:
 
   update-results:
     runs-on: ubuntu-latest
-    needs: [run-eri-tests, run-real-home-tests, run-resnet-tests, run-es-zerh-tests]
+    needs: [run-eri-tests, run-real-home-tests, run-resnet-es-zerh-tests]
     steps:
       - uses: actions/checkout@v3
         with:
