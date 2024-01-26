@@ -346,6 +346,7 @@ class ERIApplianceTest < Minitest::Test
     assert_in_epsilon(agc, clothes_washer.label_annual_gas_cost, 0.01)
     assert_in_epsilon(cap, clothes_washer.capacity, 0.01)
     assert_in_epsilon(label_usage, clothes_washer.label_usage, 0.01)
+    assert_equal(Schedule.ConstantMonthlyMultipliers, clothes_washer.monthly_multipliers)
   end
 
   def _check_clothes_dryer(hpxml_bldg, fuel_type:, ef:, cef:, control: nil, location:)
@@ -367,6 +368,7 @@ class ERIApplianceTest < Minitest::Test
     end
     assert_equal(true, clothes_dryer.is_vented)
     assert_equal(0.0, clothes_dryer.vented_flow_rate)
+    assert_equal(Schedule.ConstantMonthlyMultipliers, clothes_dryer.monthly_multipliers)
   end
 
   def _check_dishwasher(hpxml_bldg, ef:, annual_kwh:, cap:, elec_rate:, gas_rate:, agc:, label_usage:, location:)
@@ -388,6 +390,7 @@ class ERIApplianceTest < Minitest::Test
     assert_in_epsilon(gas_rate, dishwasher.label_gas_rate, 0.01)
     assert_in_epsilon(agc, dishwasher.label_annual_gas_cost, 0.01)
     assert_in_epsilon(label_usage, dishwasher.label_usage, 0.01)
+    assert_equal(Schedule.ConstantMonthlyMultipliers, dishwasher.monthly_multipliers)
   end
 
   def _check_refrigerator(hpxml_bldg, annual_kwh:, location:)
@@ -403,6 +406,7 @@ class ERIApplianceTest < Minitest::Test
     assert_equal(location, cooking_range.location)
     assert_equal(fuel_type, cooking_range.fuel_type)
     assert_equal(cook_is_induction, cooking_range.is_induction)
+    assert_equal(Schedule.ConstantMonthlyMultipliers, cooking_range.monthly_multipliers)
     assert_equal(1, hpxml_bldg.ovens.size)
     oven = hpxml_bldg.ovens[0]
     assert_equal(oven_is_convection, oven.is_convection)

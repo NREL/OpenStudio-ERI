@@ -84,6 +84,7 @@ class ERIMiscTest < Minitest::Test
         assert_in_epsilon(tv_sens, plug_load.frac_sensible, 0.01)
         assert_in_epsilon(tv_lat, plug_load.frac_latent, 0.01)
       end
+      assert_equal(Schedule.ConstantMonthlyMultipliers, plug_load.monthly_multipliers)
     end
     assert_equal(2, num_pls)
   end
