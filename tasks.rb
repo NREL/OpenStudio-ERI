@@ -2011,14 +2011,14 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-05.xml'].include? hpxml_file
     # Change to recirculation: Control = none; 50 W pump; Loop length is same as reference loop length; Branch length is 10 ft; All hot water pipes insulated to R-3
     hpxml_bldg.hot_water_distributions[0].system_type = HPXML::DHWDistTypeRecirc
-    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecirControlTypeNone
+    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecircControlTypeNone
     hpxml_bldg.hot_water_distributions[0].recirculation_branch_piping_length = 10
     hpxml_bldg.hot_water_distributions[0].recirculation_pump_power = 50
     hpxml_bldg.hot_water_distributions[0].pipe_r_value = 3
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-06.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-06.xml'].include? hpxml_file
     # Change to recirculation: Control = manual
-    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecirControlTypeManual
+    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecircControlTypeManual
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-07.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-07.xml'].include? hpxml_file
     # Change to drain Water Heat Recovery (DWHR) with all facilities connected; equal flow; DWHR eff = 54%
