@@ -121,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: workflow/tests/test_results
-          name: test_results_resnet
+          name: test_results_resnet_es_zerh
 
   run-windows-tests:
     runs-on: windows-latest
@@ -178,19 +178,12 @@ jobs:
             results
           name: test_results_real_homes
 
-      - name: Download RESNET feature results
+      - name: Download RESNET/ES/ZERH feature results
         uses: actions/download-artifact@v3
         with:
           path: |
             results
-          name: test_results_resnet
-
-      - name: Download ES & ZERH feature results
-        uses: actions/download-artifact@v3
-        with:
-          path: |
-            results
-          name: test_results_es_zerh
+          name: test_results_resnet_es_zerh
 
       - name: Compare results
         run: |
@@ -234,19 +227,12 @@ jobs:
             results
           name: test_results_real_homes
 
-      - name: Download RESNET feature results
+      - name: Download RESNET/ES/ZERH feature results
         uses: actions/download-artifact@v3
         with:
           path: |
             results
-          name: test_results_resnet
-
-      - name: Download ES & ZERH feature results
-        uses: actions/download-artifact@v3
-        with:
-          path: |
-            results
-          name: test_results_es_zerh
+          name: test_results_resnet_es_zerh
 
       - name: Commit latest results
         shell: bash        
