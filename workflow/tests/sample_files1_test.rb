@@ -12,7 +12,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
-class RealHomesTest < Minitest::Test
+class SampleFilesTest1 < Minitest::Test
   def setup
     @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
     FileUtils.mkdir_p @test_results_dir
@@ -20,15 +20,18 @@ class RealHomesTest < Minitest::Test
     FileUtils.mkdir_p @test_files_dir
   end
 
-  def test_real_homes
-    test_name = 'real_homes'
+  def test_sample_files
+    test_name = 'sample_files1'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
+    files = 'base*.xml'
     all_results = {}
-    xmldir = "#{File.dirname(__FILE__)}/../real_homes"
-    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+    xmldir = "#{File.dirname(__FILE__)}/../sample_files"
+    Dir["#{xmldir}/#{files}"].sort.each do |xml|
+      break if xml.include? 'base-hvac-air-to-air-heat-pump-1-speed.xml' # Run first half of the sample files
+
       rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
       all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results],
                                                           csvs[:co2e_results],
