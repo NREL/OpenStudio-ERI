@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnergyStarZeroEnergyReadyHomeRuleset
+class ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
     # Use latest version of 301-2019
     @eri_version = Constants.ERIVersions[-1]
