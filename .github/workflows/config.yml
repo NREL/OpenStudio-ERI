@@ -13,7 +13,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.7.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
@@ -38,7 +38,7 @@ jobs:
           bundle exec rake test_rulesets
 
       - name: Store code coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: coverage
           name: coverage
@@ -49,7 +49,7 @@ jobs:
           make html SPHINXOPTS="-W --keep-going -n"
 
       - name: Save Docs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: docs/_build/html/
@@ -59,7 +59,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.7.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
@@ -72,7 +72,7 @@ jobs:
           bundle exec rake test_sample_files1
 
       - name: Store results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: workflow/tests/test_results
           name: test_results_sample_files1
@@ -82,7 +82,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.7.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
@@ -95,7 +95,7 @@ jobs:
           bundle exec rake test_sample_files2
 
       - name: Store results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: workflow/tests/test_results
           name: test_results_sample_files2
@@ -105,7 +105,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.7.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
@@ -118,7 +118,7 @@ jobs:
           bundle exec rake test_real_homes
 
       - name: Store results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: workflow/tests/test_results
           name: test_results_real_homes
@@ -128,7 +128,7 @@ jobs:
     container:
       image: docker://nrel/openstudio:3.7.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
@@ -141,7 +141,7 @@ jobs:
           bundle exec rake test_other
 
       - name: Store results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: workflow/tests/test_results
           name: test_results_other
@@ -149,7 +149,7 @@ jobs:
   run-windows-tests:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
       - name: Install software and run test
@@ -166,50 +166,50 @@ jobs:
     runs-on: ubuntu-latest
     needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.sha }}
 
       - name: Store base results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: workflow/tests/base_results
           name: base_results
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Download base results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             base_results
           name: base_results
 
       - name: Download Sample Files 1 feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
           name: test_results_sample_files1
 
       - name: Download Sample Files 2 feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
           name: test_results_sample_files2
 
       - name: Download Real Home feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
           name: test_results_real_homes
 
       - name: Download Other feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
@@ -230,7 +230,7 @@ jobs:
           python hpxml-measures/workflow/tests/compare.py -a visualize
 
       - name: Store comparisons
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: workflow/tests/comparisons
           name: comparisons
@@ -239,33 +239,33 @@ jobs:
     runs-on: ubuntu-latest
     needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
       - name: Download Sample Files 1 feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
           name: test_results_sample_files1
 
       - name: Download Sample Files 2 feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
           name: test_results_sample_files2
 
       - name: Download Real Home feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
           name: test_results_real_homes
 
       - name: Download Other feature results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: |
             results
