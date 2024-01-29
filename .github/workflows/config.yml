@@ -161,10 +161,21 @@ jobs:
           tar -xzf Windows.tar.gz
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
 
+  merge-results:
+    runs-on: ubuntu-latest
+    needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: results
+          pattern: test_results_*
+          delete-merged: true
+
   compare-results:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
+    needs: merge-results
     steps:
       - uses: actions/checkout@v4
         with:
@@ -183,37 +194,14 @@ jobs:
       - name: Download base results
         uses: actions/download-artifact@v4
         with:
-          path: |
-            base_results
+          path: base_results
           name: base_results
 
-      - name: Download Sample Files 1 feature results
+      - name: Download feature results
         uses: actions/download-artifact@v4
         with:
-          path: |
-            results
-          name: test_results_sample_files1
-
-      - name: Download Sample Files 2 feature results
-        uses: actions/download-artifact@v4
-        with:
-          path: |
-            results
-          name: test_results_sample_files2
-
-      - name: Download Real Home feature results
-        uses: actions/download-artifact@v4
-        with:
-          path: |
-            results
-          name: test_results_real_homes
-
-      - name: Download Other feature results
-        uses: actions/download-artifact@v4
-        with:
-          path: |
-            results
-          name: test_results_other
+          path: results
+          name: results
 
       - name: Compare results
         run: |
@@ -237,39 +225,17 @@ jobs:
 
   update-results:
     runs-on: ubuntu-latest
-    needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
+    needs: merge-results
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Download Sample Files 1 feature results
+      - name: Download feature results
         uses: actions/download-artifact@v4
         with:
-          path: |
-            results
-          name: test_results_sample_files1
-
-      - name: Download Sample Files 2 feature results
-        uses: actions/download-artifact@v4
-        with:
-          path: |
-            results
-          name: test_results_sample_files2
-
-      - name: Download Real Home feature results
-        uses: actions/download-artifact@v4
-        with:
-          path: |
-            results
-          name: test_results_real_homes
-
-      - name: Download Other feature results
-        uses: actions/download-artifact@v4
-        with:
-          path: |
-            results
-          name: test_results_other
+          path: results
+          name: results
 
       - name: Commit latest results
         shell: bash        
