@@ -629,6 +629,7 @@ class EnergyRatingIndex301Ruleset
                          solar_absorptance: solar_absorptance,
                          emittance: emittance,
                          insulation_assembly_r_value: (1.0 / ufactor).round(3))
+    end
 
     # Create walls for Above-grade walls separating Conditioned Space Volume
     # from Unconditioned Space Volume, Unrated Heated Space, Multifamily Buffer Boundary,
