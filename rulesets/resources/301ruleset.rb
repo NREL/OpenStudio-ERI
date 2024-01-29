@@ -610,32 +610,51 @@ class EnergyRatingIndex301Ruleset
     ufactor = get_reference_wall_ufactor()
 
     ext_thermal_bndry_walls = orig_bldg.walls.select { |wall| wall.is_exterior_thermal_boundary }
-    sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
-
+    sum_ext_wall_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
+    other_walls = orig_bldg.walls - ext_thermal_bndry_walls
+    
     solar_absorptance = 0.75
     emittance = 0.90
 
     # Create insulated walls for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be able to accommodate windows,
     # which are also equally distributed.
-    if sum_gross_area > 0.1
+    if sum_ext_wall_gross_area > 0.1
       new_bldg.walls.add(id: 'WallArea',
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                          wall_type: HPXML::WallTypeWoodStud,
-                         area: sum_gross_area,
+                         area: sum_ext_wall_gross_area,
                          azimuth: nil,
                          solar_absorptance: solar_absorptance,
                          emittance: emittance,
                          insulation_assembly_r_value: (1.0 / ufactor).round(3))
-    end
 
+    # Create walls for Above-grade walls separating Conditioned Space Volume
+    # from Unconditioned Space Volume, Unrated Heated Space, Multifamily Buffer Boundary,
+    # or Non-Freezing Space.
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+      common_space_walls = orig_bldg.walls.select { |wall| wall.adjacent_to_common_spaces }
+      common_space_wall_ufactor = get_reference_wall_ufactor_common_space()
+      common_space_walls.each do |orig_wall|
+      new_bldg.walls.add(id: orig_wall.id,
+                         exterior_adjacent_to: orig_wall.exterior_adjacent_to,
+                         interior_adjacent_to: HPXML::LocationConditionedSpace,
+                         wall_type: orig_wall.wall_type,
+                         area: orig_wall.area,
+                         azimuth: orig_wall.azimuth,
+                         solar_absorptance: solar_absorptance,
+                         emittance: emittance,
+                         insulation_id: orig_wall.insulation_id,
+                         insulation_assembly_r_value: (1.0 / common_space_wall_ufactor).round(3))
+      end
+      other_walls -= common_space_walls
+    end
+    
     # Preserve other walls:
     # 1. Interior thermal boundary surfaces (e.g., between conditioned space and garage)
     # 2. Exterior non-thermal boundary surfaces (e.g., between garage and outside)
-    orig_bldg.walls.each do |orig_wall|
-      next if orig_wall.is_exterior_thermal_boundary
-
+    other_walls.each do |orig_wall|
       if orig_wall.is_thermal_boundary
         insulation_assembly_r_value = (1.0 / ufactor).round(3)
       else
@@ -2863,6 +2882,16 @@ class EnergyRatingIndex301Ruleset
       return 0.060
     elsif ['7', '8'].include? @iecc_zone
       return 0.057
+    end
+  end
+
+  def self.get_reference_wall_ufactor_common_space()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Frame Wall U-Factor
+    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+      return 0.292
+    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 0.089
     end
   end
 
