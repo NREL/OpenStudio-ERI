@@ -1691,10 +1691,15 @@ class EnergyRatingIndex301Ruleset
 
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
 
-      location = orig_water_heater.location
-      if in_conditioned_space
-        # Hot water equipment shall be located in conditioned space.
-        location = HPXML::LocationConditionedSpace
+      #If 2022, reference WH is in default location, regardless of rated home location
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+        location = WaterHeater.get_default_location(orig_bldg, @iecc_zone)
+      else
+        location = orig_water_heater.location
+        if in_conditioned_space
+          # Hot water equipment shall be located in conditioned space.
+          location = HPXML::LocationConditionedSpace
+        end
       end
 
       # New water heater
