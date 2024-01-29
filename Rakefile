@@ -13,16 +13,23 @@ Rake::TestTask.new('test_all') do |t|
   t.verbose = true
 end
 
-desc 'Run measure unit tests'
-Rake::TestTask.new('test_measures') do |t|
+desc 'Run ruleset tests'
+Rake::TestTask.new('test_rulesets') do |t|
   t.test_files = Dir['rulesets/tests/*.rb']
   t.warning = false
   t.verbose = true
 end
 
-desc 'Run ERI tests'
-Rake::TestTask.new('test_eri') do |t|
-  t.test_files = Dir['workflow/tests/energy_rating_index_test.rb']
+desc 'Run Sample Files 1 tests'
+Rake::TestTask.new('test_sample_files1') do |t|
+  t.test_files = Dir['workflow/tests/sample_files1_test.rb']
+  t.warning = false
+  t.verbose = true
+end
+
+desc 'Run Sample Files 2 tests'
+Rake::TestTask.new('test_sample_files2') do |t|
+  t.test_files = Dir['workflow/tests/sample_files2_test.rb']
   t.warning = false
   t.verbose = true
 end
@@ -34,9 +41,9 @@ Rake::TestTask.new('test_real_homes') do |t|
   t.verbose = true
 end
 
-desc 'Run RESNET/ES/ZERH tests'
-Rake::TestTask.new('test_resnet_es_zerh') do |t|
-  t.test_files = Dir['workflow/tests/*test.rb'] - Dir['workflow/tests/real_homes_test.rb'] - Dir['workflow/tests/energy_rating_index_test.rb']
+desc 'Run Other tests'
+Rake::TestTask.new('test_other') do |t|
+  t.test_files = Dir['workflow/tests/*test.rb'] - Dir['workflow/tests/real_homes_test.rb'] - Dir['workflow/tests/sample_files*test.rb']
   t.warning = false
   t.verbose = true
 end
