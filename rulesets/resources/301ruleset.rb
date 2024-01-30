@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnergyRatingIndex301Ruleset
+class ERI_301_Ruleset
   def self.apply_ruleset(hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
