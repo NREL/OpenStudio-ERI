@@ -10,6 +10,8 @@ __New Features__
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
 - Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
 - Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
+- Clarifies that Capacity=-1 can be used to autosize HVAC equipment for research purposes or to run tests.
+  - It should *not* be used for a real home; a warning will be issued when it's used.
 
 __Bugfixes__
 - Fixes possible 301ruleset.rb error due to floating point arithmetic.
