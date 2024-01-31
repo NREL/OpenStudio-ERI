@@ -609,46 +609,46 @@ They can be used to reflect real-world or stochastic occupancy.
 Detailed schedule inputs are provided via one or more CSV file that should be referenced in the HPXML file as ``/HPXML/Building/BuildingDetails/BuildingSummary/extension/SchedulesFilePath`` elements.
 The column names available in the schedule CSV files are:
 
-  ================================  =====  =================================================================================  ===============================
-  Column Name                       Units  Description                                                                        Can Be Stochastically Generated
-  ================================  =====  =================================================================================  ===============================
-  ``occupants``                     frac   Occupant heat gain schedule.                                                       Yes
-  ``lighting_interior``             frac   Interior lighting energy use schedule.                                             Yes
-  ``lighting_exterior``             frac   Exterior lighting energy use schedule.                                             No
-  ``lighting_garage``               frac   Garage lighting energy use schedule.                                               Yes
-  ``lighting_exterior_holiday``     frac   Exterior holiday lighting energy use schedule.                                     No
-  ``cooking_range``                 frac   Cooking range & oven energy use schedule.                                          Yes
-  ``refrigerator``                  frac   Primary refrigerator energy use schedule.                                          No
-  ``extra_refrigerator``            frac   Non-primary refrigerator energy use schedule.                                      No
-  ``freezer``                       frac   Freezer energy use schedule.                                                       No
-  ``dishwasher``                    frac   Dishwasher energy use schedule.                                                    Yes
-  ``clothes_washer``                frac   Clothes washer energy use schedule.                                                Yes
-  ``clothes_dryer``                 frac   Clothes dryer energy use schedule.                                                 Yes
-  ``ceiling_fan``                   frac   Ceiling fan energy use schedule.                                                   Yes
-  ``plug_loads_other``              frac   Other plug load energy use schedule.                                               Yes
-  ``plug_loads_tv``                 frac   Television plug load energy use schedule.                                          Yes
-  ``plug_loads_vehicle``            frac   Electric vehicle plug load energy use schedule.                                    No
-  ``plug_loads_well_pump``          frac   Well pump plug load energy use schedule.                                           No
-  ``fuel_loads_grill``              frac   Grill fuel load energy use schedule.                                               No
-  ``fuel_loads_lighting``           frac   Lighting fuel load energy use schedule.                                            No
-  ``fuel_loads_fireplace``          frac   Fireplace fuel load energy use schedule.                                           No
-  ``pool_pump``                     frac   Pool pump energy use schedule.                                                     No
-  ``pool_heater``                   frac   Pool heater energy use schedule.                                                   No
-  ``permanent_spa_pump``            frac   Permanent spa pump energy use schedule.                                            No
-  ``permanent_spa_heater``          frac   Permanent spa heater energy use schedule.                                          No
-  ``hot_water_dishwasher``          frac   Dishwasher hot water use schedule.                                                 Yes
-  ``hot_water_clothes_washer``      frac   Clothes washer hot water use schedule.                                             Yes
-  ``hot_water_fixtures``            frac   Fixtures (sinks, showers, baths) hot water use schedule.                           Yes
-  ``hot_water_recirculation_pump``  frac   Hot water recirculation pump schedule.                                             No
-  ``general_water_use``             frac   General water use internal gains.                                                  Yes
-  ``heating_setpoint``              F      Thermostat heating setpoint schedule.                                              No
-  ``cooling_setpoint``              F      Thermostat cooling setpoint schedule.                                              No
-  ``water_heater_setpoint``         F      Water heater setpoint schedule.                                                    No
-  ``water_heater_operating_mode``   0/1    Heat pump water heater operating mode schedule. 0=hybrid/auto, 1=heat pump only.   No
-  ``battery``                       frac   Battery schedule. Positive for charging, negative for discharging.                 No
-  ``vacancy``                       0/1    Vacancy schedule. 0=occupied, 1=vacant. Automatically overrides other columns.     N/A
-  ``outage``                        0/1    Power outage schedule. 0=power. 1=nopower. Automatically overrides other columns.  N/A
-  ================================  =====  =================================================================================  ===============================
+  ================================  =======  =================================================================================  ===============================
+  Column Name                       Units    Description                                                                        Can Be Stochastically Generated
+  ================================  =======  =================================================================================  ===============================
+  ``occupants``                     frac     Occupant heat gain schedule.                                                       Yes
+  ``lighting_interior``             frac     Interior lighting energy use schedule.                                             Yes
+  ``lighting_exterior``             frac     Exterior lighting energy use schedule.                                             No
+  ``lighting_garage``               frac     Garage lighting energy use schedule.                                               Yes
+  ``lighting_exterior_holiday``     frac     Exterior holiday lighting energy use schedule.                                     No
+  ``cooking_range``                 frac     Cooking range & oven energy use schedule.                                          Yes
+  ``refrigerator``                  frac     Primary refrigerator energy use schedule.                                          No
+  ``extra_refrigerator``            frac     Non-primary refrigerator energy use schedule.                                      No
+  ``freezer``                       frac     Freezer energy use schedule.                                                       No
+  ``dishwasher``                    frac     Dishwasher energy use schedule.                                                    Yes
+  ``clothes_washer``                frac     Clothes washer energy use schedule.                                                Yes
+  ``clothes_dryer``                 frac     Clothes dryer energy use schedule.                                                 Yes
+  ``ceiling_fan``                   frac     Ceiling fan energy use schedule.                                                   Yes
+  ``plug_loads_other``              frac     Other plug load energy use schedule.                                               Yes
+  ``plug_loads_tv``                 frac     Television plug load energy use schedule.                                          Yes
+  ``plug_loads_vehicle``            frac     Electric vehicle plug load energy use schedule.                                    No
+  ``plug_loads_well_pump``          frac     Well pump plug load energy use schedule.                                           No
+  ``fuel_loads_grill``              frac     Grill fuel load energy use schedule.                                               No
+  ``fuel_loads_lighting``           frac     Lighting fuel load energy use schedule.                                            No
+  ``fuel_loads_fireplace``          frac     Fireplace fuel load energy use schedule.                                           No
+  ``pool_pump``                     frac     Pool pump energy use schedule.                                                     No
+  ``pool_heater``                   frac     Pool heater energy use schedule.                                                   No
+  ``permanent_spa_pump``            frac     Permanent spa pump energy use schedule.                                            No
+  ``permanent_spa_heater``          frac     Permanent spa heater energy use schedule.                                          No
+  ``hot_water_dishwasher``          frac     Dishwasher hot water use schedule.                                                 Yes
+  ``hot_water_clothes_washer``      frac     Clothes washer hot water use schedule.                                             Yes
+  ``hot_water_fixtures``            frac     Fixtures (sinks, showers, baths) hot water use schedule.                           Yes
+  ``hot_water_recirculation_pump``  frac     Hot water recirculation pump schedule.                                             No
+  ``general_water_use``             frac     General water use internal gains.                                                  Yes
+  ``heating_setpoint``              F        Thermostat heating setpoint schedule.                                              No
+  ``cooling_setpoint``              F        Thermostat cooling setpoint schedule.                                              No
+  ``water_heater_setpoint``         F        Water heater setpoint schedule.                                                    No
+  ``water_heater_operating_mode``   0/1      Heat pump water heater operating mode schedule. 0=hybrid/auto, 1=heat pump only.   No
+  ``battery``                       -1 to 1  Battery schedule. Positive for charging, negative for discharging.                 No
+  ``vacancy``                       0/1      Vacancy schedule. 0=occupied, 1=vacant. Automatically overrides other columns.     N/A
+  ``outage``                        0/1      Power outage schedule. 0=power. 1=nopower. Automatically overrides other columns.  N/A
+  ================================  =======  =================================================================================  ===============================
 
 Columns with units of `frac` must be normalized to MAX=1; that is, these schedules only define *when* energy is used, not *how much* energy is used.
 In other words, the amount of energy or hot water used in each simulation timestep is essentially the schedule value divided by the sum of all schedule values in the column, multiplied by the annual energy or hot water use.
@@ -1301,35 +1301,35 @@ If UFactor and SHGC are not provided and GlassLayers is not "glass block", addit
   
   .. [#] FrameType child element choices are ``Aluminum``, ``Fiberglass``, ``Metal``, ``Vinyl``, or ``Wood``.
   .. [#] ThermalBreak is only valid if FrameType is ``Aluminum`` or ``Metal``.
-  .. [#] GlassType choices are "clear", "low-e", "tinted", "tinted/reflective", or "reflective".
+  .. [#] GlassType choices are "clear", "low-e", "low-e, high-solar-gain", "low-e, low-solar-gain", "tinted", "tinted/reflective", or "reflective".
   .. [#] GasFill choices are "air", "argon", "krypton", "xenon", "nitrogen", or "other".
-  .. [#] If GasFill not provided, defaults to "air" for double-pane windows and "argon" for triple-pane windows.
+  .. [#] If GasFill not provided, defaults to "air" for double-pane, non-low-e windows and "argon" for double-pane, low-e or triple-pane windows.
 
 If UFactor and SHGC are not provided, they are defaulted as follows:
   
-  ===========  =======================  ============  =========================  =============  =======  ====
-  GlassLayers  FrameType                ThermalBreak  GlassType                  GasFill        UFactor  SHGC
-  ===========  =======================  ============  =========================  =============  =======  ====
-  single-pane  Aluminum, Metal          false         clear                      --             1.27     0.75
-  single-pane  Fiberglass, Vinyl, Wood  --            clear                      --             0.89     0.64
-  single-pane  Aluminum, Metal          false         tinted, tinted/reflective  --             1.27     0.64
-  single-pane  Fiberglass, Vinyl, Wood  --            tinted, tinted/reflective  --             0.89     0.54
-  double-pane  Aluminum, Metal          false         clear                      air            0.81     0.67
-  double-pane  Aluminum, Metal          true          clear                      air            0.60     0.67
-  double-pane  Fiberglass, Vinyl, Wood  --            clear                      air            0.51     0.56
-  double-pane  Aluminum, Metal          false         tinted, tinted/reflective  air            0.81     0.55
-  double-pane  Aluminum, Metal          true          tinted, tinted/reflective  air            0.60     0.55
-  double-pane  Fiberglass, Vinyl, Wood  --            tinted, tinted/reflective  air            0.51     0.46
-  double-pane  Fiberglass, Vinyl, Wood  --            low-e                      air            0.42     0.52
-  double-pane  Aluminum, Metal          true          low-e                      <any but air>  0.47     0.62
-  double-pane  Fiberglass, Vinyl, Wood  --            low-e                      <any but air>  0.39     0.52
-  double-pane  Aluminum, Metal          false         reflective                 air            0.67     0.37
-  double-pane  Aluminum, Metal          true          reflective                 air            0.47     0.37
-  double-pane  Fiberglass, Vinyl, Wood  --            reflective                 air            0.39     0.31
-  double-pane  Fiberglass, Vinyl, Wood  --            reflective                 <any but air>  0.36     0.31
-  triple-pane  Fiberglass, Vinyl, Wood  --            low-e                      <any but air>  0.27     0.31
-  glass block  --                       --            --                         --             0.60     0.60
-  ===========  =======================  ============  =========================  =============  =======  ====
+  ===========  =======================  ============  =================================  =============  =======  ====
+  GlassLayers  FrameType                ThermalBreak  GlassType                          GasFill        UFactor  SHGC
+  ===========  =======================  ============  =================================  =============  =======  ====
+  single-pane  Aluminum, Metal          false         "clear", "reflective"              --             1.27     0.75
+  single-pane  Fiberglass, Vinyl, Wood  --            "clear", "reflective"              --             0.89     0.64
+  single-pane  Aluminum, Metal          false         "tinted", "tinted/reflective"      --             1.27     0.64
+  single-pane  Fiberglass, Vinyl, Wood  --            "tinted", "tinted/reflective"      --             0.89     0.54
+  double-pane  Aluminum, Metal          false         "clear", "reflective"              air            0.81     0.67
+  double-pane  Aluminum, Metal          true          "clear", "reflective"              air            0.60     0.67
+  double-pane  Fiberglass, Vinyl, Wood  --            "clear", "reflective"              air            0.51     0.56
+  double-pane  Aluminum, Metal          false         "tinted", "tinted/reflective"      air            0.81     0.55
+  double-pane  Aluminum, Metal          true          "tinted", "tinted/reflective"      air            0.60     0.55
+  double-pane  Fiberglass, Vinyl, Wood  --            "tinted", "tinted/reflective"      air            0.51     0.46
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e", "low-e, high-solar-gain"  air            0.42     0.52
+  double-pane  Aluminum, Metal          true          "low-e", "low-e, high-solar-gain"  <any but air>  0.47     0.62
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e", "low-e, high-solar-gain"  <any but air>  0.39     0.52
+  double-pane  Aluminum, Metal          false         "low-e, low-solar-gain"            air            0.67     0.37
+  double-pane  Aluminum, Metal          true          "low-e, low-solar-gain"            air            0.47     0.37
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e, low-solar-gain"            air            0.39     0.31
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e, low-solar-gain"            <any but air>  0.36     0.31
+  triple-pane  Fiberglass, Vinyl, Wood  --            "low-e", "low-e, high-solar-gain"  <any but air>  0.27     0.31
+  glass block  --                       --            --                                 --             0.60     0.60
+  ===========  =======================  ============  =================================  =============  =======  ====
 
 .. warning::
 
@@ -1395,36 +1395,35 @@ If UFactor and SHGC are not provided and GlassLayers is not "glass block", addit
   
   .. [#] FrameType child element choices are ``Aluminum``, ``Fiberglass``, ``Metal``, ``Vinyl``, or ``Wood``.
   .. [#] ThermalBreak is only valid if FrameType is ``Aluminum`` or ``Metal``.
-  .. [#] GlassType choices are "clear", "low-e", "tinted", "tinted/reflective", or "reflective".
-         Do not specify this element if the skylight has clear glass.
+  .. [#] GlassType choices are "clear", "low-e", "low-e, high-solar-gain", "low-e, low-solar-gain", "tinted", "tinted/reflective", or "reflective".
   .. [#] GasFill choices are "air", "argon", "krypton", "xenon", "nitrogen", or "other".
-  .. [#] If GasFill not provided, defaults to "air" for double-pane skylights and "argon" for triple-pane skylights.
+  .. [#] If GasFill not provided, defaults to "air" for double-pane, non-low-e skylights and "argon" for double-pane, low-e or triple-pane skylights.
 
 If UFactor and SHGC are not provided, they are defaulted as follows:
   
-  ===========  =======================  ============  =========================  =============  =======  ====
-  GlassLayers  FrameType                ThermalBreak  GlassType                  GasFill        UFactor  SHGC
-  ===========  =======================  ============  =========================  =============  =======  ====
-  single-pane  Aluminum, Metal          false         clear                      --             1.98     0.75
-  single-pane  Fiberglass, Vinyl, Wood  --            clear                      --             1.47     0.64
-  single-pane  Aluminum, Metal          false         tinted, tinted/reflective  --             1.98     0.64
-  single-pane  Fiberglass, Vinyl, Wood  --            tinted, tinted/reflective  --             1.47     0.54
-  double-pane  Aluminum, Metal          false         clear                      air            1.30     0.67
-  double-pane  Aluminum, Metal          true          clear                      air            1.10     0.67
-  double-pane  Fiberglass, Vinyl, Wood  --            clear                      air            0.84     0.56
-  double-pane  Aluminum, Metal          false         tinted, tinted/reflective  air            1.30     0.55
-  double-pane  Aluminum, Metal          true          tinted, tinted/reflective  air            1.10     0.55
-  double-pane  Fiberglass, Vinyl, Wood  --            tinted, tinted/reflective  air            0.84     0.46
-  double-pane  Fiberglass, Vinyl, Wood  --            low-e                      air            0.74     0.52
-  double-pane  Aluminum, Metal          true          low-e                      <any but air>  0.95     0.62
-  double-pane  Fiberglass, Vinyl, Wood  --            low-e                      <any but air>  0.68     0.52
-  double-pane  Aluminum, Metal          false         reflective                 air            1.17     0.37
-  double-pane  Aluminum, Metal          true          reflective                 air            0.98     0.37
-  double-pane  Fiberglass, Vinyl, Wood  --            reflective                 air            0.71     0.31
-  double-pane  Fiberglass, Vinyl, Wood  --            reflective                 <any but air>  0.65     0.31
-  triple-pane  Fiberglass, Vinyl, Wood  --            low-e                      <any but air>  0.47     0.31
-  glass block  --                       --            --                         --             0.60     0.60
-  ===========  =======================  ============  =========================  =============  =======  ====
+  ===========  =======================  ============  =================================  =============  =======  ====
+  GlassLayers  FrameType                ThermalBreak  GlassType                          GasFill        UFactor  SHGC
+  ===========  =======================  ============  =================================  =============  =======  ====
+  single-pane  Aluminum, Metal          false         "clear", "reflective"              --             1.98     0.75
+  single-pane  Fiberglass, Vinyl, Wood  --            "clear", "reflective"              --             1.47     0.64
+  single-pane  Aluminum, Metal          false         "tinted", "tinted/reflective"      --             1.98     0.64
+  single-pane  Fiberglass, Vinyl, Wood  --            "tinted", "tinted/reflective"      --             1.47     0.54
+  double-pane  Aluminum, Metal          false         "clear", "reflective"              air            1.30     0.67
+  double-pane  Aluminum, Metal          true          "clear", "reflective"              air            1.10     0.67
+  double-pane  Fiberglass, Vinyl, Wood  --            "clear", "reflective"              air            0.84     0.56
+  double-pane  Aluminum, Metal          false         "tinted", "tinted/reflective"      air            1.30     0.55
+  double-pane  Aluminum, Metal          true          "tinted", "tinted/reflective"      air            1.10     0.55
+  double-pane  Fiberglass, Vinyl, Wood  --            "tinted", "tinted/reflective"      air            0.84     0.46
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e", "low-e, high-solar-gain"  air            0.74     0.52
+  double-pane  Aluminum, Metal          true          "low-e", "low-e, high-solar-gain"  <any but air>  0.95     0.62
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e", "low-e, high-solar-gain"  <any but air>  0.68     0.52
+  double-pane  Aluminum, Metal          false         "low-e, low-solar-gain"            air            1.17     0.37
+  double-pane  Aluminum, Metal          true          "low-e, low-solar-gain"            air            0.98     0.37
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e, low-solar-gain"            air            0.71     0.31
+  double-pane  Fiberglass, Vinyl, Wood  --            "low-e, low-solar-gain"            <any but air>  0.65     0.31
+  triple-pane  Fiberglass, Vinyl, Wood  --            "low-e", "low-e, high-solar-gain"  <any but air>  0.47     0.31
+  glass block  --                       --            --                                 --             0.60     0.60
+  ===========  =======================  ============  =================================  =============  =======  ====
 
 .. warning::
 
@@ -2212,10 +2211,7 @@ Each ``HeatPump`` is expected to represent a single outdoor unit, whether connec
          HeatingDetailedPerformanceData must also be provided.
   .. [#] If HeatingDetailedPerformanceData is provided, see :ref:`htg_detailed_perf_data`.
          CoolingDetailedPerformanceData must also be provided.
-  .. [#] If neither extension/HeatingCapacityRetention nor HeatingCapacity17F nor HeatingDetailedPerformanceData provided, heating capacity retention defaults based on CompressorType:
-         
-         \- **variable speed**: 0.0461 * HSPF + 0.1594 (at 5F)
-         
+  .. [#] If neither extension/HeatingCapacityRetention nor HeatingCapacity17F nor HeatingDetailedPerformanceData provided, heating capacity retention defaults to 0.0461 * HSPF + 0.1594 (at 5F).
   .. [#] The extension/HeatingCapacityRetention input is a more flexible alternative to HeatingCapacity17F, as it can apply to autosized systems and allows the heating capacity retention to be defined at a user-specified temperature (instead of 17F).
          Either input approach can be used, but not both.
   .. [#] FanPowerWattsPerCFM defaults to 0.07 W/cfm for ductless systems and 0.18 W/cfm for ducted systems.
@@ -3581,7 +3577,7 @@ An in-unit recirculation hot water distribution system is entered as a ``/HPXML/
                   
          \- **temperature**: "0.067, 0.072, 0.074, 0.073, 0.069, 0.048, 0.011, 0.003, 0.009, 0.020, 0.030, 0.037, 0.043, 0.047, 0.050, 0.051, 0.044, 0.034, 0.026, 0.026, 0.030, 0.036, 0.045, 0.055" (based on Table C.3(5) of ANSI/RESNET/ICC 301-2022 Addendum C)
 
-  .. [#] If RecirculationPumpMonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), defaults to: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
+  .. [#] If RecirculationPumpMonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 .. _hot_water_dist_recirc_shared:
 
@@ -3956,7 +3952,7 @@ If not entered, the simulation will not include a clothes washer.
   .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``; AttachedToHotWaterDistribution must reference a ``HotWaterDistribution``.
   .. [#] AttachedToWaterHeatingSystem (or AttachedToHotWaterDistribution) only required if IsSharedAppliance is true.
   .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`schedules_detailed` not used), default values from Table C.3(1) of ANSI/RESNET/ICC 301-2022 Addendum C are used: "0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.051, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017".
-  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.011, 1.002, 1.022, 1.020, 1.022, 0.996, 0.999, 0.999, 0.996, 0.964, 0.959, 1.011".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 If IntegratedModifiedEnergyFactor or ModifiedEnergyFactor is provided, a complete set of EnergyGuide label information is entered in ``ClothesWasher``.
 
@@ -4045,7 +4041,7 @@ If not entered, the simulation will not include a dishwasher.
   .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``; AttachedToHotWaterDistribution must reference a ``HotWaterDistribution``.
   .. [#] AttachedToWaterHeatingSystem (or AttachedToHotWaterDistribution) only required if IsSharedAppliance is true.
   .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`schedules_detailed` not used), default values from Table C.3(1) of ANSI/RESNET/ICC 301-2022 Addendum C are used: "0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.042, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031".
-  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 If the RatedAnnualkWh or EnergyFactor is provided, a complete set of EnergyGuide label information is entered in ``Dishwasher``.
 
@@ -4183,7 +4179,7 @@ If not entered, the simulation will not include a cooking range/oven.
          See :ref:`hpxmllocations` for descriptions.
   .. [#] FuelType choices are "natural gas", "fuel oil", "fuel oil 1", "fuel oil 2", "fuel oil 4", "fuel oil 5/6", "diesel", "propane", "kerosene", "coal", "coke", "bituminous coal", "anthracite coal", "electricity", "wood", or "wood pellets".
   .. [#] If WeekdayScheduleFractions or WeekendScheduleFractions not provided (and :ref:`schedules_detailed` not used), default values from Table C.3(1) of ANSI/RESNET/ICC 301-2022 Addendum C are used: "0.008, 0.008, 0.008, 0.008, 0.008, 0.015, 0.023, 0.039, 0.046, 0.046, 0.046, 0.054, 0.062, 0.046, 0.039, 0.054, 0.076, 0.134, 0.114, 0.058, 0.039, 0.031, 0.023, 0.015".
-  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 If a cooking range is specified, a single oven is also entered as a ``/HPXML/Building/BuildingDetails/Appliances/Oven``.
 
@@ -4538,15 +4534,7 @@ If not entered, the simulation will not include that type of plug load.
          
          \- **electric vehicle charging**: "0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042"
          
-  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), defaults as:
-         
-         \- **other**: "1.248, 1.257, 0.993, 0.989, 0.993, 0.827, 0.821, 0.821, 0.827, 0.99, 0.987, 1.248" (based on Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
-         
-         \- **TV other**: "1.137, 1.129, 0.961, 0.969, 0.961, 0.993, 0.996, 0.96, 0.993, 0.867, 0.86, 1.137" (based on the `American Time Use Survey <https://www.bls.gov/tus>`_)
-         
-         \- **well pump**: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154" (based on Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_)
-         
-         \- **electric vehicle charging**: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0"
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 .. _fuel_loads:
 
@@ -4596,13 +4584,7 @@ If not entered, the simulation will not include that type of fuel load.
          
          \- **lighting**: "0.044, 0.023, 0.019, 0.015, 0.016, 0.018, 0.026, 0.033, 0.033, 0.032, 0.033, 0.033, 0.032, 0.032, 0.032, 0.033, 0.045, 0.057, 0.066, 0.076, 0.081, 0.086, 0.075, 0.065".
          
-  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values from Figure 24 of the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_ are used:
-         
-         \- **grill**: "1.097, 1.097, 0.991, 0.987, 0.991, 0.890, 0.896, 0.896, 0.890, 1.085, 1.085, 1.097";
-         
-         \- **fireplace**: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154";
-         
-         \- **lighting**: "1.154, 1.161, 1.013, 1.010, 1.013, 0.888, 0.883, 0.883, 0.888, 0.978, 0.974, 1.154".
+  .. [#] If MonthlyScheduleMultipliers not provided (and :ref:`schedules_detailed` not used), default values are used: "1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0".
 
 .. _hpxmllocations:
 
