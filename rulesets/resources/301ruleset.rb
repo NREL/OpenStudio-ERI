@@ -1698,10 +1698,11 @@ class EnergyRatingIndex301Ruleset
         location = Waterheater.get_default_location(orig_bldg, climate_zone_iecc)
       else
         location = orig_water_heater.location
-        if in_conditioned_space
-          # Hot water equipment shall be located in conditioned space.
-          location = HPXML::LocationConditionedSpace
-        end
+      end
+
+      if in_conditioned_space
+        # Hot water equipment shall be located in conditioned space.
+        location = HPXML::LocationConditionedSpace
       end
 
       # New water heater
