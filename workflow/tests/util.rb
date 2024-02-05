@@ -826,34 +826,39 @@ def _check_reference_home_components(results, test_num, version)
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2022'
-    # Pub 002-2020 (June 2020)
+  if version == '2022C'
+    # FIXME: Expected values changed due to rounded F_sensible values in 301-2022
+    # Addendum C relative to previously prescribed internal gains. Values below
+    # do not match Pub 002, as it has not yet been updated.
     if test_num == 1
-      assert_in_epsilon(55115, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13666, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
       assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12568, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
       assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9152, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(82691, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17769, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   else
+    # Note: Values have been updated slightly relative to Pub 002 because we are
+    # using rounded F_sensible values from 301-2022 Addendum C instead of the
+    # previously prescribed internal gains.
     if test_num == 1
-      assert_in_epsilon(55470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13807, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55520, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13776, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
-      assert_in_epsilon(52794, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12698, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(52809, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12701, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
-      assert_in_epsilon(48111, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9259, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(48124, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9263, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(83103, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17934, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(83160, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17899, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   end
 
