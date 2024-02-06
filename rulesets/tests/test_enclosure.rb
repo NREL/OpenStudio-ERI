@@ -307,12 +307,26 @@ class ERIEnclosureTest < Minitest::Test
 
     hpxml_name = 'base-bldgtype-mf-unit-adjacent-to-multiple.xml'
 
+    hpxml_name = _change_eri_version(hpxml_name, '2019')
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1086, rvalue: (23.0 * 986 + 4.0 * 100) / 1086, sabs: 0.7, emit: 0.92)
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1086, rvalue: (16.67 * 986 + 4.0 * 100) / 1086, sabs: 0.75, emit: 0.9)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_walls(hpxml_bldg, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
+      end
+    end
+    hpxml_name = _change_eri_version(hpxml_name, '2022')
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_walls(hpxml_bldg, area: 1086, rvalue: (23.0 * 986 + 4.0 * 100) / 1086, sabs: 0.7, emit: 0.92)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_walls(hpxml_bldg, area: 1086, rvalue: (16.67 * 686 + 4.0 * 100 + 11.24 * 300) / 1086, sabs: 0.75, emit: 0.9)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
