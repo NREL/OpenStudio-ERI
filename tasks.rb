@@ -2033,15 +2033,11 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
                                            pipe_r_value: 0.0)
   end
 
-  has_uncond_bsmnt = false
-  hpxml_bldg.foundation_walls.each do |foundation_wall|
-    next unless [foundation_wall.interior_adjacent_to, foundation_wall.exterior_adjacent_to].include? HPXML::LocationBasementUnconditioned
-
-    has_uncond_bsmnt = true
-  end
+  has_uncond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementUnconditioned)
+  has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
-  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
 
   if hpxml_bldg.hot_water_distributions.size > 0
     if hpxml_bldg.hot_water_distributions[0].system_type == HPXML::DHWDistTypeStandard
@@ -2326,7 +2322,7 @@ end
 
 def create_sample_hpxmls
   # Copy sample files from hpxml-measures subtree
-  puts 'Copying sample files...'
+  puts 'Copying sample files from OS-HPXML...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
 
   # Copy files we're interested in
@@ -2513,7 +2509,7 @@ def create_sample_hpxmls
   end
 
   # Update HPXMLs as needed
-  puts 'Updating HPXML inputs for ERI/ENERGY STAR...'
+  puts 'Updating HPXML inputs for OS-ERI...'
   hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
@@ -2877,7 +2873,7 @@ def create_sample_hpxmls
   end
 
   # Create additional files
-  puts 'Creating additional HPXML files for ERI...'
+  puts 'Creating additional HPXML files for OS-ERI...'
 
   # base-hvac-programmable-thermostat.xml
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
