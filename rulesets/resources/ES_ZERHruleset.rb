@@ -850,7 +850,7 @@ class ES_ZERH_Ruleset
     return if orig_bldg.water_heating_systems.size == 0
 
     # Exhibit 2 - Service Water Heating Systems: Use the same Gallons per Day as Table 4.2.2(1) - Service water heating systems
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl).round(3)
+    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @has_cond_bsmnt, @cfa, @ncfl).round(3)
 
     if orig_bldg.hot_water_distributions.size == 0
       sys_id = 'HotWaterDistribution'
