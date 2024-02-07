@@ -1774,7 +1774,8 @@ class ERI_301_Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     has_uncond_bsmnt = new_bldg.has_location(HPXML::LocationBasementUnconditioned)
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
+    has_cond_bsmnt = new_bldg.has_location(HPXML::LocationBasementConditioned)
+    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, @cfa, @ncfl)
 
     # New hot water distribution
     new_bldg.hot_water_distributions.add(id: 'HotWaterDistribution',

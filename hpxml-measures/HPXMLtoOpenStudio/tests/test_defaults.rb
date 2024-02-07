@@ -1676,6 +1676,21 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     default_hpxml, default_hpxml_bldg = _test_measure()
     _test_default_heat_pump_temperature_values(default_hpxml_bldg.heat_pumps[0], 0.0, 40.0, nil)
 
+    # Test inputs not overridden by defaults - Var-speed ASHP w/ electric backup
+    hpxml, hpxml_bldg = _create_hpxml('base-hvac-air-to-air-heat-pump-var-speed.xml')
+    hpxml_bldg.heat_pumps[0].compressor_lockout_temp = -2.0
+    hpxml_bldg.heat_pumps[0].backup_heating_lockout_temp = 44.0
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    default_hpxml, default_hpxml_bldg = _test_measure()
+    _test_default_heat_pump_temperature_values(default_hpxml_bldg.heat_pumps[0], -2.0, 44.0, nil)
+
+    # Test defaults
+    hpxml_bldg.heat_pumps[0].compressor_lockout_temp = nil
+    hpxml_bldg.heat_pumps[0].backup_heating_lockout_temp = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    default_hpxml, default_hpxml_bldg = _test_measure()
+    _test_default_heat_pump_temperature_values(default_hpxml_bldg.heat_pumps[0], -20.0, 40.0, nil)
+
     # Test inputs not overridden by defaults - MSHP w/o backup
     hpxml, hpxml_bldg = _create_hpxml('base-hvac-mini-split-heat-pump-ductless.xml')
     hpxml_bldg.heat_pumps[0].compressor_lockout_temp = 33.0
@@ -3274,10 +3289,28 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
       freezer.weekday_fractions = ConstantDaySchedule
       freezer.weekend_fractions = ConstantDaySchedule
       freezer.monthly_multipliers = ConstantMonthSchedule
+      freezer.constant_coefficients = nil
+      freezer.temperature_coefficients = nil
     end
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_freezers_values(default_hpxml_bldg, HPXML::LocationConditionedSpace, 333.0, 1.5, ConstantDaySchedule, ConstantDaySchedule, ConstantMonthSchedule)
+    _test_default_freezers_values(default_hpxml_bldg, HPXML::LocationConditionedSpace, 333.0, 1.5, ConstantDaySchedule, ConstantDaySchedule, ConstantMonthSchedule, nil, nil)
+
+    # Test inputs not overridden by defaults 2
+    hpxml, hpxml_bldg = _create_hpxml('base-misc-loads-large-uncommon.xml')
+    hpxml_bldg.freezers.each do |freezer|
+      freezer.location = HPXML::LocationConditionedSpace
+      freezer.rated_annual_kwh = 333.0
+      freezer.usage_multiplier = 1.5
+      freezer.weekday_fractions = nil
+      freezer.weekend_fractions = nil
+      freezer.monthly_multipliers = nil
+      freezer.constant_coefficients = ConstantDaySchedule
+      freezer.temperature_coefficients = ConstantDaySchedule
+    end
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    _test_default_freezers_values(default_hpxml_bldg, HPXML::LocationConditionedSpace, 333.0, 1.5, nil, nil, nil, ConstantDaySchedule, ConstantDaySchedule)
 
     # Test defaults
     hpxml_bldg.freezers.each do |freezer|
@@ -3287,10 +3320,12 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
       freezer.weekday_fractions = nil
       freezer.weekend_fractions = nil
       freezer.monthly_multipliers = nil
+      freezer.constant_coefficients = nil
+      freezer.temperature_coefficients = nil
     end
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_freezers_values(default_hpxml_bldg, HPXML::LocationBasementConditioned, 320.0, 1.0, Schedule.FreezerWeekdayFractions, Schedule.FreezerWeekendFractions, Schedule.FreezerMonthlyMultipliers)
+    _test_default_freezers_values(default_hpxml_bldg, HPXML::LocationBasementConditioned, 320.0, 1.0, Schedule.FreezerWeekdayFractions, Schedule.FreezerWeekendFractions, Schedule.FreezerMonthlyMultipliers, nil, nil)
   end
 
   def test_cooking_ranges
@@ -5005,7 +5040,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     end
   end
 
-  def _test_default_freezers_values(hpxml_bldg, location, rated_annual_kwh, usage_multiplier, weekday_sch, weekend_sch, monthly_mults)
+  def _test_default_freezers_values(hpxml_bldg, location, rated_annual_kwh, usage_multiplier, weekday_sch, weekend_sch, monthly_mults, constant_coeffs, temperature_coeffs)
     hpxml_bldg.freezers.each do |freezer|
       assert_equal(location, freezer.location)
       assert_in_epsilon(rated_annual_kwh, freezer.rated_annual_kwh, 0.01)
@@ -5024,6 +5059,16 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
         assert_nil(freezer.monthly_multipliers)
       else
         assert_equal(monthly_mults, freezer.monthly_multipliers)
+      end
+      if constant_coeffs.nil?
+        assert_nil(freezer.constant_coefficients)
+      else
+        assert_equal(constant_coeffs, freezer.constant_coefficients)
+      end
+      if temperature_coeffs.nil?
+        assert_nil(freezer.temperature_coefficients)
+      else
+        assert_equal(temperature_coeffs, freezer.temperature_coefficients)
       end
     end
   end
