@@ -6,7 +6,7 @@ require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 
-class ERIApplianceTest < Minitest::Test
+class ERIOccupancyTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')

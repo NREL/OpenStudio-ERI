@@ -404,6 +404,11 @@ class ERIApplianceTest < Minitest::Test
     refrigerator = hpxml_bldg.refrigerators[0]
     assert_equal(location, refrigerator.location)
     assert_equal(annual_kwh, refrigerator.rated_annual_kwh)
+    assert_nil(refrigerator.weekday_fractions)
+    assert_nil(refrigerator.weekend_fractions)
+    assert_nil(refrigerator.monthly_multipliers)
+    assert_equal('-0.487, -0.340, -0.370, -0.361, -0.515, -0.684, -0.471, -0.159, -0.079, -0.417, -0.411, -0.386, -0.240, -0.314, -0.160, -0.121, -0.469, -0.412, -0.091, 0.077, -0.118, -0.247, -0.445, -0.544', refrigerator.constant_coefficients)
+    assert_equal('0.019, 0.016, 0.017, 0.016, 0.018, 0.021, 0.019, 0.015, 0.015, 0.019, 0.018, 0.018, 0.016, 0.017, 0.015, 0.015, 0.020, 0.020, 0.017, 0.014, 0.016, 0.017, 0.019, 0.020', refrigerator.temperature_coefficients)
   end
 
   def _check_cooking_range(hpxml_bldg, fuel_type:, cook_is_induction:, oven_is_convection:, location:)
