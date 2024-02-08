@@ -369,7 +369,7 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
       elsif [ESConstants.MFNationalVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90, n_units_served: 6 }])
       end
-      _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, true), pipe_l: 70.0, shared_recirc_power: 232.94, shared_recirc_num_units_served: 6, shared_recirc_control_type: HPXML::DHWRecirControlTypeTimer)
+      _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, true), pipe_l: 70.0, shared_recirc_power: 232.94, shared_recirc_num_units_served: 6, shared_recirc_control_type: HPXML::DHWRecircControlTypeTimer)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version), low_flow_faucet: is_low_flow(program_version))
       _check_drain_water_heat_recovery(hpxml_bldg)
     end

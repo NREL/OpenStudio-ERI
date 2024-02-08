@@ -73,7 +73,7 @@ class RESNETTest < Minitest::Test
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml)[0, 2].to_i
-      _check_reference_home_components(results, test_num, '2019A')
+      _check_reference_home_components(results, test_num, '2022C')
     end
   end
 

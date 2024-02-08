@@ -1203,10 +1203,14 @@ class ERI_301_Ruleset
 
     # Table 303.4.1(1) - Thermostat
     control_type = HPXML::HVACControlTypeManual
+    htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(control_type, @eri_version)
+    clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(control_type, @eri_version)
     new_bldg.hvac_controls.add(id: 'HVACControl',
                                control_type: control_type,
-                               heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
-                               cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
+                               weekday_heating_setpoints: htg_weekday_setpoints,
+                               weekend_heating_setpoints: htg_weekend_setpoints,
+                               weekday_cooling_setpoints: clg_weekday_setpoints,
+                               weekend_cooling_setpoints: clg_weekend_setpoints)
 
     # Distribution system
     add_reference_distribution_system(new_bldg)
@@ -1244,9 +1248,6 @@ class ERI_301_Ruleset
 
     # Retain heating system(s)
     orig_bldg.heating_systems.each do |orig_heating_system|
-      if [HPXML::HVACTypeBoiler].include? orig_heating_system.heating_system_type
-        orig_heating_system.electric_auxiliary_energy = HVAC.get_default_boiler_eae(orig_heating_system)
-      end
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
         fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
         airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
@@ -1261,7 +1262,8 @@ class ERI_301_Ruleset
                                    heating_efficiency_afue: orig_heating_system.heating_efficiency_afue,
                                    heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                    fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
-                                   electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
+                                   shared_loop_watts: orig_heating_system.shared_loop_watts,
+                                   fan_coil_watts: orig_heating_system.fan_coil_watts,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    fan_watts: orig_heating_system.fan_watts,
                                    airflow_defect_ratio: airflow_defect_ratio,
@@ -1374,26 +1376,19 @@ class ERI_301_Ruleset
     if orig_bldg.hvac_controls.size > 0
       hvac_control = orig_bldg.hvac_controls[0]
       control_type = hvac_control.control_type
-      htg_sp, htg_setback_sp, htg_setback_hrs_per_week, htg_setback_start_hr = HVAC.get_default_heating_setpoint(control_type)
-      clg_sp, clg_setup_sp, clg_setup_hrs_per_week, clg_setup_start_hr = HVAC.get_default_cooling_setpoint(control_type)
-      new_bldg.hvac_controls.add(id: hvac_control.id,
-                                 control_type: control_type,
-                                 heating_setpoint_temp: htg_sp,
-                                 heating_setback_temp: htg_setback_sp,
-                                 heating_setback_hours_per_week: htg_setback_hrs_per_week,
-                                 heating_setback_start_hour: htg_setback_start_hr,
-                                 cooling_setpoint_temp: clg_sp,
-                                 cooling_setup_temp: clg_setup_sp,
-                                 cooling_setup_hours_per_week: clg_setup_hrs_per_week,
-                                 cooling_setup_start_hour: clg_setup_start_hr)
-
+      hvac_control_id = hvac_control.id
     else
       control_type = HPXML::HVACControlTypeManual
-      new_bldg.hvac_controls.add(id: 'HVACControl',
-                                 control_type: control_type,
-                                 heating_setpoint_temp: HVAC.get_default_heating_setpoint(control_type)[0],
-                                 cooling_setpoint_temp: HVAC.get_default_cooling_setpoint(control_type)[0])
+      hvac_control_id = 'HVACControl'
     end
+    htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(control_type, @eri_version)
+    clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(control_type, @eri_version)
+    new_bldg.hvac_controls.add(id: hvac_control_id,
+                               control_type: control_type,
+                               weekday_heating_setpoints: htg_weekday_setpoints,
+                               weekend_heating_setpoints: htg_weekend_setpoints,
+                               weekday_cooling_setpoints: clg_weekday_setpoints,
+                               weekend_cooling_setpoints: clg_weekend_setpoints)
 
     # Table 4.2.2(1) - Thermal distribution systems
     orig_bldg.hvac_distributions.each do |orig_hvac_distribution|
@@ -1425,6 +1420,7 @@ class ERI_301_Ruleset
                                         duct_insulation_r_value: orig_duct.duct_insulation_r_value,
                                         duct_location: orig_duct.duct_location,
                                         duct_surface_area: orig_duct.duct_surface_area,
+                                        duct_fraction_area: orig_duct.duct_fraction_area,
                                         duct_buried_insulation_level: orig_duct.duct_buried_insulation_level)
       end
     end
@@ -1460,7 +1456,7 @@ class ERI_301_Ruleset
       q_fan_airflow = (0.01 * @cfa) + (7.5 * (@nbeds + 1))
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
-      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, 0.0) # cfm for airflow
+      q_fan_airflow = calc_mech_vent_q_fan(q_tot, ref_sla, true) # cfm for airflow
     end
 
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1503,7 +1499,7 @@ class ERI_301_Ruleset
 
       # Airflow and fan power
       new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
-                                    fan_type: HPXML::MechVentTypeBalanced, # Per RESNET 55i
+                                    fan_type: HPXML::MechVentTypeBalanced,
                                     tested_flow_rate: q_fan_airflow.round(2),
                                     hours_in_operation: 24,
                                     fan_power: fan_power_w.round(3),
@@ -1575,7 +1571,7 @@ class ERI_301_Ruleset
         end
       else
         # Fan power defaulted
-        fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_vent_fan)
+        fan_w_per_cfm = Airflow.get_default_mech_vent_fan_power(orig_vent_fan, @eri_version)
         if orig_vent_fan.flow_rate_not_tested && orig_vent_fan.fan_type == HPXML::MechVentTypeCFIS
           # For in-unit CFIS systems, the cfm used to determine fan watts shall be the larger of
           # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
@@ -1635,7 +1631,7 @@ class ERI_301_Ruleset
       sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, @infil_volume)
       break
     end
-    q_fan = calc_mech_vent_q_fan(q_tot, sla, 0.0)
+    q_fan = calc_mech_vent_q_fan(q_tot, sla, true)
     fan_power_w = 0.70 * q_fan
 
     new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -1900,14 +1896,19 @@ class ERI_301_Ruleset
   end
 
   def self.set_systems_batteries_rated(orig_bldg, new_bldg)
-    # Temporarily disabled until RESNET allows this.
-    # orig_bldg.batteries.each do |orig_battery|
-    #   new_bldg.batteries.add(id: orig_battery.id,
-    #                           type: orig_battery.type,
-    #                           location: orig_battery.location,
-    #                           nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
-    #                           usable_capacity_kwh: orig_battery.usable_capacity_kwh)
-    # end
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+      orig_bldg.batteries.each do |orig_battery|
+        new_bldg.batteries.add(id: orig_battery.id,
+                               is_shared_system: orig_battery.is_shared_system,
+                               type: orig_battery.type,
+                               location: orig_battery.location,
+                               nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
+                               usable_capacity_kwh: orig_battery.usable_capacity_kwh,
+                               rated_power_output: orig_battery.rated_power_output,
+                               round_trip_efficiency: orig_battery.round_trip_efficiency,
+                               number_of_bedrooms_served: orig_battery.number_of_bedrooms_served)
+      end
+    end
   end
 
   def self.set_systems_batteries_iad(orig_bldg, new_bldg)
@@ -2534,7 +2535,7 @@ class ERI_301_Ruleset
 
   def self.calc_mech_vent_q_fan(q_tot, sla, is_balanced)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, @infil_height)
-    q_inf = nl * @weather.data.WSF * @cfa / 7.3 # Effective annual average infiltration rate, cfm, eq. 4.5a
+    q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
       if is_balanced
         phi = 1.0
@@ -2625,7 +2626,6 @@ class ERI_301_Ruleset
                                  heating_efficiency_afue: 0.80,
                                  fraction_heat_load_served: load_frac,
                                  htg_seed_id: seed_id)
-    new_bldg.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_boiler_eae(new_bldg.heating_systems[-1])
   end
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, htg_load_frac, clg_load_frac, orig_htg_system: nil, orig_clg_system: nil, is_all_electric: false)
