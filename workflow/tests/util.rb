@@ -69,6 +69,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
       hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
       outputs[:eri_results] = File.join(rundir, 'results', "ERI_Results.#{output_format}")
+      outputs[:eri_worksheet] = File.join(rundir, 'results', "ERI_Worksheet.#{output_format}")
       outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
       outputs[:ref_results] = File.join(rundir, 'results', "ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
@@ -96,7 +97,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:esrat_iadref] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.xml')
       outputs[:es_results] = File.join(rundir, 'results', "ES_Results.#{output_format}")
       outputs[:esrd_eri_results] = File.join(rundir, 'results', "ESReference_ERI_Results.#{output_format}")
+      outputs[:esrd_eri_worksheet] = File.join(rundir, 'results', "ESReference_ERI_Worksheet.#{output_format}")
       outputs[:esrat_eri_results] = File.join(rundir, 'results', "ESRated_ERI_Results.#{output_format}")
+      outputs[:esrat_eri_worksheet] = File.join(rundir, 'results', "ESRated_ERI_Worksheet.#{output_format}")
       outputs[:esrd_rated_results] = File.join(rundir, 'results', "ESReference_ERIRatedHome.#{output_format}")
       outputs[:esrd_ref_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome.#{output_format}")
       outputs[:esrd_iad_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentDesign.#{output_format}")
@@ -124,7 +127,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
       outputs[:zerh_results] = File.join(rundir, 'results', "ZERH_Results.#{output_format}")
       outputs[:zerhrd_eri_results] = File.join(rundir, 'results', "ZERHReference_ERI_Results.#{output_format}")
+      outputs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', "ZERHReference_ERI_Worksheet.#{output_format}")
       outputs[:zerhrat_eri_results] = File.join(rundir, 'results', "ZERHRated_ERI_Results.#{output_format}")
+      outputs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', "ZERHRated_ERI_Worksheet.#{output_format}")
       outputs[:zerhrd_rated_results] = File.join(rundir, 'results', "ZERHReference_ERIRatedHome.#{output_format}")
       outputs[:zerhrd_ref_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome.#{output_format}")
       outputs[:zerhrd_iad_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentDesign.#{output_format}")
@@ -142,6 +147,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
       hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
       outputs[:iecc_eri_results] = File.join(rundir, 'results', "IECC_ERI_Results.#{output_format}")
+      outputs[:iecc_eri_worksheet] = File.join(rundir, 'results', "IECC_ERI_Worksheet.#{output_format}")
       outputs[:iecc_eri_rated_results] = File.join(rundir, 'results', "IECC_ERIRatedHome.#{output_format}")
       outputs[:iecc_eri_ref_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
@@ -328,8 +334,8 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
     XMLHelper.write_file(new_hpxml.to_doc, out_xml)
 
     _rundir, _hpxmls, csvs = _run_workflow(out_xml, test_name)
-    eri_results = _get_csv_results([csvs[:eri_results]])
-    all_results[File.basename(xml)]['e-Ratio'] = (eri_results['Total Loads TnML'] / eri_results['Total Loads TRL']).round(7)
+    worksheet_results = _get_csv_results([csvs[:eri_worksheet]])
+    all_results[File.basename(xml)]['e-Ratio'] = (worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']).round(7)
   end
   assert(all_results.size > 0)
 
