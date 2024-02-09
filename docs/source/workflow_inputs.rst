@@ -42,6 +42,8 @@ HPXML Software Info
 
 High-level software inputs are entered in ``/HPXML/SoftwareInfo``.
 
+.. _hpxml_calculations:
+
 HPXML Calculations
 ******************
 
