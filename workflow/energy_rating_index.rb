@@ -643,8 +643,12 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.is_dual_fuel = is_dfhp_primary
   c.ec_x = calculate_ec(rated_output, c.rated_id, rated_fuel, type, is_dfhp_primary)
   c.ec_r = calculate_ec(ref_output, c.ref_id, ref_fuel, type, is_dfhp_primary, load_frac)
-  c.dse_r = c.reul / c.ec_r * c.eec_r
-  c.nec_x = 0
+  if c.ec_r > 0
+    c.dse_r = c.reul / c.ec_r * c.eec_r
+  else
+    c.dse_r = 0.0
+  end
+  c.nec_x = 0.0
   if c.eec_x * c.reul > 0
     c.nec_x = (c.coeff_a * c.eec_x - c.coeff_b) * (c.ec_x * c.ec_r * c.dse_r) / (c.eec_x * c.reul)
   end
@@ -652,7 +656,7 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
     # Add whole-house fan energy to nec_x per 301 (apportioned by load) and excluded from eul_la
     c.nec_x += (whf_energy * c.load_frac)
   end
-  c.nmeul = 0
+  c.nmeul = 0.0
   if c.ec_r > 0
     c.nmeul = c.reul * (c.nec_x / c.ec_r)
   end
