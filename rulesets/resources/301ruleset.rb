@@ -1692,7 +1692,6 @@ class ERI_301_Ruleset
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
 
       #If 2022, reference WH is in default location, regardless of rated home location
-      #JEFF
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
         climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
         location = Waterheater.get_default_location(orig_bldg, climate_zone_iecc)
