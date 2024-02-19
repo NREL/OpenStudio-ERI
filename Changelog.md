@@ -5,6 +5,7 @@ __New Features__
   - `ERICalculation/Version` and `CO2IndexCalculation/Version` can now be "2022C" or "2022".
   - Allows modeling electric battery storage, including shared batteries ("2022C" or newer).
   - The `ElectricAuxiliaryEnergy` input for boilers is no longer used.
+- **Breaking change**: ERI_Results.csv and ERI_Worksheet.csv combined into a single ERI_Results.csv that better reflects the current ERI calculation components; additional fields (e.g., PEfrac) added and a few renamed/removed.
 - **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
 - Ground source heat pump model enhancements.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
