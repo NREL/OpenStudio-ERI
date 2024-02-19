@@ -353,17 +353,31 @@ def _test_resnet_hers_method(test_name, dir_name)
   test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
   File.delete(test_results_csv) if File.exist? test_results_csv
 
+  columns_of_interest = ['ERI',
+                         'REUL Heating (MBtu)',
+                         'REUL Cooling (MBtu)',
+                         'REUL Hot Water (MBtu)',
+                         'EC_r Heating (MBtu)',
+                         'EC_r Cooling (MBtu)',
+                         'EC_r Hot Water (MBtu)',
+                         'EC_x Heating (MBtu)',
+                         'EC_x Cooling (MBtu)',
+                         'EC_x Hot Water (MBtu)',
+                         'EC_x L&A (MBtu)',
+                         'IAD_Save (%)']
+
   # Run simulations
   all_results = {}
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
-    all_results[xml] = _get_csv_results([csvs[:eri_results]])
+    results = _get_csv_results([csvs[:eri_results]])
 
-    # Temporary until these are included in the RESNET spreadsheet
-    all_results[xml]['EC_x L&A (MBtu)'] += all_results[xml]['EC_x Vent (MBtu)'] + all_results[xml]['EC_x Dehumid (MBtu)']
-    all_results[xml].delete('EC_x Vent (MBtu)')
-    all_results[xml].delete('EC_x Dehumid (MBtu)')
+    # Include columns only in the RESNET accreditation spreadsheet
+    all_results[xml] = {}
+    columns_of_interest.each do |col|
+      all_results[xml][col] = results[col]
+    end
   end
   assert(all_results.size > 0)
 
