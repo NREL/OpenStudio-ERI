@@ -884,7 +884,7 @@ def _check_reference_home_components(results, test_num, version)
 
   # Mechanical ventilation
   mv_kwh_yr = nil
-  if version == '2022'
+  if version == '2022C'
     mv_kwh_yr = { 1 => 0.0, 2 => 223.9, 3 => 288.1, 4 => 763.4 }[test_num]
   elsif version == '2019'
     mv_kwh_yr = { 1 => 0.0, 2 => 222.1, 3 => 288.1, 4 => 763.4 }[test_num]
