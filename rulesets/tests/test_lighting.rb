@@ -182,6 +182,18 @@ class ERILightingTest < Minitest::Test
         assert_in_epsilon(f_grg_led, lg.fraction_of_units_in_location, 0.01)
       end
     end
+
+    assert_equal('0.012, 0.010, 0.010, 0.010, 0.011, 0.018, 0.030, 0.038, 0.041, 0.041, 0.039, 0.037, 0.036, 0.035, 0.037, 0.041, 0.050, 0.065, 0.086, 0.106, 0.110, 0.079, 0.040, 0.018', hpxml_bldg.lighting.interior_weekday_fractions)
+    assert_equal('0.012, 0.010, 0.010, 0.010, 0.011, 0.018, 0.030, 0.038, 0.041, 0.041, 0.039, 0.037, 0.036, 0.035, 0.037, 0.041, 0.050, 0.065, 0.086, 0.106, 0.110, 0.079, 0.040, 0.018', hpxml_bldg.lighting.interior_weekend_fractions)
+    assert_equal('1.19, 1.11, 1.02, 0.93, 0.84, 0.80, 0.82, 0.88, 0.98, 1.07, 1.16, 1.20', hpxml_bldg.lighting.interior_monthly_multipliers)
+    assert_equal('0.040, 0.037, 0.037, 0.035, 0.035, 0.039, 0.044, 0.041, 0.031, 0.025, 0.024, 0.024, 0.025, 0.028, 0.030, 0.035, 0.044, 0.056, 0.064, 0.068, 0.070, 0.065, 0.056, 0.047', hpxml_bldg.lighting.exterior_weekday_fractions)
+    assert_equal('0.040, 0.037, 0.037, 0.035, 0.035, 0.039, 0.044, 0.041, 0.031, 0.025, 0.024, 0.024, 0.025, 0.028, 0.030, 0.035, 0.044, 0.056, 0.064, 0.068, 0.070, 0.065, 0.056, 0.047', hpxml_bldg.lighting.exterior_weekend_fractions)
+    assert_equal('1.19, 1.11, 1.02, 0.93, 0.84, 0.80, 0.82, 0.88, 0.98, 1.07, 1.16, 1.20', hpxml_bldg.lighting.exterior_monthly_multipliers)
+    if hpxml_bldg.has_location(HPXML::LocationGarage)
+      assert_equal('0.023, 0.019, 0.015, 0.017, 0.021, 0.031, 0.042, 0.041, 0.034, 0.029, 0.027, 0.025, 0.021, 0.021, 0.021, 0.026, 0.031, 0.044, 0.084, 0.117, 0.113, 0.096, 0.063, 0.039', hpxml_bldg.lighting.garage_weekday_fractions)
+      assert_equal('0.023, 0.019, 0.015, 0.017, 0.021, 0.031, 0.042, 0.041, 0.034, 0.029, 0.027, 0.025, 0.021, 0.021, 0.021, 0.026, 0.031, 0.044, 0.084, 0.117, 0.113, 0.096, 0.063, 0.039', hpxml_bldg.lighting.garage_weekend_fractions)
+      assert_equal('1.19, 1.11, 1.02, 0.93, 0.84, 0.80, 0.82, 0.88, 0.98, 1.07, 1.16, 1.20', hpxml_bldg.lighting.garage_monthly_multipliers)
+    end
   end
 
   def _check_ceiling_fans(hpxml_bldg, cfm_per_w: nil, count: nil)
@@ -202,6 +214,12 @@ class ERILightingTest < Minitest::Test
         assert_equal(count, ceiling_fan.count)
       end
       assert_equal(0.5, hpxml_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
+    end
+
+    hpxml_bldg.ceiling_fans.each do |ceiling_fan|
+      assert_equal('0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.052, 0.057, 0.057, 0.057, 0.057, 0.057', ceiling_fan.weekday_fractions)
+      assert_equal('0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.052, 0.057, 0.057, 0.057, 0.057, 0.057', ceiling_fan.weekend_fractions)
+      assert_equal('0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0', ceiling_fan.monthly_multipliers)
     end
   end
 end

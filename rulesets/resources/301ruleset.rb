@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EnergyRatingIndex301Ruleset
+class ERI_301_Ruleset
   def self.apply_ruleset(hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
@@ -1243,9 +1243,6 @@ class EnergyRatingIndex301Ruleset
 
     # Retain heating system(s)
     orig_bldg.heating_systems.each do |orig_heating_system|
-      if [HPXML::HVACTypeBoiler].include? orig_heating_system.heating_system_type
-        orig_heating_system.electric_auxiliary_energy = HVAC.get_default_boiler_eae(orig_heating_system)
-      end
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
         fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
         airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
@@ -1260,7 +1257,8 @@ class EnergyRatingIndex301Ruleset
                                    heating_efficiency_afue: orig_heating_system.heating_efficiency_afue,
                                    heating_efficiency_percent: orig_heating_system.heating_efficiency_percent,
                                    fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
-                                   electric_auxiliary_energy: orig_heating_system.electric_auxiliary_energy,
+                                   shared_loop_watts: orig_heating_system.shared_loop_watts,
+                                   fan_coil_watts: orig_heating_system.fan_coil_watts,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    fan_watts: orig_heating_system.fan_watts,
                                    airflow_defect_ratio: airflow_defect_ratio,
@@ -1417,6 +1415,7 @@ class EnergyRatingIndex301Ruleset
                                         duct_insulation_r_value: orig_duct.duct_insulation_r_value,
                                         duct_location: orig_duct.duct_location,
                                         duct_surface_area: orig_duct.duct_surface_area,
+                                        duct_fraction_area: orig_duct.duct_fraction_area,
                                         duct_buried_insulation_level: orig_duct.duct_buried_insulation_level)
       end
     end
@@ -1778,7 +1777,8 @@ class EnergyRatingIndex301Ruleset
     # Table 4.2.2(1) - Service water heating systems
 
     has_uncond_bsmnt = new_bldg.has_location(HPXML::LocationBasementUnconditioned)
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, @cfa, @ncfl)
+    has_cond_bsmnt = new_bldg.has_location(HPXML::LocationBasementConditioned)
+    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, @cfa, @ncfl)
 
     # New hot water distribution
     new_bldg.hot_water_distributions.add(id: 'HotWaterDistribution',
@@ -1899,14 +1899,19 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_systems_batteries_rated(orig_bldg, new_bldg)
-    # Temporarily disabled until RESNET allows this.
-    # orig_bldg.batteries.each do |orig_battery|
-    #   new_bldg.batteries.add(id: orig_battery.id,
-    #                           type: orig_battery.type,
-    #                           location: orig_battery.location,
-    #                           nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
-    #                           usable_capacity_kwh: orig_battery.usable_capacity_kwh)
-    # end
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+      orig_bldg.batteries.each do |orig_battery|
+        new_bldg.batteries.add(id: orig_battery.id,
+                               is_shared_system: orig_battery.is_shared_system,
+                               type: orig_battery.type,
+                               location: orig_battery.location,
+                               nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
+                               usable_capacity_kwh: orig_battery.usable_capacity_kwh,
+                               rated_power_output: orig_battery.rated_power_output,
+                               round_trip_efficiency: orig_battery.round_trip_efficiency,
+                               number_of_bedrooms_served: orig_battery.number_of_bedrooms_served)
+      end
+    end
   end
 
   def self.set_systems_batteries_iad(orig_bldg, new_bldg)
@@ -2635,7 +2640,6 @@ class EnergyRatingIndex301Ruleset
                                  heating_efficiency_afue: 0.80,
                                  fraction_heat_load_served: load_frac,
                                  htg_seed_id: seed_id)
-    new_bldg.heating_systems[-1].electric_auxiliary_energy = HVAC.get_default_boiler_eae(new_bldg.heating_systems[-1])
   end
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, htg_load_frac, clg_load_frac, orig_htg_system: nil, orig_clg_system: nil, is_all_electric: false)

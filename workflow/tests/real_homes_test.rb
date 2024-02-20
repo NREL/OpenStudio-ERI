@@ -12,7 +12,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
-class EnergyRatingIndexTest < Minitest::Test
+class RealHomesTest < Minitest::Test
   def setup
     @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
     FileUtils.mkdir_p @test_results_dir

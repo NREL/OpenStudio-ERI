@@ -545,7 +545,6 @@
                 <Value>0.95</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.9</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>211.0</ElectricAuxiliaryEnergy>
               <extension>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
@@ -564,7 +563,6 @@
                 <Value>0.706</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>0.0</ElectricAuxiliaryEnergy>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>

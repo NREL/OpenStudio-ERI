@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class EnergyStarZeroEnergyReadyHomeRuleset
+class ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
-    # Use latest version of 301-2019
+    # Use latest version of ANSI 301
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
@@ -850,7 +850,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return if orig_bldg.water_heating_systems.size == 0
 
     # Exhibit 2 - Service Water Heating Systems: Use the same Gallons per Day as Table 4.2.2(1) - Service water heating systems
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl).round(3)
+    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @has_cond_bsmnt, @cfa, @ncfl).round(3)
 
     if orig_bldg.hot_water_distributions.size == 0
       sys_id = 'HotWaterDistribution'
@@ -1173,7 +1173,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     ducts_in_uncond_attic = false
     all_ducts.each do |duct|
-      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
+      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) &&
+         (!duct.duct_surface_area.to_f.zero? || !duct.duct_fraction_area.to_f.zero?)
         ducts_in_uncond_attic = true
       end
     end
