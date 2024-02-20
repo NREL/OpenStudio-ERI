@@ -2900,19 +2900,21 @@ Each exhaust only fan is entered as a ``/HPXML/Building/BuildingDetails/Systems/
 
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional inputs for shared systems are described in :ref:`vent_fan_shared`.
-  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_:
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per ANSI/RESNET/ICC 301-2022:
          
-         Qfan = Qtot - (Qinf/Qtot) * (Qinf * Aext)
+         Qfan = required mechanical ventilation rate (cfm) = ((Qtot^2 – 4*Qinf_eff^2 + 2*Qinf_eff*Qtot + Qinf_eff^2)^0.5 + Qtot - Qinf_eff) / 2
          
          where
          
-         Qfan = required mechanical ventilation rate (cfm)
-         
          Qtot = total required ventilation rate (cfm) = 0.03 * ConditionedFloorArea + 7.5*(NumberofBedrooms + 1)
+         
+         Qinf_eff = Qinf * Aext
          
          Qinf = infiltration rate (cfm)
          
          Aext = 1 if single-family detached or TypeOfInfiltrationLeakage is "unit exterior only", otherwise ratio of SFA/MF exterior envelope surface area to total envelope surface area as described in :ref:`air_infiltration`
+         
+         OpenStudio-HPXML does not currently support defaulting flow rates for multiple mechanical ventilation fans.
          
   .. [#] HoursInOperation is optional unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed because the runtime is automatically calculated for each hour (based on the air handler runtime) to maintain the hourly target ventilation rate.
   .. [#] If FanPower not provided, defaults to 0.35 W/cfm based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
@@ -2938,19 +2940,21 @@ Each supply only fan is entered as a ``/HPXML/Building/BuildingDetails/Systems/M
 
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional inputs for shared systems are described in :ref:`vent_fan_shared`.
-  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_:
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per ANSI/RESNET/ICC 301-2022:
          
-         Qfan = Qtot - (Qinf/Qtot) * (Qinf * Aext)
+         Qfan = required mechanical ventilation rate (cfm) = ((Qtot^2 – 4*Qinf_eff^2 + 2*Qinf_eff*Qtot + Qinf_eff^2)^0.5 + Qtot - Qinf_eff) / 2
          
          where
          
-         Qfan = required mechanical ventilation rate (cfm)
-         
          Qtot = total required ventilation rate (cfm) = 0.03 * ConditionedFloorArea + 7.5*(NumberofBedrooms + 1)
+         
+         Qinf_eff = Qinf * Aext
          
          Qinf = infiltration rate (cfm)
          
          Aext = 1 if single-family detached or TypeOfInfiltrationLeakage is "unit exterior only", otherwise ratio of SFA/MF exterior envelope surface area to total envelope surface area as described in :ref:`air_infiltration`
+         
+         OpenStudio-HPXML does not currently support defaulting flow rates for multiple mechanical ventilation fans.
          
   .. [#] HoursInOperation is optional unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed because the runtime is automatically calculated for each hour (based on the air handler runtime) to maintain the hourly target ventilation rate.
   .. [#] If FanPower not provided, defaults to 0.35 W/cfm based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
@@ -2976,19 +2980,21 @@ Each balanced (supply and exhaust) fan is entered as a ``/HPXML/Building/Buildin
 
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional inputs for shared systems are described in :ref:`vent_fan_shared`.
-  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_:
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per ANSI/RESNET/ICC 301-2022:
          
-         Qfan = Qtot - (Qinf * Aext)
+         Qfan = required mechanical ventilation rate (cfm) = Qtot - Qinf_eff
          
          where
          
-         Qfan = required mechanical ventilation rate (cfm)
-         
          Qtot = total required ventilation rate (cfm) = 0.03 * ConditionedFloorArea + 7.5*(NumberofBedrooms + 1)
+         
+         Qinf_eff = Qinf * Aext
          
          Qinf = infiltration rate (cfm)
          
          Aext = 1 if single-family detached or TypeOfInfiltrationLeakage is "unit exterior only", otherwise ratio of SFA/MF exterior envelope surface area to total envelope surface area as described in :ref:`air_infiltration`
+         
+         OpenStudio-HPXML does not currently support defaulting flow rates for multiple mechanical ventilation fans.
          
   .. [#] If FanPower not provided, defaults to 0.7 W/cfm based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
 
@@ -3014,19 +3020,21 @@ Each heat recovery ventilator (HRV) is entered as a ``/HPXML/Building/BuildingDe
 
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional inputs for shared systems are described in :ref:`vent_fan_shared`.
-  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_:
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per ANSI/RESNET/ICC 301-2022:
          
-         Qfan = Qtot - (Qinf * Aext)
+         Qfan = required mechanical ventilation rate (cfm) = Qtot - Qinf_eff
          
          where
          
-         Qfan = required mechanical ventilation rate (cfm)
-         
          Qtot = total required ventilation rate (cfm) = 0.03 * ConditionedFloorArea + 7.5*(NumberofBedrooms + 1)
+         
+         Qinf_eff = Qinf * Aext
          
          Qinf = infiltration rate (cfm)
          
          Aext = 1 if single-family detached or TypeOfInfiltrationLeakage is "unit exterior only", otherwise ratio of SFA/MF exterior envelope surface area to total envelope surface area as described in :ref:`air_infiltration`
+         
+         OpenStudio-HPXML does not currently support defaulting flow rates for multiple mechanical ventilation fans.
          
   .. [#] Providing AdjustedSensibleRecoveryEfficiency (ASRE) is preferable to SensibleRecoveryEfficiency (SRE).
   .. [#] If FanPower not provided, defaults to 1.0 W/cfm based on `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
@@ -3054,19 +3062,21 @@ Each energy recovery ventilator (ERV) is entered as a ``/HPXML/Building/Building
 
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional inputs for shared systems are described in :ref:`vent_fan_shared`.
-  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_:
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per ANSI/RESNET/ICC 301-2022:
          
-         Qfan = Qtot - (Qinf * Aext)
+         Qfan  = required mechanical ventilation rate (cfm) = Qtot - Qinf_eff
          
          where
          
-         Qfan = required mechanical ventilation rate (cfm)
-         
          Qtot = total required ventilation rate (cfm) = 0.03 * ConditionedFloorArea + 7.5*(NumberofBedrooms + 1)
+         
+         Qinf_eff = Qinf * Aext
          
          Qinf = infiltration rate (cfm)
          
          Aext = 1 if single-family detached or TypeOfInfiltrationLeakage is "unit exterior only", otherwise ratio of SFA/MF exterior envelope surface area to total envelope surface area as described in :ref:`air_infiltration`
+         
+         OpenStudio-HPXML does not currently support defaulting flow rates for multiple mechanical ventilation fans.
          
   .. [#] Providing AdjustedTotalRecoveryEfficiency (ATRE) is preferable to TotalRecoveryEfficiency (TRE).
   .. [#] Providing AdjustedSensibleRecoveryEfficiency (ASRE) is preferable to SensibleRecoveryEfficiency (SRE).
@@ -3098,19 +3108,21 @@ Each central fan integrated supply (CFIS) system is entered as a ``/HPXML/Buildi
   .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan" or "supplemental fan".
   .. [#] SupplementalFan must reference another ``VentilationFan`` where UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
   .. [#] SupplementalFan only required if AdditionalRuntimeOperatingMode is "supplemental fan".
-  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per `ASHRAE 62.2-2019 <https://www.techstreet.com/ashrae/standards/ashrae-62-2-2019?product_id=2087691>`_:
+  .. [#] If flow rate not provided, defaults to the required mechanical ventilation rate per ANSI/RESNET/ICC 301-2022:
          
-         Qfan = Qtot - (Qinf/Qtot) * (Qinf * Aext)
+         Qfan = required mechanical ventilation rate (cfm) = ((Qtot^2 – 4*Qinf_eff^2 + 2*Qinf_eff*Qtot + Qinf_eff^2)^0.5 + Qtot - Qinf_eff) / 2
          
          where
          
-         Qfan = required mechanical ventilation rate (cfm)
-         
          Qtot = total required ventilation rate (cfm) = 0.03 * ConditionedFloorArea + 7.5*(NumberofBedrooms + 1)
+         
+         Qinf_eff = Qinf * Aext
          
          Qinf = infiltration rate (cfm)
          
          Aext = 1 if single-family detached or TypeOfInfiltrationLeakage is "unit exterior only", otherwise ratio of SFA/MF exterior envelope surface area to total envelope surface area as described in :ref:`air_infiltration`
+         
+         OpenStudio-HPXML does not currently support defaulting flow rates for multiple mechanical ventilation fans.
          
   .. [#] The flow rate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
   .. [#] The HoursInOperation and the flow rate are combined to form the hourly target ventilation rate (e.g., inputs of 90 cfm and 8 hrs/day produce an hourly target ventilation rate of 30 cfm).
