@@ -2940,6 +2940,16 @@ def create_sample_hpxmls
   puts 'Reformatting real_homes HPXMLs...'
   Dir['workflow/real_homes/*.xml'].each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
+    hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.co2index_calculation_version = 'latest'
+    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
+    if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
+      hpxml.header.zerh_calculation_version = ZERHConstants.MFVer2
+      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2
+    else
+      hpxml.header.zerh_calculation_version = ZERHConstants.SFVer2
+      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
+    end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end
 end
