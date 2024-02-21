@@ -2520,8 +2520,8 @@ def create_sample_hpxmls
 
     # Handle different inputs for ERI
 
-    hpxml.header.eri_calculation_version = 'latest'
-    hpxml.header.co2index_calculation_version = 'latest'
+    hpxml.header.eri_calculation_version = Constants.ERIVersions[-3]
+    hpxml.header.co2index_calculation_version = Constants.ERIVersions[-3]
     hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.header.timestep = nil

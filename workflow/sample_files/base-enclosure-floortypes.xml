@@ -9,10 +9,10 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>latest</Version>
+        <Version>2019ABCD</Version>
       </ERICalculation>
       <CO2IndexCalculation>
-        <Version>latest</Version>
+        <Version>2019ABCD</Version>
       </CO2IndexCalculation>
       <EnergyStarCalculation>
         <Version>SF_National_3.2</Version>
