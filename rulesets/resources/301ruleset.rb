@@ -1307,13 +1307,15 @@ class ERI_301_Ruleset
                                    integrated_heating_system_capacity: orig_cooling_system.integrated_heating_system_capacity,
                                    integrated_heating_system_efficiency_percent: orig_cooling_system.integrated_heating_system_efficiency_percent,
                                    integrated_heating_system_fraction_heat_load_served: orig_cooling_system.integrated_heating_system_fraction_heat_load_served,
-                                   htg_seed_id: htg_seed_id,
-                                   hvac_perf_data_capacity_type: orig_cooling_system.hvac_perf_data_capacity_type,
-                                   hvac_perf_data_cooling_outdoor_temperatures: orig_cooling_system.hvac_perf_data_cooling_outdoor_temperatures,
-                                   hvac_perf_data_cooling_min_speed_capacities: orig_cooling_system.hvac_perf_data_cooling_min_speed_capacities,
-                                   hvac_perf_data_cooling_max_speed_capacities: orig_cooling_system.hvac_perf_data_cooling_max_speed_capacities,
-                                   hvac_perf_data_cooling_min_speed_cops: orig_cooling_system.hvac_perf_data_cooling_min_speed_cops,
-                                   hvac_perf_data_cooling_max_speed_cops: orig_cooling_system.hvac_perf_data_cooling_max_speed_cops)
+                                   htg_seed_id: htg_seed_id)
+      if [HPXML::HVACTypeCentralAirConditioner, HPXML::HVACTypeMiniSplitAirConditioner].include?(orig_cooling_system.cooling_system_type) && orig_cooling_system.compressor_type == HPXML::HVACCompressorTypeVariableSpeed
+        new_bldg.cooling_systems[-1].hvac_perf_data_capacity_type = orig_cooling_system.hvac_perf_data_capacity_type
+        new_bldg.cooling_systems[-1].hvac_perf_data_cooling_outdoor_temperatures = orig_cooling_system.hvac_perf_data_cooling_outdoor_temperatures
+        new_bldg.cooling_systems[-1].hvac_perf_data_cooling_min_speed_capacities = orig_cooling_system.hvac_perf_data_cooling_min_speed_capacities
+        new_bldg.cooling_systems[-1].hvac_perf_data_cooling_max_speed_capacities = orig_cooling_system.hvac_perf_data_cooling_max_speed_capacities
+        new_bldg.cooling_systems[-1].hvac_perf_data_cooling_min_speed_cops = orig_cooling_system.hvac_perf_data_cooling_min_speed_cops
+        new_bldg.cooling_systems[-1].hvac_perf_data_cooling_max_speed_cops = orig_cooling_system.hvac_perf_data_cooling_max_speed_cops
+      end
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1369,18 +1371,20 @@ class ERI_301_Ruleset
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio,
                               htg_seed_id: orig_heat_pump.htg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.htg_seed_id,
-                              clg_seed_id: orig_heat_pump.clg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.clg_seed_id,
-                              hvac_perf_data_capacity_type: orig_heat_pump.hvac_perf_data_capacity_type,
-                              hvac_perf_data_heating_outdoor_temperatures: orig_heat_pump.hvac_perf_data_heating_outdoor_temperatures,
-                              hvac_perf_data_heating_min_speed_capacities: orig_heat_pump.hvac_perf_data_heating_min_speed_capacities,
-                              hvac_perf_data_heating_max_speed_capacities: orig_heat_pump.hvac_perf_data_heating_max_speed_capacities,
-                              hvac_perf_data_heating_min_speed_cops: orig_heat_pump.hvac_perf_data_heating_min_speed_cops,
-                              hvac_perf_data_heating_max_speed_cops: orig_heat_pump.hvac_perf_data_heating_max_speed_cops,
-                              hvac_perf_data_cooling_outdoor_temperatures: orig_heat_pump.hvac_perf_data_cooling_outdoor_temperatures,
-                              hvac_perf_data_cooling_min_speed_capacities: orig_heat_pump.hvac_perf_data_cooling_min_speed_capacities,
-                              hvac_perf_data_cooling_max_speed_capacities: orig_heat_pump.hvac_perf_data_cooling_max_speed_capacities,
-                              hvac_perf_data_cooling_min_speed_cops: orig_heat_pump.hvac_perf_data_cooling_min_speed_cops,
-                              hvac_perf_data_cooling_max_speed_cops: orig_heat_pump.hvac_perf_data_cooling_max_speed_cops)
+                              clg_seed_id: orig_heat_pump.clg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.clg_seed_id)
+      if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit].include?(orig_heat_pump.heat_pump_type) && orig_heat_pump.compressor_type == HPXML::HVACCompressorTypeVariableSpeed
+        new_bldg.heat_pumps[-1].hvac_perf_data_capacity_type = orig_heat_pump.hvac_perf_data_capacity_type
+        new_bldg.heat_pumps[-1].hvac_perf_data_heating_outdoor_temperatures = orig_heat_pump.hvac_perf_data_heating_outdoor_temperatures
+        new_bldg.heat_pumps[-1].hvac_perf_data_heating_min_speed_capacities = orig_heat_pump.hvac_perf_data_heating_min_speed_capacities
+        new_bldg.heat_pumps[-1].hvac_perf_data_heating_max_speed_capacities = orig_heat_pump.hvac_perf_data_heating_max_speed_capacities
+        new_bldg.heat_pumps[-1].hvac_perf_data_heating_min_speed_cops = orig_heat_pump.hvac_perf_data_heating_min_speed_cops
+        new_bldg.heat_pumps[-1].hvac_perf_data_heating_max_speed_cops = orig_heat_pump.hvac_perf_data_heating_max_speed_cops
+        new_bldg.heat_pumps[-1].hvac_perf_data_cooling_outdoor_temperatures = orig_heat_pump.hvac_perf_data_cooling_outdoor_temperatures
+        new_bldg.heat_pumps[-1].hvac_perf_data_cooling_min_speed_capacities = orig_heat_pump.hvac_perf_data_cooling_min_speed_capacities
+        new_bldg.heat_pumps[-1].hvac_perf_data_cooling_max_speed_capacities = orig_heat_pump.hvac_perf_data_cooling_max_speed_capacities
+        new_bldg.heat_pumps[-1].hvac_perf_data_cooling_min_speed_cops = orig_heat_pump.hvac_perf_data_cooling_min_speed_cops
+        new_bldg.heat_pumps[-1].hvac_perf_data_cooling_max_speed_cops = orig_heat_pump.hvac_perf_data_cooling_max_speed_cops
+      end
     end
     # Add reference heat pump for residual load
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
