@@ -272,6 +272,7 @@ class ERI_301_Ruleset
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
     @bldg_type = orig_bldg.building_construction.residential_facility_type
+    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
@@ -292,6 +293,7 @@ class ERI_301_Ruleset
   def self.set_summary_rated(orig_bldg, new_bldg)
     # Global variables
     @bldg_type = orig_bldg.building_construction.residential_facility_type
+    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
@@ -312,6 +314,7 @@ class ERI_301_Ruleset
   def self.set_summary_iad(orig_bldg, new_bldg)
     # Global variables
     @bldg_type = orig_bldg.building_construction.residential_facility_type
+    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = 2400.0
     @nbeds = 3
     @ncfl = 2.0
@@ -2472,7 +2475,8 @@ class ERI_301_Ruleset
     end
 
     if not min_nach.nil?
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @infil_height, 8.202, @weather)
+      avg_ceiling_height = orig_bldg.building_construction.average_ceiling_height
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @infil_height, avg_ceiling_height, @weather)
       min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infil_volume)
       if ach50 < min_ach50
         ach50 = min_ach50
