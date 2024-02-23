@@ -271,8 +271,8 @@ class ERI_301_Ruleset
 
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
+    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
-    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
@@ -286,13 +286,15 @@ class ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
+    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
+    new_bldg.building_construction.conditioned_building_volume = orig_bldg.building_construction.conditioned_building_volume
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_rated(orig_bldg, new_bldg)
     # Global variables
+    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
-    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
@@ -306,13 +308,15 @@ class ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
+    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
+    new_bldg.building_construction.conditioned_building_volume = orig_bldg.building_construction.conditioned_building_volume
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_iad(orig_bldg, new_bldg)
     # Global variables
+    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
-    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = 2400.0
     @nbeds = 3
     @ncfl = 2.0
@@ -326,6 +330,7 @@ class ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = @nbeds
     new_bldg.building_construction.conditioned_floor_area = @cfa
     new_bldg.building_construction.residential_facility_type = @bldg_type
+    new_bldg.building_construction.average_ceiling_height = 8.5
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
@@ -2453,7 +2458,7 @@ class ERI_301_Ruleset
       # This should only happen when the home has no mechanical ventilation, because
       # otherwise the existing ventilation fans would have been increased instead.
       if min_q_fan > q_fans.values.sum
-        q_fan_bal_remain = min_q_fan - q_fans.values.sum
+        q_fan_bal_remain = calc_rated_home_qfan(orig_bldg, true, 0.0)
       end
     end
 
@@ -3083,4 +3088,14 @@ def calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value
   end
 
   fail "Unable to calculate area-weighted avg for #{attribute}."
+end
+
+def apply_default_average_ceiling_height(orig_bldg)
+  if orig_bldg.building_construction.average_ceiling_height.nil?
+    if not orig_bldg.building_construction.conditioned_building_volume.nil?
+      orig_bldg.building_construction.average_ceiling_height = (orig_bldg.building_construction.conditioned_building_volume / orig_bldg.building_construction.conditioned_floor_area).round(2)
+    else
+      orig_bldg.building_construction.average_ceiling_height = 8.2
+    end
+  end
 end
