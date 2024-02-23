@@ -2472,7 +2472,7 @@ class ERI_301_Ruleset
     end
 
     if not min_nach.nil?
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @infil_height, @weather)
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, @infil_height, 8.202, @weather)
       min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, @infil_volume)
       if ach50 < min_ach50
         ach50 = min_ach50
