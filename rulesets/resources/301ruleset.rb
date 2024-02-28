@@ -2286,9 +2286,8 @@ class ERI_301_Ruleset
       return
     end
 
-    medium_cfm = 3000.0
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
-                              efficiency: medium_cfm / HVAC.get_default_ceiling_fan_power(),
+                              label_energy_use: HVAC.get_default_ceiling_fan_power(),
                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
@@ -2311,16 +2310,17 @@ class ERI_301_Ruleset
     orig_bldg.ceiling_fans.each do |orig_ceiling_fan|
       num_cfs += orig_ceiling_fan.count
       cfm_per_w = orig_ceiling_fan.efficiency
-      if cfm_per_w.nil?
-        fan_power_w = HVAC.get_default_ceiling_fan_power()
-        cfm_per_w = medium_cfm / fan_power_w
+      label_energy_use = orig_ceiling_fan.label_energy_use
+      if !label_energy_use.nil? # priority if both provided
+        sum_w += (label_energy_use * orig_ceiling_fan.count)
+      elsif !cfm_per_w.nil?
+        sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.count)
       end
-      sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.count)
     end
     avg_w = sum_w / num_cfs
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
-                              efficiency: medium_cfm / avg_w,
+                              label_energy_use: avg_w,
                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end

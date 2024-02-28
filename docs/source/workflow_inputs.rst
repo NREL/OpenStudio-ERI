@@ -2632,13 +2632,13 @@ HPXML Ceiling Fans
 
 Each ceiling fan is entered as a ``/HPXML/Building/BuildingDetails/Lighting/CeilingFan``.
 
-  =========================================  =======  =======  ===========  ========  ========  ==============================
-  Element                                    Type     Units    Constraints  Required  Default   Notes
-  =========================================  =======  =======  ===========  ========  ========  ==============================
-  ``SystemIdentifier``                       id                             Yes                 Unique identifier
-  ``Airflow[FanSpeed="medium"]/Efficiency``  double   cfm/W    > 0          Yes                 Efficiency at medium speed
-  ``Count``                                  integer           > 0          Yes                 Number of similar ceiling fans
-  =========================================  =======  =======  ===========  ========  ========  ==============================
+  =====================================================================  =======  ==========  ===========  ========  ========  ==============================
+  Element                                                                Type     Units       Constraints  Required  Default   Notes
+  =====================================================================  =======  ==========  ===========  ========  ========  ==============================
+  ``SystemIdentifier``                                                   id                                Yes                 Unique identifier
+  ``Airflow[FanSpeed="medium"]/Efficiency`` and/or ``LabelEnergyUse``    double   cfm/W or W  > 0          Yes                 Efficiency at medium speed or EnergyGuide label average energy use
+  ``Count``                                                              integer              > 0          Yes                 Number of similar ceiling fans
+  =====================================================================  =======  ==========  ===========  ========  ========  ==============================
 
 .. _hpxmllocations:
 
