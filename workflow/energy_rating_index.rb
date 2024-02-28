@@ -473,7 +473,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   generation_elec_produced = get_end_use(rated_output, EUT::Generator, FT::Elec)
   generation_fuel_consumed = get_end_use(rated_output, EUT::Generator, non_elec_fuels)
   results[:opp] = calculate_opp(renewable_energy_limit, renewable_elec_produced, generation_elec_produced, generation_fuel_consumed)
-  results[:pefrac] = calculate_pefrac(results[:teu], results[:opp])
+  results[:bsl] = get_end_use(rated_output, EUT::Battery, FT::Elec)
+  results[:pefrac] = calculate_pefrac(results[:teu], results[:opp], results[:bsl])
 
   results[:eul_dh] = calculate_dh(rated_output)
   results[:eul_mv] = calculate_mv(rated_output)
@@ -508,7 +509,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
              results[:eri_cool].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_dhw].map { |c| c.ec_x }.sum(0.0) +
              results[:eul_la] + results[:eul_mv] + results[:eul_dh] + whf_energy +
-             renewable_elec_produced + generation_elec_produced + generation_fuel_consumed
+             renewable_elec_produced + generation_elec_produced + generation_fuel_consumed +
+             results[:bsl]
   total_ec_x = get_fuel_use(rated_output, all_fuels, use_net: true)
   if (sum_ec_x - total_ec_x).abs > 0.1
     fail "Sum of energy consumptions (#{sum_ec_x.round(2)}) do not match total (#{total_ec_x.round(2)}) for Rated Home."
@@ -641,8 +643,12 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.is_dual_fuel = is_dfhp_primary
   c.ec_x = calculate_ec(rated_output, c.rated_id, rated_fuel, type, is_dfhp_primary)
   c.ec_r = calculate_ec(ref_output, c.ref_id, ref_fuel, type, is_dfhp_primary, load_frac)
-  c.dse_r = c.reul / c.ec_r * c.eec_r
-  c.nec_x = 0
+  if c.ec_r > 0
+    c.dse_r = c.reul / c.ec_r * c.eec_r
+  else
+    c.dse_r = 0.0
+  end
+  c.nec_x = 0.0
   if c.eec_x * c.reul > 0
     c.nec_x = (c.coeff_a * c.eec_x - c.coeff_b) * (c.ec_x * c.ec_r * c.dse_r) / (c.eec_x * c.reul)
   end
@@ -650,7 +656,7 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
     # Add whole-house fan energy to nec_x per 301 (apportioned by load) and excluded from eul_la
     c.nec_x += (whf_energy * c.load_frac)
   end
-  c.nmeul = 0
+  c.nmeul = 0.0
   if c.ec_r > 0
     c.nmeul = c.reul * (c.nec_x / c.ec_r)
   end
@@ -722,10 +728,10 @@ def calculate_opp(renewable_energy_limit, renewable_elec_produced, generation_el
   return opp
 end
 
-def calculate_pefrac(teu, opp)
+def calculate_pefrac(teu, opp, bsl)
   pefrac = 1.0
   if teu > 0
-    pefrac = (teu - opp) / teu
+    pefrac = (teu - opp + bsl) / teu
   end
   return pefrac
 end
@@ -807,7 +813,7 @@ def calculate_eri(design_outputs, resultsdir, output_format, output_filename_pre
                            renewable_energy_limit: renewable_energy_limit)
 
   if not skip_csv
-    write_eri_results(results, resultsdir, design_outputs, results_iad, output_filename_prefix, output_format)
+    write_eri_results(results, resultsdir, results_iad, output_filename_prefix, output_format)
   end
 
   return results
@@ -828,106 +834,89 @@ def calculate_co2_index(design_outputs, resultsdir, output_format)
   return results
 end
 
-def write_eri_results(results, resultsdir, design_outputs, results_iad, output_filename_prefix, output_format)
-  ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
-
+def write_eri_results(results, resultsdir, results_iad, output_filename_prefix, output_format)
   output_filename_prefix = "#{output_filename_prefix}_" unless output_filename_prefix.nil?
 
   # ERI Results file
   results_csv = File.join(resultsdir, "#{output_filename_prefix}ERI_Results.#{output_format}")
   results_out = []
   results_out << ['ERI', results[:eri].round(2)]
+
+  # ERI Components
+  results_out << ['Total Loads TRL', results[:trl].round(4)]
+  results_out << ['Total Loads TnML', results[:tnml].round(4)]
+  if not results_iad.nil?
+    results_out << ['Total Loads TRL*IAF', (results[:trl] * results[:iaf_rh]).round(4)]
+    results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
+    results_out << ['IAF CFA', results[:iaf_cfa].round(4)]
+    results_out << ['IAF NBR', results[:iaf_nbr].round(4)]
+    results_out << ['IAF NS', results[:iaf_ns].round(4)]
+    results_out << ['IAF RH', results[:iaf_rh].round(4)]
+  end
+  results_out << ['PEfrac', results[:pefrac].round(4)]
+  results_out << ['TEU (MBtu)', results[:teu].round(4)]
+  results_out << ['OPP (MBtu)', results[:opp].round(4)]
+  results_out << ['BSL (MBtu)', results[:bsl].round(4)]
+
+  # Reference Home
+  results_out << [nil] if output_format == 'csv' # line break
   results_out << ['REUL Heating (MBtu)', results[:eri_heat].map { |c| c.reul.round(2) }.join(',')]
   results_out << ['REUL Cooling (MBtu)', results[:eri_cool].map { |c| c.reul.round(2) }.join(',')]
   results_out << ['REUL Hot Water (MBtu)', results[:eri_dhw].map { |c| c.reul.round(2) }.join(',')]
   results_out << ['EC_r Heating (MBtu)', results[:eri_heat].map { |c| c.ec_r.round(2) }.join(',')]
   results_out << ['EC_r Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_r.round(2) }.join(',')]
   results_out << ['EC_r Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_r.round(2) }.join(',')]
+  results_out << ['EC_r L&A (MBtu)', results[:reul_la].round(2)]
+  results_out << ['EC_r Vent (MBtu)', results[:reul_mv].round(2)]
+  results_out << ['EC_r Dehumid (MBtu)', results[:reul_dh].round(2)]
+  results_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(4) }.join(',')]
+  results_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(4) }.join(',')]
+  results_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(4) }.join(',')]
+  results_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(4) }.join(',')]
+  results_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(4) }.join(',')]
+  results_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(4) }.join(',')]
+
+  # Rated Home
+  results_out << [nil] if output_format == 'csv' # line break
+  results_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(4) }.join(',')]
+  results_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(4) }.join(',')]
+  results_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(4) }.join(',')]
+  if results[:eri_vent_preheat].empty?
+    results_out << ['nMEUL Vent Preheat', 0.0]
+  else
+    results_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(4) }.join(',')]
+  end
+  if results[:eri_vent_precool].empty?
+    results_out << ['nMEUL Vent Precool', 0.0]
+  else
+    results_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(4) }.join(',')]
+  end
+  results_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(4) }.join(',')]
+  results_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(4) }.join(',')]
+  results_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(4) }.join(',')]
   results_out << ['EC_x Heating (MBtu)', results[:eri_heat].map { |c| c.ec_x.round(2) }.join(',')]
   results_out << ['EC_x Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_x.round(2) }.join(',')]
   results_out << ['EC_x Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_x.round(2) }.join(',')]
   results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(2)]
   results_out << ['EC_x Vent (MBtu)', results[:eul_mv].round(2)]
   results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(2)]
-  if not results_iad.nil?
-    results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
-  end
+  results_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(4) }.join(',')]
+  results_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(4) }.join(',')]
+  results_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(4) }.join(',')]
+
+  # Coefficients
+  results_out << [nil] if output_format == 'csv' # line break
+  results_out << ['Coeff Heating a', results[:eri_heat].map { |c| c.coeff_a.round(4) }.join(',')]
+  results_out << ['Coeff Heating b', results[:eri_heat].map { |c| c.coeff_b.round(4) }.join(',')]
+  results_out << ['Coeff Cooling a', results[:eri_cool].map { |c| c.coeff_a.round(4) }.join(',')]
+  results_out << ['Coeff Cooling b', results[:eri_cool].map { |c| c.coeff_b.round(4) }.join(',')]
+  results_out << ['Coeff Hot Water a', results[:eri_dhw].map { |c| c.coeff_a.round(4) }.join(',')]
+  results_out << ['Coeff Hot Water b', results[:eri_dhw].map { |c| c.coeff_b.round(4) }.join(',')]
+
   if output_format == 'csv'
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
   elsif output_format == 'json'
     File.open(results_csv, 'wb') { |json| json.write(JSON.pretty_generate(results_out.to_h)) }
-  end
-
-  # ERI Worksheet file
-  worksheet_csv = File.join(resultsdir, "#{output_filename_prefix}ERI_Worksheet.#{output_format}")
-  worksheet_out = []
-  worksheet_out << ['Coeff Heating a', results[:eri_heat].map { |c| c.coeff_a.round(4) }.join(',')]
-  worksheet_out << ['Coeff Heating b', results[:eri_heat].map { |c| c.coeff_b.round(4) }.join(',')]
-  worksheet_out << ['Coeff Cooling a', results[:eri_cool].map { |c| c.coeff_a.round(4) }.join(',')]
-  worksheet_out << ['Coeff Cooling b', results[:eri_cool].map { |c| c.coeff_b.round(4) }.join(',')]
-  worksheet_out << ['Coeff Hot Water a', results[:eri_dhw].map { |c| c.coeff_a.round(4) }.join(',')]
-  worksheet_out << ['Coeff Hot Water b', results[:eri_dhw].map { |c| c.coeff_b.round(4) }.join(',')]
-  worksheet_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(4) }.join(',')]
-  worksheet_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(4) }.join(',')]
-  worksheet_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(4) }.join(',')]
-  worksheet_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(4) }.join(',')]
-  worksheet_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(4) }.join(',')]
-  worksheet_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(4) }.join(',')]
-  worksheet_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(4) }.join(',')]
-  worksheet_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(4) }.join(',')]
-  worksheet_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(4) }.join(',')]
-  worksheet_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(4) }.join(',')]
-  worksheet_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(4) }.join(',')]
-  worksheet_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(4) }.join(',')]
-  if results[:eri_vent_preheat].empty?
-    worksheet_out << ['nMEUL Vent Preheat', 0.0]
-  else
-    worksheet_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(4) }.join(',')]
-  end
-  if results[:eri_vent_precool].empty?
-    worksheet_out << ['nMEUL Vent Precool', 0.0]
-  else
-    worksheet_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(4) }.join(',')]
-  end
-  if not results_iad.nil?
-    worksheet_out << ['IAF CFA', results[:iaf_cfa].round(4)]
-    worksheet_out << ['IAF NBR', results[:iaf_nbr].round(4)]
-    worksheet_out << ['IAF NS', results[:iaf_ns].round(4)]
-    worksheet_out << ['IAF RH', results[:iaf_rh].round(4)]
-  end
-  worksheet_out << ['Total Loads TnML', results[:tnml].round(4)]
-  worksheet_out << ['Total Loads TRL', results[:trl].round(4)]
-  if not results_iad.nil?
-    worksheet_out << ['Total Loads TRL*IAF', (results[:trl] * results[:iaf_rh]).round(4)]
-  end
-  worksheet_out << ['ERI', results[:eri].round(2)]
-  worksheet_out << [nil] if output_format == 'csv' # line break
-  worksheet_out << ['Ref Home CFA', results[:rated_cfa]]
-  worksheet_out << ['Ref Home Nbr', results[:rated_nbr]]
-  if not results_iad.nil?
-    worksheet_out << ['Ref Home NS', results[:rated_nst]]
-  end
-  worksheet_out << ['Ref dehumid', results[:reul_dh].round(2)]
-  worksheet_out << ['Ref L&A resMELs', get_end_use(ref_output, EUT::PlugLoads, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A intLgt', (get_end_use(ref_output, EUT::LightsInterior, FT::Elec) +
-                                       get_end_use(ref_output, EUT::LightsGarage, FT::Elec)).round(2)]
-  worksheet_out << ['Ref L&A extLgt', get_end_use(ref_output, EUT::LightsExterior, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A Fridg', get_end_use(ref_output, EUT::Refrigerator, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A TVs', get_end_use(ref_output, EUT::Television, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A R/O', get_end_use(ref_output, EUT::RangeOven, all_fuels).round(2)]
-  worksheet_out << ['Ref L&A cDryer', get_end_use(ref_output, EUT::ClothesDryer, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A dWash', get_end_use(ref_output, EUT::Dishwasher, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A cWash', get_end_use(ref_output, EUT::ClothesWasher, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A mechV', results[:reul_mv].round(2)]
-  worksheet_out << ['Ref L&A ceilFan', get_end_use(ref_output, EUT::CeilingFan, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A total', (results[:reul_la] + results[:reul_mv]).round(2)]
-  if output_format == 'csv'
-    CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
-  elsif output_format == 'json'
-    File.open(worksheet_csv, 'wb') { |json| json.write(JSON.pretty_generate(worksheet_out.to_h)) }
   end
 end
 

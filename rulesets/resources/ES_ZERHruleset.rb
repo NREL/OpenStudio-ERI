@@ -2,7 +2,7 @@
 
 class ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
-    # Use latest version of 301-2019
+    # Use latest version of ANSI 301
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
@@ -1173,7 +1173,8 @@ class ES_ZERH_Ruleset
 
     ducts_in_uncond_attic = false
     all_ducts.each do |duct|
-      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
+      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) &&
+         (!duct.duct_surface_area.to_f.zero? || !duct.duct_fraction_area.to_f.zero?)
         ducts_in_uncond_attic = true
       end
     end

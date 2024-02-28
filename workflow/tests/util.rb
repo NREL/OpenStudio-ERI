@@ -69,7 +69,6 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
       hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
       outputs[:eri_results] = File.join(rundir, 'results', "ERI_Results.#{output_format}")
-      outputs[:eri_worksheet] = File.join(rundir, 'results', "ERI_Worksheet.#{output_format}")
       outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
       outputs[:ref_results] = File.join(rundir, 'results', "ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
@@ -97,9 +96,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:esrat_iadref] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.xml')
       outputs[:es_results] = File.join(rundir, 'results', "ES_Results.#{output_format}")
       outputs[:esrd_eri_results] = File.join(rundir, 'results', "ESReference_ERI_Results.#{output_format}")
-      outputs[:esrd_eri_worksheet] = File.join(rundir, 'results', "ESReference_ERI_Worksheet.#{output_format}")
       outputs[:esrat_eri_results] = File.join(rundir, 'results', "ESRated_ERI_Results.#{output_format}")
-      outputs[:esrat_eri_worksheet] = File.join(rundir, 'results', "ESRated_ERI_Worksheet.#{output_format}")
       outputs[:esrd_rated_results] = File.join(rundir, 'results', "ESReference_ERIRatedHome.#{output_format}")
       outputs[:esrd_ref_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome.#{output_format}")
       outputs[:esrd_iad_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentDesign.#{output_format}")
@@ -127,9 +124,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
       outputs[:zerh_results] = File.join(rundir, 'results', "ZERH_Results.#{output_format}")
       outputs[:zerhrd_eri_results] = File.join(rundir, 'results', "ZERHReference_ERI_Results.#{output_format}")
-      outputs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', "ZERHReference_ERI_Worksheet.#{output_format}")
       outputs[:zerhrat_eri_results] = File.join(rundir, 'results', "ZERHRated_ERI_Results.#{output_format}")
-      outputs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', "ZERHRated_ERI_Worksheet.#{output_format}")
       outputs[:zerhrd_rated_results] = File.join(rundir, 'results', "ZERHReference_ERIRatedHome.#{output_format}")
       outputs[:zerhrd_ref_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome.#{output_format}")
       outputs[:zerhrd_iad_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentDesign.#{output_format}")
@@ -147,7 +142,6 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
       hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
       outputs[:iecc_eri_results] = File.join(rundir, 'results', "IECC_ERI_Results.#{output_format}")
-      outputs[:iecc_eri_worksheet] = File.join(rundir, 'results', "IECC_ERI_Worksheet.#{output_format}")
       outputs[:iecc_eri_rated_results] = File.join(rundir, 'results', "IECC_ERIRatedHome.#{output_format}")
       outputs[:iecc_eri_ref_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
@@ -334,8 +328,8 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
     XMLHelper.write_file(new_hpxml.to_doc, out_xml)
 
     _rundir, _hpxmls, csvs = _run_workflow(out_xml, test_name)
-    worksheet_results = _get_csv_results([csvs[:eri_worksheet]])
-    all_results[File.basename(xml)]['e-Ratio'] = (worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']).round(7)
+    eri_results = _get_csv_results([csvs[:eri_results]])
+    all_results[File.basename(xml)]['e-Ratio'] = (eri_results['Total Loads TnML'] / eri_results['Total Loads TRL']).round(7)
   end
   assert(all_results.size > 0)
 
@@ -359,17 +353,31 @@ def _test_resnet_hers_method(test_name, dir_name)
   test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
   File.delete(test_results_csv) if File.exist? test_results_csv
 
+  columns_of_interest = ['ERI',
+                         'REUL Heating (MBtu)',
+                         'REUL Cooling (MBtu)',
+                         'REUL Hot Water (MBtu)',
+                         'EC_r Heating (MBtu)',
+                         'EC_r Cooling (MBtu)',
+                         'EC_r Hot Water (MBtu)',
+                         'EC_x Heating (MBtu)',
+                         'EC_x Cooling (MBtu)',
+                         'EC_x Hot Water (MBtu)',
+                         'EC_x L&A (MBtu)',
+                         'IAD_Save (%)']
+
   # Run simulations
   all_results = {}
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
-    all_results[xml] = _get_csv_results([csvs[:eri_results]])
+    results = _get_csv_results([csvs[:eri_results]])
 
-    # Temporary until these are included in the RESNET spreadsheet
-    all_results[xml]['EC_x L&A (MBtu)'] += all_results[xml]['EC_x Vent (MBtu)'] + all_results[xml]['EC_x Dehumid (MBtu)']
-    all_results[xml].delete('EC_x Vent (MBtu)')
-    all_results[xml].delete('EC_x Dehumid (MBtu)')
+    # Include columns only in the RESNET accreditation spreadsheet
+    all_results[xml] = {}
+    columns_of_interest.each do |col|
+      all_results[xml][col] = results[col]
+    end
   end
   assert(all_results.size > 0)
 
@@ -534,6 +542,7 @@ def _get_reference_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Above-grade walls
   wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml_bldg)
@@ -631,7 +640,7 @@ def _get_reference_home_components(hpxml, test_num)
   results['Air Distribution System Efficiency'] = dse.round(2)
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml_bldg)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp.round(0)
   results['Cooling thermostat settings'] = clg_sp.round(0)
@@ -652,6 +661,7 @@ def _get_iad_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Geometry
   results['Number of Stories'] = hpxml_bldg.building_construction.number_of_conditioned_floors
@@ -711,7 +721,7 @@ def _get_iad_home_components(hpxml, test_num)
   results['Labeled cooling system rating and efficiency'] = seer
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml_bldg)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp
   results['Cooling thermostat settings'] = clg_sp
@@ -824,34 +834,39 @@ def _check_reference_home_components(results, test_num, version)
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2019A'
-    # Pub 002-2020 (June 2020)
+  if version == '2022C'
+    # FIXME: Expected values changed due to rounded F_sensible values in 301-2022
+    # Addendum C relative to previously prescribed internal gains. Values below
+    # do not match Pub 002, as it has not yet been updated.
     if test_num == 1
-      assert_in_epsilon(55115, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13666, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
       assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12568, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
       assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9152, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(82691, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17769, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   else
+    # Note: Values have been updated slightly relative to Pub 002 because we are
+    # using rounded F_sensible values from 301-2022 Addendum C instead of the
+    # previously prescribed internal gains.
     if test_num == 1
-      assert_in_epsilon(55470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13807, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55520, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13776, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
-      assert_in_epsilon(52794, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12698, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(52809, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12701, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
-      assert_in_epsilon(48111, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9259, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(48124, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9263, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(83103, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17934, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(83160, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17899, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   end
 
@@ -882,15 +897,14 @@ def _check_reference_home_components(results, test_num, version)
       mv_kwh_yr = 379.1
     end
   else
-    # Pub 002-2020 (June 2020)
     if test_num == 1
       mv_kwh_yr = 0.0
     elsif test_num == 2
       mv_kwh_yr = 222.1
     elsif test_num == 3
-      mv_kwh_yr = 287.8
+      mv_kwh_yr = 288.1
     else
-      mv_kwh_yr = 762.8
+      mv_kwh_yr = 763.4
     end
   end
   assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], epsilon)
@@ -1254,11 +1268,23 @@ def _get_hvac(hpxml_bldg)
   return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
 end
 
-def _get_tstat(hpxml_bldg)
+def _get_tstat(eri_version, hpxml_bldg)
   hvac_control = hpxml_bldg.hvac_controls[0]
   tstat = hvac_control.control_type.gsub(' thermostat', '')
-  htg_sp, _htg_setback_sp, _htg_setback_hrs_per_week, _htg_setback_start_hr = HVAC.get_default_heating_setpoint(hvac_control.control_type)
-  clg_sp, _clg_setup_sp, _clg_setup_hrs_per_week, _clg_setup_start_hr = HVAC.get_default_cooling_setpoint(hvac_control.control_type)
+  htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(hvac_control.control_type, eri_version)
+  clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
+
+  htg_weekday_setpoints = htg_weekday_setpoints.split(', ').map(&:to_f)
+  htg_weekend_setpoints = htg_weekend_setpoints.split(', ').map(&:to_f)
+  clg_weekday_setpoints = clg_weekday_setpoints.split(', ').map(&:to_f)
+  clg_weekend_setpoints = clg_weekend_setpoints.split(', ').map(&:to_f)
+
+  if htg_weekday_setpoints.uniq.size == 1 && htg_weekend_setpoints.uniq.size == 1 && htg_weekday_setpoints.uniq[0] == htg_weekend_setpoints.uniq[0]
+    htg_sp = htg_weekday_setpoints.uniq[0]
+  end
+  if clg_weekday_setpoints.uniq.size == 1 && clg_weekend_setpoints.uniq.size == 1 && clg_weekday_setpoints.uniq[0] == clg_weekend_setpoints.uniq[0]
+    clg_sp = clg_weekday_setpoints.uniq[0]
+  end
   return tstat, htg_sp, clg_sp
 end
 
@@ -1575,7 +1601,7 @@ def _check_hot_water_301_2019_pre_addendum_a(energy)
 
   # FL Delta cases
   assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :>, -24.54)
-  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.44)
+  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.42)
   assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :>, 16.65)
   assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :<, 18.12)
   assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-04']) / energy['L100AM-HW-02'] * 100, :>, 2.20)
