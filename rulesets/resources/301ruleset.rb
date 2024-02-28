@@ -1309,12 +1309,8 @@ class ERI_301_Ruleset
                                    integrated_heating_system_fraction_heat_load_served: orig_cooling_system.integrated_heating_system_fraction_heat_load_served,
                                    htg_seed_id: htg_seed_id)
 
-      next unless [HPXML::HVACTypeCentralAirConditioner, HPXML::HVACTypeMiniSplitAirConditioner].include?(orig_cooling_system.cooling_system_type) && orig_cooling_system.compressor_type == HPXML::HVACCompressorTypeVariableSpeed
-
-      if not orig_cooling_system.cooling_detailed_performance_data.empty?
-        orig_cooling_system.cooling_detailed_performance_data.each_with_index do |cdp, idx|
-          new_bldg.cooling_systems[-1].cooling_detailed_performance_data[idx] = cdp
-        end
+      orig_cooling_system.cooling_detailed_performance_data.each_with_index do |cdp, idx|
+        new_bldg.cooling_systems[-1].cooling_detailed_performance_data[idx] = cdp
       end
     end
     # Add reference cooling system for residual load
@@ -1373,18 +1369,12 @@ class ERI_301_Ruleset
                               htg_seed_id: orig_heat_pump.htg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.htg_seed_id,
                               clg_seed_id: orig_heat_pump.clg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.clg_seed_id)
 
-      next unless [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit].include?(orig_heat_pump.heat_pump_type) && orig_heat_pump.compressor_type == HPXML::HVACCompressorTypeVariableSpeed
-
-      if not orig_heat_pump.heating_detailed_performance_data.empty?
-        orig_heat_pump.heating_detailed_performance_data.each_with_index do |hdp, idx|
-          new_bldg.heat_pumps[-1].heating_detailed_performance_data[idx] = hdp
-        end
+      orig_heat_pump.heating_detailed_performance_data.each_with_index do |hdp, idx|
+        new_bldg.heat_pumps[-1].heating_detailed_performance_data[idx] = hdp
       end
 
-      if not orig_heat_pump.cooling_detailed_performance_data.empty?
-        orig_heat_pump.cooling_detailed_performance_data.each_with_index do |cdp, idx|
-          new_bldg.heat_pumps[-1].cooling_detailed_performance_data[idx] = cdp
-        end
+      orig_heat_pump.cooling_detailed_performance_data.each_with_index do |cdp, idx|
+        new_bldg.heat_pumps[-1].cooling_detailed_performance_data[idx] = cdp
       end
     end
     # Add reference heat pump for residual load
