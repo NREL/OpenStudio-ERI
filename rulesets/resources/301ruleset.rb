@@ -983,7 +983,7 @@ class EnergyRatingIndex301Ruleset
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, shgc)
 
     fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
@@ -1009,7 +1009,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_windows_rated(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, shgc)
 
     # Preserve all windows
     orig_bldg.windows.each do |orig_window|
@@ -1030,7 +1030,7 @@ class EnergyRatingIndex301Ruleset
   end
 
   def self.set_enclosure_windows_iad(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, shgc)
     ext_thermal_bndry_windows = orig_bldg.windows.select { |window| window.is_exterior_thermal_boundary }
     ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
     avg_ufactor = calc_area_weighted_avg(ext_thermal_bndry_windows, :ufactor, backup_value: ref_ufactor)
