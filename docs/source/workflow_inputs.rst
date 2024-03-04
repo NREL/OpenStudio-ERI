@@ -367,7 +367,7 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   ``Azimuth``                             integer    deg           >= 0, <= 359  No         See [#]_  Azimuth (clockwise from North)
   ``SolarAbsorptance``                    double                   >= 0, <= 1    Yes                  Solar absorptance
   ``Emittance``                           double                   >= 0, <= 1    Yes                  Emittance
-  ``Pitch``                               integer    ?:12          >= 0          Yes                  Pitch
+  ``Pitch``                               double     ?/12          >= 0          Yes                  Pitch [#]_
   ``RadiantBarrier``                      boolean                                No         false     Presence of radiant barrier
   ``RadiantBarrierGrade``                 integer                  >= 1, <= 3    See [#]_             Radiant barrier installation grade
   ``Insulation/SystemIdentifier``         id                                     Yes                  Unique identifier
@@ -378,6 +378,8 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If Azimuth not provided, and it's a *pitched* roof, modeled as four surfaces of equal area facing every direction.
          Azimuth is irrelevant for *flat* roofs.
+  .. [#] Pitch is entered as vertical rise in inches for every 12 inches of horizontal run.
+         For example, 6.0 means a 6/12 roof, which has a 26.57-degree roof slope.
   .. [#] RadiantBarrierGrade only required if RadiantBarrier=true.
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
