@@ -14,6 +14,7 @@ __New Features__
 - Now defaults to -20F for `CompressorLockoutTemperature` for variable-speed air-to-air heat pumps.
 - Clarifies that Capacity=-1 can be used to autosize HVAC equipment for research purposes or to run tests.
   - It should *not* be used for a real home; a warning will be issued when it's used.
+- Allow alternative label energy use (W) input for ceiling fans.
 
 __Bugfixes__
 - Fixes possible 301ruleset.rb error due to floating point arithmetic.

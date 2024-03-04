@@ -56,6 +56,8 @@ class ERILightingTest < Minitest::Test
   end
 
   def test_ceiling_fans
+    # Efficiency
+
     # Test w/ 301-2019
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
@@ -65,9 +67,9 @@ class ERILightingTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml_bldg, cfm_per_w: 3000.0 / 30.0, count: 4)
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 30.0, count: 4)
       else
-        _check_ceiling_fans(hpxml_bldg, cfm_per_w: 3000.0 / 42.6, count: 4)
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 4)
       end
     end
 
@@ -95,9 +97,9 @@ class ERILightingTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml_bldg, cfm_per_w: 3000.0 / 30.0, count: 4)
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 30.0, count: 4)
       else
-        _check_ceiling_fans(hpxml_bldg, cfm_per_w: 3000.0 / 42.6, count: 4)
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 4)
       end
     end
 
@@ -113,11 +115,78 @@ class ERILightingTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_ceiling_fans(hpxml_bldg, cfm_per_w: 3000.0 / 42.6, count: 6)
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 6)
       elsif [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceiling_fans(hpxml_bldg, cfm_per_w: 3000.0 / 30.0, count: 6)
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 30.0, count: 6)
       else
-        _check_ceiling_fans(hpxml_bldg, cfm_per_w: 3000.0 / 42.6, count: 4)
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 4)
+      end
+    end
+
+    # Label energy use
+
+    # Test w/ 301-2019
+    hpxml_name = 'base-lighting-ceiling-fans-label-energy-use.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 39.0, count: 4)
+      else
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 4)
+      end
+    end
+
+    # Test w/ 301-2019 and Nfans < Nbr + 1
+    hpxml_name = 'base-lighting-ceiling-fans-label-energy-use.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.ceiling_fans[0].count = 3
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      _check_ceiling_fans(hpxml_bldg)
+    end
+
+    # Test w/ 301-2014 and Nfans < Nbr + 1
+    hpxml_name = _change_eri_version('base-lighting-ceiling-fans-label-energy-use.xml', '2014')
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.ceiling_fans[0].count = 3
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 39.0, count: 4)
+      else
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 4)
+      end
+    end
+
+    # Test w/ different Nbr
+    hpxml_name = 'base-lighting-ceiling-fans-label-energy-use.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.building_construction.number_of_bedrooms = 5
+    hpxml_bldg.ceiling_fans[0].count = 6
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 6)
+      elsif [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 39.0, count: 6)
+      else
+        _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 4)
       end
     end
   end
@@ -196,13 +265,18 @@ class ERILightingTest < Minitest::Test
     end
   end
 
-  def _check_ceiling_fans(hpxml_bldg, cfm_per_w: nil, count: nil)
-    if cfm_per_w.nil? && count.nil?
+  def _check_ceiling_fans(hpxml_bldg, label_energy_use: nil, cfm_per_w: nil, count: nil)
+    if label_energy_use.nil? && cfm_per_w.nil? && count.nil?
       assert_equal(0, hpxml_bldg.ceiling_fans.size)
       assert_nil(hpxml_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset)
     else
       assert_equal(1, hpxml_bldg.ceiling_fans.size)
       ceiling_fan = hpxml_bldg.ceiling_fans[0]
+      if label_energy_use.nil?
+        assert_nil(ceiling_fan.label_energy_use)
+      else
+        assert_equal(label_energy_use, ceiling_fan.label_energy_use)
+      end
       if cfm_per_w.nil?
         assert_nil(ceiling_fan.efficiency)
       else
