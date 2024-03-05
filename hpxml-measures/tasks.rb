@@ -406,7 +406,8 @@ def apply_hpxml_modification(hpxml_file, hpxml)
       hpxml_bldg.dishwashers[0].location = adjacent_to
       hpxml_bldg.refrigerators[0].location = adjacent_to
       hpxml_bldg.cooking_ranges[0].location = adjacent_to
-    elsif ['base-bldgtype-mf-unit-adjacent-to-multiple.xml'].include? hpxml_file
+    elsif ['base-bldgtype-mf-unit-adjacent-to-multiple.xml',
+           'base-bldgtype-mf-unit-adjacent-to-multiple-hvac-none.xml'].include? hpxml_file
       wall = hpxml_bldg.walls.select { |w|
                w.interior_adjacent_to == HPXML::LocationConditionedSpace &&
                  w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit
@@ -1325,21 +1326,25 @@ def apply_hpxml_modification(hpxml_file, hpxml)
       hpxml_bldg.heat_pumps[0].number_of_units_served = 6
       hpxml_bldg.heat_pumps[0].pump_watts_per_ton = 0.0
     end
-    if hpxml_file.include? 'shared-boiler'
-      hpxml_bldg.heating_systems[0].shared_loop_watts = 600
-    end
-    if hpxml_file.include?('chiller') || hpxml_file.include?('cooling-tower')
-      hpxml_bldg.cooling_systems[0].shared_loop_watts = 600
-    end
-    if hpxml_file.include? 'shared-ground-loop'
-      hpxml_bldg.heat_pumps[0].shared_loop_watts = 600
-    end
-    if hpxml_file.include? 'fan-coil'
-      if hpxml_file.include? 'boiler'
-        hpxml_bldg.heating_systems[0].fan_coil_watts = 150
+    if hpxml_file.include? 'eae'
+      hpxml_bldg.heating_systems[0].electric_auxiliary_energy = 500.0
+    else
+      if hpxml_file.include? 'shared-boiler'
+        hpxml_bldg.heating_systems[0].shared_loop_watts = 600
       end
-      if hpxml_file.include? 'chiller'
-        hpxml_bldg.cooling_systems[0].fan_coil_watts = 150
+      if hpxml_file.include?('chiller') || hpxml_file.include?('cooling-tower')
+        hpxml_bldg.cooling_systems[0].shared_loop_watts = 600
+      end
+      if hpxml_file.include? 'shared-ground-loop'
+        hpxml_bldg.heat_pumps[0].shared_loop_watts = 600
+      end
+      if hpxml_file.include? 'fan-coil'
+        if hpxml_file.include? 'boiler'
+          hpxml_bldg.heating_systems[0].fan_coil_watts = 150
+        end
+        if hpxml_file.include? 'chiller'
+          hpxml_bldg.cooling_systems[0].fan_coil_watts = 150
+        end
       end
     end
     if hpxml_file.include? 'install-quality'
@@ -1777,7 +1782,10 @@ def apply_hpxml_modification(hpxml_file, hpxml)
       hpxml_bldg.water_fixtures[1].flow_rate = 2.0
       hpxml_bldg.water_fixtures[1].count = 3
     end
-    if ['base-dhw-recirc-demand-scheduled.xml'].include? hpxml_file
+    if ['base-dhw-recirc-demand-scheduled.xml',
+        'base-schedules-simple.xml',
+        'base-schedules-simple-vacancy.xml',
+        'base-schedules-simple-power-outage.xml'].include? hpxml_file
       hpxml_bldg.hot_water_distributions[0].recirculation_pump_weekday_fractions = Schedule.RecirculationPumpDemandControlledWeekdayFractions
       hpxml_bldg.hot_water_distributions[0].recirculation_pump_weekend_fractions = Schedule.RecirculationPumpDemandControlledWeekendFractions
       hpxml_bldg.hot_water_distributions[0].recirculation_pump_monthly_multipliers = Schedule.RecirculationPumpMonthlyMultipliers
@@ -2101,13 +2109,21 @@ def apply_hpxml_modification(hpxml_file, hpxml)
       hpxml_bldg.refrigerators[0].constant_coefficients = '-0.487, -0.340, -0.370, -0.361, -0.515, -0.684, -0.471, -0.159, -0.079, -0.417, -0.411, -0.386, -0.240, -0.314, -0.160, -0.121, -0.469, -0.412, -0.091, 0.077, -0.118, -0.247, -0.445, -0.544'
       hpxml_bldg.refrigerators[0].temperature_coefficients = '0.019, 0.016, 0.017, 0.016, 0.018, 0.021, 0.019, 0.015, 0.015, 0.019, 0.018, 0.018, 0.016, 0.017, 0.015, 0.015, 0.020, 0.020, 0.017, 0.014, 0.016, 0.017, 0.019, 0.020'
     end
+    if ['base-appliances-freezer-temperature-dependent-schedule.xml'].include? hpxml_file
+      hpxml_bldg.freezers.add(id: "Freezer#{hpxml_bldg.freezers.size + 1}",
+                              location: HPXML::LocationConditionedSpace,
+                              rated_annual_kwh: 400,
+                              constant_coefficients: '-0.487, -0.340, -0.370, -0.361, -0.515, -0.684, -0.471, -0.159, -0.079, -0.417, -0.411, -0.386, -0.240, -0.314, -0.160, -0.121, -0.469, -0.412, -0.091, 0.077, -0.118, -0.247, -0.445, -0.544',
+                              temperature_coefficients: '0.019, 0.016, 0.017, 0.016, 0.018, 0.021, 0.019, 0.015, 0.015, 0.019, 0.018, 0.018, 0.016, 0.017, 0.015, 0.015, 0.020, 0.020, 0.017, 0.014, 0.016, 0.017, 0.019, 0.020')
+    end
 
     # -------------- #
     # HPXML Lighting #
     # -------------- #
 
     # Logic that can only be applied based on the file name
-    if ['base-lighting-ceiling-fans.xml'].include? hpxml_file
+    if ['base-lighting-ceiling-fans.xml',
+        'base-lighting-ceiling-fans-label-energy-use.xml'].include? hpxml_file
       hpxml_bldg.ceiling_fans[0].weekday_fractions = '0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057'
       hpxml_bldg.ceiling_fans[0].weekend_fractions = '0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.024, 0.057, 0.057, 0.057, 0.057, 0.057, 0.057'
       hpxml_bldg.ceiling_fans[0].monthly_multipliers = '0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0'

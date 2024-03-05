@@ -1,6 +1,6 @@
-Test Case,ERI,REUL Heating (MBtu),REUL Cooling (MBtu),REUL Hot Water (MBtu),EC_r Heating (MBtu),EC_r Cooling (MBtu),EC_r Hot Water (MBtu),EC_x Heating (MBtu),EC_x Cooling (MBtu),EC_x Hot Water (MBtu),EC_x L&A (MBtu)
-L100A-01.xml,153.27,23.4,5.31,10.83,15.12,2.27,11.86,33.19,3.89,12.46,21.08
-L100A-02.xml,144.35,22.26,5.81,10.83,14.48,2.47,18.75,33.45,3.87,14.36,23.16
-L100A-03.xml,144.2,22.81,5.27,8.65,36.28,2.93,9.68,74.22,3.78,10.28,21.87
-L100A-04.xml,120.09,23.8,5.53,12.94,15.37,2.37,13.97,21.19,3.82,14.57,22.16
-L100A-05.xml,121.24,22.96,5.53,10.83,36.52,3.03,11.86,59.93,3.88,12.46,23.16
+Test Case,ERI,REUL Heating (MBtu),REUL Cooling (MBtu),REUL Hot Water (MBtu),EC_r Heating (MBtu),EC_r Cooling (MBtu),EC_r Hot Water (MBtu),EC_x Heating (MBtu),EC_x Cooling (MBtu),EC_x Hot Water (MBtu),EC_x L&A (MBtu),IAD_Save (%)
+L100A-01.xml,153.27,23.4,5.31,10.83,15.12,2.27,11.86,33.19,3.89,12.46,21.08,
+L100A-02.xml,144.35,22.26,5.81,10.83,14.48,2.47,18.75,33.45,3.87,14.36,23.16,
+L100A-03.xml,144.2,22.81,5.27,8.65,36.28,2.93,9.68,74.22,3.78,10.28,21.87,
+L100A-04.xml,120.09,23.8,5.53,12.94,15.37,2.37,13.97,21.19,3.82,14.57,22.16,
+L100A-05.xml,121.24,22.96,5.53,10.83,36.52,3.03,11.86,59.93,3.88,12.46,23.16,
