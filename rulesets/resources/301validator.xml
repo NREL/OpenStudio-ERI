@@ -1695,7 +1695,7 @@
   <sch:pattern>
     <sch:title>[CeilingFan]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Lighting/h:CeilingFan'>
-      <sch:assert role='ERROR' test='count(h:Airflow[h:FanSpeed="medium"]/h:Efficiency) = 1'>Expected 1 element(s) for xpath: Airflow[FanSpeed="medium"]/Efficiency</sch:assert>
+      <sch:assert role='ERROR' test='count(h:Airflow[h:FanSpeed="medium"]/h:Efficiency) + count(h:LabelEnergyUse) &gt;= 1'>Expected 1 or more element(s) for xpath: Airflow[FanSpeed="medium"]/Efficiency or LabelEnergyUse</sch:assert>
       <sch:assert role='ERROR' test='count(h:Count) = 1'>Expected 1 element(s) for xpath: Count</sch:assert>
     </sch:rule>
   </sch:pattern>

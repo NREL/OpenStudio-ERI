@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class ERI_301_Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
+  def self.apply_ruleset(hpxml, calc_type, weather, epw_file, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
+    @is_southern_hemisphere = (epw_file.latitude < 0)
 
     if not iecc_version.nil?
       if ['2015', '2018'].include? iecc_version
@@ -40,7 +41,7 @@ class ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, convert_shared_systems: false)
+    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, epw_file: epw_file, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
@@ -343,7 +344,6 @@ class ERI_301_Ruleset
     new_bldg.climate_and_risk_zones.weather_station_name = orig_bldg.climate_and_risk_zones.weather_station_name
     new_bldg.climate_and_risk_zones.weather_station_epw_filepath = orig_bldg.climate_and_risk_zones.weather_station_epw_filepath
     @iecc_zone = climate_zone_iecc.zone
-    @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
@@ -2294,9 +2294,8 @@ class ERI_301_Ruleset
       return
     end
 
-    medium_cfm = 3000.0
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
-                              efficiency: medium_cfm / HVAC.get_default_ceiling_fan_power(),
+                              label_energy_use: HVAC.get_default_ceiling_fan_power(),
                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
@@ -2319,16 +2318,17 @@ class ERI_301_Ruleset
     orig_bldg.ceiling_fans.each do |orig_ceiling_fan|
       num_cfs += orig_ceiling_fan.count
       cfm_per_w = orig_ceiling_fan.efficiency
-      if cfm_per_w.nil?
-        fan_power_w = HVAC.get_default_ceiling_fan_power()
-        cfm_per_w = medium_cfm / fan_power_w
+      label_energy_use = orig_ceiling_fan.label_energy_use
+      if !label_energy_use.nil? # priority if both provided
+        sum_w += (label_energy_use * orig_ceiling_fan.count)
+      elsif !cfm_per_w.nil?
+        sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.count)
       end
-      sum_w += (medium_cfm / cfm_per_w * orig_ceiling_fan.count)
     end
     avg_w = sum_w / num_cfs
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
-                              efficiency: medium_cfm / avg_w,
+                              label_energy_use: avg_w,
                               count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
