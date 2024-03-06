@@ -2651,28 +2651,32 @@ HPXML Locations
 
 The various locations used in an HPXML file are defined as follows:
 
-  ==============================  ==================================  ============================================  =============
-  Value                           Description                         Temperature                                   Building Type
-  ==============================  ==================================  ============================================  =============
-  outside                         Ambient environment                 Weather data                                  Any
-  ground                                                              EnergyPlus calculation                        Any
-  conditioned space               Above-grade conditioned floor area  EnergyPlus calculation                        Any
-  attic - vented                                                      EnergyPlus calculation                        Any
-  attic - unvented                                                    EnergyPlus calculation                        Any
-  basement - conditioned          Below-grade conditioned floor area  EnergyPlus calculation                        Any
-  basement - unconditioned                                            EnergyPlus calculation                        Any
-  crawlspace - vented                                                 EnergyPlus calculation                        Any
-  crawlspace - unvented                                               EnergyPlus calculation                        Any
-  garage                          Single-family (not shared parking)  EnergyPlus calculation                        Any
-  other housing unit              Unrated Conditioned Space           Same as conditioned space                     SFA/MF only
-  other heated space              Unrated Heated Space                Avg of conditioned space/outside; min of 68F  SFA/MF only
-  other multifamily buffer space  Multifamily Buffer Boundary         Avg of conditioned space/outside; min of 50F  SFA/MF only
-  other non-freezing space        Non-Freezing Space                  Floats with outside; minimum of 40F           SFA/MF only
-  other exterior                  Water heater outside                Weather data                                  Any
-  exterior wall                   Ducts in exterior wall              Avg of conditioned space/outside                   Any
-  under slab                      Ducts under slab (ground)           EnergyPlus calculation                        Any
-  roof deck                       Ducts on roof deck (outside)        Weather data                                  Any
-  ==============================  ==================================  ============================================  =============
+  ==============================  ==============================================  ============================================  =============
+  Value                           Description                                     Temperature                                   Building Type
+  ==============================  ==============================================  ============================================  =============
+  outside                         Ambient environment                             Weather data                                  Any
+  ground                                                                          EnergyPlus calculation                        Any
+  conditioned space               Above-grade conditioned floor area              EnergyPlus calculation                        Any
+  attic - vented                                                                  EnergyPlus calculation                        Any
+  attic - unvented                                                                EnergyPlus calculation                        Any
+  basement - conditioned          Below-grade conditioned floor area              EnergyPlus calculation                        Any
+  basement - unconditioned                                                        EnergyPlus calculation                        Any
+  crawlspace - vented                                                             EnergyPlus calculation                        Any
+  crawlspace - unvented                                                           EnergyPlus calculation                        Any
+  garage                          Unconditioned garage (not shared parking) [#]_  EnergyPlus calculation                        Any
+  other housing unit              Unrated Conditioned Space                       Same as conditioned space                     SFA/MF only
+  other heated space              Unrated Heated Space                            Avg of conditioned space/outside; min of 68F  SFA/MF only
+  other multifamily buffer space  Multifamily Buffer Boundary                     Avg of conditioned space/outside; min of 50F  SFA/MF only
+  other non-freezing space        Non-Freezing Space                              Floats with outside; minimum of 40F           SFA/MF only
+  other exterior                  Water heater outside                            Weather data                                  Any
+  exterior wall                   Ducts in exterior wall                          Avg of conditioned space/outside              Any
+  under slab                      Ducts under slab (ground)                       EnergyPlus calculation                        Any
+  roof deck                       Ducts on roof deck (outside)                    Weather data                                  Any
+  ==============================  ==============================================  ============================================  =============
+
+  .. [#] OpenStudio-ERI does not model "conditioned" or "heated" garages.
+         Many conditioned garages are not conditioned 24/7, rather they are only conditioned for short periods when occupants are in them and turn on the space conditioning equipment, so it is best to assume an unconditioned garage.
+         However, if a garage was converted into livable space, then "conditioned space" should be used instead.
 
 Validating & Debugging Errors
 -----------------------------
