@@ -367,7 +367,7 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   ``Azimuth``                             integer    deg           >= 0, <= 359  No         See [#]_  Azimuth (clockwise from North)
   ``SolarAbsorptance``                    double                   >= 0, <= 1    Yes                  Solar absorptance
   ``Emittance``                           double                   >= 0, <= 1    Yes                  Emittance
-  ``Pitch``                               integer    ?:12          >= 0          Yes                  Pitch
+  ``Pitch``                               double     ?/12          >= 0          Yes                  Pitch [#]_
   ``RadiantBarrier``                      boolean                                No         false     Presence of radiant barrier
   ``RadiantBarrierGrade``                 integer                  >= 1, <= 3    See [#]_             Radiant barrier installation grade
   ``Insulation/SystemIdentifier``         id                                     Yes                  Unique identifier
@@ -378,6 +378,8 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
          See :ref:`hpxmllocations` for descriptions.
   .. [#] If Azimuth not provided, and it's a *pitched* roof, modeled as four surfaces of equal area facing every direction.
          Azimuth is irrelevant for *flat* roofs.
+  .. [#] Pitch is entered as vertical rise in inches for every 12 inches of horizontal run.
+         For example, 6.0 means a 6/12 roof, which has a 26.57-degree roof slope.
   .. [#] RadiantBarrierGrade only required if RadiantBarrier=true.
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
 
@@ -2715,28 +2717,32 @@ HPXML Locations
 
 The various locations used in an HPXML file are defined as follows:
 
-  ==============================  ==================================  ============================================  =============
-  Value                           Description                         Temperature                                   Building Type
-  ==============================  ==================================  ============================================  =============
-  outside                         Ambient environment                 Weather data                                  Any
-  ground                                                              EnergyPlus calculation                        Any
-  conditioned space               Above-grade conditioned floor area  EnergyPlus calculation                        Any
-  attic - vented                                                      EnergyPlus calculation                        Any
-  attic - unvented                                                    EnergyPlus calculation                        Any
-  basement - conditioned          Below-grade conditioned floor area  EnergyPlus calculation                        Any
-  basement - unconditioned                                            EnergyPlus calculation                        Any
-  crawlspace - vented                                                 EnergyPlus calculation                        Any
-  crawlspace - unvented                                               EnergyPlus calculation                        Any
-  garage                          Single-family (not shared parking)  EnergyPlus calculation                        Any
-  other housing unit              Unrated Conditioned Space           Same as conditioned space                     SFA/MF only
-  other heated space              Unrated Heated Space                Avg of conditioned space/outside; min of 68F  SFA/MF only
-  other multifamily buffer space  Multifamily Buffer Boundary         Avg of conditioned space/outside; min of 50F  SFA/MF only
-  other non-freezing space        Non-Freezing Space                  Floats with outside; minimum of 40F           SFA/MF only
-  other exterior                  Water heater outside                Weather data                                  Any
-  exterior wall                   Ducts in exterior wall              Avg of conditioned space/outside                   Any
-  under slab                      Ducts under slab (ground)           EnergyPlus calculation                        Any
-  roof deck                       Ducts on roof deck (outside)        Weather data                                  Any
-  ==============================  ==================================  ============================================  =============
+  ==============================  ==============================================  ============================================  =============
+  Value                           Description                                     Temperature                                   Building Type
+  ==============================  ==============================================  ============================================  =============
+  outside                         Ambient environment                             Weather data                                  Any
+  ground                                                                          EnergyPlus calculation                        Any
+  conditioned space               Above-grade conditioned floor area              EnergyPlus calculation                        Any
+  attic - vented                                                                  EnergyPlus calculation                        Any
+  attic - unvented                                                                EnergyPlus calculation                        Any
+  basement - conditioned          Below-grade conditioned floor area              EnergyPlus calculation                        Any
+  basement - unconditioned                                                        EnergyPlus calculation                        Any
+  crawlspace - vented                                                             EnergyPlus calculation                        Any
+  crawlspace - unvented                                                           EnergyPlus calculation                        Any
+  garage                          Unconditioned garage (not shared parking) [#]_  EnergyPlus calculation                        Any
+  other housing unit              Unrated Conditioned Space                       Same as conditioned space                     SFA/MF only
+  other heated space              Unrated Heated Space                            Avg of conditioned space/outside; min of 68F  SFA/MF only
+  other multifamily buffer space  Multifamily Buffer Boundary                     Avg of conditioned space/outside; min of 50F  SFA/MF only
+  other non-freezing space        Non-Freezing Space                              Floats with outside; minimum of 40F           SFA/MF only
+  other exterior                  Water heater outside                            Weather data                                  Any
+  exterior wall                   Ducts in exterior wall                          Avg of conditioned space/outside              Any
+  under slab                      Ducts under slab (ground)                       EnergyPlus calculation                        Any
+  roof deck                       Ducts on roof deck (outside)                    Weather data                                  Any
+  ==============================  ==============================================  ============================================  =============
+
+  .. [#] OpenStudio-ERI does not model "conditioned" or "heated" garages.
+         Many conditioned garages are not conditioned 24/7, rather they are only conditioned for short periods when occupants are in them and turn on the space conditioning equipment, so it is best to assume an unconditioned garage.
+         However, if a garage was converted into livable space, then "conditioned space" should be used instead.
 
 Validating & Debugging Errors
 -----------------------------
