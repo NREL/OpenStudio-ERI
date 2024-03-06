@@ -4,6 +4,7 @@ __New Features__
 - **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
 
 __Bugfixes__
+- Fixes incorrect Reference Home mechanical ventilation flowrate for attached units (when Aext is not 1).
 - Fixes possible 301ruleset.rb error due to floating point arithmetic.
 
 ## OpenStudio-ERI v1.7.0
