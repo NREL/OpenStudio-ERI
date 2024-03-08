@@ -288,7 +288,6 @@ class ERI_301_Ruleset
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
     new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
-    new_bldg.building_construction.conditioned_building_volume = orig_bldg.building_construction.conditioned_building_volume
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
@@ -310,7 +309,6 @@ class ERI_301_Ruleset
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
     new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
-    new_bldg.building_construction.conditioned_building_volume = orig_bldg.building_construction.conditioned_building_volume
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
@@ -3092,10 +3090,7 @@ end
 
 def apply_default_average_ceiling_height(orig_bldg)
   if orig_bldg.building_construction.average_ceiling_height.nil?
-    if not orig_bldg.building_construction.conditioned_building_volume.nil?
-      orig_bldg.building_construction.average_ceiling_height = (orig_bldg.building_construction.conditioned_building_volume / orig_bldg.building_construction.conditioned_floor_area).round(2)
-    else
-      orig_bldg.building_construction.average_ceiling_height = 8.2
-    end
+    # ASHRAE 62.2 default for average floor to ceiling height
+    orig_bldg.building_construction.average_ceiling_height = 8.2
   end
 end

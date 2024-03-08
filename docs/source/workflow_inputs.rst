@@ -141,14 +141,13 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   ``ResidentialFacilityType``                                    string               See [#]_                           Yes                 Type of dwelling unit
   ``NumberofConditionedFloors``                                  double               > 0                                Yes                 Number of conditioned floors (including a basement)
   ``NumberofConditionedFloorsAboveGrade``                        double               > 0, <= NumberofConditionedFloors  Yes                 Number of conditioned floors above grade (including a walkout basement)
+  ``AverageCeilingHeight``                                       double    ft         > 0                                No        8.2       Floor to ceiling height within conditioned space
   ``NumberofBedrooms``                                           integer              > 0                                Yes                 Number of bedrooms
   ``ConditionedFloorArea``                                       double    ft2        > 0                                Yes                 Floor area within conditioned space boundary
-  ``AverageCeilingHeight`` and/or ``ConditionedBuildingVolume``  double    ft or ft3  > 0                                No        See [#]_  Ceiling/volume height within conditioned space boundary
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
          For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
-  .. [#] If AverageCeilingHeight not provided, defaults to ConditionedBuildingVolume / ConditionedFloorArea if ConditionedBuildingVolume is provided, else 8.2.
 
 HPXML Weather Station
 ---------------------
