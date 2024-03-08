@@ -321,8 +321,6 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
         vent_fan.fan_power = 0.70 * vent_fan.tested_flow_rate
       elsif (vent_fan.fan_type == HPXML::MechVentTypeERV) || (vent_fan.fan_type == HPXML::MechVentTypeHRV)
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
-      elsif vent_fan.fan_type == HPXML::MechVentTypeCFIS
-        vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
       end
     end
     XMLHelper.write_file(new_hpxml.to_doc, out_xml)
@@ -886,26 +884,12 @@ def _check_reference_home_components(results, test_num, version)
 
   # Mechanical ventilation
   mv_kwh_yr = nil
-  if version == '2014'
-    if test_num == 1
-      mv_kwh_yr = 0.0
-    elsif test_num == 2
-      mv_kwh_yr = 77.9
-    elsif test_num == 3
-      mv_kwh_yr = 140.4
-    else
-      mv_kwh_yr = 379.1
-    end
-  else
-    if test_num == 1
-      mv_kwh_yr = 0.0
-    elsif test_num == 2
-      mv_kwh_yr = 222.1
-    elsif test_num == 3
-      mv_kwh_yr = 288.1
-    else
-      mv_kwh_yr = 763.4
-    end
+  if version == '2022C'
+    mv_kwh_yr = { 1 => 0.0, 2 => 223.9, 3 => 288.1, 4 => 763.4 }[test_num]
+  elsif version == '2019'
+    mv_kwh_yr = { 1 => 0.0, 2 => 222.1, 3 => 288.1, 4 => 763.4 }[test_num]
+  elsif version == '2014'
+    mv_kwh_yr = { 1 => 0.0, 2 => 77.9, 3 => 140.4, 4 => 379.1 }[test_num]
   end
   assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], epsilon)
 
@@ -967,19 +951,10 @@ def _check_iad_home_components(results, test_num)
   end
 
   # Mechanical Ventilation
-  if test_num == 1
-    assert_in_delta(66.4, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(407, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 2
-    assert_in_delta(64.2, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(394, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 3
-    assert_in_delta(53.3, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(327, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 4
-    assert_in_delta(57.1, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(350, results['Mechanical ventilation'], 1.0)
-  end
+  mv_cfm = { 1 => 66.4, 2 => 64.2, 3 => 53.3, 4 => 57.1 }[test_num]
+  mv_kwh = { 1 => 407, 2 => 394, 3 => 327, 4 => 350 }[test_num]
+  assert_in_delta(mv_cfm, results['Mechanical ventilation rate'], 0.2)
+  assert_in_delta(mv_kwh, results['Mechanical ventilation'], 1.0)
 
   # HVAC
   if (test_num == 1) || (test_num == 4)
