@@ -983,6 +983,42 @@ class ERIHVACtest < Minitest::Test
     end
   end
 
+  def test_air_to_air_heat_pump_var_speed_detailed_performance
+    hpxml_name = 'base-hvac-air-to-air-heat-pump-var-speed-detailed-performance.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        assert_equal(6, hpxml_bldg.heat_pumps[-1].heating_detailed_performance_data.size)
+        assert_equal(4, hpxml_bldg.heat_pumps[-1].cooling_detailed_performance_data.size)
+      else
+        assert_equal(0, hpxml_bldg.heat_pumps[-1].heating_detailed_performance_data.size)
+        assert_equal(0, hpxml_bldg.heat_pumps[-1].cooling_detailed_performance_data.size)
+      end
+    end
+  end
+
+  def test_central_air_conditioner_var_speed_detailed_performance
+    hpxml_name = 'base-hvac-central-ac-only-var-speed-detailed-performance.xml'
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        assert_equal(4, hpxml_bldg.cooling_systems[-1].cooling_detailed_performance_data.size)
+      else
+        assert_equal(0, hpxml_bldg.cooling_systems[-1].cooling_detailed_performance_data.size)
+      end
+    end
+  end
+
   def _test_ruleset(hpxml_name, calc_type)
     require_relative '../../workflow/design'
     designs = [Design.new(calc_type: calc_type,

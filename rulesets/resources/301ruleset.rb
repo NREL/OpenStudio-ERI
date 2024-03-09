@@ -1311,6 +1311,10 @@ class ERI_301_Ruleset
                                    integrated_heating_system_efficiency_percent: orig_cooling_system.integrated_heating_system_efficiency_percent,
                                    integrated_heating_system_fraction_heat_load_served: orig_cooling_system.integrated_heating_system_fraction_heat_load_served,
                                    htg_seed_id: htg_seed_id)
+
+      orig_cooling_system.cooling_detailed_performance_data.each_with_index do |cdp, idx|
+        new_bldg.cooling_systems[-1].cooling_detailed_performance_data[idx] = cdp
+      end
     end
     # Add reference cooling system for residual load
     if (sum_frac_cool_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding
@@ -1367,6 +1371,14 @@ class ERI_301_Ruleset
                               charge_defect_ratio: charge_defect_ratio,
                               htg_seed_id: orig_heat_pump.htg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.htg_seed_id,
                               clg_seed_id: orig_heat_pump.clg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.clg_seed_id)
+
+      orig_heat_pump.heating_detailed_performance_data.each_with_index do |hdp, idx|
+        new_bldg.heat_pumps[-1].heating_detailed_performance_data[idx] = hdp
+      end
+
+      orig_heat_pump.cooling_detailed_performance_data.each_with_index do |cdp, idx|
+        new_bldg.heat_pumps[-1].cooling_detailed_performance_data[idx] = cdp
+      end
     end
     # Add reference heat pump for residual load
     if (not has_fuel) && (sum_frac_heat_load < 0.99) # Accommodate systems that don't quite sum to 1 due to rounding

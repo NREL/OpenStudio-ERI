@@ -16,6 +16,7 @@ __New Features__
 - Clarifies that Capacity=-1 can be used to autosize HVAC equipment for research purposes or to run tests.
   - It should *not* be used for a real home; a warning will be issued when it's used.
 - Allow alternative label energy use (W) input for ceiling fans.
+- Allows detailed heating and cooling performance data (min/max COPs and capacities at different outdoor temperatures) for variable-speed systems. 
 
 __Bugfixes__
 - Fixes incorrect Reference Home mechanical ventilation flowrate for attached units (when Aext is not 1).
