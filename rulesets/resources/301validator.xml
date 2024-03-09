@@ -1049,20 +1049,6 @@
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[HeatingDetailedPerformanceDataPointWithCapacity]</sch:title>
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/*/h:HeatingDetailedPerformanceData/h:PerformanceDataPoint/h:Capacity'>
-      <sch:assert role='ERROR' test='count(../../../h:HeatingCapacity) = 1'>Expected 1 element(s) for xpath: ../../../HeatingCapacity</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-
-  <sch:pattern>
-    <sch:title>[CoolingDetailedPerformanceDataPointWithCapacity]</sch:title>
-    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/*/h:CoolingDetailedPerformanceData/h:PerformanceDataPoint/h:Capacity'>
-      <sch:assert role='ERROR' test='count(../../../h:CoolingCapacity) = 1'>Expected 1 element(s) for xpath: ../../../CoolingCapacity</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-  
-  <sch:pattern>
     <sch:title>[PerformanceDataPoint]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/*/*/h:PerformanceDataPoint'>
       <sch:assert role='ERROR' test='count(h:Capacity) + count(h:CapacityFractionOfNominal) &gt;= 1'>Expected 1 or more element(s) for xpath: Capacity | CapacityFractionOfNominal</sch:assert>
