@@ -236,6 +236,7 @@ class ERI_301_Ruleset
     new_bldg.event_type = orig_bldg.event_type
     new_bldg.state_code = orig_bldg.state_code
     new_bldg.zip_code = orig_bldg.zip_code
+    new_bldg.dst_enabled = false
     new_bldg.header.allow_increased_fixed_capacities = true
     new_bldg.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
     new_bldg.header.natvent_days_per_week = 7
