@@ -775,7 +775,7 @@ def set_hpxml_rim_joists(hpxml_file, hpxml_bldg)
                                 area: exterior_area,
                                 solar_absorptance: 0.75,
                                 emittance: 0.9,
-                                insulation_assembly_r_value: assembly_r)
+                                insulation_assembly_r_value: assembly_r.round(3))
       hpxml_bldg.rim_joists.add(id: "RimJoist#{hpxml_bldg.rim_joists.size + 1}",
                                 exterior_adjacent_to: interior_adjacent_to,
                                 interior_adjacent_to: interior_adjacent_to,
