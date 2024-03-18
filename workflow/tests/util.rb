@@ -417,15 +417,15 @@ def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
 end
 
 def _check_ashrae_140_results(htg_loads, clg_loads)
-  # Proposed acceptance criteria as of 2/6/2024
-  htg_min = [48.06, 74.30, 35.98, 39.74, 45.72, 39.12, 42.16, 48.30, 58.15, 121.75, 126.71, 24.59, 27.71, 57.57, 48.33]
-  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.39, 74.24, 137.68, 146.84, 81.73, 70.27, 91.66, 56.46]
-  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.89, -0.56, -1.95, 8.16, 71.16, 3.20, -25.77, -3.12, 7.80, 5.50]
-  htg_dt_max = [29.62, -9.45, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.68, 11.47, 32.01, 38.95]
-  clg_min = [42.49, 47.72, 41.14, 31.55, 21.03, 50.55, 36.62, 52.25, 34.16, 57.07, 50.19]
-  clg_max = [58.66, 61.33, 51.69, 41.84, 29.35, 73.47, 59.72, 68.60, 47.58, 73.51, 60.72]
+  # Proposed acceptance criteria as of 3/18/2024
+  htg_min = [48.07, 74.30, 35.98, 39.74, 45.72, 39.13, 42.17, 48.30, 58.15, 121.76, 126.71, 24.59, 27.72, 57.57, 48.33]
+  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.40, 74.24, 137.68, 146.84, 81.73, 70.27, 91.66, 56.47]
+  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.90, -0.56, -1.96, 8.15, 71.16, 3.20, -25.78, -3.14, 7.79, 5.49]
+  htg_dt_max = [29.62, -9.44, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.68, 11.47, 32.01, 38.95]
+  clg_min = [42.50, 47.72, 41.15, 31.54, 21.03, 50.55, 36.63, 52.26, 34.16, 57.07, 50.19]
+  clg_max = [58.66, 61.33, 51.69, 41.85, 29.35, 73.48, 59.72, 68.60, 47.58, 73.51, 60.72]
   clg_dt_min = [0.69, -8.24, -18.53, -30.58, 7.51, -16.52, 6.75, -12.95, 11.62, 5.12]
-  clg_dt_max = [6.91, -0.22, -9.74, -20.47, 15.77, -11.16, 12.76, -6.58, 17.59, 14.14]
+  clg_dt_max = [6.91, -0.22, -9.74, -20.47, 15.77, -11.15, 12.76, -6.58, 17.59, 14.14]
 
   # Annual Heating Loads
   assert_operator(htg_loads['L100AC'], :<=, htg_max[0])
@@ -1369,9 +1369,9 @@ def _check_method_results(results, test_num, has_tankless_water_heater, version)
 end
 
 def _check_hvac_test_results(energy)
-  # Proposed acceptance criteria as of 2/6/2024
-  min = [-24.58, -13.18, -42.75, 57.19]
-  max = [-18.18, -12.58, -15.84, 111.39]
+  # Proposed acceptance criteria as of 3/18/2024
+  min = [-24.59, -13.13, -42.73, 57.35]
+  max = [-18.18, -12.60, -15.88, 110.25]
 
   # Cooling cases
   assert_operator((energy['HVAC1b'] - energy['HVAC1a']) / energy['HVAC1a'] * 100, :>, min[0])
@@ -1389,11 +1389,11 @@ def _check_hvac_test_results(energy)
 end
 
 def _check_dse_test_results(energy)
-  # Proposed acceptance criteria as of 2/6/2024
-  htg_min = [9.33, 3.05, 7.29]
-  htg_max = [25.96, 6.65, 19.99]
-  clg_min = [19.33, 5.35, 15.96]
-  clg_max = [28.08, 8.52, 28.29]
+  # Proposed acceptance criteria as of 3/18/2024
+  htg_min = [9.45, 3.11, 7.40]
+  htg_max = [25.72, 6.53, 19.77]
+  clg_min = [18.69, 5.23, 16.32]
+  clg_max = [29.39, 8.79, 27.47]
 
   # Heating cases
   assert_operator((energy['HVAC3b'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[0])
