@@ -18,7 +18,7 @@
     <Site>
       <SiteID id='SiteID'/>
       <Address>
-        <StateCode>FL</StateCode>
+        <StateCode>MN</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -42,20 +42,20 @@
         </BuildingConstruction>
         <extension>
           <AdditionalProperties>
-            <ParentHPXMLFile>03_BaseCase_CZ7_DuluthMN.xml</ParentHPXMLFile>
+            <ParentHPXMLFile>03_BaseCase_CZ4A_BaltimoreMD.xml</ParentHPXMLFile>
           </AdditionalProperties>
         </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>1A</ClimateZone>
+          <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Miami, FL</Name>
+          <Name>Duluth, MN</Name>
           <extension>
-            <EPWFilePath>USA_FL_Miami.Intl.AP.722020_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_MN_Duluth.Intl.AP.727450_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>

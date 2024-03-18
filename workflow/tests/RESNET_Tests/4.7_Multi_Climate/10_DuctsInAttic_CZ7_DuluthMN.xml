@@ -42,7 +42,7 @@
         </BuildingConstruction>
         <extension>
           <AdditionalProperties>
-            <ParentHPXMLFile>08_CFIS_CZ7_DuluthMN.xml</ParentHPXMLFile>
+            <ParentHPXMLFile>03_BaseCase_CZ7_DuluthMN.xml</ParentHPXMLFile>
           </AdditionalProperties>
         </extension>
       </BuildingSummary>
@@ -356,7 +356,7 @@
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>0.005</Value>
+                    <Value>21.6</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -364,7 +364,7 @@
                   <DuctType>return</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>0.005</Value>
+                    <Value>21.6</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -392,19 +392,12 @@
           <VentilationFans>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
-              <FanType>central fan integrated supply</FanType>
-              <CFISControls>
-                <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
-              </CFISControls>
-              <TestedFlowRate>155.4</TestedFlowRate>
-              <HoursInOperation>12.0</HoursInOperation>
+              <FanType>balanced</FanType>
+              <TestedFlowRate>52.0</TestedFlowRate>
+              <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>232.0</FanPower>
-              <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
-              <extension>
-                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
-              </extension>
+              <FanPower>36.4</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>

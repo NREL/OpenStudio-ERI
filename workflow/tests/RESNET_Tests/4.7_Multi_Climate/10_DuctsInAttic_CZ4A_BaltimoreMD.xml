@@ -18,7 +18,7 @@
     <Site>
       <SiteID id='SiteID'/>
       <Address>
-        <StateCode>MN</StateCode>
+        <StateCode>MD</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -42,20 +42,20 @@
         </BuildingConstruction>
         <extension>
           <AdditionalProperties>
-            <ParentHPXMLFile>08_CFIS_CZ7_DuluthMN.xml</ParentHPXMLFile>
+            <ParentHPXMLFile>03_BaseCase_CZ4A_BaltimoreMD.xml</ParentHPXMLFile>
           </AdditionalProperties>
         </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>7</ClimateZone>
+          <ClimateZone>4A</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Duluth, MN</Name>
+          <Name>Baltimore, MD</Name>
           <extension>
-            <EPWFilePath>USA_MN_Duluth.Intl.AP.727450_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -140,7 +140,7 @@
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation'/>
-              <AssemblyEffectiveRValue>22.222</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>16.949</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
         </Walls>
@@ -207,7 +207,7 @@
             <Area>960.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor3_CarpetFloorInsulation'/>
-              <AssemblyEffectiveRValue>34.483</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>21.277</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -220,7 +220,7 @@
             <Area>240.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor4_TileFloorInsulation'/>
-              <AssemblyEffectiveRValue>32.258</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>20.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>
@@ -256,7 +256,7 @@
             <SystemIdentifier id='Window1'/>
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.32</UFactor>
+            <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -266,7 +266,7 @@
             <SystemIdentifier id='Window2'/>
             <Area>108.0</Area>
             <Azimuth>90</Azimuth>
-            <UFactor>0.32</UFactor>
+            <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -276,7 +276,7 @@
             <SystemIdentifier id='Window3'/>
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.32</UFactor>
+            <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -286,7 +286,7 @@
             <SystemIdentifier id='Window4'/>
             <Area>108.0</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.32</UFactor>
+            <UFactor>0.35</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -299,7 +299,7 @@
             <AttachedToWall idref='Wall1'/>
             <Area>40.0</Area>
             <Azimuth>0</Azimuth>
-            <RValue>3.125</RValue>
+            <RValue>2.857</RValue>
           </Door>
         </Doors>
       </Enclosure>
@@ -313,7 +313,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>42000.0</HeatingCapacity>
+              <HeatingCapacity>31000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.95</Value>
@@ -329,7 +329,7 @@
               <DistributionSystem idref='HVACDistribution1'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>18000.0</CoolingCapacity>
+              <CoolingCapacity>25000.0</CoolingCapacity>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -356,7 +356,7 @@
                   <DuctType>supply</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>0.005</Value>
+                    <Value>30.0</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -364,7 +364,7 @@
                   <DuctType>return</DuctType>
                   <DuctLeakage>
                     <Units>CFM25</Units>
-                    <Value>0.005</Value>
+                    <Value>30.0</Value>
                     <TotalOrToOutside>to outside</TotalOrToOutside>
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
@@ -392,19 +392,12 @@
           <VentilationFans>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
-              <FanType>central fan integrated supply</FanType>
-              <CFISControls>
-                <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
-              </CFISControls>
-              <TestedFlowRate>155.4</TestedFlowRate>
-              <HoursInOperation>12.0</HoursInOperation>
+              <FanType>balanced</FanType>
+              <TestedFlowRate>66.0</TestedFlowRate>
+              <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>232.0</FanPower>
-              <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
-              <extension>
-                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
-              </extension>
+              <FanPower>46.2</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>

@@ -128,8 +128,14 @@ def create_test_hpxmls
     'RESNET_Tests/4.7_Multi_Climate/07_ReferenceWindows_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
     'RESNET_Tests/4.7_Multi_Climate/08_CFIS_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
     'RESNET_Tests/4.7_Multi_Climate/09_CFISDuctsInAttic_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/08_CFIS_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/10_DuctsInAttic_CZ1A_MiamiFL.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ1A_MiamiFL.xml',
+    'RESNET_Tests/4.7_Multi_Climate/10_DuctsInAttic_CZ2B_PhoenixAZ.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ2B_PhoenixAZ.xml',
+    'RESNET_Tests/4.7_Multi_Climate/10_DuctsInAttic_CZ3C_SanFranCA.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ3C_SanFranCA.xml',
+    'RESNET_Tests/4.7_Multi_Climate/10_DuctsInAttic_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ4A_BaltimoreMD.xml',
+    'RESNET_Tests/4.7_Multi_Climate/10_DuctsInAttic_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
     'RESNET_Tests/4.7_Multi_Climate/11_NoMechVent_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
-    'RESNET_Tests/4.7_Multi_Climate/12_NoMechVentDuctsInAttic_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/12_NoMechVentDuctsInAttic_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ4A_BaltimoreMD.xml',
+    'RESNET_Tests/4.7_Multi_Climate/13_HeatPump_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
@@ -441,7 +447,8 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml_bldg)
     hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
     hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Miami.Intl.AP.722020_TMY3.epw'
     hpxml_bldg.state_code = 'FL'
-  elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include?(hpxml_file) ||
+        hpxml_file.include?('DuluthMN')
     # Duluth
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
@@ -450,8 +457,7 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml_bldg)
     hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
     hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MN_Duluth.Intl.AP.727450_TMY3.epw'
     hpxml_bldg.state_code = 'MN'
-  elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-01.xml'].include?(hpxml_file) ||
-        hpxml_file.include?('DuluthMN')
+  elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     if hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath == 'USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3.epw'
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
@@ -1625,6 +1631,9 @@ def set_hpxml_heating_systems(hpxml_file, hpxml_bldg)
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio)
   elsif hpxml_file.include?('Multi_Climate')
+    hpxml_bldg.heating_systems.clear
+    return if hpxml_file.include?('HeatPump')
+
     if hpxml_file.include?('MiamiFL')
       heating_capacity = 15000
     elsif hpxml_file.include?('PhoenixAZ')
@@ -1640,7 +1649,6 @@ def set_hpxml_heating_systems(hpxml_file, hpxml_bldg)
     elsif hpxml_file.include?('DuluthMN')
       heating_capacity = 42000
     end
-    hpxml_bldg.heating_systems.clear
     hpxml_bldg.heating_systems.add(id: "HeatingSystem#{hpxml_bldg.heating_systems.size + 1}",
                                    distribution_system_idref: 'HVACDistribution1',
                                    heating_system_type: HPXML::HVACTypeFurnace,
@@ -1791,6 +1799,9 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    charge_defect_ratio: charge_defect_ratio)
   elsif hpxml_file.include?('Multi_Climate')
+    hpxml_bldg.cooling_systems.clear
+    return if hpxml_file.include?('HeatPump')
+
     if hpxml_file.include?('MiamiFL')
       cooling_capacity = 27000
     elsif hpxml_file.include?('PhoenixAZ')
@@ -1802,7 +1813,6 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
     elsif hpxml_file.include?('DuluthMN')
       cooling_capacity = 18000
     end
-    hpxml_bldg.cooling_systems.clear
     hpxml_bldg.cooling_systems.add(id: "CoolingSystem#{hpxml_bldg.cooling_systems.size + 1}",
                                    distribution_system_idref: 'HVACDistribution1',
                                    cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
@@ -1958,6 +1968,28 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fan_watts_per_cfm: fan_watts_per_cfm,
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio)
+  elsif hpxml_file.include?('Multi_Climate') && hpxml_file.include?('HeatPump')
+    hpxml_bldg.heat_pumps.clear
+    hpxml_bldg.heat_pumps.add(id: "HeatPump#{hpxml_bldg.heat_pumps.size + 1}",
+                              distribution_system_idref: 'HVACDistribution1',
+                              heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
+                              heat_pump_fuel: HPXML::FuelTypeElectricity,
+                              compressor_lockout_temp: 0,
+                              cooling_shr: 0.7,
+                              cooling_capacity: 25000,
+                              heating_capacity: 31000,
+                              backup_type: HPXML::HeatPumpBackupTypeIntegrated,
+                              backup_heating_fuel: HPXML::FuelTypeElectricity,
+                              backup_heating_capacity: -1,
+                              backup_heating_efficiency_percent: 1.0,
+                              backup_heating_lockout_temp: 40,
+                              fraction_heat_load_served: 1,
+                              fraction_cool_load_served: 1,
+                              heating_efficiency_hspf: 8.2,
+                              cooling_efficiency_seer: 15,
+                              fan_watts_per_cfm: 0.58,
+                              airflow_defect_ratio: -0.25,
+                              charge_defect_ratio: -0.25)
   end
 end
 
@@ -2043,13 +2075,28 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
                                                                    duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
   elsif hpxml_file.include?('Multi_Climate')
     hpxml_bldg.hvac_distributions[0].duct_leakage_measurements.clear
+    if hpxml_file.include?('10_DuctsInAttic')
+      if hpxml_file.include?('MiamiFL')
+        duct_lto = 64.8
+      elsif hpxml_file.include?('PhoenixAZ')
+        duct_lto = 93.6
+      elsif hpxml_file.include?('SanFranCA')
+        duct_lto = 45.6
+      elsif hpxml_file.include?('BaltimoreMD')
+        duct_lto = 60.0
+      elsif hpxml_file.include?('DuluthMN')
+        duct_lto = 43.2
+      end
+    else
+      duct_lto = 0.01
+    end
     hpxml_bldg.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeSupply,
                                                                    duct_leakage_units: HPXML::UnitsCFM25,
-                                                                   duct_leakage_value: 0.005,
+                                                                   duct_leakage_value: (duct_lto / 2).round(3),
                                                                    duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
     hpxml_bldg.hvac_distributions[0].duct_leakage_measurements.add(duct_type: HPXML::DuctTypeReturn,
                                                                    duct_leakage_units: HPXML::UnitsCFM25,
-                                                                   duct_leakage_value: 0.005,
+                                                                   duct_leakage_value: (duct_lto / 2).round(3),
                                                                    duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
   end
 

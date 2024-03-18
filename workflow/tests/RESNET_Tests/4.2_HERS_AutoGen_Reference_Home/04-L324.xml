@@ -18,6 +18,7 @@
     <Site>
       <SiteID id='SiteID'/>
       <Address>
+        <StateCode>CO</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -48,6 +49,10 @@
         </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
+        <ClimateZoneIECC>
+          <Year>2006</Year>
+          <ClimateZone>5B</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>USA_CO_Colorado.Springs-Peterson.Field.724660_TMY3</Name>
