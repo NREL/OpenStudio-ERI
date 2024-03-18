@@ -27,6 +27,7 @@ The following DOE ZERH versions are supported:
 
 - 1.0
 - Single Family, 2.0
+- Multifamily, 2.0
 
 Accuracy vs Speed
 -----------------

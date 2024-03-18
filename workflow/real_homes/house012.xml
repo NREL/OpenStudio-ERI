@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>redacted</XMLGeneratedBy>
@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <CO2IndexCalculation>
+        <Version>latest</Version>
+      </CO2IndexCalculation>
       <EnergyStarCalculation>
         <Version>SF_National_3.2</Version>
       </EnergyStarCalculation>
@@ -28,7 +31,7 @@
       <SiteID id='Site'/>
       <Address>
         <StateCode>VT</StateCode>
-        <ZipCode>00000</ZipCode>
+        <ZipCode>05401</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -82,7 +85,7 @@
         <Roofs>
           <Roof>
             <SystemIdentifier id='Roof1'/>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>578.0</Area>
             <SolarAbsorptance>0.8</SolarAbsorptance>
             <Emittance>0.75</Emittance>
@@ -98,7 +101,7 @@
           <RimJoist>
             <SystemIdentifier id='RimJoist1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <Area>148.0</Area>
             <SolarAbsorptance>0.8</SolarAbsorptance>
             <Emittance>0.75</Emittance>
@@ -112,7 +115,7 @@
           <Wall>
             <SystemIdentifier id='Wall1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -127,7 +130,7 @@
           <Wall>
             <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -142,7 +145,7 @@
           <Wall>
             <SystemIdentifier id='Wall3'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -157,7 +160,7 @@
           <Wall>
             <SystemIdentifier id='Wall4'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -312,7 +315,7 @@
                 <Value>6.8</Value>
               </AnnualHeatingEfficiency>
               <extension>
-                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+                <AirflowDefectRatio>0.0</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
               </extension>
@@ -330,6 +333,7 @@
               <FanType>energy recovery ventilator</FanType>
               <TestedFlowRate>100.0</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
+              <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
               <AdjustedTotalRecoveryEfficiency>0.7</AdjustedTotalRecoveryEfficiency>
               <AdjustedSensibleRecoveryEfficiency>0.8</AdjustedSensibleRecoveryEfficiency>
@@ -380,7 +384,7 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <IntegratedModifiedEnergyFactor>2.2</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>200.0</RatedAnnualkWh>
           <LabelElectricRate>0.0803</LabelElectricRate>
@@ -392,7 +396,7 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <EnergyFactor>2.67</EnergyFactor>
           <ControlType>timer</ControlType>
@@ -400,7 +404,7 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <EnergyFactor>0.46</EnergyFactor>
           <PlaceSettingCapacity>14</PlaceSettingCapacity>
           <LabelElectricRate>0.12</LabelElectricRate>
@@ -410,12 +414,12 @@
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <RatedAnnualkWh>691.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <IsInduction>false</IsInduction>
         </CookingRange>

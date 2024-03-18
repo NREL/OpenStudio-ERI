@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -9,9 +9,6 @@
   <SoftwareInfo>
     <extension>
       <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
-      <AdditionalProperties>
-        <ParentHPXMLFile>HVAC3a.xml</ParentHPXMLFile>
-      </AdditionalProperties>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -41,6 +38,11 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
         </BuildingConstruction>
+        <extension>
+          <AdditionalProperties>
+            <ParentHPXMLFile>HVAC3a.xml</ParentHPXMLFile>
+          </AdditionalProperties>
+        </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <WeatherStation>
@@ -118,7 +120,7 @@
             <SystemIdentifier id='RimJoist1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Area>42.8</Area>
+            <Area>42.7</Area>
             <Azimuth>0</Azimuth>
             <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
@@ -146,7 +148,7 @@
             <SystemIdentifier id='RimJoist3'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Area>42.8</Area>
+            <Area>42.7</Area>
             <Azimuth>180</Azimuth>
             <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
@@ -175,7 +177,7 @@
           <Wall>
             <SystemIdentifier id='Wall1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -196,7 +198,7 @@
           <Wall>
             <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -217,7 +219,7 @@
           <Wall>
             <SystemIdentifier id='Wall3'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -238,7 +240,7 @@
           <Wall>
             <SystemIdentifier id='Wall4'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -299,7 +301,7 @@
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Height>7.25</Height>
-            <Area>413.3</Area>
+            <Area>413.2</Area>
             <Azimuth>0</Azimuth>
             <Thickness>6.0</Thickness>
             <DepthBelowGrade>6.583</DepthBelowGrade>
@@ -323,7 +325,7 @@
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Height>7.25</Height>
-            <Area>195.7</Area>
+            <Area>195.8</Area>
             <Azimuth>90</Azimuth>
             <Thickness>6.0</Thickness>
             <DepthBelowGrade>6.583</DepthBelowGrade>
@@ -347,7 +349,7 @@
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Height>7.25</Height>
-            <Area>413.3</Area>
+            <Area>413.2</Area>
             <Azimuth>180</Azimuth>
             <Thickness>6.0</Thickness>
             <DepthBelowGrade>6.583</DepthBelowGrade>
@@ -371,7 +373,7 @@
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Height>7.25</Height>
-            <Area>195.7</Area>
+            <Area>195.8</Area>
             <Azimuth>270</Azimuth>
             <Thickness>6.0</Thickness>
             <DepthBelowGrade>6.583</DepthBelowGrade>
@@ -395,7 +397,7 @@
           <Floor>
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorOrCeiling>ceiling</FloorOrCeiling>
             <FloorType>
               <WoodFrame/>
@@ -413,7 +415,7 @@
           <Floor>
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>basement - unconditioned</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorType>
               <WoodFrame/>
             </FloorType>

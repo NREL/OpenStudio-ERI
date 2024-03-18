@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2019/10' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://hpxmlonline.com/2019/10' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>redacted</XMLGeneratedBy>
@@ -11,6 +11,9 @@
       <ERICalculation>
         <Version>latest</Version>
       </ERICalculation>
+      <CO2IndexCalculation>
+        <Version>latest</Version>
+      </CO2IndexCalculation>
       <EnergyStarCalculation>
         <Version>SF_National_3.2</Version>
       </EnergyStarCalculation>
@@ -28,7 +31,7 @@
       <SiteID id='Site'/>
       <Address>
         <StateCode>OR</StateCode>
-        <ZipCode>00000</ZipCode>
+        <ZipCode>97231</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -140,7 +143,7 @@
           <Wall>
             <SystemIdentifier id='Wall1'/>
             <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
@@ -155,13 +158,11 @@
           <Wall>
             <SystemIdentifier id='Wall2'/>
             <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <WallType>
               <WoodStud/>
             </WallType>
             <Area>396.0</Area>
-            <SolarAbsorptance>0.8</SolarAbsorptance>
-            <Emittance>0.75</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall2Insulation'/>
               <AssemblyEffectiveRValue>19.67</AssemblyEffectiveRValue>
@@ -215,7 +216,7 @@
           <Floor>
             <SystemIdentifier id='Floor1'/>
             <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorType>
               <WoodFrame/>
             </FloorType>
@@ -228,7 +229,7 @@
           <Floor>
             <SystemIdentifier id='Floor2'/>
             <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorType>
               <WoodFrame/>
             </FloorType>
@@ -434,28 +435,28 @@
                   </DuctLeakage>
                 </DuctLeakageMeasurement>
                 <Ducts>
-                  <SystemIdentifier id="Duct1"/>
+                  <SystemIdentifier id='Duct1'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>518.9</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
-                  <SystemIdentifier id="Duct2"/>
+                  <SystemIdentifier id='Duct2'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
-                  <DuctLocation>living space</DuctLocation>
+                  <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>76.9</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
-                  <SystemIdentifier id="Duct3"/>
+                  <SystemIdentifier id='Duct3'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
                   <DuctSurfaceArea>518.9</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
-                  <SystemIdentifier id="Duct4"/>
+                  <SystemIdentifier id='Duct4'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>8.0</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
@@ -523,7 +524,7 @@
         <ClothesWasher>
           <SystemIdentifier id='ClothesWasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <IntegratedModifiedEnergyFactor>0.807</IntegratedModifiedEnergyFactor>
           <RatedAnnualkWh>487.0</RatedAnnualkWh>
           <LabelElectricRate>0.0803</LabelElectricRate>
@@ -535,7 +536,7 @@
         <ClothesDryer>
           <SystemIdentifier id='ClothesDryer1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>2.62</CombinedEnergyFactor>
           <ControlType>moisture</ControlType>
@@ -543,7 +544,7 @@
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
           <IsSharedAppliance>false</IsSharedAppliance>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <RatedAnnualkWh>239.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
           <LabelElectricRate>0.12</LabelElectricRate>
@@ -553,12 +554,12 @@
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <RatedAnnualkWh>691.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
-          <Location>living space</Location>
+          <Location>conditioned space</Location>
           <FuelType>natural gas</FuelType>
           <IsInduction>false</IsInduction>
         </CookingRange>

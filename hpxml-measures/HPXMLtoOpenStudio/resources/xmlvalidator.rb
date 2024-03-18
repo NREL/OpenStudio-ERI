@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class XMLValidator
-  def self.validate_against_schema(hpxml_path, schema_path, errors = [], warnings = [])
+  def self.get_schema_validator(schema_path)
+    return OpenStudio::XMLValidator.new(schema_path)
+  end
+
+  def self.validate_against_schema(hpxml_path, validator, errors = [], warnings = [])
     # Validate against XSD
-    validator = OpenStudio::XMLValidator.new(schema_path)
     validator.validate(hpxml_path)
     validator.errors.each do |e|
       next unless e.logMessage.count(':') >= 2
@@ -17,9 +20,18 @@ class XMLValidator
     return errors, warnings
   end
 
-  def self.validate_against_schematron(hpxml_path, schematron_path, hpxml_doc, errors = [], warnings = [])
+  def self.get_schematron_validator(schematron_path)
+    # First create XSLT at our specified output path to avoid possible errors due
+    # to https://github.com/NREL/OpenStudio/issues/4824.
+    xslt_dir = Dir.mktmpdir('xmlvalidation-')
+    OpenStudio::XMLValidator::schematronToXslt(schematron_path, xslt_dir)
+    xslt_path = File.join(xslt_dir, File.basename(schematron_path, '.xml') + '_stylesheet.xslt')
+
+    return OpenStudio::XMLValidator.new(xslt_path)
+  end
+
+  def self.validate_against_schematron(hpxml_path, validator, hpxml_doc, errors = [], warnings = [])
     # Validate against Schematron doc
-    validator = OpenStudio::XMLValidator.new(schematron_path)
     validator.validate(hpxml_path)
     if validator.fullValidationReport.is_initialized
       report_doc = Oga.parse_xml(validator.fullValidationReport.get)
@@ -43,17 +55,21 @@ class XMLValidator
 
           # Try to retrieve SystemIdentifier
           context_element = hpxml_doc.xpath(current_context.gsub('h:', ''))[current_context_idx]
-          sys_id = XMLHelper.get_attribute_value(XMLHelper.get_element(context_element, 'SystemIdentifier'), 'id')
-          if sys_id.nil?
+          if context_element.nil?
+            fail "Could not find element at xpath '#{current_context}' with index #{current_context_idx}."
+          end
+
+          element_id = get_element_id(context_element)
+          if element_id.nil?
             # Keep checking parent elements
             context_element.each_ancestor do |parent_element|
-              sys_id = XMLHelper.get_attribute_value(XMLHelper.get_element(parent_element, 'SystemIdentifier'), 'id')
-              break unless sys_id.nil?
+              element_id = get_element_id(parent_element)
+              break unless element_id.nil?
             end
           end
-          sys_id_string = ", id: \"#{sys_id}\"" unless sys_id.nil?
+          element_id_string = ", id: \"#{element_id}\"" unless element_id.nil?
 
-          full_msg = "#{msg_txt} [context: #{current_context.gsub('h:', '')}#{sys_id_string}]"
+          full_msg = "#{msg_txt} [context: #{current_context.gsub('h:', '')}#{element_id_string}]"
           if n.name == 'failed-assert'
             errors.append(full_msg)
           elsif n.name == 'successful-report'
@@ -62,18 +78,14 @@ class XMLValidator
         end
       end
     end
-    cleanup_openstudio_tmp_dir(validator, schematron_path)
     return errors, warnings
   end
 
-  def self.cleanup_openstudio_tmp_dir(validator, schema_path)
-    # Workaround for https://github.com/NREL/OpenStudio/issues/4761
-    # Remove this method if the issue is addressed
-    if validator.schemaPath.to_s != schema_path
-      # OpenStudio created a temp dir; delete it now
-      tmp_path = File.dirname(validator.schemaPath.to_s)
-      require 'fileutils'
-      FileUtils.rm_r(tmp_path)
+  def self.get_element_id(element)
+    if element.name.to_s == 'Building'
+      return XMLHelper.get_attribute_value(XMLHelper.get_element(element, 'BuildingID'), 'id')
+    else
+      return XMLHelper.get_attribute_value(XMLHelper.get_element(element, 'SystemIdentifier'), 'id')
     end
   end
 end

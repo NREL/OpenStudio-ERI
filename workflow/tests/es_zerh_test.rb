@@ -10,6 +10,8 @@ require_relative '../util.rb'
 
 class ESZERHTest < Minitest::Test
   def setup
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
+    @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
     FileUtils.mkdir_p @test_results_dir
     @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
@@ -57,83 +59,88 @@ class ESZERHTest < Minitest::Test
   end
 
   def test_saf
-    def get_results_hash(hpxml)
-      return { rated_facility_type: hpxml.building_construction.residential_facility_type,
-               rated_cfa: hpxml.building_construction.conditioned_floor_area,
-               rated_nbr: hpxml.building_construction.number_of_bedrooms }
+    def get_results_hash(hpxml_bldg)
+      return { rated_facility_type: hpxml_bldg.building_construction.residential_facility_type,
+               rated_cfa: hpxml_bldg.building_construction.conditioned_floor_area,
+               rated_nbr: hpxml_bldg.building_construction.number_of_bedrooms }
     end
-
-    root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
 
     saf_affected_versions = [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ZERHConstants.Ver1]
 
     # Single-family detached
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base-foundation-slab.xml'))
-    hpxml.building_construction.conditioned_floor_area *= 2.0
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-foundation-slab.xml'))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.building_construction.conditioned_floor_area *= 2.0
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
-      results = get_results_hash(hpxml)
+      results = get_results_hash(hpxml_bldg)
       if saf_affected_versions.include? es_version
-        assert_in_epsilon(0.95, get_saf(results, es_version, hpxml), 0.001)
+        assert_in_epsilon(0.95, get_saf(results, es_version, hpxml_bldg), 0.001)
       else
-        assert_equal(1.0, get_saf(results, es_version, hpxml))
+        assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
       end
     end
 
     # Single-family detached, 2 bedrooms
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base-foundation-slab.xml'))
-    hpxml.building_construction.conditioned_floor_area *= 2.0
-    hpxml.building_construction.number_of_bedrooms = 2
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-foundation-slab.xml'))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.building_construction.conditioned_floor_area *= 2.0
+    hpxml_bldg.building_construction.number_of_bedrooms = 2
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
-      results = get_results_hash(hpxml)
+      results = get_results_hash(hpxml_bldg)
       if saf_affected_versions.include? es_version
-        assert_in_epsilon(0.877, get_saf(results, es_version, hpxml), 0.001)
+        assert_in_epsilon(0.877, get_saf(results, es_version, hpxml_bldg), 0.001)
       else
-        assert_equal(1.0, get_saf(results, es_version, hpxml))
+        assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
       end
     end
 
     # Single-family detached, 5 bedrooms
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base-foundation-slab.xml'))
-    hpxml.building_construction.conditioned_floor_area *= 2.0
-    hpxml.building_construction.number_of_bedrooms = 5
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-foundation-slab.xml'))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.building_construction.conditioned_floor_area *= 2.0
+    hpxml_bldg.building_construction.number_of_bedrooms = 5
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
-      results = get_results_hash(hpxml)
-      assert_equal(1.0, get_saf(results, es_version, hpxml))
+      results = get_results_hash(hpxml_bldg)
+      assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
 
     # Single-family detached, conditioned basement below grade
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base.xml'))
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
+    hpxml_bldg = hpxml.buildings[0]
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
-      results = get_results_hash(hpxml)
-      assert_equal(1.0, get_saf(results, es_version, hpxml))
+      results = get_results_hash(hpxml_bldg)
+      assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
 
     # Single-family detached, conditioned basement above grade
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base.xml'))
-    hpxml.foundation_walls.each do |fwall|
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.foundation_walls.each do |fwall|
       fwall.depth_below_grade = fwall.depth_below_grade / 2.0 - 0.5
     end
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
-      results = get_results_hash(hpxml)
+      results = get_results_hash(hpxml_bldg)
       if saf_affected_versions.include? es_version
-        assert_in_epsilon(0.95, get_saf(results, es_version, hpxml), 0.001)
+        assert_in_epsilon(0.95, get_saf(results, es_version, hpxml_bldg), 0.001)
       else
-        assert_equal(1.0, get_saf(results, es_version, hpxml))
+        assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
       end
     end
 
     # Single-family attached
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base-bldgtype-single-family-attached.xml'))
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-bldgtype-sfa-unit.xml'))
+    hpxml_bldg = hpxml.buildings[0]
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
-      results = get_results_hash(hpxml)
-      assert_equal(1.0, get_saf(results, es_version, hpxml))
+      results = get_results_hash(hpxml_bldg)
+      assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
 
     # Apartment unit
-    hpxml = HPXML.new(hpxml_path: File.join(root_path, 'workflow', 'sample_files', 'base-bldgtype-multifamily.xml'))
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-bldgtype-mf-unit.xml'))
+    hpxml_bldg = hpxml.buildings[0]
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |es_version|
-      results = get_results_hash(hpxml)
-      assert_equal(1.0, get_saf(results, es_version, hpxml))
+      results = get_results_hash(hpxml_bldg)
+      assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
   end
 

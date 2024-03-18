@@ -6,7 +6,7 @@ Setup
 
 To get started:
 
-#. Either download `OpenStudio 3.5.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.5.0>`_ and install the Command Line Interface/EnergyPlus/C++ API components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
+#. Either download `OpenStudio 3.7.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.7.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
 #. Download the `latest release <https://github.com/NREL/OpenStudio-ERI/releases>`_ release.
 
 .. note:: 
@@ -37,6 +37,9 @@ Or for example, one or more specific monthly output types can be requested, e.g.
 
 You can also skip simulations (i.e., just generate the ERI Reference/Rated Home HPXMLs) by using, e.g.:
 ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --skip-simulation``
+
+Or you can request all output files in JSON (instead of CSV) format:
+``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --output-format json``
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 

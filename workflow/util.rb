@@ -17,9 +17,9 @@ def calc_saf(results, hpxml_obj_or_path)
   nbr = results[:rated_nbr]
 
   if hpxml_obj_or_path.is_a? String
-    hpxml = HPXML.new(hpxml_path: hpxml_obj_or_path)
-  elsif hpxml_obj_or_path.is_a? HPXML
-    hpxml = hpxml_obj_or_path
+    hpxml_bldg = HPXML.new(hpxml_path: hpxml_obj_or_path).buildings[0]
+  elsif hpxml_obj_or_path.is_a? HPXML::Building
+    hpxml_bldg = hpxml_obj_or_path
   else
     fail 'Unexpected argument.'
   end
@@ -28,19 +28,19 @@ def calc_saf(results, hpxml_obj_or_path)
   cond_bsmt_floor_area = 0.0
   cond_bsmt_ext_wall_area = 0.0
   cond_bsmt_ext_wall_area_bg = 0.0
-  hpxml.slabs.each do |slab|
+  hpxml_bldg.slabs.each do |slab|
     next unless slab.interior_adjacent_to == HPXML::LocationBasementConditioned
 
     cond_bsmt_floor_area += slab.area
   end
-  hpxml.foundation_walls.each do |fwall|
+  hpxml_bldg.foundation_walls.each do |fwall|
     next unless fwall.is_exterior
     next unless fwall.interior_adjacent_to == HPXML::LocationBasementConditioned
 
     cond_bsmt_ext_wall_area += fwall.area
     cond_bsmt_ext_wall_area_bg += (fwall.area * fwall.depth_below_grade / fwall.height)
   end
-  hpxml.walls.each do |wall|
+  hpxml_bldg.walls.each do |wall|
     next unless wall.is_exterior
     next unless wall.interior_adjacent_to == HPXML::LocationBasementConditioned
 
@@ -79,7 +79,7 @@ def calc_renewable_energy_limit(eri_outputs, program_version)
   if ['2021'].include? program_version
     # For compliance purposes, any reduction in energy use of the rated design associated with
     # on-site renewable energy shall not exceed 5 percent of the total energy use.
-    return 0.05 * eri_outputs[Constants.CalcTypeERIRatedHome]['Energy Use: Total (MBtu)']
+    return 0.05 * eri_outputs[Constants.CalcTypeERIRatedHome]['Energy Use: Total']
   else
     return
   end

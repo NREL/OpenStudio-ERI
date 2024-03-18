@@ -59,6 +59,11 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
   if model.alwaysOffDiscreteSchedule.directUseCount == 0
     remove_objects << ['Schedule:Constant', model.alwaysOffDiscreteSchedule.name.to_s]
   end
+  model.getScheduleConstants.each do |sch|
+    next unless sch.directUseCount == 0
+
+    remove_objects << ['Schedule:Constant', sch.name.to_s]
+  end
 
   # Translate model to workspace
   forward_translator = OpenStudio::EnergyPlus::ForwardTranslator.new
@@ -67,7 +72,7 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
   success = report_ft_errors_warnings(forward_translator, rundir)
 
   # Remove objects
-  remove_objects.each do |remove_object|
+  remove_objects.uniq.each do |remove_object|
     workspace.getObjectByTypeAndName(remove_object[0].to_IddObjectType, remove_object[1]).get.remove
   end
 
@@ -94,6 +99,12 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
 
   if skip_simulation
     return { success: success, runner: runner }
+  end
+
+  if not model.getWeatherFile.path.is_initialized
+    print "#{print_prefix}Creating input unsuccessful.\n"
+    print "#{print_prefix}See #{File.join(rundir, 'run.log')} for details.\n"
+    return { success: false, runner: runner }
   end
 
   # Run simulation
@@ -498,6 +509,7 @@ def report_os_warnings(os_log, rundir)
       next if s.logMessage.include? 'Valid instance'
       next if s.logMessage.include? 'xsdValidate'
       next if s.logMessage.include? 'xsltValidate'
+      next if s.logLevel == 0 && s.logMessage.include?('not within the expected limits') # Ignore EpwFile warnings
 
       f << "OS Message: #{s.logMessage}\n"
     end
@@ -536,31 +548,32 @@ end
 def get_argument_values(runner, arguments, user_arguments)
   args = {}
   arguments.each do |argument|
+    key = argument.name.to_sym
     if argument.required
       case argument.type
       when 'Choice'.to_OSArgumentType
-        args[argument.name] = runner.getStringArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getStringArgumentValue(argument.name, user_arguments)
       when 'Boolean'.to_OSArgumentType
-        args[argument.name] = runner.getBoolArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getBoolArgumentValue(argument.name, user_arguments)
       when 'Double'.to_OSArgumentType
-        args[argument.name] = runner.getDoubleArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getDoubleArgumentValue(argument.name, user_arguments)
       when 'Integer'.to_OSArgumentType
-        args[argument.name] = runner.getIntegerArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getIntegerArgumentValue(argument.name, user_arguments)
       when 'String'.to_OSArgumentType
-        args[argument.name] = runner.getStringArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getStringArgumentValue(argument.name, user_arguments)
       end
     else
       case argument.type
       when 'Choice'.to_OSArgumentType
-        args[argument.name] = runner.getOptionalStringArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getOptionalStringArgumentValue(argument.name, user_arguments)
       when 'Boolean'.to_OSArgumentType
-        args[argument.name] = runner.getOptionalBoolArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getOptionalBoolArgumentValue(argument.name, user_arguments)
       when 'Double'.to_OSArgumentType
-        args[argument.name] = runner.getOptionalDoubleArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getOptionalDoubleArgumentValue(argument.name, user_arguments)
       when 'Integer'.to_OSArgumentType
-        args[argument.name] = runner.getOptionalIntegerArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getOptionalIntegerArgumentValue(argument.name, user_arguments)
       when 'String'.to_OSArgumentType
-        args[argument.name] = runner.getOptionalStringArgumentValue(argument.name, user_arguments)
+        args[key] = runner.getOptionalStringArgumentValue(argument.name, user_arguments)
       end
     end
   end

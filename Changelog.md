@@ -1,3 +1,97 @@
+## OpenStudio-ERI v1.8.0
+
+__New Features__
+- **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
+
+__Bugfixes__
+- Fixes incorrect Reference Home mechanical ventilation flowrate for attached units (when Aext is not 1).
+- Fixes possible 301ruleset.rb error due to floating point arithmetic.
+
+## OpenStudio-ERI v1.7.0
+
+__New Features__
+- Updates to OpenStudio 3.7.0/EnergyPlus 23.2.
+- **Breaking change**: Updates to HPXML v4.0-rc2:
+  - HPXML namespace changed from http://hpxmlonline.com/2019/10 to http://hpxmlonline.com/2023/09.
+  - Replaces "living space" with "conditioned space", which better represents what is modeled.
+  - Replaces `PortableHeater` and `FixedHeater` with `SpaceHeater`.
+- HVAC updates:
+  - Updated assumptions for variable-speed air conditioners, heat pumps, and mini-splits based on NEEP data. Expect results to change, potentially significantly so depending on the scenario.
+  - Updates deep ground temperatures (used for modeling ground-source heat pumps) using L. Xing's simplified design model (2014).
+  - Replaces inverse calculations, used to calculate COPs from rated efficiencies, with regressions for single/two-speed central ACs and ASHPs.
+- Output updates:
+  - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
+  - Adds "Peak Electricity: Annual Total (W)" output.
+- Relaxes requirements for some inputs:
+  - `SolarAbsorptance` and `Emittance` now only required for *exterior* walls & rim joists (i.e., ExteriorAdjacentTo=outside).
+  - `Window/PerformanceClass` no longer required (defaults to "residential").
+  - Allows above-grade basements/crawlspaces defined solely with Wall (not FoundationWall) elements.
+- Adds ZERH Multifamily v2.
+- Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
+- Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
+
+__Bugfixes__
+- Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.
+- Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
+- Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
+- Fixes ground source heat pump fan/pump adjustment to rated efficiency.
+- Fixes missing radiation exchange between window and sky.
+- Minor HVAC design load calculation bugfixes for foundation walls.
+- Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
+- Various HVAC sizing bugfixes and improvements.
+
+## OpenStudio-ERI v1.6.3
+
+__Bugfixes__
+- Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
+
+## OpenStudio-ERI v1.6.2
+
+__Bugfixes__
+- Fixes incorrect ESRD ceiling U-factor for SFA unit with adiabatic ceiling when using SFNH program.
+
+## OpenStudio-ERI v1.6.1
+
+__Bugfixes__
+- Fixes ZERH Single Family v2 mechanical ventilation fan efficiency to use ASRE instead of SRE.
+- Fixes error if describing a wall with `WallType/StructuralInsulatedPanel`.
+
+## OpenStudio-ERI v1.6.0
+
+__New Features__
+- Updates to OpenStudio 3.6.1/EnergyPlus 23.1.
+- **Breaking change**: CO2e Index results must now be requested through a new optional `SoftwareInfo/extension/CO2IndexCalculation/Version` input.
+- **Breaking change**: Updates to newer proposed HPXML v4.0:
+  - Replaces `CeilingFan/Quantity`, `ClothesWasher/NumberofUnits`, and `ClothesDryer/NumberofUnits` with `Count`.
+  - Replaces `PVSystem/InverterEfficiency` with `PVSystem/AttachedToInverter` and `Inverter/InverterEfficiency`.
+- Output updates:
+  - **Breaking change**: Adds `End Use: Heating Heat Pump Backup Fans/Pumps` (disaggregated from `End Use: Heating Fans/Pumps`).
+  - **Breaking change**: Replaces `Component Load: Windows` with `Component Load: Windows Conduction` and `Component Load: Windows Solar`.
+  - **Breaking change**: Replaces `Component Load: Skylights` with `Component Load: Skylights Conduction` and `Component Load: Skylights Solar`.
+  - **Breaking change**: Adds `Component Load: Lighting` (disaggregated from `Component Load: Internal Gains`).
+  - **Breaking change**: Adds "net" values for emissions; "total" values now exclude generation (e.g., PV).
+  - Adds `Load: Heating: Heat Pump Backup` (heating load delivered by heat pump backup systems).
+  - Adds `System Use` outputs (end use outputs for each heating, cooling, and water heating system); allows requesting timeseries output.
+  - All annual load outputs are now provided as timeseries outputs; previously only "Delivered" loads were available.
+  - Peak summer/winter electricity outputs are now based on Jun/July/Aug and Dec/Jan/Feb months, not HVAC heating/cooling operation.
+- Heat pump enhancements:
+  - Allows `HeatingCapacityRetention[Fraction | Temperature]` optional inputs as a more flexible alternative to `HeatingCapacity17F`.
+  - Allows `CompressorLockoutTemperature` and `BackupHeatingLockoutTemperature` as optional inputs; alternatives to `BackupHeatingSwitchoverTemperature`.
+  - Defaults for `CompressorLockoutTemperature`: 25F for dual-fuel, -20F for mini-split, 0F for all other heat pumps.
+  - Defaults for `BackupHeatingLockoutTemperature`: 50F for dual-fuel, 40F for all other heat pumps.
+  - Increased consistency between variable-speed central HP and mini-split HP models for degradation coefficients, gross SHR calculations, etc.
+- Duct enhancements:
+  - Allows modeling ducts buried in attic loose-fill insulation using `Ducts/DuctBuriedInsulationLevel`.
+  - The duct effective R-value can now be found in the ERI___Home.xml files; it accounts for exterior air film, duct shape, and buried insulation level.
+- Allows additional building air leakage inputs (ACH or CFM at user-specified house pressure, Natural CFM, Effective Leakage Area).
+- LightingGroup for garage is no longer required if the home doesn't have a garage.
+- Weather cache files (\*foo-cache.csv) are no longer used/needed.
+
+__Bugfixes__
+- Adds error-checking to ensure that SFA/MF dwelling units have at least one attached wall/ceiling/floor surface.
+- Various Manual J HVAC autosizing calculation bugfixes and improvements.
+- Ensure that ductless HVAC systems do not have a non-zero airflow defect ratio specified.
+
 ## OpenStudio-ERI v1.5.2
 
 __New Features__
@@ -22,15 +116,15 @@ __Bugfixes__
 
 __New Features__
 - Updates to OpenStudio 3.5.0/EnergyPlus 22.2.
-- Updates to newer proposed HPXML v4.0:
-  - **Breaking change**: Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
-  - **Breaking change**: `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
-  - **Breaking change**: All `Ducts` must now have a `SystemIdentifier`.
-  - **Breaking change**: Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
-  - **Breaking change**: Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
-  - **Breaking change**: Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
-  - **Breaking change**: Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
-  - **Breaking change**: For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
+- **Breaking change**: Updates to newer proposed HPXML v4.0:
+  - Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
+  - `Floor/FloorType` (WoodFrame, StructuralInsulatedPanel, SteelFrame, or SolidConcrete) is a required input.
+  - All `Ducts` must now have a `SystemIdentifier`.
+  - Replaces `WallType/StructurallyInsulatedPanel` with `WallType/StructuralInsulatedPanel`.
+  - Replaces `StandbyLoss` with `StandbyLoss[Units="F/hr"]/Value` for an indirect water heater.
+  - Replaces `BranchPipingLoopLength` with `BranchPipingLength` for a hot water recirculation system.
+  - Replaces `Floor/extension/OtherSpaceAboveOrBelow` with `Floor/FloorOrCeiling`.
+  - For PTAC with heating, replaces `HeatingSystem` of type PackagedTerminalAirConditionerHeating with `CoolingSystem/IntegratedHeating*` elements.
 - **Breaking change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).

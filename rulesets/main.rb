@@ -12,7 +12,7 @@ Dir["#{File.dirname(__FILE__)}/resources/*.rb"].each do |resource_file|
   require resource_file
 end
 
-def run_rulesets(hpxml_input_path, designs)
+def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_validator = nil)
   errors, warnings = [], []
 
   unless (Pathname.new hpxml_input_path).absolute?
@@ -24,9 +24,15 @@ def run_rulesets(hpxml_input_path, designs)
   end
 
   begin
-    xsd_path = File.join(File.dirname(__FILE__), '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-    stron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
-    orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_path: xsd_path, schematron_path: stron_path)
+    if schema_validator.nil?
+      schema_path = File.join(File.dirname(__FILE__), '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
+      schema_validator = XMLValidator.get_schema_validator(schema_path)
+    end
+    if schematron_validator.nil?
+      schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
+      schematron_validator = XMLValidator.get_schematron_validator(schematron_path)
+    end
+    orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_validator: schema_validator, schematron_validator: schematron_validator)
     orig_hpxml.errors.each do |error|
       errors << error
     end
@@ -36,7 +42,7 @@ def run_rulesets(hpxml_input_path, designs)
     return false, errors, warnings unless orig_hpxml.errors.empty?
 
     # Weather file
-    epw_path = orig_hpxml.climate_and_risk_zones.weather_station_epw_filepath
+    epw_path = orig_hpxml.buildings[0].climate_and_risk_zones.weather_station_epw_filepath
     if not File.exist? epw_path
       test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
       epw_path = test_epw_path if File.exist? test_epw_path
@@ -50,27 +56,13 @@ def run_rulesets(hpxml_input_path, designs)
       return false, errors, warnings
     end
 
-    cache_path = epw_path.gsub('.epw', '-cache.csv')
-    weather = nil
-    if not File.exist?(cache_path)
-      # Process weather file to create cache .csv
-      begin
-        File.open(cache_path, 'wb') do |file|
-          warnings << "'#{cache_path}' could not be found; regenerating it."
-          weather = WeatherProcess.new(epw_path: epw_path)
-          weather.dump_to_csv(file)
-        end
-      rescue SystemCallError
-        warnings << "#{cache_path} could not be written, skipping."
-      end
-    else
-      # Obtain weather object
-      weather = WeatherProcess.new(csv_path: cache_path)
-    end
+    # Obtain weather object
+    weather = WeatherProcess.new(epw_path: epw_path, runner: nil)
 
     eri_version = orig_hpxml.header.eri_calculation_version
+    eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
     eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
-    zip_code = orig_hpxml.header.zip_code
+    zip_code = orig_hpxml.buildings[0].zip_code
     if not eri_version.nil?
       # Obtain egrid subregion & cambium gea region
       egrid_subregion = get_epa_egrid_subregion(zip_code)
@@ -114,7 +106,7 @@ def run_rulesets(hpxml_input_path, designs)
       # Write initial HPXML file
       if not design.init_hpxml_output_path.nil?
         if not File.exist? design.init_hpxml_output_path
-          XMLHelper.write_file(new_hpxml.to_oga, design.init_hpxml_output_path)
+          XMLHelper.write_file(new_hpxml.to_doc, design.init_hpxml_output_path)
         end
       end
 
@@ -127,7 +119,7 @@ def run_rulesets(hpxml_input_path, designs)
 
       # Write final HPXML file
       if (not design.hpxml_output_path.nil?) && (not design.calc_type.nil?)
-        hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_oga, design.hpxml_output_path)
+        hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_doc, design.hpxml_output_path)
       end
     end
   rescue Exception => e
