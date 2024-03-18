@@ -42,7 +42,7 @@
         </BuildingConstruction>
         <extension>
           <AdditionalProperties>
-            <ParentHPXMLFile>BaseCase_CZ7_DuluthMN.xml</ParentHPXMLFile>
+            <ParentHPXMLFile>03_BaseCase_CZ7_DuluthMN.xml</ParentHPXMLFile>
           </AdditionalProperties>
         </extension>
       </BuildingSummary>
@@ -372,14 +372,14 @@
                   <SystemIdentifier id='Duct1'/>
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>4.2</DuctInsulationRValue>
-                  <DuctLocation>conditioned space</DuctLocation>
+                  <DuctLocation>attic - vented</DuctLocation>
                   <DuctSurfaceArea>486.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id='Duct2'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>4.2</DuctInsulationRValue>
-                  <DuctLocation>conditioned space</DuctLocation>
+                  <DuctLocation>attic - vented</DuctLocation>
                   <DuctSurfaceArea>90.0</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>2</NumberofReturnRegisters>

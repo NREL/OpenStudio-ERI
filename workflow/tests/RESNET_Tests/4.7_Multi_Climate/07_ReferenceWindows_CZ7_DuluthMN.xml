@@ -18,7 +18,7 @@
     <Site>
       <SiteID id='SiteID'/>
       <Address>
-        <StateCode>CA</StateCode>
+        <StateCode>FL</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -42,20 +42,20 @@
         </BuildingConstruction>
         <extension>
           <AdditionalProperties>
-            <ParentHPXMLFile>BaseCase_CZ1A_MiamiFL.xml</ParentHPXMLFile>
+            <ParentHPXMLFile>03_BaseCase_CZ7_DuluthMN.xml</ParentHPXMLFile>
           </AdditionalProperties>
         </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>3C</ClimateZone>
+          <ClimateZone>1A</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>San Francisco, CA</Name>
+          <Name>Miami, FL</Name>
           <extension>
-            <EPWFilePath>USA_CA_San.Francisco.Intl.AP.724940_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_FL_Miami.Intl.AP.722020_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -140,7 +140,7 @@
             <Emittance>0.9</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation'/>
-              <AssemblyEffectiveRValue>16.949</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.222</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
         </Walls>
@@ -178,10 +178,10 @@
             <FloorType>
               <WoodFrame/>
             </FloorType>
-            <Area>982.3</Area>
+            <Area>895.2</Area>
             <Insulation>
               <SystemIdentifier id='Floor1_CeilingInsulation'/>
-              <AssemblyEffectiveRValue>38.462</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>50.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -191,10 +191,10 @@
             <FloorType>
               <WoodFrame/>
             </FloorType>
-            <Area>217.7</Area>
+            <Area>304.8</Area>
             <Insulation>
               <SystemIdentifier id='Floor2_EaveInsulation'/>
-              <AssemblyEffectiveRValue>38.462</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>50.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -207,7 +207,7 @@
             <Area>960.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor3_CarpetFloorInsulation'/>
-              <AssemblyEffectiveRValue>21.277</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>34.483</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -220,7 +220,7 @@
             <Area>240.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor4_TileFloorInsulation'/>
-              <AssemblyEffectiveRValue>20.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>32.258</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>
@@ -257,7 +257,7 @@
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
             <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -267,7 +267,7 @@
             <Area>108.0</Area>
             <Azimuth>90</Azimuth>
             <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -277,7 +277,7 @@
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
             <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -287,7 +287,7 @@
             <Area>108.0</Area>
             <Azimuth>270</Azimuth>
             <UFactor>0.35</UFactor>
-            <SHGC>0.25</SHGC>
+            <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -299,7 +299,7 @@
             <AttachedToWall idref='Wall1'/>
             <Area>40.0</Area>
             <Azimuth>0</Azimuth>
-            <RValue>2.857</RValue>
+            <RValue>3.125</RValue>
           </Door>
         </Doors>
       </Enclosure>
@@ -313,7 +313,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>17000.0</HeatingCapacity>
+              <HeatingCapacity>42000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.95</Value>
@@ -329,7 +329,7 @@
               <DistributionSystem idref='HVACDistribution1'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
-              <CoolingCapacity>19000.0</CoolingCapacity>
+              <CoolingCapacity>18000.0</CoolingCapacity>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -393,11 +393,11 @@
             <VentilationFan>
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>balanced</FanType>
-              <TestedFlowRate>59.0</TestedFlowRate>
+              <TestedFlowRate>52.0</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>41.3</FanPower>
+              <FanPower>36.4</FanPower>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>

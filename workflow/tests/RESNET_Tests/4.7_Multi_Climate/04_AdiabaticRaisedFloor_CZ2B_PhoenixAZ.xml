@@ -42,7 +42,7 @@
         </BuildingConstruction>
         <extension>
           <AdditionalProperties>
-            <ParentHPXMLFile>BaseCase_CZ2B_PhoenixAZ.xml</ParentHPXMLFile>
+            <ParentHPXMLFile>03_BaseCase_CZ2B_PhoenixAZ.xml</ParentHPXMLFile>
           </AdditionalProperties>
         </extension>
       </BuildingSummary>
@@ -207,7 +207,7 @@
             <Area>960.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor3_CarpetFloorInsulation'/>
-              <AssemblyEffectiveRValue>16.393</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>100.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -220,7 +220,7 @@
             <Area>240.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor4_TileFloorInsulation'/>
-              <AssemblyEffectiveRValue>15.152</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>100.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>
@@ -256,8 +256,8 @@
             <SystemIdentifier id='Window1'/>
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.75</UFactor>
-            <SHGC>0.4</SHGC>
+            <UFactor>0.4</UFactor>
+            <SHGC>0.25</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -266,8 +266,8 @@
             <SystemIdentifier id='Window2'/>
             <Area>108.0</Area>
             <Azimuth>90</Azimuth>
-            <UFactor>0.75</UFactor>
-            <SHGC>0.4</SHGC>
+            <UFactor>0.4</UFactor>
+            <SHGC>0.25</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -276,8 +276,8 @@
             <SystemIdentifier id='Window3'/>
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.75</UFactor>
-            <SHGC>0.4</SHGC>
+            <UFactor>0.4</UFactor>
+            <SHGC>0.25</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
@@ -286,8 +286,8 @@
             <SystemIdentifier id='Window4'/>
             <Area>108.0</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.75</UFactor>
-            <SHGC>0.4</SHGC>
+            <UFactor>0.4</UFactor>
+            <SHGC>0.25</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
             <AttachedToWall idref='Wall1'/>
