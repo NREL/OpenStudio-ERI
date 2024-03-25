@@ -73,43 +73,7 @@ class RESNETTest < Minitest::Test
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml)[0, 2].to_i
-      _check_reference_home_components(results, test_num, '2022')
-    end
-  end
-
-  def test_resnet_hers_iad_home_auto_generation
-    test_name = 'RESNET_Test_Other_HERS_AutoGen_IAD_Home'
-    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-    File.delete(test_results_csv) if File.exist? test_results_csv
-
-    # Run simulations
-    all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home')
-    Dir["#{xmldir}/*.xml"].sort.each do |xml|
-      out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
-      _run_ruleset(Constants.CalcTypeERIIndexAdjustmentDesign, xml, out_xml)
-      test_num = File.basename(xml)[0, 2].to_i
-      all_results[File.basename(xml)] = _get_iad_home_components(out_xml, test_num)
-    end
-    assert(all_results.size > 0)
-
-    # Write results to csv
-    CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Component', 'Test 1 Results', 'Test 2 Results', 'Test 3 Results', 'Test 4 Results']
-      all_results['01-L100.xml'].keys.each do |component|
-        csv << [component,
-                all_results['01-L100.xml'][component],
-                all_results['02-L100.xml'][component],
-                all_results['03-L304.xml'][component],
-                all_results['04-L324.xml'][component]]
-      end
-    end
-    puts "Wrote results to #{test_results_csv}."
-
-    # Check results
-    all_results.each do |xml, results|
-      test_num = File.basename(xml)[0, 2].to_i
-      _check_iad_home_components(results, test_num)
+      _check_reference_home_components(results, test_num, '2022C')
     end
   end
 

@@ -78,12 +78,17 @@ class ERIMiscTest < Minitest::Test
         assert_in_epsilon(misc_kwh, plug_load.kwh_per_year, 0.01)
         assert_in_epsilon(misc_sens, plug_load.frac_sensible, 0.01)
         assert_in_epsilon(misc_lat, plug_load.frac_latent, 0.01)
+        assert_equal('0.036, 0.036, 0.036, 0.036, 0.036, 0.036, 0.038, 0.041, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.044, 0.047, 0.050, 0.051, 0.050, 0.048, 0.044, 0.040, 0.037', plug_load.weekday_fractions)
+        assert_equal('0.036, 0.036, 0.036, 0.036, 0.036, 0.036, 0.038, 0.041, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.044, 0.047, 0.050, 0.051, 0.050, 0.048, 0.044, 0.040, 0.037', plug_load.weekend_fractions)
       elsif plug_load.plug_load_type == HPXML::PlugLoadTypeTelevision
         num_pls += 1
         assert_in_epsilon(tv_kwh, plug_load.kwh_per_year, 0.01)
         assert_in_epsilon(tv_sens, plug_load.frac_sensible, 0.01)
         assert_in_epsilon(tv_lat, plug_load.frac_latent, 0.01)
+        assert_equal('0.014, 0.007, 0.004, 0.003, 0.004, 0.006, 0.010, 0.015, 0.020, 0.025, 0.028, 0.031, 0.033, 0.038, 0.042, 0.046, 0.054, 0.062, 0.080, 0.110, 0.132, 0.125, 0.077, 0.034', plug_load.weekday_fractions)
+        assert_equal('0.014, 0.007, 0.004, 0.003, 0.004, 0.006, 0.010, 0.015, 0.020, 0.025, 0.028, 0.031, 0.033, 0.038, 0.042, 0.046, 0.054, 0.062, 0.080, 0.110, 0.132, 0.125, 0.077, 0.034', plug_load.weekend_fractions)
       end
+      assert_equal('1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0', plug_load.monthly_multipliers)
     end
     assert_equal(2, num_pls)
   end

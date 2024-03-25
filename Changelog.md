@@ -5,13 +5,20 @@ __New Features__
   - `ERICalculation/Version` and `CO2IndexCalculation/Version` can now be "2022C" or "2022".
   - Allows modeling electric battery storage, including shared batteries ("2022C" or newer).
   - The `ElectricAuxiliaryEnergy` input for boilers is no longer used.
+- **Breaking change**: ERI_Results.csv and ERI_Worksheet.csv combined into a single ERI_Results.csv that better reflects the current ERI calculation components; additional fields (e.g., PEfrac) added and a few renamed/removed.
 - **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
+- Allows `AverageCeilingHeight` to be optionally provided for infiltration calculations.
 - Ground source heat pump model enhancements.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
 - Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
 - Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
+- Now defaults to -20F for `CompressorLockoutTemperature` for variable-speed air-to-air heat pumps.
+- Clarifies that Capacity=-1 can be used to autosize HVAC equipment for research purposes or to run tests.
+  - It should *not* be used for a real home; a warning will be issued when it's used.
+- Allow alternative label energy use (W) input for ceiling fans.
 
 __Bugfixes__
+- Fixes incorrect Reference Home mechanical ventilation flowrate for attached units (when Aext is not 1).
 - Fixes possible 301ruleset.rb error due to floating point arithmetic.
 
 ## OpenStudio-ERI v1.7.0
