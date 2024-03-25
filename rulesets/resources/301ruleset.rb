@@ -1011,10 +1011,9 @@ class ERI_301_Ruleset
   end
 
   def self.set_enclosure_windows_rated(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, shgc)
-
     # Preserve all windows
     orig_bldg.windows.each do |orig_window|
+      shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, orig_window.shgc)
       new_bldg.windows.add(id: orig_window.id,
                            area: orig_window.area,
                            azimuth: orig_window.azimuth,
@@ -1032,11 +1031,12 @@ class ERI_301_Ruleset
   end
 
   def self.set_enclosure_windows_iad(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, shgc)
     ext_thermal_bndry_windows = orig_bldg.windows.select { |window| window.is_exterior_thermal_boundary }
     ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
     avg_ufactor = calc_area_weighted_avg(ext_thermal_bndry_windows, :ufactor, backup_value: ref_ufactor)
     avg_shgc = calc_area_weighted_avg(ext_thermal_bndry_windows, :shgc, backup_value: ref_shgc)
+    # IAD shading coefficient the same as reference home
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, ref_shgc)
 
     # Default natural ventilation
     fraction_operable = Airflow.get_default_fraction_of_windows_operable()
