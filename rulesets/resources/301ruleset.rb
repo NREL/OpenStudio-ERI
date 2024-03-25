@@ -637,19 +637,19 @@ class ERI_301_Ruleset
     # from Unconditioned Space Volume, Unrated Heated Space, Multifamily Buffer Boundary,
     # or Non-Freezing Space.
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
-      common_space_walls = orig_bldg.walls.select { |wall| wall.is_adjacent_to_common_spaces }
+      common_space_walls = orig_bldg.walls.select { |wall| wall.is_conditioned_and_adjacent_to_multifamily_common_space }
       common_space_wall_ufactor = get_reference_wall_ufactor_common_space()
       common_space_walls.each do |orig_wall|
-      new_bldg.walls.add(id: orig_wall.id,
-                         exterior_adjacent_to: orig_wall.exterior_adjacent_to,
-                         interior_adjacent_to: HPXML::LocationConditionedSpace,
-                         wall_type: orig_wall.wall_type,
-                         area: orig_wall.area,
-                         azimuth: orig_wall.azimuth,
-                         solar_absorptance: solar_absorptance,
-                         emittance: emittance,
-                         insulation_id: orig_wall.insulation_id,
-                         insulation_assembly_r_value: (1.0 / common_space_wall_ufactor).round(3))
+        new_bldg.walls.add(id: orig_wall.id,
+                           exterior_adjacent_to: orig_wall.exterior_adjacent_to,
+                           interior_adjacent_to: HPXML::LocationConditionedSpace,
+                           wall_type: orig_wall.wall_type,
+                           area: orig_wall.area,
+                           azimuth: orig_wall.azimuth,
+                           solar_absorptance: solar_absorptance,
+                           emittance: emittance,
+                           insulation_id: orig_wall.insulation_id,
+                           insulation_assembly_r_value: (1.0 / common_space_wall_ufactor).round(3))
       end
       other_walls -= common_space_walls
     end
