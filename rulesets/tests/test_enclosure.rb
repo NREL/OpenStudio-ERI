@@ -665,31 +665,60 @@ class ERIEnclosureTest < Minitest::Test
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
+        hpxml_name = _change_eri_version(hpxml_name, '2022C')
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          90 => { area: 72, ufactor: 0.33, shgc: 0.45 },
-                                                          270 => { area: 72, ufactor: 0.33, shgc: 0.45 } })
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                          90 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                          270 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
         elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
-                                                          180 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
-                                                          90 => { area: 89.5, ufactor: 0.35, shgc: 0.40 },
-                                                          270 => { area: 89.5, ufactor: 0.35, shgc: 0.40 } })
+                                     values_by_azimuth: { 0 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          180 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          90 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          270 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
         elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
         elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
+        end
+        # prior to 301-2022C: Shading coefficients are fixed values: 0.7 for summer, 0.85 for winter
+        hpxml_name = _change_eri_version(hpxml_name, '2019')
+        _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+        if [Constants.CalcTypeERIRatedHome].include? calc_type
+          _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          90 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          270 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 } })
+        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+          _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                     values_by_azimuth: { 0 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          180 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          90 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          270 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 } })
+        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+          _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 } })
+        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+          _check_windows(hpxml_bldg, frac_operable: 0.67,
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
+                                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 } })
         end
       end
     end
@@ -705,28 +734,28 @@ class ERIEnclosureTest < Minitest::Test
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants.CalcTypeERIRatedHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          90 => { area: 72, ufactor: 0.33, shgc: 0.45 },
-                                                          270 => { area: 72, ufactor: 0.33, shgc: 0.45 } })
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                          90 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                          270 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
         elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
-                                                          180 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
-                                                          90 => { area: 60.75, ufactor: 0.35, shgc: 0.40 },
-                                                          270 => { area: 60.75, ufactor: 0.35, shgc: 0.40 } })
+                                     values_by_azimuth: { 0 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          180 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          90 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          270 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
         elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
         elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
+                                     values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                          270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
         end
       end
     end
@@ -751,28 +780,28 @@ class ERIEnclosureTest < Minitest::Test
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: (432.0 * 0.67) / (432.0 + 24.0),
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        90 => { area: 120, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 120, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        90 => { area: 120, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        270 => { area: 120, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 93.5, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 93.5, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       end
     end
 
@@ -782,28 +811,28 @@ class ERIEnclosureTest < Minitest::Test
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: (432.0 * 0.67) / (432.0 + 74.0),
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        90 => { area: 120, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 170, ufactor: (0.3 * 62 + 0.33 * 108) / 170, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        90 => { area: 120, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        270 => { area: 170, ufactor: (0.3 * 62 + 0.33 * 108) / 170, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 128.6, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 128.6, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
-                                                        180 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
-                                                        90 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 },
-                                                        270 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       end
     end
 
@@ -813,27 +842,27 @@ class ERIEnclosureTest < Minitest::Test
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        180 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        270 => { area: 53.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       end
     end
 
@@ -851,27 +880,27 @@ class ERIEnclosureTest < Minitest::Test
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.0,
-                                   values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        180 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
+                                                        270 => { area: 53.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.0,
-                                   values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
+                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
       end
     end
 
@@ -882,27 +911,27 @@ class ERIEnclosureTest < Minitest::Test
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.0,
-                                   values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 35.0, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 53.0, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        180 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        270 => { area: 53.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 } })
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 35.15, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 35.15, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        180 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        90 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        270 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45 },
-                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
-                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40 },
-                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40 } })
+                                   values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        90 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
+                                                        270 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 } })
       end
     end
   end
@@ -1346,6 +1375,7 @@ class ERIEnclosureTest < Minitest::Test
     tot_area, operable_area = 0, 0
     azimuth_area_values = {}
     azimuth_ufactor_x_area_values, azimuth_shgc_x_area_values = {}, {} # Area-weighted
+    azimuth_interior_shading_factor_summer_x_area_values, azimuth_interior_shading_factor_winter_x_area_values = {}, {} # Area-weighted
     hpxml_bldg.windows.each do |window|
       tot_area += window.area
       operable_area += (window.area * window.fraction_operable)
@@ -1354,16 +1384,22 @@ class ERIEnclosureTest < Minitest::Test
       azimuth_area_values[window.azimuth] = [] if azimuth_area_values[window.azimuth].nil?
       azimuth_ufactor_x_area_values[window.azimuth] = [] if azimuth_ufactor_x_area_values[window.azimuth].nil?
       azimuth_shgc_x_area_values[window.azimuth] = [] if azimuth_shgc_x_area_values[window.azimuth].nil?
+      azimuth_interior_shading_factor_summer_x_area_values[window.azimuth] = [] if azimuth_interior_shading_factor_summer_x_area_values[window.azimuth].nil?
+      azimuth_interior_shading_factor_winter_x_area_values[window.azimuth] = [] if azimuth_interior_shading_factor_winter_x_area_values[window.azimuth].nil?
 
       # Update
       azimuth_area_values[window.azimuth] << window.area
       azimuth_ufactor_x_area_values[window.azimuth] << window.ufactor * window.area
       azimuth_shgc_x_area_values[window.azimuth] << window.shgc * window.area
+      azimuth_interior_shading_factor_summer_x_area_values[window.azimuth] << window.interior_shading_factor_summer * window.area
+      azimuth_interior_shading_factor_winter_x_area_values[window.azimuth] << window.interior_shading_factor_winter * window.area
     end
 
     assert_equal(values_by_azimuth.keys.size, azimuth_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_shgc_x_area_values.size)
+    assert_equal(values_by_azimuth.keys.size, azimuth_interior_shading_factor_summer_x_area_values.size)
+    assert_equal(values_by_azimuth.keys.size, azimuth_interior_shading_factor_winter_x_area_values.size)
 
     assert_in_epsilon(frac_operable, operable_area / tot_area, 0.01)
 
@@ -1371,6 +1407,8 @@ class ERIEnclosureTest < Minitest::Test
       assert_in_epsilon(values[:area], azimuth_area_values[azimuth].sum, 0.01)
       assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
       assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:interior_shading_factor_summer], azimuth_interior_shading_factor_summer_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:interior_shading_factor_winter], azimuth_interior_shading_factor_winter_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
     end
   end
 
