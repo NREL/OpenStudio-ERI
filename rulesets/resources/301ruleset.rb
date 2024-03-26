@@ -614,7 +614,7 @@ class ERI_301_Ruleset
     ext_thermal_bndry_walls = orig_bldg.walls.select { |wall| wall.is_exterior_thermal_boundary }
     sum_ext_wall_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
     other_walls = orig_bldg.walls - ext_thermal_bndry_walls
-    
+
     solar_absorptance = 0.75
     emittance = 0.90
 
@@ -653,7 +653,7 @@ class ERI_301_Ruleset
       end
       other_walls -= common_space_walls
     end
-    
+
     # Preserve other walls:
     # 1. Interior thermal boundary surfaces (e.g., between conditioned space and garage)
     # 2. Exterior non-thermal boundary surfaces (e.g., between garage and outside)

@@ -825,8 +825,15 @@ def _check_reference_home_components(results, test_num, version)
   else
     assert_equal(0.35, results['Window U-Factor'])
   end
-  assert_equal(0.34, results['Window SHGCo (heating)'])
-  assert_equal(0.28, results['Window SHGCo (cooling)'])
+  if version == '2022C'
+    # FIXME: Expected values changed due to different internal shading coefficients
+    # in 301-2022 Addendum C.
+    assert_equal(0.33, results['Window SHGCo (heating)'])
+    assert_equal(0.33, results['Window SHGCo (cooling)'])
+  else
+    assert_equal(0.34, results['Window SHGCo (heating)'])
+    assert_equal(0.28, results['Window SHGCo (cooling)'])
+  end
 
   # Infiltration
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
@@ -885,6 +892,7 @@ def _check_reference_home_components(results, test_num, version)
   # Mechanical ventilation
   mv_kwh_yr = nil
   if version == '2022C'
+    # FIXME: Updated values per 301-2022 Addendum C
     mv_kwh_yr = { 1 => 0.0, 2 => 223.9, 3 => 288.1, 4 => 763.4 }[test_num]
   elsif version == '2019'
     mv_kwh_yr = { 1 => 0.0, 2 => 222.1, 3 => 288.1, 4 => 763.4 }[test_num]
