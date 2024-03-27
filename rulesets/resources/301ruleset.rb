@@ -634,8 +634,7 @@ class ERI_301_Ruleset
     end
 
     # Create walls for Above-grade walls separating Conditioned Space Volume
-    # from Unconditioned Space Volume, Unrated Heated Space, Multifamily Buffer Boundary,
-    # or Non-Freezing Space.
+    # from Unrated Heated Space, Multifamily Buffer Boundary, or Non-Freezing Space.
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
       common_space_walls = orig_bldg.walls.select { |wall| wall.is_conditioned_and_adjacent_to_multifamily_common_space }
       common_space_wall_ufactor = get_reference_wall_ufactor_common_space()
