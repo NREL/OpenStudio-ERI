@@ -345,11 +345,13 @@
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>other housing unit</Location>
             <IsSharedSystem>true</IsSharedSystem>
-            <NumberofUnitsServed>18</NumberofUnitsServed>
             <TankVolume>80.0</TankVolume>
             <FractionDHWLoadServed>0.0</FractionDHWLoadServed>
             <EnergyFactor>0.51</EnergyFactor>
             <RecoveryEfficiency>0.76</RecoveryEfficiency>
+            <extension>
+              <NumberofBedroomsServed>18</NumberofBedroomsServed>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
