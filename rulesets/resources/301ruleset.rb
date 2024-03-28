@@ -612,7 +612,8 @@ class ERI_301_Ruleset
     ufactor = get_reference_wall_ufactor()
 
     ext_thermal_bndry_walls = orig_bldg.walls.select { |wall| wall.is_exterior_thermal_boundary }
-    sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
+    sum_ext_wall_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
+    other_walls = orig_bldg.walls - ext_thermal_bndry_walls
 
     solar_absorptance = 0.75
     emittance = 0.90
@@ -620,24 +621,42 @@ class ERI_301_Ruleset
     # Create insulated walls for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be able to accommodate windows,
     # which are also equally distributed.
-    if sum_gross_area > 0.1
+    if sum_ext_wall_gross_area > 0.1
       new_bldg.walls.add(id: 'WallArea',
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                          wall_type: HPXML::WallTypeWoodStud,
-                         area: sum_gross_area,
+                         area: sum_ext_wall_gross_area,
                          azimuth: nil,
                          solar_absorptance: solar_absorptance,
                          emittance: emittance,
                          insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
 
+    # Create walls for Above-grade walls separating Conditioned Space Volume
+    # from Unrated Heated Space, Multifamily Buffer Boundary, or Non-Freezing Space.
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+      common_space_walls = orig_bldg.walls.select { |wall| wall.is_conditioned_and_adjacent_to_multifamily_common_space }
+      common_space_wall_ufactor = get_reference_wall_ufactor_common_space()
+      common_space_walls.each do |orig_wall|
+        new_bldg.walls.add(id: orig_wall.id,
+                           exterior_adjacent_to: orig_wall.exterior_adjacent_to,
+                           interior_adjacent_to: HPXML::LocationConditionedSpace,
+                           wall_type: orig_wall.wall_type,
+                           area: orig_wall.area,
+                           azimuth: orig_wall.azimuth,
+                           solar_absorptance: solar_absorptance,
+                           emittance: emittance,
+                           insulation_id: orig_wall.insulation_id,
+                           insulation_assembly_r_value: (1.0 / common_space_wall_ufactor).round(3))
+      end
+      other_walls -= common_space_walls
+    end
+
     # Preserve other walls:
     # 1. Interior thermal boundary surfaces (e.g., between conditioned space and garage)
     # 2. Exterior non-thermal boundary surfaces (e.g., between garage and outside)
-    orig_bldg.walls.each do |orig_wall|
-      next if orig_wall.is_exterior_thermal_boundary
-
+    other_walls.each do |orig_wall|
       if orig_wall.is_thermal_boundary
         insulation_assembly_r_value = (1.0 / ufactor).round(3)
       else
@@ -965,7 +984,7 @@ class ERI_301_Ruleset
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, shgc)
 
     fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
@@ -991,10 +1010,9 @@ class ERI_301_Ruleset
   end
 
   def self.set_enclosure_windows_rated(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
-
     # Preserve all windows
     orig_bldg.windows.each do |orig_window|
+      shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, orig_window.shgc)
       new_bldg.windows.add(id: orig_window.id,
                            area: orig_window.area,
                            azimuth: orig_window.azimuth,
@@ -1012,11 +1030,12 @@ class ERI_301_Ruleset
   end
 
   def self.set_enclosure_windows_iad(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
     ext_thermal_bndry_windows = orig_bldg.windows.select { |window| window.is_exterior_thermal_boundary }
     ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
     avg_ufactor = calc_area_weighted_avg(ext_thermal_bndry_windows, :ufactor, backup_value: ref_ufactor)
     avg_shgc = calc_area_weighted_avg(ext_thermal_bndry_windows, :shgc, backup_value: ref_shgc)
+    # IAD shading coefficient the same as reference home
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, ref_shgc)
 
     # Default natural ventilation
     fraction_operable = Airflow.get_default_fraction_of_windows_operable()
@@ -2886,6 +2905,16 @@ class ERI_301_Ruleset
       return 0.060
     elsif ['7', '8'].include? @iecc_zone
       return 0.057
+    end
+  end
+
+  def self.get_reference_wall_ufactor_common_space()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Frame Wall U-Factor
+    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+      return 0.292
+    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 0.089
     end
   end
 

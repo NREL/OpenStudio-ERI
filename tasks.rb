@@ -279,6 +279,8 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA') ||
         hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
     hpxml.header.eri_calculation_version = '2019'
+  elsif hpxml_file.include?('Other_HERS_AutoGen_IAD_Home')
+    hpxml.header.eri_calculation_version = '2019ABCD'
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.header.eri_calculation_version = 'latest'
   elsif hpxml_file.include?('EPA_Tests')
