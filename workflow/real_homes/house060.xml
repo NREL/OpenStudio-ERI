@@ -763,7 +763,6 @@
                 <Value>0.8</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.5</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>753.0</ElectricAuxiliaryEnergy>
               <extension>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
@@ -783,7 +782,6 @@
                 <Value>0.8</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.5</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>753.0</ElectricAuxiliaryEnergy>
               <extension>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>

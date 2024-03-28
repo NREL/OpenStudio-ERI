@@ -70,17 +70,19 @@ def calc_opp_eri_limit(rd_eri, saf, program_version)
     saf_eri = (rd_eri * saf).round(0)
     return orig_eri - saf_eri
   else
-    # on-site power generation may not be used to meet the ENERGY STAR ERI Target
+    # on-site power generation may not be used to meet the ENERGY STAR/ZERH ERI Target
     return 0.0
   end
 end
 
-def calc_renewable_energy_limit(eri_outputs, program_version)
-  if ['2021'].include? program_version
+def calc_renewable_energy_limit(eri_outputs, iecc_version)
+  if ['2021'].include? iecc_version
     # For compliance purposes, any reduction in energy use of the rated design associated with
     # on-site renewable energy shall not exceed 5 percent of the total energy use.
     return 0.05 * eri_outputs[Constants.CalcTypeERIRatedHome]['Energy Use: Total']
-  else
+  elsif ['2015', '2018'].include? iecc_version
     return
+  else
+    fail 'Unhandled IECC version.'
   end
 end

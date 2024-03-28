@@ -30,7 +30,6 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
   end
 
   def test_pv_batteries
-    skip # Temporarily disabled until RESNET allows this.
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       _convert_to_es_zerh('base-pv-battery.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)

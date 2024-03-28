@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
+
 Dir["#{File.dirname(__FILE__)}/hpxml-measures/HPXMLtoOpenStudio/resources/*.rb"].each do |resource_file|
   next if resource_file.include? 'minitest_helper.rb'
 
@@ -277,6 +279,8 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA') ||
         hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
     hpxml.header.eri_calculation_version = '2019'
+  elsif hpxml_file.include?('Other_HERS_AutoGen_IAD_Home')
+    hpxml.header.eri_calculation_version = '2019ABCD'
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     hpxml.header.eri_calculation_version = 'latest'
   elsif hpxml_file.include?('EPA_Tests')
@@ -2009,14 +2013,14 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-05.xml'].include? hpxml_file
     # Change to recirculation: Control = none; 50 W pump; Loop length is same as reference loop length; Branch length is 10 ft; All hot water pipes insulated to R-3
     hpxml_bldg.hot_water_distributions[0].system_type = HPXML::DHWDistTypeRecirc
-    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecirControlTypeNone
+    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecircControlTypeNone
     hpxml_bldg.hot_water_distributions[0].recirculation_branch_piping_length = 10
     hpxml_bldg.hot_water_distributions[0].recirculation_pump_power = 50
     hpxml_bldg.hot_water_distributions[0].pipe_r_value = 3
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-06.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-06.xml'].include? hpxml_file
     # Change to recirculation: Control = manual
-    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecirControlTypeManual
+    hpxml_bldg.hot_water_distributions[0].recirculation_control_type = HPXML::DHWRecircControlTypeManual
   elsif ['RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AD-HW-07.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-07.xml'].include? hpxml_file
     # Change to drain Water Heat Recovery (DWHR) with all facilities connected; equal flow; DWHR eff = 54%
@@ -2031,15 +2035,11 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
                                            pipe_r_value: 0.0)
   end
 
-  has_uncond_bsmnt = false
-  hpxml_bldg.foundation_walls.each do |foundation_wall|
-    next unless [foundation_wall.interior_adjacent_to, foundation_wall.exterior_adjacent_to].include? HPXML::LocationBasementUnconditioned
-
-    has_uncond_bsmnt = true
-  end
+  has_uncond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementUnconditioned)
+  has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
-  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
 
   if hpxml_bldg.hot_water_distributions.size > 0
     if hpxml_bldg.hot_water_distributions[0].system_type == HPXML::DHWDistTypeStandard
@@ -2324,7 +2324,7 @@ end
 
 def create_sample_hpxmls
   # Copy sample files from hpxml-measures subtree
-  puts 'Copying sample files...'
+  puts 'Copying sample files from OS-HPXML...'
   FileUtils.rm_f(Dir.glob('workflow/sample_files/*.xml'))
 
   # Copy files we're interested in
@@ -2345,7 +2345,7 @@ def create_sample_hpxmls
                   'base-atticroof-radiant-barrier.xml',
                   'base-atticroof-unvented-insulated-roof.xml',
                   'base-atticroof-vented.xml',
-                  # 'base-battery.xml',
+                  'base-battery.xml',
                   'base-bldgtype-mf-unit.xml',
                   'base-bldgtype-mf-unit-adjacent-to-multiple.xml',
                   'base-bldgtype-mf-unit-shared-boiler-only-baseboard.xml',
@@ -2364,6 +2364,7 @@ def create_sample_hpxmls
                   'base-bldgtype-mf-unit-shared-mechvent.xml',
                   'base-bldgtype-mf-unit-shared-mechvent-preconditioning.xml',
                   'base-bldgtype-mf-unit-shared-pv.xml',
+                  'base-bldgtype-mf-unit-shared-pv-battery.xml',
                   'base-bldgtype-mf-unit-shared-water-heater.xml',
                   'base-bldgtype-mf-unit-shared-water-heater-recirc.xml',
                   'base-bldgtype-sfa-unit.xml',
@@ -2436,6 +2437,7 @@ def create_sample_hpxmls
                   'base-hvac-central-ac-only-var-speed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dse.xml',
+                  'base-hvac-ducts-area-fractions.xml',
                   'base-hvac-ducts-leakage-cfm50.xml',
                   'base-hvac-ducts-buried.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',
@@ -2476,6 +2478,7 @@ def create_sample_hpxmls
                   'base-hvac-undersized.xml',
                   'base-hvac-wall-furnace-elec-only.xml',
                   'base-lighting-ceiling-fans.xml',
+                  'base-lighting-ceiling-fans-label-energy-use.xml',
                   'base-location-baltimore-md.xml',
                   'base-location-capetown-zaf.xml',
                   'base-location-dallas-tx.xml',
@@ -2498,8 +2501,8 @@ def create_sample_hpxmls
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
                   'base-misc-generators.xml',
-                  'base-pv.xml']
-  # 'base-pv-battery.xml']
+                  'base-pv.xml',
+                  'base-pv-battery.xml']
   include_list.each do |include_file|
     if File.exist? "hpxml-measures/workflow/sample_files/#{include_file}"
       FileUtils.cp("hpxml-measures/workflow/sample_files/#{include_file}", "workflow/sample_files/#{include_file}")
@@ -2509,7 +2512,7 @@ def create_sample_hpxmls
   end
 
   # Update HPXMLs as needed
-  puts 'Updating HPXML inputs for ERI/ENERGY STAR...'
+  puts 'Updating HPXML inputs for OS-ERI...'
   hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
     hpxml_paths << hpxml_path
@@ -2532,6 +2535,7 @@ def create_sample_hpxmls
     hpxml_bldg.site.orientation_of_front_of_home = nil
     hpxml_bldg.site.azimuth_of_front_of_home = nil
     hpxml_bldg.site.ground_conductivity = nil
+    hpxml_bldg.building_construction.number_of_units_in_building = nil
     hpxml_bldg.building_construction.number_of_bathrooms = nil
     hpxml_bldg.building_construction.conditioned_building_volume = nil
     hpxml_bldg.building_construction.average_ceiling_height = nil
@@ -2695,6 +2699,7 @@ def create_sample_hpxmls
     hpxml_bldg.plug_loads.clear
     hpxml_bldg.fuel_loads.clear
     hpxml_bldg.heating_systems.each do |heating_system|
+      heating_system.electric_auxiliary_energy = nil
       next unless [HPXML::HVACTypeFurnace].include? heating_system.heating_system_type
 
       if heating_system.fan_watts_per_cfm.nil?
@@ -2749,14 +2754,15 @@ def create_sample_hpxmls
       heating_system.heating_capacity = 300000
     end
     hpxml_bldg.pv_systems.each do |pv_system|
-      next unless pv_system.is_shared_system.nil?
-
-      pv_system.is_shared_system = false
+      pv_system.is_shared_system = false if pv_system.is_shared_system.nil?
     end
     hpxml_bldg.generators.each do |generator|
-      next unless generator.is_shared_system.nil?
-
-      generator.is_shared_system = false
+      generator.is_shared_system = false if generator.is_shared_system.nil?
+    end
+    hpxml_bldg.batteries.each do |battery|
+      battery.is_shared_system = false if battery.is_shared_system.nil?
+      battery.location = nil
+      battery.round_trip_efficiency = 0.925
     end
     n_htg_systems = (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.size
     n_clg_systems = (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_cool_load_served.to_f > 0 }.size
@@ -2870,7 +2876,7 @@ def create_sample_hpxmls
   end
 
   # Create additional files
-  puts 'Creating additional HPXML files for ERI...'
+  puts 'Creating additional HPXML files for OS-ERI...'
 
   # base-hvac-programmable-thermostat.xml
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
@@ -2937,11 +2943,21 @@ def create_sample_hpxmls
   puts 'Reformatting real_homes HPXMLs...'
   Dir['workflow/real_homes/*.xml'].each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
+    hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.co2index_calculation_version = 'latest'
+    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
+    if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
+      hpxml.header.zerh_calculation_version = ZERHConstants.MFVer2
+      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2
+    else
+      hpxml.header.zerh_calculation_version = ZERHConstants.SFVer2
+      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
+    end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end
 end
 
-command_list = [:update_measures, :create_release_zips]
+command_list = [:update_measures, :update_hpxmls, :create_release_zips]
 
 def display_usage(command_list)
   puts "Usage: openstudio #{File.basename(__FILE__)} [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
@@ -2962,15 +2978,9 @@ elsif not command_list.include? ARGV[0].to_sym
 end
 
 if ARGV[0].to_sym == :update_measures
-  require 'oga'
-  require_relative 'rulesets/resources/constants'
-
   # Prevent NREL error regarding U: drive when not VPNed in
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
   ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
-
-  create_test_hpxmls
-  create_sample_hpxmls
 
   # Apply rubocop
   cops = ['Layout',
@@ -3005,6 +3015,20 @@ if ARGV[0].to_sym == :update_measures
   system(command)
 
   puts 'Done.'
+end
+
+if ARGV[0].to_sym == :update_hpxmls
+  require 'oga'
+  require_relative 'rulesets/resources/constants'
+
+  # Prevent NREL error regarding U: drive when not VPNed in
+  ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
+  ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
+
+  t = Time.now
+  create_test_hpxmls
+  create_sample_hpxmls
+  puts "Completed in #{(Time.now - t).round(1)}s"
 end
 
 if ARGV[0].to_sym == :create_release_zips

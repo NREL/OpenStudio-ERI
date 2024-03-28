@@ -346,6 +346,9 @@ class ERIApplianceTest < Minitest::Test
     assert_in_epsilon(agc, clothes_washer.label_annual_gas_cost, 0.01)
     assert_in_epsilon(cap, clothes_washer.capacity, 0.01)
     assert_in_epsilon(label_usage, clothes_washer.label_usage, 0.01)
+    assert_equal('0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.051, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017', clothes_washer.weekday_fractions)
+    assert_equal('0.009, 0.007, 0.004, 0.004, 0.007, 0.011, 0.022, 0.049, 0.073, 0.086, 0.084, 0.075, 0.067, 0.060, 0.049, 0.051, 0.050, 0.049, 0.049, 0.049, 0.049, 0.047, 0.032, 0.017', clothes_washer.weekend_fractions)
+    assert_equal('1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0', clothes_washer.monthly_multipliers)
   end
 
   def _check_clothes_dryer(hpxml_bldg, fuel_type:, ef:, cef:, control: nil, location:)
@@ -367,6 +370,9 @@ class ERIApplianceTest < Minitest::Test
     end
     assert_equal(true, clothes_dryer.is_vented)
     assert_equal(0.0, clothes_dryer.vented_flow_rate)
+    assert_equal('0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.058, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024', clothes_dryer.weekday_fractions)
+    assert_equal('0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.058, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024', clothes_dryer.weekend_fractions)
+    assert_equal('1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0', clothes_dryer.monthly_multipliers)
   end
 
   def _check_dishwasher(hpxml_bldg, ef:, annual_kwh:, cap:, elec_rate:, gas_rate:, agc:, label_usage:, location:)
@@ -388,6 +394,9 @@ class ERIApplianceTest < Minitest::Test
     assert_in_epsilon(gas_rate, dishwasher.label_gas_rate, 0.01)
     assert_in_epsilon(agc, dishwasher.label_annual_gas_cost, 0.01)
     assert_in_epsilon(label_usage, dishwasher.label_usage, 0.01)
+    assert_equal('0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.042, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031', dishwasher.weekday_fractions)
+    assert_equal('0.015, 0.007, 0.005, 0.003, 0.003, 0.010, 0.020, 0.031, 0.058, 0.065, 0.056, 0.048, 0.042, 0.046, 0.036, 0.038, 0.038, 0.049, 0.087, 0.111, 0.090, 0.067, 0.044, 0.031', dishwasher.weekend_fractions)
+    assert_equal('1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0', dishwasher.monthly_multipliers)
   end
 
   def _check_refrigerator(hpxml_bldg, annual_kwh:, location:)
@@ -395,6 +404,11 @@ class ERIApplianceTest < Minitest::Test
     refrigerator = hpxml_bldg.refrigerators[0]
     assert_equal(location, refrigerator.location)
     assert_equal(annual_kwh, refrigerator.rated_annual_kwh)
+    assert_nil(refrigerator.weekday_fractions)
+    assert_nil(refrigerator.weekend_fractions)
+    assert_nil(refrigerator.monthly_multipliers)
+    assert_equal('-0.487, -0.340, -0.370, -0.361, -0.515, -0.684, -0.471, -0.159, -0.079, -0.417, -0.411, -0.386, -0.240, -0.314, -0.160, -0.121, -0.469, -0.412, -0.091, 0.077, -0.118, -0.247, -0.445, -0.544', refrigerator.constant_coefficients)
+    assert_equal('0.019, 0.016, 0.017, 0.016, 0.018, 0.021, 0.019, 0.015, 0.015, 0.019, 0.018, 0.018, 0.016, 0.017, 0.015, 0.015, 0.020, 0.020, 0.017, 0.014, 0.016, 0.017, 0.019, 0.020', refrigerator.temperature_coefficients)
   end
 
   def _check_cooking_range(hpxml_bldg, fuel_type:, cook_is_induction:, oven_is_convection:, location:)
@@ -403,6 +417,9 @@ class ERIApplianceTest < Minitest::Test
     assert_equal(location, cooking_range.location)
     assert_equal(fuel_type, cooking_range.fuel_type)
     assert_equal(cook_is_induction, cooking_range.is_induction)
+    assert_equal('0.008, 0.008, 0.008, 0.008, 0.008, 0.015, 0.023, 0.039, 0.046, 0.046, 0.046, 0.054, 0.062, 0.046, 0.039, 0.054, 0.076, 0.134, 0.114, 0.058, 0.039, 0.031, 0.023, 0.015', cooking_range.weekday_fractions)
+    assert_equal('0.008, 0.008, 0.008, 0.008, 0.008, 0.015, 0.023, 0.039, 0.046, 0.046, 0.046, 0.054, 0.062, 0.046, 0.039, 0.054, 0.076, 0.134, 0.114, 0.058, 0.039, 0.031, 0.023, 0.015', cooking_range.weekend_fractions)
+    assert_equal('1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0', cooking_range.monthly_multipliers)
     assert_equal(1, hpxml_bldg.ovens.size)
     oven = hpxml_bldg.ovens[0]
     assert_equal(oven_is_convection, oven.is_convection)
