@@ -1769,7 +1769,7 @@ class ERI_301_Ruleset
       # New water heater
       new_bldg.water_heating_systems.add(id: orig_water_heater.id,
                                          is_shared_system: orig_water_heater.is_shared_system,
-                                         number_of_units_served: orig_water_heater.number_of_units_served,
+                                         number_of_bedrooms_served: orig_water_heater.number_of_bedrooms_served,
                                          fuel_type: orig_water_heater.fuel_type,
                                          water_heater_type: orig_water_heater.water_heater_type,
                                          location: orig_water_heater.location,
@@ -1845,7 +1845,7 @@ class ERI_301_Ruleset
                                          dwhr_equal_flow: hot_water_distribution.dwhr_equal_flow,
                                          dwhr_efficiency: hot_water_distribution.dwhr_efficiency,
                                          has_shared_recirculation: hot_water_distribution.has_shared_recirculation,
-                                         shared_recirculation_number_of_units_served: hot_water_distribution.shared_recirculation_number_of_units_served,
+                                         shared_recirculation_number_of_bedrooms_served: hot_water_distribution.shared_recirculation_number_of_bedrooms_served,
                                          shared_recirculation_pump_power: hot_water_distribution.shared_recirculation_pump_power,
                                          shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
 
@@ -2792,7 +2792,7 @@ class ERI_301_Ruleset
 
     new_bldg.water_heating_systems.add(id: 'WaterHeatingSystem',
                                        is_shared_system: false,
-                                       number_of_units_served: 1,
+                                       number_of_bedrooms_served: 3,
                                        fuel_type: wh_fuel_type,
                                        water_heater_type: HPXML::WaterHeaterTypeStorage,
                                        location: HPXML::LocationConditionedSpace,
