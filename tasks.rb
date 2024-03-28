@@ -2645,7 +2645,7 @@ def create_sample_hpxmls
     shared_water_heaters = hpxml_bldg.water_heating_systems.select { |wh| wh.is_shared_system }
     if not hpxml_bldg.clothes_washers.empty?
       if hpxml_bldg.clothes_washers[0].is_shared_appliance
-        hpxml_bldg.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
+        hpxml_bldg.clothes_washers[0].number_of_units_served = shared_water_heaters[0].number_of_bedrooms_served / hpxml_bldg.building_construction.number_of_bedrooms
         hpxml_bldg.clothes_washers[0].count = 2
       else
         hpxml_bldg.clothes_washers[0].is_shared_appliance = false
@@ -2653,7 +2653,7 @@ def create_sample_hpxmls
     end
     if not hpxml_bldg.clothes_dryers.empty?
       if hpxml_bldg.clothes_dryers[0].is_shared_appliance
-        hpxml_bldg.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_units_served
+        hpxml_bldg.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_bedrooms_served / hpxml_bldg.building_construction.number_of_bedrooms
         hpxml_bldg.clothes_dryers[0].count = 2
       else
         hpxml_bldg.clothes_dryers[0].is_shared_appliance = false
