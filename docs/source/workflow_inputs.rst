@@ -2146,19 +2146,19 @@ Recirculation (Shared)
 
 A shared recirculation hot water distribution system (serving multiple dwelling units) is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/HotWaterDistribution``.
 
-  =======================================================  =======  ============  =================  ========  ========  =====================
-  Element                                                  Type     Units         Constraints        Required  Default   Notes
-  =======================================================  =======  ============  =================  ========  ========  =====================
-  ``SystemIdentifier``                                     id                                        Yes                 Unique identifier
-  ``SystemType/Standard``                                  element                                   Yes                 Type of in-unit distribution system serving the dwelling unit
-  ``SystemType/Standard/PipingLength``                     double   ft            > 0                Yes                 Length of piping [#]_
-  ``PipeInsulation/PipeRValue``                            double   F-ft2-hr/Btu  >= 0               Yes                 Pipe insulation R-value
-  ``DrainWaterHeatRecovery``                               element                                   No        <none>    Presence of drain water heat recovery device [#]_
-  ``extension/SharedRecirculation/NumberofBedroomsServed`` integer                > NumberofBedrooms Yes [#]_            Number of bedrooms served
-  ``extension/SharedRecirculation/PumpPower``              double   W             >= 0               Yes                 Shared recirculation pump power
-  ``extension/SharedRecirculation/MotorEfficiency``        double   frac          > 0, < 1           No        0.85      Shared recirculation motor efficiency
-  ``extension/SharedRecirculation/ControlType``            string                 See [#]_           Yes                 Shared recirculation control type
-  =======================================================  =======  ============  =================  ========  ========  =====================
+  ========================================================  =======  ============  ==================  ========  ========  =====================
+  Element                                                   Type     Units         Constraints         Required  Default   Notes
+  ========================================================  =======  ============  ==================  ========  ========  =====================
+  ``SystemIdentifier``                                      id                                         Yes                 Unique identifier
+  ``SystemType/Standard``                                   element                                    Yes                 Type of in-unit distribution system serving the dwelling unit
+  ``SystemType/Standard/PipingLength``                      double   ft            > 0                 Yes                 Length of piping [#]_
+  ``PipeInsulation/PipeRValue``                             double   F-ft2-hr/Btu  >= 0                Yes                 Pipe insulation R-value
+  ``DrainWaterHeatRecovery``                                element                                    No        <none>    Presence of drain water heat recovery device [#]_
+  ``extension/SharedRecirculation/NumberofBedroomsServed``  integer                > NumberofBedrooms  Yes [#]_            Number of bedrooms served
+  ``extension/SharedRecirculation/PumpPower``               double   W             >= 0                Yes                 Shared recirculation pump power
+  ``extension/SharedRecirculation/MotorEfficiency``         double   frac          > 0, < 1            No        0.85      Shared recirculation motor efficiency
+  ``extension/SharedRecirculation/ControlType``             string                 See [#]_            Yes                 Shared recirculation control type
+  ========================================================  =======  ============  ==================  ========  ========  =====================
 
   .. [#] PipingLength is the length of hot water piping from the shared recirculation loop to the farthest hot water fixture, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 10 feet of piping for each floor level, plus 5 feet of piping for unconditioned basements (if any).
   .. [#] Additional drain water heat recovery inputs are described in :ref:`water_heater_dwhr`.
