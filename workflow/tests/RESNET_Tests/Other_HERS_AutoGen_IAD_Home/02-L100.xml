@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>latest</Version>
+        <Version>2019ABCD</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -39,6 +39,7 @@
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
+          <AverageCeilingHeight>8.0</AverageCeilingHeight>
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
         </BuildingConstruction>

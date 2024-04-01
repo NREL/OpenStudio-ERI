@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class ERI_301_Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
+  def self.apply_ruleset(hpxml, calc_type, weather, epw_file, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
+    @is_southern_hemisphere = (epw_file.latitude < 0)
 
     if not iecc_version.nil?
       if ['2015', '2018'].include? iecc_version
@@ -40,7 +41,7 @@ class ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, convert_shared_systems: false)
+    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, epw_file: epw_file, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
@@ -235,6 +236,7 @@ class ERI_301_Ruleset
     new_bldg.event_type = orig_bldg.event_type
     new_bldg.state_code = orig_bldg.state_code
     new_bldg.zip_code = orig_bldg.zip_code
+    new_bldg.dst_enabled = false
     new_bldg.header.allow_increased_fixed_capacities = true
     new_bldg.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
     new_bldg.header.natvent_days_per_week = 7
@@ -271,8 +273,8 @@ class ERI_301_Ruleset
 
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
+    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
-    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
@@ -286,13 +288,14 @@ class ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
+    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_rated(orig_bldg, new_bldg)
     # Global variables
+    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
-    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
@@ -306,13 +309,14 @@ class ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
+    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_iad(orig_bldg, new_bldg)
     # Global variables
+    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
-    orig_bldg.building_construction.average_ceiling_height = 8.202
     @cfa = 2400.0
     @nbeds = 3
     @ncfl = 2.0
@@ -326,6 +330,7 @@ class ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = @nbeds
     new_bldg.building_construction.conditioned_floor_area = @cfa
     new_bldg.building_construction.residential_facility_type = @bldg_type
+    new_bldg.building_construction.average_ceiling_height = 8.5
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
@@ -338,36 +343,33 @@ class ERI_301_Ruleset
     new_bldg.climate_and_risk_zones.weather_station_name = orig_bldg.climate_and_risk_zones.weather_station_name
     new_bldg.climate_and_risk_zones.weather_station_epw_filepath = orig_bldg.climate_and_risk_zones.weather_station_epw_filepath
     @iecc_zone = climate_zone_iecc.zone
-    @is_southern_hemisphere = (@weather.header.Latitude < 0)
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
-    _, _, _, infil_volume, infil_height, _ = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
-
+    infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
     sla = 0.00036
-    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, infil_volume)
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, infil_values[:volume])
     new_bldg.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
                                                air_leakage: ach50.round(2),
-                                               infiltration_volume: infil_volume,
-                                               infiltration_height: infil_height,
+                                               infiltration_volume: infil_values[:volume],
+                                               infiltration_height: infil_values[:height],
                                                infiltration_type: HPXML::InfiltrationTypeUnitExterior,
                                                a_ext: 1.0)
   end
 
   def self.set_enclosure_air_infiltration_rated(orig_bldg, new_bldg)
-    _, _, _, infil_volume, infil_height, _ = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+    infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
     ach50, a_ext = calc_rated_home_infiltration_ach50(orig_bldg)
-
     new_bldg.air_infiltration_measurements.add(id: 'AirInfiltrationMeasurement',
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
                                                air_leakage: ach50.round(2),
-                                               infiltration_volume: infil_volume,
-                                               infiltration_height: infil_height,
+                                               infiltration_volume: infil_values[:volume],
+                                               infiltration_height: infil_values[:height],
                                                infiltration_type: HPXML::InfiltrationTypeUnitExterior,
-                                               a_ext: a_ext.round(3))
+                                               a_ext: a_ext.round(3)) # Aext reported solely for inspection
   end
 
   def self.set_enclosure_air_infiltration_iad(new_bldg)
@@ -610,7 +612,8 @@ class ERI_301_Ruleset
     ufactor = get_reference_wall_ufactor()
 
     ext_thermal_bndry_walls = orig_bldg.walls.select { |wall| wall.is_exterior_thermal_boundary }
-    sum_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
+    sum_ext_wall_gross_area = ext_thermal_bndry_walls.map { |wall| wall.area }.sum(0)
+    other_walls = orig_bldg.walls - ext_thermal_bndry_walls
 
     solar_absorptance = 0.75
     emittance = 0.90
@@ -618,24 +621,42 @@ class ERI_301_Ruleset
     # Create insulated walls for exterior thermal boundary surface.
     # Area is equally distributed to each direction to be able to accommodate windows,
     # which are also equally distributed.
-    if sum_gross_area > 0.1
+    if sum_ext_wall_gross_area > 0.1
       new_bldg.walls.add(id: 'WallArea',
                          exterior_adjacent_to: HPXML::LocationOutside,
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                          wall_type: HPXML::WallTypeWoodStud,
-                         area: sum_gross_area,
+                         area: sum_ext_wall_gross_area,
                          azimuth: nil,
                          solar_absorptance: solar_absorptance,
                          emittance: emittance,
                          insulation_assembly_r_value: (1.0 / ufactor).round(3))
     end
 
+    # Create walls for Above-grade walls separating Conditioned Space Volume
+    # from Unrated Heated Space, Multifamily Buffer Boundary, or Non-Freezing Space.
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+      common_space_walls = orig_bldg.walls.select { |wall| wall.is_conditioned_and_adjacent_to_multifamily_common_space }
+      common_space_wall_ufactor = get_reference_wall_ufactor_common_space()
+      common_space_walls.each do |orig_wall|
+        new_bldg.walls.add(id: orig_wall.id,
+                           exterior_adjacent_to: orig_wall.exterior_adjacent_to,
+                           interior_adjacent_to: HPXML::LocationConditionedSpace,
+                           wall_type: orig_wall.wall_type,
+                           area: orig_wall.area,
+                           azimuth: orig_wall.azimuth,
+                           solar_absorptance: solar_absorptance,
+                           emittance: emittance,
+                           insulation_id: orig_wall.insulation_id,
+                           insulation_assembly_r_value: (1.0 / common_space_wall_ufactor).round(3))
+      end
+      other_walls -= common_space_walls
+    end
+
     # Preserve other walls:
     # 1. Interior thermal boundary surfaces (e.g., between conditioned space and garage)
     # 2. Exterior non-thermal boundary surfaces (e.g., between garage and outside)
-    orig_bldg.walls.each do |orig_wall|
-      next if orig_wall.is_exterior_thermal_boundary
-
+    other_walls.each do |orig_wall|
       if orig_wall.is_thermal_boundary
         insulation_assembly_r_value = (1.0 / ufactor).round(3)
       else
@@ -963,7 +984,7 @@ class ERI_301_Ruleset
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, shgc)
 
     fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
@@ -989,10 +1010,9 @@ class ERI_301_Ruleset
   end
 
   def self.set_enclosure_windows_rated(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
-
     # Preserve all windows
     orig_bldg.windows.each do |orig_window|
+      shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, orig_window.shgc)
       new_bldg.windows.add(id: orig_window.id,
                            area: orig_window.area,
                            azimuth: orig_window.azimuth,
@@ -1010,11 +1030,12 @@ class ERI_301_Ruleset
   end
 
   def self.set_enclosure_windows_iad(orig_bldg, new_bldg)
-    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors()
     ext_thermal_bndry_windows = orig_bldg.windows.select { |window| window.is_exterior_thermal_boundary }
     ref_ufactor, ref_shgc = get_reference_glazing_ufactor_shgc()
     avg_ufactor = calc_area_weighted_avg(ext_thermal_bndry_windows, :ufactor, backup_value: ref_ufactor)
     avg_shgc = calc_area_weighted_avg(ext_thermal_bndry_windows, :shgc, backup_value: ref_shgc)
+    # IAD shading coefficient the same as reference home
+    shade_summer, shade_winter = Constructions.get_default_interior_shading_factors(@eri_version, ref_shgc)
 
     # Default natural ventilation
     fraction_operable = Airflow.get_default_fraction_of_windows_operable()
@@ -1457,7 +1478,7 @@ class ERI_301_Ruleset
     else
       q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
       infil_height = new_bldg.air_infiltration_measurements[0].infiltration_height
-      q_fan_airflow = calc_mech_vent_qfan(q_tot, ref_sla, true, infil_height) # cfm for airflow
+      q_fan_airflow = calc_mech_vent_qfan(q_tot, ref_sla, true, 0.0, infil_height) # cfm for airflow
     end
 
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
@@ -1474,7 +1495,7 @@ class ERI_301_Ruleset
     else
 
       # Calculate weighted-average fan W/cfm
-      q_fans = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
+      q_fans, q_fan_bal_remain = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
       sum_fan_w = 0.0
       sum_fan_cfm = 0.0
       q_fans.each do |fan_id, flow_rate|
@@ -1488,10 +1509,12 @@ class ERI_301_Ruleset
         end
         sum_fan_cfm += flow_rate
       end
+      sum_fan_w += 0.70 * q_fan_bal_remain
+      sum_fan_cfm += q_fan_bal_remain
 
       # Calculate fan power
-      is_balanced = calc_mech_vent_is_balanced(orig_bldg.ventilation_fans)
-      q_fan_power = calc_rated_home_qfan(orig_bldg, is_balanced) # cfm for energy use calculation; Use Rated Home fan type
+      is_balanced, frac_imbal = get_mech_vent_imbal_properties(orig_bldg.ventilation_fans)
+      q_fan_power = calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal) # cfm for energy use calculation; Use Rated Home fan type
       if sum_fan_cfm > 0
         fan_power_w = sum_fan_w / sum_fan_cfm * q_fan_power
       else
@@ -1516,7 +1539,7 @@ class ERI_301_Ruleset
         (f.flow_rate_not_tested || f.flow_rate > 0)
     }
 
-    q_fans = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
+    q_fans, q_fan_bal_remain = calc_rated_home_q_fans_by_system(orig_bldg, mech_vent_fans)
 
     # Table 4.2.2(1) - Whole-House Mechanical ventilation
     mech_vent_fans.each do |orig_vent_fan|
@@ -1618,15 +1641,26 @@ class ERI_301_Ruleset
         new_vent_fan.precooling_fraction_load_served = orig_vent_fan.precooling_fraction_load_served
       end
     end
+
+    if q_fan_bal_remain > 0
+      fan_power_w = 0.70 * q_fan_bal_remain
+      new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
+                                    fan_type: HPXML::MechVentTypeBalanced,
+                                    tested_flow_rate: q_fan_bal_remain.round(2),
+                                    hours_in_operation: 24,
+                                    fan_power: fan_power_w.round(3),
+                                    used_for_whole_building_ventilation: true,
+                                    is_shared_system: false)
+    end
   end
 
   def self.set_systems_mechanical_ventilation_iad(new_bldg)
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
 
     # Calculate fan cfm
-    _, ach50, _, infil_volume, infil_height, _ = Airflow.get_values_from_air_infiltration_measurements(new_bldg, @cfa, @weather)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, infil_volume)
-    q_fan = calc_mech_vent_qfan(q_tot, sla, true, infil_height)
+    infil_values = Airflow.get_values_from_air_infiltration_measurements(new_bldg, @cfa, @weather)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(infil_values[:ach50], 0.65, @cfa, infil_values[:volume])
+    q_fan = calc_mech_vent_qfan(q_tot, sla, true, 0.0, infil_values[:height])
     fan_power_w = 0.70 * q_fan
 
     new_bldg.ventilation_fans.add(id: 'MechanicalVentilation',
@@ -2367,8 +2401,8 @@ class ERI_301_Ruleset
     balanced_fans = mech_vent_fans.select { |f| f.is_balanced? }
 
     # Calculate min airflow rate requirement
-    is_balanced = calc_mech_vent_is_balanced(mech_vent_fans)
-    min_q_fan = calc_rated_home_qfan(orig_bldg, is_balanced)
+    is_balanced, frac_imbal = get_mech_vent_imbal_properties(mech_vent_fans)
+    min_q_fan = calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
 
     # Calculate total supply/exhaust cfm (across all mech vent systems)
     cfm_oa_supply, cfm_oa_exhaust = calc_mech_vent_supply_exhaust_cfms(mech_vent_fans, :oa)
@@ -2443,7 +2477,17 @@ class ERI_301_Ruleset
       q_fans[orig_vent_fan.id] = q_fans[parent_cfis_fan.id]
     end
 
-    return q_fans
+    q_fan_bal_remain = 0
+    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+      # Check if supplemental balanced ventilation is needed
+      # This should only happen when the home has no mechanical ventilation, because
+      # otherwise the existing ventilation fans would have been increased instead.
+      if min_q_fan > q_fans.values.sum
+        q_fan_bal_remain = calc_rated_home_qfan(orig_bldg, true, 0.0)
+      end
+    end
+
+    return q_fans, q_fan_bal_remain
   end
 
   def self.calc_rated_home_infiltration_ach50(orig_bldg)
@@ -2451,7 +2495,7 @@ class ERI_301_Ruleset
     # We separately report out the Aext in the HPXML file for inspection, but the
     # AirInfiltrationMeasurement element will use infiltration_type: 'unit exterior'
     # so as not to double-count the Aext term.
-    _, ach50, _, infil_volume, infil_height, _ = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+    infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
 
     if @bldg_type == HPXML::ResidentialTypeSFD
       a_ext = 1.0
@@ -2461,7 +2505,7 @@ class ERI_301_Ruleset
 
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
         if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-          cfm50 = ach50 * infil_volume / 60.0
+          cfm50 = infil_values[:ach50] * infil_values[:volume] / 60.0
           tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
           if cfm50 / tot_cb_area > 0.30
             a_ext = 1.0
@@ -2470,7 +2514,7 @@ class ERI_301_Ruleset
       end
     end
 
-    ach50 *= a_ext
+    ach50 = infil_values[:ach50] * a_ext
 
     # Apply min Natural ACH?
     min_nach = nil
@@ -2488,8 +2532,8 @@ class ERI_301_Ruleset
 
     if not min_nach.nil?
       avg_ceiling_height = orig_bldg.building_construction.average_ceiling_height
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_height, avg_ceiling_height, @weather)
-      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, infil_volume)
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_values[:height], avg_ceiling_height, @weather)
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, infil_values[:volume])
       if ach50 < min_ach50
         ach50 = min_ach50
       end
@@ -2522,59 +2566,54 @@ class ERI_301_Ruleset
     return cfm_supply, cfm_exhaust
   end
 
-  def self.calc_mech_vent_is_balanced(ventilation_fans)
-    unmeasured_types = ventilation_fans.select { |f| f.used_for_whole_building_ventilation && f.flow_rate_not_tested }
-    if unmeasured_types.size > 0 # Some mech vent systems are not measured
+  def self.get_mech_vent_imbal_properties(mech_vent_fans)
+    # Returns (is_imbalanced, frac_imbalanced)
+    whole_fans = mech_vent_fans.select { |f| f.used_for_whole_building_ventilation && !f.is_cfis_supplemental_fan? }
+
+    if whole_fans.count { |f| !f.is_balanced? && f.hours_in_operation < 24 } > 1
+      return false, 1.0 # Multiple intermittent unbalanced fans, assume imbalanced per ANSI 301-2022
+    end
+
+    unmeasured_types = whole_fans.select { |f| f.flow_rate_not_tested }
+    if unmeasured_types.size > 0
       if unmeasured_types.all? { |f| f.is_balanced? }
-        return true # All types are balanced, assume balanced
+        return true, 0.0 # All types are balanced, assume balanced
       else
-        return false # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced
+        return false, 1.0 # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced
       end
     end
 
-    cfm_total_supply, cfm_total_exhaust = calc_mech_vent_supply_exhaust_cfms(ventilation_fans, :total)
+    cfm_total_supply, cfm_total_exhaust = calc_mech_vent_supply_exhaust_cfms(mech_vent_fans, :total)
     q_avg = (cfm_total_supply + cfm_total_exhaust) / 2.0
     if (cfm_total_supply - q_avg).abs / q_avg <= 0.1
-      return true # Supply/exhaust within 10% of average; balanced
+      is_balanced = true # Supply/exhaust within 10% of average; balanced
+    else
+      is_balanced = false
+    end
+    if cfm_total_supply + cfm_total_exhaust > 0
+      frac_imbal = (cfm_total_supply - cfm_total_exhaust).abs / [cfm_total_supply, cfm_total_exhaust].max
+    else
+      frac_imbal = 1.0
     end
 
-    return false # imbalanced
+    return is_balanced, frac_imbal
   end
 
-  def self.calc_rated_home_qfan(orig_bldg, is_balanced)
-    _, _, _, infil_volume, infil_height, _ = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
+  def self.calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
+    infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @cfa, @weather)
     ach50, _ = calc_rated_home_infiltration_ach50(orig_bldg)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, infil_volume)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, infil_values[:volume])
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
-    q_fan = calc_mech_vent_qfan(q_tot, sla, is_balanced, infil_height)
+    q_fan = calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, infil_values[:height])
     return q_fan
   end
 
-  def self.calc_mech_vent_qfan(q_tot, sla, is_balanced, infil_height)
+  def self.calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, infil_height)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, infil_height)
     q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
     a_ext = 1.0 # Use Aext=1.0 because sla reflects 'unit exterior' infiltration so it already incorporates Aext
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
-      if is_balanced
-        phi = 1.0
-      else
-        phi = q_inf / q_tot
-      end
-      q_fan = q_tot - phi * (q_inf * a_ext)
-    else
-      if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-        # No infiltration credit for attached/multifamily
-        return q_tot
-      end
-
-      if q_inf > 2.0 / 3.0 * q_tot
-        q_fan = q_tot - 2.0 / 3.0 * q_tot
-      else
-        q_fan = q_tot - q_inf
-      end
-    end
-
-    return [q_fan, 0].max
+    q_fan = Airflow.get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, a_ext, @bldg_type, @eri_version, nil)
+    return q_fan
   end
 
   def self.get_new_distribution_id(orig_bldg, new_bldg)
@@ -2876,6 +2915,16 @@ class ERI_301_Ruleset
     end
   end
 
+  def self.get_reference_wall_ufactor_common_space()
+    # Table 4.2.2(2) - Component Heat Transfer Characteristics for Reference Home
+    # Frame Wall U-Factor
+    if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
+      return 0.292
+    elsif ['3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? @iecc_zone
+      return 0.089
+    end
+  end
+
   def self.get_reference_door_area(orig_bldg)
     if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (@bldg_type == HPXML::ResidentialTypeApartment)
       total_area = 20.0 # ft2
@@ -3074,4 +3123,11 @@ def calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value
   end
 
   fail "Unable to calculate area-weighted avg for #{attribute}."
+end
+
+def apply_default_average_ceiling_height(orig_bldg)
+  if orig_bldg.building_construction.average_ceiling_height.nil?
+    # ASHRAE 62.2 default for average floor to ceiling height
+    orig_bldg.building_construction.average_ceiling_height = 8.2
+  end
 end

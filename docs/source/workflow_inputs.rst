@@ -135,15 +135,16 @@ HPXML Building Construction
 
 Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction``.
 
-  =======================================  ========  =========  =================================  ========  ========  =======================================================================
-  Element                                  Type      Units      Constraints                        Required  Default   Notes
-  =======================================  ========  =========  =================================  ========  ========  =======================================================================
-  ``ResidentialFacilityType``              string               See [#]_                           Yes                 Type of dwelling unit
-  ``NumberofConditionedFloors``            double               > 0                                Yes                 Number of conditioned floors (including a basement)
-  ``NumberofConditionedFloorsAboveGrade``  double               > 0, <= NumberofConditionedFloors  Yes                 Number of conditioned floors above grade (including a walkout basement)
-  ``NumberofBedrooms``                     integer              > 0                                Yes                 Number of bedrooms
-  ``ConditionedFloorArea``                 double    ft2        > 0                                Yes                 Floor area within conditioned space boundary
-  =======================================  ========  =========  =================================  ========  ========  =======================================================================
+  =============================================================  ========  =========  =================================  ========  ========  =======================================================================
+  Element                                                        Type      Units      Constraints                        Required  Default   Notes
+  =============================================================  ========  =========  =================================  ========  ========  =======================================================================
+  ``ResidentialFacilityType``                                    string               See [#]_                           Yes                 Type of dwelling unit
+  ``NumberofConditionedFloors``                                  double               > 0                                Yes                 Number of conditioned floors (including a basement)
+  ``NumberofConditionedFloorsAboveGrade``                        double               > 0, <= NumberofConditionedFloors  Yes                 Number of conditioned floors above grade (including a walkout basement)
+  ``AverageCeilingHeight``                                       double    ft         > 0                                No        8.2       Floor to ceiling height within conditioned space
+  ``NumberofBedrooms``                                           integer              > 0                                Yes                 Number of bedrooms
+  ``ConditionedFloorArea``                                       double    ft2        > 0                                Yes                 Floor area within conditioned space boundary
+  =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
          For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
@@ -302,52 +303,52 @@ Note that ELA is different than Equivalent Leakage Area (EqLA), which involves a
 HPXML Attics
 ************
 
-If the dwelling unit has an unvented attic, whether it is within the infiltration volume is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="false"]]``.
+If the dwelling unit has an unvented attic, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="false"]]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                In accordance with ANSI/RESNET/ICC Standard 380
+  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
-If the dwelling unit has a vented attic, attic ventilation information can be optionally entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]/VentilationRate``.
+If the dwelling unit has a vented attic, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]``.
 
-  =================  ======  =====  ===========  ========  =======  ==========================
-  Element            Type    Units  Constraints  Required  Default  Notes
-  =================  ======  =====  ===========  ========  =======  ==========================
-  ``UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
-  ``Value``          double         > 0          No        1/300    Value for ventilation rate
-  =================  ======  =====  ===========  ========  =======  ==========================
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  Element                            Type    Units  Constraints  Required  Default  Notes
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  ``VentilationRate/UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
+  ``VentilationRate/Value``          double         > 0          No        1/300    Value for ventilation rate
+  =================================  ======  =====  ===========  ========  =======  ==========================
 
   .. [#] UnitofMeasure choices are "SLA" (specific leakage area) or "ACHnatural" (natural air changes per hour).
 
 HPXML Foundations
 *****************
 
-If the dwelling unit has an unconditioned basement, whether it is within the infiltration volume is entered in ``Enclosure/Foundations/Foundation/FoundationType/Basement[Conditioned='false']``.
+If the dwelling unit has an unconditioned basement, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement[Conditioned='false']]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                In accordance with ANSI/RESNET/ICC Standard 380
+  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
-If the dwelling unit has an unvented crawlspace, whether it is within the infiltration volume is entered in ``Enclosure/Foundations/Foundation/FoundationType/Crawlspace[Vented='false']``.
+If the dwelling unit has an unvented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                In accordance with ANSI/RESNET/ICC Standard 380
+  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
-If the dwelling unit has a vented crawlspace, crawlspace ventilation information can be optionally entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]/VentilationRate``.
+If the dwelling unit has a vented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]``.
 
-  =================  ======  =====  ===========  ========  =======  ==========================
-  Element            Type    Units  Constraints  Required  Default  Notes
-  =================  ======  =====  ===========  ========  =======  ==========================
-  ``UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
-  ``Value``          double         > 0          No        1/150    Value for ventilation rate
-  =================  ======  =====  ===========  ========  =======  ==========================
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  Element                            Type    Units  Constraints  Required  Default  Notes
+  =================================  ======  =====  ===========  ========  =======  ==========================
+  ``VentilationRate/UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
+  ``VentilationRate/Value``          double         > 0          No        1/150    Value for ventilation rate
+  =================================  ======  =====  ===========  ========  =======  ==========================
 
   .. [#] UnitofMeasure only choice is "SLA" (specific leakage area).
 
@@ -2649,28 +2650,32 @@ HPXML Locations
 
 The various locations used in an HPXML file are defined as follows:
 
-  ==============================  ==================================  ============================================  =============
-  Value                           Description                         Temperature                                   Building Type
-  ==============================  ==================================  ============================================  =============
-  outside                         Ambient environment                 Weather data                                  Any
-  ground                                                              EnergyPlus calculation                        Any
-  conditioned space               Above-grade conditioned floor area  EnergyPlus calculation                        Any
-  attic - vented                                                      EnergyPlus calculation                        Any
-  attic - unvented                                                    EnergyPlus calculation                        Any
-  basement - conditioned          Below-grade conditioned floor area  EnergyPlus calculation                        Any
-  basement - unconditioned                                            EnergyPlus calculation                        Any
-  crawlspace - vented                                                 EnergyPlus calculation                        Any
-  crawlspace - unvented                                               EnergyPlus calculation                        Any
-  garage                          Single-family (not shared parking)  EnergyPlus calculation                        Any
-  other housing unit              Unrated Conditioned Space           Same as conditioned space                     SFA/MF only
-  other heated space              Unrated Heated Space                Avg of conditioned space/outside; min of 68F  SFA/MF only
-  other multifamily buffer space  Multifamily Buffer Boundary         Avg of conditioned space/outside; min of 50F  SFA/MF only
-  other non-freezing space        Non-Freezing Space                  Floats with outside; minimum of 40F           SFA/MF only
-  other exterior                  Water heater outside                Weather data                                  Any
-  exterior wall                   Ducts in exterior wall              Avg of conditioned space/outside                   Any
-  under slab                      Ducts under slab (ground)           EnergyPlus calculation                        Any
-  roof deck                       Ducts on roof deck (outside)        Weather data                                  Any
-  ==============================  ==================================  ============================================  =============
+  ==============================  ==============================================  ============================================  =============
+  Value                           Description                                     Temperature                                   Building Type
+  ==============================  ==============================================  ============================================  =============
+  outside                         Ambient environment                             Weather data                                  Any
+  ground                                                                          EnergyPlus calculation                        Any
+  conditioned space               Above-grade conditioned floor area              EnergyPlus calculation                        Any
+  attic - vented                                                                  EnergyPlus calculation                        Any
+  attic - unvented                                                                EnergyPlus calculation                        Any
+  basement - conditioned          Below-grade conditioned floor area              EnergyPlus calculation                        Any
+  basement - unconditioned                                                        EnergyPlus calculation                        Any
+  crawlspace - vented                                                             EnergyPlus calculation                        Any
+  crawlspace - unvented                                                           EnergyPlus calculation                        Any
+  garage                          Unconditioned garage (not shared parking) [#]_  EnergyPlus calculation                        Any
+  other housing unit              Unrated Conditioned Space                       Same as conditioned space                     SFA/MF only
+  other heated space              Unrated Heated Space                            Avg of conditioned space/outside; min of 68F  SFA/MF only
+  other multifamily buffer space  Multifamily Buffer Boundary                     Avg of conditioned space/outside; min of 50F  SFA/MF only
+  other non-freezing space        Non-Freezing Space                              Floats with outside; minimum of 40F           SFA/MF only
+  other exterior                  Water heater outside                            Weather data                                  Any
+  exterior wall                   Ducts in exterior wall                          Avg of conditioned space/outside              Any
+  under slab                      Ducts under slab (ground)                       EnergyPlus calculation                        Any
+  roof deck                       Ducts on roof deck (outside)                    Weather data                                  Any
+  ==============================  ==============================================  ============================================  =============
+
+  .. [#] OpenStudio-ERI does not model "conditioned" or "heated" garages.
+         Many conditioned garages are not conditioned 24/7, rather they are only conditioned for short periods when occupants are in them and turn on the space conditioning equipment, so it is best to assume an unconditioned garage.
+         However, if a garage was converted into livable space, then "conditioned space" should be used instead.
 
 Validating & Debugging Errors
 -----------------------------
