@@ -2,6 +2,8 @@
 
 __New Features__
 - Implements ANSI/RESNET/ICC Standard 301-2022 and Addendum C.
+  - **Breaking change**: For shared water heaters, `NumberofUnitsServed` is replaced by `extension/NumberofBedroomsServed`.
+  - **Breaking change**: For shared hot water recirculation systems, `NumberofUnitsServed` is replaced by `NumberofBedroomsServed`.
   - `ERICalculation/Version` and `CO2IndexCalculation/Version` can now be "2022C" or "2022".
   - Allows modeling electric battery storage, including shared batteries ("2022C" or newer).
   - The `ElectricAuxiliaryEnergy` input for boilers is no longer used.

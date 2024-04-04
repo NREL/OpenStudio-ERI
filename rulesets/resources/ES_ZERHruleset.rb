@@ -834,7 +834,7 @@ class ES_ZERH_Ruleset
       # New water heater
       new_bldg.water_heating_systems.add(id: orig_water_heater.id,
                                          is_shared_system: orig_water_heater.is_shared_system,
-                                         number_of_units_served: orig_water_heater.number_of_units_served,
+                                         number_of_bedrooms_served: orig_water_heater.number_of_bedrooms_served,
                                          fuel_type: wh_fuel_type,
                                          water_heater_type: wh_type,
                                          location: orig_water_heater.location.gsub('unvented', 'vented'),
@@ -883,7 +883,7 @@ class ES_ZERH_Ruleset
                                            pipe_r_value: pipe_r_value,
                                            standard_piping_length: standard_piping_length,
                                            has_shared_recirculation: true,
-                                           shared_recirculation_number_of_units_served: orig_dist.shared_recirculation_number_of_units_served,
+                                           shared_recirculation_number_of_bedrooms_served: orig_dist.shared_recirculation_number_of_bedrooms_served,
                                            shared_recirculation_pump_power: shared_recirculation_pump_power,
                                            shared_recirculation_control_type: orig_dist.shared_recirculation_control_type)
     else
