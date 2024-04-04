@@ -2366,6 +2366,7 @@ def create_sample_hpxmls
                   'base-bldgtype-mf-unit-shared-pv.xml',
                   'base-bldgtype-mf-unit-shared-pv-battery.xml',
                   'base-bldgtype-mf-unit-shared-water-heater.xml',
+                  'base-bldgtype-mf-unit-shared-water-heater-heat-pump.xml',
                   'base-bldgtype-mf-unit-shared-water-heater-recirc.xml',
                   'base-bldgtype-sfa-unit.xml',
                   'base-dhw-combi-tankless.xml',

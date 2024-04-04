@@ -2792,7 +2792,6 @@ class ERI_301_Ruleset
 
     new_bldg.water_heating_systems.add(id: 'WaterHeatingSystem',
                                        is_shared_system: false,
-                                       number_of_bedrooms_served: 3,
                                        fuel_type: wh_fuel_type,
                                        water_heater_type: HPXML::WaterHeaterTypeStorage,
                                        location: HPXML::LocationConditionedSpace,
