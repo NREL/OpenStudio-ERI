@@ -509,6 +509,7 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
   ``SystemIdentifier``                    id                                   Yes                Unique identifier
   ``ExteriorAdjacentTo``                  string                  See [#]_     Yes                Exterior adjacent space type
   ``InteriorAdjacentTo``                  string                  See [#]_     Yes                Interior adjacent space type
+  ``FloorOrCeiling``                      string                  See [#]_     See [#]_           Floor or ceiling from the perspective of the conditioned space
   ``FloorType``                           element                 See [#]_     Yes                Floor type (for thermal mass)
   ``Area``                                double    ft2           > 0          Yes                Gross area
   ``Insulation/SystemIdentifier``         id                                   Yes                Unique identifier
@@ -519,18 +520,10 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
          See :ref:`hpxmllocations` for descriptions.
   .. [#] InteriorAdjacentTo choices are "conditioned space", "attic - vented", "attic - unvented", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", or "garage".
          See :ref:`hpxmllocations` for descriptions.
+  .. [#] FloorOrCeiling choices are "floor" or "ceiling".
+  .. [#] FloorOrCeiling only required for floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
   .. [#] FloorType child element choices are ``WoodFrame``, ``StructuralInsulatedPanel``, ``SteelFrame``, or ``SolidConcrete``.
   .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
-
-For floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space", additional information is entered in ``Floor``.
-
-  ======================================  ========  =====  ==============  ========  =======  ==========================================
-  Element                                 Type      Units  Constraints     Required  Default  Notes
-  ======================================  ========  =====  ==============  ========  =======  ==========================================
-  ``FloorOrCeiling``                      string           See [#]_        Yes                Specifies whether a floor or ceiling from the perspective of the conditioned space
-  ======================================  ========  =====  ==============  ========  =======  ==========================================
-
-  .. [#] FloorOrCeiling choices are "floor" or "ceiling".
 
 HPXML Slabs
 ***********
@@ -1579,7 +1572,7 @@ Additional information is entered in each ``Ducts``.
          See :ref:`hpxmllocations` for descriptions.
   .. [#] The sum of all FractionDuctArea must each equal to 1, both for the supply side and return side.
   .. [#] If both are provided, DuctSurfaceArea will be used in the model.
-  .. [#] If DuctSurfaceArea not provided, duct surface areas will be calculated based on ANSI/RESNET/ICC 301-2022:
+  .. [#] If DuctSurfaceArea not provided, duct surface areas will be calculated based on `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_:
 
          \- **Supply duct area**: 0.27 * ConditionedFloorAreaServed
 
