@@ -831,13 +831,20 @@ class ERI_301_Ruleset
     sum_ceiling_area = 0.0
     new_bldg.floors.each do |new_floor|
       next unless new_floor.is_ceiling
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+        # Only include ceilings above Conditioned Space Volume and below an Attic, Unconditioned Space Volume, Unrated Heated Space, Multifamily Buffer Boundary, Non-Freezing Space, or outdoor environment
+        next unless new_floor.is_thermal_boundary
+      end
 
       sum_ceiling_area += new_floor.area
     end
     new_bldg.floors.each do |new_floor|
       next unless new_floor.is_ceiling
-
-      new_floor.area = 1200.0 * new_floor.area / sum_ceiling_area
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+        new_floor.area = new_floor.is_thermal_boundary ? 1200.0 * new_floor.area / sum_ceiling_area : 0.0
+      else
+        new_floor.area = 1200.0 * new_floor.area / sum_ceiling_area
+      end
     end
   end
 
