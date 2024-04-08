@@ -19,8 +19,8 @@ Window U-Factor,1.039,1.039,1.039,1.039
 Window SHGCo (heating),0.5695,0.5695,0.5695,0.5695
 Window SHGCo (cooling),0.469,0.469,0.469,0.469
 Infiltration rate (ACH50),3.0,3.0,5.0,3.0
-Mechanical ventilation rate,66.37,64.24,53.31,57.11
-Mechanical ventilation,406.99836,393.8934000000001,326.89691999999997,350.19852
+Mechanical ventilation rate,66.45,64.31,53.41,57.2
+Mechanical ventilation,407.45387999999997,394.3752,327.51887999999997,350.77668
 Labeled heating system rating and efficiency,0.78,7.7,7.7,0.78
 Labeled cooling system rating and efficiency,13.0,13.0,13.0,13.0
 Thermostat Type,manual,manual,manual,manual

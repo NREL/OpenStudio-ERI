@@ -25,8 +25,8 @@ def _run_ruleset(design, xml, out_xml)
   assert(File.exist?(out_xml))
 end
 
-def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,
-                  skip_simulation: false, rated_home_only: false, diagnostic_output: false)
+def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false, skip_simulation: false,
+                  rated_home_only: false, output_format: 'csv', diagnostic_output: false)
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
 
@@ -59,33 +59,32 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format} --debug"
   system(command)
 
   hpxmls = {}
-  csvs = {}
+  outputs = {}
   if rated_home_only
     # ERI w/ Rated Home only
     hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-    csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
+    outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
   else
     if not eri_version.nil?
       # ERI
       hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
       hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-      csvs[:eri_results] = File.join(rundir, 'results', 'ERI_Results.csv')
-      csvs[:eri_worksheet] = File.join(rundir, 'results', 'ERI_Worksheet.csv')
-      csvs[:rated_results] = File.join(rundir, 'results', 'ERIRatedHome.csv')
-      csvs[:ref_results] = File.join(rundir, 'results', 'ERIReferenceHome.csv')
+      outputs[:eri_results] = File.join(rundir, 'results', "ERI_Results.#{output_format}")
+      outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
+      outputs[:ref_results] = File.join(rundir, 'results', "ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
     if not co2_version.nil?
       hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
       if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv') # Some HPXMLs (e.g., in AK/HI or with wood fuel) won't produce a CO2 Index
-        csvs[:co2e_results] = File.join(rundir, 'results', 'CO2e_Results.csv')
+        outputs[:co2e_results] = File.join(rundir, 'results', "CO2e_Results.#{output_format}")
       end
     end
     if not es_version.nil?
@@ -100,22 +99,20 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:esrat_rated] = File.join(rundir, 'results', 'ESRated_ERIRatedHome.xml')
       hpxmls[:esrat_iad] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentDesign.xml')
       hpxmls[:esrat_iadref] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.xml')
-      csvs[:es_results] = File.join(rundir, 'results', 'ES_Results.csv')
-      csvs[:esrd_eri_results] = File.join(rundir, 'results', 'ESReference_ERI_Results.csv')
-      csvs[:esrd_eri_worksheet] = File.join(rundir, 'results', 'ESReference_ERI_Worksheet.csv')
-      csvs[:esrat_eri_results] = File.join(rundir, 'results', 'ESRated_ERI_Results.csv')
-      csvs[:esrat_eri_worksheet] = File.join(rundir, 'results', 'ESRated_ERI_Worksheet.csv')
-      csvs[:esrd_rated_results] = File.join(rundir, 'results', 'ESReference_ERIRatedHome.csv')
-      csvs[:esrd_ref_results] = File.join(rundir, 'results', 'ESReference_ERIReferenceHome.csv')
-      csvs[:esrd_iad_results] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentDesign.csv')
-      csvs[:esrd_iadref_results] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentReferenceHome.csv')
-      csvs[:esrat_rated_results] = File.join(rundir, 'results', 'ESRated_ERIRatedHome.csv')
-      csvs[:esrat_ref_results] = File.join(rundir, 'results', 'ESRated_ERIReferenceHome.csv')
-      csvs[:esrat_iad_results] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentDesign.csv')
-      csvs[:esrat_iadref_results] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.csv')
+      outputs[:es_results] = File.join(rundir, 'results', "ES_Results.#{output_format}")
+      outputs[:esrd_eri_results] = File.join(rundir, 'results', "ESReference_ERI_Results.#{output_format}")
+      outputs[:esrat_eri_results] = File.join(rundir, 'results', "ESRated_ERI_Results.#{output_format}")
+      outputs[:esrd_rated_results] = File.join(rundir, 'results', "ESReference_ERIRatedHome.#{output_format}")
+      outputs[:esrd_ref_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome.#{output_format}")
+      outputs[:esrd_iad_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:esrd_iadref_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentReferenceHome.#{output_format}")
+      outputs[:esrat_rated_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome.#{output_format}")
+      outputs[:esrat_ref_results] = File.join(rundir, 'results', "ESRated_ERIReferenceHome.#{output_format}")
+      outputs[:esrat_iad_results] = File.join(rundir, 'results', "ESRated_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:esrat_iadref_results] = File.join(rundir, 'results', "ESRated_ERIIndexAdjustmentReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
     if not zerh_version.nil?
@@ -130,34 +127,31 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:zerhrat_rated] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.xml')
       hpxmls[:zerhrat_iad] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.xml')
       hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
-      csvs[:zerh_results] = File.join(rundir, 'results', 'ZERH_Results.csv')
-      csvs[:zerhrd_eri_results] = File.join(rundir, 'results', 'ZERHReference_ERI_Results.csv')
-      csvs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', 'ZERHReference_ERI_Worksheet.csv')
-      csvs[:zerhrat_eri_results] = File.join(rundir, 'results', 'ZERHRated_ERI_Results.csv')
-      csvs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', 'ZERHRated_ERI_Worksheet.csv')
-      csvs[:zerhrd_rated_results] = File.join(rundir, 'results', 'ZERHReference_ERIRatedHome.csv')
-      csvs[:zerhrd_ref_results] = File.join(rundir, 'results', 'ZERHReference_ERIReferenceHome.csv')
-      csvs[:zerhrd_iad_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentDesign.csv')
-      csvs[:zerhrd_iadref_results] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentReferenceHome.csv')
-      csvs[:zerhrat_rated_results] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.csv')
-      csvs[:zerhrat_ref_results] = File.join(rundir, 'results', 'ZERHRated_ERIReferenceHome.csv')
-      csvs[:zerhrat_iad_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.csv')
-      csvs[:zerhrat_iadref_results] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.csv')
+      outputs[:zerh_results] = File.join(rundir, 'results', "ZERH_Results.#{output_format}")
+      outputs[:zerhrd_eri_results] = File.join(rundir, 'results', "ZERHReference_ERI_Results.#{output_format}")
+      outputs[:zerhrat_eri_results] = File.join(rundir, 'results', "ZERHRated_ERI_Results.#{output_format}")
+      outputs[:zerhrd_rated_results] = File.join(rundir, 'results', "ZERHReference_ERIRatedHome.#{output_format}")
+      outputs[:zerhrd_ref_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome.#{output_format}")
+      outputs[:zerhrd_iad_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:zerhrd_iadref_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentReferenceHome.#{output_format}")
+      outputs[:zerhrat_rated_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome.#{output_format}")
+      outputs[:zerhrat_ref_results] = File.join(rundir, 'results', "ZERHRated_ERIReferenceHome.#{output_format}")
+      outputs[:zerhrat_iad_results] = File.join(rundir, 'results', "ZERHRated_ERIIndexAdjustmentDesign.#{output_format}")
+      outputs[:zerhrat_iadref_results] = File.join(rundir, 'results', "ZERHRated_ERIIndexAdjustmentReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:zerhrat_timeseries_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:zerhrd_timeseries_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:zerhrat_timeseries_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:zerhrd_timeseries_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
     if not iecc_eri_version.nil?
       hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
       hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
-      csvs[:iecc_eri_results] = File.join(rundir, 'results', 'IECC_ERI_Results.csv')
-      csvs[:iecc_eri_worksheet] = File.join(rundir, 'results', 'IECC_ERI_Worksheet.csv')
-      csvs[:iecc_eri_rated_results] = File.join(rundir, 'results', 'IECC_ERIRatedHome.csv')
-      csvs[:iecc_eri_ref_results] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.csv')
+      outputs[:iecc_eri_results] = File.join(rundir, 'results', "IECC_ERI_Results.#{output_format}")
+      outputs[:iecc_eri_rated_results] = File.join(rundir, 'results', "IECC_ERIRatedHome.#{output_format}")
+      outputs[:iecc_eri_ref_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        csvs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECC_ERIRatedHome_#{timeseries_frequency.capitalize}.csv")
-        csvs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome_#{timeseries_frequency.capitalize}.csv")
+        outputs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECC_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
   end
@@ -168,9 +162,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     assert(File.exist?(hpxml_path))
   end
   if not skip_simulation
-    csvs.values.each do |csv_path|
-      puts "Did not find #{csv_path}" unless File.exist?(csv_path)
-      assert(File.exist?(csv_path))
+    outputs.values.each do |output_path|
+      puts "Did not find #{output_path}" unless File.exist?(output_path)
+      assert(File.exist?(output_path))
     end
   end
   if diagnostic_output && (not eri_version.nil?) && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
@@ -206,7 +200,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     end
   end
 
-  return rundir, hpxmls, csvs
+  return rundir, hpxmls, outputs
 end
 
 def _run_simulation(xml, test_name)
@@ -343,7 +337,8 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
 
     # Update HPXML to override mech vent fan power for eRatio test
     new_hpxml = HPXML.new(hpxml_path: out_xml)
-    new_hpxml.ventilation_fans.each do |vent_fan|
+    new_hpxml_bldg = new_hpxml.buildings[0]
+    new_hpxml_bldg.ventilation_fans.each do |vent_fan|
       next unless vent_fan.used_for_whole_building_ventilation
 
       if (vent_fan.fan_type == HPXML::MechVentTypeSupply) || (vent_fan.fan_type == HPXML::MechVentTypeExhaust)
@@ -352,15 +347,13 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
         vent_fan.fan_power = 0.70 * vent_fan.tested_flow_rate
       elsif (vent_fan.fan_type == HPXML::MechVentTypeERV) || (vent_fan.fan_type == HPXML::MechVentTypeHRV)
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
-      elsif vent_fan.fan_type == HPXML::MechVentTypeCFIS
-        vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
       end
     end
-    XMLHelper.write_file(new_hpxml.to_oga, out_xml)
+    XMLHelper.write_file(new_hpxml.to_doc, out_xml)
 
     _rundir, _hpxmls, csvs = _run_workflow(out_xml, test_name)
-    worksheet_results = _get_csv_results([csvs[:eri_worksheet]])
-    all_results[File.basename(xml)]['e-Ratio'] = (worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']).round(7)
+    eri_results = _get_csv_results([csvs[:eri_results]])
+    all_results[File.basename(xml)]['e-Ratio'] = (eri_results['Total Loads TnML'] / eri_results['Total Loads TRL']).round(7)
   end
   assert(all_results.size > 0)
 
@@ -384,13 +377,31 @@ def _test_resnet_hers_method(test_name, dir_name)
   test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
   File.delete(test_results_csv) if File.exist? test_results_csv
 
+  columns_of_interest = ['ERI',
+                         'REUL Heating (MBtu)',
+                         'REUL Cooling (MBtu)',
+                         'REUL Hot Water (MBtu)',
+                         'EC_r Heating (MBtu)',
+                         'EC_r Cooling (MBtu)',
+                         'EC_r Hot Water (MBtu)',
+                         'EC_x Heating (MBtu)',
+                         'EC_x Cooling (MBtu)',
+                         'EC_x Hot Water (MBtu)',
+                         'EC_x L&A (MBtu)',
+                         'IAD_Save (%)']
+
   # Run simulations
   all_results = {}
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
-    all_results[xml] = _get_csv_results([csvs[:eri_results]])
-    all_results[xml].delete('EC_x Dehumid (MBtu)') # Not yet included in RESNET spreadsheet
+    results = _get_csv_results([csvs[:eri_results]])
+
+    # Include columns only in the RESNET accreditation spreadsheet
+    all_results[xml] = {}
+    columns_of_interest.each do |col|
+      all_results[xml][col] = results[col]
+    end
   end
   assert(all_results.size > 0)
 
@@ -432,15 +443,15 @@ def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
 end
 
 def _check_ashrae_140_results(htg_loads, clg_loads)
-  # Proposed acceptance criteria as of 8/17/2022
-  htg_min = [48.06, 74.30, 35.98, 39.74, 45.72, 39.12, 42.16, 48.30, 58.15, 121.75, 126.71, 23.91, 26.93, 55.09, 46.62]
-  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.39, 74.24, 137.68, 146.84, 81.95, 70.53, 92.73, 56.46]
-  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.89, -0.56, -1.95, 8.16, 71.16, 3.20, -26.32, -3.05, 5.87, 5.10]
-  htg_dt_max = [29.62, -9.45, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.75, 11.45, 32.54, 39.08]
-  clg_min = [42.49, 47.72, 41.14, 31.55, 21.03, 50.55, 36.62, 52.25, 34.16, 57.07, 50.19]
-  clg_max = [58.66, 61.33, 51.69, 41.84, 29.35, 73.47, 59.72, 68.60, 47.58, 73.51, 60.72]
+  # Proposed acceptance criteria as of 3/18/2024
+  htg_min = [48.07, 74.30, 35.98, 39.74, 45.72, 39.13, 42.17, 48.30, 58.15, 121.76, 126.71, 24.59, 27.72, 57.57, 48.33]
+  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.40, 74.24, 137.68, 146.84, 81.73, 70.27, 91.66, 56.47]
+  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.90, -0.56, -1.96, 8.15, 71.16, 3.20, -25.78, -3.14, 7.79, 5.49]
+  htg_dt_max = [29.62, -9.44, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.68, 11.47, 32.01, 38.95]
+  clg_min = [42.50, 47.72, 41.15, 31.54, 21.03, 50.55, 36.63, 52.26, 34.16, 57.07, 50.19]
+  clg_max = [58.66, 61.33, 51.69, 41.85, 29.35, 73.48, 59.72, 68.60, 47.58, 73.51, 60.72]
   clg_dt_min = [0.69, -8.24, -18.53, -30.58, 7.51, -16.52, 6.75, -12.95, 11.62, 5.12]
-  clg_dt_max = [6.91, -0.22, -9.74, -20.47, 15.77, -11.16, 12.76, -6.58, 17.59, 14.14]
+  clg_dt_max = [6.91, -0.22, -9.74, -20.47, 15.77, -11.15, 12.76, -6.58, 17.59, 14.14]
 
   # Annual Heating Loads
   assert_operator(htg_loads['L100AC'], :<=, htg_max[0])
@@ -554,15 +565,17 @@ end
 def _get_reference_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
+  hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Above-grade walls
-  wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml)
+  wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml_bldg)
   results['Above-grade walls (Uo)'] = wall_u.round(3)
   results['Above-grade wall solar absorptance (α)'] = wall_solar_abs.round(2)
   results['Above-grade wall infrared emittance (ε)'] = wall_emiss.round(2)
 
   # Basement walls
-  bsmt_wall_r = _get_basement_walls(hpxml)
+  bsmt_wall_r = _get_basement_walls(hpxml_bldg)
   if test_num == 4
     results['Basement walls insulation R-Value'] = bsmt_wall_r.round(0)
   else
@@ -571,7 +584,7 @@ def _get_reference_home_components(hpxml, test_num)
   results['Basement walls (Uo)'] = 'n/a'
 
   # Above-grade floors
-  floors_u = _get_above_grade_floors(hpxml)
+  floors_u = _get_above_grade_floors(hpxml_bldg)
   if test_num <= 2
     results['Above-grade floors (Uo)'] = floors_u.round(3)
   else
@@ -579,7 +592,7 @@ def _get_reference_home_components(hpxml, test_num)
   end
 
   # Slab insulation
-  slab_r, carpet_r, exp_mas_floor_area = _get_hpxml_slabs(hpxml)
+  slab_r, carpet_r, exp_mas_floor_area = _get_slabs(hpxml_bldg)
   if test_num >= 3
     results['Slab insulation R-Value'] = slab_r.round(0)
   else
@@ -587,20 +600,20 @@ def _get_reference_home_components(hpxml, test_num)
   end
 
   # Ceilings
-  ceil_u, _ceil_area = _get_ceilings(hpxml)
+  ceil_u, _ceil_area = _get_ceilings(hpxml_bldg)
   results['Ceilings (Uo)'] = ceil_u.round(3)
 
   # Roofs
-  roof_solar_abs, roof_emiss, _roof_area = _get_roofs(hpxml)
+  roof_solar_abs, roof_emiss, _roof_area = _get_roofs(hpxml_bldg)
   results['Roof solar absorptance (α)'] = roof_solar_abs.round(2)
   results['Roof infrared emittance (ε)'] = roof_emiss.round(2)
 
   # Attic vent area
-  attic_vent_area = _get_attic_vent_area(hpxml)
+  attic_vent_area = _get_attic_vent_area(hpxml_bldg)
   results['Attic vent area (ft2)'] = attic_vent_area.round(2)
 
   # Crawlspace vent area
-  crawl_vent_area = _get_crawl_vent_area(hpxml)
+  crawl_vent_area = _get_crawl_vent_area(hpxml_bldg)
   if test_num == 2
     results['Crawlspace vent area (ft2)'] = crawl_vent_area.round(2)
   else
@@ -617,12 +630,12 @@ def _get_reference_home_components(hpxml, test_num)
   end
 
   # Doors
-  door_u, door_area = _get_doors(hpxml)
+  door_u, door_area = _get_doors(hpxml_bldg)
   results['Door Area (ft2)'] = door_area.round(0)
   results['Door U-Factor'] = door_u.round(2)
 
   # Windows
-  win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml)
+  win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_bldg)
   results['North window area (ft2)'] = win_areas[0].round(2)
   results['South window area (ft2)'] = win_areas[180].round(2)
   results['East window area (ft2)'] = win_areas[90].round(2)
@@ -632,16 +645,16 @@ def _get_reference_home_components(hpxml, test_num)
   results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
 
   # Infiltration
-  sla, _ach50 = _get_infiltration(hpxml)
+  sla, _ach50 = _get_infiltration(hpxml_bldg)
   results['SLAo (ft2/ft2)'] = sla.round(5)
 
   # Internal gains
-  xml_it_sens, xml_it_lat = _get_internal_gains(hpxml)
+  xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_bldg, hpxml.header.eri_calculation_version)
   results['Sensible Internal gains (Btu/day)'] = xml_it_sens.round(0)
   results['Latent Internal gains (Btu/day)'] = xml_it_lat.round(0)
 
   # HVAC
-  afue, hspf, seer, dse = _get_hvac(hpxml)
+  afue, hspf, seer, dse = _get_hvac(hpxml_bldg)
   if (test_num == 1) || (test_num == 4)
     results['Labeled heating system rating and efficiency'] = afue.round(2)
   else
@@ -651,17 +664,17 @@ def _get_reference_home_components(hpxml, test_num)
   results['Air Distribution System Efficiency'] = dse.round(2)
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp.round(0)
   results['Cooling thermostat settings'] = clg_sp.round(0)
 
   # Mechanical ventilation
-  mv_kwh, _mv_cfm = _get_mech_vent(hpxml)
+  mv_kwh, _mv_cfm = _get_mech_vent(hpxml_bldg)
   results['Mechanical ventilation (kWh/y)'] = mv_kwh.round(2)
 
   # Domestic hot water
-  ref_pipe_l, ref_loop_l = _get_dhw(hpxml)
+  ref_pipe_l, ref_loop_l = _get_dhw(hpxml_bldg)
   results['DHW pipe length refPipeL'] = ref_pipe_l.round(1)
   results['DHW loop length refLoopL'] = ref_loop_l.round(1)
 
@@ -671,38 +684,40 @@ end
 def _get_iad_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
+  hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Geometry
-  results['Number of Stories'] = hpxml.building_construction.number_of_conditioned_floors
-  results['Number of Bedrooms'] = hpxml.building_construction.number_of_bedrooms
-  results['Conditioned Floor Area (ft2)'] = hpxml.building_construction.conditioned_floor_area
-  results['Infiltration Volume (ft3)'] = hpxml.air_infiltration_measurements[0].infiltration_volume
+  results['Number of Stories'] = hpxml_bldg.building_construction.number_of_conditioned_floors
+  results['Number of Bedrooms'] = hpxml_bldg.building_construction.number_of_bedrooms
+  results['Conditioned Floor Area (ft2)'] = hpxml_bldg.building_construction.conditioned_floor_area
+  results['Infiltration Volume (ft3)'] = hpxml_bldg.air_infiltration_measurements[0].infiltration_volume
 
   # Above-grade Walls
-  wall_u, _wall_solar_abs, _wall_emiss, wall_area = _get_above_grade_walls(hpxml)
+  wall_u, _wall_solar_abs, _wall_emiss, wall_area = _get_above_grade_walls(hpxml_bldg)
   results['Above-grade walls area (ft2)'] = wall_area
   results['Above-grade walls (Uo)'] = wall_u
 
   # Roof
-  _roof_solar_abs, _roof_emiss, roof_area = _get_roofs(hpxml)
+  _roof_solar_abs, _roof_emiss, roof_area = _get_roofs(hpxml_bldg)
   results['Roof gross area (ft2)'] = roof_area
 
   # Ceilings
-  ceil_u, ceil_area = _get_ceilings(hpxml)
+  ceil_u, ceil_area = _get_ceilings(hpxml_bldg)
   results['Ceiling gross projected footprint area (ft2)'] = ceil_area
   results['Ceilings (Uo)'] = ceil_u
 
   # Crawlspace
-  crawl_vent_area = _get_crawl_vent_area(hpxml)
+  crawl_vent_area = _get_crawl_vent_area(hpxml_bldg)
   results['Crawlspace vent area (ft2)'] = crawl_vent_area
 
   # Doors
-  door_u, door_area = _get_doors(hpxml)
+  door_u, door_area = _get_doors(hpxml_bldg)
   results['Door Area (ft2)'] = door_area
   results['Door R-value'] = 1.0 / door_u
 
   # Windows
-  win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml)
+  win_areas, win_u, win_shgc_htg, win_shgc_clg = _get_windows(hpxml_bldg)
   results['North window area (ft2)'] = win_areas[0]
   results['South window area (ft2)'] = win_areas[180]
   results['East window area (ft2)'] = win_areas[90]
@@ -712,16 +727,16 @@ def _get_iad_home_components(hpxml, test_num)
   results['Window SHGCo (cooling)'] = win_shgc_clg
 
   # Infiltration
-  _sla, ach50 = _get_infiltration(hpxml)
+  _sla, ach50 = _get_infiltration(hpxml_bldg)
   results['Infiltration rate (ACH50)'] = ach50
 
   # Mechanical Ventilation
-  mv_kwh, mv_cfm = _get_mech_vent(hpxml)
+  mv_kwh, mv_cfm = _get_mech_vent(hpxml_bldg)
   results['Mechanical ventilation rate'] = mv_cfm
   results['Mechanical ventilation'] = mv_kwh
 
   # HVAC
-  afue, hspf, seer, _dse = _get_hvac(hpxml)
+  afue, hspf, seer, _dse = _get_hvac(hpxml_bldg)
   if (test_num == 1) || (test_num == 4)
     results['Labeled heating system rating and efficiency'] = afue
   else
@@ -730,7 +745,7 @@ def _get_iad_home_components(hpxml, test_num)
   results['Labeled cooling system rating and efficiency'] = seer
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp
   results['Cooling thermostat settings'] = clg_sp
@@ -836,41 +851,53 @@ def _check_reference_home_components(results, test_num, version)
   else
     assert_equal(0.35, results['Window U-Factor'])
   end
-  assert_equal(0.34, results['Window SHGCo (heating)'])
-  assert_equal(0.28, results['Window SHGCo (cooling)'])
+  if version == '2022C'
+    # FIXME: Expected values changed due to different internal shading coefficients
+    # in 301-2022 Addendum C.
+    assert_equal(0.33, results['Window SHGCo (heating)'])
+    assert_equal(0.33, results['Window SHGCo (cooling)'])
+  else
+    assert_equal(0.34, results['Window SHGCo (heating)'])
+    assert_equal(0.28, results['Window SHGCo (cooling)'])
+  end
 
   # Infiltration
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2019A'
-    # Pub 002-2020 (June 2020)
+  if version == '2022C'
+    # FIXME: Expected values changed due to rounded F_sensible values in 301-2022
+    # Addendum C relative to previously prescribed internal gains. Values below
+    # do not match Pub 002, as it has not yet been updated.
     if test_num == 1
-      assert_in_epsilon(55115, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13666, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
       assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12568, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
       assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9152, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(82691, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17769, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   else
+    # Note: Values have been updated slightly relative to Pub 002 because we are
+    # using rounded F_sensible values from 301-2022 Addendum C instead of the
+    # previously prescribed internal gains.
     if test_num == 1
-      assert_in_epsilon(55470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13807, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55520, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13776, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
-      assert_in_epsilon(52794, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12698, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(52809, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12701, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
-      assert_in_epsilon(48111, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9259, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(48124, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9263, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(83103, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17934, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(83160, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17899, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   end
 
@@ -890,27 +917,13 @@ def _check_reference_home_components(results, test_num, version)
 
   # Mechanical ventilation
   mv_kwh_yr = nil
-  if version == '2014'
-    if test_num == 1
-      mv_kwh_yr = 0.0
-    elsif test_num == 2
-      mv_kwh_yr = 77.9
-    elsif test_num == 3
-      mv_kwh_yr = 140.4
-    else
-      mv_kwh_yr = 379.1
-    end
-  else
-    # Pub 002-2020 (June 2020)
-    if test_num == 1
-      mv_kwh_yr = 0.0
-    elsif test_num == 2
-      mv_kwh_yr = 222.1
-    elsif test_num == 3
-      mv_kwh_yr = 287.8
-    else
-      mv_kwh_yr = 762.8
-    end
+  if version == '2022C'
+    # FIXME: Updated values per 301-2022 Addendum C
+    mv_kwh_yr = { 1 => 0.0, 2 => 223.9, 3 => 288.1, 4 => 763.4 }[test_num]
+  elsif version == '2019'
+    mv_kwh_yr = { 1 => 0.0, 2 => 222.1, 3 => 288.1, 4 => 763.4 }[test_num]
+  elsif version == '2014'
+    mv_kwh_yr = { 1 => 0.0, 2 => 77.9, 3 => 140.4, 4 => 379.1 }[test_num]
   end
   assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], epsilon)
 
@@ -972,19 +985,10 @@ def _check_iad_home_components(results, test_num)
   end
 
   # Mechanical Ventilation
-  if test_num == 1
-    assert_in_delta(66.4, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(407, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 2
-    assert_in_delta(64.2, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(394, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 3
-    assert_in_delta(53.3, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(327, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 4
-    assert_in_delta(57.1, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(350, results['Mechanical ventilation'], 1.0)
-  end
+  mv_cfm = { 1 => 66.4, 2 => 64.2, 3 => 53.3, 4 => 57.1 }[test_num]
+  mv_kwh = { 1 => 407, 2 => 394, 3 => 327, 4 => 350 }[test_num]
+  assert_in_delta(mv_cfm, results['Mechanical ventilation rate'], 0.2)
+  assert_in_delta(mv_kwh, results['Mechanical ventilation'], 1.0)
 
   # HVAC
   if (test_num == 1) || (test_num == 4)
@@ -1000,9 +1004,9 @@ def _check_iad_home_components(results, test_num)
   assert_equal(78, results['Cooling thermostat settings'])
 end
 
-def _get_above_grade_walls(hpxml)
+def _get_above_grade_walls(hpxml_bldg)
   u_factor = solar_abs = emittance = area = num = 0.0
-  hpxml.walls.each do |wall|
+  hpxml_bldg.walls.each do |wall|
     next unless wall.is_exterior_thermal_boundary
 
     u_factor += 1.0 / wall.insulation_assembly_r_value
@@ -1014,9 +1018,9 @@ def _get_above_grade_walls(hpxml)
   return u_factor / num, solar_abs / num, emittance / num, area
 end
 
-def _get_basement_walls(hpxml)
+def _get_basement_walls(hpxml_bldg)
   r_value = num = 0.0
-  hpxml.foundation_walls.each do |foundation_wall|
+  hpxml_bldg.foundation_walls.each do |foundation_wall|
     next unless foundation_wall.is_exterior_thermal_boundary
 
     r_value += foundation_wall.insulation_exterior_r_value
@@ -1026,9 +1030,9 @@ def _get_basement_walls(hpxml)
   return r_value / num
 end
 
-def _get_above_grade_floors(hpxml)
+def _get_above_grade_floors(hpxml_bldg)
   u_factor = num = 0.0
-  hpxml.floors.each do |floor|
+  hpxml_bldg.floors.each do |floor|
     next unless floor.is_floor
 
     u_factor += 1.0 / floor.insulation_assembly_r_value
@@ -1037,9 +1041,9 @@ def _get_above_grade_floors(hpxml)
   return u_factor / num
 end
 
-def _get_hpxml_slabs(hpxml)
+def _get_slabs(hpxml_bldg)
   r_value = carpet_r_value = exp_area = carpet_num = r_num = 0.0
-  hpxml.slabs.each do |slab|
+  hpxml_bldg.slabs.each do |slab|
     exp_area += (slab.area * (1.0 - slab.carpet_fraction))
     carpet_r_value += Float(slab.carpet_r_value)
     carpet_num += 1
@@ -1051,9 +1055,9 @@ def _get_hpxml_slabs(hpxml)
   return r_value / r_num, carpet_r_value / carpet_num, exp_area
 end
 
-def _get_ceilings(hpxml)
+def _get_ceilings(hpxml_bldg)
   u_factor = area = num = 0.0
-  hpxml.floors.each do |floor|
+  hpxml_bldg.floors.each do |floor|
     next unless floor.is_ceiling
 
     u_factor += 1.0 / floor.insulation_assembly_r_value
@@ -1063,9 +1067,9 @@ def _get_ceilings(hpxml)
   return u_factor / num, area
 end
 
-def _get_roofs(hpxml)
+def _get_roofs(hpxml_bldg)
   solar_abs = emittance = area = num = 0.0
-  hpxml.roofs.each do |roof|
+  hpxml_bldg.roofs.each do |roof|
     solar_abs += roof.solar_absorptance
     emittance += roof.emittance
     area += roof.area
@@ -1074,14 +1078,14 @@ def _get_roofs(hpxml)
   return solar_abs / num, emittance / num, area
 end
 
-def _get_attic_vent_area(hpxml)
+def _get_attic_vent_area(hpxml_bldg)
   area = sla = 0.0
-  hpxml.attics.each do |attic|
+  hpxml_bldg.attics.each do |attic|
     next unless attic.attic_type == HPXML::AtticTypeVented
 
     sla = attic.vented_attic_sla
   end
-  hpxml.floors.each do |floor|
+  hpxml_bldg.floors.each do |floor|
     next unless floor.is_ceiling && (floor.exterior_adjacent_to == HPXML::LocationAtticVented)
 
     area += floor.area
@@ -1089,14 +1093,14 @@ def _get_attic_vent_area(hpxml)
   return sla * area
 end
 
-def _get_crawl_vent_area(hpxml)
+def _get_crawl_vent_area(hpxml_bldg)
   area = sla = 0.0
-  hpxml.foundations.each do |foundation|
+  hpxml_bldg.foundations.each do |foundation|
     next unless foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
 
     sla = foundation.vented_crawlspace_sla
   end
-  hpxml.floors.each do |floor|
+  hpxml_bldg.floors.each do |floor|
     next unless floor.is_floor && (floor.exterior_adjacent_to == HPXML::LocationCrawlspaceVented)
 
     area += floor.area
@@ -1104,9 +1108,9 @@ def _get_crawl_vent_area(hpxml)
   return sla * area
 end
 
-def _get_doors(hpxml)
+def _get_doors(hpxml_bldg)
   area = u_factor = num = 0.0
-  hpxml.doors.each do |door|
+  hpxml_bldg.doors.each do |door|
     area += door.area
     u_factor += 1.0 / door.r_value
     num += 1
@@ -1114,10 +1118,10 @@ def _get_doors(hpxml)
   return u_factor / num, area
 end
 
-def _get_windows(hpxml)
+def _get_windows(hpxml_bldg)
   areas = { 0 => 0.0, 90 => 0.0, 180 => 0.0, 270 => 0.0 }
   u_factor = shgc_htg = shgc_clg = num = 0.0
-  hpxml.windows.each do |window|
+  hpxml_bldg.windows.each do |window|
     areas[window.azimuth] += window.area
     u_factor += window.ufactor
     shgc = window.shgc
@@ -1130,27 +1134,26 @@ def _get_windows(hpxml)
   return areas, u_factor / num, shgc_htg / num, shgc_clg / num
 end
 
-def _get_infiltration(hpxml)
-  air_infil = hpxml.air_infiltration_measurements[0]
+def _get_infiltration(hpxml_bldg)
+  air_infil = hpxml_bldg.air_infiltration_measurements[0]
   ach50 = air_infil.air_leakage
-  cfa = hpxml.building_construction.conditioned_floor_area
+  cfa = hpxml_bldg.building_construction.conditioned_floor_area
   infil_volume = air_infil.infiltration_volume
   sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, cfa, infil_volume)
   return sla, ach50
 end
 
-def _get_internal_gains(hpxml)
+def _get_internal_gains(hpxml_bldg, eri_version)
   s = ''
-  nbeds = hpxml.building_construction.number_of_bedrooms
-  cfa = hpxml.building_construction.conditioned_floor_area
-  eri_version = hpxml.header.eri_calculation_version
-  gfa = hpxml.slabs.select { |s| s.interior_adjacent_to == HPXML::LocationGarage }.map { |s| s.area }.inject(0, :+)
+  nbeds = hpxml_bldg.building_construction.number_of_bedrooms
+  cfa = hpxml_bldg.building_construction.conditioned_floor_area
+  gfa = hpxml_bldg.slabs.select { |s| s.interior_adjacent_to == HPXML::LocationGarage }.map { |s| s.area }.sum
 
   xml_pl_sens = 0.0
   xml_pl_lat = 0.0
 
   # Plug loads
-  hpxml.plug_loads.each do |plug_load|
+  hpxml_bldg.plug_loads.each do |plug_load|
     btu = UnitConversions.convert(plug_load.kwh_per_year, 'kWh', 'Btu')
     xml_pl_sens += (plug_load.frac_sensible * btu)
     xml_pl_lat += (plug_load.frac_latent * btu)
@@ -1161,16 +1164,16 @@ def _get_internal_gains(hpxml)
   xml_appl_lat = 0.0
 
   # Appliances: CookingRange
-  cooking_range = hpxml.cooking_ranges[0]
+  cooking_range = hpxml_bldg.cooking_ranges[0]
   cooking_range.usage_multiplier = 1.0 if cooking_range.usage_multiplier.nil?
-  oven = hpxml.ovens[0]
+  oven = hpxml_bldg.ovens[0]
   cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cooking_range, oven)
   btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cr_frac_sens * btu)
   xml_appl_lat += (cr_frac_lat * btu)
 
   # Appliances: Refrigerator
-  refrigerator = hpxml.refrigerators[0]
+  refrigerator = hpxml_bldg.refrigerators[0]
   refrigerator.usage_multiplier = 1.0 if refrigerator.usage_multiplier.nil?
   rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
   btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
@@ -1178,7 +1181,7 @@ def _get_internal_gains(hpxml)
   xml_appl_lat += (rf_frac_lat * btu)
 
   # Appliances: Dishwasher
-  dishwasher = hpxml.dishwashers[0]
+  dishwasher = hpxml_bldg.dishwashers[0]
   dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
   dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
   btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
@@ -1186,7 +1189,7 @@ def _get_internal_gains(hpxml)
   xml_appl_lat += (dw_frac_lat * btu)
 
   # Appliances: ClothesWasher
-  clothes_washer = hpxml.clothes_washers[0]
+  clothes_washer = hpxml_bldg.clothes_washers[0]
   clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
   cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
   btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
@@ -1194,7 +1197,7 @@ def _get_internal_gains(hpxml)
   xml_appl_lat += (cw_frac_lat * btu)
 
   # Appliances: ClothesDryer
-  clothes_dryer = hpxml.clothes_dryers[0]
+  clothes_dryer = hpxml_bldg.clothes_dryers[0]
   clothes_dryer.usage_multiplier = 1.0 if clothes_dryer.usage_multiplier.nil?
   cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(eri_version, nbeds, clothes_dryer, clothes_washer)
   btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
@@ -1219,7 +1222,7 @@ def _get_internal_gains(hpxml)
   # Lighting
   xml_ltg_sens = 0.0
   f_int_cfl, f_grg_cfl, f_int_lfl, f_grg_lfl, f_int_led, f_grg_led = nil
-  hpxml.lighting_groups.each do |lg|
+  hpxml_bldg.lighting_groups.each do |lg|
     if (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationInterior)
       f_int_cfl = lg.fraction_of_units_in_location
     elsif (lg.lighting_type == HPXML::LightingTypeCFL) && (lg.location == HPXML::LocationGarage)
@@ -1245,17 +1248,17 @@ def _get_internal_gains(hpxml)
   return xml_btu_sens, xml_btu_lat
 end
 
-def _get_hvac(hpxml)
+def _get_hvac(hpxml_bldg)
   afue = hspf = seer = dse = num_afue = num_hspf = num_seer = num_dse = 0.0
-  hpxml.heating_systems.each do |heating_system|
+  hpxml_bldg.heating_systems.each do |heating_system|
     afue += heating_system.heating_efficiency_afue
     num_afue += 1
   end
-  hpxml.cooling_systems.each do |cooling_system|
+  hpxml_bldg.cooling_systems.each do |cooling_system|
     seer += cooling_system.cooling_efficiency_seer
     num_seer += 1
   end
-  hpxml.heat_pumps.each do |heat_pump|
+  hpxml_bldg.heat_pumps.each do |heat_pump|
     if not heat_pump.heating_efficiency_hspf.nil?
       hspf += heat_pump.heating_efficiency_hspf
       num_hspf += 1
@@ -1265,7 +1268,7 @@ def _get_hvac(hpxml)
       num_seer += 1
     end
   end
-  hpxml.hvac_distributions.each do |hvac_distribution|
+  hpxml_bldg.hvac_distributions.each do |hvac_distribution|
     dse += hvac_distribution.annual_heating_dse
     num_dse += 1
     dse += hvac_distribution.annual_cooling_dse
@@ -1274,17 +1277,29 @@ def _get_hvac(hpxml)
   return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
 end
 
-def _get_tstat(hpxml)
-  hvac_control = hpxml.hvac_controls[0]
+def _get_tstat(eri_version, hpxml_bldg)
+  hvac_control = hpxml_bldg.hvac_controls[0]
   tstat = hvac_control.control_type.gsub(' thermostat', '')
-  htg_sp, _htg_setback_sp, _htg_setback_hrs_per_week, _htg_setback_start_hr = HVAC.get_default_heating_setpoint(hvac_control.control_type)
-  clg_sp, _clg_setup_sp, _clg_setup_hrs_per_week, _clg_setup_start_hr = HVAC.get_default_cooling_setpoint(hvac_control.control_type)
+  htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(hvac_control.control_type, eri_version)
+  clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
+
+  htg_weekday_setpoints = htg_weekday_setpoints.split(', ').map(&:to_f)
+  htg_weekend_setpoints = htg_weekend_setpoints.split(', ').map(&:to_f)
+  clg_weekday_setpoints = clg_weekday_setpoints.split(', ').map(&:to_f)
+  clg_weekend_setpoints = clg_weekend_setpoints.split(', ').map(&:to_f)
+
+  if htg_weekday_setpoints.uniq.size == 1 && htg_weekend_setpoints.uniq.size == 1 && htg_weekday_setpoints.uniq[0] == htg_weekend_setpoints.uniq[0]
+    htg_sp = htg_weekday_setpoints.uniq[0]
+  end
+  if clg_weekday_setpoints.uniq.size == 1 && clg_weekend_setpoints.uniq.size == 1 && clg_weekday_setpoints.uniq[0] == clg_weekend_setpoints.uniq[0]
+    clg_sp = clg_weekday_setpoints.uniq[0]
+  end
   return tstat, htg_sp, clg_sp
 end
 
-def _get_mech_vent(hpxml)
+def _get_mech_vent(hpxml_bldg)
   mv_kwh = mv_cfm = 0.0
-  hpxml.ventilation_fans.each do |vent_fan|
+  hpxml_bldg.ventilation_fans.each do |vent_fan|
     next unless vent_fan.used_for_whole_building_ventilation
 
     hours = vent_fan.hours_in_operation
@@ -1295,11 +1310,12 @@ def _get_mech_vent(hpxml)
   return mv_kwh, mv_cfm
 end
 
-def _get_dhw(hpxml)
-  has_uncond_bsmnt = hpxml.has_location(HPXML::LocationBasementUnconditioned)
-  cfa = hpxml.building_construction.conditioned_floor_area
-  ncfl = hpxml.building_construction.number_of_conditioned_floors
-  ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+def _get_dhw(hpxml_bldg)
+  has_uncond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementUnconditioned)
+  has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
+  cfa = hpxml_bldg.building_construction.conditioned_floor_area
+  ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
+  ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
   ref_loop_l = HotWaterAndAppliances.get_default_recirc_loop_length(ref_pipe_l)
   return ref_pipe_l, ref_loop_l
 end
@@ -1387,9 +1403,9 @@ def _check_method_results(results, test_num, has_tankless_water_heater, version)
 end
 
 def _check_hvac_test_results(energy)
-  # Proposed acceptance criteria as of 8/17/2022
-  min = [-24.58, -13.18, -42.75, 57.19]
-  max = [-18.18, -12.58, -15.84, 111.39]
+  # Proposed acceptance criteria as of 3/18/2024
+  min = [-24.59, -13.13, -42.73, 57.35]
+  max = [-18.18, -12.60, -15.88, 110.25]
 
   # Cooling cases
   assert_operator((energy['HVAC1b'] - energy['HVAC1a']) / energy['HVAC1a'] * 100, :>, min[0])
@@ -1407,11 +1423,11 @@ def _check_hvac_test_results(energy)
 end
 
 def _check_dse_test_results(energy)
-  # Proposed acceptance criteria as of 8/17/2022
-  htg_min = [8.68, 2.87, 6.94]
-  htg_max = [26.12, 6.63, 20.04]
-  clg_min = [19.33, 5.35, 15.96]
-  clg_max = [28.08, 8.52, 28.29]
+  # Proposed acceptance criteria as of 3/18/2024
+  htg_min = [9.45, 3.11, 7.40]
+  htg_max = [25.72, 6.53, 19.77]
+  clg_min = [18.69, 5.23, 16.32]
+  clg_max = [29.39, 8.79, 27.47]
 
   # Heating cases
   assert_operator((energy['HVAC3b'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[0])
@@ -1419,6 +1435,7 @@ def _check_dse_test_results(energy)
   # Note: OS-ERI does not pass this test because of differences in duct insulation
   #       R-values; see get_duct_insulation_rvalue() in airflow.rb.
   # See https://github.com/resnet-us/software-consistency-inquiries/issues/21
+  # Set Pub 002 effective R-value in test cases?
   # assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[1])
   # assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, htg_max[1])
   assert_operator((energy['HVAC3d'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[2])
@@ -1453,7 +1470,7 @@ def _get_hot_water(results_csv)
 end
 
 def _check_hot_water(energy)
-  # Proposed acceptance criteria as of 8/17/2022
+  # Proposed acceptance criteria as of 2/6/2024
   mn_min = [19.34, 25.76, 17.20, 24.94, 55.93, 22.61, 20.51]
   mn_max = [19.88, 26.55, 17.70, 25.71, 57.58, 23.28, 21.09]
   fl_min = [10.74, 13.37, 8.83, 13.06, 30.84, 12.09, 11.84]
@@ -1593,7 +1610,7 @@ def _check_hot_water_301_2019_pre_addendum_a(energy)
 
   # FL Delta cases
   assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :>, -24.54)
-  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.44)
+  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.42)
   assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :>, 16.65)
   assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :<, 18.12)
   assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-04']) / energy['L100AM-HW-02'] * 100, :>, 2.20)

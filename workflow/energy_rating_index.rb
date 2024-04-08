@@ -155,7 +155,7 @@ def run_design_direct(design, options)
   # Calls design.rb methods directly. Should only be called from a forked
   # process. This is the fastest approach.
   run_design(design, options[:debug], options[:timeseries_output_freq], options[:timeseries_outputs],
-             options[:add_comp_loads], options[:diagnostic_output])
+             options[:add_comp_loads], options[:output_format], options[:diagnostic_output])
 
   return design.design_dir
 end
@@ -177,6 +177,7 @@ def run_design_spawn(design, options)
   command += "\"#{options[:timeseries_output_freq]}\" "
   command += "\"#{options[:timeseries_outputs].join('|')}\" "
   command += "\"#{options[:add_comp_loads]}\" "
+  command += "\"#{options[:output_format]}\" "
   command += "\"#{options[:diagnostic_output]}\" "
   pid = Process.spawn(command)
 
@@ -187,9 +188,7 @@ def retrieve_design_outputs(designs)
   # Retrieve outputs for ERI calculations
   design_outputs = {}
   designs.each do |design|
-    csv_path = design.csv_output_path
-
-    if not File.exist? csv_path
+    if not File.exist? design.annual_output_path
       puts 'Errors encountered. Aborting...'
       exit!
     end
@@ -198,12 +197,22 @@ def retrieve_design_outputs(designs)
 
     design_outputs[calc_type] = {}
     design_outputs[calc_type]['HPXML'] = HPXML.new(hpxml_path: design.hpxml_output_path)
-    CSV.foreach(csv_path) do |row|
-      next if row.nil? || (row.size < 2) || row[1].nil?
 
-      output_type = row[0]
-      output_type = output_type.split(' (')[0].strip # Remove units
-      design_outputs[calc_type][output_type] = Float(row[1])
+    if design.annual_output_path.end_with? '.csv'
+      CSV.foreach(design.annual_output_path) do |row|
+        next if row.nil? || (row.size < 2) || row[1].nil?
+
+        output_type = row[0].split(' (')[0].strip # Remove units
+        design_outputs[calc_type][output_type] = Float(row[1])
+      end
+    elsif design.annual_output_path.end_with? '.json'
+      require 'json'
+      JSON.parse(File.read(design.annual_output_path)).each do |group, hash|
+        hash.each do |var, val|
+          output_type = "#{group}: #{var}".split(' (')[0].strip # Remove units
+          design_outputs[calc_type][output_type] = Float(val)
+        end
+      end
     end
   end
   return design_outputs
@@ -217,19 +226,19 @@ end
 def _calculate_eri(rated_output, ref_output, results_iad: nil,
                    opp_reduction_limit: nil, renewable_energy_limit: nil)
 
-  rated_hpxml = rated_output['HPXML']
-  HVAC.apply_shared_systems(rated_hpxml)
-  ref_hpxml = ref_output['HPXML']
+  rated_bldg = rated_output['HPXML'].buildings[0]
+  HVAC.apply_shared_systems(rated_bldg)
+  ref_bldg = ref_output['HPXML'].buildings[0]
 
   results = {}
 
   # ======== #
   # Building #
   # ======== #
-  results[:rated_cfa] = rated_hpxml.building_construction.conditioned_floor_area
-  results[:rated_nbr] = rated_hpxml.building_construction.number_of_bedrooms
-  results[:rated_nst] = rated_hpxml.building_construction.number_of_conditioned_floors_above_grade
-  results[:rated_facility_type] = rated_hpxml.building_construction.residential_facility_type
+  results[:rated_cfa] = rated_bldg.building_construction.conditioned_floor_area
+  results[:rated_nbr] = rated_bldg.building_construction.number_of_bedrooms
+  results[:rated_nst] = rated_bldg.building_construction.number_of_conditioned_floors_above_grade
+  results[:rated_facility_type] = rated_bldg.building_construction.residential_facility_type
 
   # =========================== #
   # Ventilation Preconditioning #
@@ -238,14 +247,14 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Calculate independent nMEUL for ventilation preconditioning
 
   results[:eri_vent_preheat] = []
-  rated_hpxml.ventilation_fans.each do |rated_sys|
+  rated_bldg.ventilation_fans.each do |rated_sys|
     next if rated_sys.preheating_fuel.nil?
 
     results[:eri_vent_preheat] << calculate_eri_component_precond(rated_output, rated_sys, 'Mech Vent Preheating')
   end
 
   results[:eri_vent_precool] = []
-  rated_hpxml.ventilation_fans.each do |rated_sys|
+  rated_bldg.ventilation_fans.each do |rated_sys|
     next if rated_sys.precooling_fuel.nil?
 
     results[:eri_vent_precool] << calculate_eri_component_precond(rated_output, rated_sys, 'Mech Vent Precooling')
@@ -257,9 +266,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
 
   type = 'Heating'
   results[:eri_heat] = []
-  get_rated_systems(rated_hpxml.hvac_systems, type).each do |rated_sys, load_frac|
+  get_rated_systems(rated_bldg.hvac_systems, type).each do |rated_sys, load_frac|
     # Get corresponding Reference Home system
-    ref_sys = get_corresponding_ref_system(ref_hpxml.hvac_systems, rated_sys, type)
+    ref_sys = get_corresponding_ref_system(ref_bldg.hvac_systems, rated_sys, type)
 
     if rated_sys.is_a?(HPXML::HeatPump) && rated_sys.is_dual_fuel
       # Dual fuel heat pump; calculate ERI using two different HVAC systems
@@ -277,9 +286,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   type = 'Cooling'
   results[:eri_cool] = []
   whf_energy = get_end_use(rated_output, EUT::WholeHouseFan, FT::Elec)
-  get_rated_systems(rated_hpxml.hvac_systems, type).each do |rated_sys, load_frac|
+  get_rated_systems(rated_bldg.hvac_systems, type).each do |rated_sys, load_frac|
     # Get corresponding Reference Home system
-    ref_sys = get_corresponding_ref_system(ref_hpxml.hvac_systems, rated_sys, type)
+    ref_sys = get_corresponding_ref_system(ref_bldg.hvac_systems, rated_sys, type)
 
     results[:eri_cool] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_frac, type, whf_energy: whf_energy)
   end
@@ -290,9 +299,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
 
   type = 'Hot Water'
   results[:eri_dhw] = []
-  get_rated_systems(rated_hpxml.water_heating_systems, type).each do |rated_sys, load_frac|
+  get_rated_systems(rated_bldg.water_heating_systems, type).each do |rated_sys, load_frac|
     # Get corresponding Reference Home system
-    ref_sys = get_corresponding_ref_system(ref_hpxml.water_heating_systems, rated_sys, type)
+    ref_sys = get_corresponding_ref_system(ref_bldg.water_heating_systems, rated_sys, type)
 
     results[:eri_dhw] << calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_frac, type)
   end
@@ -303,7 +312,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
 
   results[:teu] = calculate_teu(rated_output)
   results[:opp], opp_energy = calculate_opp(rated_output, renewable_energy_limit)
-  results[:pefrac] = calculate_pefrac(results[:teu], results[:opp])
+  results[:bsl] = get_end_use(rated_output, EUT::Battery, FT::Elec)
+  results[:pefrac] = calculate_pefrac(results[:teu], results[:opp], results[:bsl])
 
   results[:eul_dh] = calculate_dh(rated_output)
   results[:eul_mv] = calculate_mv(rated_output)
@@ -337,8 +347,8 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
              results[:eri_heat].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_cool].map { |c| c.ec_x }.sum(0.0) +
              results[:eri_dhw].map { |c| c.ec_x }.sum(0.0) +
-             results[:eul_la] + results[:eul_mv] + results[:eul_dh] +
-             whf_energy + opp_energy
+             results[:eul_la] + results[:eul_mv] + results[:eul_dh] + whf_energy +
+             opp_energy + results[:bsl]
   total_ec_x = get_fuel_use(rated_output, all_fuels, use_net: true)
   if (sum_ec_x - total_ec_x).abs > 0.1
     fail "Sum of energy consumptions (#{sum_ec_x.round(2)}) do not match total (#{total_ec_x.round(2)}) for Rated Home."
@@ -532,9 +542,9 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
   end
 end
 
-def get_rated_systems(hpxml_systems, type)
+def get_rated_systems(bldg_systems, type)
   systems = {}
-  hpxml_systems.each do |rated_sys|
+  bldg_systems.each do |rated_sys|
     if type == 'Cooling'
       if rated_sys.respond_to? :fraction_cool_load_served
         fraction_cool_load_served = rated_sys.fraction_cool_load_served
@@ -560,18 +570,18 @@ def get_rated_systems(hpxml_systems, type)
   return systems
 end
 
-def get_corresponding_ref_system(ref_hpxml_systems, rated_sys, type)
+def get_corresponding_ref_system(ref_bldg_systems, rated_sys, type)
   if type == 'Cooling'
-    return ref_hpxml_systems.find { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == rated_sys.clg_seed_id) }
+    return ref_bldg_systems.find { |h| h.respond_to?(:clg_seed_id) && (h.clg_seed_id == rated_sys.clg_seed_id) }
   elsif type == 'Heating'
-    return ref_hpxml_systems.find { |h| h.respond_to?(:htg_seed_id) && (h.htg_seed_id == rated_sys.htg_seed_id) }
+    return ref_bldg_systems.find { |h| h.respond_to?(:htg_seed_id) && (h.htg_seed_id == rated_sys.htg_seed_id) }
   elsif type == 'Hot Water'
     # Always just 1 Reference Home water heater.
-    if ref_hpxml_systems.size != 1
+    if ref_bldg_systems.size != 1
       fail 'Unexpected Reference Home results; should only be 1 DHW system.'
     end
 
-    return ref_hpxml_systems[0]
+    return ref_bldg_systems[0]
   end
 end
 
@@ -656,8 +666,12 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
   c.is_dual_fuel = is_dfhp_primary
   c.ec_x = calculate_ec(rated_output, c.rated_id, all_fuels, type, is_dfhp_primary)
   c.ec_r = calculate_ec(ref_output, c.ref_id, all_fuels, type, is_dfhp_primary, load_frac)
-  c.dse_r = c.reul / c.ec_r * c.eec_r
-  c.nec_x = 0
+  if c.ec_r > 0
+    c.dse_r = c.reul / c.ec_r * c.eec_r
+  else
+    c.dse_r = 0.0
+  end
+  c.nec_x = 0.0
   if c.eec_x * c.reul > 0
     c.nec_x = (c.coeff_a * c.eec_x - c.coeff_b) * (c.ec_x * c.ec_r * c.dse_r) / (c.eec_x * c.reul)
   end
@@ -665,7 +679,7 @@ def calculate_eri_component(rated_output, ref_output, rated_sys, ref_sys, load_f
     # Add whole-house fan energy to nec_x per 301 (apportioned by load) and excluded from eul_la
     c.nec_x += (whf_energy * c.load_frac)
   end
-  c.nmeul = 0
+  c.nmeul = 0.0
   if c.ec_r > 0
     c.nmeul = c.reul * (c.nec_x / c.ec_r)
   end
@@ -740,10 +754,10 @@ def calculate_opp(rated_output, renewable_energy_limit, fuel_conv = 1.0)
   return opp, opp_energy
 end
 
-def calculate_pefrac(teu, opp)
+def calculate_pefrac(teu, opp, bsl)
   pefrac = 1.0
   if teu > 0
-    pefrac = (teu - opp) / teu
+    pefrac = (teu - opp + bsl) / teu
   end
   return pefrac
 end
@@ -776,13 +790,13 @@ def _calculate_co2e_index(rated_output, ref_output, results_iad)
     fail 'CO2e Reference Home found with fossil fuel energy use.'
   end
 
-  rated_hpxml = rated_output['HPXML']
+  rated_bldg = rated_output['HPXML'].buildings[0]
 
   results = {}
 
-  results[:rated_cfa] = rated_hpxml.building_construction.conditioned_floor_area
-  results[:rated_nbr] = rated_hpxml.building_construction.number_of_bedrooms
-  results[:rated_nst] = rated_hpxml.building_construction.number_of_conditioned_floors_above_grade
+  results[:rated_cfa] = rated_bldg.building_construction.conditioned_floor_area
+  results[:rated_nbr] = rated_bldg.building_construction.number_of_bedrooms
+  results[:rated_nst] = rated_bldg.building_construction.number_of_conditioned_floors_above_grade
 
   results[:aco2e] = get_emissions_co2e(rated_output)
   results[:arco2e] = get_emissions_co2e(ref_output)
@@ -807,7 +821,7 @@ def _calculate_co2e_index(rated_output, ref_output, results_iad)
   return results
 end
 
-def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_reduction_limit: nil,
+def calculate_eri(design_outputs, resultsdir, output_format, output_filename_prefix: nil, opp_reduction_limit: nil,
                   renewable_energy_limit: nil, skip_csv: false)
   if design_outputs.keys.include? Constants.CalcTypeERIIndexAdjustmentDesign
     results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
@@ -823,13 +837,13 @@ def calculate_eri(design_outputs, resultsdir, csv_filename_prefix: nil, opp_redu
                            renewable_energy_limit: renewable_energy_limit)
 
   if not skip_csv
-    write_eri_results(results, resultsdir, design_outputs, results_iad, csv_filename_prefix)
+    write_eri_results(results, resultsdir, results_iad, output_filename_prefix, output_format)
   end
 
   return results
 end
 
-def calculate_co2_index(design_outputs, resultsdir)
+def calculate_co2_index(design_outputs, resultsdir, output_format)
   results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
                                design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
 
@@ -839,118 +853,115 @@ def calculate_co2_index(design_outputs, resultsdir)
                                     results_iad)
   end
 
-  write_co2_results(results, resultsdir)
+  write_co2_results(results, resultsdir, output_format)
 
   return results
 end
 
-def write_eri_results(results, resultsdir, design_outputs, results_iad, csv_filename_prefix)
-  ref_output = design_outputs[Constants.CalcTypeERIReferenceHome]
-
-  csv_filename_prefix = "#{csv_filename_prefix}_" unless csv_filename_prefix.nil?
+def write_eri_results(results, resultsdir, results_iad, output_filename_prefix, output_format)
+  output_filename_prefix = "#{output_filename_prefix}_" unless output_filename_prefix.nil?
 
   # ERI Results file
-  results_csv = File.join(resultsdir, "#{csv_filename_prefix}ERI_Results.csv")
+  results_csv = File.join(resultsdir, "#{output_filename_prefix}ERI_Results.#{output_format}")
   results_out = []
   results_out << ['ERI', results[:eri].round(2)]
+
+  # ERI Components
+  results_out << ['Total Loads TRL', results[:trl].round(4)]
+  results_out << ['Total Loads TnML', results[:tnml].round(4)]
+  if not results_iad.nil?
+    results_out << ['Total Loads TRL*IAF', (results[:trl] * results[:iaf_rh]).round(4)]
+    results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
+    results_out << ['IAF CFA', results[:iaf_cfa].round(4)]
+    results_out << ['IAF NBR', results[:iaf_nbr].round(4)]
+    results_out << ['IAF NS', results[:iaf_ns].round(4)]
+    results_out << ['IAF RH', results[:iaf_rh].round(4)]
+  end
+  results_out << ['PEfrac', results[:pefrac].round(4)]
+  results_out << ['TEU (MBtu)', results[:teu].round(4)]
+  results_out << ['OPP (MBtu)', results[:opp].round(4)]
+  results_out << ['BSL (MBtu)', results[:bsl].round(4)]
+
+  # Reference Home
+  results_out << [nil] if output_format == 'csv' # line break
   results_out << ['REUL Heating (MBtu)', results[:eri_heat].map { |c| c.reul.round(2) }.join(',')]
   results_out << ['REUL Cooling (MBtu)', results[:eri_cool].map { |c| c.reul.round(2) }.join(',')]
   results_out << ['REUL Hot Water (MBtu)', results[:eri_dhw].map { |c| c.reul.round(2) }.join(',')]
   results_out << ['EC_r Heating (MBtu)', results[:eri_heat].map { |c| c.ec_r.round(2) }.join(',')]
   results_out << ['EC_r Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_r.round(2) }.join(',')]
   results_out << ['EC_r Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_r.round(2) }.join(',')]
+  results_out << ['EC_r L&A (MBtu)', results[:reul_la].round(2)]
+  results_out << ['EC_r Vent (MBtu)', results[:reul_mv].round(2)]
+  results_out << ['EC_r Dehumid (MBtu)', results[:reul_dh].round(2)]
+  results_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(4) }.join(',')]
+  results_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(4) }.join(',')]
+  results_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(4) }.join(',')]
+  results_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(4) }.join(',')]
+  results_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(4) }.join(',')]
+  results_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(4) }.join(',')]
+
+  # Rated Home
+  results_out << [nil] if output_format == 'csv' # line break
+  results_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(4) }.join(',')]
+  results_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(4) }.join(',')]
+  results_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(4) }.join(',')]
+  if results[:eri_vent_preheat].empty?
+    results_out << ['nMEUL Vent Preheat', 0.0]
+  else
+    results_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(4) }.join(',')]
+  end
+  if results[:eri_vent_precool].empty?
+    results_out << ['nMEUL Vent Precool', 0.0]
+  else
+    results_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(4) }.join(',')]
+  end
+  results_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(4) }.join(',')]
+  results_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(4) }.join(',')]
+  results_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(4) }.join(',')]
   results_out << ['EC_x Heating (MBtu)', results[:eri_heat].map { |c| c.ec_x.round(2) }.join(',')]
   results_out << ['EC_x Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_x.round(2) }.join(',')]
   results_out << ['EC_x Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x L&A (MBtu)', (results[:eul_la] + results[:eul_mv] + results[:eul_dh]).round(2)]
-  if not results_iad.nil?
-    results_out << ['IAD_Save (%)', results[:iad_save].round(5)]
-  end
-  CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+  results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(2)]
+  results_out << ['EC_x Vent (MBtu)', results[:eul_mv].round(2)]
+  results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(2)]
+  results_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(4) }.join(',')]
+  results_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(4) }.join(',')]
+  results_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(4) }.join(',')]
 
-  # ERI Worksheet file
-  worksheet_csv = File.join(resultsdir, "#{csv_filename_prefix}ERI_Worksheet.csv")
-  worksheet_out = []
-  worksheet_out << ['Coeff Heating a', results[:eri_heat].map { |c| c.coeff_a.round(4) }.join(',')]
-  worksheet_out << ['Coeff Heating b', results[:eri_heat].map { |c| c.coeff_b.round(4) }.join(',')]
-  worksheet_out << ['Coeff Cooling a', results[:eri_cool].map { |c| c.coeff_a.round(4) }.join(',')]
-  worksheet_out << ['Coeff Cooling b', results[:eri_cool].map { |c| c.coeff_b.round(4) }.join(',')]
-  worksheet_out << ['Coeff Hot Water a', results[:eri_dhw].map { |c| c.coeff_a.round(4) }.join(',')]
-  worksheet_out << ['Coeff Hot Water b', results[:eri_dhw].map { |c| c.coeff_b.round(4) }.join(',')]
-  worksheet_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(4) }.join(',')]
-  worksheet_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(4) }.join(',')]
-  worksheet_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(4) }.join(',')]
-  worksheet_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(4) }.join(',')]
-  worksheet_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(4) }.join(',')]
-  worksheet_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(4) }.join(',')]
-  worksheet_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(4) }.join(',')]
-  worksheet_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(4) }.join(',')]
-  worksheet_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(4) }.join(',')]
-  worksheet_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(4) }.join(',')]
-  worksheet_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(4) }.join(',')]
-  worksheet_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(4) }.join(',')]
-  worksheet_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(4) }.join(',')]
-  if results[:eri_vent_preheat].empty?
-    worksheet_out << ['nMEUL Vent Preheat', 0.0]
-  else
-    worksheet_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(4) }.join(',')]
+  # Coefficients
+  results_out << [nil] if output_format == 'csv' # line break
+  results_out << ['Coeff Heating a', results[:eri_heat].map { |c| c.coeff_a.round(4) }.join(',')]
+  results_out << ['Coeff Heating b', results[:eri_heat].map { |c| c.coeff_b.round(4) }.join(',')]
+  results_out << ['Coeff Cooling a', results[:eri_cool].map { |c| c.coeff_a.round(4) }.join(',')]
+  results_out << ['Coeff Cooling b', results[:eri_cool].map { |c| c.coeff_b.round(4) }.join(',')]
+  results_out << ['Coeff Hot Water a', results[:eri_dhw].map { |c| c.coeff_a.round(4) }.join(',')]
+  results_out << ['Coeff Hot Water b', results[:eri_dhw].map { |c| c.coeff_b.round(4) }.join(',')]
+
+  if output_format == 'csv'
+    CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+  elsif output_format == 'json'
+    File.open(results_csv, 'wb') { |json| json.write(JSON.pretty_generate(results_out.to_h)) }
   end
-  if results[:eri_vent_precool].empty?
-    worksheet_out << ['nMEUL Vent Precool', 0.0]
-  else
-    worksheet_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(4) }.join(',')]
-  end
-  if not results_iad.nil?
-    worksheet_out << ['IAF CFA', results[:iaf_cfa].round(4)]
-    worksheet_out << ['IAF NBR', results[:iaf_nbr].round(4)]
-    worksheet_out << ['IAF NS', results[:iaf_ns].round(4)]
-    worksheet_out << ['IAF RH', results[:iaf_rh].round(4)]
-  end
-  worksheet_out << ['Total Loads TnML', results[:tnml].round(4)]
-  worksheet_out << ['Total Loads TRL', results[:trl].round(4)]
-  if not results_iad.nil?
-    worksheet_out << ['Total Loads TRL*IAF', (results[:trl] * results[:iaf_rh]).round(4)]
-  end
-  worksheet_out << ['ERI', results[:eri].round(2)]
-  worksheet_out << [nil] # line break
-  worksheet_out << ['Ref Home CFA', results[:rated_cfa]]
-  worksheet_out << ['Ref Home Nbr', results[:rated_nbr]]
-  if not results_iad.nil?
-    worksheet_out << ['Ref Home NS', results[:rated_nst]]
-  end
-  worksheet_out << ['Ref dehumid', results[:reul_dh].round(2)]
-  worksheet_out << ['Ref L&A resMELs', get_end_use(ref_output, EUT::PlugLoads, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A intLgt', (get_end_use(ref_output, EUT::LightsInterior, FT::Elec) +
-                                       get_end_use(ref_output, EUT::LightsGarage, FT::Elec)).round(2)]
-  worksheet_out << ['Ref L&A extLgt', get_end_use(ref_output, EUT::LightsExterior, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A Fridg', get_end_use(ref_output, EUT::Refrigerator, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A TVs', get_end_use(ref_output, EUT::Television, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A R/O', get_end_use(ref_output, EUT::RangeOven, all_fuels).round(2)]
-  worksheet_out << ['Ref L&A cDryer', get_end_use(ref_output, EUT::ClothesDryer, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A dWash', get_end_use(ref_output, EUT::Dishwasher, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A cWash', get_end_use(ref_output, EUT::ClothesWasher, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A mechV', results[:reul_mv].round(2)]
-  worksheet_out << ['Ref L&A ceilFan', get_end_use(ref_output, EUT::CeilingFan, FT::Elec).round(2)]
-  worksheet_out << ['Ref L&A total', (results[:reul_la] + results[:reul_mv]).round(2)]
-  CSV.open(worksheet_csv, 'wb') { |csv| worksheet_out.to_a.each { |elem| csv << elem } }
 end
 
-def write_co2_results(results, resultsdir)
+def write_co2_results(results, resultsdir, output_format)
   # CO2e Results file
   if not results[:co2eindex].nil?
-    results_csv = File.join(resultsdir, 'CO2e_Results.csv')
+    results_csv = File.join(resultsdir, "CO2e_Results.#{output_format}")
     results_out = []
     results_out << ['CO2e Rating Index', results[:co2eindex].round(2)]
     results_out << ['ACO2 (lb CO2e)', results[:aco2e].round(2)]
     results_out << ['ARCO2 (lb CO2e)', results[:arco2e].round(2)]
     results_out << ['IAF RH', results[:iaf_rh].round(4)]
-    CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+    if output_format == 'csv'
+      CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+    elsif output_format == 'json'
+      File.open(results_csv, 'wb') { |json| json.write(JSON.pretty_generate(results_out.to_h)) }
+    end
   end
 end
 
-def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
+def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, output_format)
   # Even though pass/fail is calculated based on rounded integer ERIs,
   # we provide two decimal places here so that there's less possibility
   # for user confusion when comparing the actual/target ERIs.
@@ -964,7 +975,7 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   elsif ZERHConstants.AllVersions.include? ruleset
     program_abbreviation, program_name = 'ZERH', 'Zero Energy Ready Home'
   end
-  results_csv = File.join(resultsdir, "#{program_abbreviation}_Results.csv")
+  results_csv = File.join(resultsdir, "#{program_abbreviation}_Results.#{output_format}")
   results_out = []
   results_out << ['Reference Home ERI', rd_eri]
 
@@ -974,25 +985,29 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
     results_out << ['SAF (Size Adjustment Factor)', saf.round(3)]
   end
   results_out << ['SAF Adjusted ERI Target', target_eri]
-  results_out << [nil] # line break
+  results_out << [nil] if output_format == 'csv' # line break
   results_out << ['Rated Home ERI', rated_eri]
   results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
-  results_out << [nil] # line break
+  results_out << [nil] if output_format == 'csv' # line break
   if passes
     results_out << ["#{program_name} Certification", 'PASS']
   else
     results_out << ["#{program_name} Certification", 'FAIL']
   end
-  CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+  if output_format == 'csv'
+    CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
+  elsif output_format == 'json'
+    File.open(results_csv, 'wb') { |json| json.write(JSON.pretty_generate(results_out.to_h)) }
+  end
 end
 
-def _add_diagnostic_system_outputs(json_system_output, data_hashes, rated_hpxml_systems, hpxml_systems, type, design_type, json_units_map, json_fuel_map)
-  rated_systems = get_rated_systems(rated_hpxml_systems, type)
+def _add_diagnostic_system_outputs(json_system_output, data_hashes, rated_bldg_systems, bldg_systems, type, design_type, json_units_map, json_fuel_map)
+  rated_systems = get_rated_systems(rated_bldg_systems, type)
   rated_systems.each do |rated_sys, load_frac|
-    if hpxml_systems == rated_hpxml_systems
+    if bldg_systems == rated_bldg_systems
       sys = rated_sys
     else
-      sys = get_corresponding_ref_system(hpxml_systems, rated_sys, type)
+      sys = get_corresponding_ref_system(bldg_systems, rated_sys, type)
     end
     next if sys.nil?
 
@@ -1022,9 +1037,10 @@ end
 
 def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, hpxml_path, resultsdir)
   in_hpxml = HPXML.new(hpxml_path: hpxml_path)
+  in_bldg = in_hpxml.buildings[0]
 
   # Gather weather info
-  epw_file = File.basename(in_hpxml.climate_and_risk_zones.weather_station_epw_filepath)
+  epw_file = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
   epw_path = epw_file
   if not File.exist? epw_path
     test_epw_path = File.join(File.dirname(hpxml_path), epw_path)
@@ -1070,13 +1086,13 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     next if designs.nil?
 
     design = designs.find { |d| d.calc_type == design_type }
-    csv_path = File.join(design.output_dir, 'results', File.basename(design.csv_output_path.gsub('.csv', '_Diagnostic.csv')))
+    csv_path = File.join(design.output_dir, 'results', File.basename(design.annual_output_path.gsub('.csv', '_Diagnostic.csv')))
     design_data[design_type] = CSV.read(csv_path, headers: true)
     design_data[design_type].delete(0) # strip units
     design_data_hashes[design_type] = design_data[design_type].map(&:to_h)
 
     hpxml = HPXML.new(hpxml_path: design.hpxml_output_path)
-    HVAC.apply_shared_systems(hpxml)
+    HVAC.apply_shared_systems(hpxml.buildings[0])
     design_hpxmls[design_type] = hpxml
   end
 
@@ -1131,15 +1147,18 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     next if data.nil?
 
     data_hashes = design_data_hashes[design_type]
-    hpxml = design_hpxmls[design_type]
+    hpxml_bldg = design_hpxmls[design_type].buildings[0]
 
     # Use rated HPXML to ensure systems across different designs end up in the same order.
     if [Constants.CalcTypeERIRatedHome, Constants.CalcTypeERIReferenceHome].include? design_type
       rated_hpxml = design_hpxmls[Constants.CalcTypeERIRatedHome]
+      rated_bldg = rated_hpxml.buildings[0]
     elsif [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design_type
       rated_hpxml = design_hpxmls[Constants.CalcTypeERIIndexAdjustmentDesign]
+      rated_bldg = rated_hpxml.buildings[0]
     elsif [Constants.CalcTypeCO2eRatedHome, Constants.CalcTypeCO2eReferenceHome].include? design_type
       rated_hpxml = design_hpxmls[Constants.CalcTypeCO2eRatedHome]
+      rated_bldg = rated_hpxml.buildings[0]
     end
 
     if design_type == Constants.CalcTypeERIRatedHome
@@ -1165,7 +1184,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     json_output[json_element_name] = {}
 
     # Temperatures
-    values = data['Temperature: Living Space'].map { |v| Float(v).round(3) }
+    values = data['Temperature: Conditioned Space'].map { |v| Float(v).round(3) }
     json_output[json_element_name][:conditioned_space_temperature] = values
 
     # Space Heating Energy
@@ -1173,19 +1192,19 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     type = 'Heating'
     json_output[json_element_name][:space_heating_system_output] = []
     _add_diagnostic_system_outputs(json_output[json_element_name][:space_heating_system_output], data_hashes,
-                                   rated_hpxml.hvac_systems, hpxml.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+                                   rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
 
     # Space Cooling Energy
     type = 'Cooling'
     json_output[json_element_name][:space_cooling_system_output] = []
     _add_diagnostic_system_outputs(json_output[json_element_name][:space_cooling_system_output], data_hashes,
-                                   rated_hpxml.hvac_systems, hpxml.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+                                   rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
 
     # Water Heating Energy
     type = 'Hot Water'
     json_output[json_element_name][:water_heating_system_output] = []
     _add_diagnostic_system_outputs(json_output[json_element_name][:water_heating_system_output], data_hashes,
-                                   rated_hpxml.water_heating_systems, hpxml.water_heating_systems, type, design_type, json_units_map, json_fuel_map)
+                                   rated_bldg.water_heating_systems, hpxml_bldg.water_heating_systems, type, design_type, json_units_map, json_fuel_map)
 
     # Lighting & appliances
     json_output[json_element_name][:lighting_and_appliance_energy] = []
@@ -1249,13 +1268,13 @@ def main(options)
   designs = []
   if not eri_version.nil?
     # ERI designs
-    designs << Design.new(calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
+    designs << Design.new(calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
     if not options[:rated_home_only]
-      designs << Design.new(calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
+      designs << Design.new(calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
       if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE')
         # Add IAF designs
-        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
-        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
       end
       if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
       end
@@ -1267,43 +1286,43 @@ def main(options)
     end
 
     # Add CO2e designs
-    designs << Design.new(calc_type: Constants.CalcTypeCO2eRatedHome, output_dir: options[:output_dir])
-    designs << Design.new(calc_type: Constants.CalcTypeCO2eReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(calc_type: Constants.CalcTypeCO2eRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(calc_type: Constants.CalcTypeCO2eReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
 
     # Add IAF designs if we didn't already
     if designs.find { |d| d.calc_type == Constants.CalcTypeERIIndexAdjustmentDesign }.nil?
-      designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
-      designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+      designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
     end
   end
   if not es_version.nil?
     # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
   end
   if not iecc_version.nil?
     # IECC ERI designs
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
   end
   if not zerh_version.nil?
     # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
   end
 
   if designs.size == 0
@@ -1334,7 +1353,7 @@ def main(options)
       eri_outputs = retrieve_design_outputs(eri_designs)
 
       # Calculate and write results
-      eri_results = calculate_eri(eri_outputs, resultsdir)
+      eri_results = calculate_eri(eri_outputs, resultsdir, options[:output_format])
       puts "ERI: #{eri_results[:eri].round(2)}"
     end
 
@@ -1350,7 +1369,7 @@ def main(options)
       co2_outputs = retrieve_design_outputs(co2_designs)
 
       # Calculate and write results
-      co2_results = calculate_co2_index(co2_outputs, resultsdir)
+      co2_results = calculate_co2_index(co2_outputs, resultsdir, options[:output_format])
       if not co2_results[:co2eindex].nil?
         puts "CO2e Index: #{co2_results[:co2eindex].round(2)}"
       end
@@ -1364,7 +1383,8 @@ def main(options)
       renewable_energy_limit = calc_renewable_energy_limit(iecc_eri_outputs, iecc_version)
 
       # Calculate and write results
-      iecc_eri_results = calculate_eri(iecc_eri_outputs, resultsdir, csv_filename_prefix: 'IECC', renewable_energy_limit: renewable_energy_limit)
+      iecc_eri_results = calculate_eri(iecc_eri_outputs, resultsdir, options[:output_format],
+                                       output_filename_prefix: 'IECC', renewable_energy_limit: renewable_energy_limit)
       puts "IECC ERI: #{iecc_eri_results[:eri].round(2)}"
     end
 
@@ -1372,7 +1392,8 @@ def main(options)
       # Calculate ES Reference ERI
       esrd_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarReference }
       esrd_eri_outputs = retrieve_design_outputs(esrd_eri_designs)
-      esrd_eri_results = calculate_eri(esrd_eri_outputs, resultsdir, csv_filename_prefix: ESConstants.CalcTypeEnergyStarReference.gsub(' ', ''))
+      esrd_eri_results = calculate_eri(esrd_eri_outputs, resultsdir, options[:output_format],
+                                       output_filename_prefix: ESConstants.CalcTypeEnergyStarReference.gsub(' ', ''))
 
       # Calculate Size-Adjusted ERI for Energy Star Reference Homes
       saf = get_saf(esrd_eri_results, es_version, options[:hpxml])
@@ -1382,8 +1403,8 @@ def main(options)
       opp_reduction_limit = calc_opp_eri_limit(esrd_eri_results[:eri], saf, es_version)
       rated_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarRated }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
-      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, csv_filename_prefix: ESConstants.CalcTypeEnergyStarRated.gsub(' ', ''),
-                                                                       opp_reduction_limit: opp_reduction_limit)
+      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format],
+                                        output_filename_prefix: ESConstants.CalcTypeEnergyStarRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
 
       if rated_eri_results[:eri].round(0) <= target_eri.round(0)
         passes = true
@@ -1392,9 +1413,9 @@ def main(options)
       end
 
       # Calculate ES Rated ERI w/o OPP for extra information
-      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, skip_csv: true, opp_reduction_limit: 0.0)
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results(es_version, resultsdir, esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
+      write_es_zerh_results(es_version, resultsdir, esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       if passes
         puts 'ENERGY STAR Certification: PASS'
@@ -1407,7 +1428,8 @@ def main(options)
       # Calculate ZERH Reference ERI
       zerhrd_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHReference }
       zerhrd_eri_outputs = retrieve_design_outputs(zerhrd_eri_designs)
-      zerhrd_eri_results = calculate_eri(zerhrd_eri_outputs, resultsdir, csv_filename_prefix: ZERHConstants.CalcTypeZERHReference.gsub(' ', ''))
+      zerhrd_eri_results = calculate_eri(zerhrd_eri_outputs, resultsdir, options[:output_format],
+                                         output_filename_prefix: ZERHConstants.CalcTypeZERHReference.gsub(' ', ''))
 
       # Calculate Size-Adjusted ERI for ZERH Reference Homes
       saf = get_saf(zerhrd_eri_results, zerh_version, options[:hpxml])
@@ -1417,8 +1439,8 @@ def main(options)
       opp_reduction_limit = calc_opp_eri_limit(zerhrd_eri_results[:eri], saf, zerh_version)
       rated_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHRated }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
-      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, csv_filename_prefix: ZERHConstants.CalcTypeZERHRated.gsub(' ', ''),
-                                                                       opp_reduction_limit: opp_reduction_limit)
+      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format],
+                                        output_filename_prefix: ZERHConstants.CalcTypeZERHRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
 
       if rated_eri_results[:eri].round(0) <= target_eri.round(0)
         passes = true
@@ -1427,9 +1449,9 @@ def main(options)
       end
 
       # Calculate ZERH Rated ERI w/o OPP for extra information
-      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, skip_csv: true, opp_reduction_limit: 0.0)
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results(zerh_version, resultsdir, zerhrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes)
+      write_es_zerh_results(zerh_version, resultsdir, zerhrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       if passes
         puts 'Zero Energy Ready Home Certification: PASS'
@@ -1468,6 +1490,11 @@ OptionParser.new do |opts|
 
   opts.on('-o', '--output-dir <DIR>', 'Output directory') do |t|
     options[:output_dir] = t
+  end
+
+  options[:output_format] = 'csv'
+  opts.on('--output-format TYPE', ['csv', 'json'], 'Output file format type (csv, json)') do |t|
+    options[:output_format] = t
   end
 
   options[:hourly_outputs] = []

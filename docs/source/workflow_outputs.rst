@@ -1,3 +1,6 @@
+.. |nbsp| unicode:: 0xA0 
+   :trim:
+
 .. _outputs:
 
 Workflow Outputs
@@ -11,6 +14,8 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_configurations_hpxml`
 - :ref:`home_energyplus_files`
 
+All CSV output files can be alternatively requested in JSON format; see :ref:`running`.
+
 .. note::
 
   MBtu is defined as one million Btu.
@@ -20,17 +25,16 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 Summary Outputs (CSV)
 ---------------------
 
-Based on which calculations were requested in the HPXML file, summary output files will be found in the ``results`` directory.
+Based on which :ref:`hpxml_calculations` were requested, summary output files will be found in the ``results`` directory.
 
   ================  ===============================================  =========
   Calculation       File                                             Notes
   ================  ===============================================  =========
-  ERI               CO2e_Results.csv                                 See :ref:`co2e_results_csv`. Only produced if 301-2019 Addendum D or newer.
+  ERI               CO2e_Results.csv                                 See :ref:`co2e_results_csv`.
   ERI               ERI_Results.csv                                  See :ref:`eri_results_csv`.
-  ERI               ERI_Worksheet.csv                                See :ref:`eri_worksheet_csv`.
-  IECC ERI Pathway  IECC_ERI_Results.csv                             See :ref:`eri_results_csv` (same format).
-  IECC ERI Pathway  IECC_ERI_Worksheet.csv                           See :ref:`eri_worksheet_csv` (same format).
+  IECC ERI Pathway  IECC_ERI_Results.csv                             See :ref:`eri_results_csv`.
   ENERGY STAR       ES_Results.csv                                   See :ref:`es_results_csv`.
+  ZERH              ZERH_Results.csv                                 See :ref:`zerh_results_csv`.
   ================  ===============================================  =========
 
 .. _co2e_results_csv:
@@ -38,46 +42,122 @@ Based on which calculations were requested in the HPXML file, summary output fil
 CO2e_Results.csv
 ~~~~~~~~~~~~~~~~
 
-A ``CO2e_Results.csv`` file will be produced when using ANSI/RESNET/ICC 301-2019 Addendum D or newer.
-The file includes all of the outputs that are used in the CO2e Index calculation.
+A ``CO2e_Results.csv`` file will be produced when requesting the CO2IndexCalculation; see :ref:`hpxml_calculations`.
+Refer to the ANSI 301 Standard for details on how the CO2e Rating Index is calculated.
+
+  =====================  ===============================================
+  Output                 Notes
+  =====================  ===============================================
+  CO2e Rating Index      CO2e Rating Index
+  ACO2 (lb CO2e)         Annual hourly CO2e emissions for Rated Home
+  ARCO2 (lb CO2e)        Annual hourly CO2e emissions for Reference Home
+  IAF RH                 Combined Index Adjustment Factor for Rated Home
+  =====================  ===============================================
 
 .. _eri_results_csv:
 
 ERI_Results.csv
 ~~~~~~~~~~~~~~~
 
-The ``ERI_Results.csv`` file includes the ERI result as well as the high-level components (e.g., REUL, EC_r, EC_x, IAD_Save) that comprise the ERI calculation.
-The file reflects the format of the Results tab of the HERS Method Test spreadsheet.
+A ``ERI_Results.csv`` (and/or ``IECC_ERI_Results.csv``)  file will be produced when requesting the ERICalculation (and/or IECCERICalculation); see :ref:`hpxml_calculations`.
+Refer to the ANSI 301 Standard for details on how the Energy Rating Index is calculated.
 
-Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
+  =====================  ===============================================
+  Output                 Notes
+  =====================  ===============================================
+  ERI                    Energy Rating Index
+  Total Loads TRL        Total Reference Loads
+  Total Loads TnML       Total normalized Modified Loads for Rated Home
+  Total Loads TRL*IAF    Total Reference Loads x Index Adjustment Factor for Rated Home
+  IAD_Save (%)           Index Adjustment Design savings
+  IAF CFA                Conditioned Floor Area factor for Index Adjustment Factor
+  IAF NBR                Number of Bedrooms factor for Index Adjustment Factor
+  IAF NS                 Number of Stories factor for Index Adjustment Factor
+  IAF RH                 Combined Index Adjustment Factor for Rated Home
+  PEfrac                 Purchased Energy fraction for Rated Home
+  TEU (MBtu)             Total Energy Use for Rated Home
+  OPP (MBtu)             On-Site Power Production for Rated Home
+  BSL (MBtu)             Battery Storage Losses for Rated Home
+  |nbsp|
+  REUL Heating (MBtu)    Reference Home End Use Load for Heating [#]_
+  REUL Cooling (MBtu)    Reference Home End Use Load for Cooling
+  REUL Hot Water (MBtu)  Reference Home End Use Load for Hot Water
+  EC_r Heating (MBtu)    Reference Home estimated Energy Consumption for Heating
+  EC_r Cooling (MBtu)    Reference Home estimated Energy Consumption for Cooling
+  EC_r Hot Water (MBtu)  Reference Home estimated Energy Consumption for Hot Water
+  EC_r L&A (MBtu)        Reference Home estimated Energy Consumption for Lights & Appliances
+  EC_r Vent (MBtu)       Reference Home estimated Energy Consumption for Mechanical Ventilation
+  EC_r Dehumid (MBtu)    Reference Home estimated Energy Consumption for Dehumidification
+  DSE_r Heating          Reference Home Distribution System Efficiency for Heating
+  DSE_r Cooling          Reference Home Distribution System Efficiency for Cooling
+  DSE_r Hot Water        Reference Home Distribution System Efficiency for Hot Water
+  EEC_r Heating          Reference Home Equipment Efficiency Coefficient for Heating
+  EEC_r Cooling          Reference Home Equipment Efficiency Coefficient for Cooling
+  EEC_r Hot Water        Reference Home Equipment Efficiency Coefficient for Hot Water
+  |nbsp|
+  nMEUL Heating          Rated Home normalized Modified End Use Load for Heating
+  nMEUL Cooling          Rated Home normalized Modified End Use Load for Cooling
+  nMEUL Hot Water        Rated Home normalized Modified End Use Load for Hot Water
+  nMEUL Vent Preheat     Rated Home normalized Modified End Use Load for Mechanical Ventilation Preheating
+  nMEUL Vent Precool     Rated Home normalized Modified End Use Load for Mechanical Ventilation Precooling
+  nEC_x Heating          Rated Home normalized Energy Consumption for Heating
+  nEC_x Cooling          Rated Home normalized Energy Consumption for Cooling
+  nEC_x Hot Water        Rated Home normalized Energy Consumption for Hot Water
+  EC_x Heating (MBtu)    Rated Home estimated Energy Consumption for Heating
+  EC_x Cooling (MBtu)    Rated Home estimated Energy Consumption for Cooling
+  EC_x Hot Water (MBtu)  Rated Home estimated Energy Consumption for Hot Water
+  EC_x L&A (MBtu)        Rated Home estimated Energy Consumption for Lights & Appliances
+  EC_x Vent (MBtu)       Rated Home estimated Energy Consumption for Mechanical Ventilation
+  EC_x Dehumid (MBtu)    Rated Home estimated Energy Consumption for Dehumidification
+  EEC_x Heating          Rated Home Equipment Efficiency Coefficient for Heating
+  EEC_x Cooling          Rated Home Equipment Efficiency Coefficient for Cooling
+  EEC_x Hot Water        Rated Home Equipment Efficiency Coefficient for Hot Water
+  |nbsp|
+  Coeff Heating a        Heating coefficient a for EEC_r
+  Coeff Heating b        Heating coefficient b for EEC_r
+  Coeff Cooling a        Cooling coefficient a for EEC_r
+  Coeff Cooling b        Cooling coefficient b for EEC_r
+  Coeff Hot Water a      Hot Water coefficient a for EEC_r
+  Coeff Hot Water b      Hot Water coefficient a for EEC_r
+  =====================  ===============================================
 
-.. _eri_worksheet_csv:
-
-ERI_Worksheet.csv
-~~~~~~~~~~~~~~~~~
-
-The ``ERI_Worksheet.csv`` file includes more detailed components that feed into the ERI_Results.csv values.
-The file reflects the format of the Worksheet tab of the HERS Method Test spreadsheet.
-
-Note that multiple comma-separated values will be reported for many of these outputs if there are multiple heating, cooling, or hot water systems.
+  .. [#] Multiple comma-separated values will be reported for some outputs if there are multiple heating, cooling, or hot water systems.
 
 .. _es_results_csv:
 
 ES_Results.csv
 ~~~~~~~~~~~~~~
 
-The ``ES_Results.csv`` file includes the following:
+A ``ES_Results.csv`` file will be produced when requesting the EnergyStarCalculation; see :ref:`hpxml_calculations`.
 
-   ===================================  =====
-   Output                               Notes
-   ===================================  =====
-   Reference Home ERI                   ERI of the ES Reference Home
-   SAF (Size Adjustment Factor)         Can only be less than 1 for some ES programs/versions
-   SAF Adjusted ERI Target              Reference Home ERI multiplied by SAF
-   Rated Home ERI                       ERI of the Rated Home including OPP as allowed by the ES program/version
-   Rated Home ERI w/o OPP               ERI of the Rated Home excluding any on-site power production (OPP)
-   ENERGY STAR Certification            PASS or FAIL
-   ===================================  =====
+   ====================================  =====
+   Output                                Notes
+   ====================================  =====
+   Reference Home ERI                    ERI of the ES Reference Home
+   SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
+   SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
+   Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
+   Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
+   ENERGY STAR Certification             PASS or FAIL
+   ====================================  =====
+
+.. _zerh_results_csv:
+
+ZERH_Results.csv
+~~~~~~~~~~~~~~~~
+
+A ``ZERH_Results.csv`` file will be produced when requesting the ZERHCalculation; see :ref:`hpxml_calculations`.
+
+   ====================================  =====
+   Output                                Notes
+   ====================================  =====
+   Reference Home ERI                    ERI of the ZERH Reference Home
+   SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
+   SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
+   Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
+   Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
+   Zero Energy Ready Home Certification  PASS or FAIL
+   ====================================  =====
 
 .. _home_annual_outputs_csv:
 
@@ -366,6 +446,7 @@ Peak building electricity outputs are listed below.
    ==================================  =============================================================
    Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
    Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
+   Peak Electricity: Annual Total (W)  Maximum value in any month
    ==================================  =============================================================
 
 Peak Building Loads
@@ -430,6 +511,17 @@ Annual hot water uses are listed below.
    Hot Water: Dishwasher (gal)
    Hot Water: Fixtures (gal)            Showers and faucets.
    Hot Water: Distribution Waste (gal) 
+   ===================================  ====================
+
+Resilience
+~~~~~~~~~~
+
+Resilience outputs are listed below.
+
+   ===================================  ====================
+   Type                                 Notes
+   ===================================  ====================
+   Resilience: Battery (hr)             Not used by OS-ERI
    ===================================  ====================
 
 HVAC Capacities
@@ -524,7 +616,7 @@ Depending on the outputs requested, CSV files may include:
    Hot Water Uses                       Water use for each end use type (in gallons).
    Total Loads                          Heating, cooling, and hot water loads (in kBtu).
    Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
-   Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., living space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+   Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
    Airflows                             Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
    Weather                              Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
    ===================================  =====

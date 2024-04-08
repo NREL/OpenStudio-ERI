@@ -5,8 +5,9 @@ ERI Capabilities
 ----------------
 The following ERI Standards are supported:
 
-- ANSI/RESNET/ICC 301-2014© Standard for the Calculation and Labeling of the Energy Performance of Low-Rise Residential Buildings using an Energy Rating Index
-- ANSI/RESNET/ICC 301-2019 Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
+- ANSI/RESNET/ICC 301-2014
+- ANSI/RESNET/ICC 301-2019
+- ANSI/RESNET/ICC 301-2022
 
 The following ENERGY STAR programs/versions are supported:
 
@@ -27,6 +28,7 @@ The following DOE ZERH versions are supported:
 
 - 1.0
 - Single Family, 2.0
+- Multifamily, 2.0
 
 Accuracy vs Speed
 -----------------

@@ -1,7 +1,81 @@
+## OpenStudio-ERI v1.8.0
+
+__New Features__
+- Implements ANSI/RESNET/ICC Standard 301-2022 and Addendum C.
+  - **Breaking change**: For shared water heaters, `NumberofUnitsServed` is replaced by `extension/NumberofBedroomsServed`.
+  - **Breaking change**: For shared hot water recirculation systems, `NumberofUnitsServed` is replaced by `NumberofBedroomsServed`.
+  - `ERICalculation/Version` and `CO2IndexCalculation/Version` can now be "2022C" or "2022".
+  - Allows modeling electric battery storage, including shared batteries ("2022C" or newer).
+  - The `ElectricAuxiliaryEnergy` input for boilers is no longer used.
+- **Breaking change**: ERI_Results.csv and ERI_Worksheet.csv combined into a single ERI_Results.csv that better reflects the current ERI calculation components; additional fields (e.g., PEfrac) added and a few renamed/removed.
+- **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
+- Allows `AverageCeilingHeight` to be optionally provided for infiltration calculations.
+- Ground source heat pump model enhancements.
+- Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
+- Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
+- Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
+- Now defaults to -20F for `CompressorLockoutTemperature` for variable-speed air-to-air heat pumps.
+- Clarifies that Capacity=-1 can be used to autosize HVAC equipment for research purposes or to run tests.
+  - It should *not* be used for a real home; a warning will be issued when it's used.
+- Allow alternative label energy use (W) input for ceiling fans.
+
+__Bugfixes__
+- Fixes incorrect Reference Home mechanical ventilation flowrate for attached units (when Aext is not 1).
+- Fixes possible 301ruleset.rb error due to floating point arithmetic.
+
+## OpenStudio-ERI v1.7.0
+
+__New Features__
+- Updates to OpenStudio 3.7.0/EnergyPlus 23.2.
+- **Breaking change**: Updates to HPXML v4.0-rc2:
+  - HPXML namespace changed from http://hpxmlonline.com/2019/10 to http://hpxmlonline.com/2023/09.
+  - Replaces "living space" with "conditioned space", which better represents what is modeled.
+  - Replaces `PortableHeater` and `FixedHeater` with `SpaceHeater`.
+- HVAC updates:
+  - Updated assumptions for variable-speed air conditioners, heat pumps, and mini-splits based on NEEP data. Expect results to change, potentially significantly so depending on the scenario.
+  - Updates deep ground temperatures (used for modeling ground-source heat pumps) using L. Xing's simplified design model (2014).
+  - Replaces inverse calculations, used to calculate COPs from rated efficiencies, with regressions for single/two-speed central ACs and ASHPs.
+- Output updates:
+  - **Breaking change**: Disaggregates "EC_x Vent" and "EC_x Dehumid" from "EC_x L&A" in `ERI_Results.csv`.
+  - Adds "Peak Electricity: Annual Total (W)" output.
+- Relaxes requirements for some inputs:
+  - `SolarAbsorptance` and `Emittance` now only required for *exterior* walls & rim joists (i.e., ExteriorAdjacentTo=outside).
+  - `Window/PerformanceClass` no longer required (defaults to "residential").
+  - Allows above-grade basements/crawlspaces defined solely with Wall (not FoundationWall) elements.
+- Adds ZERH Multifamily v2.
+- Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
+- Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
+
+__Bugfixes__
+- Fixes possible "Electricity category end uses do not sum to total" error for a heat pump w/o backup.
+- Fixes error if conditioned basement has `InsulationSpansEntireSlab=true`.
+- Fixes error if heat pump `CompressorLockoutTemperature` == `BackupHeatingLockoutTemperature`.
+- Fixes ground source heat pump fan/pump adjustment to rated efficiency.
+- Fixes missing radiation exchange between window and sky.
+- Minor HVAC design load calculation bugfixes for foundation walls.
+- Fixes `nEC_x` calculation for a fossil fuel water heater w/ UEF entered.
+- Various HVAC sizing bugfixes and improvements.
+
+## OpenStudio-ERI v1.6.3
+
+__Bugfixes__
+- Fixes possible "Sum of energy consumptions do not match total" error for shared water heater w/ FractionDHWLoadServed=0.
+
+## OpenStudio-ERI v1.6.2
+
+__Bugfixes__
+- Fixes incorrect ESRD ceiling U-factor for SFA unit with adiabatic ceiling when using SFNH program.
+
+## OpenStudio-ERI v1.6.1
+
+__Bugfixes__
+- Fixes ZERH Single Family v2 mechanical ventilation fan efficiency to use ASRE instead of SRE.
+- Fixes error if describing a wall with `WallType/StructuralInsulatedPanel`.
+
 ## OpenStudio-ERI v1.6.0
 
 __New Features__
-- Updates to OpenStudio 3.6.0/EnergyPlus 23.1.
+- Updates to OpenStudio 3.6.1/EnergyPlus 23.1.
 - **Breaking change**: CO2e Index results must now be requested through a new optional `SoftwareInfo/extension/CO2IndexCalculation/Version` input.
 - **Breaking change**: Updates to newer proposed HPXML v4.0:
   - Replaces `CeilingFan/Quantity`, `ClothesWasher/NumberofUnits`, and `ClothesDryer/NumberofUnits` with `Count`.
