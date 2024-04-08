@@ -841,9 +841,10 @@ class ERI_301_Ruleset
     new_bldg.floors.each do |new_floor|
       next unless new_floor.is_ceiling
       if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
-        next unless new_floor.is_thermal_boundary
+        new_floor.area = new_floor.is_thermal_boundary ? 1200.0 * new_floor.area / sum_ceiling_area : 0.01
+      else
+        new_floor.area = 1200.0 * new_floor.area / sum_ceiling_area
       end
-      new_floor.area = 1200.0 * new_floor.area / sum_ceiling_area
     end
   end
 

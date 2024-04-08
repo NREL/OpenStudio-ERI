@@ -498,9 +498,9 @@ class ERIEnclosureTest < Minitest::Test
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       # No ceiling created because no thermal boundary ceiling
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
@@ -528,9 +528,9 @@ class ERIEnclosureTest < Minitest::Test
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       # No ceiling created because no thermal boundary ceiling
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
@@ -558,9 +558,9 @@ class ERIEnclosureTest < Minitest::Test
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 900, rvalue: (2.1 * 300 + 33.3 * 300 + 33.3 * 300) / 900, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 1200 + 300, rvalue: (3.5 * 1200 + 2.1 * 300) / 1500, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: 1200, rvalue: 3.5, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 1200 + 300, rvalue: (33.3 * 1200 + 2.1 * 300) / 1500, floor_type: HPXML::FloorTypeWoodFrame)
+        _check_ceilings(hpxml_bldg, area: 1200, rvalue: 33.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
