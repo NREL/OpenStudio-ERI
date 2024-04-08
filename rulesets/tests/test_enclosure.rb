@@ -537,17 +537,17 @@ class ERIEnclosureTest < Minitest::Test
     # Check ANSI-301-2022 with themal boundary ceilings
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    orig_ceiling = hpxml_bldg.floors.find{|floor| floor.is_ceiling}
+    orig_ceiling = hpxml_bldg.floors.find { |floor| floor.is_ceiling }
     orig_ceiling.area /= 3
     hpxml_bldg.floors << orig_ceiling.dup
     hpxml_bldg.floors[-1].exterior_adjacent_to = HPXML::LocationOtherMultifamilyBufferSpace
-    hpxml_bldg.floors[-1].id = "Floor#{hpxml_bldg.floors.size.to_s}"
-    hpxml_bldg.floors[-1].insulation_id = "Floor#{hpxml_bldg.floors.size.to_s}Insulation"
+    hpxml_bldg.floors[-1].id = "Floor#{hpxml_bldg.floors.size}"
+    hpxml_bldg.floors[-1].insulation_id = "Floor#{hpxml_bldg.floors.size}Insulation"
     hpxml_bldg.floors[-1].insulation_assembly_r_value = 3.0
     hpxml_bldg.floors << orig_ceiling.dup
     hpxml_bldg.floors[-1].exterior_adjacent_to = HPXML::LocationOtherNonFreezingSpace
-    hpxml_bldg.floors[-1].id = "Floor#{hpxml_bldg.floors.size.to_s}"
-    hpxml_bldg.floors[-1].insulation_id = "Floor#{hpxml_bldg.floors.size.to_s}Insulation"
+    hpxml_bldg.floors[-1].id = "Floor#{hpxml_bldg.floors.size}"
+    hpxml_bldg.floors[-1].insulation_id = "Floor#{hpxml_bldg.floors.size}Insulation"
     hpxml_bldg.floors[-1].insulation_assembly_r_value = 4.0
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
