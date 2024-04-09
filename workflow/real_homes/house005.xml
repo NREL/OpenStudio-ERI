@@ -308,12 +308,14 @@
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>other housing unit</Location>
             <IsSharedSystem>true</IsSharedSystem>
-            <NumberofUnitsServed>25</NumberofUnitsServed>
             <TankVolume>119.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <EnergyFactor>0.91</EnergyFactor>
             <RecoveryEfficiency>0.94</RecoveryEfficiency>
             <UsesDesuperheater>false</UsesDesuperheater>
+            <extension>
+              <NumberofBedroomsServed>25</NumberofBedroomsServed>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
@@ -327,7 +329,7 @@
             </PipeInsulation>
             <extension>
               <SharedRecirculation>
-                <NumberofUnitsServed>25</NumberofUnitsServed>
+                <NumberofBedroomsServed>25</NumberofBedroomsServed>
                 <PumpPower>50.0</PumpPower>
                 <ControlType>manual demand control</ControlType>
               </SharedRecirculation>
