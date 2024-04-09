@@ -938,7 +938,7 @@ class ERI_301_Ruleset
   end
 
   def self.set_enclosure_slabs_rated(orig_bldg, new_bldg)
-    # Preserve all slabs.
+    # Preserve all slabs
     orig_bldg.slabs.each do |orig_slab|
       new_bldg.slabs.add(id: orig_slab.id,
                          interior_adjacent_to: orig_slab.interior_adjacent_to,
@@ -953,6 +953,7 @@ class ERI_301_Ruleset
                          carpet_r_value: orig_slab.carpet_r_value,
                          perimeter_insulation_id: orig_slab.perimeter_insulation_id,
                          perimeter_insulation_r_value: orig_slab.perimeter_insulation_r_value,
+                         gap_insulation_r_value: orig_slab.gap_insulation_r_value,
                          under_slab_insulation_id: orig_slab.under_slab_insulation_id,
                          under_slab_insulation_r_value: orig_slab.under_slab_insulation_r_value)
     end
