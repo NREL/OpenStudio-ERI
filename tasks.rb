@@ -1041,11 +1041,11 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml_bldg)
       return
     elsif hpxml_file.include?('ConditionedBasement')
       if hpxml_file.include?('PhoenixAZ')
-        insulation_exterior_r_value = 0
+        insulation_interior_r_value = 0
       elsif hpxml_file.include?('BaltimoreMD')
-        insulation_exterior_r_value = 10
+        insulation_interior_r_value = 10
       elsif hpxml_file.include?('DuluthMN')
-        insulation_exterior_r_value = 15
+        insulation_interior_r_value = 15
       end
       hpxml_bldg.foundation_walls.add(id: "FoundationWall#{hpxml_bldg.foundation_walls.size + 1}",
                                       exterior_adjacent_to: HPXML::LocationGround,
@@ -1054,10 +1054,10 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml_bldg)
                                       area: 1177.8,
                                       thickness: 6,
                                       depth_below_grade: 7.75,
-                                      insulation_interior_r_value: 0,
+                                      insulation_interior_r_value: insulation_interior_r_value,
                                       insulation_interior_distance_to_top: 0,
                                       insulation_interior_distance_to_bottom: 0,
-                                      insulation_exterior_r_value: insulation_exterior_r_value,
+                                      insulation_exterior_r_value: 0,
                                       insulation_exterior_distance_to_top: 0,
                                       insulation_exterior_distance_to_bottom: 8.5)
     else
@@ -1381,7 +1381,7 @@ def set_hpxml_windows(hpxml_file, hpxml_bldg)
     hpxml_bldg.windows.clear
     if hpxml_file.include?('ReferenceWindows')
       if hpxml_file.include?('MiamiFL')
-        ufactor, shgc = 1.30, 0.40
+        ufactor, shgc = 1.20, 0.40
       elsif hpxml_file.include?('PhoenixAZ')
         ufactor, shgc = 0.75, 0.40
       elsif hpxml_file.include?('SanFranCA')
@@ -2297,12 +2297,11 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml_bldg)
     if hpxml_file.include?('NoMechVent')
       return
     elsif hpxml_file.include?('CFIS')
-      cooling_flow_rate = 400.0 * (hpxml_bldg.cooling_systems[0].cooling_capacity / 12000) # cfm per 301-2019 Table 4.2.2(1) Note m
       hpxml_bldg.ventilation_fans.add(id: "VentilationFan#{hpxml_bldg.ventilation_fans.size + 1}",
                                       fan_type: HPXML::MechVentTypeCFIS,
                                       tested_flow_rate: 155.4,
                                       hours_in_operation: 12,
-                                      fan_power: (0.58 * cooling_flow_rate).round(3),
+                                      fan_power: 487.2,
                                       used_for_whole_building_ventilation: true,
                                       cfis_addtl_runtime_operating_mode: HPXML::CFISModeAirHandler,
                                       distribution_system_idref: hpxml_bldg.hvac_distributions[0].id,

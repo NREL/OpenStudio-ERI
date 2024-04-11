@@ -256,7 +256,7 @@
             <SystemIdentifier id='Window1'/>
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>1.3</UFactor>
+            <UFactor>1.2</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -266,7 +266,7 @@
             <SystemIdentifier id='Window2'/>
             <Area>108.0</Area>
             <Azimuth>90</Azimuth>
-            <UFactor>1.3</UFactor>
+            <UFactor>1.2</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -276,7 +276,7 @@
             <SystemIdentifier id='Window3'/>
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>1.3</UFactor>
+            <UFactor>1.2</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>
@@ -286,7 +286,7 @@
             <SystemIdentifier id='Window4'/>
             <Area>108.0</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>1.3</UFactor>
+            <UFactor>1.2</UFactor>
             <SHGC>0.4</SHGC>
             <FractionOperable>1.0</FractionOperable>
             <PerformanceClass>residential</PerformanceClass>

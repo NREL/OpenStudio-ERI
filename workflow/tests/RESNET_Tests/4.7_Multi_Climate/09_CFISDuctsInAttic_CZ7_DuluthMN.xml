@@ -400,7 +400,7 @@
               <HoursInOperation>12.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>232.0</FanPower>
+              <FanPower>487.2</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
               <extension>
                 <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
