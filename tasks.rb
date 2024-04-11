@@ -1056,10 +1056,10 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml_bldg)
                                       depth_below_grade: 7.75,
                                       insulation_interior_r_value: insulation_interior_r_value,
                                       insulation_interior_distance_to_top: 0,
-                                      insulation_interior_distance_to_bottom: 0,
+                                      insulation_interior_distance_to_bottom: 8.5,
                                       insulation_exterior_r_value: 0,
                                       insulation_exterior_distance_to_top: 0,
-                                      insulation_exterior_distance_to_bottom: 8.5)
+                                      insulation_exterior_distance_to_bottom: 0)
     else
       hpxml_bldg.foundation_walls.add(id: "FoundationWall#{hpxml_bldg.foundation_walls.size + 1}",
                                       exterior_adjacent_to: HPXML::LocationGround,
