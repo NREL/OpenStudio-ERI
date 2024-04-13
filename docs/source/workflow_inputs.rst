@@ -228,10 +228,12 @@ Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/A
   Element                               Type    Units  Constraints  Required   Default   Notes
   ====================================  ======  =====  ===========  =========  ========  ===============================================
   ``SystemIdentifier``                  id                          Yes                  Unique identifier
-  ``InfiltrationVolume``                double  ft3    > 0          Yes                  Volume associated with infiltration measurement
+  ``InfiltrationVolume``                double  ft3    > 0          Yes                  Volume associated with infiltration measurement [#]_
   ``InfiltrationHeight``                double  ft     > 0          No         See [#]_  Height associated with infiltration measurement [#]_
   ====================================  ======  =====  ===========  =========  ========  ===============================================
 
+  .. [#] InfiltrationVolume can be thought of as the volume of space most impacted by a blower door test.
+         Note that InfiltrationVolume can be larger than ConditionedBuildingVolume as it can include, e.g., attics or basements with access doors/hatches that are open during the blower door test.
   .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
   .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.
 
