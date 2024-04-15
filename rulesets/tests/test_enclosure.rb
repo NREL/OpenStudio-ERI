@@ -21,6 +21,24 @@ class ERIEnclosureTest < Minitest::Test
     FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
   end
 
+  def test_ground_conductivity
+    # Test ground conductivity
+    hpxml_name = 'base.xml'
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
+      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
+      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
+      end
+    end
+  end
+
   def test_enclosure_infiltration
     # Test w/o mech vent
     hpxml_name = 'base.xml'
