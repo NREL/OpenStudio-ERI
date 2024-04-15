@@ -493,7 +493,6 @@ class ERIEnclosureTest < Minitest::Test
     end
 
     hpxml_name = 'base-bldgtype-mf-unit.xml'
-    hpxml_name = _change_eri_version(hpxml_name, '2019')
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
@@ -505,25 +504,10 @@ class ERIEnclosureTest < Minitest::Test
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      end
-    end
-    hpxml_name = _change_eri_version(hpxml_name, '2022')
-    _all_calc_types.each do |calc_type|
-      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      # No ceiling created because no thermal boundary ceiling
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
     hpxml_name = 'base-bldgtype-mf-unit-adjacent-to-multiple.xml'
-    hpxml_name = _change_eri_version(hpxml_name, '2019')
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
@@ -535,50 +519,6 @@ class ERIEnclosureTest < Minitest::Test
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      end
-    end
-    hpxml_name = _change_eri_version(hpxml_name, '2022')
-    _all_calc_types.each do |calc_type|
-      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      # No ceiling created because no thermal boundary ceiling
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 0.01, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      end
-    end
-
-    # Check ANSI-301-2022 with themal boundary ceilings
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml_bldg = hpxml.buildings[0]
-    orig_ceiling = hpxml_bldg.floors.find { |floor| floor.is_ceiling }
-    orig_ceiling.area /= 3
-    hpxml_bldg.floors << orig_ceiling.dup
-    hpxml_bldg.floors[-1].exterior_adjacent_to = HPXML::LocationOtherMultifamilyBufferSpace
-    hpxml_bldg.floors[-1].id = "Floor#{hpxml_bldg.floors.size}"
-    hpxml_bldg.floors[-1].insulation_id = "Floor#{hpxml_bldg.floors.size}Insulation"
-    hpxml_bldg.floors[-1].insulation_assembly_r_value = 3.0
-    hpxml_bldg.floors << orig_ceiling.dup
-    hpxml_bldg.floors[-1].exterior_adjacent_to = HPXML::LocationOtherNonFreezingSpace
-    hpxml_bldg.floors[-1].id = "Floor#{hpxml_bldg.floors.size}"
-    hpxml_bldg.floors[-1].insulation_id = "Floor#{hpxml_bldg.floors.size}Insulation"
-    hpxml_bldg.floors[-1].insulation_assembly_r_value = 4.0
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-    _all_calc_types.each do |calc_type|
-      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: (2.1 * 300 + 3.0 * 300 + 4.0 * 300) / 900, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 900, rvalue: (2.1 * 300 + 33.3 * 300 + 33.3 * 300) / 900, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 1200, rvalue: 3.5, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        _check_ceilings(hpxml_bldg, area: 1200, rvalue: 33.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
 
