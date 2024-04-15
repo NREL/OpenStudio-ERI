@@ -565,8 +565,8 @@ end
 
 def set_hpxml_rim_joists(hpxml_file, hpxml_bldg)
   if ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
-    for i in 0..hpxml_bldg.rim_joists.size - 1
-      hpxml_bldg.rim_joists[i].interior_adjacent_to = HPXML::LocationBasementUnconditioned
+    hpxml_bldg.rim_joists.each do |rim_joist|
+      rim_joist.interior_adjacent_to = HPXML::LocationBasementUnconditioned
     end
   elsif hpxml_file.include?('EPA_Tests/SF')
     if ['EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
@@ -822,8 +822,8 @@ def set_hpxml_foundation_walls(hpxml_file, hpxml_bldg)
       end
     end
   elsif ['RESNET_Tests/4.5_DSE/HVAC3a.xml'].include? hpxml_file
-    for i in 0..hpxml_bldg.foundation_walls.size - 1
-      hpxml_bldg.foundation_walls[i].interior_adjacent_to = HPXML::LocationBasementUnconditioned
+    hpxml_bldg.foundation_walls.each do |foundation_wall|
+      foundation_wall.interior_adjacent_to = HPXML::LocationBasementUnconditioned
     end
   elsif hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('EPA_Tests/SF')
@@ -1677,8 +1677,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3d.xml',
          'RESNET_Tests/4.5_DSE/HVAC3h.xml'].include? hpxml_file
     # Supply and return duct leakage = 125 cfm each
-    for i in 0..hpxml_bldg.hvac_distributions[0].duct_leakage_measurements.size - 1
-      hpxml_bldg.hvac_distributions[0].duct_leakage_measurements[i].duct_leakage_value = 125
+    hpxml_bldg.hvac_distributions[0].duct_leakage_measurements.each do |duct_leakage_measurement|
+      duct_leakage_measurement.duct_leakage_value = 125
     end
   elsif hpxml_file.include?('EPA_Tests')
     tot_cfm25 = 4.0 * hpxml_bldg.building_construction.conditioned_floor_area / 100.0
@@ -1718,19 +1718,19 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
                                                duct_surface_area: 77)
   elsif ['RESNET_Tests/4.5_DSE/HVAC3b.xml'].include? hpxml_file
     # Change to Duct Location = 100% in basement
-    for i in 0..hpxml_bldg.hvac_distributions[0].ducts.size - 1
-      hpxml_bldg.hvac_distributions[0].ducts[i].duct_location = HPXML::LocationBasementUnconditioned
+    hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
+      duct.duct_location = HPXML::LocationBasementUnconditioned
     end
   elsif ['RESNET_Tests/4.5_DSE/HVAC3f.xml'].include? hpxml_file
     # Change to Duct Location = 100% in attic
-    for i in 0..hpxml_bldg.hvac_distributions[0].ducts.size - 1
-      hpxml_bldg.hvac_distributions[0].ducts[i].duct_location = HPXML::LocationAtticVented
+    hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
+      duct.duct_location = HPXML::LocationAtticVented
     end
   elsif ['RESNET_Tests/4.5_DSE/HVAC3c.xml',
          'RESNET_Tests/4.5_DSE/HVAC3g.xml'].include? hpxml_file
     # Change to Duct R-val = 6
-    for i in 0..hpxml_bldg.hvac_distributions[0].ducts.size - 1
-      hpxml_bldg.hvac_distributions[0].ducts[i].duct_insulation_r_value = 6
+    hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
+      duct.duct_insulation_r_value = 6
     end
   elsif hpxml_file.include?('EPA_Tests')
     supply_area = 0.27 * hpxml_bldg.building_construction.conditioned_floor_area
@@ -1794,6 +1794,22 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
                                                  duct_insulation_r_value: non_attic_rvalue,
                                                  duct_location: non_attic_location,
                                                  duct_surface_area: (return_area * non_attic_frac).round(2))
+    end
+  end
+  # For DSE tests, use effective R-values instead of nominal R-values to match the test specs.
+  if hpxml_file.include? '4.5_DSE'
+    hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
+      next if duct.duct_insulation_r_value.nil?
+
+      if duct.duct_insulation_r_value == 0
+        duct.duct_insulation_r_value = nil
+        duct.duct_effective_r_value = 1.5
+      elsif duct.duct_insulation_r_value == 6
+        duct.duct_insulation_r_value = nil
+        duct.duct_effective_r_value = 7
+      else
+        fail 'Unexpected error.'
+      end
     end
   end
 

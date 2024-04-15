@@ -709,7 +709,7 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150, under_ins_width: 4, under_ins_r: 10)
+        _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150, under_ins_width: 4, under_ins_r: 10, gap_ins_r: 5)
       elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
@@ -1400,10 +1400,11 @@ class ERIEnclosureTest < Minitest::Test
   end
 
   def _check_slabs(hpxml_bldg, area:, exp_perim:, perim_ins_depth: 0, perim_ins_r: 0, under_ins_width: 0,
-                   under_ins_r: 0, depth_below_grade: nil)
+                   under_ins_r: 0, depth_below_grade: nil, gap_ins_r: 0)
     tot_area = 0
     exp_perim_x_area_values, perim_ins_depth_x_area_values, perim_ins_r_x_area_values = [], [], [] # Area-weighted
     under_ins_width_x_area_values, under_ins_r_x_area_values, depth_bg_x_area_values = [], [], [] # Area-weighted
+    gap_ins_r_x_area_values = [] # Area-weighted
     hpxml_bldg.slabs.each do |slab|
       tot_area += slab.area
       exp_perim_x_area_values << slab.exposed_perimeter * slab.area
@@ -1418,6 +1419,7 @@ class ERIEnclosureTest < Minitest::Test
       if not slab.depth_below_grade.nil?
         depth_bg_x_area_values << slab.depth_below_grade * slab.area
       end
+      gap_ins_r_x_area_values << slab.gap_insulation_r_value * slab.area
     end
 
     assert_in_epsilon(area, tot_area, 0.01)
@@ -1426,6 +1428,7 @@ class ERIEnclosureTest < Minitest::Test
     assert_in_epsilon(perim_ins_r, perim_ins_r_x_area_values.sum / tot_area, 0.01)
     assert_in_epsilon(under_ins_width, under_ins_width_x_area_values.sum / tot_area, 0.01)
     assert_in_epsilon(under_ins_r, under_ins_r_x_area_values.sum / tot_area, 0.01)
+    assert_in_epsilon(gap_ins_r, gap_ins_r_x_area_values.sum / tot_area, 0.01)
     if depth_below_grade.nil?
       assert(depth_bg_x_area_values.empty?)
     else

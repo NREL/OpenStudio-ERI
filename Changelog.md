@@ -12,6 +12,7 @@ __New Features__
 - Allows `AverageCeilingHeight` to be optionally provided for infiltration calculations.
 - Ground source heat pump model enhancements.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
+- Adds optional `Slab/extension/GapInsulationRValue` input for cases where a slab has horizontal (under slab) insulation.
 - Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
 - Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
 - Now defaults to -20F for `CompressorLockoutTemperature` for variable-speed air-to-air heat pumps.

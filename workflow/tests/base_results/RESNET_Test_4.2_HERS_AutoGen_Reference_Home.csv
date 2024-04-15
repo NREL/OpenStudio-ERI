@@ -20,8 +20,7 @@ South window area (ft2),69.26,69.26,69.26,102.64
 East window area (ft2),69.26,69.26,69.26,102.64
 West window area (ft2),69.26,69.26,69.26,102.64
 Window U-Factor,0.4,0.65,1.2,0.35
-Window SHGCo (heating),0.33,0.33,0.33,0.33
-Window SHGCo (cooling),0.33,0.33,0.33,0.33
+Window SHGCo,0.33,0.33,0.33,0.33
 SLAo (ft2/ft2),0.00036,0.00036,0.00036,0.00036
 Sensible Internal gains (Btu/day),55142,52470,47839,82721
 Latent Internal gains (Btu/day),13635,12565,9150,17734
