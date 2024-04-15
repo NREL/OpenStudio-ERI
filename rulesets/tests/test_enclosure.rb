@@ -523,7 +523,6 @@ class ERIEnclosureTest < Minitest::Test
     end
 
     # Check w/ mass ceilings
-    hpxml_name = 'base-bldgtype-mf-unit-adjacent-to-multiple.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
     hpxml_bldg.floors.each do |floor|
@@ -533,7 +532,6 @@ class ERIEnclosureTest < Minitest::Test
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-    hpxml_name = _change_eri_version(hpxml_name, '2019')
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
