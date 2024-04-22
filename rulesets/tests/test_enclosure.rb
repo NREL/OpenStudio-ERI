@@ -27,15 +27,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
-        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
-        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-        assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
-      end
+      assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
     end
   end
 
