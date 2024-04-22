@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.7.1
+
+__Bugfixes__
+- Fixes emissions lookup when zip code starts with a zero.
+
 ## OpenStudio-ERI v1.7.0
 
 __New Features__
