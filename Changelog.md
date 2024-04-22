@@ -6,6 +6,7 @@ __New Features__
 __Bugfixes__
 - Fixes incorrect Reference Home mechanical ventilation flowrate for attached units (when Aext is not 1).
 - Fixes possible 301ruleset.rb error due to floating point arithmetic.
+- Fixes emissions lookup when zip code starts with a zero.
 
 ## OpenStudio-ERI v1.7.0
 
