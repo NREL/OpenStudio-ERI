@@ -474,7 +474,6 @@ class ERI_301_Ruleset
                          solar_absorptance: solar_abs,
                          emittance: emittance,
                          pitch: avg_pitch,
-                         radiant_barrier: false,
                          insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
     end
 
@@ -491,7 +490,6 @@ class ERI_301_Ruleset
                          solar_absorptance: solar_abs,
                          emittance: emittance,
                          pitch: orig_roof.pitch,
-                         radiant_barrier: false,
                          insulation_id: orig_roof.insulation_id,
                          insulation_assembly_r_value: insulation_assembly_r_value)
     end

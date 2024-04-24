@@ -1186,7 +1186,11 @@ class ERIEnclosureTest < Minitest::Test
       sabs_x_area_values << roof.solar_absorptance * roof.area
       emit_x_area_values << roof.emittance * roof.area
       if rb_grade.nil?
-        assert_equal(false, roof.radiant_barrier)
+        if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include? roof.interior_adjacent_to
+          assert_equal(false, roof.radiant_barrier)
+        else
+          assert_nil(roof.radiant_barrier)
+        end
         assert_nil(roof.radiant_barrier_grade)
       else
         assert_equal(true, roof.radiant_barrier)
