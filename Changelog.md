@@ -9,6 +9,7 @@ __New Features__
   - The `ElectricAuxiliaryEnergy` input for boilers is no longer used.
 - **Breaking change**: ERI_Results.csv and ERI_Worksheet.csv combined into a single ERI_Results.csv that better reflects the current ERI calculation components; additional fields (e.g., PEfrac) added and a few renamed/removed.
 - **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
+- Allows optional `Ducts/DuctShape` and `Ducts/DuctFractionRectangular` inputs, which affect duct effective R-value used for modeling.
 - Allows `AverageCeilingHeight` to be optionally provided for infiltration calculations.
 - Ground source heat pump model enhancements.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
