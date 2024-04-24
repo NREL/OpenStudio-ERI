@@ -246,6 +246,10 @@ class ERI_301_Ruleset
     new_bldg.header.manualj_heating_setpoint = 70
     new_bldg.header.manualj_cooling_setpoint = 75
 
+    new_bldg.site.fuels = orig_bldg.site.fuels
+    new_bldg.site.site_type = HPXML::SiteTypeSuburban
+    new_bldg.site.shielding_of_home = HPXML::ShieldingNormal
+
     add_emissions_scenarios(new_hpxml, new_bldg)
 
     return new_hpxml
@@ -280,9 +284,6 @@ class ERI_301_Ruleset
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
 
-    new_bldg.site.fuels = orig_bldg.site.fuels
-    new_bldg.site.site_type = HPXML::SiteTypeSuburban
-
     new_bldg.building_construction.number_of_conditioned_floors = orig_bldg.building_construction.number_of_conditioned_floors
     new_bldg.building_construction.number_of_conditioned_floors_above_grade = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
@@ -301,9 +302,6 @@ class ERI_301_Ruleset
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
 
-    new_bldg.site.fuels = orig_bldg.site.fuels
-    new_bldg.site.site_type = HPXML::SiteTypeSuburban
-
     new_bldg.building_construction.number_of_conditioned_floors = orig_bldg.building_construction.number_of_conditioned_floors
     new_bldg.building_construction.number_of_conditioned_floors_above_grade = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
@@ -321,9 +319,6 @@ class ERI_301_Ruleset
     @nbeds = 3
     @ncfl = 2.0
     @ncfl_ag = 2.0
-
-    new_bldg.site.fuels = orig_bldg.site.fuels
-    new_bldg.site.site_type = HPXML::SiteTypeSuburban
 
     new_bldg.building_construction.number_of_conditioned_floors = @ncfl
     new_bldg.building_construction.number_of_conditioned_floors_above_grade = @ncfl_ag
