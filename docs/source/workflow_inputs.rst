@@ -1557,20 +1557,21 @@ Additional information is entered in each ``DuctLeakageMeasurement``.
 
 Additional information is entered in each ``Ducts``.
 
-  ===============================================  =======  ============  ================  ========  ==========  ======================================
-  Element                                          Type     Units         Constraints       Required  Default     Notes
-  ===============================================  =======  ============  ================  ========  ==========  ======================================
-  ``SystemIdentifier``                             id                                       Yes                   Unique identifier
-  ``DuctType``                                     string                 See [#]_          Yes                   Supply or return ducts
-  ``DuctInsulationRValue``                         double   F-ft2-hr/Btu  >= 0              Yes                   R-value of duct insulation [#]_
-  ``DuctBuriedInsulationLevel``                    string                 See [#]_          No        not buried  Duct buried insulation level [#]_
-  ``DuctLocation``                                 string                 See [#]_          Yes                   Duct location
-  ``FractionDuctArea`` and/or ``DuctSurfaceArea``  double   frac or ft2   0-1 or >= 0 [#]_  Yes [#]_  See [#]_    Duct fraction/surface area in location
-  ===============================================  =======  ============  ================  ========  ==========  ======================================
+  ================================================  ================  ============  ======================  ========  ==========  ======================================
+  Element                                           Type              Units         Constraints             Required  Default     Notes
+  ================================================  ================  ============  ======================  ========  ==========  ======================================
+  ``SystemIdentifier``                              id                                                      Yes                   Unique identifier
+  ``DuctType``                                      string                          See [#]_                Yes                   Supply or return ducts
+  ``DuctInsulationRValue``                          double            F-ft2-hr/Btu  >= 0                    Yes                   R-value of duct insulation [#]_
+  ``DuctBuriedInsulationLevel``                     string                          See [#]_                No        not buried  Duct buried insulation level [#]_
+  ``DuctLocation``                                  string                          See [#]_                Yes                   Duct location
+  ``FractionDuctArea`` and/or ``DuctSurfaceArea``   double            frac or ft2   0-1 or >= 0 [#]_        Yes [#]_  See [#]_    Duct fraction/surface area in location
+  ``DuctShape`` and/or ``DuctFractionRectangular``  string or double  n/a or frac   See [#]_ or >= 0, <= 1  No        See [#]_    Duct shape (e.g., round vs rectangular)
+  ================================================  ================  ============  ======================  ========  ==========  ======================================
 
   .. [#] DuctType choices are "supply" or "return".
-  .. [#] DuctInsulationRValue should not include the exterior air film (i.e., use 0 for an uninsulated duct).
-         For ducts buried in insulation (using DuctBuriedInsulationLevel), DuctInsulationRValue should only represent any surrounding insulation duct wrap and not the entire attic insulation R-value.
+  .. [#] DuctInsulationRValue represents the nominal insulation R-value and should not include interior/exterior air films (i.e., use 0 for an uninsulated duct).
+         For ducts buried in insulation (i.e., DuctBuriedInsulationLevel is any value but "not buried"), DuctInsulationRValue should only represent any surrounding insulation duct wrap and not the entire attic insulation R-value.
   .. [#] DuctBuriedInsulationLevel choices are "not buried", "partially buried", "fully buried", or "deeply buried".
   .. [#] Whether the ducts are buried in, e.g., attic loose-fill insulation.
          Partially buried ducts have insulation that does not cover the top of the ducts.
@@ -1588,6 +1589,10 @@ Additional information is entered in each ``Ducts``.
          \- **Return duct area**: (if NumberofReturnRegisters < 6, 0.05 * NumberofReturnRegisters, 0.25 otherwise) * ConditionedFloorAreaServed
 
          where each duct surface area will be FractionDuctArea multiplied by supply, or return, duct area.
+
+  .. [#] DuctShape choices are "rectangular", "round", "oval", or "other".
+  .. [#] If DuctFractionRectangular not provided, defaults to 1.0 if DuctShape is "rectangular" and 0.0 if DuctShape is "round" or "oval".
+         If DuctShape is "other" or not provided, DuctFractionRectangular defaults to 0.25 for supply ducts and 1.0 for return ducts.
 
 .. _hvac_distribution_hydronic:
 

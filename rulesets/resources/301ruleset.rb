@@ -1443,7 +1443,9 @@ class ERI_301_Ruleset
                                         duct_location: orig_duct.duct_location,
                                         duct_surface_area: orig_duct.duct_surface_area,
                                         duct_fraction_area: orig_duct.duct_fraction_area,
-                                        duct_buried_insulation_level: orig_duct.duct_buried_insulation_level)
+                                        duct_buried_insulation_level: orig_duct.duct_buried_insulation_level,
+                                        duct_shape: orig_duct.duct_shape,
+                                        duct_fraction_rectangular: orig_duct.duct_fraction_rectangular)
       end
     end
 
