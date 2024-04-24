@@ -806,8 +806,10 @@ class HPXMLDefaults
         roof.emittance_isdefaulted = true
       end
       if roof.radiant_barrier.nil?
-        roof.radiant_barrier = false
-        roof.radiant_barrier_isdefaulted = true
+        if [HPXML::LocationAtticUnvented, HPXML::LocationAtticVented].include?(roof.interior_adjacent_to)
+          roof.radiant_barrier = false
+          roof.radiant_barrier_isdefaulted = true
+        end
       end
       if roof.radiant_barrier && roof.radiant_barrier_grade.nil?
         roof.radiant_barrier_grade = 1
@@ -923,8 +925,10 @@ class HPXMLDefaults
         wall.interior_finish_thickness_isdefaulted = true
       end
       if wall.radiant_barrier.nil?
-        wall.radiant_barrier = false
-        wall.radiant_barrier_isdefaulted = true
+        if [HPXML::LocationAtticUnvented, HPXML::LocationAtticVented].include?(wall.interior_adjacent_to) || [HPXML::LocationAtticUnvented, HPXML::LocationAtticVented].include?(wall.exterior_adjacent_to)
+          wall.radiant_barrier = false
+          wall.radiant_barrier_isdefaulted = true
+        end
       end
       if wall.radiant_barrier && wall.radiant_barrier_grade.nil?
         wall.radiant_barrier_grade = 1
@@ -1030,8 +1034,10 @@ class HPXMLDefaults
         floor.interior_finish_thickness_isdefaulted = true
       end
       if floor.radiant_barrier.nil?
-        floor.radiant_barrier = false
-        floor.radiant_barrier_isdefaulted = true
+        if [HPXML::LocationAtticUnvented, HPXML::LocationAtticVented].include?(floor.interior_adjacent_to) || [HPXML::LocationAtticUnvented, HPXML::LocationAtticVented].include?(floor.exterior_adjacent_to)
+          floor.radiant_barrier = false
+          floor.radiant_barrier_isdefaulted = true
+        end
       end
       if floor.radiant_barrier && floor.radiant_barrier_grade.nil?
         floor.radiant_barrier_grade = 1
@@ -2028,6 +2034,11 @@ class HPXMLDefaults
       next unless hvac_system.location.nil?
 
       hvac_system.location_isdefaulted = true
+
+      if hvac_system.is_shared_system
+        hvac_system.location = HPXML::LocationOtherHeatedSpace
+        next
+      end
 
       # Set default location based on distribution system
       dist_system = hvac_system.distribution_system
@@ -3299,6 +3310,7 @@ class HPXMLDefaults
   def self.get_default_flue_or_chimney_in_conditioned_space(hpxml_bldg)
     # Check for atmospheric heating system in conditioned space
     hpxml_bldg.heating_systems.each do |heating_system|
+      next if heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
       next unless HPXML::conditioned_locations_this_unit.include? heating_system.location
 
       if [HPXML::HVACTypeFurnace,
@@ -3315,14 +3327,13 @@ class HPXMLDefaults
 
         return true
       elsif [HPXML::HVACTypeFireplace].include? heating_system.heating_system_type
-        next if heating_system.heating_system_fuel == HPXML::FuelTypeElectricity
-
         return true
       end
     end
 
     # Check for atmospheric water heater in conditioned space
     hpxml_bldg.water_heating_systems.each do |water_heating_system|
+      next if water_heating_system.fuel_type == HPXML::FuelTypeElectricity
       next unless HPXML::conditioned_locations_this_unit.include? water_heating_system.location
 
       if not water_heating_system.energy_factor.nil?
