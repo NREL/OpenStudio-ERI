@@ -103,3 +103,4 @@ class RESNETOtherTest < Minitest::Test
       _check_method_results(results, test_num, test_num == 2, '2014')
     end
   end
+end
