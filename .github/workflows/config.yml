@@ -189,10 +189,12 @@ jobs:
       - name: Merge results
         run: |
           mkdir workflow/tests/test_results
-          cp -r test_results/results* workflow/tests/test_results
+          cp -r test_results/*.csv workflow/tests/test_results
           cd workflow/tests
           pip install pandas
-          for csv in test_results/*1_*.csv; do csv2="${csv/1_/2_}"; csv_out="${csv/1_/_}"; python hpxml-measures/workflow/tests/merge.py $csv $csv2 $csv_out; rm $csv; rm $csv2; done
+          python hpxml-measures/workflow/tests/merge.py test_results/sample_files1.csv test_results/sample_files2.csv test_results/sample_files.csv
+          rm test_results/sample_files1.csv
+          rm test_results/sample_files2.csv
 
       - name: Store results
         uses: actions/upload-artifact@v4
