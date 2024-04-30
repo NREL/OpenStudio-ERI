@@ -170,12 +170,37 @@ jobs:
     runs-on: ubuntu-latest
     needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
     steps:
-      - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+      - uses: actions/checkout@v4
         with:
-          name: results
+          ref: ${{ github.head_ref }}
+
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          path: test_results
           pattern: test_results_*
-          delete-merged: true
+          merge-multiple: true
+
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: test_results_*
+
+      - name: Merge results
+        run: |
+          mkdir workflow/tests/test_results
+          cp -r test_results/*.csv workflow/tests/test_results
+          cd workflow/tests
+          pip install pandas
+          python ../../hpxml-measures/workflow/tests/merge.py test_results/sample_files1.csv test_results/sample_files2.csv test_results/sample_files.csv
+          rm test_results/sample_files1.csv
+          rm test_results/sample_files2.csv
+
+      - name: Store results
+        uses: actions/upload-artifact@v4
+        with:
+          path: workflow/tests/test_results
+          name: test_results
 
   compare-results:
     if: github.event_name == 'pull_request'
@@ -205,14 +230,14 @@ jobs:
       - name: Download feature results
         uses: actions/download-artifact@v4
         with:
-          path: results
-          name: results
+          path: test_results
+          name: test_results
 
       - name: Compare results
         run: |
           cp -r base_results/*.csv workflow/tests/base_results
-          mkdir workflow/tests/results
-          cp -r results/*.csv workflow/tests/results
+          mkdir workflow/tests/test_results
+          cp -r test_results/*.csv workflow/tests/test_results
           
           pip install numpy
           pip install pandas
@@ -239,15 +264,15 @@ jobs:
       - name: Download feature results
         uses: actions/download-artifact@v4
         with:
-          path: results
-          name: results
+          path: test_results
+          name: test_results
 
       - name: Commit latest results
         shell: bash        
         run: |
           branch_name="${{ github.head_ref }}"
           git pull origin $branch_name
-          cp -r results/*.csv workflow/tests/base_results
+          cp -r test_results/*.csv workflow/tests/base_results
           git add workflow/tests/base_results
           git status
           if [[ $(git diff --cached --exit-code) ]]; then
