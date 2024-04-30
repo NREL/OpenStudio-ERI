@@ -192,7 +192,7 @@ jobs:
           cp -r test_results/*.csv workflow/tests/test_results
           cd workflow/tests
           pip install pandas
-          python hpxml-measures/workflow/tests/merge.py test_results/sample_files1.csv test_results/sample_files2.csv test_results/sample_files.csv
+          python ../../hpxml-measures/workflow/tests/merge.py test_results/sample_files1.csv test_results/sample_files2.csv test_results/sample_files.csv
           rm test_results/sample_files1.csv
           rm test_results/sample_files2.csv
 
