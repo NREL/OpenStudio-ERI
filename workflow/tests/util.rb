@@ -659,9 +659,6 @@ def _check_reference_home_components(results, test_num, version)
   # Internal gains
   if version == '2022C'
     # Pub 002-2024
-    # FIXME: Expected values changed due to rounded F_sensible values in 301-2022
-    # Addendum C relative to previously prescribed internal gains. Values below
-    # do not match Pub 002, as it has not yet been updated.
     if test_num == 1
       assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
       assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
