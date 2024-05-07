@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.8.0
 
 __New Features__
+- Updates to OpenStudio 3.8, EnergyPlus 24.1, HPXML 4.0-rc4.
 - Implements ANSI/RESNET/ICC Standard 301-2022 and Addendum C.
   - **Breaking change**: For shared water heaters, `NumberofUnitsServed` is replaced by `extension/NumberofBedroomsServed`.
   - **Breaking change**: For shared hot water recirculation systems, `NumberofUnitsServed` is replaced by `NumberofBedroomsServed`.

@@ -384,7 +384,9 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   .. [#] Pitch is entered as vertical rise in inches for every 12 inches of horizontal run.
          For example, 6.0 means a 6/12 roof, which has a 26.57-degree roof slope.
   .. [#] RadiantBarrierGrade only required if RadiantBarrier=true.
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
+
 
 HPXML Rim Joists
 ****************
@@ -413,7 +415,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
          Azimuth is irrelevant for *interior* rim joists.
   .. [#] SolarAbsorptance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
   .. [#] Emittance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Walls
 ***********
@@ -444,7 +447,8 @@ Each wall surface is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Wa
          Azimuth is irrelevant for *interior* walls (e.g., between conditioned space and garage).
   .. [#] SolarAbsorptance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
   .. [#] Emittance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Foundation Walls
 **********************
@@ -485,8 +489,8 @@ Any wall surface in contact with the ground is considered a foundation wall.
   .. [#] Layer[InstallationType="continuous - interior"] only required if AssemblyEffectiveRValue is not provided.
   .. [#] Layer[InstallationType="continuous - exterior"] only required if AssemblyEffectiveRValue is not provided.
   .. [#] AssemblyEffectiveRValue only required if Layer elements are not provided.
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior air film, and insulation installation grade.
-         R-value should **not** include exterior air film (for any above-grade exposure) or any soil thermal resistance.
+  .. [#] AssemblyEffectiveRValue includes all material layers and the interior air film; it should **not** include the exterior air film (for any above-grade exposure) or any soil thermal resistance.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 If insulation layers are provided, additional information is entered in each ``FoundationWall/Insulation/Layer``.
 
@@ -525,7 +529,8 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
   .. [#] FloorOrCeiling choices are "floor" or "ceiling".
   .. [#] FloorOrCeiling only required for floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
   .. [#] FloorType child element choices are ``WoodFrame``, ``StructuralInsulatedPanel``, ``SteelFrame``, or ``SolidConcrete``.
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading), compressed insulation in cavities, and/or reduced attic floor insulation thickness at the eaves per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Slabs
 ***********
