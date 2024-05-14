@@ -30,8 +30,8 @@
     <Site>
       <SiteID id='Site'/>
       <Address>
-        <StateCode>NM</StateCode>
-        <ZipCode>87501</ZipCode>
+        <StateCode>CO</StateCode>
+        <ZipCode>80031</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -66,9 +66,9 @@
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
-          <Name>Santa Fe, NM</Name>
+          <Name>USA_CO_Denver.Intl.AP.725650_TMY3</Name>
           <extension>
-            <EPWFilePath>USA_NM_Santa.Fe.County.Muni.AP.723656_TMY3.epw</EPWFilePath>
+            <EPWFilePath>USA_CO_Denver.Intl.AP.725650_TMY3.epw</EPWFilePath>
           </extension>
         </WeatherStation>
       </ClimateandRiskZones>
@@ -607,9 +607,12 @@
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
             <SystemType>
-              <Standard>
-                <PipingLength>7.0</PipingLength>
-              </Standard>
+              <Recirculation>
+                <ControlType>temperature</ControlType>
+                <RecirculationPipingLoopLength>236.5</RecirculationPipingLoopLength>
+                <BranchPipingLength>7.0</BranchPipingLength>
+                <PumpPower>50.0</PumpPower>
+              </Recirculation>
             </SystemType>
             <PipeInsulation>
               <PipeRValue>3.0</PipeRValue>
