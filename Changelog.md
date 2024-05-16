@@ -13,7 +13,6 @@ __New Features__
 - HERS software tests:
   - HERS Hot Water test HPXMLs have been updated to be direct EnergyPlus simulations (like the HERS HVAC & DSE tests already were); they are no longer run through ERI simulations.
   - HERS HVAC DSE tests now use duct effective R-values instead of nominal insulation R-values to demonstrate that they pass RESNET acceptance criteria.
-- Allows optional `Ducts/DuctShape` and `Ducts/DuctFractionRectangular` inputs, which affect duct effective R-value used for modeling.
 - Allows `AverageCeilingHeight` to be optionally provided for infiltration calculations.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
 - Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
