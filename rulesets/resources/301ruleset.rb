@@ -999,7 +999,7 @@ class ERI_301_Ruleset
                            interior_shading_factor_winter: shade_winter,
                            fraction_operable: fraction_operable,
                            performance_class: HPXML::WindowClassResidential,
-                           wall_idref: new_bldg.walls[0].id)
+                           attached_to_wall_idref: new_bldg.walls[0].id)
     end
   end
 
@@ -1019,7 +1019,7 @@ class ERI_301_Ruleset
                            interior_shading_factor_winter: shade_winter,
                            fraction_operable: orig_window.fraction_operable,
                            performance_class: orig_window.performance_class.nil? ? HPXML::WindowClassResidential : orig_window.performance_class,
-                           wall_idref: orig_window.wall_idref)
+                           attached_to_wall_idref: orig_window.attached_to_wall_idref)
     end
   end
 
@@ -1045,7 +1045,7 @@ class ERI_301_Ruleset
                            interior_shading_factor_winter: shade_winter,
                            fraction_operable: fraction_operable,
                            performance_class: HPXML::WindowClassResidential,
-                           wall_idref: new_bldg.walls[0].id)
+                           attached_to_wall_idref: new_bldg.walls[0].id)
     end
   end
 
@@ -1061,22 +1061,23 @@ class ERI_301_Ruleset
                              azimuth: orig_skylight.azimuth,
                              ufactor: orig_skylight.ufactor,
                              shgc: orig_skylight.shgc,
-                             roof_idref: orig_skylight.roof_idref)
+                             attached_to_roof_idref: orig_skylight.attached_to_roof_idref,
+                             attached_to_floor_idref: orig_skylight.attached_to_floor_idref)
     end
   end
 
   def self.set_enclosure_skylights_iad(orig_bldg, new_bldg)
     set_enclosure_skylights_rated(orig_bldg, new_bldg)
 
-    # Since the IAD roof area is scaled down but skylight area is maintained,
+    # Since the IAD roof/ceiling area is scaled down but skylight area is maintained,
     # it's possible that skylights no longer fit on the roof. To resolve this,
     # scale down skylight area to fit as needed.
-    new_bldg.roofs.each do |new_roof|
-      new_skylight_area = new_roof.skylights.map { |skylight| skylight.area }.sum(0)
-      next unless new_skylight_area > new_roof.area
+    (new_bldg.roofs + new_bldg.floors).each do |new_roof_or_ceiling|
+      new_skylight_area = new_roof_or_ceiling.skylights.map { |skylight| skylight.area }.sum(0)
+      next unless new_skylight_area > new_roof_or_ceiling.area
 
-      new_roof.skylights.each do |new_skylight|
-        new_skylight.area = new_skylight.area * new_roof.area / new_skylight_area * 0.99
+      new_roof_or_ceiling.skylights.each do |new_skylight|
+        new_skylight.area *= 0.99 * new_roof_or_ceiling.area / new_skylight_area
       end
     end
   end
@@ -1093,14 +1094,14 @@ class ERI_301_Ruleset
     end
     if exterior_area > 0.1
       new_bldg.doors.add(id: 'ExteriorDoorArea',
-                         wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
     end
     if interior_area > 0.1
       new_bldg.doors.add(id: 'InteriorDoorArea',
-                         wall_idref: new_bldg.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
                          area: interior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
@@ -1111,7 +1112,7 @@ class ERI_301_Ruleset
     # Table 4.2.2(1) - Doors
     orig_bldg.doors.each do |orig_door|
       new_bldg.doors.add(id: orig_door.id,
-                         wall_idref: orig_door.wall_idref,
+                         attached_to_wall_idref: orig_door.attached_to_wall_idref,
                          area: orig_door.area,
                          azimuth: orig_door.azimuth,
                          r_value: orig_door.r_value)
@@ -1133,7 +1134,7 @@ class ERI_301_Ruleset
     end
     if exterior_area + interior_area > 0.1
       new_bldg.doors.add(id: 'DoorArea',
-                         wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area + interior_area,
                          azimuth: azimuth,
                          r_value: avg_r_value.round(3))

@@ -517,7 +517,7 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
   ``InteriorAdjacentTo``                  string                  See [#]_     Yes                Interior adjacent space type
   ``FloorOrCeiling``                      string                  See [#]_     See [#]_           Floor or ceiling from the perspective of the conditioned space
   ``FloorType``                           element                 See [#]_     Yes                Floor type (for thermal mass)
-  ``Area``                                double    ft2           > 0          Yes                Gross area
+  ``Area``                                double    ft2           > 0          Yes                Gross area (including skylights for ceilings)
   ``Insulation/SystemIdentifier``         id                                   Yes                Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double    F-ft2-hr/Btu  > 0          Yes                Assembly R-value [#]_
   ======================================  ========  ============  ===========  ========  =======  ============================
@@ -583,7 +583,7 @@ Each window or glass door area is entered as a ``/HPXML/Building/BuildingDetails
   Element                                       Type      Units         Constraints   Required  Default      Notes
   ============================================  ========  ============  ============  ========  ===========  ==============================================
   ``SystemIdentifier``                          id                                    Yes                    Unique identifier
-  ``Area``                                      double    ft2           > 0           Yes                    Total area
+  ``Area``                                      double    ft2           > 0           Yes                    Total area [#]_
   ``Azimuth``                                   integer   deg           >= 0, <= 359  Yes                    Azimuth (clockwise from North)
   ``UFactor``                                   double    Btu/F-ft2-hr  > 0           Yes                    Full-assembly NFRC U-factor
   ``SHGC``                                      double                  > 0, < 1      Yes                    Full-assembly NFRC solar heat gain coefficient
@@ -593,6 +593,8 @@ Each window or glass door area is entered as a ``/HPXML/Building/BuildingDetails
   ``AttachedToWall``                            idref                   See [#]_      Yes                    ID of attached wall
   ============================================  ========  ============  ============  ========  ===========  ==============================================
 
+  .. [#] For bay or garden windows, this should represent the *total* area, not just the primary flat exposure.
+         The ratio of total area to primary flat exposure is typically around 1.15 for bay windows and 2.0 for garden windows.
   .. [#] FractionOperable reflects whether the windows are operable (can be opened), not how they are used by the occupants.
          If a ``Window`` represents a single window, the value should be 0 or 1.
          If a ``Window`` represents multiple windows, the value is calculated as the total window area for any operable windows divided by the total window area.
@@ -626,9 +628,11 @@ Each skylight is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Skylig
   ``UFactor``                                   double    Btu/F-ft2-hr  > 0           Yes                  Full-assembly NFRC U-factor
   ``SHGC``                                      double                  > 0, < 1      Yes                  Full-assembly NFRC solar heat gain coefficient
   ``AttachedToRoof``                            idref                   See [#]_      Yes                  ID of attached roof
+  ``AttachedToFloor``                           idref                   See [#]_      No                   ID of attached attic floor for a skylight with a shaft or sun tunnel
   ============================================  ========  ============  ============  ========  =========  ==============================================
 
   .. [#] AttachedToRoof must reference a ``Roof``.
+  .. [#] AttachedToFloor must reference a ``Floor``.
 
 HPXML Doors
 ***********
@@ -2671,22 +2675,22 @@ The various locations used in an HPXML file are defined as follows:
   Value                           Description                                     Temperature                                   Building Type
   ==============================  ==============================================  ============================================  =============
   outside                         Ambient environment                             Weather data                                  Any
-  ground                                                                          EnergyPlus calculation                        Any
-  conditioned space               Above-grade conditioned floor area              EnergyPlus calculation                        Any
-  attic - vented                                                                  EnergyPlus calculation                        Any
-  attic - unvented                                                                EnergyPlus calculation                        Any
-  basement - conditioned          Below-grade conditioned floor area              EnergyPlus calculation                        Any
-  basement - unconditioned                                                        EnergyPlus calculation                        Any
-  crawlspace - vented                                                             EnergyPlus calculation                        Any
-  crawlspace - unvented                                                           EnergyPlus calculation                        Any
-  garage                          Unconditioned garage (not shared parking) [#]_  EnergyPlus calculation                        Any
+  ground                                                                          EnergyPlus foundation model calculation       Any
+  conditioned space               Above-grade conditioned floor area              EnergyPlus thermal zone calculation           Any
+  attic - vented                                                                  EnergyPlus thermal zone calculation           Any
+  attic - unvented                                                                EnergyPlus thermal zone calculation           Any
+  basement - conditioned          Below-grade conditioned floor area              EnergyPlus thermal zone calculation           Any
+  basement - unconditioned                                                        EnergyPlus thermal zone calculation           Any
+  crawlspace - vented                                                             EnergyPlus thermal zone calculation           Any
+  crawlspace - unvented                                                           EnergyPlus thermal zone calculation           Any
+  garage                          Unconditioned garage (not shared parking) [#]_  EnergyPlus thermal zone calculation           Any
   other housing unit              Unrated Conditioned Space                       Same as conditioned space                     SFA/MF only
   other heated space              Unrated Heated Space                            Avg of conditioned space/outside; min of 68F  SFA/MF only
   other multifamily buffer space  Multifamily Buffer Boundary                     Avg of conditioned space/outside; min of 50F  SFA/MF only
   other non-freezing space        Non-Freezing Space                              Floats with outside; minimum of 40F           SFA/MF only
   other exterior                  Water heater outside                            Weather data                                  Any
   exterior wall                   Ducts in exterior wall                          Avg of conditioned space/outside              Any
-  under slab                      Ducts under slab (ground)                       EnergyPlus calculation                        Any
+  under slab                      Ducts under slab (ground)                       EnergyPlus foundation model calculation       Any
   roof deck                       Ducts on roof deck (outside)                    Weather data                                  Any
   ==============================  ==============================================  ============================================  =============
 

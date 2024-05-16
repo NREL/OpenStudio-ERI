@@ -1036,14 +1036,14 @@ def set_hpxml_windows(hpxml_file, hpxml_bldg)
 
     hpxml_bldg.windows.clear
     windows.each do |window_values|
-      azimuth, area, wall = window_values
+      azimuth, area, wall_idref = window_values
       hpxml_bldg.windows.add(id: "Window#{hpxml_bldg.windows.size + 1}",
                              area: area,
                              azimuth: azimuth,
                              ufactor: ufactor,
                              shgc: shgc,
                              fraction_operable: 0.67,
-                             wall_idref: wall,
+                             attached_to_wall_idref: wall_idref,
                              performance_class: HPXML::WindowClassResidential)
     end
   end
@@ -1063,9 +1063,9 @@ def set_hpxml_doors(hpxml_file, hpxml_bldg)
              [0, 21, 'Wall1']]
     hpxml_bldg.doors.clear
     doors.each do |door_values|
-      azimuth, area, wall = door_values
+      azimuth, area, wall_idref = door_values
       hpxml_bldg.doors.add(id: "Door#{hpxml_bldg.doors.size + 1}",
-                           wall_idref: wall,
+                           attached_to_wall_idref: wall_idref,
                            area: area,
                            azimuth: azimuth,
                            r_value: r_value)
@@ -1079,9 +1079,9 @@ def set_hpxml_doors(hpxml_file, hpxml_bldg)
     doors = [[0, 21, 'Wall1']]
     hpxml_bldg.doors.clear
     doors.each do |door_values|
-      azimuth, area, wall = door_values
+      azimuth, area, wall_idref = door_values
       hpxml_bldg.doors.add(id: "Door#{hpxml_bldg.doors.size + 1}",
-                           wall_idref: wall,
+                           attached_to_wall_idref: wall_idref,
                            area: area,
                            azimuth: azimuth,
                            r_value: r_value)
@@ -2077,6 +2077,7 @@ def create_sample_hpxmls
                   'base-enclosure-infil-natural-cfm.xml',
                   'base-enclosure-overhangs.xml',
                   'base-enclosure-skylights.xml',
+                  'base-enclosure-skylights-cathedral.xml',
                   'base-enclosure-walltypes.xml',
                   'base-foundation-ambient.xml',
                   'base-foundation-basement-garage.xml',

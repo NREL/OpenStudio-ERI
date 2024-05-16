@@ -614,7 +614,7 @@ class ES_ZERH_Ruleset
                              azimuth: azimuth,
                              ufactor: win_ufactor,
                              shgc: win_shgc,
-                             wall_idref: wall.id,
+                             attached_to_wall_idref: wall.id,
                              performance_class: HPXML::WindowClassResidential,
                              fraction_operable: fraction_operable)
       end
@@ -633,7 +633,7 @@ class ES_ZERH_Ruleset
                              azimuth: win.azimuth,
                              ufactor: win_ufactor,
                              shgc: win_shgc,
-                             wall_idref: wall.id,
+                             attached_to_wall_idref: wall.id,
                              performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
                              fraction_operable: fraction_operable)
       end
@@ -656,7 +656,7 @@ class ES_ZERH_Ruleset
 
     orig_bldg.doors.each do |orig_door|
       new_bldg.doors.add(id: orig_door.id,
-                         wall_idref: wall.id,
+                         attached_to_wall_idref: wall.id,
                          area: orig_door.area,
                          azimuth: orig_door.azimuth,
                          r_value: (1.0 / door_ufactor).round(3))

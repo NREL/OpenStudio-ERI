@@ -13,12 +13,14 @@ __New Features__
 - HERS software tests:
   - HERS Hot Water test HPXMLs have been updated to be direct EnergyPlus simulations (like the HERS HVAC & DSE tests already were); they are no longer run through ERI simulations.
   - HERS HVAC DSE tests now use duct effective R-values instead of nominal insulation R-values to demonstrate that they pass RESNET acceptance criteria.
+- Skylights with shafts or sun tunnels should include the `Skylight/AttachedToFloor` element.
 - Allows `AverageCeilingHeight` to be optionally provided for infiltration calculations.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
 - Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
 - Allows alternative `LabelEnergyUse` (W) input for ceiling fans.
 - Allows `Slab/extension/GapInsulationRValue` input for cases where a slab has horizontal (under slab) insulation.
 - Ground source heat pump model enhancements.
+- Improves heating/cooling component loads.
 - Now defaults to -20F for `CompressorLockoutTemperature` for variable-speed air-to-air heat pumps.
 - Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
 - Clarifies that HVAC `Capacity=-1` can be used to autosize HVAC equipment for research purposes or to run tests. It should *not* be used for a real home, and a warning will be issued when it's used.
