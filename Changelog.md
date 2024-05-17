@@ -9,7 +9,7 @@ __New Features__
   - Allows modeling electric battery storage, including shared batteries ("2022C" or newer).
   - The `ElectricAuxiliaryEnergy` input for boilers is no longer used.
 - **Breaking change**: ERI_Results.csv and ERI_Worksheet.csv combined into a single ERI_Results.csv that better reflects the current ERI calculation components; additional fields (e.g., PEfrac) added and a few renamed/removed.
-- **Breaking change**: Skylights with shafts or sun tunnels through attics must include the `Skylight/AttachedToFloor` element.
+- **Breaking change**: Skylights attached to roofs of attics (e.g., with shafts or sun tunnels) must include the `Skylight/AttachedToFloor` element.
 - **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
 - HERS software tests:
   - HERS Hot Water test HPXMLs have been updated to be direct EnergyPlus simulations (like the HERS HVAC & DSE tests already were); they are no longer run through ERI simulations.

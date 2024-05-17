@@ -628,11 +628,12 @@ Each skylight is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Skylig
   ``UFactor``                                   double    Btu/F-ft2-hr  > 0           Yes                  Full-assembly NFRC U-factor
   ``SHGC``                                      double                  > 0, < 1      Yes                  Full-assembly NFRC solar heat gain coefficient
   ``AttachedToRoof``                            idref                   See [#]_      Yes                  ID of attached roof
-  ``AttachedToFloor``                           idref                   See [#]_      No                   ID of attached attic floor for a skylight with a shaft or sun tunnel
+  ``AttachedToFloor``                           idref                   See [#]_      See [#]_             ID of attached attic floor for a skylight with a shaft or sun tunnel
   ============================================  ========  ============  ============  ========  =========  ==============================================
 
   .. [#] AttachedToRoof must reference a ``Roof``.
   .. [#] AttachedToFloor must reference a ``Floor``.
+  .. [#] AttachedToFloor required if the skylight is attached to a roof of an attic (e.g., with shaft or sun tunnel).
 
 HPXML Doors
 ***********
