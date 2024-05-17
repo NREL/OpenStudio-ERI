@@ -412,6 +412,7 @@
             <UFactor>0.48</UFactor>
             <SHGC>0.33</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight2'/>
@@ -420,6 +421,7 @@
             <UFactor>0.48</UFactor>
             <SHGC>0.33</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight3'/>
@@ -428,6 +430,7 @@
             <UFactor>0.48</UFactor>
             <SHGC>0.33</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight4'/>
@@ -436,6 +439,7 @@
             <UFactor>0.48</UFactor>
             <SHGC>0.33</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight5'/>
@@ -444,6 +448,7 @@
             <UFactor>0.46</UFactor>
             <SHGC>0.2</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight6'/>
@@ -452,6 +457,7 @@
             <UFactor>0.46</UFactor>
             <SHGC>0.2</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight7'/>
@@ -460,6 +466,7 @@
             <UFactor>0.46</UFactor>
             <SHGC>0.2</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight8'/>
@@ -468,6 +475,7 @@
             <UFactor>0.46</UFactor>
             <SHGC>0.2</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
           <Skylight>
             <SystemIdentifier id='Skylight9'/>
@@ -476,6 +484,7 @@
             <UFactor>0.46</UFactor>
             <SHGC>0.2</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
         </Skylights>
         <Doors>
