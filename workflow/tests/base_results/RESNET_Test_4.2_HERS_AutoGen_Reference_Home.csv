@@ -20,8 +20,7 @@ South window area (ft2),69.26,69.26,69.26,102.64
 East window area (ft2),69.26,69.26,69.26,102.64
 West window area (ft2),69.26,69.26,69.26,102.64
 Window U-Factor,0.4,0.65,1.2,0.35
-Window SHGCo (heating),0.33,0.33,0.33,0.33
-Window SHGCo (cooling),0.33,0.33,0.33,0.33
+Window SHGCo,0.33,0.33,0.33,0.33
 SLAo (ft2/ft2),0.00036,0.00036,0.00036,0.00036
 Sensible Internal gains (Btu/day),55142,52470,47839,82721
 Latent Internal gains (Btu/day),13635,12565,9150,17734
@@ -34,4 +33,4 @@ Cooling thermostat settings,78,78,78,78
 Mechanical ventilation (kWh/y),0.0,223.88,288.07,763.41
 DHW pipe length refPipeL,88.5,88.5,88.5,98.5
 DHW loop length refLoopL,156.9,156.9,156.9,176.9
-e-Ratio,0.9999958,1.0000059,1.0000194,0.999985
+e-Ratio,0.9999747,1.0000059,1.0000194,0.9999931

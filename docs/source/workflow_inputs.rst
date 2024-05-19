@@ -228,10 +228,12 @@ Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/A
   Element                               Type    Units  Constraints  Required   Default   Notes
   ====================================  ======  =====  ===========  =========  ========  ===============================================
   ``SystemIdentifier``                  id                          Yes                  Unique identifier
-  ``InfiltrationVolume``                double  ft3    > 0          Yes                  Volume associated with infiltration measurement
+  ``InfiltrationVolume``                double  ft3    > 0          Yes                  Volume associated with infiltration measurement [#]_
   ``InfiltrationHeight``                double  ft     > 0          No         See [#]_  Height associated with infiltration measurement [#]_
   ====================================  ======  =====  ===========  =========  ========  ===============================================
 
+  .. [#] InfiltrationVolume can be thought of as the volume of space most impacted by a blower door test.
+         Note that InfiltrationVolume can be larger than ConditionedBuildingVolume as it can include, e.g., attics or basements with access doors/hatches that are open during the blower door test.
   .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
   .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.
 
@@ -382,7 +384,9 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   .. [#] Pitch is entered as vertical rise in inches for every 12 inches of horizontal run.
          For example, 6.0 means a 6/12 roof, which has a 26.57-degree roof slope.
   .. [#] RadiantBarrierGrade only required if RadiantBarrier=true.
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
+
 
 HPXML Rim Joists
 ****************
@@ -411,7 +415,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
          Azimuth is irrelevant for *interior* rim joists.
   .. [#] SolarAbsorptance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
   .. [#] Emittance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Walls
 ***********
@@ -442,7 +447,8 @@ Each wall surface is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Wa
          Azimuth is irrelevant for *interior* walls (e.g., between conditioned space and garage).
   .. [#] SolarAbsorptance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
   .. [#] Emittance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Foundation Walls
 **********************
@@ -483,8 +489,8 @@ Any wall surface in contact with the ground is considered a foundation wall.
   .. [#] Layer[InstallationType="continuous - interior"] only required if AssemblyEffectiveRValue is not provided.
   .. [#] Layer[InstallationType="continuous - exterior"] only required if AssemblyEffectiveRValue is not provided.
   .. [#] AssemblyEffectiveRValue only required if Layer elements are not provided.
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior air film, and insulation installation grade.
-         R-value should **not** include exterior air film (for any above-grade exposure) or any soil thermal resistance.
+  .. [#] AssemblyEffectiveRValue includes all material layers and the interior air film; it should **not** include the exterior air film (for any above-grade exposure) or any soil thermal resistance.
+         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 If insulation layers are provided, additional information is entered in each ``FoundationWall/Insulation/Layer``.
 
@@ -511,7 +517,7 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
   ``InteriorAdjacentTo``                  string                  See [#]_     Yes                Interior adjacent space type
   ``FloorOrCeiling``                      string                  See [#]_     See [#]_           Floor or ceiling from the perspective of the conditioned space
   ``FloorType``                           element                 See [#]_     Yes                Floor type (for thermal mass)
-  ``Area``                                double    ft2           > 0          Yes                Gross area
+  ``Area``                                double    ft2           > 0          Yes                Gross area (including skylights for ceilings)
   ``Insulation/SystemIdentifier``         id                                   Yes                Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double    F-ft2-hr/Btu  > 0          Yes                Assembly R-value [#]_
   ======================================  ========  ============  ===========  ========  =======  ============================
@@ -523,7 +529,8 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
   .. [#] FloorOrCeiling choices are "floor" or "ceiling".
   .. [#] FloorOrCeiling only required for floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
   .. [#] FloorType child element choices are ``WoodFrame``, ``StructuralInsulatedPanel``, ``SteelFrame``, or ``SolidConcrete``.
-  .. [#] AssemblyEffectiveRValue includes all material layers, interior/exterior air films, and insulation installation grade.
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+         It should also include the effects of insulation gaps (installation grading), compressed insulation in cavities, and/or reduced attic floor insulation thickness at the eaves per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Slabs
 ***********
@@ -576,7 +583,7 @@ Each window or glass door area is entered as a ``/HPXML/Building/BuildingDetails
   Element                                       Type      Units         Constraints   Required  Default      Notes
   ============================================  ========  ============  ============  ========  ===========  ==============================================
   ``SystemIdentifier``                          id                                    Yes                    Unique identifier
-  ``Area``                                      double    ft2           > 0           Yes                    Total area
+  ``Area``                                      double    ft2           > 0           Yes                    Total area [#]_
   ``Azimuth``                                   integer   deg           >= 0, <= 359  Yes                    Azimuth (clockwise from North)
   ``UFactor``                                   double    Btu/F-ft2-hr  > 0           Yes                    Full-assembly NFRC U-factor
   ``SHGC``                                      double                  > 0, < 1      Yes                    Full-assembly NFRC solar heat gain coefficient
@@ -586,6 +593,8 @@ Each window or glass door area is entered as a ``/HPXML/Building/BuildingDetails
   ``AttachedToWall``                            idref                   See [#]_      Yes                    ID of attached wall
   ============================================  ========  ============  ============  ========  ===========  ==============================================
 
+  .. [#] For bay or garden windows, this should represent the *total* area, not just the primary flat exposure.
+         The ratio of total area to primary flat exposure is typically around 1.15 for bay windows and 2.0 for garden windows.
   .. [#] FractionOperable reflects whether the windows are operable (can be opened), not how they are used by the occupants.
          If a ``Window`` represents a single window, the value should be 0 or 1.
          If a ``Window`` represents multiple windows, the value is calculated as the total window area for any operable windows divided by the total window area.
@@ -619,9 +628,12 @@ Each skylight is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Skylig
   ``UFactor``                                   double    Btu/F-ft2-hr  > 0           Yes                  Full-assembly NFRC U-factor
   ``SHGC``                                      double                  > 0, < 1      Yes                  Full-assembly NFRC solar heat gain coefficient
   ``AttachedToRoof``                            idref                   See [#]_      Yes                  ID of attached roof
+  ``AttachedToFloor``                           idref                   See [#]_      See [#]_             ID of attached attic floor for a skylight with a shaft or sun tunnel
   ============================================  ========  ============  ============  ========  =========  ==============================================
 
   .. [#] AttachedToRoof must reference a ``Roof``.
+  .. [#] AttachedToFloor must reference a ``Floor``.
+  .. [#] AttachedToFloor required if the skylight is attached to a roof of an attic (e.g., with shaft or sun tunnel).
 
 HPXML Doors
 ***********
@@ -1555,20 +1567,20 @@ Additional information is entered in each ``DuctLeakageMeasurement``.
 
 Additional information is entered in each ``Ducts``.
 
-  ===============================================  =======  ============  ================  ========  ==========  ======================================
-  Element                                          Type     Units         Constraints       Required  Default     Notes
-  ===============================================  =======  ============  ================  ========  ==========  ======================================
-  ``SystemIdentifier``                             id                                       Yes                   Unique identifier
-  ``DuctType``                                     string                 See [#]_          Yes                   Supply or return ducts
-  ``DuctInsulationRValue``                         double   F-ft2-hr/Btu  >= 0              Yes                   R-value of duct insulation [#]_
-  ``DuctBuriedInsulationLevel``                    string                 See [#]_          No        not buried  Duct buried insulation level [#]_
-  ``DuctLocation``                                 string                 See [#]_          Yes                   Duct location
-  ``FractionDuctArea`` and/or ``DuctSurfaceArea``  double   frac or ft2   0-1 or >= 0 [#]_  Yes [#]_  See [#]_    Duct fraction/surface area in location
-  ===============================================  =======  ============  ================  ========  ==========  ======================================
+  ================================================  ================  ============  ======================  ========  ==========  ======================================
+  Element                                           Type              Units         Constraints             Required  Default     Notes
+  ================================================  ================  ============  ======================  ========  ==========  ======================================
+  ``SystemIdentifier``                              id                                                      Yes                   Unique identifier
+  ``DuctType``                                      string                          See [#]_                Yes                   Supply or return ducts
+  ``DuctInsulationRValue``                          double            F-ft2-hr/Btu  >= 0                    Yes                   R-value of duct insulation [#]_
+  ``DuctBuriedInsulationLevel``                     string                          See [#]_                No        not buried  Duct buried insulation level [#]_
+  ``DuctLocation``                                  string                          See [#]_                Yes                   Duct location
+  ``FractionDuctArea`` and/or ``DuctSurfaceArea``   double            frac or ft2   0-1 or >= 0 [#]_        Yes [#]_  See [#]_    Duct fraction/surface area in location
+  ================================================  ================  ============  ======================  ========  ==========  ======================================
 
   .. [#] DuctType choices are "supply" or "return".
-  .. [#] DuctInsulationRValue should not include the exterior air film (i.e., use 0 for an uninsulated duct).
-         For ducts buried in insulation (using DuctBuriedInsulationLevel), DuctInsulationRValue should only represent any surrounding insulation duct wrap and not the entire attic insulation R-value.
+  .. [#] DuctInsulationRValue represents the nominal insulation R-value and should not include interior/exterior air films (i.e., use 0 for an uninsulated duct).
+         For ducts buried in insulation (i.e., DuctBuriedInsulationLevel is any value but "not buried"), DuctInsulationRValue should only represent any surrounding insulation duct wrap and not the entire attic insulation R-value.
   .. [#] DuctBuriedInsulationLevel choices are "not buried", "partially buried", "fully buried", or "deeply buried".
   .. [#] Whether the ducts are buried in, e.g., attic loose-fill insulation.
          Partially buried ducts have insulation that does not cover the top of the ducts.
@@ -2664,22 +2676,22 @@ The various locations used in an HPXML file are defined as follows:
   Value                           Description                                     Temperature                                   Building Type
   ==============================  ==============================================  ============================================  =============
   outside                         Ambient environment                             Weather data                                  Any
-  ground                                                                          EnergyPlus calculation                        Any
-  conditioned space               Above-grade conditioned floor area              EnergyPlus calculation                        Any
-  attic - vented                                                                  EnergyPlus calculation                        Any
-  attic - unvented                                                                EnergyPlus calculation                        Any
-  basement - conditioned          Below-grade conditioned floor area              EnergyPlus calculation                        Any
-  basement - unconditioned                                                        EnergyPlus calculation                        Any
-  crawlspace - vented                                                             EnergyPlus calculation                        Any
-  crawlspace - unvented                                                           EnergyPlus calculation                        Any
-  garage                          Unconditioned garage (not shared parking) [#]_  EnergyPlus calculation                        Any
+  ground                                                                          EnergyPlus foundation model calculation       Any
+  conditioned space               Above-grade conditioned floor area              EnergyPlus thermal zone calculation           Any
+  attic - vented                                                                  EnergyPlus thermal zone calculation           Any
+  attic - unvented                                                                EnergyPlus thermal zone calculation           Any
+  basement - conditioned          Below-grade conditioned floor area              EnergyPlus thermal zone calculation           Any
+  basement - unconditioned                                                        EnergyPlus thermal zone calculation           Any
+  crawlspace - vented                                                             EnergyPlus thermal zone calculation           Any
+  crawlspace - unvented                                                           EnergyPlus thermal zone calculation           Any
+  garage                          Unconditioned garage (not shared parking) [#]_  EnergyPlus thermal zone calculation           Any
   other housing unit              Unrated Conditioned Space                       Same as conditioned space                     SFA/MF only
   other heated space              Unrated Heated Space                            Avg of conditioned space/outside; min of 68F  SFA/MF only
   other multifamily buffer space  Multifamily Buffer Boundary                     Avg of conditioned space/outside; min of 50F  SFA/MF only
   other non-freezing space        Non-Freezing Space                              Floats with outside; minimum of 40F           SFA/MF only
   other exterior                  Water heater outside                            Weather data                                  Any
   exterior wall                   Ducts in exterior wall                          Avg of conditioned space/outside              Any
-  under slab                      Ducts under slab (ground)                       EnergyPlus calculation                        Any
+  under slab                      Ducts under slab (ground)                       EnergyPlus foundation model calculation       Any
   roof deck                       Ducts on roof deck (outside)                    Weather data                                  Any
   ==============================  ==============================================  ============================================  =============
 

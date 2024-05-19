@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.8.0
 
 __New Features__
+- Updates to OpenStudio 3.8, EnergyPlus 24.1, HPXML 4.0-rc4.
 - Implements ANSI/RESNET/ICC Standard 301-2022 and Addendum C.
   - **Breaking change**: For shared water heaters, `NumberofUnitsServed` is replaced by `extension/NumberofBedroomsServed`.
   - **Breaking change**: For shared hot water recirculation systems, `NumberofUnitsServed` is replaced by `NumberofBedroomsServed`.
@@ -8,21 +9,30 @@ __New Features__
   - Allows modeling electric battery storage, including shared batteries ("2022C" or newer).
   - The `ElectricAuxiliaryEnergy` input for boilers is no longer used.
 - **Breaking change**: ERI_Results.csv and ERI_Worksheet.csv combined into a single ERI_Results.csv that better reflects the current ERI calculation components; additional fields (e.g., PEfrac) added and a few renamed/removed.
+- **Breaking change**: Skylights attached to roofs of attics (e.g., with shafts or sun tunnels) must include the `Skylight/AttachedToFloor` element.
 - **Breaking change**: Each `VentilationFan` must have one (and only one) `UsedFor...` element set to true.
+- HERS software tests:
+  - HERS Hot Water test HPXMLs have been updated to be direct EnergyPlus simulations (like the HERS HVAC & DSE tests already were); they are no longer run through ERI simulations.
+  - HERS HVAC DSE tests now use duct effective R-values instead of nominal insulation R-values to demonstrate that they pass RESNET acceptance criteria.
 - Allows `AverageCeilingHeight` to be optionally provided for infiltration calculations.
-- Ground source heat pump model enhancements.
 - Allows `Roof/RadiantBarrier` to be omitted; defaults to false.
-- Adds optional `Slab/extension/GapInsulationRValue` input for cases where a slab has horizontal (under slab) insulation.
-- Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
 - Allows `FractionDuctArea` as alternative to `DuctSurfaceArea`
+- Allows alternative `LabelEnergyUse` (W) input for ceiling fans.
+- Allows `Slab/extension/GapInsulationRValue` input for cases where a slab has horizontal (under slab) insulation.
+- Ground source heat pump model enhancements.
+- Improves heating/cooling component loads.
 - Now defaults to -20F for `CompressorLockoutTemperature` for variable-speed air-to-air heat pumps.
-- Clarifies that Capacity=-1 can be used to autosize HVAC equipment for research purposes or to run tests.
-  - It should *not* be used for a real home; a warning will be issued when it's used.
-- Allow alternative label energy use (W) input for ceiling fans.
+- Adds more error-checking for inappropriate inputs (e.g., HVAC SHR=0 or clothes washer IMEF=0).
+- Clarifies that HVAC `Capacity=-1` can be used to autosize HVAC equipment for research purposes or to run tests. It should *not* be used for a real home, and a warning will be issued when it's used.
 
 __Bugfixes__
 - Fixes incorrect Reference Home mechanical ventilation flowrate for attached units (when Aext is not 1).
 - Fixes possible 301ruleset.rb error due to floating point arithmetic.
+
+## OpenStudio-ERI v1.7.1
+
+__Bugfixes__
+- Fixes emissions lookup when zip code starts with a zero.
 
 ## OpenStudio-ERI v1.7.0
 

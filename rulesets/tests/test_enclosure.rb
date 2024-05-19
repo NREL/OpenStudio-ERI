@@ -21,6 +21,16 @@ class ERIEnclosureTest < Minitest::Test
     FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
   end
 
+  def test_ground_conductivity
+    # Test ground conductivity
+    hpxml_name = 'base.xml'
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      assert_equal(1.0, hpxml_bldg.site.ground_conductivity)
+    end
+  end
+
   def test_enclosure_infiltration
     # Test w/o mech vent
     hpxml_name = 'base.xml'
@@ -959,12 +969,12 @@ class ERIEnclosureTest < Minitest::Test
       end
     end
 
-    # Test large skylight area that would create an IAD Home error if not handled
+    # Test large skylight area that would create an IAD Home error if not scaled down
     # Create derivative file for testing
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
     hpxml_bldg.skylights.each do |skylight|
-      skylight.area = 700.0
+      skylight.area = 675.0
     end
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
@@ -972,8 +982,46 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 700, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 700, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45 },
+                                                          180 => { area: 675, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 594, ufactor: 0.33, shgc: 0.45 },
+                                                          180 => { area: 594, ufactor: 0.33, shgc: 0.45 } })
+      else
+        _check_skylights(hpxml_bldg)
+      end
+    end
+
+    hpxml_name = 'base-enclosure-skylights-cathedral.xml'
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
+                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
+                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+      else
+        _check_skylights(hpxml_bldg)
+      end
+    end
+
+    # Test large skylight area that would create an IAD Home error if not scaled down
+    # Create derivative file for testing
+    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
+    hpxml_bldg = hpxml.buildings[0]
+    hpxml_bldg.skylights.each do |skylight|
+      skylight.area = 675.0
+    end
+    hpxml_name = File.basename(@tmp_hpxml_path)
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants.CalcTypeERIRatedHome].include? calc_type
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45 },
+                                                          180 => { area: 675, ufactor: 0.33, shgc: 0.45 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 643.5, ufactor: 0.33, shgc: 0.45 },
                                                           180 => { area: 643.5, ufactor: 0.33, shgc: 0.45 } })
@@ -1186,7 +1234,11 @@ class ERIEnclosureTest < Minitest::Test
       sabs_x_area_values << roof.solar_absorptance * roof.area
       emit_x_area_values << roof.emittance * roof.area
       if rb_grade.nil?
-        assert_equal(false, roof.radiant_barrier)
+        if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include? roof.interior_adjacent_to
+          assert_equal(false, roof.radiant_barrier)
+        else
+          assert_nil(roof.radiant_barrier)
+        end
         assert_nil(roof.radiant_barrier_grade)
       else
         assert_equal(true, roof.radiant_barrier)

@@ -1316,22 +1316,22 @@ class ERIHVACtest < Minitest::Test
         if duct_leakage_measurements[idx][:duct_type].nil?
           assert_nil(duct_leakage_measurement.duct_type)
         else
-          assert_equal(duct_leakage_measurement.duct_type, duct_leakage_measurements[idx][:duct_type])
+          assert_equal(duct_leakage_measurements[idx][:duct_type], duct_leakage_measurement.duct_type)
         end
         if duct_leakage_measurements[idx][:duct_leakage_units].nil?
           assert_nil(duct_leakage_measurement.duct_leakage_units)
         else
-          assert_equal(duct_leakage_measurement.duct_leakage_units, duct_leakage_measurements[idx][:duct_leakage_units])
+          assert_equal(duct_leakage_measurements[idx][:duct_leakage_units], duct_leakage_measurement.duct_leakage_units)
         end
         if duct_leakage_measurements[idx][:duct_leakage_value].nil?
           assert_nil(duct_leakage_measurement.duct_leakage_value)
         else
-          assert_equal(duct_leakage_measurement.duct_leakage_value, duct_leakage_measurements[idx][:duct_leakage_value])
+          assert_equal(duct_leakage_measurements[idx][:duct_leakage_value], duct_leakage_measurement.duct_leakage_value)
         end
         if duct_leakage_measurements[idx][:duct_leakage_total_or_to_outside].nil?
           assert_nil(duct_leakage_measurement.duct_leakage_total_or_to_outside)
         else
-          assert_equal(duct_leakage_measurement.duct_leakage_total_or_to_outside, duct_leakage_measurements[idx][:duct_leakage_total_or_to_outside])
+          assert_equal(duct_leakage_measurements[idx][:duct_leakage_total_or_to_outside], duct_leakage_measurement.duct_leakage_total_or_to_outside)
         end
         idx += 1
       end
@@ -1346,27 +1346,27 @@ class ERIHVACtest < Minitest::Test
         if ducts[idx][:duct_type].nil?
           assert_nil(duct.duct_type)
         else
-          assert_equal(duct.duct_type, ducts[idx][:duct_type])
+          assert_equal(ducts[idx][:duct_type], duct.duct_type)
         end
         if ducts[idx][:duct_area].nil?
           assert_nil(duct.duct_surface_area)
         else
-          assert_in_epsilon(Float(duct.duct_surface_area), ducts[idx][:duct_area], 0.01)
+          assert_in_epsilon(ducts[idx][:duct_area], Float(duct.duct_surface_area), 0.01)
         end
         if ducts[idx][:duct_rvalue].nil?
           assert_nil(duct.duct_insulation_r_value)
         else
-          assert_equal(Float(duct.duct_insulation_r_value), ducts[idx][:duct_rvalue])
+          assert_equal(ducts[idx][:duct_rvalue], Float(duct.duct_insulation_r_value))
         end
         if ducts[idx][:duct_location].nil?
           assert_nil(duct.duct_location)
         else
-          assert_equal(duct.duct_location, ducts[idx][:duct_location])
+          assert_equal(ducts[idx][:duct_location], duct.duct_location)
         end
         if ducts[idx][:duct_buried].nil?
           assert_nil(duct.duct_buried_insulation_level)
         else
-          assert_equal(duct.duct_buried_insulation_level, ducts[idx][:duct_buried])
+          assert_equal(ducts[idx][:duct_buried], duct.duct_buried_insulation_level)
         end
         idx += 1
       end

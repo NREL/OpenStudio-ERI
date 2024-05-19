@@ -246,6 +246,10 @@ class ERI_301_Ruleset
     new_bldg.header.manualj_heating_setpoint = 70
     new_bldg.header.manualj_cooling_setpoint = 75
 
+    new_bldg.site.fuels = orig_bldg.site.fuels
+    new_bldg.site.site_type = HPXML::SiteTypeSuburban
+    new_bldg.site.shielding_of_home = HPXML::ShieldingNormal
+
     add_emissions_scenarios(new_hpxml, new_bldg)
 
     return new_hpxml
@@ -280,9 +284,6 @@ class ERI_301_Ruleset
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
 
-    new_bldg.site.fuels = orig_bldg.site.fuels
-    new_bldg.site.site_type = HPXML::SiteTypeSuburban
-
     new_bldg.building_construction.number_of_conditioned_floors = orig_bldg.building_construction.number_of_conditioned_floors
     new_bldg.building_construction.number_of_conditioned_floors_above_grade = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
@@ -301,9 +302,6 @@ class ERI_301_Ruleset
     @ncfl = orig_bldg.building_construction.number_of_conditioned_floors
     @ncfl_ag = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
 
-    new_bldg.site.fuels = orig_bldg.site.fuels
-    new_bldg.site.site_type = HPXML::SiteTypeSuburban
-
     new_bldg.building_construction.number_of_conditioned_floors = orig_bldg.building_construction.number_of_conditioned_floors
     new_bldg.building_construction.number_of_conditioned_floors_above_grade = orig_bldg.building_construction.number_of_conditioned_floors_above_grade
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
@@ -321,9 +319,6 @@ class ERI_301_Ruleset
     @nbeds = 3
     @ncfl = 2.0
     @ncfl_ag = 2.0
-
-    new_bldg.site.fuels = orig_bldg.site.fuels
-    new_bldg.site.site_type = HPXML::SiteTypeSuburban
 
     new_bldg.building_construction.number_of_conditioned_floors = @ncfl
     new_bldg.building_construction.number_of_conditioned_floors_above_grade = @ncfl_ag
@@ -474,7 +469,6 @@ class ERI_301_Ruleset
                          solar_absorptance: solar_abs,
                          emittance: emittance,
                          pitch: avg_pitch,
-                         radiant_barrier: false,
                          insulation_assembly_r_value: (1.0 / ceiling_ufactor).round(3))
     end
 
@@ -491,7 +485,6 @@ class ERI_301_Ruleset
                          solar_absorptance: solar_abs,
                          emittance: emittance,
                          pitch: orig_roof.pitch,
-                         radiant_barrier: false,
                          insulation_id: orig_roof.insulation_id,
                          insulation_assembly_r_value: insulation_assembly_r_value)
     end
@@ -1006,7 +999,7 @@ class ERI_301_Ruleset
                            interior_shading_factor_winter: shade_winter,
                            fraction_operable: fraction_operable,
                            performance_class: HPXML::WindowClassResidential,
-                           wall_idref: new_bldg.walls[0].id)
+                           attached_to_wall_idref: new_bldg.walls[0].id)
     end
   end
 
@@ -1026,7 +1019,7 @@ class ERI_301_Ruleset
                            interior_shading_factor_winter: shade_winter,
                            fraction_operable: orig_window.fraction_operable,
                            performance_class: orig_window.performance_class.nil? ? HPXML::WindowClassResidential : orig_window.performance_class,
-                           wall_idref: orig_window.wall_idref)
+                           attached_to_wall_idref: orig_window.attached_to_wall_idref)
     end
   end
 
@@ -1052,7 +1045,7 @@ class ERI_301_Ruleset
                            interior_shading_factor_winter: shade_winter,
                            fraction_operable: fraction_operable,
                            performance_class: HPXML::WindowClassResidential,
-                           wall_idref: new_bldg.walls[0].id)
+                           attached_to_wall_idref: new_bldg.walls[0].id)
     end
   end
 
@@ -1068,22 +1061,23 @@ class ERI_301_Ruleset
                              azimuth: orig_skylight.azimuth,
                              ufactor: orig_skylight.ufactor,
                              shgc: orig_skylight.shgc,
-                             roof_idref: orig_skylight.roof_idref)
+                             attached_to_roof_idref: orig_skylight.attached_to_roof_idref,
+                             attached_to_floor_idref: orig_skylight.attached_to_floor_idref)
     end
   end
 
   def self.set_enclosure_skylights_iad(orig_bldg, new_bldg)
     set_enclosure_skylights_rated(orig_bldg, new_bldg)
 
-    # Since the IAD roof area is scaled down but skylight area is maintained,
+    # Since the IAD roof/ceiling area is scaled down but skylight area is maintained,
     # it's possible that skylights no longer fit on the roof. To resolve this,
     # scale down skylight area to fit as needed.
-    new_bldg.roofs.each do |new_roof|
-      new_skylight_area = new_roof.skylights.map { |skylight| skylight.area }.sum(0)
-      next unless new_skylight_area > new_roof.area
+    (new_bldg.roofs + new_bldg.floors).each do |new_roof_or_ceiling|
+      new_skylight_area = new_roof_or_ceiling.skylights.map { |skylight| skylight.area }.sum(0)
+      next unless new_skylight_area > new_roof_or_ceiling.area
 
-      new_roof.skylights.each do |new_skylight|
-        new_skylight.area = new_skylight.area * new_roof.area / new_skylight_area * 0.99
+      new_roof_or_ceiling.skylights.each do |new_skylight|
+        new_skylight.area *= 0.99 * new_roof_or_ceiling.area / new_skylight_area
       end
     end
   end
@@ -1100,14 +1094,14 @@ class ERI_301_Ruleset
     end
     if exterior_area > 0.1
       new_bldg.doors.add(id: 'ExteriorDoorArea',
-                         wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
     end
     if interior_area > 0.1
       new_bldg.doors.add(id: 'InteriorDoorArea',
-                         wall_idref: new_bldg.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
                          area: interior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
@@ -1118,7 +1112,7 @@ class ERI_301_Ruleset
     # Table 4.2.2(1) - Doors
     orig_bldg.doors.each do |orig_door|
       new_bldg.doors.add(id: orig_door.id,
-                         wall_idref: orig_door.wall_idref,
+                         attached_to_wall_idref: orig_door.attached_to_wall_idref,
                          area: orig_door.area,
                          azimuth: orig_door.azimuth,
                          r_value: orig_door.r_value)
@@ -1140,7 +1134,7 @@ class ERI_301_Ruleset
     end
     if exterior_area + interior_area > 0.1
       new_bldg.doors.add(id: 'DoorArea',
-                         wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
                          area: exterior_area + interior_area,
                          azimuth: azimuth,
                          r_value: avg_r_value.round(3))
@@ -1721,7 +1715,14 @@ class ERI_301_Ruleset
 
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
 
-      location = orig_water_heater.location
+      # If 2022, reference WH is in default location, regardless of rated home location
+      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+        climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
+        location = Waterheater.get_default_location(orig_bldg, climate_zone_iecc)
+      else
+        location = orig_water_heater.location
+      end
+
       if in_conditioned_space
         # Hot water equipment shall be located in conditioned space.
         location = HPXML::LocationConditionedSpace
