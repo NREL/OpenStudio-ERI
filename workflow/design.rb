@@ -2,6 +2,7 @@
 
 # Separate ruby script to allow being called using system() on Windows.
 
+pust "START design.rb"
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
 class Design
@@ -74,6 +75,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
 end
 
 if ARGV.size == 9
+  puts ARGV.to_s
   calc_type = ARGV[0]
   init_calc_type = (ARGV[1].empty? ? nil : ARGV[1])
   iecc_version = (ARGV[2].empty? ? nil : ARGV[2])
@@ -86,3 +88,4 @@ if ARGV.size == 9
   design = Design.new(calc_type: calc_type, init_calc_type: init_calc_type, output_dir: output_dir, iecc_version: iecc_version, output_format: output_format)
   run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format)
 end
+puts "END design.rb"
