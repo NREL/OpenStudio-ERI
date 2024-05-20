@@ -173,7 +173,7 @@ jobs:
       - name: Test
         shell: pwsh
         run: |
-          Test-Path .\workflow\results\ERI_Results.csv -PathType Leaf
+          Test-Path .\workflow\results\Missing_file.csv -PathType Leaf
 
   # merge-results:
     # runs-on: ubuntu-latest
