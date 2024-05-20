@@ -167,7 +167,7 @@ def run_design_spawn(design, options)
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" "
+  command = "\"#{cli_path}\" --loglevel Trace "
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
   command += "\"#{design.calc_type}\" "
   command += "\"#{design.init_calc_type}\" "
