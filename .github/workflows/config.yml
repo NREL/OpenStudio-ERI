@@ -166,7 +166,7 @@ jobs:
       - name: Extract software
         shell: pwsh
         run: |
-          tar -xzf Windows.tar.gz
+          tar -vxzf Windows.tar.gz
       - name: Run test
         shell: pwsh
         run: |
