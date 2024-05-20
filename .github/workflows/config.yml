@@ -173,7 +173,7 @@ jobs:
       - name: Test
         shell: pwsh
         run: |
-          if (!(Test-Path .\workflow\results\Missing_file.csv -PathType Leaf)) {throw 1}
+          if (!(Test-Path .\workflow\results\ERI_Results.csv -PathType Leaf)) {throw 1}
 
   # merge-results:
     # runs-on: ubuntu-latest
