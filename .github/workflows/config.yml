@@ -7,11 +7,15 @@ on:
     types: [ synchronize, opened ]
   workflow_dispatch:
 
+env:
+  OPENSTUDIO_VER: "3.8.0"
+  OPENSTUDIO_SHA: "f953b6fcaf"
+
 jobs:
   # run-ruleset-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:3.8.0
+      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -62,7 +66,7 @@ jobs:
   # run-sample-files1-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:3.8.0
+      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -85,7 +89,7 @@ jobs:
   # run-sample-files2-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:3.8.0
+      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -108,7 +112,7 @@ jobs:
   # run-real-home-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:3.8.0
+      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -131,7 +135,7 @@ jobs:
   # run-other-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:3.8.0
+      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -160,9 +164,7 @@ jobs:
       - name: Download software
         shell: pwsh
         run: |
-          $env:OS_VERSION="3.8.0"
-          $env:OS_SHA="f953b6fcaf"
-          Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
+          Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${{ env.OPENSTUDIO_VER }}/OpenStudio-${{ env.OPENSTUDIO_VER }}+${{ env.OPENSTUDIO_SHA }}-Windows.tar.gz"
       - name: Extract software
         shell: pwsh
         run: |
@@ -170,7 +172,7 @@ jobs:
       - name: Run test
         shell: pwsh
         run: |
-          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
+          & .\OpenStudio-${{ env.OPENSTUDIO_VER }}+${{ env.OPENSTUDIO_SHA }}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
 
   # merge-results:
     # runs-on: ubuntu-latest
