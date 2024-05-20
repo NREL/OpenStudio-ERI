@@ -562,8 +562,6 @@ def get_rated_systems(bldg_systems, type)
 
       systems[rated_sys] = fraction_heat_load_served
     elsif type == 'Hot Water'
-      next if rated_sys.fraction_dhw_load_served <= 0
-
       systems[rated_sys] = rated_sys.fraction_dhw_load_served
     end
   end
