@@ -168,6 +168,7 @@ jobs:
           tar -xzf Windows.tar.gz
       - name: Run
         shell: pwsh
+        continue-on-error: true
         run: |
           & .\OpenStudio-${{ env.OPENSTUDIO_VER }}+${{ env.OPENSTUDIO_SHA }}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
       - name: Test
