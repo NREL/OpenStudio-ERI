@@ -1258,8 +1258,14 @@ def main(options)
   hpxml_doc = XMLHelper.parse_file(options[:hpxml])
   eri_version, co2_version, es_version, iecc_version, zerh_version = get_program_versions(hpxml_doc)
 
-  if options[:diagnostic_output] && eri_version.nil?
-    fail 'Diagnostic output generation requires an ERI calculation.'
+  if options[:diagnostic_output]
+    if eri_version.nil?
+      fail 'Diagnostic output generation requires an ERI calculation.'
+    elsif co2_version.nil?
+      fail 'Diagnostic output generation requires a CO2 Index calculation.'
+    elsif options[:output_format] != 'csv'
+      fail 'Diagnostic output generation requires CSV output format.'
+    end
   end
 
   # Create list of designs
@@ -1293,34 +1299,41 @@ def main(options)
       designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
     end
   end
-  if not es_version.nil?
-    # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-  end
-  if not iecc_version.nil?
-    # IECC ERI designs
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-  end
-  if not zerh_version.nil?
-    # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+  if options[:diagnostic_output]
+    # Only run required calculations (ERI & CO2 Index) if diagnostic output requested
+    es_version = nil
+    iecc_version = nil
+    zerh_version = nil
+  else
+    if not es_version.nil?
+      # ENERGY STAR designs
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    end
+    if not iecc_version.nil?
+      # IECC ERI designs
+      designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    end
+    if not zerh_version.nil?
+      # ENERGY STAR designs
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    end
   end
 
   if designs.size == 0
@@ -1516,7 +1529,7 @@ OptionParser.new do |opts|
   end
 
   options[:diagnostic_output] = false
-  opts.on('--diagnostic-output', 'Generate diagnostic output file') do |_t|
+  opts.on('--diagnostic-output', 'Generate diagnostic output file (requires ERI/CO2 Index calculations and CSV output format)') do |_t|
     options[:diagnostic_output] = true
   end
 
