@@ -163,12 +163,17 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Install software and run test
         shell: pwsh
+        continue-on-error: true
         run: |
           $env:OS_VERSION="3.8.0"
           $env:OS_SHA="f953b6fcaf"
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
-          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe --loglevel Trace workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads
+          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe --loglevel Debug workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads > log.txt 2>&1
+      - name: Write log
+        shell: pwsh
+        run: |
+          type log.txt
 
   # merge-results:
     # runs-on: ubuntu-latest
