@@ -2,7 +2,7 @@
 
 # Separate ruby script to allow being called using system() on Windows.
 
-pust "START design.rb"
+puts "START design.rb"
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
 class Design
