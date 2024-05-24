@@ -503,16 +503,16 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
     end
   elsif type == 'Hot Water'
     if not system.energy_factor.nil?
-      ef_uef = system.energy_factor
+      ef = system.energy_factor
     elsif not system.uniform_energy_factor.nil?
-      ef_uef = system.uniform_energy_factor
+      ef = Waterheater.calc_ef_from_uef(system)
     end
-    if ef_uef.nil?
+    if ef.nil?
       # Get assumed EF for combi system
 
       eta_c = system.related_hvac_system.heating_efficiency_afue
       if system.water_heater_type == HPXML::WaterHeaterTypeCombiTankless
-        ef_uef = eta_c
+        ef = eta_c
       elsif system.water_heater_type == HPXML::WaterHeaterTypeCombiStorage
         # Calculates the energy factor based on UA of the tank and conversion efficiency (eta_c)
         # Source: Burch and Erickson 2004 - http://www.nrel.gov/docs/gen/fy04/36035.pdf
@@ -530,13 +530,13 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
         t_env = 67.5 # F
         q_load = draw_mass * cp * (t - t_in) # Btu/day
 
-        ef_uef = q_load / ((ua * (t - t_env) * 24.0 + q_load) / eta_c)
+        ef = q_load / ((ua * (t - t_env) * 24.0 + q_load) / eta_c)
       end
     end
     if not system.performance_adjustment.nil?
-      ef_uef *= system.performance_adjustment
+      ef *= system.performance_adjustment
     end
-    return numerator['EF'] / ef_uef
+    return numerator['EF'] / ef
   elsif type == 'Mech Vent Preheating'
     return numerator['COP'] / system.preheating_efficiency_cop
   elsif type == 'Mech Vent Precooling'
