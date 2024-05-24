@@ -41,6 +41,9 @@ You can also skip simulations (i.e., just generate the ERI Reference/Rated Home 
 Or you can request all output files in JSON (instead of CSV) format:
 ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --output-format json``
 
+Finally, you can generate a HERS diagnostic output file using, e.g.:
+``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --diagnostic-output``
+
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 
 Output

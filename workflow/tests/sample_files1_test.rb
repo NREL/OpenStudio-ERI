@@ -32,7 +32,7 @@ class SampleFilesTest1 < Minitest::Test
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       break if xml.include? 'base-hvac-air-to-air-heat-pump-1-speed.xml' # Run first half of the sample files
 
-      rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
+      rundir, _hpxmls, csvs = _run_workflow(xml, test_name, diagnostic_output: true)
       all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results],
                                                           csvs[:co2e_results],
                                                           csvs[:es_results],
