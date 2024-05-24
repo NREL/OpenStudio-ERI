@@ -1001,7 +1001,33 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   end
 end
 
-def _add_diagnostic_system_outputs(json_system_output, data_hashes, rated_bldg_systems, bldg_systems, type, design_type, json_units_map, json_fuel_map)
+def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, is_dfhp_primary = nil)
+  primary_hpxml_fuel = get_system_fuel(sys, type, is_dfhp_primary)
+  json_system_output << {
+    primary_fuel_type: json_fuel_map[primary_hpxml_fuel],
+    equipment_efficiency_coefficient: get_system_eec(sys, type, is_dfhp_primary).round(6)
+  }
+  json_system_output[-1][:energy_use] = []
+  @fuel_map.each do |hpxml_fuel, fuel_type|
+    next unless hpxml_fuel == HPXML::FuelTypeElectricity || (hpxml_fuel == primary_hpxml_fuel)
+
+    values = data_hashes.map { |h| (calculate_ec(h, sys.id, fuel_type, type, is_dfhp_primary) * json_units_map[hpxml_fuel]).round(2) }
+    next if values.sum == 0
+
+    json_system_output[-1][:energy_use] << {
+      fuel_type: json_fuel_map[hpxml_fuel],
+      energy: values
+    }
+  end
+  return unless [Constants.CalcTypeERIReferenceHome,
+                 Constants.CalcTypeERIIndexAdjustmentReferenceHome,
+                 Constants.CalcTypeCO2eReferenceHome].include? design_type
+
+  values = data_hashes.map { |h| calculate_reul(h, load_frac, type, is_dfhp_primary).round(2) }
+  json_system_output[-1][:load] = values
+end
+
+def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_systems, bldg_systems, type, design_type, json_units_map, json_fuel_map)
   rated_systems = get_rated_systems(rated_bldg_systems, type)
   rated_systems.each do |rated_sys, load_frac|
     if bldg_systems == rated_bldg_systems
@@ -1011,27 +1037,13 @@ def _add_diagnostic_system_outputs(json_system_output, data_hashes, rated_bldg_s
     end
     next if sys.nil?
 
-    hpxml_fuel = get_system_fuel(sys, type)
-    json_system_output << {
-      primary_fuel_type: json_fuel_map[hpxml_fuel],
-      equipment_efficiency_coefficient: get_system_eec(sys, type).round(6)
-    }
-    json_system_output[-1][:energy_use] = []
-    @fuel_map.each do |hpxml_fuel, fuel_type|
-      values = data_hashes.map { |h| (calculate_ec(h, sys.id, fuel_type, type) * json_units_map[hpxml_fuel]).round(2) }
-      next if values.sum == 0
-
-      json_system_output[-1][:energy_use] << {
-        fuel_type: json_fuel_map[hpxml_fuel],
-        energy: values
-      }
+    if sys.is_a?(HPXML::HeatPump) && sys.is_dual_fuel
+      # Dual fuel heat pump; calculate values using two different HVAC systems
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, true)
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, false)
+    else
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map)
     end
-    next unless [Constants.CalcTypeERIReferenceHome,
-                 Constants.CalcTypeERIIndexAdjustmentReferenceHome,
-                 Constants.CalcTypeCO2eReferenceHome].include? design_type
-
-    values = data_hashes.map { |h| calculate_reul(h, load_frac, type).round(2) }
-    json_system_output[-1][:load] = values
   end
 end
 
@@ -1189,27 +1201,31 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     json_output[json_element_name][:conditioned_space_temperature] = data_hashes.map { |h| h['Temperature: Conditioned Space'].round(2) }
 
     # Space Heating Energy
-    # FIXME: Need to handle dual-fuel systems
     type = 'Heating'
     json_output[json_element_name][:space_heating_system_output] = []
-    _add_diagnostic_system_outputs(json_output[json_element_name][:space_heating_system_output], data_hashes,
-                                   rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+    _add_diagnostic_systems_outputs(json_output[json_element_name][:space_heating_system_output], data_hashes,
+                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
 
     # Space Cooling Energy
     type = 'Cooling'
     json_output[json_element_name][:space_cooling_system_output] = []
-    _add_diagnostic_system_outputs(json_output[json_element_name][:space_cooling_system_output], data_hashes,
-                                   rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+    _add_diagnostic_systems_outputs(json_output[json_element_name][:space_cooling_system_output], data_hashes,
+                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
 
     # Water Heating Energy
     type = 'Hot Water'
     json_output[json_element_name][:water_heating_system_output] = []
-    _add_diagnostic_system_outputs(json_output[json_element_name][:water_heating_system_output], data_hashes,
-                                   rated_bldg.water_heating_systems, hpxml_bldg.water_heating_systems, type, design_type, json_units_map, json_fuel_map)
+    _add_diagnostic_systems_outputs(json_output[json_element_name][:water_heating_system_output], data_hashes,
+                                    rated_bldg.water_heating_systems, hpxml_bldg.water_heating_systems, type, design_type, json_units_map, json_fuel_map)
 
     # Lighting & appliances
+    primary_fuel_types = []
+    primary_fuel_types += hpxml_bldg.clothes_dryers.map { |cd| cd.fuel_type }
+    primary_fuel_types += hpxml_bldg.cooking_ranges.map { |cr| cr.fuel_type }
     json_output[json_element_name][:lighting_and_appliance_energy] = []
     @fuel_map.each do |hpxml_fuel, fuel_type|
+      next unless hpxml_fuel == HPXML::FuelTypeElectricity || primary_fuel_types.include?(hpxml_fuel)
+
       values = data_hashes.map { |h| (calculate_la(h, fuel_type) * json_units_map[hpxml_fuel]).round(3) }
       next if values.sum == 0
 
