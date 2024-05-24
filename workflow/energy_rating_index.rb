@@ -196,7 +196,10 @@ def retrieve_design_outputs(designs)
     calc_type = design.calc_type
 
     design_outputs[calc_type] = {}
-    design_outputs[calc_type]['HPXML'] = HPXML.new(hpxml_path: design.hpxml_output_path)
+
+    hpxml = HPXML.new(hpxml_path: design.hpxml_output_path)
+    HVAC.apply_shared_systems(hpxml.buildings[0])
+    design_outputs[calc_type]['HPXML'] = hpxml
 
     if design.annual_output_path.end_with? '.csv'
       CSV.foreach(design.annual_output_path) do |row|
@@ -227,7 +230,6 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
                    opp_reduction_limit: nil, renewable_energy_limit: nil)
 
   rated_bldg = rated_output['HPXML'].buildings[0]
-  HVAC.apply_shared_systems(rated_bldg)
   ref_bldg = ref_output['HPXML'].buildings[0]
 
   results = {}
@@ -1033,7 +1035,7 @@ def _add_diagnostic_system_outputs(json_system_output, data_hashes, rated_bldg_s
   end
 end
 
-def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, hpxml_path, resultsdir)
+def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, eri_outputs, co2_outputs, hpxml_path, resultsdir)
   in_hpxml = HPXML.new(hpxml_path: hpxml_path)
   in_bldg = in_hpxml.buildings[0]
 
@@ -1072,26 +1074,31 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   end
 
   # Get hourly data & HPXMLs
-  design_data = {}
-  design_data_hashes = {}
+  require 'msgpack'
+  design_data_hashes = {} # Array of hashes, where each hash represents an hour of the year
   design_hpxmls = {}
-  { Constants.CalcTypeERIRatedHome => eri_designs,
-    Constants.CalcTypeERIReferenceHome => eri_designs,
-    Constants.CalcTypeERIIndexAdjustmentDesign => eri_designs,
-    Constants.CalcTypeERIIndexAdjustmentReferenceHome => eri_designs,
-    Constants.CalcTypeCO2eRatedHome => co2_designs,
-    Constants.CalcTypeCO2eReferenceHome => co2_designs }.each do |design_type, designs|
-    next if designs.nil?
+  all_outputs = eri_outputs.merge(co2_outputs)
+  (eri_designs + co2_designs).uniq.each do |design|
+    design_type = design.calc_type
+    diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
+    diag_data.delete('Time')
+    File.delete(design.diag_output_path)
 
-    design = designs.find { |d| d.calc_type == design_type }
-    csv_path = File.join(design.output_dir, 'results', File.basename(design.annual_output_path.gsub('.csv', '_Diagnostic.csv')))
-    design_data[design_type] = CSV.read(csv_path, headers: true)
-    design_data[design_type].delete(0) # strip units
-    design_data_hashes[design_type] = design_data[design_type].map(&:to_h)
+    hourly_data = Array.new(8760) { Hash.new }
+    diag_data.keys.each do |group|
+      diag_data[group].keys.each do |var|
+        next if group == 'Temperature' && !var.start_with?('Conditioned Space')
+        next if group == 'Weather' && !var.start_with?(WT::DrybulbTemp)
 
-    hpxml = HPXML.new(hpxml_path: design.hpxml_output_path)
-    HVAC.apply_shared_systems(hpxml.buildings[0])
-    design_hpxmls[design_type] = hpxml
+        output_type = "#{group}: #{var}".split(' (')[0].strip # Remove units
+        diag_data[group][var].each_with_index do |val, i|
+          hourly_data[i][output_type] = Float(val)
+        end
+      end
+    end
+    design_data_hashes[design_type] = hourly_data
+
+    design_hpxmls[design_type] = all_outputs[design_type]['HPXML']
   end
 
   # Initial JSON output
@@ -1111,14 +1118,9 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     conditioned_floor_area: eri_results[:rated_cfa],
     number_of_bedrooms: eri_results[:rated_nbr],
     number_of_stories: eri_results[:rated_nst].to_i,
-    hers_index: eri_results[:eri].round(3)
+    hers_index: eri_results[:eri].round(3),
+    carbon_index: co2_results[:co2eindex].round(3)
   }
-
-  has_co2_results = (not co2_results.nil?) && (not co2_results[:co2eindex].nil?)
-
-  if has_co2_results
-    json_output[:carbon_index] = co2_results[:co2eindex].round(3)
-  end
 
   json_fuel_map = { HPXML::FuelTypeElectricity => 'ELECTRICITY',
                     HPXML::FuelTypeNaturalGas => 'NATURAL_GAS',
@@ -1141,9 +1143,6 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
                  Constants.CalcTypeCO2eReferenceHome => :co2_reference_home_output }
 
   design_map.each do |design_type, json_element_name|
-    data = design_data[design_type]
-    next if data.nil?
-
     data_hashes = design_data_hashes[design_type]
     hpxml_bldg = design_hpxmls[design_type].buildings[0]
 
@@ -1160,19 +1159,17 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     end
 
     if design_type == Constants.CalcTypeERIRatedHome
-      if has_co2_results
-        scenario = rated_hpxml.header.emissions_scenarios.find { |s| s.emissions_type == 'CO2e' }
-        if scenario.elec_units == HPXML::EmissionsScenario::UnitsKgPerMWh
-          unit_conv = UnitConversions.convert(1.0, 'kg', 'lbm') / UnitConversions.convert(1.0, 'MWh', 'kWh') # kg/MWh => lb/kWh
-        else
-          fail 'Unexpected units.'
-        end
-        csv_data = CSV.read(scenario.elec_schedule_filepath)[scenario.elec_schedule_number_of_header_rows..-1]
-        csv_data = csv_data.map { |r| (unit_conv * Float(r[scenario.elec_schedule_column_number - 1])).round(5) }
-        json_output[:electricity_co2_emissions_factors] = csv_data
+      scenario = rated_hpxml.header.emissions_scenarios.find { |s| s.emissions_type == 'CO2e' }
+      if scenario.elec_units == HPXML::EmissionsScenario::UnitsKgPerMWh
+        unit_conv = UnitConversions.convert(1.0, 'kg', 'lbm') / UnitConversions.convert(1.0, 'MWh', 'kWh') # kg/MWh => lb/kWh
+      else
+        fail 'Unexpected units.'
       end
+      csv_data = CSV.read(scenario.elec_schedule_filepath)[scenario.elec_schedule_number_of_header_rows..-1]
+      csv_data = csv_data.map { |r| (unit_conv * Float(r[scenario.elec_schedule_column_number - 1])).round(5) }
+      json_output[:electricity_co2_emissions_factors] = csv_data
 
-      json_output[:outdoor_drybulb_temperature] = data["Weather: #{WT::DrybulbTemp}"].map { |v| Float(v) }
+      json_output[:outdoor_drybulb_temperature] = data_hashes.map { |h| h["Weather: #{WT::DrybulbTemp}"].round(2) }
 
       fuel_conv = UnitConversions.convert(1.0, 'kBtu', 'kWh')
       values = data_hashes.map { |h| calculate_opp(h, nil, fuel_conv)[0].round(3) }
@@ -1182,8 +1179,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     json_output[json_element_name] = {}
 
     # Temperatures
-    values = data['Temperature: Conditioned Space'].map { |v| Float(v).round(3) }
-    json_output[json_element_name][:conditioned_space_temperature] = values
+    json_output[json_element_name][:conditioned_space_temperature] = data_hashes.map { |h| h['Temperature: Conditioned Space'].round(2) }
 
     # Space Heating Energy
     # FIXME: Need to handle dual-fuel systems
@@ -1263,8 +1259,6 @@ def main(options)
       fail 'Diagnostic output generation requires an ERI calculation.'
     elsif co2_version.nil?
       fail 'Diagnostic output generation requires a CO2 Index calculation.'
-    elsif options[:output_format] != 'csv'
-      fail 'Diagnostic output generation requires CSV output format.'
     end
   end
 
@@ -1464,10 +1458,10 @@ def main(options)
       end
     end
 
-    if options[:diagnostic_output] && (not eri_designs.nil?) && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
+    if options[:diagnostic_output] && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
       # Write HERS diagnostic output?
       puts 'Generating HERS diagnostic output...'
-      write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, options[:hpxml], resultsdir)
+      write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, eri_outputs, co2_outputs, options[:hpxml], resultsdir)
     end
 
   end
@@ -1522,7 +1516,7 @@ OptionParser.new do |opts|
   end
 
   options[:diagnostic_output] = false
-  opts.on('--diagnostic-output', 'Generate diagnostic output file (requires ERI/CO2 Index calculations and CSV output format)') do |_t|
+  opts.on('--diagnostic-output', 'Generate diagnostic output file (requires ERI/CO2 Index calculations)') do |_t|
     options[:diagnostic_output] = true
   end
 

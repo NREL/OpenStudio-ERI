@@ -19,6 +19,7 @@ class Design
       @output_dir = output_dir
       @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
       @annual_output_path = File.join(output_dir, 'results', "#{name}.#{output_format}")
+      @diag_output_path = File.join(output_dir, 'results', "#{name}_Diagnostic.msgpack")
       @design_dir = File.join(output_dir, name)
       if not init_calc_type.nil?
         @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
@@ -28,7 +29,7 @@ class Design
     @output_format = output_format
   end
   attr_accessor(:calc_type, :init_calc_type, :init_hpxml_output_path, :hpxml_output_path, :annual_output_path,
-                :output_dir, :design_dir, :iecc_version, :output_format)
+                :diag_output_path, :output_dir, :design_dir, :iecc_version, :output_format)
 end
 
 def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format, diagnostic_output)
@@ -73,14 +74,16 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
     # Add OS-HPXML reporting measure to workflow
     measure_subdir = 'hpxml-measures/ReportSimulationOutput'
     args = {}
+    args['output_format'] = 'msgpack'
     args['timeseries_frequency'] = 'hourly'
+    args['include_annual_total_consumptions'] = false
     args['include_timeseries_end_use_consumptions'] = true
     args['include_timeseries_system_use_consumptions'] = true
     args['include_timeseries_total_loads'] = true
     args['include_timeseries_zone_temperatures'] = true
     args['include_timeseries_weather'] = true
-    args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path))
-    args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub('.csv', '_Diagnostic.csv')))
+    args['timeseries_num_decimal_places'] = 3
+    args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.diag_output_path))
     update_args_hash(measures, measure_subdir, args)
   end
 
