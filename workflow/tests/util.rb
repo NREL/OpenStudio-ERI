@@ -29,7 +29,6 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
                   rated_home_only: false, output_format: 'csv', diagnostic_output: false)
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
-  hpxml_bldg = hpxml.buildings[0]
 
   eri_version = hpxml.header.eri_calculation_version
   eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
@@ -173,21 +172,18 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
     assert(File.exist?(diag_output_path))
 
-    # FIXME: Temporarily skip validation on files w/ dehumidifiers
-    if hpxml_bldg.dehumidifiers.empty?
-      # Validate JSON
-      valid = true
-      schema_dir = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', 'hers_diagnostic_output')
-      begin
-        json_schema_path = File.join(schema_dir, 'HERSDiagnosticOutput.schema.json')
-        JSON::Validator.validate!(json_schema_path, JSON.parse(File.read(diag_output_path)))
-      rescue JSON::Schema::ValidationError => e
-        valid = false
-        puts "HERS diagnostic output file did not validate: #{diag_output_path}."
-        puts e.message
-      end
-      assert(valid)
+    # Validate JSON
+    valid = true
+    schema_dir = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', 'hers_diagnostic_output')
+    begin
+      json_schema_path = File.join(schema_dir, 'HERSDiagnosticOutput.schema.json')
+      JSON::Validator.validate!(json_schema_path, JSON.parse(File.read(diag_output_path)))
+    rescue JSON::Schema::ValidationError => e
+      valid = false
+      puts "HERS diagnostic output file did not validate: #{diag_output_path}."
+      puts e.message
     end
+    assert(valid)
   end
 
   # Check run.log for OS warnings
