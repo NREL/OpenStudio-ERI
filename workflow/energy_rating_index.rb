@@ -1118,9 +1118,14 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     conditioned_floor_area: eri_results[:rated_cfa],
     number_of_bedrooms: eri_results[:rated_nbr],
     number_of_stories: eri_results[:rated_nst].to_i,
-    hers_index: eri_results[:eri].round(3),
-    carbon_index: co2_results[:co2eindex].round(3)
+    hers_index: eri_results[:eri].round(3)
   }
+
+  has_co2_results = !co2_results[:co2eindex].nil?
+
+  if has_co2_results
+    json_output[:carbon_index] = co2_results[:co2eindex].round(3)
+  end
 
   json_fuel_map = { HPXML::FuelTypeElectricity => 'ELECTRICITY',
                     HPXML::FuelTypeNaturalGas => 'NATURAL_GAS',
@@ -1159,15 +1164,17 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     end
 
     if design_type == Constants.CalcTypeERIRatedHome
-      scenario = rated_hpxml.header.emissions_scenarios.find { |s| s.emissions_type == 'CO2e' }
-      if scenario.elec_units == HPXML::EmissionsScenario::UnitsKgPerMWh
-        unit_conv = UnitConversions.convert(1.0, 'kg', 'lbm') / UnitConversions.convert(1.0, 'MWh', 'kWh') # kg/MWh => lb/kWh
-      else
-        fail 'Unexpected units.'
+      if has_co2_results
+        scenario = rated_hpxml.header.emissions_scenarios.find { |s| s.emissions_type == 'CO2e' }
+        if scenario.elec_units == HPXML::EmissionsScenario::UnitsKgPerMWh
+          unit_conv = UnitConversions.convert(1.0, 'kg', 'lbm') / UnitConversions.convert(1.0, 'MWh', 'kWh') # kg/MWh => lb/kWh
+        else
+          fail 'Unexpected units.'
+        end
+        csv_data = CSV.read(scenario.elec_schedule_filepath)[scenario.elec_schedule_number_of_header_rows..-1]
+        csv_data = csv_data.map { |r| (unit_conv * Float(r[scenario.elec_schedule_column_number - 1])).round(5) }
+        json_output[:electricity_co2_emissions_factors] = csv_data
       end
-      csv_data = CSV.read(scenario.elec_schedule_filepath)[scenario.elec_schedule_number_of_header_rows..-1]
-      csv_data = csv_data.map { |r| (unit_conv * Float(r[scenario.elec_schedule_column_number - 1])).round(5) }
-      json_output[:electricity_co2_emissions_factors] = csv_data
 
       json_output[:outdoor_drybulb_temperature] = data_hashes.map { |h| h["Weather: #{WT::DrybulbTemp}"].round(2) }
 
