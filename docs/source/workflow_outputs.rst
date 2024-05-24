@@ -13,6 +13,7 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_timeseries_outputs_csv`
 - :ref:`home_configurations_hpxml`
 - :ref:`home_energyplus_files`
+- :ref:`hers_diagnostic_output`
 
 All CSV output files can be alternatively requested in JSON format; see :ref:`running`.
 
@@ -660,3 +661,11 @@ In addition, raw EnergyPlus simulation input/output files are available for each
   It is highly discouraged for software tools to read the raw EnergyPlus output files. 
   The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. 
   If there are additional outputs of interest that are not available in the annual/timeseries output files, please send us a request.
+
+.. _hers_diagnostic_output:
+
+HERS Diagnostic Output
+----------------------
+
+A HERS diagnostic output file (``HERS_Diagnostic.json``) can be produced if the ``--output-diagnostic`` commandline argument is used; see the :ref:`running` section.
+The output file includes hourly data and is formatted per the `HERS Diagnostic Output Schema <https://github.com/resnet-us/hers-diagnostic-schema>`_.
