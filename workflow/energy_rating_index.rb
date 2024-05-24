@@ -700,8 +700,8 @@ def calculate_reul(output, load_frac, type, is_dfhp_primary = nil)
     load = get_load(output, load_delivered)
   elsif is_dfhp_primary
     # Get HP portion of DFHP
-    load = (get_load(output, load_delivered) -
-            get_load(output, load_hp_backup))
+    load = [get_load(output, load_delivered) -
+            get_load(output, load_hp_backup), 0].max
   else
     # Get backup port of DFHP
     load = get_load(output, load_hp_backup)
@@ -1037,7 +1037,7 @@ def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_
     end
     next if sys.nil?
 
-    if sys.is_a?(HPXML::HeatPump) && sys.is_dual_fuel
+    if type=='Heating' && sys.is_a?(HPXML::HeatPump) && sys.is_dual_fuel
       # Dual fuel heat pump; calculate values using two different HVAC systems
       _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, true)
       _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, false)
