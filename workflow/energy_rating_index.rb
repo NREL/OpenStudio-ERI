@@ -120,7 +120,7 @@ def run_simulations(designs, options, duplicates)
 
     pids = {}
     Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
-      designdir, pids[design] = run_design_spawn(design, options, Parallel.worker_number)
+      designdir, pids[design] = run_design_spawn(design, options)
       Process.wait pids[design]
 
       if not File.exist? File.join(designdir, 'eplusout.end')
@@ -160,7 +160,7 @@ def run_design_direct(design, options)
   return design.design_dir
 end
 
-def run_design_spawn(design, options, worker_number)
+def run_design_spawn(design, options)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
