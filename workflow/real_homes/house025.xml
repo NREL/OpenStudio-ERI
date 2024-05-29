@@ -764,6 +764,7 @@
             <UFactor>0.42</UFactor>
             <SHGC>0.5</SHGC>
             <AttachedToRoof idref='Roof1'/>
+            <AttachedToFloor idref='Floor1'/>
           </Skylight>
         </Skylights>
         <Doors>

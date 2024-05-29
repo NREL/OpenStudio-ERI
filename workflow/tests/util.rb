@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'oga'
+require 'json'
+require 'json-schema'
 require_relative '../design'
 require_relative '../../rulesets/main'
 require_relative '../../rulesets/resources/constants'
@@ -23,38 +25,41 @@ def _run_ruleset(design, xml, out_xml)
   assert(File.exist?(out_xml))
 end
 
-def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false,
-                  skip_simulation: false, rated_home_only: false, output_format: 'csv')
+def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false, skip_simulation: false,
+                  rated_home_only: false, output_format: 'csv', diagnostic_output: false)
   xml = File.absolute_path(xml)
-  hpxml_doc = XMLHelper.parse_file(xml)
-  eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ERICalculation/Version', :string)
-  co2_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/CO2IndexCalculation/Version', :string)
-  iecc_eri_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/IECCERICalculation/Version', :string)
-  es_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/EnergyStarCalculation/Version', :string)
-  zerh_version = XMLHelper.get_value(hpxml_doc, '/HPXML/SoftwareInfo/extension/ZERHCalculation/Version', :string)
+  hpxml = HPXML.new(hpxml_path: xml)
+
+  eri_version = hpxml.header.eri_calculation_version
+  eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+  co2_version = hpxml.header.co2index_calculation_version
+  iecc_eri_version = hpxml.header.iecc_eri_calculation_version
+  es_version = hpxml.header.energystar_calculation_version
+  zerh_version = hpxml.header.zerh_calculation_version
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
-  timeseries = ''
+  flags = ''
   if timeseries_frequency != 'none'
-    timeseries = " --#{timeseries_frequency} ALL"
+    flags += " --#{timeseries_frequency} ALL"
   end
-  comploads = ''
   if component_loads
-    comploads = ' --add-component-loads'
+    flags += ' --add-component-loads'
   end
-  skipsim = ''
   if skip_simulation
-    skipsim = ' --skip-simulation'
+    flags += ' --skip-simulation'
   end
-  ratedhome = ''
   if rated_home_only
-    ratedhome = ' --rated-home-only'
+    flags += ' --rated-home-only'
+  end
+  if diagnostic_output && (not eri_version.nil?)
+    # ERI required to generate diagnostic output
+    flags += ' --diagnostic-output'
   end
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{timeseries}#{comploads}#{skipsim}#{ratedhome} -o \"#{rundir}\" --output-format #{output_format} --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format} --debug"
   system(command)
 
   hpxmls = {}
@@ -69,7 +74,6 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
       hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
       outputs[:eri_results] = File.join(rundir, 'results', "ERI_Results.#{output_format}")
-      outputs[:eri_worksheet] = File.join(rundir, 'results', "ERI_Worksheet.#{output_format}")
       outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
       outputs[:ref_results] = File.join(rundir, 'results', "ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
@@ -97,9 +101,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:esrat_iadref] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.xml')
       outputs[:es_results] = File.join(rundir, 'results', "ES_Results.#{output_format}")
       outputs[:esrd_eri_results] = File.join(rundir, 'results', "ESReference_ERI_Results.#{output_format}")
-      outputs[:esrd_eri_worksheet] = File.join(rundir, 'results', "ESReference_ERI_Worksheet.#{output_format}")
       outputs[:esrat_eri_results] = File.join(rundir, 'results', "ESRated_ERI_Results.#{output_format}")
-      outputs[:esrat_eri_worksheet] = File.join(rundir, 'results', "ESRated_ERI_Worksheet.#{output_format}")
       outputs[:esrd_rated_results] = File.join(rundir, 'results', "ESReference_ERIRatedHome.#{output_format}")
       outputs[:esrd_ref_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome.#{output_format}")
       outputs[:esrd_iad_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentDesign.#{output_format}")
@@ -127,9 +129,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
       outputs[:zerh_results] = File.join(rundir, 'results', "ZERH_Results.#{output_format}")
       outputs[:zerhrd_eri_results] = File.join(rundir, 'results', "ZERHReference_ERI_Results.#{output_format}")
-      outputs[:zerhrd_eri_worksheet] = File.join(rundir, 'results', "ZERHReference_ERI_Worksheet.#{output_format}")
       outputs[:zerhrat_eri_results] = File.join(rundir, 'results', "ZERHRated_ERI_Results.#{output_format}")
-      outputs[:zerhrat_eri_worksheet] = File.join(rundir, 'results', "ZERHRated_ERI_Worksheet.#{output_format}")
       outputs[:zerhrd_rated_results] = File.join(rundir, 'results', "ZERHReference_ERIRatedHome.#{output_format}")
       outputs[:zerhrd_ref_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome.#{output_format}")
       outputs[:zerhrd_iad_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentDesign.#{output_format}")
@@ -147,7 +147,6 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
       hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
       outputs[:iecc_eri_results] = File.join(rundir, 'results', "IECC_ERI_Results.#{output_format}")
-      outputs[:iecc_eri_worksheet] = File.join(rundir, 'results', "IECC_ERI_Worksheet.#{output_format}")
       outputs[:iecc_eri_rated_results] = File.join(rundir, 'results', "IECC_ERIRatedHome.#{output_format}")
       outputs[:iecc_eri_ref_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
@@ -167,6 +166,24 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       puts "Did not find #{output_path}" unless File.exist?(output_path)
       assert(File.exist?(output_path))
     end
+  end
+  if diagnostic_output && (not eri_version.nil?) && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
+    diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
+    puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
+    assert(File.exist?(diag_output_path))
+
+    # Validate JSON
+    valid = true
+    schema_dir = File.join(File.dirname(__FILE__), '..', '..', 'rulesets', 'resources', 'hers_diagnostic_output')
+    begin
+      json_schema_path = File.join(schema_dir, 'HERSDiagnosticOutput.schema.json')
+      JSON::Validator.validate!(json_schema_path, JSON.parse(File.read(diag_output_path)))
+    rescue JSON::Schema::ValidationError => e
+      valid = false
+      puts "HERS diagnostic output file did not validate: #{diag_output_path}."
+      puts e.message
+    end
+    assert(valid)
   end
 
   # Check run.log for OS warnings
@@ -213,14 +230,6 @@ def _run_simulation(xml, test_name)
   return csv_path
 end
 
-def _get_simulation_load_results(csv_path)
-  results = _get_csv_results([csv_path])
-  htg_load = results['Load: Heating: Delivered (MBtu)'].round(2)
-  clg_load = results['Load: Cooling: Delivered (MBtu)'].round(2)
-
-  return htg_load, clg_load
-end
-
 def _get_csv_results(csvs)
   results = {}
   csvs.each do |csv|
@@ -265,44 +274,7 @@ def _rm_path(path)
   end
 end
 
-def _test_resnet_hot_water(test_name, dir_name)
-  test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-  File.delete(test_results_csv) if File.exist? test_results_csv
-
-  # Run simulations
-  all_results = {}
-  xmldir = File.join(File.dirname(__FILE__), dir_name)
-  Dir["#{xmldir}/*.xml"].sort.each do |xml|
-    # TODO: We can remove the _run_ruleset call if we address https://github.com/NREL/OpenStudio-ERI/issues/541
-    out_xml = File.join(@test_files_dir, File.basename(xml))
-    _run_ruleset(Constants.CalcTypeERIRatedHome, xml, out_xml)
-
-    csv_path = _run_simulation(out_xml, test_name)
-
-    all_results[File.basename(xml)] = _get_hot_water(csv_path)
-    assert_operator(all_results[File.basename(xml)][0], :>, 0)
-
-    File.delete(out_xml)
-  end
-  assert(all_results.size > 0)
-
-  # Write results to csv
-  dhw_energy = {}
-  CSV.open(test_results_csv, 'w') do |csv|
-    csv << ['Test Case', 'DHW Energy (therms)', 'Recirc Pump (kWh)', 'GPD']
-    all_results.each do |xml, result|
-      rated_dhw, rated_recirc, rated_gpd = result
-      csv << [xml, (rated_dhw * 10.0).round(1), (rated_recirc * 293.08).round(1), rated_gpd]
-      test_name = File.basename(xml, File.extname(xml))
-      dhw_energy[test_name] = rated_dhw + rated_recirc
-    end
-  end
-  puts "Wrote results to #{test_results_csv}."
-
-  return dhw_energy
-end
-
-def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
+def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, version)
   test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
   File.delete(test_results_csv) if File.exist? test_results_csv
 
@@ -313,7 +285,7 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
     out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
     _run_ruleset(Constants.CalcTypeERIReferenceHome, xml, out_xml)
     test_num = File.basename(xml)[0, 2].to_i
-    all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num)
+    all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num, version)
 
     # Update HPXML to override mech vent fan power for eRatio test
     new_hpxml = HPXML.new(hpxml_path: out_xml)
@@ -327,15 +299,13 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
         vent_fan.fan_power = 0.70 * vent_fan.tested_flow_rate
       elsif (vent_fan.fan_type == HPXML::MechVentTypeERV) || (vent_fan.fan_type == HPXML::MechVentTypeHRV)
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
-      elsif vent_fan.fan_type == HPXML::MechVentTypeCFIS
-        vent_fan.fan_power = 0.50 * vent_fan.tested_flow_rate
       end
     end
     XMLHelper.write_file(new_hpxml.to_doc, out_xml)
 
     _rundir, _hpxmls, csvs = _run_workflow(out_xml, test_name)
-    worksheet_results = _get_csv_results([csvs[:eri_worksheet]])
-    all_results[File.basename(xml)]['e-Ratio'] = (worksheet_results['Total Loads TnML'] / worksheet_results['Total Loads TRL']).round(7)
+    eri_results = _get_csv_results([csvs[:eri_results]])
+    all_results[File.basename(xml)]['e-Ratio'] = (eri_results['Total Loads TnML'] / eri_results['Total Loads TRL']).round(7)
   end
   assert(all_results.size > 0)
 
@@ -359,17 +329,31 @@ def _test_resnet_hers_method(test_name, dir_name)
   test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
   File.delete(test_results_csv) if File.exist? test_results_csv
 
+  columns_of_interest = ['ERI',
+                         'REUL Heating (MBtu)',
+                         'REUL Cooling (MBtu)',
+                         'REUL Hot Water (MBtu)',
+                         'EC_r Heating (MBtu)',
+                         'EC_r Cooling (MBtu)',
+                         'EC_r Hot Water (MBtu)',
+                         'EC_x Heating (MBtu)',
+                         'EC_x Cooling (MBtu)',
+                         'EC_x Hot Water (MBtu)',
+                         'EC_x L&A (MBtu)',
+                         'IAD_Save (%)']
+
   # Run simulations
   all_results = {}
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
-    all_results[xml] = _get_csv_results([csvs[:eri_results]])
+    results = _get_csv_results([csvs[:eri_results]])
 
-    # Temporary until these are included in the RESNET spreadsheet
-    all_results[xml]['EC_x L&A (MBtu)'] += all_results[xml]['EC_x Vent (MBtu)'] + all_results[xml]['EC_x Dehumid (MBtu)']
-    all_results[xml].delete('EC_x Vent (MBtu)')
-    all_results[xml].delete('EC_x Dehumid (MBtu)')
+    # Include columns only in the RESNET accreditation spreadsheet
+    all_results[xml] = {}
+    columns_of_interest.each do |col|
+      all_results[xml][col] = results[col]
+    end
   end
   assert(all_results.size > 0)
 
@@ -390,150 +374,11 @@ def _test_resnet_hers_method(test_name, dir_name)
   return all_results
 end
 
-def _get_simulation_hvac_energy_results(csv_path, is_heat, is_electric_heat)
-  results = _get_csv_results([csv_path])
-  if not is_heat
-    hvac = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::Cooling} (MBtu)"], 'MBtu', 'kwh').round(2)
-    hvac_fan = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::CoolingFanPump} (MBtu)"], 'MBtu', 'kwh').round(2)
-  else
-    if is_electric_heat
-      hvac = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::Heating} (MBtu)"], 'MBtu', 'kwh').round(2)
-    else
-      hvac = UnitConversions.convert(results["End Use: #{FT::Gas}: #{EUT::Heating} (MBtu)"], 'MBtu', 'therm').round(2)
-    end
-    hvac_fan = UnitConversions.convert(results["End Use: #{FT::Elec}: #{EUT::HeatingFanPump} (MBtu)"], 'MBtu', 'kwh').round(2)
-  end
-
-  assert_operator(hvac, :>, 0)
-  assert_operator(hvac_fan, :>, 0)
-
-  return hvac.round(2), hvac_fan.round(2)
-end
-
-def _check_ashrae_140_results(htg_loads, clg_loads)
-  # Proposed acceptance criteria as of 8/17/2022
-  htg_min = [48.06, 74.30, 35.98, 39.74, 45.72, 39.12, 42.16, 48.30, 58.15, 121.75, 126.71, 23.91, 26.93, 55.09, 46.62]
-  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.39, 74.24, 137.68, 146.84, 81.95, 70.53, 92.73, 56.46]
-  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.89, -0.56, -1.95, 8.16, 71.16, 3.20, -26.32, -3.05, 5.87, 5.10]
-  htg_dt_max = [29.62, -9.45, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.75, 11.45, 32.54, 39.08]
-  clg_min = [42.49, 47.72, 41.14, 31.55, 21.03, 50.55, 36.62, 52.25, 34.16, 57.07, 50.19]
-  clg_max = [58.66, 61.33, 51.69, 41.84, 29.35, 73.47, 59.72, 68.60, 47.58, 73.51, 60.72]
-  clg_dt_min = [0.69, -8.24, -18.53, -30.58, 7.51, -16.52, 6.75, -12.95, 11.62, 5.12]
-  clg_dt_max = [6.91, -0.22, -9.74, -20.47, 15.77, -11.16, 12.76, -6.58, 17.59, 14.14]
-
-  # Annual Heating Loads
-  assert_operator(htg_loads['L100AC'], :<=, htg_max[0])
-  assert_operator(htg_loads['L100AC'], :>=, htg_min[0])
-  assert_operator(htg_loads['L110AC'], :<=, htg_max[1])
-  assert_operator(htg_loads['L110AC'], :>=, htg_min[1])
-  assert_operator(htg_loads['L120AC'], :<=, htg_max[2])
-  assert_operator(htg_loads['L120AC'], :>=, htg_min[2])
-  assert_operator(htg_loads['L130AC'], :<=, htg_max[3])
-  assert_operator(htg_loads['L130AC'], :>=, htg_min[3])
-  assert_operator(htg_loads['L140AC'], :<=, htg_max[4])
-  assert_operator(htg_loads['L140AC'], :>=, htg_min[4])
-  assert_operator(htg_loads['L150AC'], :<=, htg_max[5])
-  assert_operator(htg_loads['L150AC'], :>=, htg_min[5])
-  assert_operator(htg_loads['L155AC'], :<=, htg_max[6])
-  assert_operator(htg_loads['L155AC'], :>=, htg_min[6])
-  assert_operator(htg_loads['L160AC'], :<=, htg_max[7])
-  assert_operator(htg_loads['L160AC'], :>=, htg_min[7])
-  assert_operator(htg_loads['L170AC'], :<=, htg_max[8])
-  assert_operator(htg_loads['L170AC'], :>=, htg_min[8])
-  assert_operator(htg_loads['L200AC'], :<=, htg_max[9])
-  assert_operator(htg_loads['L200AC'], :>=, htg_min[9])
-  assert_operator(htg_loads['L202AC'], :<=, htg_max[10])
-  assert_operator(htg_loads['L202AC'], :>=, htg_min[10])
-  assert_operator(htg_loads['L302XC'], :<=, htg_max[11])
-  assert_operator(htg_loads['L302XC'], :>=, htg_min[11])
-  assert_operator(htg_loads['L304XC'], :<=, htg_max[12])
-  assert_operator(htg_loads['L304XC'], :>=, htg_min[12])
-  assert_operator(htg_loads['L322XC'], :<=, htg_max[13])
-  assert_operator(htg_loads['L322XC'], :>=, htg_min[13])
-  assert_operator(htg_loads['L324XC'], :<=, htg_max[14])
-  assert_operator(htg_loads['L324XC'], :>=, htg_min[14])
-
-  # Annual Heating Load Deltas
-  assert_operator(htg_loads['L110AC'] - htg_loads['L100AC'], :<=, htg_dt_max[0])
-  assert_operator(htg_loads['L110AC'] - htg_loads['L100AC'], :>=, htg_dt_min[0])
-  assert_operator(htg_loads['L120AC'] - htg_loads['L100AC'], :<=, htg_dt_max[1])
-  assert_operator(htg_loads['L120AC'] - htg_loads['L100AC'], :>=, htg_dt_min[1])
-  assert_operator(htg_loads['L130AC'] - htg_loads['L100AC'], :<=, htg_dt_max[2])
-  assert_operator(htg_loads['L130AC'] - htg_loads['L100AC'], :>=, htg_dt_min[2])
-  assert_operator(htg_loads['L140AC'] - htg_loads['L100AC'], :<=, htg_dt_max[3])
-  assert_operator(htg_loads['L140AC'] - htg_loads['L100AC'], :>=, htg_dt_min[3])
-  assert_operator(htg_loads['L150AC'] - htg_loads['L100AC'], :<=, htg_dt_max[4])
-  assert_operator(htg_loads['L150AC'] - htg_loads['L100AC'], :>=, htg_dt_min[4])
-  assert_operator(htg_loads['L155AC'] - htg_loads['L150AC'], :<=, htg_dt_max[5])
-  assert_operator(htg_loads['L155AC'] - htg_loads['L150AC'], :>=, htg_dt_min[5])
-  assert_operator(htg_loads['L160AC'] - htg_loads['L100AC'], :<=, htg_dt_max[6])
-  assert_operator(htg_loads['L160AC'] - htg_loads['L100AC'], :>=, htg_dt_min[6])
-  assert_operator(htg_loads['L170AC'] - htg_loads['L100AC'], :<=, htg_dt_max[7])
-  assert_operator(htg_loads['L170AC'] - htg_loads['L100AC'], :>=, htg_dt_min[7])
-  assert_operator(htg_loads['L200AC'] - htg_loads['L100AC'], :<=, htg_dt_max[8])
-  assert_operator(htg_loads['L200AC'] - htg_loads['L100AC'], :>=, htg_dt_min[8])
-  assert_operator(htg_loads['L202AC'] - htg_loads['L200AC'], :<=, htg_dt_max[9])
-  assert_operator(htg_loads['L202AC'] - htg_loads['L200AC'], :>=, htg_dt_min[9])
-  assert_operator(htg_loads['L302XC'] - htg_loads['L100AC'], :<=, htg_dt_max[10])
-  assert_operator(htg_loads['L302XC'] - htg_loads['L100AC'], :>=, htg_dt_min[10])
-  assert_operator(htg_loads['L302XC'] - htg_loads['L304XC'], :<=, htg_dt_max[11])
-  assert_operator(htg_loads['L302XC'] - htg_loads['L304XC'], :>=, htg_dt_min[11])
-  assert_operator(htg_loads['L322XC'] - htg_loads['L100AC'], :<=, htg_dt_max[12])
-  assert_operator(htg_loads['L322XC'] - htg_loads['L100AC'], :>=, htg_dt_min[12])
-  assert_operator(htg_loads['L322XC'] - htg_loads['L324XC'], :<=, htg_dt_max[13])
-  assert_operator(htg_loads['L322XC'] - htg_loads['L324XC'], :>=, htg_dt_min[13])
-
-  # Annual Cooling Loads
-  assert_operator(clg_loads['L100AL'], :<=, clg_max[0])
-  assert_operator(clg_loads['L100AL'], :>=, clg_min[0])
-  assert_operator(clg_loads['L110AL'], :<=, clg_max[1])
-  assert_operator(clg_loads['L110AL'], :>=, clg_min[1])
-  assert_operator(clg_loads['L120AL'], :<=, clg_max[2])
-  assert_operator(clg_loads['L120AL'], :>=, clg_min[2])
-  assert_operator(clg_loads['L130AL'], :<=, clg_max[3])
-  assert_operator(clg_loads['L130AL'], :>=, clg_min[3])
-  assert_operator(clg_loads['L140AL'], :<=, clg_max[4])
-  assert_operator(clg_loads['L140AL'], :>=, clg_min[4])
-  assert_operator(clg_loads['L150AL'], :<=, clg_max[5])
-  assert_operator(clg_loads['L150AL'], :>=, clg_min[5])
-  assert_operator(clg_loads['L155AL'], :<=, clg_max[6])
-  assert_operator(clg_loads['L155AL'], :>=, clg_min[6])
-  assert_operator(clg_loads['L160AL'], :<=, clg_max[7])
-  assert_operator(clg_loads['L160AL'], :>=, clg_min[7])
-  assert_operator(clg_loads['L170AL'], :<=, clg_max[8])
-  assert_operator(clg_loads['L170AL'], :>=, clg_min[8])
-  assert_operator(clg_loads['L200AL'], :<=, clg_max[9])
-  assert_operator(clg_loads['L200AL'], :>=, clg_min[9])
-  assert_operator(clg_loads['L202AL'], :<=, clg_max[10])
-  assert_operator(clg_loads['L202AL'], :>=, clg_min[10])
-
-  # Annual Cooling Load Deltas
-  assert_operator(clg_loads['L110AL'] - clg_loads['L100AL'], :<=, clg_dt_max[0])
-  assert_operator(clg_loads['L110AL'] - clg_loads['L100AL'], :>=, clg_dt_min[0])
-  assert_operator(clg_loads['L120AL'] - clg_loads['L100AL'], :<=, clg_dt_max[1])
-  assert_operator(clg_loads['L120AL'] - clg_loads['L100AL'], :>=, clg_dt_min[1])
-  assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :<=, clg_dt_max[2])
-  assert_operator(clg_loads['L130AL'] - clg_loads['L100AL'], :>=, clg_dt_min[2])
-  assert_operator(clg_loads['L140AL'] - clg_loads['L100AL'], :<=, clg_dt_max[3])
-  assert_operator(clg_loads['L140AL'] - clg_loads['L100AL'], :>=, clg_dt_min[3])
-  assert_operator(clg_loads['L150AL'] - clg_loads['L100AL'], :<=, clg_dt_max[4])
-  assert_operator(clg_loads['L150AL'] - clg_loads['L100AL'], :>=, clg_dt_min[4])
-  assert_operator(clg_loads['L155AL'] - clg_loads['L150AL'], :<=, clg_dt_max[5])
-  assert_operator(clg_loads['L155AL'] - clg_loads['L150AL'], :>=, clg_dt_min[5])
-  assert_operator(clg_loads['L160AL'] - clg_loads['L100AL'], :<=, clg_dt_max[6])
-  assert_operator(clg_loads['L160AL'] - clg_loads['L100AL'], :>=, clg_dt_min[6])
-  assert_operator(clg_loads['L170AL'] - clg_loads['L100AL'], :<=, clg_dt_max[7])
-  assert_operator(clg_loads['L170AL'] - clg_loads['L100AL'], :>=, clg_dt_min[7])
-  assert_operator(clg_loads['L200AL'] - clg_loads['L100AL'], :<=, clg_dt_max[8])
-  assert_operator(clg_loads['L200AL'] - clg_loads['L100AL'], :>=, clg_dt_min[8])
-  assert_operator(clg_loads['L200AL'] - clg_loads['L202AL'], :<=, clg_dt_max[9])
-  assert_operator(clg_loads['L200AL'] - clg_loads['L202AL'], :>=, clg_dt_min[9])
-end
-
-def _get_reference_home_components(hpxml, test_num)
+def _get_reference_home_components(hpxml, test_num, version)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Above-grade walls
   wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml_bldg)
@@ -608,8 +453,13 @@ def _get_reference_home_components(hpxml, test_num)
   results['East window area (ft2)'] = win_areas[90].round(2)
   results['West window area (ft2)'] = win_areas[270].round(2)
   results['Window U-Factor'] = win_u.round(2)
-  results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
-  results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
+  if version == '2022C'
+    results['Window SHGCo'] = win_shgc_htg.round(2)
+    assert_equal(win_shgc_htg, win_shgc_clg)
+  else
+    results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
+    results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
+  end
 
   # Infiltration
   sla, _ach50 = _get_infiltration(hpxml_bldg)
@@ -631,7 +481,7 @@ def _get_reference_home_components(hpxml, test_num)
   results['Air Distribution System Efficiency'] = dse.round(2)
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml_bldg)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp.round(0)
   results['Cooling thermostat settings'] = clg_sp.round(0)
@@ -652,6 +502,7 @@ def _get_iad_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
+  eri_version = hpxml.header.eri_calculation_version
 
   # Geometry
   results['Number of Stories'] = hpxml_bldg.building_construction.number_of_conditioned_floors
@@ -711,7 +562,7 @@ def _get_iad_home_components(hpxml, test_num)
   results['Labeled cooling system rating and efficiency'] = seer
 
   # Thermostat
-  tstat, htg_sp, clg_sp = _get_tstat(hpxml_bldg)
+  tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
   results['Thermostat Type'] = tstat
   results['Heating thermostat settings'] = htg_sp
   results['Cooling thermostat settings'] = clg_sp
@@ -817,41 +668,49 @@ def _check_reference_home_components(results, test_num, version)
   else
     assert_equal(0.35, results['Window U-Factor'])
   end
-  assert_equal(0.34, results['Window SHGCo (heating)'])
-  assert_equal(0.28, results['Window SHGCo (cooling)'])
+  if version == '2022C'
+    # Pub 002-2024
+    assert_equal(0.33, results['Window SHGCo'])
+  else
+    assert_equal(0.34, results['Window SHGCo (heating)'])
+    assert_equal(0.28, results['Window SHGCo (cooling)'])
+  end
 
   # Infiltration
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2019A'
-    # Pub 002-2020 (June 2020)
+  if version == '2022C'
+    # Pub 002-2024
     if test_num == 1
-      assert_in_epsilon(55115, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13666, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
       assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12568, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
       assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9152, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(82691, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17769, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   else
+    # Note: Values have been updated slightly relative to Pub 002 because we are
+    # using rounded F_sensible values from 301-2022 Addendum C instead of the
+    # previously prescribed internal gains.
     if test_num == 1
-      assert_in_epsilon(55470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13807, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(55520, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13776, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 2
-      assert_in_epsilon(52794, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12698, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(52809, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12701, results['Latent Internal gains (Btu/day)'], epsilon)
     elsif test_num == 3
-      assert_in_epsilon(48111, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9259, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(48124, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9263, results['Latent Internal gains (Btu/day)'], epsilon)
     else
-      assert_in_epsilon(83103, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17934, results['Latent Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(83160, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17899, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   end
 
@@ -871,27 +730,13 @@ def _check_reference_home_components(results, test_num, version)
 
   # Mechanical ventilation
   mv_kwh_yr = nil
-  if version == '2014'
-    if test_num == 1
-      mv_kwh_yr = 0.0
-    elsif test_num == 2
-      mv_kwh_yr = 77.9
-    elsif test_num == 3
-      mv_kwh_yr = 140.4
-    else
-      mv_kwh_yr = 379.1
-    end
-  else
-    # Pub 002-2020 (June 2020)
-    if test_num == 1
-      mv_kwh_yr = 0.0
-    elsif test_num == 2
-      mv_kwh_yr = 222.1
-    elsif test_num == 3
-      mv_kwh_yr = 287.8
-    else
-      mv_kwh_yr = 762.8
-    end
+  if version == '2022C'
+    # Pub 002-2024
+    mv_kwh_yr = { 1 => 0.0, 2 => 223.9, 3 => 288.1, 4 => 763.4 }[test_num]
+  elsif version == '2019'
+    mv_kwh_yr = { 1 => 0.0, 2 => 222.1, 3 => 288.1, 4 => 763.4 }[test_num]
+  elsif version == '2014'
+    mv_kwh_yr = { 1 => 0.0, 2 => 77.9, 3 => 140.4, 4 => 379.1 }[test_num]
   end
   assert_in_epsilon(mv_kwh_yr, results['Mechanical ventilation (kWh/y)'], epsilon)
 
@@ -953,19 +798,10 @@ def _check_iad_home_components(results, test_num)
   end
 
   # Mechanical Ventilation
-  if test_num == 1
-    assert_in_delta(66.4, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(407, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 2
-    assert_in_delta(64.2, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(394, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 3
-    assert_in_delta(53.3, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(327, results['Mechanical ventilation'], 1.0)
-  elsif test_num == 4
-    assert_in_delta(57.1, results['Mechanical ventilation rate'], 0.2)
-    assert_in_delta(350, results['Mechanical ventilation'], 1.0)
-  end
+  mv_cfm = { 1 => 66.4, 2 => 64.2, 3 => 53.3, 4 => 57.1 }[test_num]
+  mv_kwh = { 1 => 407, 2 => 394, 3 => 327, 4 => 350 }[test_num]
+  assert_in_delta(mv_cfm, results['Mechanical ventilation rate'], 0.2)
+  assert_in_delta(mv_kwh, results['Mechanical ventilation'], 1.0)
 
   # HVAC
   if (test_num == 1) || (test_num == 4)
@@ -1254,11 +1090,23 @@ def _get_hvac(hpxml_bldg)
   return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
 end
 
-def _get_tstat(hpxml_bldg)
+def _get_tstat(eri_version, hpxml_bldg)
   hvac_control = hpxml_bldg.hvac_controls[0]
   tstat = hvac_control.control_type.gsub(' thermostat', '')
-  htg_sp, _htg_setback_sp, _htg_setback_hrs_per_week, _htg_setback_start_hr = HVAC.get_default_heating_setpoint(hvac_control.control_type)
-  clg_sp, _clg_setup_sp, _clg_setup_hrs_per_week, _clg_setup_start_hr = HVAC.get_default_cooling_setpoint(hvac_control.control_type)
+  htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(hvac_control.control_type, eri_version)
+  clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
+
+  htg_weekday_setpoints = htg_weekday_setpoints.split(', ').map(&:to_f)
+  htg_weekend_setpoints = htg_weekend_setpoints.split(', ').map(&:to_f)
+  clg_weekday_setpoints = clg_weekday_setpoints.split(', ').map(&:to_f)
+  clg_weekend_setpoints = clg_weekend_setpoints.split(', ').map(&:to_f)
+
+  if htg_weekday_setpoints.uniq.size == 1 && htg_weekend_setpoints.uniq.size == 1 && htg_weekday_setpoints.uniq[0] == htg_weekend_setpoints.uniq[0]
+    htg_sp = htg_weekday_setpoints.uniq[0]
+  end
+  if clg_weekday_setpoints.uniq.size == 1 && clg_weekend_setpoints.uniq.size == 1 && clg_weekday_setpoints.uniq[0] == clg_weekend_setpoints.uniq[0]
+    clg_sp = clg_weekday_setpoints.uniq[0]
+  end
   return tstat, htg_sp, clg_sp
 end
 
@@ -1277,9 +1125,10 @@ end
 
 def _get_dhw(hpxml_bldg)
   has_uncond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementUnconditioned)
+  has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
-  ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, cfa, ncfl)
+  ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
   ref_loop_l = HotWaterAndAppliances.get_default_recirc_loop_length(ref_pipe_l)
   return ref_pipe_l, ref_loop_l
 end
@@ -1364,270 +1213,4 @@ def _check_method_results(results, test_num, has_tankless_water_heater, version)
   end
 
   assert_operator((results['ERI'] - eri).abs / results['ERI'], :<, 0.005)
-end
-
-def _check_hvac_test_results(energy)
-  # Proposed acceptance criteria as of 8/17/2022
-  min = [-24.58, -13.18, -42.75, 57.19]
-  max = [-18.18, -12.58, -15.84, 111.39]
-
-  # Cooling cases
-  assert_operator((energy['HVAC1b'] - energy['HVAC1a']) / energy['HVAC1a'] * 100, :>, min[0])
-  assert_operator((energy['HVAC1b'] - energy['HVAC1a']) / energy['HVAC1a'] * 100, :<, max[0])
-
-  # Gas heating cases
-  assert_operator((energy['HVAC2b'] - energy['HVAC2a']) / energy['HVAC2a'] * 100, :>, min[1])
-  assert_operator((energy['HVAC2b'] - energy['HVAC2a']) / energy['HVAC2a'] * 100, :<, max[1])
-
-  # Electric heating cases
-  assert_operator((energy['HVAC2d'] - energy['HVAC2c']) / energy['HVAC2c'] * 100, :>, min[2])
-  assert_operator((energy['HVAC2d'] - energy['HVAC2c']) / energy['HVAC2c'] * 100, :<, max[2])
-  assert_operator((energy['HVAC2e'] - energy['HVAC2c']) / energy['HVAC2c'] * 100, :>, min[3])
-  assert_operator((energy['HVAC2e'] - energy['HVAC2c']) / energy['HVAC2c'] * 100, :<, max[3])
-end
-
-def _check_dse_test_results(energy)
-  # Proposed acceptance criteria as of 8/17/2022
-  htg_min = [8.68, 2.87, 6.94]
-  htg_max = [26.12, 6.63, 20.04]
-  clg_min = [19.33, 5.35, 15.96]
-  clg_max = [28.08, 8.52, 28.29]
-
-  # Heating cases
-  assert_operator((energy['HVAC3b'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[0])
-  assert_operator((energy['HVAC3b'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, htg_max[0])
-  # Note: OS-ERI does not pass this test because of differences in duct insulation
-  #       R-values; see get_duct_insulation_rvalue() in airflow.rb.
-  # See https://github.com/resnet-us/software-consistency-inquiries/issues/21
-  # assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[1])
-  # assert_operator((energy['HVAC3c'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, htg_max[1])
-  assert_operator((energy['HVAC3d'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :>, htg_min[2])
-  assert_operator((energy['HVAC3d'] - energy['HVAC3a']) / energy['HVAC3a'] * 100, :<, htg_max[2])
-
-  # Cooling cases
-  assert_operator((energy['HVAC3f'] - energy['HVAC3e']) / energy['HVAC3e'] * 100, :>, clg_min[0])
-  assert_operator((energy['HVAC3f'] - energy['HVAC3e']) / energy['HVAC3e'] * 100, :<, clg_max[0])
-  assert_operator((energy['HVAC3g'] - energy['HVAC3e']) / energy['HVAC3e'] * 100, :>, clg_min[1])
-  assert_operator((energy['HVAC3g'] - energy['HVAC3e']) / energy['HVAC3e'] * 100, :<, clg_max[1])
-  assert_operator((energy['HVAC3h'] - energy['HVAC3e']) / energy['HVAC3e'] * 100, :>, clg_min[2])
-  assert_operator((energy['HVAC3h'] - energy['HVAC3e']) / energy['HVAC3e'] * 100, :<, clg_max[2])
-end
-
-def _get_hot_water(results_csv)
-  rated_dhw = nil
-  rated_recirc = nil
-  rated_gpd = 0
-  CSV.foreach(results_csv) do |row|
-    next if row.nil? || row[0].nil?
-
-    if ["End Use: #{FT::Gas}: #{EUT::HotWater} (MBtu)",
-        "End Use: #{FT::Elec}: #{EUT::HotWater} (MBtu)"].include? row[0]
-      rated_dhw = Float(row[1]).round(2)
-    elsif row[0] == "End Use: #{FT::Elec}: #{EUT::HotWaterRecircPump} (MBtu)"
-      rated_recirc = Float(row[1]).round(2)
-    elsif row[0].start_with?('Hot Water:') && row[0].include?('(gal)')
-      rated_gpd += (Float(row[1]) / 365.0).round
-    end
-  end
-  return rated_dhw, rated_recirc, rated_gpd
-end
-
-def _check_hot_water(energy)
-  # Proposed acceptance criteria as of 8/17/2022
-  mn_min = [19.34, 25.76, 17.20, 24.94, 55.93, 22.61, 20.51]
-  mn_max = [19.88, 26.55, 17.70, 25.71, 57.58, 23.28, 21.09]
-  fl_min = [10.74, 13.37, 8.83, 13.06, 30.84, 12.09, 11.84]
-  fl_max = [11.24, 13.87, 9.33, 13.56, 31.55, 12.59, 12.34]
-  mn_dt_min = [-6.77, 1.92, 0.58, -31.03, 2.95, 5.09]
-  mn_dt_max = [-6.27, 2.42, 1.08, -30.17, 3.45, 5.59]
-  fl_dt_min = [-2.88, 1.67, 0.07, -17.82, 1.04, 1.28]
-  fl_dt_max = [-2.38, 2.17, 0.57, -17.32, 1.54, 1.78]
-  mn_fl_dt_min = [8.37, 12.26, 8.13, 11.75, 25.05, 10.35, 8.46]
-  mn_fl_dt_max = [8.87, 12.77, 8.63, 12.25, 26.04, 10.85, 8.96]
-
-  # Duluth MN cases
-  assert_operator(energy['L100AD-HW-01'], :>, mn_min[0])
-  assert_operator(energy['L100AD-HW-01'], :<, mn_max[0])
-  assert_operator(energy['L100AD-HW-02'], :>, mn_min[1])
-  assert_operator(energy['L100AD-HW-02'], :<, mn_max[1])
-  assert_operator(energy['L100AD-HW-03'], :>, mn_min[2])
-  assert_operator(energy['L100AD-HW-03'], :<, mn_max[2])
-  assert_operator(energy['L100AD-HW-04'], :>, mn_min[3])
-  assert_operator(energy['L100AD-HW-04'], :<, mn_max[3])
-  assert_operator(energy['L100AD-HW-05'], :>, mn_min[4])
-  assert_operator(energy['L100AD-HW-05'], :<, mn_max[4])
-  assert_operator(energy['L100AD-HW-06'], :>, mn_min[5])
-  assert_operator(energy['L100AD-HW-06'], :<, mn_max[5])
-  assert_operator(energy['L100AD-HW-07'], :>, mn_min[6])
-  assert_operator(energy['L100AD-HW-07'], :<, mn_max[6])
-
-  # Miami FL cases
-  assert_operator(energy['L100AM-HW-01'], :>, fl_min[0])
-  assert_operator(energy['L100AM-HW-01'], :<, fl_max[0])
-  assert_operator(energy['L100AM-HW-02'], :>, fl_min[1])
-  assert_operator(energy['L100AM-HW-02'], :<, fl_max[1])
-  assert_operator(energy['L100AM-HW-03'], :>, fl_min[2])
-  assert_operator(energy['L100AM-HW-03'], :<, fl_max[2])
-  assert_operator(energy['L100AM-HW-04'], :>, fl_min[3])
-  assert_operator(energy['L100AM-HW-04'], :<, fl_max[3])
-  assert_operator(energy['L100AM-HW-05'], :>, fl_min[4])
-  assert_operator(energy['L100AM-HW-05'], :<, fl_max[4])
-  assert_operator(energy['L100AM-HW-06'], :>, fl_min[5])
-  assert_operator(energy['L100AM-HW-06'], :<, fl_max[5])
-  assert_operator(energy['L100AM-HW-07'], :>, fl_min[6])
-  assert_operator(energy['L100AM-HW-07'], :<, fl_max[6])
-
-  # MN Delta cases
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-02'], :>, mn_dt_min[0])
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-02'], :<, mn_dt_max[0])
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-03'], :>, mn_dt_min[1])
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AD-HW-03'], :<, mn_dt_max[1])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-04'], :>, mn_dt_min[2])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-04'], :<, mn_dt_max[2])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-05'], :>, mn_dt_min[3])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-05'], :<, mn_dt_max[3])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-06'], :>, mn_dt_min[4])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-06'], :<, mn_dt_max[4])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-07'], :>, mn_dt_min[5])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AD-HW-07'], :<, mn_dt_max[5])
-
-  # FL Delta cases
-  assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-02'], :>, fl_dt_min[0])
-  assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-02'], :<, fl_dt_max[0])
-  assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-03'], :>, fl_dt_min[1])
-  assert_operator(energy['L100AM-HW-01'] - energy['L100AM-HW-03'], :<, fl_dt_max[1])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-04'], :>, fl_dt_min[2])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-04'], :<, fl_dt_max[2])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-05'], :>, fl_dt_min[3])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-05'], :<, fl_dt_max[3])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-06'], :>, fl_dt_min[4])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-06'], :<, fl_dt_max[4])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-07'], :>, fl_dt_min[5])
-  assert_operator(energy['L100AM-HW-02'] - energy['L100AM-HW-07'], :<, fl_dt_max[5])
-
-  # MN-FL Delta cases
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :>, mn_fl_dt_min[0])
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :<, mn_fl_dt_max[0])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AM-HW-02'], :>, mn_fl_dt_min[1])
-  assert_operator(energy['L100AD-HW-02'] - energy['L100AM-HW-02'], :<, mn_fl_dt_max[1])
-  assert_operator(energy['L100AD-HW-03'] - energy['L100AM-HW-03'], :>, mn_fl_dt_min[2])
-  assert_operator(energy['L100AD-HW-03'] - energy['L100AM-HW-03'], :<, mn_fl_dt_max[2])
-  assert_operator(energy['L100AD-HW-04'] - energy['L100AM-HW-04'], :>, mn_fl_dt_min[3])
-  assert_operator(energy['L100AD-HW-04'] - energy['L100AM-HW-04'], :<, mn_fl_dt_max[3])
-  assert_operator(energy['L100AD-HW-05'] - energy['L100AM-HW-05'], :>, mn_fl_dt_min[4])
-  assert_operator(energy['L100AD-HW-05'] - energy['L100AM-HW-05'], :<, mn_fl_dt_max[4])
-  assert_operator(energy['L100AD-HW-06'] - energy['L100AM-HW-06'], :>, mn_fl_dt_min[5])
-  assert_operator(energy['L100AD-HW-06'] - energy['L100AM-HW-06'], :<, mn_fl_dt_max[5])
-  assert_operator(energy['L100AD-HW-07'] - energy['L100AM-HW-07'], :>, mn_fl_dt_min[6])
-  assert_operator(energy['L100AD-HW-07'] - energy['L100AM-HW-07'], :<, mn_fl_dt_max[6])
-end
-
-def _check_hot_water_301_2019_pre_addendum_a(energy)
-  # Acceptance Criteria for Hot Water Tests
-
-  # Duluth MN cases
-  assert_operator(energy['L100AD-HW-01'], :>, 19.11)
-  assert_operator(energy['L100AD-HW-01'], :<, 19.73)
-  assert_operator(energy['L100AD-HW-02'], :>, 25.54)
-  assert_operator(energy['L100AD-HW-02'], :<, 26.36)
-  assert_operator(energy['L100AD-HW-03'], :>, 17.03)
-  assert_operator(energy['L100AD-HW-03'], :<, 17.50)
-  assert_operator(energy['L100AD-HW-04'], :>, 24.75)
-  assert_operator(energy['L100AD-HW-04'], :<, 25.52)
-  assert_operator(energy['L100AD-HW-05'], :>, 55.43)
-  assert_operator(energy['L100AD-HW-05'], :<, 57.15)
-  assert_operator(energy['L100AD-HW-06'], :>, 22.39)
-  assert_operator(energy['L100AD-HW-06'], :<, 23.09)
-  assert_operator(energy['L100AD-HW-07'], :>, 20.29)
-  assert_operator(energy['L100AD-HW-07'], :<, 20.94)
-
-  # Miami FL cases
-  assert_operator(energy['L100AM-HW-01'], :>, 10.59)
-  assert_operator(energy['L100AM-HW-01'], :<, 11.03)
-  assert_operator(energy['L100AM-HW-02'], :>, 13.17)
-  assert_operator(energy['L100AM-HW-02'], :<, 13.68)
-  assert_operator(energy['L100AM-HW-03'], :>, 8.81)
-  assert_operator(energy['L100AM-HW-03'], :<, 9.13)
-  assert_operator(energy['L100AM-HW-04'], :>, 12.87)
-  assert_operator(energy['L100AM-HW-04'], :<, 13.36)
-  assert_operator(energy['L100AM-HW-05'], :>, 30.19)
-  assert_operator(energy['L100AM-HW-05'], :<, 31.31)
-  assert_operator(energy['L100AM-HW-06'], :>, 11.90)
-  assert_operator(energy['L100AM-HW-06'], :<, 12.38)
-  assert_operator(energy['L100AM-HW-07'], :>, 11.68)
-  assert_operator(energy['L100AM-HW-07'], :<, 12.14)
-
-  # MN Delta cases
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-02']) / energy['L100AD-HW-01'] * 100, :>, -34.01)
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-02']) / energy['L100AD-HW-01'] * 100, :<, -32.49)
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-03']) / energy['L100AD-HW-01'] * 100, :>, 10.74)
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-03']) / energy['L100AD-HW-01'] * 100, :<, 11.57)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-04']) / energy['L100AD-HW-02'] * 100, :>, 3.06)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-04']) / energy['L100AD-HW-02'] * 100, :<, 3.22)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-05']) / energy['L100AD-HW-02'] * 100, :>, -118.52)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-05']) / energy['L100AD-HW-02'] * 100, :<, -115.63)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-06']) / energy['L100AD-HW-02'] * 100, :>, 12.17)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-06']) / energy['L100AD-HW-02'] * 100, :<, 12.51)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-07']) / energy['L100AD-HW-02'] * 100, :>, 20.15)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-07']) / energy['L100AD-HW-02'] * 100, :<, 20.78)
-
-  # FL Delta cases
-  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :>, -24.54)
-  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.44)
-  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :>, 16.65)
-  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :<, 18.12)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-04']) / energy['L100AM-HW-02'] * 100, :>, 2.20)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-04']) / energy['L100AM-HW-02'] * 100, :<, 2.38)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-05']) / energy['L100AM-HW-02'] * 100, :>, -130.88)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-05']) / energy['L100AM-HW-02'] * 100, :<, -127.52)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-06']) / energy['L100AM-HW-02'] * 100, :>, 9.38)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-06']) / energy['L100AM-HW-02'] * 100, :<, 9.74)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-07']) / energy['L100AM-HW-02'] * 100, :>, 11.00)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-07']) / energy['L100AM-HW-02'] * 100, :<, 11.40)
-
-  # MN-FL Delta cases
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :>, 43.35)
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :<, 45.00)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AM-HW-02']) / energy['L100AD-HW-02'] * 100, :>, 47.26)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AM-HW-02']) / energy['L100AD-HW-02'] * 100, :<, 48.93)
-  assert_operator((energy['L100AD-HW-03'] - energy['L100AM-HW-03']) / energy['L100AD-HW-03'] * 100, :>, 47.38)
-  assert_operator((energy['L100AD-HW-03'] - energy['L100AM-HW-03']) / energy['L100AD-HW-03'] * 100, :<, 48.74)
-  assert_operator((energy['L100AD-HW-04'] - energy['L100AM-HW-04']) / energy['L100AD-HW-04'] * 100, :>, 46.81)
-  assert_operator((energy['L100AD-HW-04'] - energy['L100AM-HW-04']) / energy['L100AD-HW-04'] * 100, :<, 48.48)
-  assert_operator((energy['L100AD-HW-05'] - energy['L100AM-HW-05']) / energy['L100AD-HW-05'] * 100, :>, 44.41)
-  assert_operator((energy['L100AD-HW-05'] - energy['L100AM-HW-05']) / energy['L100AD-HW-05'] * 100, :<, 45.99)
-  assert_operator((energy['L100AD-HW-06'] - energy['L100AM-HW-06']) / energy['L100AD-HW-06'] * 100, :>, 45.60)
-  assert_operator((energy['L100AD-HW-06'] - energy['L100AM-HW-06']) / energy['L100AD-HW-06'] * 100, :<, 47.33)
-  assert_operator((energy['L100AD-HW-07'] - energy['L100AM-HW-07']) / energy['L100AD-HW-07'] * 100, :>, 41.32)
-  assert_operator((energy['L100AD-HW-07'] - energy['L100AM-HW-07']) / energy['L100AD-HW-07'] * 100, :<, 42.86)
-end
-
-def _check_hot_water_301_2014_pre_addendum_a(energy)
-  # Acceptance Criteria for Hot Water Tests
-
-  # Duluth MN cases
-  assert_operator(energy['L100AD-HW-01'], :>, 18.2)
-  assert_operator(energy['L100AD-HW-01'], :<, 22.0)
-
-  # Miami FL cases
-  assert_operator(energy['L100AM-HW-01'], :>, 10.9)
-  assert_operator(energy['L100AM-HW-01'], :<, 14.4)
-
-  # MN Delta cases
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :>, 26.5)
-  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :<, 32.2)
-  assert_operator((energy['L100AD-HW-03'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :>, -11.8)
-  assert_operator((energy['L100AD-HW-03'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :<, -6.8)
-
-  # FL Delta cases
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :>, 19.1)
-  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :<, 29.1)
-  assert_operator((energy['L100AM-HW-03'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :>, -19.5)
-  assert_operator((energy['L100AM-HW-03'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :<, -7.7)
-
-  # MN-FL Delta cases
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :>, 5.5)
-  assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :<, 9.4)
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :>, 28.9)
-  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :<, 45.1)
 end

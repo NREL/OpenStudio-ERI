@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class EnergyStarZeroEnergyReadyHomeRuleset
+class ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
-    # Use latest version of 301-2019
+    # Use latest version of ANSI 301
     @eri_version = Constants.ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
@@ -614,7 +614,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                              azimuth: azimuth,
                              ufactor: win_ufactor,
                              shgc: win_shgc,
-                             wall_idref: wall.id,
+                             attached_to_wall_idref: wall.id,
                              performance_class: HPXML::WindowClassResidential,
                              fraction_operable: fraction_operable)
       end
@@ -633,7 +633,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                              azimuth: win.azimuth,
                              ufactor: win_ufactor,
                              shgc: win_shgc,
-                             wall_idref: wall.id,
+                             attached_to_wall_idref: wall.id,
                              performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
                              fraction_operable: fraction_operable)
       end
@@ -656,7 +656,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     orig_bldg.doors.each do |orig_door|
       new_bldg.doors.add(id: orig_door.id,
-                         wall_idref: wall.id,
+                         attached_to_wall_idref: wall.id,
                          area: orig_door.area,
                          azimuth: orig_door.azimuth,
                          r_value: (1.0 / door_ufactor).round(3))
@@ -834,7 +834,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
       # New water heater
       new_bldg.water_heating_systems.add(id: orig_water_heater.id,
                                          is_shared_system: orig_water_heater.is_shared_system,
-                                         number_of_units_served: orig_water_heater.number_of_units_served,
+                                         number_of_bedrooms_served: orig_water_heater.number_of_bedrooms_served,
                                          fuel_type: wh_fuel_type,
                                          water_heater_type: wh_type,
                                          location: orig_water_heater.location.gsub('unvented', 'vented'),
@@ -850,7 +850,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
     return if orig_bldg.water_heating_systems.size == 0
 
     # Exhibit 2 - Service Water Heating Systems: Use the same Gallons per Day as Table 4.2.2(1) - Service water heating systems
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @cfa, @ncfl).round(3)
+    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @has_cond_bsmnt, @cfa, @ncfl).round(3)
 
     if orig_bldg.hot_water_distributions.size == 0
       sys_id = 'HotWaterDistribution'
@@ -883,7 +883,7 @@ class EnergyStarZeroEnergyReadyHomeRuleset
                                            pipe_r_value: pipe_r_value,
                                            standard_piping_length: standard_piping_length,
                                            has_shared_recirculation: true,
-                                           shared_recirculation_number_of_units_served: orig_dist.shared_recirculation_number_of_units_served,
+                                           shared_recirculation_number_of_bedrooms_served: orig_dist.shared_recirculation_number_of_bedrooms_served,
                                            shared_recirculation_pump_power: shared_recirculation_pump_power,
                                            shared_recirculation_control_type: orig_dist.shared_recirculation_control_type)
     else
@@ -1173,7 +1173,8 @@ class EnergyStarZeroEnergyReadyHomeRuleset
 
     ducts_in_uncond_attic = false
     all_ducts.each do |duct|
-      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) && duct.duct_surface_area > 0
+      if [HPXML::LocationAtticVented, HPXML::LocationAtticUnvented].include?(duct.duct_location) &&
+         (!duct.duct_surface_area.to_f.zero? || !duct.duct_fraction_area.to_f.zero?)
         ducts_in_uncond_attic = true
       end
     end
