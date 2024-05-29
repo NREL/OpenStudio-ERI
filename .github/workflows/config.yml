@@ -7,16 +7,11 @@ on:
     types: [ synchronize, opened ]
   workflow_dispatch:
 
-env:
-  OPENSTUDIO_VER: "3.8.0"
-  OPENSTUDIO_SHA: "f953b6fcaf"
-
-
 jobs:
   # run-ruleset-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
+      # image: docker://nrel/openstudio:3.8.0
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -67,7 +62,7 @@ jobs:
   # run-sample-files1-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
+      # image: docker://nrel/openstudio:3.8.0
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -90,7 +85,7 @@ jobs:
   # run-sample-files2-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
+      # image: docker://nrel/openstudio:3.8.0
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -113,7 +108,7 @@ jobs:
   # run-real-home-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
+      # image: docker://nrel/openstudio:3.8.0
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -136,7 +131,7 @@ jobs:
   # run-other-tests:
     # runs-on: ubuntu-latest
     # container:
-      # image: docker://nrel/openstudio:${{ env.OPENSTUDIO_VER }}
+      # image: docker://nrel/openstudio:3.8.0
     # steps:
       # - uses: actions/checkout@v4
         # with:
@@ -164,17 +159,12 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Install software and run test
         shell: pwsh
-        continue-on-error: true
         run: |
           $env:OS_VERSION="3.8.0"
           $env:OS_SHA="f953b6fcaf"
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
-          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe --loglevel Debug workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --hourly ALL --add-component-loads > log.txt 2>&1
-      - name: Write log
-        shell: pwsh
-        run: |
-          type log.txt
+          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads --diagnostic-output
 
   # merge-results:
     # runs-on: ubuntu-latest

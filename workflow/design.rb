@@ -20,6 +20,7 @@ class Design
       @output_dir = output_dir
       @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
       @annual_output_path = File.join(output_dir, 'results', "#{name}.#{output_format}")
+      @diag_output_path = File.join(output_dir, 'results', "#{name}_Diagnostic.msgpack")
       @design_dir = File.join(output_dir, name)
       if not init_calc_type.nil?
         @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
@@ -29,10 +30,10 @@ class Design
     @output_format = output_format
   end
   attr_accessor(:calc_type, :init_calc_type, :init_hpxml_output_path, :hpxml_output_path, :annual_output_path,
-                :output_dir, :design_dir, :iecc_version, :output_format)
+                :diag_output_path, :output_dir, :design_dir, :iecc_version, :output_format)
 end
 
-def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format)
+def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format, diagnostic_output)
   measures_dir = File.join(File.dirname(__FILE__), '..')
 
   measures = {}
@@ -70,11 +71,28 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub(".#{output_format}", "_#{timeseries_output_freq.capitalize}.#{output_format}")))
   update_args_hash(measures, measure_subdir, args)
 
+  if diagnostic_output
+    # Add OS-HPXML reporting measure to workflow
+    measure_subdir = 'hpxml-measures/ReportSimulationOutput'
+    args = {}
+    args['output_format'] = 'msgpack'
+    args['timeseries_frequency'] = 'hourly'
+    args['include_annual_total_consumptions'] = false
+    args['include_timeseries_end_use_consumptions'] = true
+    args['include_timeseries_system_use_consumptions'] = true
+    args['include_timeseries_total_loads'] = true
+    args['include_timeseries_zone_temperatures'] = true
+    args['include_timeseries_weather'] = true
+    args['timeseries_num_decimal_places'] = 3
+    args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.diag_output_path))
+    update_args_hash(measures, measure_subdir, args)
+  end
+
   run_hpxml_workflow(design.design_dir, measures, measures_dir, debug: debug,
                                                                 suppress_print: true)
 end
 
-if ARGV.size == 9
+if ARGV.size == 10
   puts ARGV.to_s
   calc_type = ARGV[0]
   init_calc_type = (ARGV[1].empty? ? nil : ARGV[1])
@@ -85,7 +103,8 @@ if ARGV.size == 9
   timeseries_outputs = ARGV[6].split('|')
   add_comp_loads = (ARGV[7].downcase.to_s == 'true')
   output_format = ARGV[8]
+  diagnostic_output = (ARGV[9].downcase.to_s == 'true')
   design = Design.new(calc_type: calc_type, init_calc_type: init_calc_type, output_dir: output_dir, iecc_version: iecc_version, output_format: output_format)
-  run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format)
+  run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format, diagnostic_output)
 end
 puts "END design.rb"

@@ -245,6 +245,7 @@ class ERI_301_Ruleset
     new_bldg.header.manualj_num_occupants = orig_bldg.building_construction.number_of_bedrooms + 1
     new_bldg.header.manualj_heating_setpoint = 70
     new_bldg.header.manualj_cooling_setpoint = 75
+    new_hpxml.header.temperature_capacitance_multiplier = 1.0
 
     new_bldg.site.fuels = orig_bldg.site.fuels
     new_bldg.site.site_type = HPXML::SiteTypeSuburban
