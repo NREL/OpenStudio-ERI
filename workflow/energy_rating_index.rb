@@ -120,16 +120,13 @@ def run_simulations(designs, options, duplicates)
 
     pids = {}
     Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
-      puts "PARALLEL START #{Parallel.worker_number}"
       designdir, pids[design] = run_design_spawn(design, options, Parallel.worker_number)
-      puts "PROCESS.WAIT #{Parallel.worker_number}"
       Process.wait pids[design]
 
       if not File.exist? File.join(designdir, 'eplusout.end')
         kill(pids)
         next
       end
-      puts "PARALLEL END #{Parallel.worker_number}"
     end
 
   end
@@ -170,7 +167,7 @@ def run_design_spawn(design, options, worker_number)
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" --loglevel Debug "
+  command = "\"#{cli_path}\" "
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
   command += "\"#{design.calc_type}\" "
   command += "\"#{design.init_calc_type}\" "
@@ -182,7 +179,6 @@ def run_design_spawn(design, options, worker_number)
   command += "\"#{options[:add_comp_loads]}\" "
   command += "\"#{options[:output_format]}\" "
   command += "\"#{options[:diagnostic_output]}\" "
-  puts "PROCESS SPAWN #{worker_number}"
   pid = Process.spawn(command)
 
   return design.design_dir, pid
