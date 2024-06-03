@@ -119,7 +119,7 @@ def run_simulations(designs, options, duplicates)
     end
 
     pids = {}
-    Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
+    Parallel.map(unique_designs, in_threads: 1) do |design|
       designdir, pids[design] = run_design_spawn(design, options)
       Process.wait pids[design]
 
