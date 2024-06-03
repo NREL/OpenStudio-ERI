@@ -165,8 +165,86 @@ jobs:
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
           for ($var = 1; $var -le 50; $var++) {
-          Write-Host Running test $var
-          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads --diagnostic-output
+            Write-Host Running test $var
+            & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads --diagnostic-output
+            if(Test-Path workflow\CO2eRatedHome\run.log -PathType Leaf) {
+              type workflow\CO2eRatedHome\run.log
+            }
+            if(Test-Path workflow\CO2eReferenceHome\run.log -PathType Leaf) {
+              type workflow\CO2eReferenceHome\run.log
+            }
+            if(Test-Path workflow\ERIIndexAdjustmentDesign\run.log -PathType Leaf) {
+              type workflow\ERIIndexAdjustmentDesign\run.log
+            }
+            if(Test-Path workflow\ERIIndexAdjustmentReferenceHome\run.log -PathType Leaf) {
+              type workflow\ERIIndexAdjustmentReferenceHome\run.log
+            }
+            if(Test-Path workflow\ERIRatedHome\run.log -PathType Leaf) {
+              type workflow\ERIRatedHome\run.log
+            }
+            if(Test-Path workflow\ERIReferenceHome\run.log -PathType Leaf) {
+              type workflow\ERIReferenceHome\run.log
+            }
+            if(Test-Path workflow\ESRated_ERIIndexAdjustmentDesign\run.log -PathType Leaf) {
+              type workflow\ESRated_ERIIndexAdjustmentDesign\run.log
+            }
+            if(Test-Path workflow\ESRated_ERIIndexAdjustmentReferenceHome\run.log -PathType Leaf) {
+              type workflow\ESRated_ERIIndexAdjustmentReferenceHome\run.log
+            }
+            if(Test-Path workflow\ESRated_ERIRatedHome\run.log -PathType Leaf) {
+              type workflow\ESRated_ERIRatedHome\run.log
+            }
+            if(Test-Path workflow\ESRated_ERIReferenceHome\run.log -PathType Leaf) {
+              type workflow\ESRated_ERIReferenceHome\run.log
+            }
+            if(Test-Path workflow\ESReference_ERIIndexAdjustmentDesign\run.log -PathType Leaf) {
+              type workflow\ESReference_ERIIndexAdjustmentDesign\run.log
+            }
+            if(Test-Path workflow\ESReference_ERIIndexAdjustmentReferenceHome\run.log -PathType Leaf) {
+              type workflow\ESReference_ERIIndexAdjustmentReferenceHome\run.log
+            }
+            if(Test-Path workflow\ESReference_ERIRatedHome\run.log -PathType Leaf) {
+              type workflow\ESReference_ERIRatedHome\run.log
+            }
+            if(Test-Path workflow\ESReference_ERIReferenceHome\run.log -PathType Leaf) {
+              type workflow\ESReference_ERIReferenceHome\run.log
+            }
+            if(Test-Path workflow\IECC_ERIIndexAdjustmentDesign\run.log -PathType Leaf) {
+              type workflow\IECC_ERIIndexAdjustmentDesign\run.log
+            }
+            if(Test-Path workflow\IECC_ERIIndexAdjustmentReferenceHome\run.log -PathType Leaf) {
+              type workflow\IECC_ERIIndexAdjustmentReferenceHome\run.log
+            }
+            if(Test-Path workflow\IECC_ERIRatedHome\run.log -PathType Leaf) {
+              type workflow\IECC_ERIRatedHome\run.log
+            }
+            if(Test-Path workflow\IECC_ERIReferenceHome\run.log -PathType Leaf) {
+              type workflow\IECC_ERIReferenceHome\run.log
+            }
+            if(Test-Path workflow\ZERHRated_ERIIndexAdjustmentDesign\run.log -PathType Leaf) {
+              type workflow\ZERHRated_ERIIndexAdjustmentDesign\run.log
+            }
+            if(Test-Path workflow\ZERHRated_ERIIndexAdjustmentReferenceHome\run.log -PathType Leaf) {
+              type workflow\ZERHRated_ERIIndexAdjustmentReferenceHome\run.log
+            }
+            if(Test-Path workflow\ZERHRated_ERIRatedHome\run.log -PathType Leaf) {
+              type workflow\ZERHRated_ERIRatedHome\run.log
+            }
+            if(Test-Path workflow\ZERHRated_ERIReferenceHome\run.log -PathType Leaf) {
+              type workflow\ZERHRated_ERIReferenceHome\run.log
+            }
+            if(Test-Path workflow\ZERHReference_ERIIndexAdjustmentDesign\run.log -PathType Leaf) {
+              type workflow\ZERHReference_ERIIndexAdjustmentDesign\run.log
+            }
+            if(Test-Path workflow\ZERHReference_ERIIndexAdjustmentReferenceHome\run.log -PathType Leaf) {
+              type workflow\ZERHReference_ERIIndexAdjustmentReferenceHome\run.log
+            }
+            if(Test-Path workflow\ZERHReference_ERIRatedHome\run.log -PathType Leaf) {
+              type workflow\ZERHReference_ERIRatedHome\run.log
+            }
+            if(Test-Path workflow\ZERHReference_ERIReferenceHome\run.log -PathType Leaf) {
+              type workflow\ZERHReference_ERIReferenceHome\run.log
+            }
           }
 
   # merge-results:
