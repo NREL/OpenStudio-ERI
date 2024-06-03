@@ -121,14 +121,14 @@ def run_simulations(designs, options, duplicates)
     pids = {}
     puts "=== RUNNING SIMULATIONS ==="
     Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
-      designdir, pids[design] = run_design_spawn(design, options)
-      Process.wait pids[design]
+      designdir = run_design_spawn(design, options)
+      #Process.wait pids[design]
 
-      if not File.exist? File.join(designdir, 'eplusout.end')
-        puts "=== KILLING ==="
-        kill(pids)
-        next
-      end
+      #if not File.exist? File.join(designdir, 'eplusout.end')
+      #  puts "=== KILLING ==="
+      #  kill(pids)
+      #  next
+      #end
     end
     puts "=== COMPLETED SIMULATIONS ==="
 
@@ -182,9 +182,9 @@ def run_design_spawn(design, options)
   command += "\"#{options[:add_comp_loads]}\" "
   command += "\"#{options[:output_format]}\" "
   command += "\"#{options[:diagnostic_output]}\" "
-  pid = Process.spawn(command)
+  system(command)
 
-  return design.design_dir, pid
+  return design.design_dir
 end
 
 def retrieve_design_outputs(designs)
