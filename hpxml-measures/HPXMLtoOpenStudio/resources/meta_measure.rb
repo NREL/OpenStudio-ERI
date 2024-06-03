@@ -14,7 +14,7 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
 
   #OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   os_log = OpenStudio::StringStreamLogSink.new
-  #os_log.setLogLevel(OpenStudio::Warn)
+  os_log.setLogLevel(OpenStudio::Warn)
 
   model = OpenStudio::Model::Model.new
   runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
