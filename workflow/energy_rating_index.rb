@@ -119,18 +119,18 @@ def run_simulations(designs, options, duplicates)
     end
 
     pids = {}
+    puts "=== RUNNING SIMULATIONS ==="
     Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
-      puts "Starting #{Parallel.worker_number}"
-      designdir, pids[design] = run_design_spawn(design, options, Parallel.worker_number)
+      designdir, pids[design] = run_design_spawn(design, options)
       Process.wait pids[design]
 
       if not File.exist? File.join(designdir, 'eplusout.end')
-        puts "KILLING"
+        puts "=== KILLING ==="
         kill(pids)
         next
       end
-      puts "Completed #{Parallel.worker_number}"
     end
+    puts "=== COMPLETED SIMULATIONS ==="
 
   end
 end
@@ -163,13 +163,12 @@ def run_design_direct(design, options)
   return design.design_dir
 end
 
-def run_design_spawn(design, options, worker_number)
+def run_design_spawn(design, options)
   # Calls design.rb in a new spawned process in order to utilize multiple
   # processes. Not as efficient as calling design.rb methods directly in
   # forked processes for a couple reasons:
   # 1. There is overhead to using the CLI
   # 2. There is overhead to spawning processes vs using forked processes
-  puts "Spawning #{worker_number}"
   cli_path = OpenStudio.getOpenStudioCLI
   command = "\"#{cli_path}\" "
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
@@ -183,7 +182,6 @@ def run_design_spawn(design, options, worker_number)
   command += "\"#{options[:add_comp_loads]}\" "
   command += "\"#{options[:output_format]}\" "
   command += "\"#{options[:diagnostic_output]}\" "
-  command += "\"#{worker_number}\" "
   pid = Process.spawn(command)
 
   return design.design_dir, pid
