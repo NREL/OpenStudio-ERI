@@ -166,7 +166,7 @@ jobs:
           tar -xzf Windows.tar.gz
           for ($var = 1; $var -le 50; $var++) {
             Write-Host Running test $var
-            & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads --diagnostic-output
+            & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb --debug -x workflow\sample_files\base.xml
             if(Test-Path workflow\CO2eRatedHome\run.log -PathType Leaf) {
               type workflow\CO2eRatedHome\run.log
             }

@@ -92,6 +92,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
 end
 
 if ARGV.size == 10
+  puts "Simulate #{worker_number}"
   calc_type = ARGV[0]
   init_calc_type = (ARGV[1].empty? ? nil : ARGV[1])
   iecc_version = (ARGV[2].empty? ? nil : ARGV[2])
@@ -104,4 +105,5 @@ if ARGV.size == 10
   diagnostic_output = (ARGV[9].downcase.to_s == 'true')
   design = Design.new(calc_type: calc_type, init_calc_type: init_calc_type, output_dir: output_dir, iecc_version: iecc_version, output_format: output_format)
   run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format, diagnostic_output)
+  puts "Simulated #{worker_number}"
 end
