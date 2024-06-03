@@ -183,6 +183,7 @@ def run_design_spawn(design, options, worker_number)
   command += "\"#{options[:add_comp_loads]}\" "
   command += "\"#{options[:output_format]}\" "
   command += "\"#{options[:diagnostic_output]}\" "
+  command += "\"#{worker_number}\" "
   pid = Process.spawn(command)
 
   return design.design_dir, pid
