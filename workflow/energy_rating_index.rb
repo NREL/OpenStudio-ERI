@@ -119,7 +119,6 @@ def run_simulations(designs, options, duplicates)
     end
 
     pids = {}
-    puts "=== RUNNING SIMULATIONS ==="
     Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
       designdir = run_design_spawn(design, options)
       #Process.wait pids[design]
@@ -130,7 +129,6 @@ def run_simulations(designs, options, duplicates)
       #  next
       #end
     end
-    puts "=== COMPLETED SIMULATIONS ==="
 
   end
 end

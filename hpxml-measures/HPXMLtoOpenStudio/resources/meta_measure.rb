@@ -12,7 +12,7 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
   # a Parallel process (see https://stackoverflow.com/a/5044669)
   print "#{print_prefix}Creating input...\n" unless suppress_print
 
-  #OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
+  OpenStudio::Logger.instance.standardOutLogger.setLogLevel(OpenStudio::Fatal)
   os_log = OpenStudio::StringStreamLogSink.new
   os_log.setLogLevel(OpenStudio::Warn)
 
