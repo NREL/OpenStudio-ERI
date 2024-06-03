@@ -701,7 +701,7 @@ def calculate_reul(output, load_frac, type, is_dfhp_primary = nil)
   elsif is_dfhp_primary
     # Get HP portion of DFHP
     load = [get_load(output, load_delivered) -
-            get_load(output, load_hp_backup), 0].max
+      get_load(output, load_hp_backup), 0].max
   else
     # Get backup port of DFHP
     load = get_load(output, load_hp_backup)
@@ -1012,7 +1012,7 @@ def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_fr
     next unless hpxml_fuel == HPXML::FuelTypeElectricity || (hpxml_fuel == primary_hpxml_fuel)
 
     values = data_hashes.map { |h| (calculate_ec(h, sys.id, fuel_type, type, is_dfhp_primary) * json_units_map[hpxml_fuel]).round(2) }
-    next if values.sum == 0
+    next if values.sum == 0 && hpxml_fuel != primary_hpxml_fuel
 
     json_system_output[-1][:energy_use] << {
       fuel_type: json_fuel_map[hpxml_fuel],
@@ -1037,7 +1037,7 @@ def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_
     end
     next if sys.nil?
 
-    if type=='Heating' && sys.is_a?(HPXML::HeatPump) && sys.is_dual_fuel
+    if type == 'Heating' && sys.is_a?(HPXML::HeatPump) && sys.is_dual_fuel
       # Dual fuel heat pump; calculate values using two different HVAC systems
       _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, true)
       _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, false)
@@ -1238,17 +1238,13 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     # Ventilation Energy
     json_output[json_element_name][:ventilation_energy] = []
     values = data_hashes.map { |h| (calculate_mv(h) * json_units_map[HPXML::FuelTypeElectricity]).round(3) }
-    if values.sum != 0
-      json_output[json_element_name][:ventilation_energy] << {
-        fuel_type: json_fuel_map[HPXML::FuelTypeElectricity],
-        energy: values
-      }
-    end
+    json_output[json_element_name][:ventilation_energy] << {
+      fuel_type: json_fuel_map[HPXML::FuelTypeElectricity],
+      energy: values
+    }
 
     # Dehumidification Energy
     values = data_hashes.map { |h| (calculate_dh(h) * json_units_map[HPXML::FuelTypeElectricity]).round(3) }
-    next unless values.sum != 0
-
     json_output[json_element_name][:dehumidification_energy] = []
     json_output[json_element_name][:dehumidification_energy] << {
       fuel_type: json_fuel_map[HPXML::FuelTypeElectricity],
