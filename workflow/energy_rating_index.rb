@@ -112,8 +112,6 @@ def run_simulations(designs, options, duplicates)
       next if stop_procs
 
       designdir = run_design_spawn(design, options)
-      next if stop_procs
-
       if not File.exist? File.join(designdir, 'eplusout.end')
         stop_procs = true # Stop any new designs from kicking off; the best we can do...
       end
