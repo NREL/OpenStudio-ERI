@@ -95,13 +95,11 @@ def run_simulations(designs, options, duplicates)
     # Code runs in forked child processes and makes direct calls. This is the fastest
     # approach but isn't available on, e.g., Windows.
 
-    def kill
-      raise Parallel::Kill
-    end
-
     Parallel.map(unique_designs, in_processes: unique_designs.size) do |design|
       designdir = run_design_direct(design, options)
-      kill unless File.exist? File.join(designdir, 'eplusout.end')
+      if not File.exist? File.join(designdir, 'eplusout.end')
+        raise Parallel::Kill
+      end
     end
 
   else # e.g., Windows
@@ -109,23 +107,15 @@ def run_simulations(designs, options, duplicates)
     # Fallback. Code runs in spawned child processes in order to take advantage of
     # multiple processors.
 
-    def kill(pids)
-      pids.values.each do |pid|
-        begin
-          Process.kill('KILL', pid)
-        rescue
-        end
-      end
-    end
-
-    pids = {}
+    stop_procs = false
     Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
-      designdir, pids[design] = run_design_spawn(design, options)
-      Process.wait pids[design]
+      next if stop_procs
+
+      designdir = run_design_spawn(design, options)
+      next if stop_procs
 
       if not File.exist? File.join(designdir, 'eplusout.end')
-        kill(pids)
-        next
+        stop_procs = true # Stop any new designs from kicking off; the best we can do...
       end
     end
 
@@ -136,6 +126,8 @@ def duplicate_output_files(duplicates, designs, resultsdir)
   duplicates.each do |dest_hpxml_path, source_hpxml_path|
     source_design = designs.find { |d| d.hpxml_output_path == source_hpxml_path }
     dest_design = designs.find { |d| d.hpxml_output_path == dest_hpxml_path }
+
+    next unless File.exist? source_design.design_dir
 
     # Duplicate E+ output directory
     FileUtils.cp_r(source_design.design_dir, dest_design.design_dir)
@@ -179,9 +171,11 @@ def run_design_spawn(design, options)
   command += "\"#{options[:add_comp_loads]}\" "
   command += "\"#{options[:output_format]}\" "
   command += "\"#{options[:diagnostic_output]}\" "
-  pid = Process.spawn(command)
+  # Note: Process.spawn() does not work reliably as of OpenStudio 3.8 so
+  # we are switching to system()
+  system(command)
 
-  return design.design_dir, pid
+  return design.design_dir
 end
 
 def retrieve_design_outputs(designs)
