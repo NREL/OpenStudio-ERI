@@ -27,7 +27,6 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
   if not success
     print "#{print_prefix}Creating input unsuccessful.\n"
     print "#{print_prefix}See #{File.join(rundir, 'run.log')} for details.\n"
-    print "ERR1: #{print_prefix}#{File.readlines(File.join(rundir, 'run.log')).map(&:strip)}"
     return { success: false, runner: runner }
   end
 
@@ -80,7 +79,6 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
   if not success
     print "#{print_prefix}Creating input unsuccessful.\n"
     print "#{print_prefix}See #{File.join(rundir, 'run.log')} for details.\n"
-    print "ERR2: #{print_prefix}#{File.readlines(File.join(rundir, 'run.log')).map(&:strip)}"
     return { success: false, runner: runner }
   end
 
@@ -106,7 +104,6 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
   if not model.getWeatherFile.path.is_initialized
     print "#{print_prefix}Creating input unsuccessful.\n"
     print "#{print_prefix}See #{File.join(rundir, 'run.log')} for details.\n"
-    print "ERR3: #{print_prefix}#{File.readlines(File.join(rundir, 'run.log')).map(&:strip)}"
     return { success: false, runner: runner }
   end
 
@@ -141,7 +138,6 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
     else
       print "#{print_prefix}Simulation unsuccessful.\n"
       print "#{print_prefix}See #{File.join(rundir, 'eplusout.err')} for details.\n"
-      print "ERR4: #{print_prefix}#{File.readlines(File.join(rundir, 'eplusout.err')).map(&:strip)}"
       return { success: false, runner: runner }
     end
   else
@@ -165,7 +161,6 @@ def run_hpxml_workflow(rundir, measures, measures_dir, debug: false, output_vars
   if not success
     print "#{print_prefix}Processing output unsuccessful.\n"
     print "#{print_prefix}See #{File.join(rundir, 'run.log')} for details.\n"
-    print "ERR5: #{print_prefix}#{File.readlines(File.join(rundir, 'run.log')).map(&:strip)}"
     return { success: false, runner: runner }
   else
     print "#{print_prefix}Wrote log file: #{File.join(rundir, 'run.log')}.\n" unless suppress_print
