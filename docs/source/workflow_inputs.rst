@@ -310,8 +310,10 @@ If the dwelling unit has an unvented attic, additional information is entered in
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
+  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
+  
+  .. [#] If there are multiple unvented attics, they must all have the same value.
 
 If the dwelling unit has a vented attic, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]``.
 
@@ -319,10 +321,11 @@ If the dwelling unit has a vented attic, additional information is entered in ``
   Element                            Type    Units  Constraints  Required  Default  Notes
   =================================  ======  =====  ===========  ========  =======  ==========================
   ``VentilationRate/UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
-  ``VentilationRate/Value``          double         > 0          No        1/300    Value for ventilation rate
+  ``VentilationRate/Value``          double         > 0 [#]_     No        1/300    Value for ventilation rate
   =================================  ======  =====  ===========  ========  =======  ==========================
 
   .. [#] UnitofMeasure choices are "SLA" (specific leakage area) or "ACHnatural" (natural air changes per hour).
+  .. [#] If there are multiple vented attics, they must all have the same value.
 
 HPXML Foundations
 *****************
@@ -332,16 +335,20 @@ If the dwelling unit has an unconditioned basement, additional information is en
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
+  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
+  
+  .. [#] If there are multiple unconditioned basements, they must all have the same value.
 
 If the dwelling unit has an unvented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean                      Yes                Included in the air infiltration measurement?
+  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
+  
+  .. [#] If there are multiple unvented crawlspaces, they must all have the same value.
 
 If the dwelling unit has a vented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]``.
 
@@ -349,10 +356,11 @@ If the dwelling unit has a vented crawlspace, additional information is entered 
   Element                            Type    Units  Constraints  Required  Default  Notes
   =================================  ======  =====  ===========  ========  =======  ==========================
   ``VentilationRate/UnitofMeasure``  string         See [#]_     No        SLA      Units for ventilation rate
-  ``VentilationRate/Value``          double         > 0          No        1/150    Value for ventilation rate
+  ``VentilationRate/Value``          double         > 0 [#]_     No        1/150    Value for ventilation rate
   =================================  ======  =====  ===========  ========  =======  ==========================
 
   .. [#] UnitofMeasure only choice is "SLA" (specific leakage area).
+  .. [#] If there are multiple vented crawlspaces, they must all have the same value.
 
 HPXML Roofs
 ***********
@@ -623,17 +631,56 @@ Each skylight is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Skylig
   Element                                       Type      Units         Constraints   Required  Default    Notes
   ============================================  ========  ============  ============  ========  =========  ==============================================
   ``SystemIdentifier``                          id                                    Yes                  Unique identifier
-  ``Area``                                      double    ft2           > 0           Yes                  Total area
+  ``Area``                                      double    ft2           > 0           Yes                  Total area [#]_
   ``Azimuth``                                   integer   deg           >= 0, <= 359  Yes                  Azimuth (clockwise from North)
   ``UFactor``                                   double    Btu/F-ft2-hr  > 0           Yes                  Full-assembly NFRC U-factor
   ``SHGC``                                      double                  > 0, < 1      Yes                  Full-assembly NFRC solar heat gain coefficient
   ``AttachedToRoof``                            idref                   See [#]_      Yes                  ID of attached roof
   ``AttachedToFloor``                           idref                   See [#]_      See [#]_             ID of attached attic floor for a skylight with a shaft or sun tunnel
+  ``extension/Curb``                            element                               No        <none>     Presence of curb (skylight wall above the roof deck) [#]_
+  ``extension/Shaft``                           element                               No        <none>     Presence of shaft (skylight wall below the roof deck) [#]_
   ============================================  ========  ============  ============  ========  =========  ==============================================
 
+  .. [#] For dome skylights, this should represent the *total* area, not just the primary flat exposure.
+         The ratio of total area to primary flat exposure is typically around 1.25 for dome skylights.
   .. [#] AttachedToRoof must reference a ``Roof``.
   .. [#] AttachedToFloor must reference a ``Floor``.
-  .. [#] AttachedToFloor required if the skylight is attached to a roof of an attic (e.g., with shaft or sun tunnel).
+  .. [#] AttachedToFloor required if the attached roof is not adjacent to conditioned space (i.e., there is a skylight shaft).
+  .. [#] If extension/Curb is provided, additional inputs are described in :ref:`skylight_curb`.
+  .. [#] If extension/Shaft is provided, additional inputs are described in :ref:`skylight_shaft`.
+         The skylight shaft will be modeled similar to an attic knee wall.
+
+.. _skylight_curb:
+
+Skylight Curb
+~~~~~~~~~~~~~
+
+If the skylight has a curb, additional information is entered in ``Skylight``.
+
+  ===========================================  ========  ============  ===========  ========  ========  ========================================================
+  Element                                      Type      Units         Constraints  Required  Default   Notes
+  ===========================================  ========  ============  ===========  ========  ========  ========================================================
+  ``extension/Curb/Area``                      double    ft^2          > 0          Yes                 Total area including all sides
+  ``extension/Curb/AssemblyEffectiveRValue``   double    F-ft2-hr/Btu  > 0          Yes                 Assembly R-value [#]_
+  ===========================================  ========  ============  ===========  ========  ========  ========================================================
+
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
+
+.. _skylight_shaft:
+
+Skylight Shaft
+~~~~~~~~~~~~~~
+
+If the skylight has a shaft, additional information is entered in ``Skylight``.
+
+  ===========================================  ========  ============  ===========  ========  ========  ========================================================
+  Element                                      Type      Units         Constraints  Required  Default   Notes
+  ===========================================  ========  ============  ===========  ========  ========  ========================================================
+  ``extension/Shaft/Area``                     double    ft^2          > 0          Yes                 Total area including all sides
+  ``extension/Shaft/AssemblyEffectiveRValue``  double    F-ft2-hr/Btu  > 0          Yes                 Assembly R-value [#]_
+  ===========================================  ========  ============  ===========  ========  ========  ========================================================
+
+  .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
 
 HPXML Doors
 ***********

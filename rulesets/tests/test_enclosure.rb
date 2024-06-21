@@ -959,11 +959,11 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 },
+                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 },
+                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 } })
       else
         _check_skylights(hpxml_bldg)
       end
@@ -982,11 +982,11 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 675, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 },
+                                                          180 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 594, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 594, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 594, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 52.8, shaft_rvalue: 6.25 },
+                                                          180 => { area: 594, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 52.8, shaft_rvalue: 6.25 } })
       else
         _check_skylights(hpxml_bldg)
       end
@@ -997,11 +997,11 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
+                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
+                                                          180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
       else
         _check_skylights(hpxml_bldg)
       end
@@ -1020,11 +1020,11 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants.CalcTypeERIRatedHome].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 675, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
+                                                          180 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
       elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
-        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 643.5, ufactor: 0.33, shgc: 0.45 },
-                                                          180 => { area: 643.5, ufactor: 0.33, shgc: 0.45 } })
+        _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 643.5, ufactor: 0.33, shgc: 0.45, curb_area: 5.0, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
+                                                          180 => { area: 643.5, ufactor: 0.33, shgc: 0.45, curb_area: 5.0, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
       else
         _check_skylights(hpxml_bldg)
       end
@@ -1482,28 +1482,53 @@ class ERIEnclosureTest < Minitest::Test
   end
 
   def _check_skylights(hpxml_bldg, values_by_azimuth: {})
-    azimuth_area_values = {}
+    azimuth_area_values, azimuth_curb_area_values, azimuth_shaft_area_values = {}, {}, {}
     azimuth_ufactor_x_area_values, azimuth_shgc_x_area_values = {}, {} # Area-weighted
+    azimuth_curb_rvalue_x_area_values, azimuth_shaft_rvalue_x_area_values = {}, {} # Area-weighted
     hpxml_bldg.skylights.each do |skylight|
       # Init if needed
       azimuth_area_values[skylight.azimuth] = [] if azimuth_area_values[skylight.azimuth].nil?
+      azimuth_curb_area_values[skylight.azimuth] = [] if azimuth_curb_area_values[skylight.azimuth].nil?
+      azimuth_shaft_area_values[skylight.azimuth] = [] if azimuth_shaft_area_values[skylight.azimuth].nil?
       azimuth_ufactor_x_area_values[skylight.azimuth] = [] if azimuth_ufactor_x_area_values[skylight.azimuth].nil?
       azimuth_shgc_x_area_values[skylight.azimuth] = [] if azimuth_shgc_x_area_values[skylight.azimuth].nil?
+      azimuth_curb_rvalue_x_area_values[skylight.azimuth] = [] if azimuth_curb_rvalue_x_area_values[skylight.azimuth].nil?
+      azimuth_shaft_rvalue_x_area_values[skylight.azimuth] = [] if azimuth_shaft_rvalue_x_area_values[skylight.azimuth].nil?
 
       # Update
       azimuth_area_values[skylight.azimuth] << skylight.area
+      azimuth_curb_area_values[skylight.azimuth] << skylight.curb_area.to_f
+      azimuth_shaft_area_values[skylight.azimuth] << skylight.shaft_area.to_f
       azimuth_ufactor_x_area_values[skylight.azimuth] << skylight.ufactor * skylight.area
       azimuth_shgc_x_area_values[skylight.azimuth] << skylight.shgc * skylight.area
+      azimuth_curb_rvalue_x_area_values[skylight.azimuth] << skylight.curb_assembly_r_value.to_f * skylight.curb_area.to_f
+      azimuth_shaft_rvalue_x_area_values[skylight.azimuth] << skylight.shaft_assembly_r_value.to_f * skylight.shaft_area.to_f
     end
 
     assert_equal(values_by_azimuth.keys.size, azimuth_area_values.size)
+    assert_equal(values_by_azimuth.keys.size, azimuth_curb_area_values.size)
+    assert_equal(values_by_azimuth.keys.size, azimuth_shaft_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_ufactor_x_area_values.size)
     assert_equal(values_by_azimuth.keys.size, azimuth_shgc_x_area_values.size)
+    assert_equal(values_by_azimuth.keys.size, azimuth_curb_rvalue_x_area_values.size)
+    assert_equal(values_by_azimuth.keys.size, azimuth_shaft_rvalue_x_area_values.size)
 
     values_by_azimuth.each do |azimuth, values|
       assert_in_epsilon(values[:area], azimuth_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:curb_area], azimuth_curb_area_values[azimuth].sum, 0.01)
+      assert_in_epsilon(values[:shaft_area], azimuth_shaft_area_values[azimuth].sum, 0.01)
       assert_in_epsilon(values[:ufactor], azimuth_ufactor_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
       assert_in_epsilon(values[:shgc], azimuth_shgc_x_area_values[azimuth].sum / azimuth_area_values[azimuth].sum, 0.01)
+      if azimuth_curb_area_values[azimuth].sum > 0
+        assert_in_epsilon(values[:curb_rvalue], azimuth_curb_rvalue_x_area_values[azimuth].sum / azimuth_curb_area_values[azimuth].sum, 0.01)
+      else
+        assert_nil(values[:curb_rvalue])
+      end
+      if azimuth_shaft_area_values[azimuth].sum > 0
+        assert_in_epsilon(values[:shaft_rvalue], azimuth_shaft_rvalue_x_area_values[azimuth].sum / azimuth_shaft_area_values[azimuth].sum, 0.01)
+      else
+        assert_nil(values[:shaft_rvalue])
+      end
     end
   end
 

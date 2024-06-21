@@ -1,3 +1,11 @@
+## OpenStudio-ERI v1.9.0
+
+__New Features__
+- Adds inputs for modeling skylight curbs and/or shafts.
+
+__Bugfixes__
+- Adds error-checking for `NumberofConditionedFloorsAboveGrade`=0, which is not allowed per the documentation.
+
 ## OpenStudio-ERI v1.8.0
 
 __New Features__
