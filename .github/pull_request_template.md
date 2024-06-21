@@ -4,9 +4,7 @@
 
 ## Checklist
 
-PR Author: Check these when they're done. Not all may apply. ~~strikethrough~~ and check any that do not apply. 
-
-PR Reviewer: Verify each has been completed.
+Not all may apply:
 
 - [ ] OS-HPXML git subtree has been pulled
 - [ ] 301validator.xml has been updated (reference EPvalidator.xml)

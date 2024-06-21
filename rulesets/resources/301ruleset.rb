@@ -1063,7 +1063,11 @@ class ERI_301_Ruleset
                              ufactor: orig_skylight.ufactor,
                              shgc: orig_skylight.shgc,
                              attached_to_roof_idref: orig_skylight.attached_to_roof_idref,
-                             attached_to_floor_idref: orig_skylight.attached_to_floor_idref)
+                             attached_to_floor_idref: orig_skylight.attached_to_floor_idref,
+                             curb_area: orig_skylight.curb_area,
+                             curb_assembly_r_value: orig_skylight.curb_assembly_r_value,
+                             shaft_area: orig_skylight.shaft_area,
+                             shaft_assembly_r_value: orig_skylight.shaft_assembly_r_value)
     end
   end
 
@@ -1077,8 +1081,16 @@ class ERI_301_Ruleset
       new_skylight_area = new_roof_or_ceiling.skylights.map { |skylight| skylight.area }.sum(0)
       next unless new_skylight_area > new_roof_or_ceiling.area
 
+      scaling_factor = 0.99 * new_roof_or_ceiling.area / new_skylight_area
+
       new_roof_or_ceiling.skylights.each do |new_skylight|
-        new_skylight.area *= 0.99 * new_roof_or_ceiling.area / new_skylight_area
+        new_skylight.area *= scaling_factor
+        if not new_skylight.curb_area.nil?
+          new_skylight.curb_area *= scaling_factor
+        end
+        if not new_skylight.shaft_area.nil?
+          new_skylight.shaft_area *= scaling_factor
+        end
       end
     end
   end

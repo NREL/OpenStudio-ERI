@@ -219,6 +219,8 @@
       <sch:assert role='ERROR' test='h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached" or text()="apartment unit"] or not(h:ResidentialFacilityType)'>Expected ResidentialFacilityType to be 'single-family detached' or 'single-family attached' or 'apartment unit'</sch:assert>
       <sch:assert role='ERROR' test='count(h:NumberofConditionedFloors) = 1'>Expected 1 element(s) for xpath: NumberofConditionedFloors</sch:assert>
       <sch:assert role='ERROR' test='count(h:NumberofConditionedFloorsAboveGrade) = 1'>Expected 1 element(s) for xpath: NumberofConditionedFloorsAboveGrade</sch:assert>
+      <!-- We are more strict than HPXML schema for NumberofConditionedFloorsAboveGrade; see https://github.com/NREL/OpenStudio-HPXML/issues/1755 -->
+      <sch:assert role='ERROR' test='number(h:NumberofConditionedFloorsAboveGrade) &gt; 0 or not(h:NumberofConditionedFloorsAboveGrade)'>Expected NumberofConditionedFloorsAboveGrade to be greater than 0</sch:assert>
       <sch:assert role='ERROR' test='number(h:NumberofConditionedFloors) &gt;= number(h:NumberofConditionedFloorsAboveGrade) or not(h:NumberofConditionedFloors) or not(h:NumberofConditionedFloorsAboveGrade)'>Expected NumberofConditionedFloors to be greater than or equal to NumberofConditionedFloorsAboveGrade</sch:assert>
       <sch:assert role='ERROR' test='count(h:AverageCeilingHeight) &lt;= 1'>Expected 0 or 1 element(s) for xpath: AverageCeilingHeight</sch:assert>
       <sch:assert role='ERROR' test='count(h:NumberofBedrooms) = 1'>Expected 1 element(s) for xpath: NumberofBedrooms</sch:assert>
@@ -497,6 +499,29 @@
       <sch:assert role='ERROR' test='count(h:UFactor) = 1'>Expected 1 element(s) for xpath: UFactor</sch:assert>
       <sch:assert role='ERROR' test='count(h:SHGC) = 1'>Expected 1 element(s) for xpath: SHGC</sch:assert>
       <sch:assert role='ERROR' test='count(h:AttachedToRoof) = 1'>Expected 1 element(s) for xpath: AttachedToRoof</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:Curb) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Curb</sch:assert> <!-- See [SkylightCurb] -->
+      <sch:assert role='ERROR' test='count(h:extension/h:Shaft) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Shaft</sch:assert> <!-- See [SkylightShaft] -->
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[SkylightCurb]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Skylights/h:Skylight/h:extension/h:Curb'>
+      <sch:assert role='ERROR' test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert role='ERROR' test='number(h:Area) &gt; 0 or not(h:Area)'>Expected Area to be greater than 0</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: AssemblyEffectiveRValue</sch:assert>
+      <sch:assert role='ERROR' test='number(h:AssemblyEffectiveRValue) &gt; 0 or not(h:AssemblyEffectiveRValue)'>Expected AssemblyEffectiveRValue to be greater than 0</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[SkylightShaft]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Skylights/h:Skylight/h:extension/h:Shaft'>
+      <sch:assert role='ERROR' test='count(../../h:AttachedToFloor) = 1'>Expected 1 element(s) for xpath: ../../AttachedToFloor</sch:assert>
+      <sch:assert role='ERROR' test='count(h:Area) = 1'>Expected 1 element(s) for xpath: Area</sch:assert>
+      <sch:assert role='ERROR' test='number(h:Area) &gt; 0 or not(h:Area)'>Expected Area to be greater than 0</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AssemblyEffectiveRValue) = 1'>Expected 1 element(s) for xpath: AssemblyEffectiveRValue</sch:assert>
+      <sch:assert role='ERROR' test='number(h:AssemblyEffectiveRValue) &gt; 0 or not(h:AssemblyEffectiveRValue)'>Expected AssemblyEffectiveRValue to be greater than 0</sch:assert>
     </sch:rule>
   </sch:pattern>
 
