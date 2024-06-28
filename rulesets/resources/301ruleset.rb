@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ERI_301_Ruleset
+module ERI_301_Ruleset
   def self.apply_ruleset(hpxml, calc_type, weather, epw_file, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
@@ -3105,36 +3105,36 @@ class ERI_301_Ruleset
                                                fuel_oil_value: so2_values[HPXML::FuelTypeOil])
     end
   end
-end
 
-def calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value: nil)
-  sum_area = 0
-  sum_val_times_area = 0
-  surfaces.each do |surface|
-    sum_area += surface.area
-    if use_inverse
-      sum_val_times_area += (1.0 / surface.send(attribute) * surface.area)
-    else
-      sum_val_times_area += (surface.send(attribute) * surface.area)
+  def self.calc_area_weighted_avg(surfaces, attribute, use_inverse: false, backup_value: nil)
+    sum_area = 0
+    sum_val_times_area = 0
+    surfaces.each do |surface|
+      sum_area += surface.area
+      if use_inverse
+        sum_val_times_area += (1.0 / surface.send(attribute) * surface.area)
+      else
+        sum_val_times_area += (surface.send(attribute) * surface.area)
+      end
     end
-  end
-  if sum_area > 0
-    if use_inverse
-      return 1.0 / (sum_val_times_area / sum_area)
-    else
-      return sum_val_times_area / sum_area
+    if sum_area > 0
+      if use_inverse
+        return 1.0 / (sum_val_times_area / sum_area)
+      else
+        return sum_val_times_area / sum_area
+      end
     end
-  end
-  if not backup_value.nil?
-    return backup_value
+    if not backup_value.nil?
+      return backup_value
+    end
+
+    fail "Unable to calculate area-weighted avg for #{attribute}."
   end
 
-  fail "Unable to calculate area-weighted avg for #{attribute}."
-end
-
-def apply_default_average_ceiling_height(orig_bldg)
-  if orig_bldg.building_construction.average_ceiling_height.nil?
-    # ASHRAE 62.2 default for average floor to ceiling height
-    orig_bldg.building_construction.average_ceiling_height = 8.2
+  def self.apply_default_average_ceiling_height(orig_bldg)
+    if orig_bldg.building_construction.average_ceiling_height.nil?
+      # ASHRAE 62.2 default for average floor to ceiling height
+      orig_bldg.building_construction.average_ceiling_height = 8.2
+    end
   end
 end

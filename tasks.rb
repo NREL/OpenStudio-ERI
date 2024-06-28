@@ -29,7 +29,7 @@ def create_test_hpxmls
   FileUtils.cp(Dir.glob('hpxml-measures/workflow/tests/HERS_Hot_Water/*.xml'), 'workflow/tests/RESNET_Tests/4.6_Hot_Water')
 
   schema_path = File.join(File.dirname(__FILE__), 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-  schema_validator = XMLValidator.get_schema_validator(schema_path)
+  schema_validator = XMLValidator.get_xml_validator(schema_path)
 
   # Hash of HPXML -> Parent HPXML
   hpxmls_files = {
