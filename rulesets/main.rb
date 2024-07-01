@@ -26,11 +26,11 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
   begin
     if schema_validator.nil?
       schema_path = File.join(File.dirname(__FILE__), '..', 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')
-      schema_validator = XMLValidator.get_schema_validator(schema_path)
+      schema_validator = XMLValidator.get_xml_validator(schema_path)
     end
     if schematron_validator.nil?
       schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
-      schematron_validator = XMLValidator.get_schematron_validator(schematron_path)
+      schematron_validator = XMLValidator.get_xml_validator(schematron_path)
     end
     orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_validator: schema_validator, schematron_validator: schematron_validator)
     orig_hpxml.errors.each do |error|

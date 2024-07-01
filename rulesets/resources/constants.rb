@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Constants
+module Constants
   def self.CalcTypeCO2eRatedHome
     return 'CO2e Rated Home'
   end
@@ -26,7 +26,7 @@ class Constants
   end
 end
 
-class ESConstants
+module ESConstants
   def self.CalcTypeEnergyStarRated
     return 'ES Rated'
   end
@@ -92,13 +92,13 @@ class ESConstants
   end
 end
 
-class IECCConstants
+module IECCConstants
   def self.AllVersions
     return ['2015', '2018', '2021']
   end
 end
 
-class ZERHConstants
+module ZERHConstants
   def self.CalcTypeZERHRated
     return 'ZERH Rated'
   end

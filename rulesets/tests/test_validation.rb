@@ -12,9 +12,9 @@ class ERI301ValidationTest < Minitest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
-    @schema_validator = XMLValidator.get_schema_validator(File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')))
+    @schema_validator = XMLValidator.get_xml_validator(File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')))
     @schematron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
-    @schematron_validator = XMLValidator.get_schematron_validator(@schematron_path)
+    @schematron_validator = XMLValidator.get_xml_validator(@schematron_path)
 
     @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
     FileUtils.mkdir_p(@tmp_output_path)
@@ -29,7 +29,7 @@ class ERI301ValidationTest < Minitest::Test
     # Check that the schematron file is valid
 
     schematron_schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'iso-schematron.xsd'))
-    schematron_schema_validator = XMLValidator.get_schema_validator(schematron_schema_path)
+    schematron_schema_validator = XMLValidator.get_xml_validator(schematron_schema_path)
     _test_schema_validation(@schematron_path, schematron_schema_validator)
   end
 
