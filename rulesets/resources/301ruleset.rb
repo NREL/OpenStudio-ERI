@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module ERI_301_Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather, epw_file, iecc_version, egrid_subregion, cambium_gea, create_time)
+  def self.apply_ruleset(hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
-    @is_southern_hemisphere = (epw_file.latitude < 0)
+    @is_southern_hemisphere = (weather.header.Latitude < 0)
 
     if not iecc_version.nil?
       if ['2015', '2018'].include? iecc_version
@@ -41,7 +41,7 @@ module ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, epw_file: epw_file, convert_shared_systems: false)
+    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time

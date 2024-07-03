@@ -1044,8 +1044,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   in_bldg = in_hpxml.buildings[0]
 
   # Gather weather info
-  epw_file = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
-  epw_path = epw_file
+  epw_path = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
   if not File.exist? epw_path
     test_epw_path = File.join(File.dirname(hpxml_path), epw_path)
     epw_path = test_epw_path if File.exist? test_epw_path
@@ -1056,7 +1055,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   end
   if not File.exist? epw_path
     # Can't find EPW location, don't fail just because of that.
-    epw_location = File.basename(epw_file)
+    epw_location = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
     epw_state = 'XX'
   else
     epw_header = File.open(epw_path) { |f| f.readline }

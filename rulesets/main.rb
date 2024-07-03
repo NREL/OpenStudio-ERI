@@ -59,8 +59,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     end
 
     # Obtain weather object
-    weather = WeatherProcess.new(epw_path: epw_path, runner: nil)
-    epw_file = OpenStudio::EpwFile.new(epw_path, false)
+    weather = WeatherFile.new(epw_path: epw_path, runner: nil)
 
     eri_version = orig_hpxml.header.eri_calculation_version
     eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
@@ -115,7 +114,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
 
       # Apply 301 ruleset on HPXML object
       if not design.calc_type.nil?
-        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.calc_type, weather, epw_file, design.iecc_version, egrid_subregion, cambium_gea, create_time)
+        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.calc_type, weather, design.iecc_version, egrid_subregion, cambium_gea, create_time)
       end
       last_hpxml = new_hpxml
 
