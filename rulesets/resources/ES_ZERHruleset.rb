@@ -142,7 +142,7 @@ module ES_ZERH_Ruleset
     @has_uncond_bsmnt = orig_bldg.has_location(HPXML::LocationBasementUnconditioned)
     @has_auto_generated_attic = false
 
-    new_bldg.site.fuels = orig_bldg.site.fuels
+    new_bldg.site.available_fuels = orig_bldg.site.available_fuels
 
     new_bldg.building_construction.residential_facility_type = orig_bldg.building_construction.residential_facility_type
     new_bldg.building_construction.number_of_conditioned_floors = orig_bldg.building_construction.number_of_conditioned_floors

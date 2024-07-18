@@ -69,7 +69,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-none.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    hpxml_bldg.site.fuels = [HPXML::FuelTypeElectricity]
+    hpxml_bldg.site.available_fuels = [HPXML::FuelTypeElectricity]
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 

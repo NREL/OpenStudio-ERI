@@ -247,7 +247,7 @@ module ERI_301_Ruleset
     new_bldg.header.manualj_cooling_setpoint = 75
     new_hpxml.header.temperature_capacitance_multiplier = 1.0
 
-    new_bldg.site.fuels = orig_bldg.site.fuels
+    new_bldg.site.available_fuels = orig_bldg.site.available_fuels
     new_bldg.site.site_type = HPXML::SiteTypeSuburban
     new_bldg.site.shielding_of_home = HPXML::ShieldingNormal
 
@@ -630,7 +630,7 @@ module ERI_301_Ruleset
     # Create walls for Above-grade walls separating Conditioned Space Volume
     # from Unrated Heated Space, Multifamily Buffer Boundary, or Non-Freezing Space.
     if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
-      common_space_walls = orig_bldg.walls.select { |wall| wall.is_conditioned_and_adjacent_to_multifamily_common_space }
+      common_space_walls = orig_bldg.walls.select { |wall| wall.is_conditioned && HPXML::multifamily_common_space_locations.include?(wall.exterior_adjacent_to) }
       common_space_wall_ufactor = get_reference_wall_ufactor_common_space()
       common_space_walls.each do |orig_wall|
         new_bldg.walls.add(id: orig_wall.id,
@@ -1510,7 +1510,7 @@ module ERI_301_Ruleset
         orig_vent_fan = mech_vent_fans.select { |f| f.id == fan_id }[0]
         if [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? orig_vent_fan.fan_type
           sum_fan_w += (1.00 * flow_rate)
-        elsif orig_vent_fan.is_balanced?
+        elsif orig_vent_fan.is_balanced
           sum_fan_w += (0.70 * flow_rate)
         else
           sum_fan_w += (0.35 * flow_rate)
@@ -1543,7 +1543,7 @@ module ERI_301_Ruleset
   def self.set_systems_mechanical_ventilation_rated(orig_bldg, new_bldg)
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f|
       f.used_for_whole_building_ventilation &&
-        (f.is_cfis_supplemental_fan? || f.hours_in_operation > 0) &&
+        (f.is_cfis_supplemental_fan || f.hours_in_operation > 0) &&
         (f.flow_rate_not_tested || f.flow_rate > 0)
     }
 
@@ -1556,7 +1556,7 @@ module ERI_301_Ruleset
       # Calculate daily-average outdoor airflow rate for fan
       if not orig_vent_fan.flow_rate_not_tested
         # Airflow measured; set to max of provided value and min Qfan requirement
-        if orig_vent_fan.is_cfis_supplemental_fan?
+        if orig_vent_fan.is_cfis_supplemental_fan
           average_oa_unit_flow_rate = [orig_vent_fan.oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
         else
           average_oa_unit_flow_rate = [orig_vent_fan.average_oa_unit_flow_rate, q_fans[orig_vent_fan.id]].max
@@ -1573,18 +1573,19 @@ module ERI_301_Ruleset
       # Convert to actual fan flow rate(s)
       if not orig_vent_fan.is_shared_system
         # In-unit system
-        if orig_vent_fan.is_cfis_supplemental_fan?
-          total_unit_flow_rate = average_oa_unit_flow_rate
+        if orig_vent_fan.is_cfis_supplemental_fan
+          unit_flow_rate = average_oa_unit_flow_rate
         else
-          total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation)
+          unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation)
         end
       else
         # Shared system
-        total_unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation) / (1 - orig_vent_fan.fraction_recirculation)
+        unit_flow_rate = average_oa_unit_flow_rate * (24.0 / hours_in_operation) / (1 - orig_vent_fan.fraction_recirculation)
         if orig_vent_fan.flow_rate_not_tested
           system_flow_rate = orig_vent_fan.rated_flow_rate
         else
-          system_flow_rate = total_unit_flow_rate / orig_vent_fan.unit_flow_rate_ratio
+          unit_flow_rate_ratio = orig_vent_fan.in_unit_flow_rate / orig_vent_fan.flow_rate
+          system_flow_rate = unit_flow_rate / unit_flow_rate_ratio
         end
       end
 
@@ -1594,7 +1595,7 @@ module ERI_301_Ruleset
         fan_power = orig_vent_fan.fan_power
         if not orig_vent_fan.flow_rate_not_tested
           # Increase proportionally with airflow, per RESNET 55i
-          fan_power = orig_vent_fan.fan_power * total_unit_flow_rate / orig_vent_fan.total_unit_flow_rate
+          fan_power = orig_vent_fan.fan_power * unit_flow_rate / orig_vent_fan.unit_flow_rate
         end
         if not orig_vent_fan.is_shared_system
           unit_fan_power = fan_power
@@ -1612,7 +1613,7 @@ module ERI_301_Ruleset
           unit_fan_power = fan_w_per_cfm * q_fan
         else
           if not orig_vent_fan.is_shared_system
-            unit_fan_power = fan_w_per_cfm * total_unit_flow_rate
+            unit_fan_power = fan_w_per_cfm * unit_flow_rate
           else
             system_fan_power = fan_w_per_cfm * system_flow_rate
           end
@@ -1634,12 +1635,12 @@ module ERI_301_Ruleset
                                     cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
       new_vent_fan = new_bldg.ventilation_fans[-1]
       if not orig_vent_fan.is_shared_system
-        new_vent_fan.tested_flow_rate = total_unit_flow_rate.round(2)
+        new_vent_fan.tested_flow_rate = unit_flow_rate.round(2)
         new_vent_fan.fan_power = unit_fan_power.round(3)
       else
         new_vent_fan.rated_flow_rate = system_flow_rate.round(2)
         new_vent_fan.fan_power = system_fan_power.round(3)
-        new_vent_fan.in_unit_flow_rate = total_unit_flow_rate.round(2)
+        new_vent_fan.in_unit_flow_rate = unit_flow_rate.round(2)
         new_vent_fan.fraction_recirculation = orig_vent_fan.fraction_recirculation
         new_vent_fan.preheating_fuel = orig_vent_fan.preheating_fuel
         new_vent_fan.preheating_efficiency_cop = orig_vent_fan.preheating_efficiency_cop
@@ -1853,7 +1854,7 @@ module ERI_301_Ruleset
                                          pipe_r_value: hot_water_distribution.pipe_r_value,
                                          standard_piping_length: hot_water_distribution.standard_piping_length,
                                          recirculation_control_type: hot_water_distribution.recirculation_control_type,
-                                         recirculation_piping_length: hot_water_distribution.recirculation_piping_length,
+                                         recirculation_piping_loop_length: hot_water_distribution.recirculation_piping_loop_length,
                                          recirculation_branch_piping_length: hot_water_distribution.recirculation_branch_piping_length,
                                          recirculation_pump_power: hot_water_distribution.recirculation_pump_power,
                                          dwhr_facilities_connected: hot_water_distribution.dwhr_facilities_connected,
@@ -2403,10 +2404,10 @@ module ERI_301_Ruleset
     # Calculates the target average airflow rate for each mechanical
     # ventilation system based on their measured value (if available)
     # and the minimum continuous ventilation rate Qfan.
-    mech_vent_fans = all_mech_vent_fans.select { |f| !f.is_cfis_supplemental_fan? }
-    supply_fans = mech_vent_fans.select { |f| f.includes_supply_air? && !f.is_balanced? }
-    exhaust_fans = mech_vent_fans.select { |f| f.includes_exhaust_air? && !f.is_balanced? }
-    balanced_fans = mech_vent_fans.select { |f| f.is_balanced? }
+    mech_vent_fans = all_mech_vent_fans.select { |f| !f.is_cfis_supplemental_fan }
+    supply_fans = mech_vent_fans.select { |f| f.includes_supply_air && !f.is_balanced }
+    exhaust_fans = mech_vent_fans.select { |f| f.includes_exhaust_air && !f.is_balanced }
+    balanced_fans = mech_vent_fans.select { |f| f.is_balanced }
 
     # Calculate min airflow rate requirement
     is_balanced, frac_imbal = get_mech_vent_imbal_properties(mech_vent_fans)
@@ -2479,7 +2480,7 @@ module ERI_301_Ruleset
 
     # Set Qfan for any CFIS supplemental fans last
     all_mech_vent_fans.each do |orig_vent_fan|
-      next unless orig_vent_fan.is_cfis_supplemental_fan?
+      next unless orig_vent_fan.is_cfis_supplemental_fan
 
       parent_cfis_fan = all_mech_vent_fans.select { |f| f.cfis_supplemental_fan_idref == orig_vent_fan.id }[0]
       q_fans[orig_vent_fan.id] = q_fans[parent_cfis_fan.id]
@@ -2555,19 +2556,19 @@ module ERI_301_Ruleset
     cfm_exhaust = 0.0
     ventilation_fans.each do |vent_fan|
       next unless vent_fan.used_for_whole_building_ventilation
-      next if vent_fan.is_cfis_supplemental_fan?
+      next if vent_fan.is_cfis_supplemental_fan
       next if vent_fan.flow_rate_not_tested
 
       if total_or_oa == :total
-        unit_flow_rate = vent_fan.average_total_unit_flow_rate
+        unit_flow_rate = vent_fan.average_unit_flow_rate
       elsif total_or_oa == :oa
         unit_flow_rate = vent_fan.average_oa_unit_flow_rate
       end
 
-      if vent_fan.includes_supply_air?
+      if vent_fan.includes_supply_air
         cfm_supply += unit_flow_rate
       end
-      if vent_fan.includes_exhaust_air?
+      if vent_fan.includes_exhaust_air
         cfm_exhaust += unit_flow_rate
       end
     end
@@ -2576,15 +2577,15 @@ module ERI_301_Ruleset
 
   def self.get_mech_vent_imbal_properties(mech_vent_fans)
     # Returns (is_imbalanced, frac_imbalanced)
-    whole_fans = mech_vent_fans.select { |f| f.used_for_whole_building_ventilation && !f.is_cfis_supplemental_fan? }
+    whole_fans = mech_vent_fans.select { |f| f.used_for_whole_building_ventilation && !f.is_cfis_supplemental_fan }
 
-    if whole_fans.count { |f| !f.is_balanced? && f.hours_in_operation < 24 } > 1
+    if whole_fans.count { |f| !f.is_balanced && f.hours_in_operation < 24 } > 1
       return false, 1.0 # Multiple intermittent unbalanced fans, assume imbalanced per ANSI 301-2022
     end
 
     unmeasured_types = whole_fans.select { |f| f.flow_rate_not_tested }
     if unmeasured_types.size > 0
-      if unmeasured_types.all? { |f| f.is_balanced? }
+      if unmeasured_types.all? { |f| f.is_balanced }
         return true, 0.0 # All types are balanced, assume balanced
       else
         return false, 1.0 # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced

@@ -684,7 +684,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-mechvent-cfis-supplemental-fan-exhaust.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan_suppl = hpxml_bldg.ventilation_fans.select { |vf| vf.is_cfis_supplemental_fan? }[0]
+    vent_fan_suppl = hpxml_bldg.ventilation_fans.select { |vf| vf.is_cfis_supplemental_fan }[0]
     vent_fan_suppl.fan_power = nil
     vent_fan_suppl.fan_power_defaulted = true
     vent_fan_suppl.tested_flow_rate = nil
@@ -1171,7 +1171,7 @@ class ERIMechVentTest < Minitest::Test
     num_mech_vent = 0
     hpxml_bldg.ventilation_fans.each_with_index do |ventilation_fan, idx|
       next unless ventilation_fan.used_for_whole_building_ventilation
-      next if ventilation_fan.is_cfis_supplemental_fan?
+      next if ventilation_fan.is_cfis_supplemental_fan
 
       expected_values = all_expected_values[idx]
       num_mech_vent += 1

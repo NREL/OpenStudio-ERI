@@ -607,9 +607,9 @@ class ERIWaterHeatingTest < Minitest::Test
       assert_equal(recirc_control, hot_water_distribution.recirculation_control_type)
     end
     if recirc_loop_l.nil?
-      assert_nil(hot_water_distribution.recirculation_piping_length)
+      assert_nil(hot_water_distribution.recirculation_piping_loop_length)
     else
-      assert_in_epsilon(recirc_loop_l, hot_water_distribution.recirculation_piping_length, 0.01)
+      assert_in_epsilon(recirc_loop_l, hot_water_distribution.recirculation_piping_loop_length, 0.01)
     end
     if recirc_branch_l.nil?
       assert_nil(hot_water_distribution.recirculation_branch_piping_length)
