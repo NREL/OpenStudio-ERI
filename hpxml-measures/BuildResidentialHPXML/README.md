@@ -193,6 +193,32 @@ Research feature to select the type of defrost model. Use standard for default E
 
 <br/>
 
+**Simulation Control: HVAC On-Off Thermostat Deadband**
+
+Research feature to model on-off thermostat deadband and start-up degradation for single or two speed AC/ASHP systems, and realistic time-based staging for two speed AC/ASHP systems. Currently only supported with 1 min timestep.
+
+- **Name:** ``simulation_control_onoff_thermostat_deadband``
+- **Type:** ``Double``
+
+- **Units:** ``deg-F``
+
+- **Required:** ``false``
+
+<br/>
+
+**Simulation Control: Heat Pump Backup Heating Capacity Increment**
+
+Research feature to model capacity increment of multi-stage heat pump backup systems with time-based staging. Only applies to air-source heat pumps where Backup Type is 'integrated' and Backup Fuel Type is 'electricity'. Currently only supported with 1 min timestep.
+
+- **Name:** ``simulation_control_heat_pump_backup_heating_capacity_increment``
+- **Type:** ``Double``
+
+- **Units:** ``Btu/hr``
+
+- **Required:** ``false``
+
+<br/>
+
 **Site: Type**
 
 The type of site. If not provided, the OS-HPXML default (see <a href='https://openstudio-hpxml.readthedocs.io/en/v1.8.1/workflow_inputs.html#hpxml-site'>HPXML Site</a>) is used.
@@ -985,7 +1011,7 @@ Nominal R-value of the vertical slab perimeter insulation. Applies to slab-on-gr
 
 Depth from grade to bottom of vertical slab perimeter insulation. Applies to slab-on-grade foundations and basement/crawlspace floors.
 
-- **Name:** ``slab_perimeter_depth``
+- **Name:** ``slab_perimeter_insulation_depth``
 - **Type:** ``Double``
 
 - **Units:** ``ft``
@@ -1011,7 +1037,7 @@ Nominal R-value of the horizontal under slab insulation. Applies to slab-on-grad
 
 Width from slab edge inward of horizontal under-slab insulation. Enter 999 to specify that the under slab insulation spans the entire slab. Applies to slab-on-grade foundations and basement/crawlspace floors.
 
-- **Name:** ``slab_under_width``
+- **Name:** ``slab_under_insulation_width``
 - **Type:** ``Double``
 
 - **Units:** ``ft``
@@ -1703,14 +1729,27 @@ R-value of the opaque door(s).
 
 <br/>
 
+**Air Leakage: Leakiness Description**
+
+Qualitative description of infiltration. If provided, the Year Built of the home is required. Either provide this input or provide a numeric air leakage value below.
+
+- **Name:** ``air_leakage_leakiness_description``
+- **Type:** ``Choice``
+
+- **Required:** ``false``
+
+- **Choices:** `very tight`, `tight`, `average`, `leaky`, `very leaky`
+
+<br/>
+
 **Air Leakage: Units**
 
-The unit of measure for the air leakage.
+The unit of measure for the air leakage if providing a numeric air leakage value.
 
 - **Name:** ``air_leakage_units``
 - **Type:** ``Choice``
 
-- **Required:** ``true``
+- **Required:** ``false``
 
 - **Choices:** `ACH`, `CFM`, `ACHnatural`, `CFMnatural`, `EffectiveLeakageArea`
 
@@ -1718,31 +1757,31 @@ The unit of measure for the air leakage.
 
 **Air Leakage: House Pressure**
 
-The house pressure relative to outside. Required when units are ACH or CFM.
+The house pressure relative to outside if providing a numeric air leakage value. Required when units are ACH or CFM.
 
 - **Name:** ``air_leakage_house_pressure``
 - **Type:** ``Double``
 
 - **Units:** ``Pa``
 
-- **Required:** ``true``
+- **Required:** ``false``
 
 <br/>
 
 **Air Leakage: Value**
 
-Air exchange rate value. For 'EffectiveLeakageArea', provide value in sq. in.
+Numeric air leakage value. For 'EffectiveLeakageArea', provide value in sq. in. If provided, overrides Leakiness Description input.
 
 - **Name:** ``air_leakage_value``
 - **Type:** ``Double``
 
-- **Required:** ``true``
+- **Required:** ``false``
 
 <br/>
 
 **Air Leakage: Type**
 
-Type of air leakage. If 'unit total', represents the total infiltration to the unit as measured by a compartmentalization test, in which case the air leakage value will be adjusted by the ratio of exterior envelope surface area to total envelope surface area. Otherwise, if 'unit exterior only', represents the infiltration to the unit from outside only as measured by a guarded test. Required when unit type is single-family attached or apartment unit.
+Type of air leakage if providing a numeric air leakage value. If 'unit total', represents the total infiltration to the unit as measured by a compartmentalization test, in which case the air leakage value will be adjusted by the ratio of exterior envelope surface area to total envelope surface area. Otherwise, if 'unit exterior only', represents the infiltration to the unit from outside only as measured by a guarded test. Required when unit type is single-family attached or apartment unit.
 
 - **Name:** ``air_leakage_type``
 - **Type:** ``Choice``

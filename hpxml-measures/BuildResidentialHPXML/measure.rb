@@ -127,6 +127,18 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Research feature to select the type of defrost model. Use #{HPXML::AdvancedResearchDefrostModelTypeStandard} for default E+ defrost setting. Use #{HPXML::AdvancedResearchDefrostModelTypeAdvanced} for an improved model that better accounts for load and energy use during defrost; using #{HPXML::AdvancedResearchDefrostModelTypeAdvanced} may impact simulation runtime. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-simulation-control'>HPXML Simulation Control</a>) is used.")
     args << arg
 
+    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('simulation_control_onoff_thermostat_deadband', false)
+    arg.setDisplayName('Simulation Control: HVAC On-Off Thermostat Deadband')
+    arg.setDescription('Research feature to model on-off thermostat deadband and start-up degradation for single or two speed AC/ASHP systems, and realistic time-based staging for two speed AC/ASHP systems. Currently only supported with 1 min timestep.')
+    arg.setUnits('deg-F')
+    args << arg
+
+    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('simulation_control_heat_pump_backup_heating_capacity_increment', false)
+    arg.setDisplayName('Simulation Control: Heat Pump Backup Heating Capacity Increment')
+    arg.setDescription("Research feature to model capacity increment of multi-stage heat pump backup systems with time-based staging. Only applies to air-source heat pumps where Backup Type is '#{HPXML::HeatPumpBackupTypeIntegrated}' and Backup Fuel Type is '#{HPXML::FuelTypeElectricity}'. Currently only supported with 1 min timestep.")
+    arg.setUnits('Btu/hr')
+    args << arg
+
     site_type_choices = OpenStudio::StringVector.new
     site_type_choices << HPXML::SiteTypeSuburban
     site_type_choices << HPXML::SiteTypeUrban
@@ -620,7 +632,7 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDefaultValue(0)
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('slab_perimeter_depth', true)
+    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('slab_perimeter_insulation_depth', true)
     arg.setDisplayName('Slab: Perimeter Insulation Depth')
     arg.setUnits('ft')
     arg.setDescription('Depth from grade to bottom of vertical slab perimeter insulation. Applies to slab-on-grade foundations and basement/crawlspace floors.')
@@ -634,7 +646,7 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDefaultValue(0)
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('slab_under_width', true)
+    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('slab_under_insulation_width', true)
     arg.setDisplayName('Slab: Under Slab Insulation Width')
     arg.setUnits('ft')
     arg.setDescription('Width from slab edge inward of horizontal under-slab insulation. Enter 999 to specify that the under slab insulation spans the entire slab. Applies to slab-on-grade foundations and basement/crawlspace floors.')
@@ -1041,6 +1053,19 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDefaultValue(4.4)
     args << arg
 
+    air_leakage_leakiness_description_choices = OpenStudio::StringVector.new
+    air_leakage_leakiness_description_choices << HPXML::LeakinessVeryTight
+    air_leakage_leakiness_description_choices << HPXML::LeakinessTight
+    air_leakage_leakiness_description_choices << HPXML::LeakinessAverage
+    air_leakage_leakiness_description_choices << HPXML::LeakinessLeaky
+    air_leakage_leakiness_description_choices << HPXML::LeakinessVeryLeaky
+
+    arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('air_leakage_leakiness_description', air_leakage_leakiness_description_choices, false)
+    arg.setDisplayName('Air Leakage: Leakiness Description')
+    arg.setDescription('Qualitative description of infiltration. If provided, the Year Built of the home is required. Either provide this input or provide a numeric air leakage value below.')
+    arg.setDefaultValue(HPXML::LeakinessAverage)
+    args << arg
+
     air_leakage_units_choices = OpenStudio::StringVector.new
     air_leakage_units_choices << HPXML::UnitsACH
     air_leakage_units_choices << HPXML::UnitsCFM
@@ -1048,23 +1073,20 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     air_leakage_units_choices << HPXML::UnitsCFMNatural
     air_leakage_units_choices << HPXML::UnitsELA
 
-    arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('air_leakage_units', air_leakage_units_choices, true)
+    arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('air_leakage_units', air_leakage_units_choices, false)
     arg.setDisplayName('Air Leakage: Units')
-    arg.setDescription('The unit of measure for the air leakage.')
-    arg.setDefaultValue(HPXML::UnitsACH)
+    arg.setDescription('The unit of measure for the air leakage if providing a numeric air leakage value.')
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('air_leakage_house_pressure', true)
+    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('air_leakage_house_pressure', false)
     arg.setDisplayName('Air Leakage: House Pressure')
     arg.setUnits('Pa')
-    arg.setDescription("The house pressure relative to outside. Required when units are #{HPXML::UnitsACH} or #{HPXML::UnitsCFM}.")
-    arg.setDefaultValue(50)
+    arg.setDescription("The house pressure relative to outside if providing a numeric air leakage value. Required when units are #{HPXML::UnitsACH} or #{HPXML::UnitsCFM}.")
     args << arg
 
-    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('air_leakage_value', true)
+    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('air_leakage_value', false)
     arg.setDisplayName('Air Leakage: Value')
-    arg.setDescription("Air exchange rate value. For '#{HPXML::UnitsELA}', provide value in sq. in.")
-    arg.setDefaultValue(3)
+    arg.setDescription("Numeric air leakage value. For '#{HPXML::UnitsELA}', provide value in sq. in. If provided, overrides Leakiness Description input.")
     args << arg
 
     air_leakage_type_choices = OpenStudio::StringVector.new
@@ -1073,7 +1095,7 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
 
     arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('air_leakage_type', air_leakage_type_choices, false)
     arg.setDisplayName('Air Leakage: Type')
-    arg.setDescription("Type of air leakage. If '#{HPXML::InfiltrationTypeUnitTotal}', represents the total infiltration to the unit as measured by a compartmentalization test, in which case the air leakage value will be adjusted by the ratio of exterior envelope surface area to total envelope surface area. Otherwise, if '#{HPXML::InfiltrationTypeUnitExterior}', represents the infiltration to the unit from outside only as measured by a guarded test. Required when unit type is #{HPXML::ResidentialTypeSFA} or #{HPXML::ResidentialTypeApartment}.")
+    arg.setDescription("Type of air leakage if providing a numeric air leakage value. If '#{HPXML::InfiltrationTypeUnitTotal}', represents the total infiltration to the unit as measured by a compartmentalization test, in which case the air leakage value will be adjusted by the ratio of exterior envelope surface area to total envelope surface area. Otherwise, if '#{HPXML::InfiltrationTypeUnitExterior}', represents the infiltration to the unit from outside only as measured by a guarded test. Required when unit type is #{HPXML::ResidentialTypeSFA} or #{HPXML::ResidentialTypeApartment}.")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument::makeBoolArgument('air_leakage_has_flue_or_chimney_in_conditioned_space', false)
@@ -2344,7 +2366,7 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
 
     solar_thermal_system_type_choices = OpenStudio::StringVector.new
     solar_thermal_system_type_choices << 'none'
-    solar_thermal_system_type_choices << HPXML::SolarThermalSystemType
+    solar_thermal_system_type_choices << HPXML::SolarThermalSystemTypeHotWater
 
     solar_thermal_collector_loop_type_choices = OpenStudio::StringVector.new
     solar_thermal_collector_loop_type_choices << HPXML::SolarThermalLoopTypeDirect
@@ -2352,10 +2374,10 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     solar_thermal_collector_loop_type_choices << HPXML::SolarThermalLoopTypeThermosyphon
 
     solar_thermal_collector_type_choices = OpenStudio::StringVector.new
-    solar_thermal_collector_type_choices << HPXML::SolarThermalTypeEvacuatedTube
-    solar_thermal_collector_type_choices << HPXML::SolarThermalTypeSingleGlazing
-    solar_thermal_collector_type_choices << HPXML::SolarThermalTypeDoubleGlazing
-    solar_thermal_collector_type_choices << HPXML::SolarThermalTypeICS
+    solar_thermal_collector_type_choices << HPXML::SolarThermalCollectorTypeEvacuatedTube
+    solar_thermal_collector_type_choices << HPXML::SolarThermalCollectorTypeSingleGlazing
+    solar_thermal_collector_type_choices << HPXML::SolarThermalCollectorTypeDoubleGlazing
+    solar_thermal_collector_type_choices << HPXML::SolarThermalCollectorTypeICS
 
     arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('solar_thermal_system_type', solar_thermal_system_type_choices, true)
     arg.setDisplayName('Solar Thermal: System Type')
@@ -2379,7 +2401,7 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('solar_thermal_collector_type', solar_thermal_collector_type_choices, true)
     arg.setDisplayName('Solar Thermal: Collector Type')
     arg.setDescription('The collector type of the solar thermal system.')
-    arg.setDefaultValue(HPXML::SolarThermalTypeEvacuatedTube)
+    arg.setDefaultValue(HPXML::SolarThermalCollectorTypeEvacuatedTube)
     args << arg
 
     arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('solar_thermal_collector_azimuth', true)
@@ -3449,7 +3471,7 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
   # Define what happens when the measure is run.
   #
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param user_arguments [OpenStudio::Measure::OSArgumentMap] OpenStudio measure arguments
   # @return [Boolean] true if successful
   def run(model, runner, user_arguments)
@@ -3772,7 +3794,7 @@ end
 module HPXMLFile
   # Create the closed-form geometry, and then call individual set_xxx methods
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
   # @param args [Hash] Map of :argument_name => value
   # @param epw_path [String] Path to the EPW weather file
@@ -3901,7 +3923,7 @@ module HPXMLFile
 
   # Check for errors in hpxml, and validate hpxml_doc against hpxml_path
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml [HPXML] HPXML object
   # @param hpxml_doc [Oga::XML::Element] Root XML element of the HPXML document
   # @param hpxml_path [TODO] TODO
@@ -3942,7 +3964,7 @@ module HPXMLFile
 
   # Create 3D geometry (surface, subsurfaces) for a given unit type
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
   # @param args [Hash] Map of :argument_name => value
   # @return [Boolean] True if successful
@@ -4036,7 +4058,7 @@ module HPXMLFile
   # - emissions scenarios
   # - utility bill scenarios
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml [HPXML] HPXML object
   # @param args [Hash] Map of :argument_name => value
   # @return [Boolean] true if no errors, otherwise false
@@ -4131,6 +4153,20 @@ module HPXMLFile
         errors << "'Simulation Control: Defrost Model Type' cannot vary across dwelling units."
       end
       hpxml.header.defrost_model_type = args[:simulation_control_defrost_model_type]
+    end
+
+    if not args[:simulation_control_onoff_thermostat_deadband].nil?
+      if (not hpxml.header.hvac_onoff_thermostat_deadband.nil?) && (hpxml.header.hvac_onoff_thermostat_deadband != args[:simulation_control_onoff_thermostat_deadband])
+        errors << "'Simulation Control: HVAC On-Off Thermostat Deadband' cannot vary across dwelling units."
+      end
+      hpxml.header.hvac_onoff_thermostat_deadband = args[:simulation_control_onoff_thermostat_deadband]
+    end
+
+    if not args[:simulation_control_heat_pump_backup_heating_capacity_increment].nil?
+      if (not hpxml.header.heat_pump_backup_heating_capacity_increment.nil?) && (hpxml.header.heat_pump_backup_heating_capacity_increment != args[:simulation_control_heat_pump_backup_heating_capacity_increment])
+        errors << "'Simulation Control: Heat Pump Backup Heating Capacity Increment' cannot vary across dwelling units."
+      end
+      hpxml.header.heat_pump_backup_heating_capacity_increment = args[:simulation_control_heat_pump_backup_heating_capacity_increment]
     end
 
     if not args[:emissions_scenario_names].nil?
@@ -4673,14 +4709,18 @@ module HPXMLFile
   # @param args [Hash] Map of :argument_name => value
   # @return [void]
   def self.set_air_infiltration_measurements(hpxml_bldg, args)
-    if args[:air_leakage_units] == HPXML::UnitsELA
-      effective_leakage_area = args[:air_leakage_value]
-    else
-      unit_of_measure = args[:air_leakage_units]
-      air_leakage = args[:air_leakage_value]
-      if [HPXML::UnitsACH, HPXML::UnitsCFM].include? args[:air_leakage_units]
-        house_pressure = args[:air_leakage_house_pressure]
+    if args[:air_leakage_value]
+      if args[:air_leakage_units] == HPXML::UnitsELA
+        effective_leakage_area = args[:air_leakage_value]
+      else
+        unit_of_measure = args[:air_leakage_units]
+        air_leakage = args[:air_leakage_value]
+        if [HPXML::UnitsACH, HPXML::UnitsCFM].include? args[:air_leakage_units]
+          house_pressure = args[:air_leakage_house_pressure]
+        end
       end
+    else
+      leakiness_description = args[:air_leakage_leakiness_description]
     end
     if not args[:air_leakage_type].nil?
       if [HPXML::ResidentialTypeSFA, HPXML::ResidentialTypeApartment].include? args[:geometry_unit_type]
@@ -4695,7 +4735,8 @@ module HPXMLFile
                                                  air_leakage: air_leakage,
                                                  effective_leakage_area: effective_leakage_area,
                                                  infiltration_volume: infiltration_volume,
-                                                 infiltration_type: air_leakage_type)
+                                                 infiltration_type: air_leakage_type,
+                                                 leakiness_description: leakiness_description)
 
     hpxml_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = args[:air_leakage_has_flue_or_chimney_in_conditioned_space]
   end
@@ -5116,10 +5157,10 @@ module HPXMLFile
         exposed_perimeter -= Geometry.get_unexposed_garage_perimeter(**args)
       end
 
-      if args[:slab_under_width] >= 999
+      if args[:slab_under_insulation_width] >= 999
         under_slab_insulation_spans_entire_slab = true
       else
-        under_slab_insulation_width = args[:slab_under_width]
+        under_slab_insulation_width = args[:slab_under_insulation_width]
       end
 
       hpxml_bldg.slabs.add(id: "Slab#{hpxml_bldg.slabs.size + 1}",
@@ -5127,7 +5168,7 @@ module HPXMLFile
                            area: UnitConversions.convert(surface.grossArea, 'm^2', 'ft^2'),
                            thickness: args[:slab_thickness],
                            exposed_perimeter: exposed_perimeter,
-                           perimeter_insulation_depth: args[:slab_perimeter_depth],
+                           perimeter_insulation_depth: args[:slab_perimeter_insulation_depth],
                            under_slab_insulation_width: under_slab_insulation_width,
                            perimeter_insulation_r_value: args[:slab_perimeter_insulation_r],
                            under_slab_insulation_r_value: args[:slab_under_insulation_r],
@@ -6530,7 +6571,7 @@ module HPXMLFile
       standard_piping_length = args[:hot_water_distribution_standard_piping_length]
     else
       recirculation_control_type = args[:hot_water_distribution_recirc_control_type]
-      recirculation_piping_length = args[:hot_water_distribution_recirc_piping_length]
+      recirculation_piping_loop_length = args[:hot_water_distribution_recirc_piping_length]
       recirculation_branch_piping_length = args[:hot_water_distribution_recirc_branch_piping_length]
       recirculation_pump_power = args[:hot_water_distribution_recirc_pump_power]
     end
@@ -6539,7 +6580,7 @@ module HPXMLFile
                                            system_type: args[:hot_water_distribution_system_type],
                                            standard_piping_length: standard_piping_length,
                                            recirculation_control_type: recirculation_control_type,
-                                           recirculation_piping_length: recirculation_piping_length,
+                                           recirculation_piping_loop_length: recirculation_piping_loop_length,
                                            recirculation_branch_piping_length: recirculation_branch_piping_length,
                                            recirculation_pump_power: recirculation_pump_power,
                                            pipe_r_value: args[:hot_water_distribution_pipe_r],
@@ -6591,8 +6632,8 @@ module HPXMLFile
       collector_azimuth = args[:solar_thermal_collector_azimuth]
       latitude = HPXMLDefaults.get_default_latitude(args[:site_latitude], weather) unless weather.nil?
       collector_tilt = Geometry.get_absolute_tilt(tilt_str: args[:solar_thermal_collector_tilt], roof_pitch: args[:geometry_roof_pitch], latitude: latitude)
-      collector_frta = args[:solar_thermal_collector_rated_optical_efficiency]
-      collector_frul = args[:solar_thermal_collector_rated_thermal_losses]
+      collector_rated_optical_efficiency = args[:solar_thermal_collector_rated_optical_efficiency]
+      collector_rated_thermal_losses = args[:solar_thermal_collector_rated_thermal_losses]
       storage_volume = args[:solar_thermal_storage_volume]
     end
 
@@ -6607,8 +6648,8 @@ module HPXMLFile
                                          collector_type: collector_type,
                                          collector_azimuth: collector_azimuth,
                                          collector_tilt: collector_tilt,
-                                         collector_frta: collector_frta,
-                                         collector_frul: collector_frul,
+                                         collector_rated_optical_efficiency: collector_rated_optical_efficiency,
+                                         collector_rated_thermal_losses: collector_rated_thermal_losses,
                                          storage_volume: storage_volume,
                                          water_heating_system_idref: hpxml_bldg.water_heating_systems[0].id,
                                          solar_fraction: solar_fraction)
