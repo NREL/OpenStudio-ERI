@@ -17,7 +17,7 @@ module HPXMLDefaults
   # attributes for all defaulted values. This allows the user to easily observe which
   # values were defaulted and what default values were used.
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml [HPXML] HPXML object
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param eri_version [String] Version of the ANSI/RESNET/ICC 301 Standard to use for equations/assumptions
@@ -53,7 +53,6 @@ module HPXMLDefaults
     apply_climate_and_risk_zones(hpxml_bldg, weather)
     apply_attics(hpxml_bldg)
     apply_foundations(hpxml_bldg)
-    apply_infiltration(hpxml_bldg)
     apply_roofs(hpxml_bldg)
     apply_rim_joists(hpxml_bldg)
     apply_walls(hpxml_bldg)
@@ -68,6 +67,7 @@ module HPXMLDefaults
     apply_hvac(runner, hpxml, hpxml_bldg, weather, convert_shared_systems)
     apply_hvac_control(hpxml_bldg, schedules_file, eri_version)
     apply_hvac_distribution(hpxml_bldg, ncfl, ncfl_ag)
+    apply_infiltration(hpxml_bldg)
     apply_hvac_location(hpxml_bldg)
     apply_ventilation_fans(hpxml_bldg, weather, cfa, nbeds, eri_version)
     apply_water_heaters(hpxml_bldg, nbeds, eri_version, schedules_file)
@@ -233,7 +233,7 @@ module HPXMLDefaults
   # Assigns default values for omitted optional inputs in the HPXML::BuildingHeader object
   # specific to HVAC equipment sizing
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param weather [WeatherFile] Weather object containing EPW information
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
@@ -338,6 +338,16 @@ module HPXMLDefaults
       end
     elsif (hpxml_bldg.header.manualj_num_occupants - sum_space_manualj_num_occupants).abs >= 1 # Tolerance for rounding
       runner.registerWarning("ManualJInputs/NumberofOccupants (#{hpxml_bldg.header.manualj_num_occupants}) does not match sum of conditioned spaces (#{sum_space_manualj_num_occupants}).")
+    end
+
+    if hpxml_bldg.header.manualj_infiltration_method.nil?
+      infil_measurement = Airflow.get_infiltration_measurement_of_interest(hpxml_bldg)
+      if (not infil_measurement.air_leakage.nil?) || (not infil_measurement.effective_leakage_area.nil?)
+        hpxml_bldg.header.manualj_infiltration_method = HPXML::ManualJInfiltrationMethodBlowerDoor
+      else
+        hpxml_bldg.header.manualj_infiltration_method = HPXML::ManualJInfiltrationMethodDefaultTable
+      end
+      hpxml_bldg.header.manualj_infiltration_method_isdefaulted = true
     end
   end
 
@@ -470,7 +480,7 @@ module HPXMLDefaults
 
   # Assigns default values for omitted optional inputs in the HPXML::UtilityBillScenarios objects
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml_header [HPXML::Header] HPXML Header object (one per HPXML file)
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param has_fuel [Hash] Map of HPXML fuel type => boolean of whether fuel type is used
@@ -1000,10 +1010,12 @@ module HPXMLDefaults
 
   # Assigns default values for omitted optional inputs in the HPXML::AirInfiltrationMeasurement object
   #
+  # Note: This needs to be called after we have applied defaults for ducts.
+  #
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @return [void]
   def self.apply_infiltration(hpxml_bldg)
-    infil_measurement = Airflow.get_infiltration_measurement_of_interest(hpxml_bldg.air_infiltration_measurements)
+    infil_measurement = Airflow.get_infiltration_measurement_of_interest(hpxml_bldg)
     if infil_measurement.infiltration_volume.nil?
       infil_measurement.infiltration_volume = hpxml_bldg.building_construction.conditioned_building_volume
       infil_measurement.infiltration_volume_isdefaulted = true
@@ -1011,6 +1023,75 @@ module HPXMLDefaults
     if infil_measurement.infiltration_height.nil?
       infil_measurement.infiltration_height = hpxml_bldg.inferred_infiltration_height(infil_measurement.infiltration_volume)
       infil_measurement.infiltration_height_isdefaulted = true
+    end
+    if (not infil_measurement.leakiness_description.nil?) && infil_measurement.air_leakage.nil? && infil_measurement.effective_leakage_area.nil?
+      cfa = hpxml_bldg.building_construction.conditioned_floor_area
+      ncfl_ag = hpxml_bldg.building_construction.number_of_conditioned_floors_above_grade
+      year_built = hpxml_bldg.building_construction.year_built
+      avg_ceiling_height = hpxml_bldg.building_construction.average_ceiling_height
+      infil_volume = infil_measurement.infiltration_volume
+      iecc_cz = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
+
+      # Duct location fractions
+      duct_loc_fracs = {}
+      hpxml_bldg.hvac_distributions.each do |hvac_distribution|
+        next if hvac_distribution.ducts.empty?
+
+        # HVAC fraction
+        htg_fraction = 0.0
+        clg_fraction = 0.0
+        hvac_distribution.hvac_systems.each do |hvac_system|
+          if hvac_system.respond_to? :fraction_heat_load_served
+            htg_fraction += hvac_system.fraction_heat_load_served
+          end
+          if hvac_system.respond_to? :fraction_cool_load_served
+            clg_fraction += hvac_system.fraction_cool_load_served
+          end
+        end
+        hvac_frac = (htg_fraction + clg_fraction) / 2.0
+
+        supply_ducts = hvac_distribution.ducts.select { |duct| duct.duct_type == HPXML::DuctTypeSupply }
+        return_ducts = hvac_distribution.ducts.select { |duct| duct.duct_type == HPXML::DuctTypeReturn }
+        total_supply_fraction = supply_ducts.map { |d| d.duct_fraction_area }.sum / hvac_distribution.ducts.map { |d| d.duct_fraction_area }.sum
+        total_return_fraction = return_ducts.map { |d| d.duct_fraction_area }.sum / hvac_distribution.ducts.map { |d| d.duct_fraction_area }.sum
+        hvac_distribution.ducts.each do |duct|
+          supply_or_return_fraction = (duct.duct_type == HPXML::DuctTypeSupply) ? total_supply_fraction : total_return_fraction
+          duct_loc_fracs[duct.duct_location] = 0.0 if duct_loc_fracs[duct.duct_location].nil?
+          duct_loc_fracs[duct.duct_location] += duct.duct_fraction_area * supply_or_return_fraction * hvac_frac
+        end
+      end
+      sum_duct_hvac_frac = duct_loc_fracs.empty? ? 0.0 : duct_loc_fracs.values.sum
+      if sum_duct_hvac_frac > 1.0001 # Using 1.0001 to allow small tolerance on sum
+        fail "Unexpected sum of duct fractions: #{sum_duct_hvac_frac}."
+      elsif sum_duct_hvac_frac < 1.0 # i.e., there is at least one ductless system
+        # Add 1.0 - sum_duct_hvac_frac as ducts in conditioned space.
+        # This will ensure ductless systems have same result as ducts in conditioned space.
+        duct_loc_fracs[HPXML::LocationConditionedSpace] = 0.0 if duct_loc_fracs[HPXML::LocationConditionedSpace].nil?
+        duct_loc_fracs[HPXML::LocationConditionedSpace] += 1.0 - sum_duct_hvac_frac
+      end
+
+      # Foundation type fractions
+      fnd_type_fracs = {}
+      hpxml_bldg.foundations.each do |foundation|
+        fnd_type_fracs[foundation.foundation_type] = 0.0 if fnd_type_fracs[foundation.foundation_type].nil?
+        area = (hpxml_bldg.floors + hpxml_bldg.slabs).select { |surface| surface.interior_adjacent_to == foundation.to_location }.map { |surface| surface.area }.sum
+        fnd_type_fracs[foundation.foundation_type] += area
+      end
+      sum_fnd_area = fnd_type_fracs.values.sum(0.0)
+      fnd_type_fracs.keys.each do |foundation_type|
+        # Convert to fractions that sum to 1
+        fnd_type_fracs[foundation_type] /= sum_fnd_area unless sum_fnd_area == 0.0
+      end
+
+      ach50 = Airflow.calc_ach50_from_leakiness_description(cfa, ncfl_ag, year_built, avg_ceiling_height, infil_volume, iecc_cz, fnd_type_fracs, duct_loc_fracs, infil_measurement.leakiness_description)
+      infil_measurement.house_pressure = 50
+      infil_measurement.house_pressure_isdefaulted = true
+      infil_measurement.unit_of_measure = HPXML::UnitsACH
+      infil_measurement.unit_of_measure_isdefaulted = true
+      infil_measurement.air_leakage = ach50
+      infil_measurement.air_leakage_isdefaulted = true
+      infil_measurement.infiltration_type = HPXML::InfiltrationTypeUnitTotal
+      infil_measurement.infiltration_type_isdefaulted = true
     end
     if infil_measurement.a_ext.nil?
       if (infil_measurement.infiltration_type == HPXML::InfiltrationTypeUnitTotal) &&
@@ -1245,7 +1326,7 @@ module HPXMLDefaults
 
   # Assigns default values for omitted optional inputs in the HPXML::Floor objects
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @return [void]
   def self.apply_floors(runner, hpxml_bldg)
@@ -1559,7 +1640,7 @@ module HPXMLDefaults
   # Assigns default values for omitted optional inputs in the HPXML::HeatingSystem,
   # HPXML::CoolingSystem, and HPXML::HeatPump objects
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml [HPXML] HPXML object
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param weather [WeatherFile] Weather object containing EPW information
@@ -2274,7 +2355,6 @@ module HPXMLDefaults
             end
           end
         end
-
       elsif hvac_distribution.ducts[0].duct_surface_area.nil?
         # Default duct surface area(s)
         [supply_ducts, return_ducts].each do |ducts|
@@ -2285,10 +2365,9 @@ module HPXMLDefaults
           end
         end
       end
-
-      # Calculate FractionDuctArea from DuctSurfaceArea
       supply_ducts = hvac_distribution.ducts.select { |duct| duct.duct_type == HPXML::DuctTypeSupply }
       return_ducts = hvac_distribution.ducts.select { |duct| duct.duct_type == HPXML::DuctTypeReturn }
+      # Calculate FractionDuctArea from DuctSurfaceArea
       total_supply_area = supply_ducts.map { |d| d.duct_surface_area }.sum
       total_return_area = return_ducts.map { |d| d.duct_surface_area }.sum
       (supply_ducts + return_ducts).each do |duct|
@@ -2457,13 +2536,13 @@ module HPXMLDefaults
         vent_fan.is_shared_system_isdefaulted = true
       end
 
-      if vent_fan.hours_in_operation.nil? && !vent_fan.is_cfis_supplemental_fan?
+      if vent_fan.hours_in_operation.nil? && !vent_fan.is_cfis_supplemental_fan
         vent_fan.hours_in_operation = (vent_fan.fan_type == HPXML::MechVentTypeCFIS) ? 8.0 : 24.0
         vent_fan.hours_in_operation_isdefaulted = true
       end
 
       if vent_fan.flow_rate.nil?
-        if hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && !vf.is_cfis_supplemental_fan? }.size > 1
+        if hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && !vf.is_cfis_supplemental_fan }.size > 1
           fail 'Defaulting flow rates for multiple mechanical ventilation systems is currently not supported.'
         end
 
@@ -2666,9 +2745,9 @@ module HPXMLDefaults
         hot_water_distribution.standard_piping_length_isdefaulted = true
       end
     elsif hot_water_distribution.system_type == HPXML::DHWDistTypeRecirc
-      if hot_water_distribution.recirculation_piping_length.nil?
-        hot_water_distribution.recirculation_piping_length = HotWaterAndAppliances.get_default_recirc_loop_length(HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl))
-        hot_water_distribution.recirculation_piping_length_isdefaulted = true
+      if hot_water_distribution.recirculation_piping_loop_length.nil?
+        hot_water_distribution.recirculation_piping_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl))
+        hot_water_distribution.recirculation_piping_loop_length_isdefaulted = true
       end
       if hot_water_distribution.recirculation_branch_piping_length.nil?
         hot_water_distribution.recirculation_branch_piping_length = HotWaterAndAppliances.get_default_recirc_branch_loop_length()
@@ -3686,7 +3765,7 @@ module HPXMLDefaults
 
   # Assigns default capacities/airflows for autosized HPXML HVAC equipment.
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param weather [WeatherFile] Weather object containing EPW information
   # @param output_format [String] Detailed output file format ('csv', 'json', or 'msgpack')

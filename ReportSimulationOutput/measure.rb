@@ -312,7 +312,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
   # TODO
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param arguments [TODO] TODO
   # @param user_arguments [OpenStudio::Measure::OSArgumentMap] OpenStudio measure arguments
   # @return [TODO] TODO
@@ -331,7 +331,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
   # Return a vector of IdfObject's to request EnergyPlus objects needed by the run method.
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param user_arguments [OpenStudio::Measure::OSArgumentMap] OpenStudio measure arguments
   # @return [Array<OpenStudio::IdfObject>] array of OpenStudio IdfObject objects
   def energyPlusOutputRequests(runner, user_arguments)
@@ -543,7 +543,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
   # Define what happens when the measure is run.
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param user_arguments [OpenStudio::Measure::OSArgumentMap] OpenStudio measure arguments
   # @return [Boolean] true if successful
   def run(runner, user_arguments)
@@ -700,7 +700,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
   # @param timeseries_frequency [TODO] TODO
   # @param sim_start_day [TODO] TODO
   # @param sim_end_day [TODO] TODO
-  # @param year [TODO] TODO
+  # @param year [Integer] the calendar year
   # @return [TODO] TODO
   def get_n_hours_per_period(timeseries_frequency, sim_start_day, sim_end_day, year)
     if timeseries_frequency == 'daily'
@@ -740,7 +740,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
   # TODO
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param args [Hash] Map of :argument_name => value
   # @return [TODO] TODO
   def get_outputs(runner, args)
@@ -1375,7 +1375,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
   # TODO
   #
-  # @param year [TODO] TODO
+  # @param year [Integer] the calendar year
   # @return [TODO] TODO
   def get_sim_times_of_year(year)
     sim_start_day = Schedule.get_day_num_from_month_day(year, @hpxml_header.sim_begin_month, @hpxml_header.sim_begin_day)
@@ -1390,7 +1390,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
   # @param timeseries_frequency [TODO] TODO
   # @param sim_start_day [TODO] TODO
   # @param sim_end_day [TODO] TODO
-  # @param year [TODO] TODO
+  # @param year [Integer] the calendar year
   # @return [TODO] TODO
   def check_for_errors(runner, outputs)
     tol = 0.1
@@ -1480,7 +1480,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
   # TODO
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param outputs [TODO] TODO
   # @param args [Hash] Map of :argument_name => value
   # @param annual_output_path [TODO] TODO
@@ -1660,7 +1660,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
   # TODO
   #
-  # @param runner [OpenStudio::Measure::OSRunner] OpenStudio Runner object
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param outputs [TODO] TODO
   # @param args [Hash] Map of :argument_name => value
   # @param timestamps_dst [TODO] TODO
@@ -2855,7 +2855,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       if object.to_CoilHeatingDXSingleSpeed.is_initialized || object.to_CoilHeatingDXMultiSpeed.is_initialized
         return { [FT::Elec, EUT::Heating] => ["Heating Coil #{EPlus::FuelTypeElectricity} Energy", "Heating Coil Crankcase Heater #{EPlus::FuelTypeElectricity} Energy", "Heating Coil Defrost #{EPlus::FuelTypeElectricity} Energy"] }
 
-      elsif object.to_CoilHeatingElectric.is_initialized
+      elsif object.to_CoilHeatingElectric.is_initialized || object.to_CoilHeatingElectricMultiStage.is_initialized
         if object.additionalProperties.getFeatureAsBoolean('IsHeatPumpBackup').is_initialized && object.additionalProperties.getFeatureAsBoolean('IsHeatPumpBackup').get
           return { [FT::Elec, EUT::HeatingHeatPumpBackup] => ["Heating Coil #{EPlus::FuelTypeElectricity} Energy"] }
         else
