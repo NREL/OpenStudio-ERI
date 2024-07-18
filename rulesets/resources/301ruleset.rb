@@ -1895,8 +1895,8 @@ module ERI_301_Ruleset
                                        collector_azimuth: solar_thermal_system.collector_azimuth,
                                        collector_type: solar_thermal_system.collector_type,
                                        collector_tilt: solar_thermal_system.collector_tilt,
-                                       collector_frta: solar_thermal_system.collector_frta,
-                                       collector_frul: solar_thermal_system.collector_frul,
+                                       collector_rated_optical_efficiency: solar_thermal_system.collector_rated_optical_efficiency,
+                                       collector_rated_thermal_losses: solar_thermal_system.collector_rated_thermal_losses,
                                        storage_volume: solar_thermal_system.storage_volume,
                                        water_heating_system_idref: solar_thermal_system.water_heating_system_idref,
                                        solar_fraction: solar_thermal_system.solar_fraction)
