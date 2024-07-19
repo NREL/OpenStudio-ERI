@@ -117,7 +117,6 @@
             <SolarAbsorptance>0.7</SolarAbsorptance>
             <Emittance>0.92</Emittance>
             <Pitch>6.0</Pitch>
-            <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
               <SystemIdentifier id='Roof1Insulation'/>
               <AssemblyEffectiveRValue>2.3</AssemblyEffectiveRValue>
@@ -303,7 +302,6 @@
                 <Value>0.92</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>200.0</ElectricAuxiliaryEnergy>
             </HeatingSystem>
           </HVACPlant>
           <HVACControl>
@@ -388,7 +386,6 @@
           <SystemIdentifier id='Refrigerator1'/>
           <Location>conditioned space</Location>
           <RatedAnnualkWh>650.0</RatedAnnualkWh>
-          <PrimaryIndicator>true</PrimaryIndicator>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>

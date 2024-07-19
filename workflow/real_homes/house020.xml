@@ -707,7 +707,6 @@
                 <Value>0.93</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>0.471</FractionHeatLoadServed>
-              <ElectricAuxiliaryEnergy>170.0</ElectricAuxiliaryEnergy>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>

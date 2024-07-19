@@ -104,7 +104,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     end
   end
 
-  def test_mech_vent_attached_or_multifamily
+  def test_mech_vent_attached_housing
     ESConstants.AllVersions.each do |program_version|
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
@@ -164,7 +164,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     end
   end
 
-  def test_mech_vent_attached_or_multifamily_location_miami_fl
+  def test_mech_vent_attached_housing_location_miami_fl
     [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
       next unless ESConstants.NationalVersions.include?(program_version)
 

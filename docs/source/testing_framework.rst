@@ -30,17 +30,16 @@ Or individual tests can be run by specifying the name of the test. A couple exam
 | ``openstudio es_zerh_test.rb --name=test_epa``
 | 
 
-Test results in CSV format are created at workflow/tests/test_results. 
-For many RESNET tests, the Excel spreadsheet test criteria are also implemented in code to automate the process of checking for test failures.
-All simulation/HPXML/etc. files generated from running the tests can be found inside the workflow/tests/test_files directory.
+Test results in CSV format are created at ``workflow/tests/test_results`` and can be used to populate RESNET Excel spreadsheet forms. 
+RESNET acceptance criteria are also implemented as part of the tests to check for test failures.
 
-At the completion of the test, there will also be output that denotes the number of failures/errors like so:
+At the completion of the test, there will be output that denotes the number of failures/errors like so:
 
 ``Finished in 36.067116s, 0.0277 runs/s, 0.9704 assertions/s.``
 ``1 runs, 35 assertions, 0 failures, 0 errors, 0 skips``
 
 Software developers may find it convenient to export HPXML files with the same name as the test files included in the repository.
-This allows issuing the same commands above to generate test results.
+This allows issuing the commands above to generate test results.
 
 Official Test Results
 ---------------------
