@@ -1224,15 +1224,15 @@ class HVAC
   # @return [TODO] TODO
   def self.get_default_heating_setpoint(control_type, eri_version)
     # Per ANSI/RESNET/ICC 301
-    htg_weekday_setpoints = '68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68'
-    htg_weekend_setpoints = '68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68'
+    htg_weekday_setpoints = '72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72'
+    htg_weekend_setpoints = '72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72'
     if control_type == HPXML::HVACControlTypeProgrammable
       if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022')
-        htg_weekday_setpoints = '66, 66, 66, 66, 66, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66'
-        htg_weekend_setpoints = '66, 66, 66, 66, 66, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66'
+        htg_weekday_setpoints = '70, 70, 70, 70, 70, 71, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 70'
+        htg_weekend_setpoints = '70, 70, 70, 70, 70, 71, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 70'
       else
-        htg_weekday_setpoints = '66, 66, 66, 66, 66, 66, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66'
-        htg_weekend_setpoints = '66, 66, 66, 66, 66, 66, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66'
+        htg_weekday_setpoints = '70, 70, 70, 70, 70, 70, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 70'
+        htg_weekend_setpoints = '70, 70, 70, 70, 70, 70, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 72, 70'
       end
     elsif control_type != HPXML::HVACControlTypeManual
       fail "Unexpected control type #{control_type}."
@@ -1247,15 +1247,15 @@ class HVAC
   # @return [TODO] TODO
   def self.get_default_cooling_setpoint(control_type, eri_version)
     # Per ANSI/RESNET/ICC 301
-    clg_weekday_setpoints = '78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78'
-    clg_weekend_setpoints = '78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78'
+    clg_weekday_setpoints = '75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75'
+    clg_weekend_setpoints = '75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75, 75'
     if control_type == HPXML::HVACControlTypeProgrammable
       if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2022')
-        clg_weekday_setpoints = '78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 79, 78, 78, 78, 78, 78, 78, 78, 78, 78'
-        clg_weekend_setpoints = '78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 79, 78, 78, 78, 78, 78, 78, 78, 78, 78'
+        clg_weekday_setpoints = '75, 75, 75, 75, 75, 75, 75, 75, 75, 77, 77, 77, 77, 77, 76, 75, 75, 75, 75, 75, 75, 75, 75, 75'
+        clg_weekend_setpoints = '75, 75, 75, 75, 75, 75, 75, 75, 75, 77, 77, 77, 77, 77, 76, 75, 75, 75, 75, 75, 75, 75, 75, 75'
       else
-        clg_weekday_setpoints = '78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 80, 78, 78, 78, 78, 78, 78, 78, 78, 78'
-        clg_weekend_setpoints = '78, 78, 78, 78, 78, 78, 78, 78, 78, 80, 80, 80, 80, 80, 80, 78, 78, 78, 78, 78, 78, 78, 78, 78'
+        clg_weekday_setpoints = '75, 75, 75, 75, 75, 75, 75, 75, 75, 77, 77, 77, 77, 77, 77, 75, 75, 75, 75, 75, 75, 75, 75, 75'
+        clg_weekend_setpoints = '75, 75, 75, 75, 75, 75, 75, 75, 75, 77, 77, 77, 77, 77, 77, 75, 75, 75, 75, 75, 75, 75, 75, 75'
       end
     elsif control_type != HPXML::HVACControlTypeManual
       fail "Unexpected control type #{control_type}."
