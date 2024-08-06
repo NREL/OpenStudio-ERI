@@ -614,23 +614,26 @@ When requested, a CSV file of timeseries outputs is written for the Reference/Ra
 
 Depending on the outputs requested, CSV files may include:
 
-  ===================================  =====
-  Type                                 Notes
-  ===================================  =====
-  Total Consumptions                   Energy use for building total and net (i.e., subtracts any power produced by PV or generators).
-  Fuel Consumptions                    Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
-  End Use Consumptions                 Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
-  System Use Consumptions              Energy use for each HVAC and water heating system (in kBtu).
-  Emissions                            Emissions (CO2e, NOx, SO2).
-  Emission Fuels                       Emissions (CO2e, NOx, SO2) disaggregated by fuel type.
-  Emission End Uses                    Emissions (CO2e, NOx, SO2) disaggregated by end use.
-  Hot Water Uses                       Water use for each end use type (in gallons).
-  Total Loads                          Heating, cooling, and hot water loads (in kBtu).
-  Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
-  Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
-  Airflows                             Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
-  Weather                              Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
-  ===================================  =====
+  =======================  ===================  ================================================================================================================================================
+  Type                     Argument [#]_        Notes
+  =======================  ===================  ================================================================================================================================================
+  Total Consumptions       ``total``            Energy use for building total and net (i.e., subtracts any power produced by PV or generators).
+  Fuel Consumptions        ``fuels``            Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
+  End Use Consumptions     ``enduses``          Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
+  System Use Consumptions  ``systemuses``       Energy use for each HVAC and water heating system (in kBtu).
+  Emissions                ``emissions``        Emissions (CO2e, NOx, SO2).
+  Emission Fuels           ``emissionfuels``    Emissions (CO2e, NOx, SO2) disaggregated by fuel type.
+  Emission End Uses        ``emissionenduses``  Emissions (CO2e, NOx, SO2) disaggregated by end use.
+  Hot Water Uses           ``hotwater``         Water use for each end use type (in gallons).
+  Total Loads              ``loads``            Heating, cooling, and hot water loads (in kBtu).
+  Component Loads          ``componentloads``   Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
+  Unmet Hours              ``unmethours``       Heating and cooling unmet hours.
+  Zone Temperatures        ``temperatures``     Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+  Airflows                 ``airflows``         Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
+  Weather                  ``weather``          Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
+  =======================  ===================  ================================================================================================================================================
+
+  .. [#] This is the argument provided to ``energy_rating_index.rb`` as described in the :ref:`running` usage instructions.
 
 Timeseries outputs can be one of the following frequencies: hourly, daily, or monthly.
 

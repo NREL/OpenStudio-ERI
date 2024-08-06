@@ -18,8 +18,8 @@ To get started:
 Running Calculations
 --------------------
 
-Run all calculations (e.g., ERI, ENERGY STAR, etc.) on a provided sample HPXML file as follows:
-``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml``
+| Run all calculations (e.g., ERI, ENERGY STAR, etc.) on a provided sample HPXML file as follows:
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml``
 
 Note that all simulations will be executed in parallel if there are sufficient cpus/cores available.
 
@@ -27,22 +27,18 @@ This will generate output as shown below:
 
 .. image:: https://user-images.githubusercontent.com/5861765/178850875-12c90097-e1fd-48c5-888b-db4355d923e8.png
 
-You can also request generation of timeseries output CSV files as part of the calculation by providing one or more timeseries flags (``--hourly``, ``--daily``, or ``--monthly``).
+| You can also request generation of timeseries output CSV files by providing one or more timeseries flags. Some examples:
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly ALL``
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --monthly fuels --monthly temperatures``
 
-For example, to request all possible hourly outputs:
-``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --hourly ALL``
+| You can also skip simulations (i.e., just generate the ERI Reference/Rated Home HPXMLs) by using, e.g.:
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --skip-simulation``
 
-Or for example, one or more specific monthly output types can be requested, e.g.:
-``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --monthly fuels --monthly temperatures``
+| Or you can request all output files in JSON (instead of CSV) format:
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --output-format json``
 
-You can also skip simulations (i.e., just generate the ERI Reference/Rated Home HPXMLs) by using, e.g.:
-``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --skip-simulation``
-
-Or you can request all output files in JSON (instead of CSV) format:
-``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --output-format json``
-
-Finally, you can generate a HERS diagnostic output file using, e.g.:
-``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --diagnostic-output``
+| Finally, you can generate a HERS diagnostic output file using, e.g.:
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --diagnostic-output``
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 
