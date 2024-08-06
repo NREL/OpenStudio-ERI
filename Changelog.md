@@ -5,6 +5,7 @@ __New Features__
 
 __Bugfixes__
 - Adds error-checking for `NumberofConditionedFloorsAboveGrade`=0, which is not allowed per the documentation.
+- Misc Manual J design load calculation improvements.
 
 ## OpenStudio-ERI v1.8.0
 
