@@ -3046,7 +3046,7 @@ module ERI_301_Ruleset
                         'RFCMc', 'RFCWc', 'RMPAc', 'SPNOc', 'SPSOc', 'SRMVc', 'SRMWc', 'SRSOc', 'SRTVc', 'SRVCc']
         col_num = cambium_geas.index(@cambium_gea) + 5
         cambium_filepath = File.join(File.dirname(__FILE__), '..', 'data', 'cambium', 'RESNET_2021_CO2e_GEAdata.csv')
-        new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+        new_hpxml.header.emissions_scenarios.add(name: 'ANSI301',
                                                  emissions_type: 'CO2e',
                                                  elec_units: HPXML::EmissionsScenario::UnitsKgPerMWh,
                                                  elec_schedule_filepath: cambium_filepath,
@@ -3063,7 +3063,7 @@ module ERI_301_Ruleset
       # Use EPA's eGrid database for electricity
       if not @egrid_subregion.nil?
         annual_elec_co2e_value = lookup_egrid_value(@egrid_subregion, 0, 1) # lb/mWh
-        new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+        new_hpxml.header.emissions_scenarios.add(name: 'ANSI301',
                                                  emissions_type: 'CO2e',
                                                  elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
                                                  elec_value: annual_elec_co2e_value,
@@ -3079,7 +3079,7 @@ module ERI_301_Ruleset
     # NOx Emissions Scenario
     if not @egrid_subregion.nil?
       elec_nox_value = lookup_egrid_value(@egrid_subregion, 0, 5) # lb/mWh
-      new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+      new_hpxml.header.emissions_scenarios.add(name: 'ANSI301',
                                                emissions_type: 'NOx',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
                                                elec_value: elec_nox_value,
@@ -3094,7 +3094,7 @@ module ERI_301_Ruleset
     # SO2 Emissions Scenario
     if not @egrid_subregion.nil?
       elec_so2_value = lookup_egrid_value(@egrid_subregion, 0, 7) # lb/mWh
-      new_hpxml.header.emissions_scenarios.add(name: 'RESNET',
+      new_hpxml.header.emissions_scenarios.add(name: 'ANSI301',
                                                emissions_type: 'SO2',
                                                elec_units: HPXML::EmissionsScenario::UnitsLbPerMWh,
                                                elec_value: elec_so2_value,

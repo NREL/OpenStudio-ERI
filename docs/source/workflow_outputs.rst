@@ -357,12 +357,12 @@ Annual emissions are listed below.
 
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 
-  ===============================================================  ===============================================================
-  Type                                                             Notes
-  ===============================================================  ===============================================================
-  Emissions: <EmissionsType>: RESNET: Total (lb)                   Total emissions
-  Emissions: <EmissionsType>: RESNET: Net (lb)                     Subtracts any power produced by PV or generators
-  ===============================================================  ===============================================================
+  ================================================================  ===============================================================
+  Type                                                              Notes
+  ================================================================  ===============================================================
+  Emissions: <EmissionsType>: ANSI301: Total (lb)                   Total emissions
+  Emissions: <EmissionsType>: ANSI301: Net (lb)                     Subtracts any power produced by PV or generators
+  ================================================================  ===============================================================
 
 Annual Emissions by Fuel Use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -371,18 +371,18 @@ Annual emissions by fuel use are listed below.
 
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 
-  ===============================================================  ===============================================================
-  Type                                                             Notes
-  ===============================================================  ===============================================================
-  Emissions: <EmissionsType>: RESNET: Electricity: Total (lb)      Emissions for Electricity only
-  Emissions: <EmissionsType>: RESNET: Electricity: Net (lb)        Subtracts any power produced by PV or generators
-  Emissions: <EmissionsType>: RESNET: Natural Gas: Total (lb)      Emissions for Natural Gas only
-  Emissions: <EmissionsType>: RESNET: Fuel Oil: Total (lb)         Emissions for Fuel Oil only
-  Emissions: <EmissionsType>: RESNET: Propane: Total (lb)          Emissions for Propane only
-  Emissions: <EmissionsType>: RESNET: Wood Cord: Total (lb)        Emissions for Wood Cord only
-  Emissions: <EmissionsType>: RESNET: Wood Pellets: Total (lb)     Emissions for Wood Pellets only
-  Emissions: <EmissionsType>: RESNET: Coal: Total (lb)             Not used by OS-ERI
-  ===============================================================  ===============================================================
+  ================================================================  ===============================================================
+  Type                                                              Notes
+  ================================================================  ===============================================================
+  Emissions: <EmissionsType>: ANSI301: Electricity: Total (lb)      Emissions for Electricity only
+  Emissions: <EmissionsType>: ANSI301: Electricity: Net (lb)        Subtracts any power produced by PV or generators
+  Emissions: <EmissionsType>: ANSI301: Natural Gas: Total (lb)      Emissions for Natural Gas only
+  Emissions: <EmissionsType>: ANSI301: Fuel Oil: Total (lb)         Emissions for Fuel Oil only
+  Emissions: <EmissionsType>: ANSI301: Propane: Total (lb)          Emissions for Propane only
+  Emissions: <EmissionsType>: ANSI301: Wood Cord: Total (lb)        Emissions for Wood Cord only
+  Emissions: <EmissionsType>: ANSI301: Wood Pellets: Total (lb)     Emissions for Wood Pellets only
+  Emissions: <EmissionsType>: ANSI301: Coal: Total (lb)             Not used by OS-ERI
+  ================================================================  ===============================================================
 
 Annual Emissions by End Use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -392,17 +392,17 @@ Annual emissions by end use are listed below.
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 Every end use from :ref:`annualenduses` will be included.
 
-  ===============================================================  ===============================================================
-  Type                                                             Notes
-  ===============================================================  ===============================================================
-  Emissions: <EmissionsType>: RESNET: Electricity: <EndUse> (lb)   Emissions for this Electricity end use only (one row per end use)
-  Emissions: <EmissionsType>: RESNET: Natural Gas: <EndUse> (lb)   Emissions for this Natural Gas end use only (one row per end use)
-  Emissions: <EmissionsType>: RESNET: Fuel Oil: <EndUse> (lb)      Emissions for this Fuel Oil end use only (one row per end use)
-  Emissions: <EmissionsType>: RESNET: Propane: <EndUse> (lb)       Emissions for this Propane end use only (one row per end use)
-  Emissions: <EmissionsType>: RESNET: Wood Cord: <EndUse> (lb)     Emissions for this Wood Cord end use only (one row per end use)
-  Emissions: <EmissionsType>: RESNET: Wood Pellets: <EndUse> (lb)  Emissions for this Wood Pellets end use only (one row per end use)
-  Emissions: <EmissionsType>: RESNET: Coal: <EndUse> (lb)          Not used by OS-ERI
-  ===============================================================  ===============================================================
+  ================================================================  ===============================================================
+  Type                                                              Notes
+  ================================================================  ===============================================================
+  Emissions: <EmissionsType>: ANSI301: Electricity: <EndUse> (lb)   Emissions for this Electricity end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Natural Gas: <EndUse> (lb)   Emissions for this Natural Gas end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Fuel Oil: <EndUse> (lb)      Emissions for this Fuel Oil end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Propane: <EndUse> (lb)       Emissions for this Propane end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Wood Cord: <EndUse> (lb)     Emissions for this Wood Cord end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Wood Pellets: <EndUse> (lb)  Emissions for this Wood Pellets end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Coal: <EndUse> (lb)          Not used by OS-ERI
+  ================================================================  ===============================================================
 
 Annual Building Loads
 ~~~~~~~~~~~~~~~~~~~~~
