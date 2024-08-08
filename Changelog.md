@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.9.0
 
 __New Features__
-- **Breaking change**: Renamed "Emissions: <EmissionsType>: RESNET: XXX" to "Emissions: <EmissionsType>: ANSI301: XXX" in Annual Home CSV output files.
+- **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
 - Adds inputs for modeling skylight curbs and/or shafts.
 
 __Bugfixes__
