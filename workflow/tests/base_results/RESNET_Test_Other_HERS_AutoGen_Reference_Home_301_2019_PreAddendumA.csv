@@ -29,9 +29,9 @@ Labeled heating system rating and efficiency,0.78,7.7,7.7,0.78
 Labeled cooling system rating and efficiency,13.0,13.0,13.0,13.0
 Air Distribution System Efficiency,0.8,0.8,0.8,0.8
 Thermostat Type,manual,manual,manual,manual
-Heating thermostat settings,68,68,68,68
-Cooling thermostat settings,78,78,78,78
+Heating thermostat settings,72,72,72,72
+Cooling thermostat settings,75,75,75,75
 Mechanical ventilation (kWh/y),0.0,222.14,288.07,763.41
 DHW pipe length refPipeL,88.5,88.5,88.5,98.5
 DHW loop length refLoopL,156.9,156.9,156.9,176.9
-e-Ratio,0.999983,1.0000045,1.0000201,0.9999849
+e-Ratio,0.9999808,1.0000062,1.0000179,0.999983

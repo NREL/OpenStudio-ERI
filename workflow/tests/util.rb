@@ -725,8 +725,8 @@ def _check_reference_home_components(results, test_num, version)
 
   # Thermostat
   assert_equal('manual', results['Thermostat Type'])
-  assert_equal(68, results['Heating thermostat settings'])
-  assert_equal(78, results['Cooling thermostat settings'])
+  assert_equal(72, results['Heating thermostat settings'])
+  assert_equal(75, results['Cooling thermostat settings'])
 
   # Mechanical ventilation
   mv_kwh_yr = nil
@@ -813,8 +813,8 @@ def _check_iad_home_components(results, test_num)
 
   # Thermostat
   assert_equal('manual', results['Thermostat Type'])
-  assert_equal(68, results['Heating thermostat settings'])
-  assert_equal(78, results['Cooling thermostat settings'])
+  assert_equal(72, results['Heating thermostat settings'])
+  assert_equal(75, results['Cooling thermostat settings'])
 end
 
 def _get_above_grade_walls(hpxml_bldg)
