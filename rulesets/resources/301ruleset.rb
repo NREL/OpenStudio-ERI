@@ -1619,7 +1619,7 @@ module ERI_301_Ruleset
           end
         end
       end
-      
+
       cfis_vent_mode_airflow_fraction = nil
       if orig_vent_fan.fan_type == HPXML::MechVentTypeCFIS
         cfis_vent_mode_airflow_fraction = 1.0 # 301-2022 Addendum E
@@ -2534,6 +2534,11 @@ module ERI_301_Ruleset
     min_nach = nil
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
     if mech_vent_fans.empty?
+      min_nach = 0.30
+    elsif mech_vent_fans.select { |f| f.fan_type == HPXML::MechVentTypeCFIS && f.cfis_addtl_runtime_operating_mode == HPXML::CFISModeNone }.size > 0
+      # 301-2022 Addendum E
+      # Does not quality as Dwelling Unit Mechanical Ventilation System because it has no
+      # strategy to meet remainder of ventilation target
       min_nach = 0.30
     elsif Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
       has_non_exhaust_systems = (mech_vent_fans.select { |f| f.fan_type != HPXML::MechVentTypeExhaust }.size > 0)

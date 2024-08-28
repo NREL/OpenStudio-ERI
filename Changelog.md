@@ -5,7 +5,8 @@ __New Features__
 - **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
 - Adds inputs for modeling skylight curbs and/or shafts.
 - Implements ANSI/RESNET/ICC Standard 301-2022 Addendum E for CFIS systems.
-  - **Breaking change**: Removes `VentilationOnlyModeAirflowFraction` input.
+  - **Breaking change**: Removes `VentilationOnlyModeAirflowFraction` input (blower fan assumed to run at max flow rate during ventilation only operation).
+  - Allows modeling systems with no strategy to meet remainder of ventilation target (`CFISControls/AdditionalRuntimeOperatingMode="none"`).
 
 __Bugfixes__
 - Adds error-checking for `NumberofConditionedFloorsAboveGrade`=0, which is not allowed per the documentation.

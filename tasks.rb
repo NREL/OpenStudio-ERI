@@ -2162,6 +2162,7 @@ def create_sample_hpxmls
                   'base-location-portland-or.xml',
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
+                  'base-mechvent-cfis-no-additional-runtime.xml',
                   'base-mechvent-cfis-supplemental-fan-exhaust.xml',
                   'base-mechvent-erv.xml',
                   'base-mechvent-erv-atre-asre.xml',

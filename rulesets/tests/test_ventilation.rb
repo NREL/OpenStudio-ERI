@@ -601,17 +601,31 @@ class ERIMechVentTest < Minitest::Test
 
   def test_mech_vent_cfis
     hpxml_names = ['base-mechvent-cfis.xml',
-                   'base-mechvent-cfis-supplemental-fan-exhaust.xml']
+                   'base-mechvent-cfis-supplemental-fan-exhaust.xml',
+                   'base-mechvent-cfis-no-additional-runtime.xml'] # FIXME: Add CFIS file w/o outdoor air control
 
     hpxml_names.each do |hpxml_name|
-      cfis_mode = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' ? HPXML::CFISModeSupplementalFan : HPXML::CFISModeAirHandler)
+      if hpxml_name == 'base-mechvent-cfis.xml'
+        cfis_mode = HPXML::CFISModeAirHandler
+      elsif hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml'
+        cfis_mode = HPXML::CFISModeSupplementalFan
+      elsif hpxml_name == 'base-mechvent-cfis-no-additional-runtime.xml'
+        cfis_mode = HPXML::CFISModeNone
+      end
       cfis_suppl_flowrate = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' ? 120.0 : nil)
       cfis_suppl_power = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' ? 30.0 : nil)
+      cfis_is_dumvs = (hpxml_name != 'base-mechvent-cfis-no-additional-runtime.xml') # FIXME: Add CFIS file w/o outdoor air control
 
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
-          _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
+          if not cfis_is_dumvs
+            # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
+            # ventilation requirement is lower, resulting in lower Reference Home fan power
+            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.1 }])
+          else
+            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
+          end
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, power: 300.0, cfis_mode: cfis_mode,
                                           cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power }])
@@ -627,7 +641,13 @@ class ERIMechVentTest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
-          _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 34.9 }])
+          if not cfis_is_dumvs
+            # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
+            # ventilation requirement is lower, resulting in lower Reference Home fan power
+            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 0.2 }])
+          else
+            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 34.9 }])
+          end
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, power: 300.0, cfis_mode: cfis_mode,
                                           cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power }])
@@ -643,7 +663,13 @@ class ERIMechVentTest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
-          _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
+          if not cfis_is_dumvs
+            # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
+            # ventilation requirement is lower, resulting in lower Reference Home fan power
+            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 13.0 }])
+          else
+            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
+          end
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, power: 300.0, cfis_mode: cfis_mode,
                                           cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power }])
