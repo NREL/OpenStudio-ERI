@@ -1214,7 +1214,11 @@ class ERIMechVentTest < Minitest::Test
       else
         refute_nil(ventilation_fan.precooling_fuel)
       end
-      assert_equal(1.0, ventilation_fan.cfis_vent_mode_airflow_fraction)
+      if ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+        assert_equal(1.0, ventilation_fan.cfis_vent_mode_airflow_fraction)
+      else
+        assert_nil(ventilation_fan.cfis_vent_mode_airflow_fraction)
+      end
       if expected_values[:cfis_mode].nil?
         assert_nil(ventilation_fan.cfis_addtl_runtime_operating_mode)
       else
