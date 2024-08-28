@@ -250,17 +250,17 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml.header.created_date_and_time = Time.new(2000, 1, 1, 0, 0, 0, '-07:00').strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
     hpxml_bldg.event_type = 'proposed workscope'
     if hpxml_file.include?('SF_National_3.2')
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
+      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
     elsif hpxml_file.include?('SF_National_3.1')
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_1
+      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_1
     elsif hpxml_file.include?('SF_National_3.0')
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_0
+      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_0
     elsif hpxml_file.include?('MF_National_1.2')
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2
+      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
     elsif hpxml_file.include?('MF_National_1.1')
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_1
+      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_1
     elsif hpxml_file.include?('MF_National_1.0')
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_0
+      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_0
     end
     hpxml_bldg.state_code = File.basename(hpxml_file)[11..12]
   end
@@ -270,7 +270,7 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
   end
 
   eri_version = hpxml.header.eri_calculation_version
-  eri_version = Constants.ERIVersions[-1] if (eri_version == 'latest' || eri_version.nil?)
+  eri_version = Constants::ERIVersions[-1] if (eri_version == 'latest' || eri_version.nil?)
   return eri_version
 end
 
@@ -2197,7 +2197,7 @@ def create_sample_hpxmls
 
     hpxml.header.eri_calculation_version = 'latest'
     hpxml.header.co2index_calculation_version = 'latest'
-    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
+    hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.header.timestep = nil
     hpxml_bldg.site.site_type = nil
@@ -2503,28 +2503,28 @@ def create_sample_hpxmls
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.zerh_calculation_version = ZERHConstants.MFVer2
+      hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
       if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
         hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
                                                                  zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
       end
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants.SFVer2
+      hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
       if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
         hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
                                                                  zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
       end
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2
+      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
     elsif hpxml_bldg.state_code == 'FL'
-      hpxml.header.energystar_calculation_version = ESConstants.SFFloridaVer3_1
+      hpxml.header.energystar_calculation_version = ESConstants::SFFloridaVer3_1
     elsif hpxml_bldg.state_code == 'HI'
-      hpxml.header.energystar_calculation_version = ESConstants.SFPacificVer3_0
+      hpxml.header.energystar_calculation_version = ESConstants::SFPacificVer3_0
     elsif hpxml_bldg.state_code == 'OR'
-      hpxml.header.energystar_calculation_version = ESConstants.SFOregonWashingtonVer3_2
+      hpxml.header.energystar_calculation_version = ESConstants::SFOregonWashingtonVer3_2
     else
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
+      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
     end
     hpxml_bldg.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?
@@ -2557,7 +2557,7 @@ def create_sample_hpxmls
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
   # Older ERI versions
-  Constants.ERIVersions.each do |eri_version|
+  Constants::ERIVersions.each do |eri_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml_bldg = hpxml.buildings[0]
     hpxml.header.eri_calculation_version = eri_version
@@ -2565,7 +2565,7 @@ def create_sample_hpxmls
     hpxml.header.iecc_eri_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     hpxml.header.zerh_calculation_version = nil
-    if Constants.ERIVersions.index(eri_version) < Constants.ERIVersions.index('2019A')
+    if Constants::ERIVersions.index(eri_version) < Constants::ERIVersions.index('2019A')
       # Need old input for clothes dryers
       hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
     end
@@ -2573,7 +2573,7 @@ def create_sample_hpxmls
   end
 
   # Older CO2 Index versions
-  Constants.ERIVersions.select { |v| Constants.ERIVersions.index(v) >= Constants.ERIVersions.index('2019ABCD') }.each do |co2_version|
+  Constants::ERIVersions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }.each do |co2_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml.header.co2index_calculation_version = co2_version
     hpxml.header.eri_calculation_version = nil
@@ -2584,7 +2584,7 @@ def create_sample_hpxmls
   end
 
   # All IECC versions
-  IECCConstants.AllVersions.each do |iecc_version|
+  IECCConstants::AllVersions.each do |iecc_version|
     hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
     hpxml_bldg = hpxml.buildings[0]
     hpxml.header.iecc_eri_calculation_version = iecc_version
@@ -2604,7 +2604,7 @@ def create_sample_hpxmls
   # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
   hpxml_bldg = hpxml.buildings[0]
-  hpxml.header.energystar_calculation_version = ESConstants.MFOregonWashingtonVer1_2
+  hpxml.header.energystar_calculation_version = ESConstants::MFOregonWashingtonVer1_2
   hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
   hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Portland, OR'
   hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_OR_Portland.Intl.AP.726980_TMY3.epw'
@@ -2617,13 +2617,13 @@ def create_sample_hpxmls
     hpxml = HPXML.new(hpxml_path: hpxml_path)
     hpxml.header.eri_calculation_version = 'latest'
     hpxml.header.co2index_calculation_version = 'latest'
-    hpxml.header.iecc_eri_calculation_version = IECCConstants.AllVersions[-1]
+    hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
     if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
-      hpxml.header.zerh_calculation_version = ZERHConstants.MFVer2
-      hpxml.header.energystar_calculation_version = ESConstants.MFNationalVer1_2
+      hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
+      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants.SFVer2
-      hpxml.header.energystar_calculation_version = ESConstants.SFNationalVer3_2
+      hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
+      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
     end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end

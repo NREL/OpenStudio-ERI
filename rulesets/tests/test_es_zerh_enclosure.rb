@@ -22,20 +22,20 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_infiltration
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if program_version == ESConstants.SFNationalVer3_0
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if program_version == ESConstants::SFNationalVer3_0
         value, units = 4.0, 'ACH'
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2].include? program_version
+      elsif [ESConstants::SFNationalVer3_1, ESConstants::SFNationalVer3_2, ESConstants::SFOregonWashingtonVer3_2].include? program_version
         value, units = 3.0, 'ACH'
-      elsif program_version == ESConstants.SFPacificVer3_0
+      elsif program_version == ESConstants::SFPacificVer3_0
         value, units = 6.0, 'ACH'
-      elsif program_version == ESConstants.SFFloridaVer3_1
+      elsif program_version == ESConstants::SFFloridaVer3_1
         value, units = 5.0, 'ACH'
-      elsif ESConstants.MFVersions.include? program_version
+      elsif ESConstants::MFVersions.include? program_version
         value, units = 1564.8, 'CFM'
-      elsif program_version == ZERHConstants.MFVer2
+      elsif program_version == ZERHConstants::MFVer2
         value, units = 1303.9, 'CFM'
-      elsif [ZERHConstants.Ver1, ZERHConstants.SFVer2].include? program_version
+      elsif [ZERHConstants::Ver1, ZERHConstants::SFVer2].include? program_version
         value, units = 2.0, 'ACH'
       end
 
@@ -44,30 +44,30 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       _check_infiltration(hpxml_bldg, value, units)
     end
 
-    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
+    [*ESConstants::MFVersions, *ZERHConstants::MFVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERHConstants.Ver1
+      if program_version == ZERHConstants::Ver1
         _check_infiltration(hpxml_bldg, 3.0, 'ACH')
-      elsif program_version == ZERHConstants.MFVer2
+      elsif program_version == ZERHConstants::MFVer2
         _check_infiltration(hpxml_bldg, 695.0, 'CFM')
       else
         _check_infiltration(hpxml_bldg, 834.0, 'CFM')
       end
     end
 
-    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if program_version == ESConstants.SFNationalVer3_0
+    [*ESConstants::NationalVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if program_version == ESConstants::SFNationalVer3_0
         value, units = 6.0, 'ACH'
-      elsif program_version == ESConstants.SFNationalVer3_1
+      elsif program_version == ESConstants::SFNationalVer3_1
         value, units = 4.0, 'ACH'
-      elsif [ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ZERHConstants::Ver1].include? program_version
         value, units = 3.0, 'ACH'
-      elsif program_version == ZERHConstants.SFVer2
+      elsif program_version == ZERHConstants::SFVer2
         value, units = 2.75, 'ACH'
-      elsif ESConstants.MFVersions.include? program_version
+      elsif ESConstants::MFVersions.include? program_version
         value, units = 1170.0, 'CFM'
-      elsif program_version == ZERHConstants.MFVer2
+      elsif program_version == ZERHConstants::MFVer2
         value, units = 975.0, 'CFM'
       end
 
@@ -78,10 +78,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_roofs
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      next if program_version == ESConstants.SFPacificVer3_0
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      next if program_version == ESConstants::SFPacificVer3_0
 
-      if [ESConstants.SFFloridaVer3_1].include? program_version
+      if [ESConstants::SFFloridaVer3_1].include? program_version
         rb_grade = 1
       else
         rb_grade = nil
@@ -93,12 +93,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_roofs(hpxml_bldg, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
-      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
+      if [ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ZERHConstants::MFVer2].include? program_version
         # Ducts remain in conditioned space, so no need to transition roof to vented attic
         adjacent_to = HPXML::LocationConditionedSpace
-        if program_version == ESConstants.MFNationalVer1_1
+        if program_version == ESConstants::MFNationalVer1_1
           rvalue = 1.0 / 0.021
-        elsif [ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
+        elsif [ESConstants::MFNationalVer1_2, ZERHConstants::MFVer2].include? program_version
           rvalue = 1.0 / 0.024
         end
       end
@@ -112,14 +112,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       _check_roofs(hpxml_bldg, area: 1350, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
     end
 
-    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
+    [*ESConstants::MFVersions, *ZERHConstants::MFVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_roofs(hpxml_bldg)
     end
 
     # Radiant barrier: In climate zones 1-3, if > 10 linear ft. of ductwork are located in unconditioned attic
-    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::NationalVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
@@ -130,7 +130,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0].include? program_version
+      if [ESConstants::SFNationalVer3_0, ESConstants::MFNationalVer1_0].include? program_version
         rb_grade = 1
       else
         rb_grade = nil
@@ -147,33 +147,33 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       # In both HI and GU, if > 10 linear ft. of ductwork are located in unconditioned attic, place radiant barrier
-      _convert_to_es_zerh('base.xml', ESConstants.SFPacificVer3_0, state_code)
-      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _convert_to_es_zerh('base.xml', ESConstants::SFPacificVer3_0, state_code)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants::SFPacificVer3_0)
       _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1, adjacent_to: HPXML::LocationAtticVented)
 
-      _convert_to_es_zerh('base-atticroof-cathedral.xml', ESConstants.SFPacificVer3_0, state_code)
-      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _convert_to_es_zerh('base-atticroof-cathedral.xml', ESConstants::SFPacificVer3_0, state_code)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants::SFPacificVer3_0)
       _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
-      _convert_to_es_zerh('base-atticroof-flat.xml', ESConstants.SFPacificVer3_0, state_code)
-      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _convert_to_es_zerh('base-atticroof-flat.xml', ESConstants::SFPacificVer3_0, state_code)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants::SFPacificVer3_0)
       _check_roofs(hpxml_bldg, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
   end
 
   def test_enclosure_walls
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      next if program_version == ESConstants.SFPacificVer3_0
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      next if program_version == ESConstants::SFPacificVer3_0
 
-      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
+      if [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
-      elsif [ESConstants.SFFloridaVer3_1].include? program_version
+      elsif [ESConstants::SFFloridaVer3_1].include? program_version
         rvalue = 1.0 / 0.082
-      elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      elsif [ESConstants::SFOregonWashingtonVer3_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.056
-      elsif [ZERHConstants.Ver1].include? program_version
+      elsif [ZERHConstants::Ver1].include? program_version
         rvalue = 1.0 / 0.060
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -192,14 +192,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       _check_walls(hpxml_bldg, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
 
-    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
-      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
+    [*ESConstants::MFVersions, *ZERHConstants::MFVersions].each do |program_version|
+      if [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
-      elsif [ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::MFNationalVer1_2, ZERHConstants::MFVer2].include? program_version
         rvalue = 1.0 / 0.045
-      elsif program_version == ESConstants.MFOregonWashingtonVer1_2
+      elsif program_version == ESConstants::MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.056
-      elsif [ZERHConstants.Ver1].include? program_version
+      elsif [ZERHConstants::Ver1].include? program_version
         rvalue = 1.0 / 0.060
       end
 
@@ -220,31 +220,31 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rvalue = 1 / 0.401
       end
 
-      _convert_to_es_zerh('base.xml', ESConstants.SFPacificVer3_0, state_code)
-      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _convert_to_es_zerh('base.xml', ESConstants::SFPacificVer3_0, state_code)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants::SFPacificVer3_0)
       _check_walls(hpxml_bldg, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-atticroof-conditioned.xml', ESConstants.SFPacificVer3_0, state_code)
-      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _convert_to_es_zerh('base-atticroof-conditioned.xml', ESConstants::SFPacificVer3_0, state_code)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants::SFPacificVer3_0)
       _check_walls(hpxml_bldg, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-enclosure-garage.xml', ESConstants.SFPacificVer3_0, state_code)
-      _hpxml, hpxml_bldg = _test_ruleset(ESConstants.SFPacificVer3_0)
+      _convert_to_es_zerh('base-enclosure-garage.xml', ESConstants::SFPacificVer3_0, state_code)
+      _hpxml, hpxml_bldg = _test_ruleset(ESConstants::SFPacificVer3_0)
       _check_walls(hpxml_bldg, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
   end
 
   def test_enclosure_rim_joists
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
+      elsif [ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1].include? program_version
         rvalue = 1.0 / 0.082
-      elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      elsif [ESConstants::SFOregonWashingtonVer3_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.056
-      elsif [ZERHConstants.Ver1].include? program_version
+      elsif [ZERHConstants::Ver1].include? program_version
         rvalue = 1.0 / 0.060
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         rvalue = 1.0 / 0.045
       else
         rvalue = 1.0 / 0.057
@@ -261,19 +261,19 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_foundation_walls
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if program_version == ESConstants.SFNationalVer3_0
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if program_version == ESConstants::SFNationalVer3_0
         assembly_rvalue = 1.0 / 0.059
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2,
-             ZERHConstants.Ver1, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_1, ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2,
+             ZERHConstants::Ver1, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         assembly_rvalue = 1.0 / 0.050
-      elsif [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
+      elsif [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1].include? program_version
         ins_interior_rvalue = 7.5
-      elsif program_version == ESConstants.MFOregonWashingtonVer1_2
+      elsif program_version == ESConstants::MFOregonWashingtonVer1_2
         ins_interior_rvalue = 15.0
-      elsif program_version == ESConstants.SFOregonWashingtonVer3_2
+      elsif program_version == ESConstants::SFOregonWashingtonVer3_2
         assembly_rvalue = 1.0 / 0.042
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
+      elsif [ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1].include? program_version
         assembly_rvalue = 1.0 / 0.360
       end
 
@@ -291,8 +291,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
     end
 
-    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
+    [*ESConstants::NationalVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1].include? program_version
         ins_interior_rvalue = 0.0
       else
         assembly_rvalue = 1.0 / 0.360
@@ -320,7 +320,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
     end
 
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7)
@@ -336,18 +336,18 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_ceilings
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if program_version == ESConstants.SFNationalVer3_0
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if program_version == ESConstants::SFNationalVer3_0
         rvalue = 1.0 / 0.030
-      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      elsif [ESConstants::SFNationalVer3_1, ZERHConstants::Ver1, ESConstants::SFOregonWashingtonVer3_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.026
-      elsif program_version == ESConstants.MFNationalVer1_0
+      elsif program_version == ESConstants::MFNationalVer1_0
         rvalue = 1.0 / 0.027
-      elsif program_version == ESConstants.MFNationalVer1_1
+      elsif program_version == ESConstants::MFNationalVer1_1
         rvalue = 1.0 / 0.021
-      elsif [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
+      elsif [ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1].include? program_version
         rvalue = 1.0 / 0.035
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         rvalue = 1.0 / 0.024
       end
 
@@ -361,7 +361,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
+      if [ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ZERHConstants::MFVer2].include? program_version
         _check_ceilings(hpxml_bldg)
       else
         _check_ceilings(hpxml_bldg, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
@@ -373,17 +373,17 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       _convert_to_es_zerh('base-atticroof-flat.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
+      if [ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ZERHConstants::MFVer2].include? program_version
         _check_ceilings(hpxml_bldg)
       else
         _check_ceilings(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
 
-      if [*ESConstants.SFVersions].include? program_version
+      if [*ESConstants::SFVersions].include? program_version
         _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
         _hpxml, hpxml_bldg = _test_ruleset(program_version)
         _check_ceilings(hpxml_bldg, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [*ESConstants.MFVersions, *ZERHConstants.MFVersions].include? program_version
+      elsif [*ESConstants::MFVersions, *ZERHConstants::MFVersions].include? program_version
         _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
         _hpxml, hpxml_bldg = _test_ruleset(program_version)
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
@@ -408,15 +408,15 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_floors
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1, ZERHConstants.SFVer2, ZERHConstants.MFVer2, ESConstants.SFNationalVer3_0, ESConstants.MFNationalVer1_0,
-          ESConstants.MFNationalVer1_1, ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2].include? program_version
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if [ESConstants::SFNationalVer3_1, ZERHConstants::Ver1, ZERHConstants::SFVer2, ZERHConstants::MFVer2, ESConstants::SFNationalVer3_0, ESConstants::MFNationalVer1_0,
+          ESConstants::MFNationalVer1_1, ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2].include? program_version
         rvalue = 1.0 / 0.033
-      elsif program_version == ESConstants.SFPacificVer3_0
+      elsif program_version == ESConstants::SFPacificVer3_0
         rvalue = 1.0 / 0.257
-      elsif program_version == ESConstants.SFFloridaVer3_1
+      elsif program_version == ESConstants::SFFloridaVer3_1
         rvalue = 1.0 / 0.064
-      elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      elsif [ESConstants::SFOregonWashingtonVer3_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.028
       end
 
@@ -429,10 +429,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
     end
 
-    [*ESConstants.MFVersions, *ZERHConstants.MFVersions].each do |program_version|
-      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ZERHConstants.Ver1, ZERHConstants.MFVer2].include? program_version
+    [*ESConstants::MFVersions, *ZERHConstants::MFVersions].each do |program_version|
+      if [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ZERHConstants::Ver1, ZERHConstants::MFVer2].include? program_version
         rvalue = 1.0 / 0.033
-      elsif program_version == ESConstants.MFOregonWashingtonVer1_2
+      elsif program_version == ESConstants::MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.028
       end
 
@@ -452,18 +452,18 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants.MFNationalVer1_0, ESConstants.MFNationalVer1_1].include? program_version
+      if [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
-      elsif [ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::MFNationalVer1_2, ZERHConstants::MFVer2].include? program_version
         rvalue = 1.0 / 0.051
       end
       _check_floors(hpxml_bldg, area: 900, rvalue: (2.1 * 150 + 3.1 * 200 + rvalue * 550) / 900, floor_type: HPXML::FloorTypeConcrete)
     end
 
-    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if program_version == ESConstants.MFNationalVer1_0
+    [*ESConstants::NationalVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if program_version == ESConstants::MFNationalVer1_0
         rvalue = 1.0 / 0.282
-      elsif program_version == ESConstants.MFNationalVer1_1
+      elsif program_version == ESConstants::MFNationalVer1_1
         rvalue = 1.0 / 0.066
       else
         rvalue = 1.0 / 0.064
@@ -484,21 +484,21 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_slabs
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
-      if [ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1].include? program_version
+      if [ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1].include? program_version
         perim_ins_depth = 0
         perim_ins_r = 0
         under_ins_width = 0
         under_ins_r = 0
-      elsif [ESConstants.SFOregonWashingtonVer3_2, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      elsif [ESConstants::SFOregonWashingtonVer3_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
         perim_ins_depth = 4
         perim_ins_r = 10
         under_ins_width = 999
         under_ins_r = 10
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         perim_ins_depth = 4
         perim_ins_r = 10
         under_ins_width = 0
@@ -516,7 +516,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
                                under_ins_width: under_ins_width, under_ins_r: under_ins_r)
     end
 
-    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::NationalVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
@@ -537,18 +537,18 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
   def test_enclosure_windows
     # SF tests
-    [*ESConstants.SFVersions, *ZERHConstants.SFVersions].each do |program_version|
-      if program_version == ESConstants.SFNationalVer3_0
+    [*ESConstants::SFVersions, *ZERHConstants::SFVersions].each do |program_version|
+      if program_version == ESConstants::SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
-      elsif [ESConstants.SFNationalVer3_1, ZERHConstants.Ver1].include? program_version
+      elsif [ESConstants::SFNationalVer3_1, ZERHConstants::Ver1].include? program_version
         ufactor, shgc = 0.27, 0.40
-      elsif [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2].include? program_version
         ufactor, shgc = 0.27, 0.30
-      elsif program_version == ESConstants.SFPacificVer3_0
+      elsif program_version == ESConstants::SFPacificVer3_0
         ufactor, shgc = 0.60, 0.27
-      elsif program_version == ESConstants.SFFloridaVer3_1
+      elsif program_version == ESConstants::SFFloridaVer3_1
         ufactor, shgc = 0.65, 0.27
-      elsif program_version == ESConstants.SFOregonWashingtonVer3_2
+      elsif program_version == ESConstants::SFOregonWashingtonVer3_2
         ufactor, shgc = 0.27, 0.30
       end
 
@@ -586,15 +586,15 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
 
     # MF tests
-    ESConstants.MFVersions.each do |program_version|
+    ESConstants::MFVersions.each do |program_version|
       # Base test (non-structural windows)
-      if program_version == ESConstants.MFNationalVer1_0
+      if program_version == ESConstants::MFNationalVer1_0
         ufactor, shgc = 0.30, 0.40
-      elsif program_version == ESConstants.MFNationalVer1_1
+      elsif program_version == ESConstants::MFNationalVer1_1
         ufactor, shgc = 0.27, 0.40
-      elsif [ESConstants.MFNationalVer1_2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::MFNationalVer1_2, ZERHConstants::MFVer2].include? program_version
         ufactor, shgc = 0.27, 0.30
-      elsif program_version == ESConstants.MFOregonWashingtonVer1_2
+      elsif program_version == ESConstants::MFOregonWashingtonVer1_2
         ufactor, shgc = 0.27, 0.30
       end
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
@@ -605,11 +605,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
                                                       270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
 
       # Test w/ structural fixed windows
-      if program_version == ESConstants.MFNationalVer1_0
+      if program_version == ESConstants::MFNationalVer1_0
         ufactor2 = 0.38
-      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2].include? program_version
+      elsif [ESConstants::MFNationalVer1_1, ESConstants::MFOregonWashingtonVer1_2].include? program_version
         ufactor2 = 0.36
-      elsif program_version == ESConstants.MFNationalVer1_2
+      elsif program_version == ESConstants::MFNationalVer1_2
         ufactor2 = 0.34
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -628,9 +628,9 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
                                                       270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
 
       # Test w/ structural operable windows
-      if program_version == ESConstants.MFNationalVer1_0
+      if program_version == ESConstants::MFNationalVer1_0
         ufactor3 = 0.45
-      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFOregonWashingtonVer1_2, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants::MFNationalVer1_1, ESConstants::MFOregonWashingtonVer1_2, ESConstants::MFNationalVer1_2].include? program_version
         ufactor3 = 0.43
       end
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -650,23 +650,23 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
 
     # Test in Climate Zone 1A
-    [*ESConstants.NationalVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if program_version == ESConstants.SFNationalVer3_0
+    [*ESConstants::NationalVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if program_version == ESConstants::SFNationalVer3_0
         ufactor, shgc = 0.60, 0.27
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ZERHConstants.Ver1].include? program_version
+      elsif [ESConstants::SFNationalVer3_1, ESConstants::SFNationalVer3_2, ZERHConstants::Ver1].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif [ZERHConstants.SFVer2].include? program_version
+      elsif [ZERHConstants::SFVer2].include? program_version
         ufactor, shgc = 0.40, 0.23
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif program_version == ESConstants.MFNationalVer1_0
+      elsif program_version == ESConstants::MFNationalVer1_0
         ufactor, shgc = 0.60, 0.27
         areas = [89.46, 89.46, 59.64, 59.64]
-      elsif [ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [89.46, 89.46, 59.64, 59.64]
-      elsif program_version == ZERHConstants.MFVer2
+      elsif program_version == ZERHConstants::MFVer2
         ufactor, shgc = 0.40, 0.23
         areas = [89.46, 89.46, 59.64, 59.64]
       end
@@ -690,7 +690,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_skylights
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-enclosure-skylights.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_skylights(hpxml_bldg)
@@ -698,7 +698,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_overhangs
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-enclosure-overhangs.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_overhangs(hpxml_bldg)
@@ -706,10 +706,10 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_doors
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
-      if [ESConstants.SFNationalVer3_1, ESConstants.SFNationalVer3_2, ESConstants.SFOregonWashingtonVer3_2,
-          ESConstants.MFNationalVer1_1, ESConstants.MFNationalVer1_2, ESConstants.MFOregonWashingtonVer1_2,
-          ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+      if [ESConstants::SFNationalVer3_1, ESConstants::SFNationalVer3_2, ESConstants::SFOregonWashingtonVer3_2,
+          ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ESConstants::MFOregonWashingtonVer1_2,
+          ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         rvalue = 1.0 / 0.17
       else
         rvalue = 1.0 / 0.21
@@ -723,11 +723,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
   def _test_ruleset(program_version)
     require_relative '../../workflow/design'
-    if ESConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
+    if ESConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
                             output_dir: @sample_files_path)]
-    elsif ZERHConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
+    elsif ZERHConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
                             output_dir: @sample_files_path)]
     end
 

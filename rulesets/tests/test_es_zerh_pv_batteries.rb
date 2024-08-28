@@ -22,7 +22,7 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
   end
 
   def test_pv
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-pv.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_pv(hpxml_bldg)
@@ -30,7 +30,7 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
   end
 
   def test_pv_batteries
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-pv-battery.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_battery(hpxml_bldg)
@@ -39,11 +39,11 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
 
   def _test_ruleset(program_version)
     require_relative '../../workflow/design'
-    if ESConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
+    if ESConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
                             output_dir: @sample_files_path)]
-    elsif ZERHConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
+    elsif ZERHConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
                             output_dir: @sample_files_path)]
     end
 

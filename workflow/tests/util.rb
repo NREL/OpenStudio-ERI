@@ -31,7 +31,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   hpxml = HPXML.new(hpxml_path: xml)
 
   eri_version = hpxml.header.eri_calculation_version
-  eri_version = Constants.ERIVersions[-1] if eri_version == 'latest'
+  eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
   co2_version = hpxml.header.co2index_calculation_version
   iecc_eri_version = hpxml.header.iecc_eri_calculation_version
   es_version = hpxml.header.energystar_calculation_version
@@ -167,7 +167,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       assert(File.exist?(output_path))
     end
   end
-  if diagnostic_output && (not eri_version.nil?) && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
+  if diagnostic_output && (not eri_version.nil?) && (Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE'))
     diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
     puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
     assert(File.exist?(diag_output_path))
@@ -283,7 +283,7 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
-    _run_ruleset(Constants.CalcTypeERIReferenceHome, xml, out_xml)
+    _run_ruleset(Constants::CalcTypeERIReferenceHome, xml, out_xml)
     test_num = File.basename(xml)[0, 2].to_i
     all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num, version)
 

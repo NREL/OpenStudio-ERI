@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.9.0
 
 __New Features__
+- Updates to HPXML v4.0 final release.
 - **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
 - Adds inputs for modeling skylight curbs and/or shafts.
 

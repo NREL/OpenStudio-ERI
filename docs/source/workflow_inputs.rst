@@ -1794,7 +1794,8 @@ Each heat recovery ventilator (HRV) is entered as a ``/HPXML/Building/BuildingDe
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
-  .. [#] Providing AdjustedSensibleRecoveryEfficiency (ASRE) is preferable to SensibleRecoveryEfficiency (SRE).
+  .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
+         Since OpenStudio-ERI separately models fan electric consumption, ASRE is a preferable input to SRE because it can be directly used in the energy model.
 
 .. _vent_fan_erv:
 
@@ -1821,8 +1822,10 @@ Each energy recovery ventilator (ERV) is entered as a ``/HPXML/Building/Building
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
-  .. [#] Providing AdjustedTotalRecoveryEfficiency (ATRE) is preferable to TotalRecoveryEfficiency (TRE).
-  .. [#] Providing AdjustedSensibleRecoveryEfficiency (ASRE) is preferable to SensibleRecoveryEfficiency (SRE).
+  .. [#] AdjustedTotalRecoveryEfficiency (ATRE) is similar to TotalRecoveryEfficiency (TRE), in that it reflects cooling season performance, but excludes fan electric consumption.
+         Since OpenStudio-ERI separately models fan electric consumption, ATRE is a preferable input to TRE because it can be directly used in the energy model.
+  .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
+         Since OpenStudio-ERI separately models fan electric consumption, ASRE is a preferable input to SRE because it can be directly used in the energy model.
 
 .. _vent_fan_cfis:
 

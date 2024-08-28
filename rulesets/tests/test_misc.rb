@@ -26,7 +26,7 @@ class ERIMiscTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      if [Constants::CalcTypeERIIndexAdjustmentDesign, Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_misc(hpxml_bldg, misc_kwh: 2184, misc_sens: 0.855, misc_lat: 0.045, tv_kwh: 620, tv_sens: 1, tv_lat: 0)
       else
         _check_misc(hpxml_bldg, misc_kwh: 2457, misc_sens: 0.855, misc_lat: 0.045, tv_kwh: 620, tv_sens: 1, tv_lat: 0)

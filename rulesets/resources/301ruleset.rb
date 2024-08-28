@@ -11,10 +11,10 @@ module ERI_301_Ruleset
     if not iecc_version.nil?
       if ['2015', '2018'].include? iecc_version
         # Use 2014 w/ all addenda
-        @eri_version = Constants.ERIVersions.select { |v| v.include? '2014' }[-1]
+        @eri_version = Constants::ERIVersions.select { |v| v.include? '2014' }[-1]
       elsif ['2021'].include? iecc_version
         # Use 2019 w/ all addenda
-        @eri_version = Constants.ERIVersions.select { |v| v.include? '2019' }[-1]
+        @eri_version = Constants::ERIVersions.select { |v| v.include? '2019' }[-1]
       else
         fail "Unhandled IECC version: #{iecc_version}."
       end
@@ -22,21 +22,21 @@ module ERI_301_Ruleset
       @eri_version = hpxml.header.eri_calculation_version
       @eri_version = hpxml.header.co2index_calculation_version if @eri_version.nil?
     end
-    @eri_version = Constants.ERIVersions[-1] if @eri_version == 'latest'
+    @eri_version = Constants::ERIVersions[-1] if @eri_version == 'latest'
 
     # Update HPXML object based on calculation type
-    if calc_type == Constants.CalcTypeERIReferenceHome
+    if calc_type == Constants::CalcTypeERIReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
-    elsif calc_type == Constants.CalcTypeERIRatedHome
+    elsif calc_type == Constants::CalcTypeERIRatedHome
       hpxml = apply_rated_home_ruleset(hpxml)
-    elsif calc_type == Constants.CalcTypeERIIndexAdjustmentDesign
+    elsif calc_type == Constants::CalcTypeERIIndexAdjustmentDesign
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
-    elsif calc_type == Constants.CalcTypeERIIndexAdjustmentReferenceHome
+    elsif calc_type == Constants::CalcTypeERIIndexAdjustmentReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
-    elsif calc_type == Constants.CalcTypeCO2eRatedHome
+    elsif calc_type == Constants::CalcTypeCO2eRatedHome
       hpxml = apply_rated_home_ruleset(hpxml)
-    elsif calc_type == Constants.CalcTypeCO2eReferenceHome
+    elsif calc_type == Constants::CalcTypeCO2eReferenceHome
       hpxml = apply_reference_home_ruleset(hpxml, is_all_electric: true)
     end
 
@@ -629,7 +629,7 @@ module ERI_301_Ruleset
 
     # Create walls for Above-grade walls separating Conditioned Space Volume
     # from Unrated Heated Space, Multifamily Buffer Boundary, or Non-Freezing Space.
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022')
       common_space_walls = orig_bldg.walls.select { |wall| wall.is_conditioned && HPXML::multifamily_common_space_locations.include?(wall.exterior_adjacent_to) }
       common_space_wall_ufactor = get_reference_wall_ufactor_common_space()
       common_space_walls.each do |orig_wall|
@@ -983,7 +983,7 @@ module ERI_301_Ruleset
 
     fraction_operable = Airflow.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
-      if (orig_bldg.fraction_of_windows_operable() <= 0) && (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
+      if (orig_bldg.fraction_of_windows_operable() <= 0) && (Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019'))
         # Disable natural ventilation
         fraction_operable = 0.0
       end
@@ -1277,7 +1277,7 @@ module ERI_301_Ruleset
 
     # Retain heating system(s)
     orig_bldg.heating_systems.each do |orig_heating_system|
-      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+      if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019AB')
         fan_watts_per_cfm = orig_heating_system.fan_watts_per_cfm
         airflow_defect_ratio = orig_heating_system.airflow_defect_ratio
       end
@@ -1305,7 +1305,7 @@ module ERI_301_Ruleset
 
     # Retain cooling system(s)
     orig_bldg.cooling_systems.each do |orig_cooling_system|
-      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+      if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019AB')
         fan_watts_per_cfm = orig_cooling_system.fan_watts_per_cfm
         airflow_defect_ratio = orig_cooling_system.airflow_defect_ratio
         charge_defect_ratio = orig_cooling_system.charge_defect_ratio
@@ -1347,7 +1347,7 @@ module ERI_301_Ruleset
 
     # Retain heat pump(s)
     orig_bldg.heat_pumps.each do |orig_heat_pump|
-      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+      if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019AB')
         fan_watts_per_cfm = orig_heat_pump.fan_watts_per_cfm
         airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
         charge_defect_ratio = orig_heat_pump.charge_defect_ratio
@@ -1730,7 +1730,7 @@ module ERI_301_Ruleset
       heating_capacity = Waterheater.get_default_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
 
       # If 2022, reference WH is in default location, regardless of rated home location
-      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022')
+      if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022')
         climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
         location = Waterheater.get_default_location(orig_bldg, climate_zone_iecc)
       else
@@ -1941,7 +1941,7 @@ module ERI_301_Ruleset
   end
 
   def self.set_systems_batteries_rated(orig_bldg, new_bldg)
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022C')
       orig_bldg.batteries.each do |orig_battery|
         new_bldg.batteries.add(id: orig_battery.id,
                                is_shared_system: orig_battery.is_shared_system,
@@ -2189,7 +2189,7 @@ module ERI_301_Ruleset
   end
 
   def self.set_appliances_dehumidifier_reference(orig_bldg, new_bldg)
-    return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
+    return if Constants::ERIVersions.index(@eri_version) < Constants::ERIVersions.index('2019AB')
 
     orig_bldg.dehumidifiers.each do |dehumidifier|
       reference_values = HVAC.get_dehumidifier_default_values(dehumidifier.capacity)
@@ -2204,7 +2204,7 @@ module ERI_301_Ruleset
   end
 
   def self.set_appliances_dehumidifier_rated(orig_bldg, new_bldg)
-    return if Constants.ERIVersions.index(@eri_version) < Constants.ERIVersions.index('2019AB')
+    return if Constants::ERIVersions.index(@eri_version) < Constants::ERIVersions.index('2019AB')
 
     orig_bldg.dehumidifiers.each do |dehumidifier|
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
@@ -2319,7 +2319,7 @@ module ERI_301_Ruleset
 
   def self.set_ceiling_fans_reference(orig_bldg, new_bldg)
     n_fans = orig_bldg.ceiling_fans.map { |cf| cf.count }.sum(0)
-    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
+    if (Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
       # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
       # is less than Nbr + 1.
       return
@@ -2336,7 +2336,7 @@ module ERI_301_Ruleset
 
   def self.set_ceiling_fans_rated(orig_bldg, new_bldg)
     n_fans = orig_bldg.ceiling_fans.map { |cf| cf.count }.sum(0)
-    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
+    if (Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')) && (n_fans < @nbeds + 1)
       # In 301-2019, no ceiling fans in Reference Home if number of ceiling fans
       # is less than Nbr + 1.
       return
@@ -2487,7 +2487,7 @@ module ERI_301_Ruleset
     end
 
     q_fan_bal_remain = 0
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2022C')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022C')
       # Check if supplemental balanced ventilation is needed
       # This should only happen when the home has no mechanical ventilation, because
       # otherwise the existing ventilation fans would have been increased instead.
@@ -2512,7 +2512,7 @@ module ERI_301_Ruleset
       tot_cb_area, ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
       a_ext = ext_cb_area / tot_cb_area
 
-      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
+      if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
         if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
           cfm50 = infil_values[:ach50] * infil_values[:volume] / 60.0
           tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
@@ -2530,7 +2530,7 @@ module ERI_301_Ruleset
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
     if mech_vent_fans.empty?
       min_nach = 0.30
-    elsif Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')
+    elsif Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
       has_non_exhaust_systems = (mech_vent_fans.select { |f| f.fan_type != HPXML::MechVentTypeExhaust }.size > 0)
       mech_vent_fans.each do |orig_vent_fan|
         if orig_vent_fan.flow_rate_not_tested || ((a_ext < 0.5) && !has_non_exhaust_systems)
@@ -2934,12 +2934,12 @@ module ERI_301_Ruleset
   end
 
   def self.get_reference_door_area(orig_bldg)
-    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019')) && (@bldg_type == HPXML::ResidentialTypeApartment)
+    if (Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')) && (@bldg_type == HPXML::ResidentialTypeApartment)
       total_area = 20.0 # ft2
     else
       total_area = 40.0 # ft2
     end
-    if (Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019'))
+    if (Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019'))
       # Calculate portion of door area that is exterior by preserving ratio from rated home
       orig_interior_area = orig_bldg.doors.select { |d| d.wall.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }.map { |d| d.area }.sum(0)
       orig_exterior_area = orig_bldg.doors.select { |d| d.is_exterior_thermal_boundary }.map { |d| d.area }.sum(0)
@@ -2959,7 +2959,7 @@ module ERI_301_Ruleset
   end
 
   def self.get_reference_hvac_airflow_defect_ratio()
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019AB')
       return -0.25
     else
       return 0.0
@@ -2967,7 +2967,7 @@ module ERI_301_Ruleset
   end
 
   def self.get_reference_hvac_fan_watts_per_cfm()
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019AB')
       return 0.58
     else
       return
@@ -2975,7 +2975,7 @@ module ERI_301_Ruleset
   end
 
   def self.get_reference_hvac_charge_defect_ratio()
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019AB')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019AB')
       return -0.25
     else
       return 0.0
@@ -2983,7 +2983,7 @@ module ERI_301_Ruleset
   end
 
   def self.lookup_egrid_value(egrid_subregion, zip_column_index, output_column_index)
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019ABCD')
       zip_filepath = File.join(File.dirname(__FILE__), '..', 'data', 'egrid', 'egrid2019_summary_tables.csv')
     else
       zip_filepath = File.join(File.dirname(__FILE__), '..', 'data', 'egrid', 'egrid2012_summary_tables.csv')
@@ -3009,8 +3009,8 @@ module ERI_301_Ruleset
     end
 
     # Fossil fuel values
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABC')
-      if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019ABC')
+      if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019ABCD')
         # Latest values include pre-combustion for fossil fuels
         co2e_values = { HPXML::FuelTypeNaturalGas => 147.3,
                         HPXML::FuelTypeOil => 195.9,
@@ -3039,7 +3039,7 @@ module ERI_301_Ruleset
     end
 
     # CO2e Emissions Scenario
-    if Constants.ERIVersions.index(@eri_version) >= Constants.ERIVersions.index('2019ABCD')
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019ABCD')
       # Use Cambium database for electricity
       if not @cambium_gea.nil?
         cambium_geas = ['AZNMc', 'CAMXc', 'ERCTc', 'FRCCc', 'MROEc', 'MROWc', 'NEWEc', 'NWPPc', 'NYSTc', 'RFCEc',

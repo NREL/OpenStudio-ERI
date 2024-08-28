@@ -37,13 +37,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
@@ -53,13 +53,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 9.75, volume: 21600.0)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
@@ -76,13 +76,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 10.5, volume: 21600.0)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 10.5, volume: 21600.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
@@ -102,13 +102,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
@@ -130,13 +130,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 0.74, height: 8.0, volume: 7200.0)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 8.0, volume: 7200.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
@@ -158,13 +158,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 10.1, height: 8.0, volume: 7200.0)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 8.0, volume: 7200.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
@@ -175,13 +175,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 2.3, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9)
       end
     end
@@ -190,13 +190,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1510, rvalue: 25.8, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1510, rvalue: 33.33, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1300, rvalue: 33.33, sabs: 0.75, emit: 0.9)
       end
     end
@@ -205,13 +205,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1510, rvalue: (25.8 * 1006 + 2.3 * 504) / 1510, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1510, rvalue: (33.33 * 1006 + 2.3 * 504) / 1510, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1300, rvalue: (25.8 * 1006 + 2.3 * 504) / 1510, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg,  area: 1300, rvalue: (33.33 * 1006 + 2.3 * 504) / 1510, sabs: 0.75, emit: 0.9)
       end
     end
@@ -220,13 +220,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1510, rvalue: 25.8, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9)
       end
     end
@@ -235,13 +235,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1350, rvalue: 25.8, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1350, rvalue: 33.33, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 25.8, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 33.33, sabs: 0.75, emit: 0.9)
       end
     end
@@ -257,13 +257,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.7, emit: 0.92, rb_grade: 2)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 2.3, sabs: 0.7, emit: 0.92, rb_grade: 2)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_roofs(hpxml_bldg, area: 1300, rvalue: 2.3, sabs: 0.75, emit: 0.9)
       end
     end
@@ -274,13 +274,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1425, rvalue: (23.0 * 1200 + 4.0 * 225) / 1425, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1425, rvalue: (16.67 * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
@@ -289,13 +289,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1806, rvalue: (23.0 * 1516 + 22.3 * 240 + 4.0 * 50) / 1806, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1806, rvalue: (16.67 * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: (23.0 * 1200 + 22.3 * 240) / 1440, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
@@ -304,13 +304,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_walls(hpxml_bldg, area: 980, rvalue: (23.0 * 686 + 4.0 * 294) / 980, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 980, rvalue: (16.67 * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
@@ -320,26 +320,26 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_name = _change_eri_version(hpxml_name, '2019')
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1086, rvalue: (23.0 * 986 + 4.0 * 100) / 1086, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1086, rvalue: (16.67 * 986 + 4.0 * 100) / 1086, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
     hpxml_name = _change_eri_version(hpxml_name, '2022')
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1086, rvalue: (23.0 * 986 + 4.0 * 100) / 1086, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 1086, rvalue: (16.67 * 686 + 4.0 * 100 + 11.24 * 300) / 1086, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
@@ -348,13 +348,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2098, rvalue: (23.0 * 1200 + 4.0 * 898) / 2098, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2098, rvalue: (16.67 * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
@@ -365,9 +365,9 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_rim_joists(hpxml_bldg, area: 116, rvalue: 23.0, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_rim_joists(hpxml_bldg, area: 116, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       else
         _check_rim_joists(hpxml_bldg)
@@ -378,9 +378,9 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_rim_joists(hpxml_bldg, area: 197, rvalue: 4.0, sabs: 0.7, emit: 0.92)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_rim_joists(hpxml_bldg, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.9)
       else
         _check_rim_joists(hpxml_bldg)
@@ -393,13 +393,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 8.9, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
@@ -408,13 +408,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 18.9, ins_top: 2, ins_bottom: 16, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
@@ -423,13 +423,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
@@ -440,13 +440,13 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
+        if [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_foundation_walls(hpxml_bldg, area: 600, rvalue: 8.9, ins_bottom: 4, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
-        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
           _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
-        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
           _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
         end
       end
@@ -458,13 +458,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1350, rvalue: 39.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1350, rvalue: 33.33, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 39.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 33.33, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -473,13 +473,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1950, rvalue: (39.3 * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1950, rvalue: (33.33 * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 39.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 33.33, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -488,13 +488,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -503,13 +503,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -526,13 +526,13 @@ class ERIEnclosureTest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeConcrete)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_ceilings(hpxml_bldg, area: 1200, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -543,13 +543,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1350, rvalue: 18.7, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1350, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -558,13 +558,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1350, rvalue: 18.7, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1350, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -573,13 +573,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_floors(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -588,13 +588,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_floors(hpxml_bldg, area: 900, rvalue: (18.7 * 750.0 + 2.1 * 150.0) / 900.0, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 900, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -609,13 +609,13 @@ class ERIEnclosureTest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_floors(hpxml_bldg, area: 900, rvalue: (18.7 * 750.0 + 2.1 * 150.0) / 900.0, floor_type: HPXML::FloorTypeConcrete)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 900, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_floors(hpxml_bldg, area: 1200, rvalue: 30.3, floor_type: HPXML::FloorTypeWoodFrame)
       end
     end
@@ -626,13 +626,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_slabs(hpxml_bldg, area: 1200, exp_perim: 138.6)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1200, exp_perim: 138.6)
       end
     end
@@ -641,13 +641,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150, under_ins_width: 999, under_ins_r: 5, depth_below_grade: 0)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150, perim_ins_depth: 2, perim_ins_r: 10, depth_below_grade: 0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_slabs(hpxml_bldg, area: 1200, exp_perim: 138.6)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1200, exp_perim: 138.6)
       end
     end
@@ -656,13 +656,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150, under_ins_width: 4, under_ins_r: 10, gap_ins_r: 5)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_slabs(hpxml_bldg, area: 1200, exp_perim: 138.6)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_slabs(hpxml_bldg, area: 1200, exp_perim: 138.6)
       end
     end
@@ -677,25 +677,25 @@ class ERIEnclosureTest < Minitest::Test
       _all_calc_types.each do |calc_type|
         hpxml_name = _change_eri_version(hpxml_name, '2022C')
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
+        if [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                           180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                           90 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                           270 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
-        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           180 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           90 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           270 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
@@ -705,25 +705,25 @@ class ERIEnclosureTest < Minitest::Test
         # prior to 301-2022C: Shading coefficients are fixed values: 0.7 for summer, 0.85 for winter
         hpxml_name = _change_eri_version(hpxml_name, '2019')
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
+        if [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           90 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           270 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 } })
-        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           180 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           90 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           270 => { area: 89.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 } })
-        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 } })
-        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
                                                           180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.70, interior_shading_factor_winter: 0.85 },
@@ -742,25 +742,25 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
+        if [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                           180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                           90 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                           270 => { area: 72, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
-        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           180 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           90 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           270 => { area: 60.75, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
           _check_windows(hpxml_bldg, frac_operable: 0.67,
                                      values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                           180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
@@ -788,25 +788,25 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: (432.0 * 0.67) / (432.0 + 24.0),
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         90 => { area: 120, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         270 => { area: 120, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 93.5, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
@@ -819,25 +819,25 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: (432.0 * 0.67) / (432.0 + 74.0),
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         90 => { area: 120, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         270 => { area: 170, ufactor: (0.3 * 62 + 0.33 * 108) / 170, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 128.6, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 108, ufactor: (0.3 * 62 + 0.33 * 444) / 506, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
@@ -850,24 +850,24 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         180 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         270 => { area: 53.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
@@ -888,24 +888,24 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.0,
                                    values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         180 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 },
                                                         270 => { area: 53.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.8255, interior_shading_factor_winter: 0.8255 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.0,
                                    values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
                                                         180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.836, interior_shading_factor_winter: 0.836 },
@@ -919,24 +919,24 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.0,
                                    values_by_azimuth: { 0 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         180 => { area: 35.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         270 => { area: 53.0, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         180 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         90 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         270 => { area: 35.15, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         180 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         90 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         270 => { area: 108, ufactor: 0.33, shgc: 0.45, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_windows(hpxml_bldg, frac_operable: 0.67,
                                    values_by_azimuth: { 0 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
                                                         180 => { area: 108, ufactor: 0.35, shgc: 0.40, interior_shading_factor_summer: 0.7, interior_shading_factor_winter: 0.85 },
@@ -958,10 +958,10 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 },
                                                           180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 },
                                                           180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 } })
       else
@@ -981,10 +981,10 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 },
                                                           180 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 60, shaft_rvalue: 6.25 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 594, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 52.8, shaft_rvalue: 6.25 },
                                                           180 => { area: 594, ufactor: 0.33, shgc: 0.45, curb_area: 0, curb_rvalue: nil, shaft_area: 52.8, shaft_rvalue: 6.25 } })
       else
@@ -996,10 +996,10 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
                                                           180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
                                                           180 => { area: 15, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
       else
@@ -1019,10 +1019,10 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
                                                           180 => { area: 675, ufactor: 0.33, shgc: 0.45, curb_area: 5.25, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_skylights(hpxml_bldg, values_by_azimuth: { 0 => { area: 643.5, ufactor: 0.33, shgc: 0.45, curb_area: 5.0, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil },
                                                           180 => { area: 643.5, ufactor: 0.33, shgc: 0.45, curb_area: 5.0, curb_rvalue: 1.96, shaft_area: 0, shaft_rvalue: nil } })
       else
@@ -1043,7 +1043,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_overhangs(hpxml_bldg, [{ depth: 2.5, top: 0, bottom: 4 },
                                       { depth: 1.5, top: 2, bottom: 6 },
                                       { depth: 0.0, top: 0, bottom: 0 },
@@ -1059,13 +1059,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 0 => { area: 40, rvalue: 4.4 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 0 => { area: 40, rvalue: 2.86 } })
       end
     end
@@ -1075,13 +1075,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 40, rvalue: 1.54 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 40, rvalue: 4.4 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 40, rvalue: 1.54 } })
       end
     end
@@ -1091,13 +1091,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 20, rvalue: 4.4 } })
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 0 => { area: 10, rvalue: 2.86 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 0 => { area: 20, rvalue: 4.4 } })
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_doors(hpxml_bldg, values_by_azimuth: { 0 => { area: 20, rvalue: 2.86 } })
       end
     end
@@ -1110,13 +1110,13 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
+        if [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_attic_ventilation(hpxml_bldg)
-        elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
           _check_attic_ventilation(hpxml_bldg, sla: 1.0 / 300.0)
-        elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_attic_ventilation(hpxml_bldg)
-        elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
           _check_attic_ventilation(hpxml_bldg, sla: 1.0 / 300.0)
         end
       end
@@ -1136,13 +1136,13 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_attic_ventilation(hpxml_bldg, sla: 0.003)
-      elsif [Constants.CalcTypeERIReferenceHome, Constants.CalcTypeCO2eReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_attic_ventilation(hpxml_bldg, sla: 1.0 / 300.0)
-      elsif [Constants.CalcTypeERIIndexAdjustmentDesign].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_attic_ventilation(hpxml_bldg, sla: 0.003)
-      elsif [Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_attic_ventilation(hpxml_bldg, sla: 1.0 / 300.0)
       end
     end
@@ -1155,7 +1155,7 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome].include? calc_type
+        if [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_crawlspace_ventilation(hpxml_bldg)
         else
           _check_crawlspace_ventilation(hpxml_bldg, sla: 1.0 / 150.0)
@@ -1171,9 +1171,9 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants.CalcTypeERIRatedHome,
-            Constants.CalcTypeERIReferenceHome,
-            Constants.CalcTypeCO2eReferenceHome].include? calc_type
+        if [Constants::CalcTypeERIRatedHome,
+            Constants::CalcTypeERIReferenceHome,
+            Constants::CalcTypeCO2eReferenceHome].include? calc_type
           _check_crawlspace_ventilation(hpxml_bldg)
         else
           _check_crawlspace_ventilation(hpxml_bldg, sla: 1.0 / 150.0)
@@ -1185,7 +1185,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_crawlspace_ventilation(hpxml_bldg, sla: 0.00667)
       else
         _check_crawlspace_ventilation(hpxml_bldg, sla: 1.0 / 150.0)

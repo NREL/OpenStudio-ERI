@@ -3,19 +3,19 @@
 module ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
     # Use latest version of ANSI 301
-    @eri_version = Constants.ERIVersions[-1]
+    @eri_version = Constants::ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
-    if calc_type == ESConstants.CalcTypeEnergyStarReference
+    if calc_type == ESConstants::CalcTypeEnergyStarReference
       @program_version = hpxml.header.energystar_calculation_version
-    elsif calc_type == ZERHConstants.CalcTypeZERHReference
+    elsif calc_type == ZERHConstants::CalcTypeZERHReference
       @program_version = hpxml.header.zerh_calculation_version
     end
 
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? @program_version
+    if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_year = 2021
-    elsif @program_version == ZERHConstants.Ver1
+    elsif @program_version == ZERHConstants::Ver1
       # Use Year=2015 for Reference Home configuration
       iecc_year = 2015
     else
@@ -26,8 +26,8 @@ module ES_ZERH_Ruleset
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
-    if [ESConstants.CalcTypeEnergyStarReference,
-        ZERHConstants.CalcTypeZERHReference].include? calc_type
+    if [ESConstants::CalcTypeEnergyStarReference,
+        ZERHConstants::CalcTypeZERHReference].include? calc_type
       hpxml = apply_ruleset_reference(hpxml)
     end
 
@@ -109,14 +109,14 @@ module ES_ZERH_Ruleset
     new_bldg.zip_code = orig_bldg.zip_code
 
     bldg_type = orig_bldg.building_construction.residential_facility_type
-    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants.MFVersions.include?(@program_version)
+    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants::MFVersions.include?(@program_version)
       begin
         # ESRD configured as SF National v3.X
         ref_design_config_mapping = {
-          ESConstants.MFNationalVer1_2 => ESConstants.SFNationalVer3_2,
-          ESConstants.MFNationalVer1_1 => ESConstants.SFNationalVer3_1,
-          ESConstants.MFNationalVer1_0 => ESConstants.SFNationalVer3_0,
-          ESConstants.MFOregonWashingtonVer1_2 => ESConstants.SFOregonWashingtonVer3_2
+          ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
+          ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
+          ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
+          ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
         }
         @program_version = ref_design_config_mapping.fetch(@program_version)
       rescue KeyError

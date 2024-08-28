@@ -22,14 +22,14 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_lighting
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants.SFNationalVer3_0, ESConstants.SFPacificVer3_0, ESConstants.SFFloridaVer3_1, ZERHConstants.Ver1].include? program_version
+      if [ESConstants::SFNationalVer3_0, ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1, ZERHConstants::Ver1].include? program_version
         _check_lighting(hpxml_bldg, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-      elsif [ESConstants.SFNationalVer3_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         _check_lighting(hpxml_bldg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
-      elsif [ESConstants.MFNationalVer1_2].include? program_version
+      elsif [ESConstants::MFNationalVer1_2].include? program_version
         _check_lighting(hpxml_bldg, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
         _check_lighting(hpxml_bldg, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -38,7 +38,7 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_ceiling_fans_none
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml_bldg)
@@ -46,7 +46,7 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_ceiling_fans
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml_bldg, cfm_per_w: 122.0, count: 4)
@@ -54,7 +54,7 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_ceiling_fans_nbeds_5
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
@@ -67,11 +67,11 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
 
   def _test_ruleset(program_version)
     require_relative '../../workflow/design'
-    if ESConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
+    if ESConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
                             output_dir: @sample_files_path)]
-    elsif ZERHConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
+    elsif ZERHConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
                             output_dir: @sample_files_path)]
     end
 
