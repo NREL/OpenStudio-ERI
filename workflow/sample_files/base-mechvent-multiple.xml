@@ -569,9 +569,6 @@
               <IsSharedSystem>false</IsSharedSystem>
               <FanPower>37.5</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
-              <extension>
-                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
-              </extension>
             </VentilationFan>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan18'/>
@@ -586,9 +583,6 @@
               <IsSharedSystem>false</IsSharedSystem>
               <FanPower>37.5</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution2'/>
-              <extension>
-                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
-              </extension>
             </VentilationFan>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan19'/>

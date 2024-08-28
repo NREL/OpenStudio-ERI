@@ -1630,7 +1630,7 @@ module ERI_301_Ruleset
                                     sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
                                     distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
-                                    cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction,
+                                    cfis_vent_mode_airflow_fraction: 1.0, # 301-2022 Addendum E
                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
                                     cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
       new_vent_fan = new_bldg.ventilation_fans[-1]
