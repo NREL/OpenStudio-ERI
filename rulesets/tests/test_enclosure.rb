@@ -38,7 +38,7 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants::CalcTypeERIRatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0)
+        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
@@ -166,6 +166,25 @@ class ERIEnclosureTest < Minitest::Test
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
+      end
+    end
+
+    # Test CFIS mechanical ventilation that does not quality as a
+    # Dwelling Unit Mechanical Ventilation System
+    hpxml_names = ['base-mechvent-cfis-no-additional-runtime.xml'] # FIXME: Add CFIS file w/o outdoor air control
+
+    hpxml_names.each do |hpxml_name|
+      _all_calc_types.each do |calc_type|
+        _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+        if [Constants::CalcTypeERIRatedHome].include? calc_type
+          _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+        elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
+          _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
+        elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
+          _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
+        elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+          _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
+        end
       end
     end
   end
