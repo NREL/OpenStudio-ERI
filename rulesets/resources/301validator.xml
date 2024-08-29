@@ -1217,6 +1217,7 @@
       <sch:assert role='ERROR' test='count(h:CFISControls/h:AdditionalRuntimeOperatingMode) = 1'>Expected 1 element(s) for xpath: CFISControls/AdditionalRuntimeOperatingMode</sch:assert>
       <sch:assert role='ERROR' test='h:CFISControls/h:AdditionalRuntimeOperatingMode[text()="air handler fan" or text()="supplemental fan" or text()="none"] or not(h:CFISControls/h:AdditionalRuntimeOperatingMode)'>Expected CFISControls/AdditionalRuntimeOperatingMode to be 'air handler fan' or 'supplemental fan' or 'none'</sch:assert> <!-- See [MechanicalVentilationType=CFISWithSupplementalFan] -->
       <sch:assert role='ERROR' test='count(h:AttachedToHVACDistributionSystem) = 1'>Expected 1 element(s) for xpath: AttachedToHVACDistributionSystem</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:VentilationOnlyModeAirflowFraction) = 0'>Expected 0 element(s) for xpath: extension/VentilationOnlyModeAirflowFraction</sch:assert>
     </sch:rule>
   </sch:pattern>
 
