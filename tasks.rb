@@ -2211,6 +2211,7 @@ def create_sample_hpxmls
     hpxml_bldg.building_construction.number_of_bathrooms = nil
     hpxml_bldg.building_construction.conditioned_building_volume = nil
     hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.unit_height_above_grade = nil
     hpxml_bldg.air_infiltration_measurements.each do |measurement|
       measurement.infiltration_type = nil
     end
