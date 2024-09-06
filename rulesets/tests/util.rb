@@ -28,10 +28,6 @@ def _change_iecc_version(hpxml_name, version)
   hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
   hpxml_bldg = hpxml.buildings[0]
   hpxml.header.iecc_eri_calculation_version = version
-  if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(version) }.size == 0
-    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(version),
-                                                             zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
-  end
 
   hpxml_name = File.basename(@tmp_hpxml_path)
   XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
@@ -54,34 +50,26 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
   # Change weather station for regional ENERGY STAR
   if [ESConstants::SFPacificVer3_0].include? program_version
     if ['HI'].include?(state_code) || state_code.nil? # if state_code isn't provided, default to HI
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-        climate_zone_iecc.zone = '1A'
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
       hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Honolulu, HI'
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 911820
       hpxml_bldg.state_code = 'HI'
     elsif ['GU', 'MP'].include? state_code # For Northern Mariana Islands, use Guam weather
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-        climate_zone_iecc.zone = '1A'
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
       hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Andersen_Afb, GU'
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 912180
       hpxml_bldg.state_code = 'GU'
     end
   elsif [ESConstants::SFFloridaVer3_1].include? program_version
-    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-      climate_zone_iecc.zone = '1A'
-    end
+    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
     hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
     hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
     hpxml_bldg.state_code = 'FL'
   elsif [ESConstants::SFOregonWashingtonVer3_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
-    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-      climate_zone_iecc.zone = '4C'
-    end
+    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
     hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
     hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Portland, OR'
     hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 726980
@@ -116,17 +104,6 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
                          interior_adjacent_to: HPXML::LocationConditionedSpace,
                          exterior_adjacent_to: HPXML::LocationOtherHousingUnit,
                          insulation_assembly_r_value: 99)
-  end
-
-  # Change climate zone year if needed
-  if program_version == ZERHConstants::Ver1
-    iecc_climate_zone_year = 2015
-  else
-    iecc_climate_zone_year = 2021
-  end
-  if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_climate_zone_year }.size == 0
-    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: iecc_climate_zone_year,
-                                                             zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
   end
 
   # Save new file

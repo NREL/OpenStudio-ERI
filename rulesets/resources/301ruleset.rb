@@ -338,7 +338,7 @@ module ERI_301_Ruleset
 
   def self.set_climate(orig_bldg, new_bldg)
     # Always use 2006 IECC climate zone for ERI calculation
-    climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
+    climate_zone_iecc = get_climate_zone_of_year(orig_bldg, 2006)
     new_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
                                                            zone: climate_zone_iecc.zone)
     new_bldg.climate_and_risk_zones.weather_station_id = orig_bldg.climate_and_risk_zones.weather_station_id
@@ -1113,14 +1113,14 @@ module ERI_301_Ruleset
     end
     if exterior_area > 0.1
       new_bldg.doors.add(id: 'ExteriorDoorArea',
-                         attached_to_wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.find { |w| w.is_exterior_thermal_boundary }.id,
                          area: exterior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
     end
     if interior_area > 0.1
       new_bldg.doors.add(id: 'InteriorDoorArea',
-                         attached_to_wall_idref: new_bldg.walls.select { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.find { |w| w.exterior_adjacent_to == HPXML::LocationOtherHousingUnit }.id,
                          area: interior_area,
                          azimuth: azimuth,
                          r_value: (1.0 / ufactor).round(3))
@@ -1153,7 +1153,7 @@ module ERI_301_Ruleset
     end
     if exterior_area + interior_area > 0.1
       new_bldg.doors.add(id: 'DoorArea',
-                         attached_to_wall_idref: new_bldg.walls.select { |w| w.is_exterior_thermal_boundary }[0].id,
+                         attached_to_wall_idref: new_bldg.walls.find { |w| w.is_exterior_thermal_boundary }.id,
                          area: exterior_area + interior_area,
                          azimuth: azimuth,
                          r_value: avg_r_value.round(3))
@@ -1198,7 +1198,7 @@ module ERI_301_Ruleset
           if heating_system.distribution_system.hydronic_type == HPXML::HydronicTypeWaterLoop
             # Maintain same fractions of heating load between boiler and heat pump
             # 301-2019 Section 4.4.7.2.1
-            orig_wlhp = orig_bldg.heat_pumps.select { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir }[0]
+            orig_wlhp = orig_bldg.heat_pumps.find { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir }
             hp_fraction_heat_load_served = fraction_heat_load_served * (1.0 / orig_wlhp.heating_efficiency_cop)
             add_reference_heat_pump(orig_bldg, new_bldg, hp_fraction_heat_load_served, 0.0, orig_htg_system: orig_wlhp)
             fraction_heat_load_served *= (1.0 - 1.0 / orig_wlhp.heating_efficiency_cop)
@@ -1513,7 +1513,7 @@ module ERI_301_Ruleset
       sum_fan_w = 0.0
       sum_fan_cfm = 0.0
       q_fans.each do |fan_id, flow_rate|
-        orig_vent_fan = mech_vent_fans.select { |f| f.id == fan_id }[0]
+        orig_vent_fan = mech_vent_fans.find { |f| f.id == fan_id }
         if [HPXML::MechVentTypeERV, HPXML::MechVentTypeHRV].include? orig_vent_fan.fan_type
           sum_fan_w += (1.00 * flow_rate)
         elsif orig_vent_fan.is_balanced
@@ -1737,8 +1737,7 @@ module ERI_301_Ruleset
 
       # If 2022, reference WH is in default location, regardless of rated home location
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022')
-        climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
-        location = Waterheater.get_default_location(orig_bldg, climate_zone_iecc)
+        location = Waterheater.get_default_location(orig_bldg, @iecc_zone)
       else
         location = orig_water_heater.location
       end
@@ -2488,7 +2487,7 @@ module ERI_301_Ruleset
     all_mech_vent_fans.each do |orig_vent_fan|
       next unless orig_vent_fan.is_cfis_supplemental_fan
 
-      parent_cfis_fan = all_mech_vent_fans.select { |f| f.cfis_supplemental_fan_idref == orig_vent_fan.id }[0]
+      parent_cfis_fan = all_mech_vent_fans.find { |f| f.cfis_supplemental_fan_idref == orig_vent_fan.id }
       q_fans[orig_vent_fan.id] = q_fans[parent_cfis_fan.id]
     end
 

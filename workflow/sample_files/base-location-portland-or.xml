@@ -58,14 +58,6 @@
           <Year>2006</Year>
           <ClimateZone>4C</ClimateZone>
         </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2024</Year>
-          <ClimateZone>4C</ClimateZone>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2021</Year>
-          <ClimateZone>4C</ClimateZone>
-        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>USA_OR_Portland.Intl.AP.726980_TMY3</Name>

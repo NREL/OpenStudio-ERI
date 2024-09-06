@@ -177,8 +177,13 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
   =================================  ========  =====  ===========  ========  ========  ===============
   
   .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, 2021, or 2024.
-  .. [#] The IECC climate zone for 2006 is always required.
-         Additional climate zones of other years may be required based on the programs selected for calculation:
+  .. [#] At least one IECC climate zone is required.
+         The following climate zone years will be used based on the programs selected for calculation.
+         If the year cannot be found, the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+         
+         \- **ERI**: 2006
+         
+         \- **CO2 Index**: 2006
          
          \- **IECC ERI 2015**: 2015
 

@@ -5,6 +5,10 @@ __New Features__
 - Adds 2024 IECC ERI pathway calculation.
 - **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
 - Adds inputs for modeling skylight curbs and/or shafts.
+- Relaxes IECC climate zone requirements.
+  - Providing only a single IECC climate zone (of any year) is now allowed.
+  - For programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided in the HPXML, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+  - See [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-climate-zones) for more information.
 
 __Bugfixes__
 - Adds error-checking for `NumberofConditionedFloorsAboveGrade`=0, which is not allowed per the documentation.

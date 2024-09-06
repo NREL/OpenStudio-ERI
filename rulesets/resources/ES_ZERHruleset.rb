@@ -22,7 +22,7 @@ module ES_ZERH_Ruleset
       # Use Year=2006 for Reference Home configuration
       iecc_climate_zone_year = 2006
     end
-    @iecc_zone = hpxml.buildings[0].climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_climate_zone_year }[0].zone
+    @iecc_zone = get_climate_zone_of_year(hpxml.buildings[0], iecc_climate_zone_year)
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
@@ -154,7 +154,7 @@ module ES_ZERH_Ruleset
 
   def self.set_climate(orig_bldg, new_bldg)
     # Set 2006 IECC zone for downstream ERI calculation
-    climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
+    climate_zone_iecc = get_climate_zone_of_year(orig_bldg, 2006)
     new_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
                                                            zone: climate_zone_iecc.zone)
     new_bldg.climate_and_risk_zones.weather_station_id = orig_bldg.climate_and_risk_zones.weather_station_id
