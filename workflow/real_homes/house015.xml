@@ -62,6 +62,10 @@
           <Year>2021</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2024</Year>
+          <ClimateZone>5B</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Phoenix, AZ</Name>

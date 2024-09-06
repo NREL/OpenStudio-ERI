@@ -62,6 +62,10 @@
           <Year>2021</Year>
           <ClimateZone>6A</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2024</Year>
+          <ClimateZone>6A</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Burlington, VT</Name>

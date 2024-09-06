@@ -63,6 +63,10 @@
           <Year>2021</Year>
           <ClimateZone>3B</ClimateZone>
         </ClimateZoneIECC>
+        <ClimateZoneIECC>
+          <Year>2024</Year>
+          <ClimateZone>3B</ClimateZone>
+        </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>
           <Name>Las Vegas, NV</Name>
