@@ -129,7 +129,7 @@
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails'>
       <sch:assert role='ERROR' test='count(h:BuildingSummary/h:Site) = 1'>Expected 1 element(s) for xpath: BuildingSummary/Site</sch:assert> <!-- See [Site] -->
       <sch:assert role='ERROR' test='count(h:BuildingSummary/h:BuildingConstruction) = 1'>Expected 1 element(s) for xpath: BuildingSummary/BuildingConstruction</sch:assert> <!-- See [BuildingConstruction] -->
-      <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:ClimateZoneIECC[h:Year]/h:ClimateZone) &gt;= 1'>Expected 1 or more element(s) for xpath: ClimateandRiskZones/ClimateZoneIECC[Year]/ClimateZone</sch:assert>
+      <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:ClimateZoneIECC[h:Year="2006"]/h:ClimateZone) = 1'>Expected 1 element(s) for xpath: ClimateandRiskZones/ClimateZoneIECC[Year="2006"]/ClimateZone</sch:assert>
       <sch:assert role='ERROR' test='count(h:ClimateandRiskZones/h:WeatherStation) = 1'>Expected 1 element(s) for xpath: ClimateandRiskZones/WeatherStation</sch:assert> <!-- See [WeatherStation] -->
       <sch:assert role='ERROR' test='count(h:Enclosure/h:AirInfiltration/h:AirInfiltrationMeasurement[h:BuildingAirLeakage/h:AirLeakage | h:EffectiveLeakageArea]) = 1'>Expected 1 element(s) for xpath: Enclosure/AirInfiltration/AirInfiltrationMeasurement[BuildingAirLeakage/AirLeakage | EffectiveLeakageArea]</sch:assert> <!-- See [AirInfiltrationMeasurement] -->
       <sch:assert role='ERROR' test='count(h:Enclosure/h:Attics/h:Attic) &gt;= 0'>Expected 0 or more element(s) for xpath: Enclosure/Attics/Attic</sch:assert> <!-- See [Attic] -->
