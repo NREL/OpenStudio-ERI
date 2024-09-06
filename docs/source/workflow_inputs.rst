@@ -65,7 +65,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   .. [#] CO2IndexCalculation/Version choices are "latest", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
          If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
-  .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
+  .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
   .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
 
@@ -176,7 +176,7 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
   ``ClimateZone``                    string           See [#]_     Yes                 IECC zone
   =================================  ========  =====  ===========  ========  ========  ===============
   
-  .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, or 2021.
+  .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, 2021, or 2024.
   .. [#] The IECC climate zone for 2006 is always required.
          Additional climate zones of other years may be required based on the programs selected for calculation:
          
@@ -185,6 +185,8 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
          \- **IECC ERI 2018**: 2018
 
          \- **IECC ERI 2021**: 2021
+         
+         \- **IECC ERI 2024**: 2024
 
          \- **ENERGY STAR SFNH National v3.2**: 2021
 

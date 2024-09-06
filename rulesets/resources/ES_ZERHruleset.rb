@@ -14,15 +14,15 @@ module ES_ZERH_Ruleset
 
     if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
-      iecc_year = 2021
+      iecc_climate_zone_year = 2021
     elsif @program_version == ZERHConstants::Ver1
       # Use Year=2015 for Reference Home configuration
-      iecc_year = 2015
+      iecc_climate_zone_year = 2015
     else
       # Use Year=2006 for Reference Home configuration
-      iecc_year = 2006
+      iecc_climate_zone_year = 2006
     end
-    @iecc_zone = hpxml.buildings[0].climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }[0].zone
+    @iecc_zone = hpxml.buildings[0].climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_climate_zone_year }[0].zone
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
