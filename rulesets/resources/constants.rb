@@ -29,7 +29,7 @@ module ESConstants
 end
 
 module IECCConstants
-  AllVersions = ['2015', '2018', '2021']
+  AllVersions = ['2015', '2018', '2021', '2024']
 end
 
 module ZERHConstants

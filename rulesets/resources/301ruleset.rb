@@ -15,6 +15,9 @@ module ERI_301_Ruleset
       elsif ['2021'].include? iecc_version
         # Use 2019 w/ all addenda
         @eri_version = Constants::ERIVersions.select { |v| v.include? '2019' }[-1]
+      elsif ['2024'].include? iecc_version
+        # Use 2022 w/ all addenda
+        @eri_version = Constants::ERIVersions.select { |v| v.include? '2022' }[-1]
       else
         fail "Unhandled IECC version: #{iecc_version}."
       end

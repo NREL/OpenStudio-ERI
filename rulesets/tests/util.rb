@@ -120,12 +120,12 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
 
   # Change climate zone year if needed
   if program_version == ZERHConstants::Ver1
-    iecc_year = 2015
+    iecc_climate_zone_year = 2015
   else
-    iecc_year = 2021
+    iecc_climate_zone_year = 2021
   end
-  if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }.size == 0
-    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: iecc_year,
+  if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_climate_zone_year }.size == 0
+    hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: iecc_climate_zone_year,
                                                              zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
   end
 
