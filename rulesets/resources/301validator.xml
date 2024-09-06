@@ -31,7 +31,7 @@
   <sch:pattern>
     <sch:title>[IECC=2024]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:IECCERICalculation/h:Version[text()="2024"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:ClimateandRiskZones/h:ClimateZoneIECC[h:Year="2024"]/h:ClimateZone) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone</sch:assert>
+      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:ClimateandRiskZones/h:ClimateZoneIECC[h:Year="2024"]/h:ClimateZone) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2024"]/ClimateZone</sch:assert>
     </sch:rule>
   </sch:pattern>
 
