@@ -338,13 +338,13 @@ module ERI_301_Ruleset
 
   def self.set_climate(orig_bldg, new_bldg)
     # Always use 2006 IECC climate zone for ERI calculation
-    climate_zone_iecc = get_climate_zone_of_year(orig_bldg, 2006)
-    new_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
-                                                           zone: climate_zone_iecc.zone)
+    iecc_climate_zone, year = get_climate_zone_of_year(orig_bldg, 2006)
+    new_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
+                                                           zone: iecc_climate_zone)
     new_bldg.climate_and_risk_zones.weather_station_id = orig_bldg.climate_and_risk_zones.weather_station_id
     new_bldg.climate_and_risk_zones.weather_station_name = orig_bldg.climate_and_risk_zones.weather_station_name
     new_bldg.climate_and_risk_zones.weather_station_epw_filepath = orig_bldg.climate_and_risk_zones.weather_station_epw_filepath
-    @iecc_zone = climate_zone_iecc.zone
+    @iecc_zone = iecc_climate_zone
   end
 
   def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)

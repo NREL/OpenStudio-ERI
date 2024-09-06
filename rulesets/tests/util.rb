@@ -26,7 +26,6 @@ end
 def _change_iecc_version(hpxml_name, version)
   # Create derivative file w/ changed ERI version
   hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-  hpxml_bldg = hpxml.buildings[0]
   hpxml.header.iecc_eri_calculation_version = version
 
   hpxml_name = File.basename(@tmp_hpxml_path)
