@@ -291,6 +291,7 @@ module ERI_301_Ruleset
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
     new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
+    new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
@@ -309,6 +310,7 @@ module ERI_301_Ruleset
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
     new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
+    new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
@@ -327,6 +329,7 @@ module ERI_301_Ruleset
     new_bldg.building_construction.conditioned_floor_area = @cfa
     new_bldg.building_construction.residential_facility_type = @bldg_type
     new_bldg.building_construction.average_ceiling_height = 8.5
+    new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
