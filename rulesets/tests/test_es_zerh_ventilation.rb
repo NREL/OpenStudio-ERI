@@ -171,9 +171,7 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-        climate_zone_iecc.zone = '1A'
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)

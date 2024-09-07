@@ -361,34 +361,24 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml_bldg)
     end
   elsif hpxml_file.include?('EPA_Tests')
     hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
-    years = [2006]
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
-      years << 2021
-    end
     if hpxml_file.include?('CZ2')
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-      years.each do |year|
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
-                                                                 zone: '2A')
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '2A')
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Tampa, FL'
       hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Tampa.Intl.AP.722110_TMY3.epw'
       hpxml_bldg.state_code = 'FL'
     elsif hpxml_file.include?('CZ4')
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-      years.each do |year|
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
-                                                                 zone: '4A')
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '4A')
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'St Louis, MO'
       hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MO_St.Louis-Lambert.Intl.AP.724340_TMY3.epw'
       hpxml_bldg.state_code = 'MO'
     elsif hpxml_file.include?('CZ6')
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-      years.each do |year|
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
-                                                                 zone: '6A')
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '6A')
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Burlington, VT'
       hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_VT_Burlington.Intl.AP.726170_TMY3.epw'
       hpxml_bldg.state_code = 'VT'
@@ -2491,30 +2481,16 @@ def create_sample_hpxmls
       if hpxml_bldg.state_code.nil?
         hpxml_bldg.state_code = 'NA'
       end
-      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.empty?
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(zone: '3A',
-                                                                 year: 2006)
-      end
-    end
-    if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(hpxml.header.iecc_eri_calculation_version) }.size == 0
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(hpxml.header.iecc_eri_calculation_version),
-                                                               zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '3A')
     end
 
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
       hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
-      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
-                                                                 zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
-      end
     else
       hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
-      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
-                                                                 zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
-      end
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
       hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
@@ -2593,12 +2569,6 @@ def create_sample_hpxmls
     hpxml.header.co2index_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     hpxml.header.zerh_calculation_version = nil
-    zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(iecc_version) }.size == 0
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(iecc_version),
-                                                               zone: zone)
-    end
-
     XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
   end
 
