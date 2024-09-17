@@ -44,7 +44,7 @@ module ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @eri_version, @weather, convert_shared_systems: false)
+    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
