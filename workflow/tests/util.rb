@@ -988,7 +988,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: Refrigerator
   refrigerator = hpxml_bldg.refrigerators[0]
   refrigerator.usage_multiplier = 1.0 if refrigerator.usage_multiplier.nil?
-  rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
+  rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_fridge_or_freezer_energy(refrigerator)
   btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (rf_frac_sens * btu)
   xml_appl_lat += (rf_frac_lat * btu)
@@ -1020,13 +1020,13 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
   # Water Use
-  xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_water_gains_sens_lat(nbeds)
+  xml_water_sens, xml_water_lat = InternalGains.get_water_gains_sens_lat(nbeds)
   s += "#{xml_water_sens} #{xml_water_lat}\n"
 
   # Occupants
   xml_occ_sens = 0.0
   xml_occ_lat = 0.0
-  heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
+  heat_gain, hrs_per_day, frac_sens, frac_lat = InternalGains.get_occupancy_default_values()
   btu = nbeds * heat_gain * hrs_per_day * 365.0
   xml_occ_sens += (frac_sens * btu)
   xml_occ_lat += (frac_lat * btu)
