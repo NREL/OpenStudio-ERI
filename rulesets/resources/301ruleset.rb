@@ -985,6 +985,11 @@ module ERI_301_Ruleset
     fa = ag_bndry_wall_area / (ag_bndry_wall_area + 0.5 * bg_bndry_wall_area)
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
+    # Interior shading equation is based on light curtains, 50% coverage
+    shade_summer, shade_winter = HPXMLDefaults.get_default_window_interior_shading_factors(
+      HPXML::InteriorShadingTypeLightCurtains, shgc, 0.5, 0.5, nil, nil, @eri_version
+    )
+
     fraction_operable = HPXMLDefaults.get_default_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (orig_bldg.fraction_of_windows_operable() <= 0) && (Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019'))
@@ -1000,7 +1005,8 @@ module ERI_301_Ruleset
                            azimuth: azimuth,
                            ufactor: ufactor,
                            shgc: shgc,
-                           interior_shading_type: HPXML::InteriorShadingTypeLightCurtains,
+                           interior_shading_factor_summer: shade_summer,
+                           interior_shading_factor_winter: shade_winter,
                            fraction_operable: fraction_operable,
                            performance_class: HPXML::WindowClassResidential,
                            attached_to_wall_idref: new_bldg.walls[0].id)
@@ -1010,6 +1016,10 @@ module ERI_301_Ruleset
   def self.set_enclosure_windows_rated(orig_bldg, new_bldg)
     # Preserve all windows
     orig_bldg.windows.each do |orig_window|
+      # Interior shading equation is based on light curtains, 50% coverage
+      shade_summer, shade_winter = HPXMLDefaults.get_default_window_interior_shading_factors(
+        HPXML::InteriorShadingTypeLightCurtains, orig_window.shgc, 0.5, 0.5, nil, nil, @eri_version
+      )
       new_bldg.windows.add(id: orig_window.id,
                            area: orig_window.area,
                            azimuth: orig_window.azimuth,
@@ -1018,7 +1028,8 @@ module ERI_301_Ruleset
                            overhangs_depth: orig_window.overhangs_depth,
                            overhangs_distance_to_top_of_window: orig_window.overhangs_distance_to_top_of_window,
                            overhangs_distance_to_bottom_of_window: orig_window.overhangs_distance_to_bottom_of_window,
-                           interior_shading_type: HPXML::InteriorShadingTypeLightCurtains,
+                           interior_shading_factor_summer: shade_summer,
+                           interior_shading_factor_winter: shade_winter,
                            fraction_operable: orig_window.fraction_operable,
                            performance_class: orig_window.performance_class.nil? ? HPXML::WindowClassResidential : orig_window.performance_class,
                            attached_to_wall_idref: orig_window.attached_to_wall_idref)
@@ -1031,6 +1042,11 @@ module ERI_301_Ruleset
     avg_ufactor = calc_area_weighted_avg(ext_thermal_bndry_windows, :ufactor, backup_value: ref_ufactor)
     avg_shgc = calc_area_weighted_avg(ext_thermal_bndry_windows, :shgc, backup_value: ref_shgc)
 
+    # Interior shading equation is based on light curtains, 50% coverage
+    shade_summer, shade_winter = HPXMLDefaults.get_default_window_interior_shading_factors(
+      HPXML::InteriorShadingTypeLightCurtains, ref_shgc, 0.5, 0.5, nil, nil, @eri_version
+    )
+
     # Default natural ventilation
     fraction_operable = HPXMLDefaults.get_default_fraction_of_windows_operable()
 
@@ -1041,7 +1057,8 @@ module ERI_301_Ruleset
                            azimuth: azimuth,
                            ufactor: avg_ufactor,
                            shgc: avg_shgc,
-                           interior_shading_type: HPXML::InteriorShadingTypeLightCurtains,
+                           interior_shading_factor_summer: shade_summer,
+                           interior_shading_factor_winter: shade_winter,
                            fraction_operable: fraction_operable,
                            performance_class: HPXML::WindowClassResidential,
                            attached_to_wall_idref: new_bldg.walls[0].id)
