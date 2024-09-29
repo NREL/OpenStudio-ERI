@@ -1093,8 +1093,8 @@ end
 def _get_tstat(eri_version, hpxml_bldg)
   hvac_control = hpxml_bldg.hvac_controls[0]
   tstat = hvac_control.control_type.gsub(' thermostat', '')
-  htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(hvac_control.control_type, eri_version)
-  clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
+  htg_weekday_setpoints, htg_weekend_setpoints = HPXMLDefaults.get_default_heating_setpoint(hvac_control.control_type, eri_version)
+  clg_weekday_setpoints, clg_weekend_setpoints = HPXMLDefaults.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
 
   htg_weekday_setpoints = htg_weekday_setpoints.split(', ').map(&:to_f)
   htg_weekend_setpoints = htg_weekend_setpoints.split(', ').map(&:to_f)

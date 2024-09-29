@@ -583,9 +583,6 @@ module ES_ZERH_Ruleset
     orig_total_win_area = ext_thermal_bndry_windows.map { |window| window.area }.sum(0)
     window_to_cfa_ratio = orig_total_win_area / @cfa
 
-    # Default natural ventilation
-    fraction_operable = Airflow.get_default_fraction_of_windows_operable()
-
     window_area = lookup_reference_value('window_area')
 
     wall = new_bldg.walls.find { |w| w.interior_adjacent_to == HPXML::LocationConditionedSpace && w.exterior_adjacent_to == HPXML::LocationOutside }
@@ -615,8 +612,7 @@ module ES_ZERH_Ruleset
                              ufactor: win_ufactor,
                              shgc: win_shgc,
                              attached_to_wall_idref: wall.id,
-                             performance_class: HPXML::WindowClassResidential,
-                             fraction_operable: fraction_operable)
+                             performance_class: HPXML::WindowClassResidential)
       end
     elsif window_area == '0.15 x CFA x FA x F'
       total_win_area = calc_default_total_win_area(orig_bldg, @cfa)
@@ -634,8 +630,7 @@ module ES_ZERH_Ruleset
                              ufactor: win_ufactor,
                              shgc: win_shgc,
                              attached_to_wall_idref: wall.id,
-                             performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
-                             fraction_operable: fraction_operable)
+                             performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class)
       end
     else
       fail 'Unexpected case.'
@@ -849,9 +844,6 @@ module ES_ZERH_Ruleset
   def self.set_systems_water_heating_use_reference(orig_bldg, new_bldg)
     return if orig_bldg.water_heating_systems.size == 0
 
-    # Exhibit 2 - Service Water Heating Systems: Use the same Gallons per Day as Table 4.2.2(1) - Service water heating systems
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @has_cond_bsmnt, @cfa, @ncfl).round(3)
-
     if orig_bldg.hot_water_distributions.size == 0
       sys_id = 'HotWaterDistribution'
     else
@@ -881,7 +873,6 @@ module ES_ZERH_Ruleset
       new_bldg.hot_water_distributions.add(id: sys_id,
                                            system_type: HPXML::DHWDistTypeStandard,
                                            pipe_r_value: pipe_r_value,
-                                           standard_piping_length: standard_piping_length,
                                            has_shared_recirculation: true,
                                            shared_recirculation_number_of_bedrooms_served: orig_dist.shared_recirculation_number_of_bedrooms_served,
                                            shared_recirculation_pump_power: shared_recirculation_pump_power,
@@ -889,8 +880,7 @@ module ES_ZERH_Ruleset
     else
       new_bldg.hot_water_distributions.add(id: sys_id,
                                            system_type: HPXML::DHWDistTypeStandard,
-                                           pipe_r_value: pipe_r_value,
-                                           standard_piping_length: standard_piping_length)
+                                           pipe_r_value: pipe_r_value)
     end
 
     # New water fixtures
@@ -1114,8 +1104,7 @@ module ES_ZERH_Ruleset
     return if orig_bldg.ceiling_fans.size == 0
 
     new_bldg.ceiling_fans.add(id: 'TargetCeilingFan',
-                              efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
-                              count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                              efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'))
   end
 
   def self.set_misc_loads_reference(orig_bldg, new_bldg)
@@ -1580,7 +1569,7 @@ module ES_ZERH_Ruleset
       heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated unless heat_pump_backup_fuel.nil?
       heat_pump_backup_eff = 1.0 unless heat_pump_backup_fuel.nil?
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
-      pump_watts_per_ton = HVAC.get_default_gshp_pump_power()
+      pump_watts_per_ton = HPXMLDefaults.get_default_gshp_pump_power()
     end
 
     if (not orig_htg_system.nil?) && orig_htg_system.respond_to?(:cooling_shr)

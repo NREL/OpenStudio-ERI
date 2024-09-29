@@ -1707,13 +1707,14 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
   has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
-  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
 
   if hpxml_bldg.hot_water_distributions.size > 0
     if hpxml_bldg.hot_water_distributions[0].system_type == HPXML::DHWDistTypeStandard
+      piping_length = HPXMLDefaults.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
       hpxml_bldg.hot_water_distributions[0].standard_piping_length = piping_length.round(3)
     elsif hpxml_bldg.hot_water_distributions[0].system_type == HPXML::DHWDistTypeRecirc
-      hpxml_bldg.hot_water_distributions[0].recirculation_piping_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length).round(3)
+    loop_length = HPXMLDefaults.get_default_recirc_loop_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
+      hpxml_bldg.hot_water_distributions[0].recirculation_piping_loop_length = loop_length.round(3)
     end
   end
 end
@@ -1963,7 +1964,7 @@ def set_hpxml_lighting(hpxml_file, hpxml_bldg)
                   [HPXML::LocationExterior, HPXML::LightingTypeLFL] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLFL] => 0 }
   else
-    ltg_fracs = Lighting.get_default_fractions()
+    ltg_fracs = HPXMLDefaults.get_default_lighting_fractions()
   end
 
   hpxml_bldg.lighting_groups.clear
