@@ -44,7 +44,7 @@ module ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., ERIRatedHome.xml
-    HPXMLDefaults.apply(nil, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
+    Defaults.apply(nil, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
@@ -400,7 +400,7 @@ module ERI_301_Ruleset
 
       new_bldg.attics.add(id: 'VentedAttic',
                           attic_type: HPXML::AtticTypeVented,
-                          vented_attic_sla: HPXMLDefaults.get_default_vented_attic_sla())
+                          vented_attic_sla: Defaults.get_vented_attic_sla())
       break
     end
   end
@@ -428,14 +428,14 @@ module ERI_301_Ruleset
 
       new_bldg.foundations.add(id: 'VentedCrawlspace',
                                foundation_type: HPXML::FoundationTypeCrawlspaceVented,
-                               vented_crawlspace_sla: HPXMLDefaults.get_default_vented_crawl_sla())
+                               vented_crawlspace_sla: Defaults.get_vented_crawl_sla())
       break
     end
   end
 
   def self.set_enclosure_foundations_rated(orig_bldg, new_bldg)
     # Preserve vented crawlspace ventilation rate.
-    reference_crawlspace_sla = HPXMLDefaults.get_default_vented_crawl_sla()
+    reference_crawlspace_sla = Defaults.get_vented_crawl_sla()
     orig_bldg.foundations.each do |orig_foundation|
       next unless orig_foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
 
@@ -453,7 +453,7 @@ module ERI_301_Ruleset
     # Always has a vented crawlspace
     new_bldg.foundations.add(id: 'VentedCrawlspace',
                              foundation_type: HPXML::FoundationTypeCrawlspaceVented,
-                             vented_crawlspace_sla: HPXMLDefaults.get_default_vented_crawl_sla())
+                             vented_crawlspace_sla: Defaults.get_vented_crawl_sla())
   end
 
   def self.set_enclosure_roofs_reference(orig_bldg, new_bldg)
@@ -986,11 +986,11 @@ module ERI_301_Ruleset
     f = 1.0 - 0.44 * common_wall_area / (ag_bndry_wall_area + common_wall_area)
 
     # Interior shading equation is based on light curtains, 50% coverage
-    shade_summer, shade_winter = HPXMLDefaults.get_default_window_interior_shading_factors(
+    shade_summer, shade_winter = Defaults.get_window_interior_shading_factors(
       HPXML::InteriorShadingTypeLightCurtains, shgc, 0.5, 0.5, nil, nil, @eri_version
     )
 
-    fraction_operable = HPXMLDefaults.get_default_fraction_of_windows_operable() # Default natural ventilation
+    fraction_operable = Defaults.get_fraction_of_windows_operable() # Default natural ventilation
     if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
       if (orig_bldg.fraction_of_windows_operable() <= 0) && (Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019'))
         # Disable natural ventilation
@@ -1017,7 +1017,7 @@ module ERI_301_Ruleset
     # Preserve all windows
     orig_bldg.windows.each do |orig_window|
       # Interior shading equation is based on light curtains, 50% coverage
-      shade_summer, shade_winter = HPXMLDefaults.get_default_window_interior_shading_factors(
+      shade_summer, shade_winter = Defaults.get_window_interior_shading_factors(
         HPXML::InteriorShadingTypeLightCurtains, orig_window.shgc, 0.5, 0.5, nil, nil, @eri_version
       )
       new_bldg.windows.add(id: orig_window.id,
@@ -1043,12 +1043,12 @@ module ERI_301_Ruleset
     avg_shgc = calc_area_weighted_avg(ext_thermal_bndry_windows, :shgc, backup_value: ref_shgc)
 
     # Interior shading equation is based on light curtains, 50% coverage
-    shade_summer, shade_winter = HPXMLDefaults.get_default_window_interior_shading_factors(
+    shade_summer, shade_winter = Defaults.get_window_interior_shading_factors(
       HPXML::InteriorShadingTypeLightCurtains, ref_shgc, 0.5, 0.5, nil, nil, @eri_version
     )
 
     # Default natural ventilation
-    fraction_operable = HPXMLDefaults.get_default_fraction_of_windows_operable()
+    fraction_operable = Defaults.get_fraction_of_windows_operable()
 
     # Create equally distributed windows
     for orientation, azimuth in { 'North' => 0, 'South' => 180, 'East' => 90, 'West' => 270 }
@@ -1247,8 +1247,8 @@ module ERI_301_Ruleset
 
     # Table 303.4.1(1) - Thermostat
     control_type = HPXML::HVACControlTypeManual
-    htg_weekday_setpoints, htg_weekend_setpoints = HPXMLDefaults.get_default_heating_setpoint(control_type, @eri_version)
-    clg_weekday_setpoints, clg_weekend_setpoints = HPXMLDefaults.get_default_cooling_setpoint(control_type, @eri_version)
+    htg_weekday_setpoints, htg_weekend_setpoints = Defaults.get_heating_setpoint(control_type, @eri_version)
+    clg_weekday_setpoints, clg_weekend_setpoints = Defaults.get_cooling_setpoint(control_type, @eri_version)
     new_bldg.hvac_controls.add(id: 'HVACControl',
                                control_type: control_type,
                                weekday_heating_setpoints: htg_weekday_setpoints,
@@ -1425,8 +1425,8 @@ module ERI_301_Ruleset
       control_type = HPXML::HVACControlTypeManual
       hvac_control_id = 'HVACControl'
     end
-    htg_weekday_setpoints, htg_weekend_setpoints = HPXMLDefaults.get_default_heating_setpoint(control_type, @eri_version)
-    clg_weekday_setpoints, clg_weekend_setpoints = HPXMLDefaults.get_default_cooling_setpoint(control_type, @eri_version)
+    htg_weekday_setpoints, htg_weekend_setpoints = Defaults.get_heating_setpoint(control_type, @eri_version)
+    clg_weekday_setpoints, clg_weekend_setpoints = Defaults.get_cooling_setpoint(control_type, @eri_version)
     new_bldg.hvac_controls.add(id: hvac_control_id,
                                control_type: control_type,
                                weekday_heating_setpoints: htg_weekday_setpoints,
@@ -1619,7 +1619,7 @@ module ERI_301_Ruleset
         end
       else
         # Fan power defaulted
-        fan_w_per_cfm = HPXMLDefaults.get_default_mech_vent_fan_efficiency(orig_vent_fan, @eri_version)
+        fan_w_per_cfm = Defaults.get_mech_vent_fan_efficiency(orig_vent_fan, @eri_version)
         if orig_vent_fan.flow_rate_not_tested && orig_vent_fan.fan_type == HPXML::MechVentTypeCFIS
           # For in-unit CFIS systems, the cfm used to determine fan watts shall be the larger of
           # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
@@ -1742,11 +1742,11 @@ module ERI_301_Ruleset
 
       energy_factor = get_reference_water_heater_ef(fuel_type, tank_volume)
 
-      heating_capacity = HPXMLDefaults.get_default_water_heater_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
+      heating_capacity = Defaults.get_water_heater_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
 
       # If 2022, reference WH is in default location, regardless of rated home location
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022')
-        location = HPXMLDefaults.get_default_water_heater_location(orig_bldg, @iecc_zone)
+        location = Defaults.get_water_heater_location(orig_bldg, @iecc_zone)
       else
         location = orig_water_heater.location
       end
@@ -1768,7 +1768,7 @@ module ERI_301_Ruleset
                                          heating_capacity: heating_capacity.round(0),
                                          energy_factor: energy_factor,
                                          uses_desuperheater: false,
-                                         temperature: HPXMLDefaults.get_default_water_heater_temperature(@eri_version))
+                                         temperature: Defaults.get_water_heater_temperature(@eri_version))
 
       break if has_multiple_water_heaters # Only add 1 reference water heater
     end
@@ -1784,11 +1784,11 @@ module ERI_301_Ruleset
     orig_bldg.water_heating_systems.each do |orig_water_heater|
       heating_capacity = orig_water_heater.heating_capacity
       if (orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeStorage) && heating_capacity.nil?
-        heating_capacity = HPXMLDefaults.get_default_water_heater_heating_capacity(orig_water_heater.fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
+        heating_capacity = Defaults.get_water_heater_heating_capacity(orig_water_heater.fuel_type, @nbeds, orig_bldg.water_heating_systems.size) * 1000.0 # Btuh
       end
 
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
-        performance_adjustment = HPXMLDefaults.get_default_water_heater_performance_adjustment(orig_water_heater)
+        performance_adjustment = Defaults.get_water_heater_performance_adjustment(orig_water_heater)
       else
         performance_adjustment = 1.0
       end
@@ -1816,7 +1816,7 @@ module ERI_301_Ruleset
                                          related_hvac_idref: orig_water_heater.related_hvac_idref,
                                          standby_loss_units: orig_water_heater.standby_loss_units,
                                          standby_loss_value: orig_water_heater.standby_loss_value,
-                                         temperature: HPXMLDefaults.get_default_water_heater_temperature(@eri_version))
+                                         temperature: Defaults.get_water_heater_temperature(@eri_version))
     end
 
     if orig_bldg.water_heating_systems.size == 0
@@ -1834,7 +1834,7 @@ module ERI_301_Ruleset
 
     has_uncond_bsmnt = new_bldg.has_location(HPXML::LocationBasementUnconditioned)
     has_cond_bsmnt = new_bldg.has_location(HPXML::LocationBasementConditioned)
-    standard_piping_length = HPXMLDefaults.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, @cfa, @ncfl)
+    standard_piping_length = Defaults.get_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, @cfa, @ncfl)
 
     # New hot water distribution
     new_bldg.hot_water_distributions.add(id: 'HotWaterDistribution',
@@ -2009,7 +2009,7 @@ module ERI_301_Ruleset
       end
     end
 
-    reference_values = HPXMLDefaults.get_default_clothes_washer_values(@eri_version)
+    reference_values = Defaults.get_clothes_washer_values(@eri_version)
     new_bldg.clothes_washers.add(id: id,
                                  is_shared_appliance: false,
                                  location: location,
@@ -2075,7 +2075,7 @@ module ERI_301_Ruleset
       fuel_type = HPXML::FuelTypeElectricity
     end
 
-    reference_values = HPXMLDefaults.get_default_clothes_dryer_values(@eri_version, fuel_type)
+    reference_values = Defaults.get_clothes_dryer_values(@eri_version, fuel_type)
     new_bldg.clothes_dryers.add(id: id,
                                 is_shared_appliance: false,
                                 location: location,
@@ -2127,7 +2127,7 @@ module ERI_301_Ruleset
       location = dishwasher.location.gsub('unvented', 'vented')
     end
 
-    reference_values = HPXMLDefaults.get_default_dishwasher_values(@eri_version)
+    reference_values = Defaults.get_dishwasher_values(@eri_version)
     new_bldg.dishwashers.add(id: id,
                              is_shared_appliance: false,
                              location: location,
@@ -2179,7 +2179,7 @@ module ERI_301_Ruleset
       location = refrigerator.location.gsub('unvented', 'vented')
     end
 
-    reference_values = HPXMLDefaults.get_default_refrigerator_values(@nbeds)
+    reference_values = Defaults.get_refrigerator_values(@nbeds)
     new_bldg.refrigerators.add(id: id,
                                location: location,
                                rated_annual_kwh: reference_values[:rated_annual_kwh])
@@ -2206,7 +2206,7 @@ module ERI_301_Ruleset
     return if Constants::ERIVersions.index(@eri_version) < Constants::ERIVersions.index('2019AB')
 
     orig_bldg.dehumidifiers.each do |dehumidifier|
-      reference_values = HPXMLDefaults.get_default_dehumidifier_values(dehumidifier.capacity)
+      reference_values = Defaults.get_dehumidifier_values(dehumidifier.capacity)
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
                                  type: dehumidifier.type, # Per RESNET 55i
                                  capacity: dehumidifier.capacity,
@@ -2257,7 +2257,7 @@ module ERI_301_Ruleset
       fuel_type = HPXML::FuelTypeElectricity
     end
 
-    reference_values = HPXMLDefaults.get_default_range_oven_values()
+    reference_values = Defaults.get_range_oven_values()
     new_bldg.cooking_ranges.add(id: range_id,
                                 location: location,
                                 fuel_type: fuel_type,
@@ -2288,7 +2288,7 @@ module ERI_301_Ruleset
   end
 
   def self.set_lighting_reference(orig_bldg, new_bldg)
-    ltg_fracs = HPXMLDefaults.get_default_lighting_fractions()
+    ltg_fracs = Defaults.get_lighting_fractions()
 
     orig_bldg.lighting_groups.each do |orig_lg|
       fraction = ltg_fracs[[orig_lg.location, orig_lg.lighting_type]]
@@ -2343,8 +2343,8 @@ module ERI_301_Ruleset
     end
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
-                              label_energy_use: HPXMLDefaults.get_default_ceiling_fan_power(),
-                              count: HPXMLDefaults.get_default_ceiling_fan_quantity(@nbeds))
+                              label_energy_use: Defaults.get_ceiling_fan_power(),
+                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
@@ -2377,7 +2377,7 @@ module ERI_301_Ruleset
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
                               label_energy_use: avg_w,
-                              count: HPXMLDefaults.get_default_ceiling_fan_quantity(@nbeds))
+                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
@@ -2388,7 +2388,7 @@ module ERI_301_Ruleset
 
   def self.set_misc_loads_reference(new_bldg)
     # Misc
-    kwh_per_year, frac_sensible, frac_latent = HPXMLDefaults.get_default_residual_mels_values(@cfa)
+    kwh_per_year, frac_sensible, frac_latent = Defaults.get_residual_mels_values(@cfa)
     new_bldg.plug_loads.add(id: 'MiscPlugLoad',
                             plug_load_type: HPXML::PlugLoadTypeOther,
                             kwh_per_year: kwh_per_year,
@@ -2396,7 +2396,7 @@ module ERI_301_Ruleset
                             frac_latent: frac_latent.round(3))
 
     # Television
-    kwh_per_year, frac_sensible, frac_latent = HPXMLDefaults.get_default_televisions_values(@cfa, @nbeds)
+    kwh_per_year, frac_sensible, frac_latent = Defaults.get_televisions_values(@cfa, @nbeds)
     new_bldg.plug_loads.add(id: 'TelevisionPlugLoad',
                             plug_load_type: HPXML::PlugLoadTypeTelevision,
                             kwh_per_year: kwh_per_year,
@@ -2818,7 +2818,7 @@ module ERI_301_Ruleset
     wh_tank_vol = 40.0
 
     wh_ef = get_reference_water_heater_ef(wh_fuel_type, wh_tank_vol)
-    wh_cap = HPXMLDefaults.get_default_water_heater_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
+    wh_cap = Defaults.get_water_heater_heating_capacity(wh_fuel_type, @nbeds, 1) * 1000.0 # Btuh
 
     new_bldg.water_heating_systems.add(id: 'WaterHeatingSystem',
                                        is_shared_system: false,
@@ -2831,7 +2831,7 @@ module ERI_301_Ruleset
                                        heating_capacity: wh_cap.round(0),
                                        energy_factor: wh_ef,
                                        uses_desuperheater: false,
-                                       temperature: HPXMLDefaults.get_default_water_heater_temperature(@eri_version))
+                                       temperature: Defaults.get_water_heater_temperature(@eri_version))
   end
 
   def self.get_hvac_capacities_for_distribution_system(orig_hvac_dist)

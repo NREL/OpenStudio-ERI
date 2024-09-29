@@ -1020,13 +1020,13 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
   # Water Use
-  xml_water_sens, xml_water_lat = HPXMLDefaults.get_default_water_use_internal_gains(nbeds)
+  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds)
   s += "#{xml_water_sens} #{xml_water_lat}\n"
 
   # Occupants
   xml_occ_sens = 0.0
   xml_occ_lat = 0.0
-  heat_gain, hrs_per_day, frac_sens, frac_lat = HPXMLDefaults.get_default_occupancy_values()
+  heat_gain, hrs_per_day, frac_sens, frac_lat = Defaults.get_occupancy_values()
   btu = nbeds * heat_gain * hrs_per_day * 365.0
   xml_occ_sens += (frac_sens * btu)
   xml_occ_lat += (frac_lat * btu)
@@ -1093,8 +1093,8 @@ end
 def _get_tstat(eri_version, hpxml_bldg)
   hvac_control = hpxml_bldg.hvac_controls[0]
   tstat = hvac_control.control_type.gsub(' thermostat', '')
-  htg_weekday_setpoints, htg_weekend_setpoints = HPXMLDefaults.get_default_heating_setpoint(hvac_control.control_type, eri_version)
-  clg_weekday_setpoints, clg_weekend_setpoints = HPXMLDefaults.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
+  htg_weekday_setpoints, htg_weekend_setpoints = Defaults.get_heating_setpoint(hvac_control.control_type, eri_version)
+  clg_weekday_setpoints, clg_weekend_setpoints = Defaults.get_cooling_setpoint(hvac_control.control_type, eri_version)
 
   htg_weekday_setpoints = htg_weekday_setpoints.split(', ').map(&:to_f)
   htg_weekend_setpoints = htg_weekend_setpoints.split(', ').map(&:to_f)
@@ -1128,8 +1128,8 @@ def _get_dhw(hpxml_bldg)
   has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
-  ref_pipe_l = HPXMLDefaults.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
-  ref_loop_l = HPXMLDefaults.get_default_recirc_loop_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
+  ref_pipe_l = Defaults.get_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
+  ref_loop_l = Defaults.get_recirc_loop_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
   return ref_pipe_l, ref_loop_l
 end
 
