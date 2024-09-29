@@ -583,6 +583,9 @@ module ES_ZERH_Ruleset
     orig_total_win_area = ext_thermal_bndry_windows.map { |window| window.area }.sum(0)
     window_to_cfa_ratio = orig_total_win_area / @cfa
 
+    # Default natural ventilation
+    fraction_operable = HPXMLDefaults.get_default_fraction_of_windows_operable()
+
     window_area = lookup_reference_value('window_area')
 
     wall = new_bldg.walls.find { |w| w.interior_adjacent_to == HPXML::LocationConditionedSpace && w.exterior_adjacent_to == HPXML::LocationOutside }
@@ -612,7 +615,8 @@ module ES_ZERH_Ruleset
                              ufactor: win_ufactor,
                              shgc: win_shgc,
                              attached_to_wall_idref: wall.id,
-                             performance_class: HPXML::WindowClassResidential)
+                             performance_class: HPXML::WindowClassResidential,
+                             fraction_operable: fraction_operable)
       end
     elsif window_area == '0.15 x CFA x FA x F'
       total_win_area = calc_default_total_win_area(orig_bldg, @cfa)
@@ -630,7 +634,8 @@ module ES_ZERH_Ruleset
                              ufactor: win_ufactor,
                              shgc: win_shgc,
                              attached_to_wall_idref: wall.id,
-                             performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class)
+                             performance_class: win.performance_class.nil? ? HPXML::WindowClassResidential : win.performance_class,
+                             fraction_operable: fraction_operable)
       end
     else
       fail 'Unexpected case.'
@@ -779,7 +784,7 @@ module ES_ZERH_Ruleset
                                                     duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
 
         # ASHRAE 152 duct area calculation based on conditioned floor area served
-        primary_duct_area, secondary_duct_area = HVAC.get_default_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
+        primary_duct_area, secondary_duct_area = HPXMLDefaults.get_default_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
         total_duct_area = primary_duct_area + secondary_duct_area
 
         duct_location_areas = get_duct_location_areas(orig_bldg, total_duct_area)
@@ -844,6 +849,9 @@ module ES_ZERH_Ruleset
   def self.set_systems_water_heating_use_reference(orig_bldg, new_bldg)
     return if orig_bldg.water_heating_systems.size == 0
 
+    # Exhibit 2 - Service Water Heating Systems: Use the same Gallons per Day as Table 4.2.2(1) - Service water heating systems
+    standard_piping_length = HPXMLDefaults.get_default_std_pipe_length(@has_uncond_bsmnt, @has_cond_bsmnt, @cfa, @ncfl).round(3)
+
     if orig_bldg.hot_water_distributions.size == 0
       sys_id = 'HotWaterDistribution'
     else
@@ -873,6 +881,7 @@ module ES_ZERH_Ruleset
       new_bldg.hot_water_distributions.add(id: sys_id,
                                            system_type: HPXML::DHWDistTypeStandard,
                                            pipe_r_value: pipe_r_value,
+                                           standard_piping_length: standard_piping_length,
                                            has_shared_recirculation: true,
                                            shared_recirculation_number_of_bedrooms_served: orig_dist.shared_recirculation_number_of_bedrooms_served,
                                            shared_recirculation_pump_power: shared_recirculation_pump_power,
@@ -880,7 +889,8 @@ module ES_ZERH_Ruleset
     else
       new_bldg.hot_water_distributions.add(id: sys_id,
                                            system_type: HPXML::DHWDistTypeStandard,
-                                           pipe_r_value: pipe_r_value)
+                                           pipe_r_value: pipe_r_value,
+                                           standard_piping_length: standard_piping_length)
     end
 
     # New water fixtures
@@ -1025,7 +1035,7 @@ module ES_ZERH_Ruleset
 
   def self.set_appliances_dehumidifier_reference(orig_bldg, new_bldg)
     orig_bldg.dehumidifiers.each do |dehumidifier|
-      reference_values = HVAC.get_dehumidifier_default_values(dehumidifier.capacity)
+      reference_values = HPXMLDefaults.get_default_dehumidifier_values(dehumidifier.capacity)
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
                                  type: dehumidifier.type, # Per RESNET 55i
                                  capacity: dehumidifier.capacity,
@@ -1104,7 +1114,8 @@ module ES_ZERH_Ruleset
     return if orig_bldg.ceiling_fans.size == 0
 
     new_bldg.ceiling_fans.add(id: 'TargetCeilingFan',
-                              efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'))
+                              efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
+                              count: HPXMLDefaults.get_default_ceiling_fan_quantity(@nbeds))
   end
 
   def self.set_misc_loads_reference(orig_bldg, new_bldg)
