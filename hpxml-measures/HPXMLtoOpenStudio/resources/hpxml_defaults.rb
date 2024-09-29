@@ -3592,7 +3592,7 @@ module HPXMLDefaults
       ceiling_fan.weekend_fractions_isdefaulted = true
     end
     if ceiling_fan.monthly_multipliers.nil? && !schedules_file_includes_ceiling_fan
-      ceiling_fan.monthly_multipliers = get_default_ceiling_fan_months(weather).join(', ')
+      ceiling_fan.monthly_multipliers = HPXMLDefaults.get_default_ceiling_fan_months(weather).join(', ')
       ceiling_fan.monthly_multipliers_isdefaulted = true
     end
   end
@@ -4904,7 +4904,7 @@ module HPXMLDefaults
   # @return [Double] Water heater heating capacity (kBtu/hr)
   def self.get_default_water_heater_heating_capacity(fuel, nbeds, num_water_heaters, nbaths = nil)
     if nbaths.nil?
-      nbaths = get_default_num_bathrooms(nbeds)
+      nbaths = HPXMLDefaults.get_default_num_bathrooms(nbeds)
     end
 
     # Adjust the heating capacity if there are multiple water heaters in the home
@@ -4954,7 +4954,7 @@ module HPXMLDefaults
   # @return [Double] Water heater tank volume (gal)
   def self.get_default_water_heater_tank_volume(fuel, nbeds, nbaths = nil)
     if nbaths.nil?
-      nbaths = get_default_num_bathrooms(nbeds)
+      nbaths = HPXMLDefaults.get_default_num_bathrooms(nbeds)
     end
 
     if fuel != HPXML::FuelTypeElectricity # Non-electric tank WHs
