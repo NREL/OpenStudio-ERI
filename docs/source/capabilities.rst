@@ -23,6 +23,7 @@ The following IECC ERI versions are supported:
 - 2015
 - 2018
 - 2021
+- 2024
 
 The following DOE ZERH versions are supported:
 

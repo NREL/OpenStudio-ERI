@@ -12,9 +12,9 @@ class ERI301ValidationTest < Minitest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
-    @schema_validator = XMLValidator.get_schema_validator(File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')))
+    @schema_validator = XMLValidator.get_xml_validator(File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')))
     @schematron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
-    @schematron_validator = XMLValidator.get_schematron_validator(@schematron_path)
+    @schematron_validator = XMLValidator.get_xml_validator(@schematron_path)
 
     @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
     FileUtils.mkdir_p(@tmp_output_path)
@@ -29,7 +29,7 @@ class ERI301ValidationTest < Minitest::Test
     # Check that the schematron file is valid
 
     schematron_schema_path = File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'iso-schematron.xsd'))
-    schematron_schema_validator = XMLValidator.get_schema_validator(schematron_schema_path)
+    schematron_schema_validator = XMLValidator.get_xml_validator(schematron_schema_path)
     _test_schema_validation(@schematron_path, schematron_schema_validator)
   end
 
@@ -74,19 +74,16 @@ class ERI301ValidationTest < Minitest::Test
                                                              'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"]'],
                             'energy-star-SF_National_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
                             'energy-star-SF_National_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
-                            'energy-star-SF_National_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
-                                                              'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone'],
+                            'energy-star-SF_National_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
                             'energy-star-SF_OregonWashington_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
                                                                       'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'],
                             'energy-star-SF_Pacific_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
                                                              'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"]'],
                             'energy-star-MF_National_1.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
                             'energy-star-MF_National_1.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
-                            'energy-star-MF_National_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
-                                                              'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone'],
+                            'energy-star-MF_National_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
                             'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
-                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'],
-                            'zerh-version_1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2015"]/ClimateZone'] }
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
@@ -106,16 +103,16 @@ class ERI301ValidationTest < Minitest::Test
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml_bldg.building_construction.conditioned_floor_area = 1348.8
       elsif error_case.include? 'energy-star'
-        props = { 'energy-star-SF_Florida_3.1' => [ESConstants.SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_National_3.0' => [ESConstants.SFNationalVer3_0, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_National_3.1' => [ESConstants.SFNationalVer3_1, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_National_3.2' => [ESConstants.SFNationalVer3_2, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_OregonWashington_3.2' => [ESConstants.SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_Pacific_3.0' => [ESConstants.SFPacificVer3_0, HPXML::ResidentialTypeApartment],
-                  'energy-star-MF_National_1.0' => [ESConstants.MFNationalVer1_0, HPXML::ResidentialTypeSFD],
-                  'energy-star-MF_National_1.1' => [ESConstants.MFNationalVer1_1, HPXML::ResidentialTypeSFD],
-                  'energy-star-MF_National_1.2' => [ESConstants.MFNationalVer1_2, HPXML::ResidentialTypeSFD],
-                  'energy-star-MF_OregonWashington_1.2' => [ESConstants.MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
+        props = { 'energy-star-SF_Florida_3.1' => [ESConstants::SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.0' => [ESConstants::SFNationalVer3_0, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.1' => [ESConstants::SFNationalVer3_1, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.2' => [ESConstants::SFNationalVer3_2, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_OregonWashington_3.2' => [ESConstants::SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_Pacific_3.0' => [ESConstants::SFPacificVer3_0, HPXML::ResidentialTypeApartment],
+                  'energy-star-MF_National_1.0' => [ESConstants::MFNationalVer1_0, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_National_1.1' => [ESConstants::MFNationalVer1_1, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_National_1.2' => [ESConstants::MFNationalVer1_2, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_OregonWashington_1.2' => [ESConstants::MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
         version, bldg_type = props[error_case]
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml.header.energystar_calculation_version = version
@@ -126,18 +123,6 @@ class ERI301ValidationTest < Minitest::Test
           hpxml_bldg.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
         end
         hpxml_bldg.state_code = 'CO'
-        zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
-                                                                 zone: zone)
-      elsif error_case.include? 'zerh'
-        versions = { 'zerh-version_1' => ZERHConstants.Ver1,
-                     'zerh-version_2' => ZERHConstants.SFVer2 }
-        version = versions[error_case]
-        hpxml, hpxml_bldg = _create_hpxml('base.xml')
-        hpxml.header.zerh_calculation_version = version
-        hpxml.header.iecc_eri_calculation_version = nil
-        hpxml.header.energystar_calculation_version = nil
         zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
         hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
         hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
@@ -197,7 +182,7 @@ class ERI301ValidationTest < Minitest::Test
 
   def _test_ruleset(expected_errors)
     require_relative '../../workflow/design'
-    designs = [Design.new(calc_type: Constants.CalcTypeERIRatedHome)]
+    designs = [Design.new(calc_type: Constants::CalcTypeERIRatedHome)]
     designs[0].hpxml_output_path = File.absolute_path(@tmp_output_path)
 
     success, errors, _, _, _ = run_rulesets(File.absolute_path(@tmp_hpxml_path), designs)
