@@ -18,6 +18,7 @@
     <Site>
       <SiteID id='SiteID'/>
       <Address>
+        <StateCode>FL</StateCode>
         <ZipCode>00000</ZipCode>
       </Address>
     </Site>
@@ -40,6 +41,19 @@
           <ConditionedFloorArea>2400.0</ConditionedFloorArea>
         </BuildingConstruction>
       </BuildingSummary>
+      <ClimateandRiskZones>
+        <ClimateZoneIECC>
+          <Year>2006</Year>
+          <ClimateZone>1A</ClimateZone>
+        </ClimateZoneIECC>
+        <WeatherStation>
+          <SystemIdentifier id='WeatherStation'/>
+          <Name>Miami, FL</Name>
+          <extension>
+            <EPWFilePath>USA_FL_Miami.Intl.AP.722020_TMY3.epw</EPWFilePath>
+          </extension>
+        </WeatherStation>
+      </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>
           <AirInfiltrationMeasurement>

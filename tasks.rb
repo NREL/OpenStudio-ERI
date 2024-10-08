@@ -381,7 +381,7 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml_bldg)
     hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Baltimore, MD'
     hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MD_Baltimore-Washington.Intl.AP.724060_TMY3.epw'
     hpxml_bldg.state_code = 'MD'
-  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include? hpxml_file
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml'].include?(hpxml_file)
     # Dallas
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
@@ -390,8 +390,8 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml_bldg)
     hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Dallas, TX'
     hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_TX_Dallas-Fort.Worth.Intl.AP.722590_TMY3.epw'
     hpxml_bldg.state_code = 'TX'
-  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include? hpxml_file ||
-                                                                                         hpxml_file.include?('MiamiFL')
+  elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml'].include?(hpxml_file) ||
+        hpxml_file.include?('MiamiFL')
     # Miami
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
