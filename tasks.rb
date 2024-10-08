@@ -2220,6 +2220,7 @@ end
 def set_hpxml_water_fixtures(hpxml_file, hpxml_bldg)
   if ['RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include?(hpxml_file) ||
      hpxml_file.include?('EPA_Tests/SF') ||
+     hpxml_file.include?('HERS_AutoGen') ||
      hpxml_file.include?('Multi_Climate')
     # Standard
     hpxml_bldg.water_fixtures.clear
