@@ -55,7 +55,7 @@ class RESNETOtherTest < Minitest::Test
     xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
-      _run_ruleset(Constants.CalcTypeERIIndexAdjustmentDesign, xml, out_xml)
+      _run_ruleset(Constants::CalcTypeERIIndexAdjustmentDesign, xml, out_xml)
       test_num = File.basename(xml)[0, 2].to_i
       all_results[File.basename(xml)] = _get_iad_home_components(out_xml, test_num)
     end

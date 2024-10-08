@@ -11,9 +11,9 @@ class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
-    @schema_validator = XMLValidator.get_schema_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
   end
 
   def teardown
@@ -22,7 +22,7 @@ class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
   end
 
   def test_misc
-    [*ESConstants.AllVersions, *ZERHConstants.AllVersions].each do |program_version|
+    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       _check_misc(hpxml_bldg)
@@ -31,11 +31,11 @@ class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
 
   def _test_ruleset(program_version)
     require_relative '../../workflow/design'
-    if ESConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference,
+    if ESConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
                             output_dir: @sample_files_path)]
-    elsif ZERHConstants.AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference,
+    elsif ZERHConstants::AllVersions.include? program_version
+      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
                             output_dir: @sample_files_path)]
     end
 

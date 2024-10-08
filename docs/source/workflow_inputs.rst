@@ -65,7 +65,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   .. [#] CO2IndexCalculation/Version choices are "latest", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
          If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
-  .. [#] IECCERICalculation/Version choices are "2021", "2018", or "2015".
+  .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
   .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
 
@@ -176,16 +176,11 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
   ``ClimateZone``                    string           See [#]_     Yes                 IECC zone
   =================================  ========  =====  ===========  ========  ========  ===============
   
-  .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, or 2021.
+  .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, 2021, or 2024.
   .. [#] The IECC climate zone for 2006 is always required.
-         Additional climate zones of other years may be required based on the programs selected for calculation:
+         IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+         See below for the list of climate zone years used by different programs:
          
-         \- **IECC ERI 2015**: 2015
-
-         \- **IECC ERI 2018**: 2018
-
-         \- **IECC ERI 2021**: 2021
-
          \- **ENERGY STAR SFNH National v3.2**: 2021
 
          \- **ENERGY STAR MFNC National v1.2**: 2021
@@ -194,6 +189,8 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
 
          \- **ZERH SF/MF 2.0**: 2021
   
+         \- **IECC ERI 20XX**: 20XX
+
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".
 
 HPXML Enclosure
@@ -254,13 +251,13 @@ For example, ACH50 (ACH at 50 Pascals) is a commonly obtained value from a blowe
   ====================================  ======  =====  ===========  =========  =======  ===============================================
   Element                               Type    Units  Constraints  Required   Default  Notes
   ====================================  ======  =====  ===========  =========  =======  ===============================================
-  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                 Units for air leakage
   ``HousePressure``                     double  Pa     > 0          Yes                 House pressure with respect to outside [#]_
+  ``BuildingAirLeakage/UnitofMeasure``  string         See [#]_     Yes                 Units for air leakage
   ``BuildingAirLeakage/AirLeakage``     double         > 0          Yes                 Value for air leakage [#]_
   ====================================  ======  =====  ===========  =========  =======  ===============================================
 
-  .. [#] UnitofMeasure choices are "ACH" or "CFM".
   .. [#] HousePressure typical value is 50 Pa.
+  .. [#] UnitofMeasure choices are "ACH" or "CFM".
   .. [#] For attached dwelling units, BuildingAirLeakage/AirLeakage should be a compartmentalization test value and *not* adjusted by the Aext reduction factor specified in ANSI/RESNET/ICC 301.
          OpenStudio-ERI will automatically calculate and apply the Aext adjustment (and the Aext value can be found in, e.g., the ERIRatedHome.xml output file).
          Note that all attached surfaces, even adiabatic surfaces, must be defined in the HPXML file.
@@ -660,7 +657,7 @@ If the skylight has a curb, additional information is entered in ``Skylight``.
   ===========================================  ========  ============  ===========  ========  ========  ========================================================
   Element                                      Type      Units         Constraints  Required  Default   Notes
   ===========================================  ========  ============  ===========  ========  ========  ========================================================
-  ``extension/Curb/Area``                      double    ft^2          > 0          Yes                 Total area including all sides
+  ``extension/Curb/Area``                      double    ft2           > 0          Yes                 Total area including all sides
   ``extension/Curb/AssemblyEffectiveRValue``   double    F-ft2-hr/Btu  > 0          Yes                 Assembly R-value [#]_
   ===========================================  ========  ============  ===========  ========  ========  ========================================================
 
@@ -676,7 +673,7 @@ If the skylight has a shaft, additional information is entered in ``Skylight``.
   ===========================================  ========  ============  ===========  ========  ========  ========================================================
   Element                                      Type      Units         Constraints  Required  Default   Notes
   ===========================================  ========  ============  ===========  ========  ========  ========================================================
-  ``extension/Shaft/Area``                     double    ft^2          > 0          Yes                 Total area including all sides
+  ``extension/Shaft/Area``                     double    ft2           > 0          Yes                 Total area including all sides
   ``extension/Shaft/AssemblyEffectiveRValue``  double    F-ft2-hr/Btu  > 0          Yes                 Assembly R-value [#]_
   ===========================================  ========  ============  ===========  ========  ========  ========================================================
 
@@ -1794,7 +1791,8 @@ Each heat recovery ventilator (HRV) is entered as a ``/HPXML/Building/BuildingDe
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
-  .. [#] Providing AdjustedSensibleRecoveryEfficiency (ASRE) is preferable to SensibleRecoveryEfficiency (SRE).
+  .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
+         Since OpenStudio-ERI separately models fan electric consumption, ASRE is a preferable input to SRE because it can be directly used in the energy model.
 
 .. _vent_fan_erv:
 
@@ -1821,8 +1819,10 @@ Each energy recovery ventilator (ERV) is entered as a ``/HPXML/Building/Building
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
-  .. [#] Providing AdjustedTotalRecoveryEfficiency (ATRE) is preferable to TotalRecoveryEfficiency (TRE).
-  .. [#] Providing AdjustedSensibleRecoveryEfficiency (ASRE) is preferable to SensibleRecoveryEfficiency (SRE).
+  .. [#] AdjustedTotalRecoveryEfficiency (ATRE) is similar to TotalRecoveryEfficiency (TRE), in that it reflects cooling season performance, but excludes fan electric consumption.
+         Since OpenStudio-ERI separately models fan electric consumption, ATRE is a preferable input to TRE because it can be directly used in the energy model.
+  .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
+         Since OpenStudio-ERI separately models fan electric consumption, ASRE is a preferable input to SRE because it can be directly used in the energy model.
 
 .. _vent_fan_cfis:
 
@@ -2563,11 +2563,11 @@ A single dishwasher can be entered as a ``/HPXML/Building/BuildingDetails/Applia
   ``IsSharedAppliance``                   boolean                            Yes                Whether it serves multiple dwelling units [#]_
   ``Location``                            string                See [#]_     Yes                Location
   ``RatedAnnualkWh`` or ``EnergyFactor``  double   kWh/yr or #  > 0          Yes                EnergyGuide label consumption/efficiency [#]_
+  ``PlaceSettingCapacity``                integer  #            > 0          Yes                Number of place settings
   ``LabelElectricRate``                   double   $/kWh        > 0          Yes                EnergyGuide label electricity rate (not used if 301 version < 2019A)
   ``LabelGasRate``                        double   $/therm      > 0          Yes                EnergyGuide label natural gas rate (not used if 301 version < 2019A)
   ``LabelAnnualGasCost``                  double   $            > 0          Yes                EnergyGuide label annual gas cost (not used if 301 version < 2019A)
   ``LabelUsage``                          double   cyc/wk       > 0          Yes                EnergyGuide label number of cycles (not used if 301 version < 2019A)
-  ``PlaceSettingCapacity``                integer  #            > 0          Yes                Number of place settings
   ======================================  =======  ===========  ===========  ========  =======  ==============================================
 
   .. [#] For example, a dishwasher in a shared mechanical room of a MF building.
