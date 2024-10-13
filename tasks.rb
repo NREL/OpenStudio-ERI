@@ -2112,6 +2112,7 @@ def create_sample_hpxmls
                   'base-hvac-floor-furnace-propane-only.xml',
                   'base-hvac-furnace-elec-only.xml',
                   'base-hvac-furnace-gas-only.xml',
+                  'base-hvac-furnace-gas-plus-air-to-air-heat-pump-cooling.xml',
                   'base-hvac-ground-to-air-heat-pump.xml',
                   'base-hvac-ground-to-air-heat-pump-cooling-only.xml',
                   'base-hvac-ground-to-air-heat-pump-heating-only.xml',
