@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 def get_hvac_configurations(orig_bldg)
   hvac_configurations = []
   orig_bldg.heating_systems.each do |orig_heating_system|
