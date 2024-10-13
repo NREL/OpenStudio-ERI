@@ -11132,7 +11132,7 @@ class HPXML < Object
     # @return [nil]
     def delete
       (@parent_object.heating_systems + @parent_object.heat_pumps).each do |heating_system|
-        heating_system.cooling_detailed_performance_data.delete(self)
+        heating_system.heating_detailed_performance_data.delete(self)
       end
     end
 
@@ -11184,7 +11184,7 @@ class HPXML < Object
   #
   # @return [Oga::XML::Document] The HPXML document
   def _create_hpxml_document
-    doc = XMLHelper.create_doc('1.0', 'UTF-8')
+    doc = XMLHelper.create_doc()
     hpxml = XMLHelper.add_element(doc, 'HPXML')
     XMLHelper.add_attribute(hpxml, 'xmlns', NameSpace)
     XMLHelper.add_attribute(hpxml, 'schemaVersion', Version::HPXML_Version)
