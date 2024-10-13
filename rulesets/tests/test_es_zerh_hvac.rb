@@ -1454,7 +1454,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def test_shared_ground_loop_ground_source
+  def test_shared_ground_loop_ground_source_heat_pump
     hpxml_name = 'base-bldgtype-mf-unit-shared-ground-loop-ground-to-air-heat-pump.xml'
     [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
